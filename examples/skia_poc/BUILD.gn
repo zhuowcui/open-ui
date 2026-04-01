@@ -1,10 +1,18 @@
-# Skia POC — Build when Skia is available via submodule
-# For now, build the placeholder version
+# Skia POC — Build target for Skia proof of concept
+#
+# This target is designed to build within the Chromium tree:
+#   1. Copy openui/ directory to chromium/src/openui/
+#   2. Add "//openui:skia_poc" to chromium/src/BUILD.gn's gn_all deps
+#   3. ninja -C out/Release openui:skia_poc
+#
+# Within our own build system, this is a placeholder until SP1-E4
+# integrates Chromium's GN build.
 
 executable("skia_poc") {
   sources = [ "main.cc" ]
 
-  # TODO(sp1-e4): Add Skia dependency once submodule is integrated
-  # deps = [ "//third_party/chromium/third_party/skia" ]
-  # include_dirs = [ "//third_party/chromium" ]
+  # When building inside Chromium tree, add:
+  #   deps = [ "//skia" ]
+  # When building standalone (SP1-E4), will be:
+  #   deps = [ "//third_party/chromium/skia" ]
 }

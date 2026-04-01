@@ -1,0 +1,20 @@
+# Chromium source (managed by tools/setup-chromium.sh, not checked in)
+third_party/chromium/
+
+# Build outputs
+out/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# depot_tools
+.gclient
+.gclient_entries

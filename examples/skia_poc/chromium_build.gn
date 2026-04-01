@@ -1,0 +1,10 @@
+# Open UI — Skia POC build target
+# Build: ninja -C out/Release openui/skia_poc
+
+executable("skia_poc") {
+  sources = [ "skia_poc.cc" ]
+
+  deps = [
+    "//skia",
+  ]
+}
