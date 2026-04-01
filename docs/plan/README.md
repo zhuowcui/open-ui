@@ -48,17 +48,18 @@ The project is divided into 8 sequential sub-projects. Each produces a usable, t
 
 | # | Sub-Project | Deliverable | Dependencies |
 |---|---|---|---|
-| 1 | [Research & Infrastructure](./01-research-and-infrastructure.md) | Dependency maps, build system, Skia POC | — |
+| 1 | [Research & Infrastructure](./01-research-and-infrastructure.md) ✅ | Dependency maps, build system, Skia POC | — |
 | 2 | [Skia Extraction & C API](./02-skia-extraction.md) | `libopenui_skia.so` | SP1 |
 | 3 | [Compositor Extraction](./03-compositor-extraction.md) | `libopenui_compositor.so` | SP2 |
 | 4 | [Layout Engine Extraction](./04-layout-engine-extraction.md) | `libopenui_layout.so` | SP3 |
 | 5 | [Style System Extraction](./05-style-system-extraction.md) | `libopenui_style.so` | SP4 |
 | 6 | [Unified Pipeline & Scene Graph](./06-scene-graph.md) | `libopenui.so` | SP5 |
-| 7 | [Rust Bindings & Developer Experience](./07-rust-bindings.md) | `openui` crate on crates.io | SP6 |
-| 8 | [Platform Expansion & Ecosystem](./08-platform-expansion.md) | Cross-platform framework + tooling | SP7 |
+| 7 | [Native Widget Toolkit](./07-native-widget-toolkit.md) | HTML-equivalent compiled widgets + platform services | SP6 |
+| 8 | [Rust Bindings & Developer Experience](./08-rust-bindings.md) | `openui` crate on crates.io | SP7 |
+| 9 | [Platform Expansion & Ecosystem](./09-platform-expansion.md) | Cross-platform framework + tooling | SP8 |
 
 ```
-SP1 → SP2 → SP3 → SP4 → SP5 → SP6 → SP7 → SP8
+SP1 → SP2 → SP3 → SP4 → SP5 → SP6 → SP7 → SP8 → SP9
 ```
 
 ## Repository Structure
@@ -115,5 +116,6 @@ open-ui/
 | SP4 | Correct Flexbox and Grid layout via C API. |
 | SP5 | Style cascade and computed values via C API. |
 | SP6 | Declarative hello world app renders correctly. |
-| SP7 | `cargo add openui` → build a working app. |
-| SP8 | Same app runs on Linux, macOS, Windows. |
+| SP7 | Widget gallery renders all HTML-equivalent controls. |
+| SP8 | `cargo add openui` → build a working app. |
+| SP9 | Same app runs on Linux, macOS, Windows. |

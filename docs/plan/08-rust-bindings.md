@@ -1,4 +1,4 @@
-# Sub-Project 7: Rust Bindings & Developer Experience
+# Sub-Project 8: Rust Bindings & Developer Experience
 
 > Idiomatic Rust crate that makes building UIs with Open UI feel native to Rust developers.
 
@@ -17,7 +17,7 @@ openui (workspace)
 
 ## Tasks
 
-### 7.1 `openui-sys` — Raw FFI Bindings
+### 8.1 `openui-sys` — Raw FFI Bindings
 
 **Auto-generated with `bindgen`:**
 - Input: `include/openui/openui.h` and all sub-headers
@@ -30,7 +30,7 @@ openui (workspace)
 - Callback function pointers → raw function pointers
 - Run `bindgen` at build time or check in generated code (prefer build time for freshness)
 
-### 7.2 `openui` — Safe Rust API
+### 8.2 `openui` — Safe Rust API
 
 **Core design principles:**
 - **Ownership**: Handles have clear owners. `Drop` calls destroy.
@@ -107,7 +107,7 @@ fn button(label: &str, on_click: impl Fn() + 'static) -> Node {
 }
 ```
 
-### 7.3 State Management
+### 8.3 State Management
 
 **Reactive state model:**
 
@@ -129,7 +129,7 @@ ctx.effect("fetch-data", [user_id.get()], || {
 
 **State is stored in the framework**, keyed by the node's key + state name. This allows the framework to persist state across re-renders (like React hooks).
 
-### 7.4 `openui-macros` — Proc Macros
+### 8.4 `openui-macros` — Proc Macros
 
 **`ui!` macro — JSX/SwiftUI-like declarative syntax:**
 
@@ -185,7 +185,7 @@ fn TodoItem(text: &str, on_delete: impl Fn()) -> Node {
 }
 ```
 
-### 7.5 Styling in Rust
+### 8.5 Styling in Rust
 
 ```rust
 // Inline styles (builder pattern)
@@ -219,7 +219,7 @@ App::builder()
     .build()?;
 ```
 
-### 7.6 Example Applications
+### 8.6 Example Applications
 
 1. **Hello World** — Window with "Hello, Open UI!" text
 2. **Counter** — Increment/decrement with state management
@@ -230,7 +230,7 @@ App::builder()
 7. **Theming** — Light/dark mode switching
 8. **Complex App** — Multi-window app with navigation, forms, lists
 
-### 7.7 Documentation
+### 8.7 Documentation
 
 - **rustdoc**: Full API documentation with examples on every type/method
 - **Book**: "Getting Started with Open UI" (mdBook)

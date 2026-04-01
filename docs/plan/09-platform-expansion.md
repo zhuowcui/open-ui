@@ -1,4 +1,4 @@
-# Sub-Project 8: Platform Expansion & Ecosystem
+# Sub-Project 9: Platform Expansion & Ecosystem
 
 > Expand Open UI to macOS, Windows, mobile platforms. Build developer tooling and language ecosystem.
 
@@ -8,7 +8,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 
 ## Tasks
 
-### 8.1 macOS Port
+### 9.1 macOS Port
 
 **Rendering backend:**
 - Metal backend for Skia (Skia already supports Metal)
@@ -35,7 +35,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 - Map Open UI accessibility tree to macOS accessibility API
 - VoiceOver compatibility testing
 
-### 8.2 Windows Port
+### 9.2 Windows Port
 
 **Rendering backend:**
 - Direct3D 12 via ANGLE or native Skia D3D backend
@@ -59,7 +59,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 - UI Automation (UIA) provider implementation
 - Narrator compatibility testing
 
-### 8.3 Android Port
+### 9.3 Android Port
 
 **Rendering:**
 - Vulkan (preferred, wide support on modern Android)
@@ -78,7 +78,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 - Permissions handling
 - System theme detection
 
-### 8.4 iOS Port
+### 9.4 iOS Port
 
 **Rendering:**
 - Metal (required on iOS, no Vulkan/OpenGL)
@@ -92,7 +92,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 - System gestures (swipe back, etc.)
 - Dynamic Type (accessibility text sizing)
 
-### 8.5 Developer Tooling
+### 9.5 Developer Tooling
 
 **Inspector / DevTools:**
 - Standalone inspector application (built with Open UI itself!)
@@ -126,7 +126,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 - `openui bench` — run performance benchmarks
 - `openui doctor` — check system requirements and configuration
 
-### 8.6 Additional Language Bindings
+### 9.6 Additional Language Bindings
 
 **Python (`openui-python`):**
 - pybind11 or ctypes-based bindings
@@ -157,42 +157,7 @@ Take the Linux-proven Open UI framework cross-platform and build the ecosystem t
 - Maven Central / Gradle dependency
 - Target: Android developers, JVM ecosystem
 
-### 8.7 Widget Library
-
-A standard set of pre-built, themeable UI components:
-
-**Basic:**
-- Button (text, icon, icon+text)
-- Text (label, paragraph, heading)
-- TextInput (single-line, multi-line, password)
-- Checkbox, RadioButton, Switch
-- Slider, ProgressBar
-- Image
-
-**Navigation:**
-- TabBar, TabView
-- NavigationBar, NavigationStack
-- Drawer, Sidebar
-- Breadcrumbs
-
-**Data display:**
-- List, VirtualList (lazy loading for 100k+ items)
-- Table (sortable, filterable)
-- Tree view
-- Card, Badge, Chip/Tag
-
-**Overlay:**
-- Dialog, Modal
-- Toast, Snackbar
-- Tooltip, Popover
-- Menu, ContextMenu, Dropdown
-
-**Layout:**
-- Divider, Spacer
-- Accordion, Collapsible
-- SplitView
-
-### 8.8 Documentation & Community
+### 9.7 Documentation & Community
 
 **Website:**
 - Landing page (hero demo, features, benchmarks)
@@ -224,7 +189,6 @@ A standard set of pre-built, themeable UI components:
 | C# bindings | NuGet package |
 | Swift bindings | SPM package |
 | Kotlin bindings | Maven package |
-| Widget library | 30+ standard UI components |
 | Website & docs | Full documentation site |
 
 ## Success Criteria
@@ -234,7 +198,6 @@ A standard set of pre-built, themeable UI components:
 - [ ] DevTools inspector can connect to and inspect a running application
 - [ ] Hot reload works with < 1 second turnaround
 - [ ] At least 3 language bindings published to their respective package managers
-- [ ] Widget library covers the 80% use case for typical business applications
 - [ ] Documentation site is live and comprehensive
 - [ ] At least 10 community-contributed example applications
 
@@ -244,7 +207,6 @@ This is the most expansive sub-project and will likely be broken into further su
 
 1. macOS + Windows ports (biggest impact, desktop-first)
 2. DevTools + profiler (essential for developer adoption)
-3. Widget library (essential for developer productivity)
-4. Additional language bindings (broadens adoption)
-5. Mobile ports (Android + iOS)
-6. Community + ecosystem
+3. Additional language bindings (broadens adoption)
+4. Mobile ports (Android + iOS)
+5. Community + ecosystem
