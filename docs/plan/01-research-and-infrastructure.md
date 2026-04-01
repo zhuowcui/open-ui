@@ -1,6 +1,8 @@
-# Sub-Project 1: Research & Infrastructure
+# Sub-Project 1: Research & Infrastructure ✅ COMPLETE
 
 > Deep understanding of Chromium's rendering internals, documented dependency maps, and a build infrastructure that can compile Chromium components in isolation.
+>
+> **Status:** All 27 tasks complete. SP1-E5 (GPU stretch goal) deferred to SP2.
 
 ## Objective
 
