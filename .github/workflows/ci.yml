@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential clang lld ninja-build \
+            libfontconfig-dev libfreetype-dev \
+            libvulkan-dev \
+            libx11-xcb-dev libxcb1-dev libxcb-shm0-dev \
+            libwayland-dev wayland-protocols \
+            libdrm-dev libgbm-dev libegl-dev libgl-dev
+
+      - name: Install depot_tools
+        run: |
+          git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git $HOME/depot_tools
+          echo "$HOME/depot_tools" >> $GITHUB_PATH
+
+      - name: Generate build
+        run: |
+          gn gen out/${{ matrix.build_type }} \
+            --args='is_debug=${{ matrix.build_type == 'Debug' && 'true' || 'false' }}'
+
+      - name: Build
+        run: ninja -C out/${{ matrix.build_type }}
+
+      - name: Run hello_world
+        run: ./out/${{ matrix.build_type }}/hello_world

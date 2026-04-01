@@ -1,0 +1,9 @@
+# Clang-format configuration for Open UI
+# Based on Chromium style with minor adjustments
+BasedOnStyle: Chromium
+ColumnLimit: 100
+IndentWidth: 2
+ContinuationIndentWidth: 4
+MaxEmptyLinesToKeep: 1
+SortIncludes: true
+IncludeBlocks: Regroup

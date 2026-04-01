@@ -1,0 +1,12 @@
+=== base/ Usage Analysis: third_party/skia/ ===
+
+Source files scanned: 5817
+Unique base/ includes: 0
+
+--- Usage by Subsystem ---
+
+--- Most Referenced base/ Headers (top 20) ---
+
+--- Subsystem Summary ---
+  Subsystem            Unique Includes      Extraction Notes
+  ──────────────────── ──────────────────── ────────────────────────────────────────

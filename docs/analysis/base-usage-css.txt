@@ -1,0 +1,120 @@
+=== base/ Usage Analysis: third_party/blink/renderer/core/css/ ===
+
+Source files scanned: 1018
+Unique base/ includes: 52
+
+--- Usage by Subsystem ---
+
+  [other] (21 unique includes)
+    base/auto_reset.h  (used by 11 files)
+    base/bits.h  (used by 2 files)
+    base/command_line.h  (used by 2 files)
+    base/compiler_specific.h  (used by 35 files)
+    base/cpu.h  (used by 2 files)
+    base/dcheck_is_on.h  (used by 6 files)
+    base/feature_list.h  (used by 3 files)
+    base/gtest_prod_util.h  (used by 7 files)
+    base/hash/hash.h  (used by 1 files)
+    base/json/json_reader.h  (used by 1 files)
+    base/not_fatal_until.h  (used by 1 files)
+    base/rand_util.h  (used by 1 files)
+    base/substring_set_matcher/substring_set_matcher.h  (used by 3 files)
+    base/test/scoped_feature_list.h  (used by 5 files)
+    base/test/task_environment.h  (used by 1 files)
+    base/test/trace_event_analyzer.h  (used by 1 files)
+    base/test/trace_test_utils.h  (used by 1 files)
+    base/types/optional_util.h  (used by 1 files)
+    base/types/pass_key.h  (used by 13 files)
+    base/types/strong_alias.h  (used by 2 files)
+    base/types/zip.h  (used by 2 files)
+
+  [containers] (5 unique includes)
+    base/containers/adapters.h  (used by 7 files)
+    base/containers/enum_set.h  (used by 1 files)
+    base/containers/fixed_flat_map.h  (used by 1 files)
+    base/containers/lru_cache.h  (used by 1 files)
+    base/containers/span.h  (used by 9 files)
+
+  [logging] (5 unique includes)
+    base/check.h  (used by 5 files)
+    base/check_op.h  (used by 17 files)
+    base/debug/crash_logging.h  (used by 1 files)
+    base/logging.h  (used by 1 files)
+    base/notreached.h  (used by 25 files)
+
+  [memory] (4 unique includes)
+    base/memory/ptr_util.h  (used by 2 files)
+    base/memory/scoped_refptr.h  (used by 6 files)
+    base/memory/stack_allocated.h  (used by 12 files)
+    base/memory/values_equivalent.h  (used by 28 files)
+
+  [strings] (3 unique includes)
+    base/strings/string_number_conversions.h  (used by 1 files)
+    base/strings/string_view_util.h  (used by 3 files)
+    base/strings/to_string.h  (used by 1 files)
+
+  [callbacks] (3 unique includes)
+    base/functional/bind.h  (used by 1 files)
+    base/functional/callback.h  (used by 1 files)
+    base/functional/function_ref.h  (used by 4 files)
+
+  [tracing] (3 unique includes)
+    base/trace_event/common/trace_event_common.h  (used by 1 files)
+    base/trace_event/trace_event.h  (used by 2 files)
+    base/trace_event/typed_macros.h  (used by 2 files)
+
+  [metrics] (2 unique includes)
+    base/metrics/histogram_functions.h  (used by 3 files)
+    base/metrics/histogram_macros.h  (used by 1 files)
+
+  [time] (2 unique includes)
+    base/time/time.h  (used by 2 files)
+    base/timer/elapsed_timer.h  (used by 1 files)
+
+  [numerics] (2 unique includes)
+    base/numerics/clamped_math.h  (used by 2 files)
+    base/numerics/safe_conversions.h  (used by 2 files)
+
+  [threading] (1 unique includes)
+    base/task/single_thread_task_runner.h  (used by 7 files)
+
+  [synchronization] (1 unique includes)
+    base/synchronization/waitable_event.h  (used by 3 files)
+
+--- Most Referenced base/ Headers (top 20) ---
+  base/compiler_specific.h  [other]  (35 files)
+  base/memory/values_equivalent.h  [memory]  (28 files)
+  base/notreached.h  [logging]  (25 files)
+  base/check_op.h  [logging]  (17 files)
+  base/types/pass_key.h  [other]  (13 files)
+  base/memory/stack_allocated.h  [memory]  (12 files)
+  base/auto_reset.h  [other]  (11 files)
+  base/containers/span.h  [containers]  (9 files)
+  base/containers/adapters.h  [containers]  (7 files)
+  base/task/single_thread_task_runner.h  [threading]  (7 files)
+  base/gtest_prod_util.h  [other]  (7 files)
+  base/dcheck_is_on.h  [other]  (6 files)
+  base/memory/scoped_refptr.h  [memory]  (6 files)
+  base/check.h  [logging]  (5 files)
+  base/test/scoped_feature_list.h  [other]  (5 files)
+  base/functional/function_ref.h  [callbacks]  (4 files)
+  base/feature_list.h  [other]  (3 files)
+  base/strings/string_view_util.h  [strings]  (3 files)
+  base/metrics/histogram_functions.h  [metrics]  (3 files)
+  base/substring_set_matcher/substring_set_matcher.h  [other]  (3 files)
+
+--- Subsystem Summary ---
+  Subsystem            Unique Includes      Extraction Notes
+  ──────────────────── ──────────────────── ────────────────────────────────────────
+  callbacks            3                    Must extract (used everywhere)
+  containers           5                    Can replace with std/absl
+  logging              5                    Can stub with simple implementation
+  memory               4                    Must extract (pervasive ownership model)
+  metrics              2                    Can stub (no-op)
+  numerics             2                    Can replace with std equivalents
+  other                21                   Evaluate individually
+  strings              3                    Can partially replace with std::string_view
+  synchronization      1                    Must extract (thread safety)
+  threading            1                    Must extract (core functionality)
+  time                 2                    Can partially replace with std::chrono
+  tracing              3                    Can stub (no-op)

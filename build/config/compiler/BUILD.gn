@@ -1,0 +1,40 @@
+config("default") {
+  cflags_cc = [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wno-unused-parameter",
+    "-fPIC",
+  ]
+
+  cflags_c = [
+    "-std=c17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-Wno-unused-parameter",
+    "-fPIC",
+  ]
+
+  if (is_debug) {
+    cflags_cc += [
+      "-g",
+      "-O0",
+    ]
+    cflags_c += [
+      "-g",
+      "-O0",
+    ]
+    defines = [ "OUI_DEBUG=1" ]
+  } else {
+    cflags_cc += [
+      "-O2",
+      "-DNDEBUG",
+    ]
+    cflags_c += [
+      "-O2",
+      "-DNDEBUG",
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+# Skia POC — Build when Skia is available via submodule
+# For now, build the placeholder version
+
+executable("skia_poc") {
+  sources = [ "main.cc" ]
+
+  # TODO(sp1-e4): Add Skia dependency once submodule is integrated
+  # deps = [ "//third_party/chromium/third_party/skia" ]
+  # include_dirs = [ "//third_party/chromium" ]
+}

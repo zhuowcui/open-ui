@@ -1,0 +1,94 @@
+=== base/ Usage Analysis: third_party/blink/renderer/core/layout/ ===
+
+Source files scanned: 797
+Unique base/ includes: 32
+
+--- Usage by Subsystem ---
+
+  [other] (11 unique includes)
+    base/auto_reset.h  (used by 7 files)
+    base/compiler_specific.h  (used by 3 files)
+    base/dcheck_is_on.h  (used by 33 files)
+    base/feature_list.h  (used by 5 files)
+    base/gtest_prod_util.h  (used by 4 files)
+    base/not_fatal_until.h  (used by 1 files)
+    base/test/metrics/histogram_tester.h  (used by 1 files)
+    base/test/mock_callback.h  (used by 1 files)
+    base/test/scoped_feature_list.h  (used by 3 files)
+    base/types/optional_util.h  (used by 2 files)
+    base/types/strong_alias.h  (used by 2 files)
+
+  [logging] (5 unique includes)
+    base/check.h  (used by 3 files)
+    base/check_op.h  (used by 38 files)
+    base/debug/crash_logging.h  (used by 1 files)
+    base/debug/dump_without_crashing.h  (used by 4 files)
+    base/notreached.h  (used by 25 files)
+
+  [memory] (4 unique includes)
+    base/memory/ptr_util.h  (used by 6 files)
+    base/memory/scoped_refptr.h  (used by 4 files)
+    base/memory/stack_allocated.h  (used by 5 files)
+    base/memory/values_equivalent.h  (used by 3 files)
+
+  [callbacks] (2 unique includes)
+    base/functional/callback.h  (used by 2 files)
+    base/functional/function_ref.h  (used by 5 files)
+
+  [time] (2 unique includes)
+    base/time/time.h  (used by 4 files)
+    base/timer/lap_timer.h  (used by 1 files)
+
+  [containers] (2 unique includes)
+    base/containers/adapters.h  (used by 15 files)
+    base/containers/span.h  (used by 10 files)
+
+  [numerics] (2 unique includes)
+    base/numerics/clamped_math.h  (used by 2 files)
+    base/numerics/safe_conversions.h  (used by 2 files)
+
+  [tracing] (2 unique includes)
+    base/trace_event/trace_event.h  (used by 2 files)
+    base/trace_event/typed_macros.h  (used by 1 files)
+
+  [threading] (1 unique includes)
+    base/task/single_thread_task_runner.h  (used by 2 files)
+
+  [metrics] (1 unique includes)
+    base/metrics/histogram_macros.h  (used by 1 files)
+
+--- Most Referenced base/ Headers (top 20) ---
+  base/check_op.h  [logging]  (38 files)
+  base/dcheck_is_on.h  [other]  (33 files)
+  base/notreached.h  [logging]  (25 files)
+  base/containers/adapters.h  [containers]  (15 files)
+  base/containers/span.h  [containers]  (10 files)
+  base/auto_reset.h  [other]  (7 files)
+  base/memory/ptr_util.h  [memory]  (6 files)
+  base/functional/function_ref.h  [callbacks]  (5 files)
+  base/memory/stack_allocated.h  [memory]  (5 files)
+  base/feature_list.h  [other]  (5 files)
+  base/time/time.h  [time]  (4 files)
+  base/memory/scoped_refptr.h  [memory]  (4 files)
+  base/gtest_prod_util.h  [other]  (4 files)
+  base/debug/dump_without_crashing.h  [logging]  (4 files)
+  base/test/scoped_feature_list.h  [other]  (3 files)
+  base/memory/values_equivalent.h  [memory]  (3 files)
+  base/compiler_specific.h  [other]  (3 files)
+  base/check.h  [logging]  (3 files)
+  base/numerics/clamped_math.h  [numerics]  (2 files)
+  base/numerics/safe_conversions.h  [numerics]  (2 files)
+
+--- Subsystem Summary ---
+  Subsystem            Unique Includes      Extraction Notes
+  ──────────────────── ──────────────────── ────────────────────────────────────────
+  callbacks            2                    Must extract (used everywhere)
+  containers           2                    Can replace with std/absl
+  logging              5                    Can stub with simple implementation
+  memory               4                    Must extract (pervasive ownership model)
+  metrics              1                    Can stub (no-op)
+  numerics             2                    Can replace with std equivalents
+  other                11                   Evaluate individually
+  threading            1                    Must extract (core functionality)
+  time                 2                    Can partially replace with std::chrono
+  tracing              2                    Can stub (no-op)

@@ -1,0 +1,2011 @@
+=== cc → layout ===
+=== Cross-Layer Analysis: cc/ → third_party/blink/renderer/core/layout/ ===
+
+  No cross-layer includes found from cc/ to third_party/blink/renderer/core/layout/
+=== cc → css ===
+=== Cross-Layer Analysis: cc/ → third_party/blink/renderer/core/css/ ===
+
+  No cross-layer includes found from cc/ to third_party/blink/renderer/core/css/
+=== layout → css ===
+=== Cross-Layer Analysis: third_party/blink/renderer/core/layout/ → third_party/blink/renderer/core/css/ ===
+
+Files scanned in third_party/blink/renderer/core/layout/: 797
+Unique cross-layer includes: 29
+Total cross-references: 97
+
+--- Cross-Layer Includes (by target header) ---
+
+  third_party/blink/renderer/core/css/anchor_evaluator.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.h:11
+
+  third_party/blink/renderer/core/css/anchor_query.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.cc:8
+
+  third_party/blink/renderer/core/css/counter_style.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_counter.cc:28
+    ← third_party/blink/renderer/core/layout/list/list_marker.cc:8
+
+  third_party/blink/renderer/core/css/counters_attachment_context.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/out_of_flow_layout_part.h:11
+    ← third_party/blink/renderer/core/layout/page_container_layout_algorithm.h:11
+    ← third_party/blink/renderer/core/layout/paginated_root_layout_algorithm.cc:9
+
+  third_party/blink/renderer/core/css/css_anchor_query_enums.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.h:12
+
+  third_party/blink/renderer/core/css/css_counter_style_rule.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/list/layout_inline_list_item_test.cc:5
+
+  third_party/blink/renderer/core/css/css_font_selector.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_inline_text.cc:26
+
+  third_party/blink/renderer/core/css/css_markup.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/scroll_anchor.cc:12
+
+  third_party/blink/renderer/core/css/css_property_names.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/layout/custom/css_layout_definition.h:8
+    ← third_party/blink/renderer/core/layout/custom/layout_worklet_global_scope.cc:13
+    ← third_party/blink/renderer/core/layout/hit_testing_test.cc:9
+    ← third_party/blink/renderer/core/layout/scroll_anchor_test.cc:9
+
+  third_party/blink/renderer/core/css/css_property_value_set.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_tree_as_text.cc:28
+    ← third_party/blink/renderer/core/layout/out_of_flow_layout_part.cc:14
+
+  third_party/blink/renderer/core/css/css_rule_list.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/list/layout_inline_list_item_test.cc:6
+
+  third_party/blink/renderer/core/css/css_style_declaration.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_text_combine_test.cc:10
+
+  third_party/blink/renderer/core/css/css_style_sheet.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_quote_test.cc:6
+
+  third_party/blink/renderer/core/css/css_value_id_mappings.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_tree_as_text.cc:29
+
+  third_party/blink/renderer/core/css/cssom/css_style_value.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/custom/css_layout_definition.h:9
+
+  third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/custom/css_layout_definition.cc:21
+    ← third_party/blink/renderer/core/layout/custom/custom_layout_child.cc:10
+    ← third_party/blink/renderer/core/layout/custom/custom_layout_child.h:9
+
+  third_party/blink/renderer/core/css/font_size_functions.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_theme_font_provider.cc:28
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_inline_text.cc:27
+
+  third_party/blink/renderer/core/css/out_of_flow_data.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.h:13
+    ← third_party/blink/renderer/core/layout/anchor_position_scroll_data.cc:7
+    ← third_party/blink/renderer/core/layout/out_of_flow_layout_part.cc:15
+
+  third_party/blink/renderer/core/css/page_margins_style.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/page_container_layout_algorithm.cc:7
+
+  third_party/blink/renderer/core/css/properties/longhands.h  (referenced by 8 files)
+    ← third_party/blink/renderer/core/layout/forms/layout_fieldset.cc:7
+    ← third_party/blink/renderer/core/layout/layout_box.cc:38
+    ← third_party/blink/renderer/core/layout/layout_object.cc:44
+    ← third_party/blink/renderer/core/layout/layout_theme_test.cc:11
+    ← third_party/blink/renderer/core/layout/layout_tree_as_text.cc:30
+    ← third_party/blink/renderer/core/layout/svg/svg_layout_tree_as_text.cc:31
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.cc:24
+    ← third_party/blink/renderer/core/layout/table/table_borders.cc:7
+
+  third_party/blink/renderer/core/css/resolver/style_adjuster.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/layout_object.cc:45
+    ← third_party/blink/renderer/core/layout/layout_object_hot.cc:5
+    ← third_party/blink/renderer/core/layout/layout_text_combine.cc:7
+
+  third_party/blink/renderer/core/css/resolver/style_resolver.h  (referenced by 20 files)
+    ← third_party/blink/renderer/core/layout/inline/inline_items_builder_test.cc:8
+    ← third_party/blink/renderer/core/layout/inline/inline_layout_algorithm.cc:13
+    ← third_party/blink/renderer/core/layout/layout_block.cc:32
+    ← third_party/blink/renderer/core/layout/layout_block_test.cc:8
+    ← third_party/blink/renderer/core/layout/layout_inline.cc:27
+    ← third_party/blink/renderer/core/layout/layout_object.cc:46
+    ← third_party/blink/renderer/core/layout/layout_object_hot.cc:6
+    ← third_party/blink/renderer/core/layout/layout_object_test.cc:11
+    ← third_party/blink/renderer/core/layout/layout_ruby_as_block.cc:7
+    ← third_party/blink/renderer/core/layout/layout_text_combine.cc:8
+    ← third_party/blink/renderer/core/layout/layout_view_transition_root.cc:7
+    ← third_party/blink/renderer/core/layout/length_utils_test.cc:8
+    ← third_party/blink/renderer/core/layout/list/list_marker.cc:9
+    ← third_party/blink/renderer/core/layout/page_container_layout_algorithm.cc:8
+    ← third_party/blink/renderer/core/layout/paginated_root_layout_algorithm.cc:10
+    ← third_party/blink/renderer/core/layout/pagination_utils.cc:10
+    ← third_party/blink/renderer/core/layout/table/layout_table.cc:7
+    ← third_party/blink/renderer/core/layout/table/layout_table_cell.cc:7
+    ← third_party/blink/renderer/core/layout/table/layout_table_row.cc:7
+    ← third_party/blink/renderer/core/layout/table/layout_table_section.cc:7
+
+  third_party/blink/renderer/core/css/style_change_reason.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/layout/custom/pending_layout_registry.cc:7
+    ← third_party/blink/renderer/core/layout/forms/layout_text_control.cc:25
+    ← third_party/blink/renderer/core/layout/layout_object.cc:47
+    ← third_party/blink/renderer/core/layout/layout_text_fragment.cc:25
+
+  third_party/blink/renderer/core/css/style_containment_scope.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_object.cc:48
+    ← third_party/blink/renderer/core/layout/layout_quote.cc:26
+
+  third_party/blink/renderer/core/css/style_engine.h  (referenced by 19 files)
+    ← third_party/blink/renderer/core/layout/block_child_iterator_test.cc:8
+    ← third_party/blink/renderer/core/layout/block_node.cc:9
+    ← third_party/blink/renderer/core/layout/column_layout_algorithm.cc:9
+    ← third_party/blink/renderer/core/layout/custom_scrollbar.cc:28
+    ← third_party/blink/renderer/core/layout/depth_ordered_layout_object_list.cc:8
+    ← third_party/blink/renderer/core/layout/forms/layout_text_control.cc:26
+    ← third_party/blink/renderer/core/layout/layout_block.cc:33
+    ← third_party/blink/renderer/core/layout/layout_br.cc:24
+    ← third_party/blink/renderer/core/layout/layout_counter.cc:29
+    ← third_party/blink/renderer/core/layout/layout_image_resource.cc:32
+    ← third_party/blink/renderer/core/layout/layout_inline.cc:28
+    ← third_party/blink/renderer/core/layout/layout_object.cc:49
+    ← third_party/blink/renderer/core/layout/layout_object_inlines.h:8
+    ← third_party/blink/renderer/core/layout/layout_quote.cc:27
+    ← third_party/blink/renderer/core/layout/layout_theme_test.cc:12
+    ← third_party/blink/renderer/core/layout/layout_view.cc:34
+    ← third_party/blink/renderer/core/layout/out_of_flow_layout_part.cc:16
+    ← third_party/blink/renderer/core/layout/scroll_anchor.cc:13
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_inline_text.cc:28
+
+  third_party/blink/renderer/core/css/style_request.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/custom_scrollbar.cc:29
+
+  third_party/blink/renderer/core/css/style_sheet_contents.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_object_test.cc:12
+
+  third_party/blink/renderer/core/css/style_sheet_list.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_quote_test.cc:7
+
+  third_party/blink/renderer/core/css_value_keywords.h  (referenced by 7 files)
+    ← third_party/blink/renderer/core/layout/layout_embedded_object.cc:28
+    ← third_party/blink/renderer/core/layout/layout_theme.cc:27
+    ← third_party/blink/renderer/core/layout/layout_theme.h:29
+    ← third_party/blink/renderer/core/layout/layout_theme_default.cc:30
+    ← third_party/blink/renderer/core/layout/layout_theme_font_provider.h:30
+    ← third_party/blink/renderer/core/layout/layout_theme_font_provider_default.cc:28
+    ← third_party/blink/renderer/core/layout/layout_theme_font_provider_win.cc:28
+
+--- Source Files with Cross-Layer Includes ---
+
+  third_party/blink/renderer/core/layout/anchor_evaluator_impl.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/anchor_query.h
+
+  third_party/blink/renderer/core/layout/anchor_evaluator_impl.h (3 cross-layer includes)
+    line 11: third_party/blink/renderer/core/css/anchor_evaluator.h
+    line 12: third_party/blink/renderer/core/css/css_anchor_query_enums.h
+    line 13: third_party/blink/renderer/core/css/out_of_flow_data.h
+
+  third_party/blink/renderer/core/layout/anchor_position_scroll_data.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/out_of_flow_data.h
+
+  third_party/blink/renderer/core/layout/block_child_iterator_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/block_node.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/column_layout_algorithm.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/custom/css_layout_definition.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.h
+
+  third_party/blink/renderer/core/layout/custom/css_layout_definition.h (2 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/css_property_names.h
+    line 9: third_party/blink/renderer/core/css/cssom/css_style_value.h
+
+  third_party/blink/renderer/core/layout/custom/custom_layout_child.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.h
+
+  third_party/blink/renderer/core/layout/custom/custom_layout_child.h (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.h
+
+  third_party/blink/renderer/core/layout/custom/layout_worklet_global_scope.cc (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/css/css_property_names.h
+
+  third_party/blink/renderer/core/layout/custom/pending_layout_registry.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/style_change_reason.h
+
+  third_party/blink/renderer/core/layout/custom_scrollbar.cc (2 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css/style_engine.h
+    line 29: third_party/blink/renderer/core/css/style_request.h
+
+  third_party/blink/renderer/core/layout/depth_ordered_layout_object_list.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/forms/layout_fieldset.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/properties/longhands.h
+
+  third_party/blink/renderer/core/layout/forms/layout_text_control.cc (2 cross-layer includes)
+    line 25: third_party/blink/renderer/core/css/style_change_reason.h
+    line 26: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/hit_testing_test.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/css/css_property_names.h
+
+  third_party/blink/renderer/core/layout/inline/inline_items_builder_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/inline/inline_layout_algorithm.cc (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/layout_block.cc (2 cross-layer includes)
+    line 32: third_party/blink/renderer/core/css/resolver/style_resolver.h
+    line 33: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_block_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/layout_box.cc (1 cross-layer includes)
+    line 38: third_party/blink/renderer/core/css/properties/longhands.h
+
+  third_party/blink/renderer/core/layout/layout_br.cc (1 cross-layer includes)
+    line 24: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_counter.cc (2 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css/counter_style.h
+    line 29: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_embedded_object.cc (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_image_resource.cc (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_inline.cc (2 cross-layer includes)
+    line 27: third_party/blink/renderer/core/css/resolver/style_resolver.h
+    line 28: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_object.cc (6 cross-layer includes)
+    line 44: third_party/blink/renderer/core/css/properties/longhands.h
+    line 45: third_party/blink/renderer/core/css/resolver/style_adjuster.h
+    line 46: third_party/blink/renderer/core/css/resolver/style_resolver.h
+    line 47: third_party/blink/renderer/core/css/style_change_reason.h
+    line 48: third_party/blink/renderer/core/css/style_containment_scope.h
+    line 49: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_object_hot.cc (2 cross-layer includes)
+    line 5: third_party/blink/renderer/core/css/resolver/style_adjuster.h
+    line 6: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/layout_object_inlines.h (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_object_test.cc (2 cross-layer includes)
+    line 11: third_party/blink/renderer/core/css/resolver/style_resolver.h
+    line 12: third_party/blink/renderer/core/css/style_sheet_contents.h
+
+  third_party/blink/renderer/core/layout/layout_quote.cc (2 cross-layer includes)
+    line 26: third_party/blink/renderer/core/css/style_containment_scope.h
+    line 27: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_quote_test.cc (2 cross-layer includes)
+    line 6: third_party/blink/renderer/core/css/css_style_sheet.h
+    line 7: third_party/blink/renderer/core/css/style_sheet_list.h
+
+  third_party/blink/renderer/core/layout/layout_ruby_as_block.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/layout_text_combine.cc (2 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_adjuster.h
+    line 8: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/layout_text_combine_test.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/css/css_style_declaration.h
+
+  third_party/blink/renderer/core/layout/layout_text_fragment.cc (1 cross-layer includes)
+    line 25: third_party/blink/renderer/core/css/style_change_reason.h
+
+  third_party/blink/renderer/core/layout/layout_theme.cc (1 cross-layer includes)
+    line 27: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_theme.h (1 cross-layer includes)
+    line 29: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_theme_default.cc (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_theme_font_provider.cc (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css/font_size_functions.h
+
+  third_party/blink/renderer/core/layout/layout_theme_font_provider.h (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_theme_font_provider_default.cc (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_theme_font_provider_win.cc (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css_value_keywords.h
+
+  third_party/blink/renderer/core/layout/layout_theme_test.cc (2 cross-layer includes)
+    line 11: third_party/blink/renderer/core/css/properties/longhands.h
+    line 12: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_tree_as_text.cc (3 cross-layer includes)
+    line 28: third_party/blink/renderer/core/css/css_property_value_set.h
+    line 29: third_party/blink/renderer/core/css/css_value_id_mappings.h
+    line 30: third_party/blink/renderer/core/css/properties/longhands.h
+
+  third_party/blink/renderer/core/layout/layout_view.cc (1 cross-layer includes)
+    line 34: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/layout_view_transition_root.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/length_utils_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/list/layout_inline_list_item_test.cc (2 cross-layer includes)
+    line 5: third_party/blink/renderer/core/css/css_counter_style_rule.h
+    line 6: third_party/blink/renderer/core/css/css_rule_list.h
+
+  third_party/blink/renderer/core/layout/list/list_marker.cc (2 cross-layer includes)
+    line 8: third_party/blink/renderer/core/css/counter_style.h
+    line 9: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/out_of_flow_layout_part.cc (3 cross-layer includes)
+    line 14: third_party/blink/renderer/core/css/css_property_value_set.h
+    line 15: third_party/blink/renderer/core/css/out_of_flow_data.h
+    line 16: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/out_of_flow_layout_part.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/css/counters_attachment_context.h
+
+  third_party/blink/renderer/core/layout/page_container_layout_algorithm.cc (2 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/page_margins_style.h
+    line 8: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/page_container_layout_algorithm.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/css/counters_attachment_context.h
+
+  third_party/blink/renderer/core/layout/paginated_root_layout_algorithm.cc (2 cross-layer includes)
+    line 9: third_party/blink/renderer/core/css/counters_attachment_context.h
+    line 10: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/pagination_utils.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/scroll_anchor.cc (2 cross-layer includes)
+    line 12: third_party/blink/renderer/core/css/css_markup.h
+    line 13: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/scroll_anchor_test.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/css/css_property_names.h
+
+  third_party/blink/renderer/core/layout/svg/layout_svg_inline_text.cc (3 cross-layer includes)
+    line 26: third_party/blink/renderer/core/css/css_font_selector.h
+    line 27: third_party/blink/renderer/core/css/font_size_functions.h
+    line 28: third_party/blink/renderer/core/css/style_engine.h
+
+  third_party/blink/renderer/core/layout/svg/svg_layout_tree_as_text.cc (1 cross-layer includes)
+    line 31: third_party/blink/renderer/core/css/properties/longhands.h
+
+  third_party/blink/renderer/core/layout/svg/svg_resources.cc (1 cross-layer includes)
+    line 24: third_party/blink/renderer/core/css/properties/longhands.h
+
+  third_party/blink/renderer/core/layout/table/layout_table.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/table/layout_table_cell.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/table/layout_table_row.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/table/layout_table_section.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/resolver/style_resolver.h
+
+  third_party/blink/renderer/core/layout/table/table_borders.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/css/properties/longhands.h
+
+--- Extraction Guidance ---
+  To decouple third_party/blink/renderer/core/layout/ from third_party/blink/renderer/core/css/:
+  29 headers need to be either:
+    - Extracted alongside third_party/blink/renderer/core/layout/
+    - Replaced with an adapter/interface
+    - Stubbed with a minimal implementation
+
+  High-traffic headers (most referenced):
+    third_party/blink/renderer/core/css/resolver/style_resolver.h  (20 references)
+    third_party/blink/renderer/core/css/style_engine.h  (19 references)
+    third_party/blink/renderer/core/css/properties/longhands.h  (8 references)
+    third_party/blink/renderer/core/css_value_keywords.h  (7 references)
+    third_party/blink/renderer/core/css/css_property_names.h  (4 references)
+    third_party/blink/renderer/core/css/style_change_reason.h  (4 references)
+    third_party/blink/renderer/core/css/counters_attachment_context.h  (3 references)
+    third_party/blink/renderer/core/css/resolver/style_adjuster.h  (3 references)
+    third_party/blink/renderer/core/css/out_of_flow_data.h  (3 references)
+    third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.h  (3 references)
+=== layout → style ===
+=== Cross-Layer Analysis: third_party/blink/renderer/core/layout/ → third_party/blink/renderer/core/style/ ===
+
+Files scanned in third_party/blink/renderer/core/layout/: 797
+Unique cross-layer includes: 34
+Total cross-references: 158
+
+--- Cross-Layer Includes (by target header) ---
+
+  third_party/blink/renderer/core/style/anchor_specifier_value.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.cc:12
+
+  third_party/blink/renderer/core/style/applied_text_decoration.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/ink_overflow.cc:23
+
+  third_party/blink/renderer/core/style/basic_shapes.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_replaced.cc:54
+    ← third_party/blink/renderer/core/layout/shapes/shape.h:37
+
+  third_party/blink/renderer/core/style/computed_grid_template_areas.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.cc:10
+
+  third_party/blink/renderer/core/style/computed_grid_track_list.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.cc:11
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.h:10
+    ← third_party/blink/renderer/core/layout/grid/grid_named_line_collection.cc:8
+
+  third_party/blink/renderer/core/style/computed_style.h  (referenced by 62 files)
+    ← third_party/blink/renderer/core/layout/absolute_utils.cc:17
+    ← third_party/blink/renderer/core/layout/absolute_utils_test.cc:12
+    ← third_party/blink/renderer/core/layout/adjust_for_absolute_zoom.h:32
+    ← third_party/blink/renderer/core/layout/block_layout_algorithm.cc:43
+    ← third_party/blink/renderer/core/layout/block_layout_algorithm_test.cc:21
+    ← third_party/blink/renderer/core/layout/column_layout_algorithm.cc:31
+    ← third_party/blink/renderer/core/layout/custom/pending_layout_registry.cc:11
+    ← third_party/blink/renderer/core/layout/flex/flex_layout_algorithm.cc:35
+    ← third_party/blink/renderer/core/layout/floats_utils.cc:22
+    ← third_party/blink/renderer/core/layout/fragment_builder.h:23
+    ← third_party/blink/renderer/core/layout/fragmentation_utils.cc:18
+    ← third_party/blink/renderer/core/layout/gap/gap_geometry.cc:7
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.cc:12
+    ← third_party/blink/renderer/core/layout/grid/grid_named_line_collection.cc:9
+    ← third_party/blink/renderer/core/layout/grid/grid_track_collection.h:10
+    ← third_party/blink/renderer/core/layout/grid/grid_track_sizing_algorithm.h:11
+    ← third_party/blink/renderer/core/layout/ink_overflow.cc:24
+    ← third_party/blink/renderer/core/layout/inline/hyphen_result.cc:7
+    ← third_party/blink/renderer/core/layout/inline/inline_box_state.cc:21
+    ← third_party/blink/renderer/core/layout/inline/inline_item.cc:11
+    ← third_party/blink/renderer/core/layout/inline/inline_item_segment.cc:9
+    ← third_party/blink/renderer/core/layout/inline/inline_item_segment.h:19
+    ← third_party/blink/renderer/core/layout/inline/inline_items_builder.cc:20
+    ← third_party/blink/renderer/core/layout/inline/inline_items_builder_test.cc:12
+    ← third_party/blink/renderer/core/layout/inline/inline_layout_algorithm.cc:49
+    ← third_party/blink/renderer/core/layout/inline/inline_node.cc:50
+    ← third_party/blink/renderer/core/layout/inline/inline_node_test.cc:26
+    ← third_party/blink/renderer/core/layout/inline/line_breaker.cc:33
+    ← third_party/blink/renderer/core/layout/inline/offset_mapping_test.cc:15
+    ← third_party/blink/renderer/core/layout/inline/physical_line_box_fragment.cc:14
+    ← third_party/blink/renderer/core/layout/layout_block.cc:71
+    ← third_party/blink/renderer/core/layout/layout_counter.cc:39
+    ← third_party/blink/renderer/core/layout/layout_object.h:63
+    ← third_party/blink/renderer/core/layout/layout_theme.cc:58
+    ← third_party/blink/renderer/core/layout/layout_theme_default.cc:34
+    ← third_party/blink/renderer/core/layout/layout_theme_mobile.cc:32
+    ← third_party/blink/renderer/core/layout/layout_theme_test.cc:19
+    ← third_party/blink/renderer/core/layout/layout_view_transition_root.cc:10
+    ← third_party/blink/renderer/core/layout/length_utils.cc:22
+    ← third_party/blink/renderer/core/layout/length_utils.h:19
+    ← third_party/blink/renderer/core/layout/length_utils_test.cc:12
+    ← third_party/blink/renderer/core/layout/mathml/math_layout_utils.h:11
+    ← third_party/blink/renderer/core/layout/out_of_flow_layout_part.cc:51
+    ← third_party/blink/renderer/core/layout/outline_utils.cc:8
+    ← third_party/blink/renderer/core/layout/paginated_root_layout_algorithm.cc:21
+    ← third_party/blink/renderer/core/layout/pagination_utils.cc:23
+    ← third_party/blink/renderer/core/layout/physical_fragment.cc:22
+    ← third_party/blink/renderer/core/layout/relative_utils.cc:11
+    ← third_party/blink/renderer/core/layout/relative_utils.h:11
+    ← third_party/blink/renderer/core/layout/relative_utils_test.cc:8
+    ← third_party/blink/renderer/core/layout/space_utils.cc:17
+    ← third_party/blink/renderer/core/layout/space_utils.h:10
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.cc:29
+    ← third_party/blink/renderer/core/layout/svg/transform_helper.cc:10
+    ← third_party/blink/renderer/core/layout/svg/transform_helper.h:8
+    ← third_party/blink/renderer/core/layout/table/table_borders.cc:17
+    ← third_party/blink/renderer/core/layout/table/table_borders.h:13
+    ← third_party/blink/renderer/core/layout/table/table_layout_algorithm_types.cc:14
+    ← third_party/blink/renderer/core/layout/text_decoration_offset.cc:10
+    ← third_party/blink/renderer/core/layout/text_utils.cc:7
+    ← third_party/blink/renderer/core/layout/transform_utils.cc:11
+    ← third_party/blink/renderer/core/layout/unpositioned_float.h:15
+
+  third_party/blink/renderer/core/style/computed_style_base.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/inline/inline_node.cc:51
+
+  third_party/blink/renderer/core/style/computed_style_base_constants.h  (referenced by 12 files)
+    ← third_party/blink/renderer/core/layout/flex/flex_layout_algorithm.cc:36
+    ← third_party/blink/renderer/core/layout/fragment_builder.cc:20
+    ← third_party/blink/renderer/core/layout/inline/caret_rect.cc:19
+    ← third_party/blink/renderer/core/layout/inline/inline_node.cc:52
+    ← third_party/blink/renderer/core/layout/inline/line_info.h:17
+    ← third_party/blink/renderer/core/layout/layout_box.cc:115
+    ← third_party/blink/renderer/core/layout/layout_box_model_object.cc:53
+    ← third_party/blink/renderer/core/layout/layout_iframe.cc:30
+    ← third_party/blink/renderer/core/layout/layout_object.cc:136
+    ← third_party/blink/renderer/core/layout/layout_replaced.cc:55
+    ← third_party/blink/renderer/core/layout/out_of_flow_layout_part.h:19
+    ← third_party/blink/renderer/core/layout/physical_fragment.h:29
+
+  third_party/blink/renderer/core/style/computed_style_constants.h  (referenced by 17 files)
+    ← third_party/blink/renderer/core/layout/box_fragment_builder.h:32
+    ← third_party/blink/renderer/core/layout/custom_scrollbar.h:31
+    ← third_party/blink/renderer/core/layout/exclusions/exclusion_area.h:10
+    ← third_party/blink/renderer/core/layout/exclusions/exclusion_space.h:16
+    ← third_party/blink/renderer/core/layout/flex/flex_layout_algorithm.cc:37
+    ← third_party/blink/renderer/core/layout/fragmentation_utils.h:19
+    ← third_party/blink/renderer/core/layout/inline/inline_box_state.h:16
+    ← third_party/blink/renderer/core/layout/layout_object.cc:137
+    ← third_party/blink/renderer/core/layout/layout_result.h:27
+    ← third_party/blink/renderer/core/layout/length_utils.h:20
+    ← third_party/blink/renderer/core/layout/physical_box_fragment.cc:38
+    ← third_party/blink/renderer/core/layout/pointer_events_hit_rules.h:23
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.h:23
+    ← third_party/blink/renderer/core/layout/table/table_borders.h:14
+    ← third_party/blink/renderer/core/layout/table/table_layout_algorithm_types.h:14
+    ← third_party/blink/renderer/core/layout/table/table_layout_utils.h:12
+    ← third_party/blink/renderer/core/layout/unpositioned_float.h:16
+
+  third_party/blink/renderer/core/style/computed_style_initial_values.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_theme.cc:59
+
+  third_party/blink/renderer/core/style/content_data.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/layout_counter.h:27
+    ← third_party/blink/renderer/core/layout/layout_object.cc:138
+    ← third_party/blink/renderer/core/layout/page_container_layout_algorithm.cc:21
+
+  third_party/blink/renderer/core/style/cursor_data.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_frame.cc:30
+    ← third_party/blink/renderer/core/layout/layout_object.cc:139
+
+  third_party/blink/renderer/core/style/fit_text.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/inline/fit_text_utils.h:9
+
+  third_party/blink/renderer/core/style/grid_area.h  (referenced by 8 files)
+    ← third_party/blink/renderer/core/layout/gap/gap_utils.h:11
+    ← third_party/blink/renderer/core/layout/grid/grid_baseline_accumulator.h:14
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.cc:13
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.h:11
+    ← third_party/blink/renderer/core/layout/grid/grid_named_line_collection.cc:10
+    ← third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_item_group.h:9
+    ← third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_running_positions.cc:8
+    ← third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_running_positions.h:10
+
+  third_party/blink/renderer/core/style/grid_enums.h  (referenced by 6 files)
+    ← third_party/blink/renderer/core/layout/gap/cross_gap.h:11
+    ← third_party/blink/renderer/core/layout/gap/gap_geometry.h:13
+    ← third_party/blink/renderer/core/layout/grid/grid_layout_utils.h:10
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.h:12
+    ← third_party/blink/renderer/core/layout/grid/grid_named_line_collection.h:8
+    ← third_party/blink/renderer/core/layout/grid/grid_track_sizing_algorithm.h:12
+
+  third_party/blink/renderer/core/style/grid_position.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.cc:14
+    ← third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_node.cc:9
+
+  third_party/blink/renderer/core/style/grid_track_list.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/grid/grid_layout_utils.cc:21
+
+  third_party/blink/renderer/core/style/grid_track_size.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/grid/grid_layout_utils.h:11
+
+  third_party/blink/renderer/core/style/list_style_type_data.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/list/list_marker.cc:21
+
+  third_party/blink/renderer/core/style/named_grid_lines_map.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/grid/grid_line_resolver.h:13
+    ← third_party/blink/renderer/core/layout/grid/grid_named_line_collection.h:9
+
+  third_party/blink/renderer/core/style/position_area.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.cc:13
+
+  third_party/blink/renderer/core/style/reference_clip_path_operation.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_resource_clipper.h:26
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_resource_container.cc:25
+    ← third_party/blink/renderer/core/layout/svg/svg_layout_tree_as_text.cc:48
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.cc:30
+
+  third_party/blink/renderer/core/style/reference_offset_path_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.cc:31
+    ← third_party/blink/renderer/core/layout/svg/transform_helper.cc:11
+
+  third_party/blink/renderer/core/style/scoped_css_name.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/naming_scope.h:11
+
+  third_party/blink/renderer/core/style/shadow_list.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/layout_box.cc:116
+    ← third_party/blink/renderer/core/layout/layout_box_model_object.cc:54
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_block.cc:33
+
+  third_party/blink/renderer/core/style/shape_value.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/shapes/shape_outside_info.h:38
+
+  third_party/blink/renderer/core/style/style_difference.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/layout/layout_object.h:64
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.h:24
+
+  third_party/blink/renderer/core/style/style_fetched_image.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/layout_image_resource_style_image.cc:33
+
+  third_party/blink/renderer/core/style/style_image.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/layout_image_resource.h:33
+    ← third_party/blink/renderer/core/layout/layout_image_resource_style_image.h:32
+    ← third_party/blink/renderer/core/layout/shapes/shape.h:38
+
+  third_party/blink/renderer/core/style/style_mask_source_image.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_resource_container.cc:26
+
+  third_party/blink/renderer/core/style/style_name_scope.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/anchor_scope.cc:9
+    ← third_party/blink/renderer/core/layout/naming_scope.cc:9
+    ← third_party/blink/renderer/core/layout/naming_scope.h:12
+
+  third_party/blink/renderer/core/style/style_overflow_clip_margin.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/layout/layout_box.cc:117
+    ← third_party/blink/renderer/core/layout/layout_box.h:41
+    ← third_party/blink/renderer/core/layout/physical_box_fragment.h:23
+    ← third_party/blink/renderer/core/layout/scrollable_overflow_calculator.cc:18
+
+  third_party/blink/renderer/core/style/style_position_anchor.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/layout/anchor_evaluator_impl.h:15
+
+  third_party/blink/renderer/core/style/style_svg_resource.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/layout/svg/layout_svg_resource_container.h:24
+    ← third_party/blink/renderer/core/layout/svg/svg_layout_tree_as_text.cc:49
+    ← third_party/blink/renderer/core/layout/svg/svg_resources.cc:32
+
+--- Source Files with Cross-Layer Includes ---
+
+  third_party/blink/renderer/core/layout/absolute_utils.cc (1 cross-layer includes)
+    line 17: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/absolute_utils_test.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/adjust_for_absolute_zoom.h (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/anchor_evaluator_impl.cc (2 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/anchor_specifier_value.h
+    line 13: third_party/blink/renderer/core/style/position_area.h
+
+  third_party/blink/renderer/core/layout/anchor_evaluator_impl.h (1 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/style_position_anchor.h
+
+  third_party/blink/renderer/core/layout/anchor_scope.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/style_name_scope.h
+
+  third_party/blink/renderer/core/layout/block_layout_algorithm.cc (1 cross-layer includes)
+    line 43: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/block_layout_algorithm_test.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/box_fragment_builder.h (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/column_layout_algorithm.cc (1 cross-layer includes)
+    line 31: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/custom/pending_layout_registry.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/custom_scrollbar.h (1 cross-layer includes)
+    line 31: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/exclusions/exclusion_area.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/exclusions/exclusion_space.h (1 cross-layer includes)
+    line 16: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/flex/flex_layout_algorithm.cc (3 cross-layer includes)
+    line 35: third_party/blink/renderer/core/style/computed_style.h
+    line 36: third_party/blink/renderer/core/style/computed_style_base_constants.h
+    line 37: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/floats_utils.cc (1 cross-layer includes)
+    line 22: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/fragment_builder.cc (1 cross-layer includes)
+    line 20: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/fragment_builder.h (1 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/fragmentation_utils.cc (1 cross-layer includes)
+    line 18: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/fragmentation_utils.h (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/gap/cross_gap.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/grid_enums.h
+
+  third_party/blink/renderer/core/layout/gap/gap_geometry.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/gap/gap_geometry.h (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/grid_enums.h
+
+  third_party/blink/renderer/core/layout/gap/gap_utils.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/layout/grid/grid_baseline_accumulator.h (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/layout/grid/grid_layout_utils.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/style/grid_track_list.h
+
+  third_party/blink/renderer/core/layout/grid/grid_layout_utils.h (2 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/grid_enums.h
+    line 11: third_party/blink/renderer/core/style/grid_track_size.h
+
+  third_party/blink/renderer/core/layout/grid/grid_line_resolver.cc (5 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_grid_template_areas.h
+    line 11: third_party/blink/renderer/core/style/computed_grid_track_list.h
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+    line 13: third_party/blink/renderer/core/style/grid_area.h
+    line 14: third_party/blink/renderer/core/style/grid_position.h
+
+  third_party/blink/renderer/core/layout/grid/grid_line_resolver.h (4 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_grid_track_list.h
+    line 11: third_party/blink/renderer/core/style/grid_area.h
+    line 12: third_party/blink/renderer/core/style/grid_enums.h
+    line 13: third_party/blink/renderer/core/style/named_grid_lines_map.h
+
+  third_party/blink/renderer/core/layout/grid/grid_named_line_collection.cc (3 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_grid_track_list.h
+    line 9: third_party/blink/renderer/core/style/computed_style.h
+    line 10: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/layout/grid/grid_named_line_collection.h (2 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/grid_enums.h
+    line 9: third_party/blink/renderer/core/style/named_grid_lines_map.h
+
+  third_party/blink/renderer/core/layout/grid/grid_track_collection.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/grid/grid_track_sizing_algorithm.h (2 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+    line 12: third_party/blink/renderer/core/style/grid_enums.h
+
+  third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_item_group.h (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_node.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/grid_position.h
+
+  third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_running_positions.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/layout/grid_lanes/grid_lanes_running_positions.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/layout/ink_overflow.cc (2 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style/applied_text_decoration.h
+    line 24: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/caret_rect.cc (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/inline/fit_text_utils.h (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/fit_text.h
+
+  third_party/blink/renderer/core/layout/inline/hyphen_result.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_box_state.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_box_state.h (1 cross-layer includes)
+    line 16: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/inline/inline_item.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_item_segment.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_item_segment.h (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_items_builder.cc (1 cross-layer includes)
+    line 20: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_items_builder_test.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_layout_algorithm.cc (1 cross-layer includes)
+    line 49: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/inline_node.cc (3 cross-layer includes)
+    line 50: third_party/blink/renderer/core/style/computed_style.h
+    line 51: third_party/blink/renderer/core/style/computed_style_base.h
+    line 52: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/inline/inline_node_test.cc (1 cross-layer includes)
+    line 26: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/line_breaker.cc (1 cross-layer includes)
+    line 33: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/line_info.h (1 cross-layer includes)
+    line 17: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/inline/offset_mapping_test.cc (1 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/inline/physical_line_box_fragment.cc (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/layout_block.cc (1 cross-layer includes)
+    line 71: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/layout_box.cc (3 cross-layer includes)
+    line 115: third_party/blink/renderer/core/style/computed_style_base_constants.h
+    line 116: third_party/blink/renderer/core/style/shadow_list.h
+    line 117: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+
+  third_party/blink/renderer/core/layout/layout_box.h (1 cross-layer includes)
+    line 41: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+
+  third_party/blink/renderer/core/layout/layout_box_model_object.cc (2 cross-layer includes)
+    line 53: third_party/blink/renderer/core/style/computed_style_base_constants.h
+    line 54: third_party/blink/renderer/core/style/shadow_list.h
+
+  third_party/blink/renderer/core/layout/layout_counter.cc (1 cross-layer includes)
+    line 39: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/layout_counter.h (1 cross-layer includes)
+    line 27: third_party/blink/renderer/core/style/content_data.h
+
+  third_party/blink/renderer/core/layout/layout_frame.cc (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/style/cursor_data.h
+
+  third_party/blink/renderer/core/layout/layout_iframe.cc (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/layout_image_resource.h (1 cross-layer includes)
+    line 33: third_party/blink/renderer/core/style/style_image.h
+
+  third_party/blink/renderer/core/layout/layout_image_resource_style_image.cc (1 cross-layer includes)
+    line 33: third_party/blink/renderer/core/style/style_fetched_image.h
+
+  third_party/blink/renderer/core/layout/layout_image_resource_style_image.h (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/style_image.h
+
+  third_party/blink/renderer/core/layout/layout_object.cc (4 cross-layer includes)
+    line 136: third_party/blink/renderer/core/style/computed_style_base_constants.h
+    line 137: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 138: third_party/blink/renderer/core/style/content_data.h
+    line 139: third_party/blink/renderer/core/style/cursor_data.h
+
+  third_party/blink/renderer/core/layout/layout_object.h (2 cross-layer includes)
+    line 63: third_party/blink/renderer/core/style/computed_style.h
+    line 64: third_party/blink/renderer/core/style/style_difference.h
+
+  third_party/blink/renderer/core/layout/layout_replaced.cc (2 cross-layer includes)
+    line 54: third_party/blink/renderer/core/style/basic_shapes.h
+    line 55: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/layout_result.h (1 cross-layer includes)
+    line 27: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/layout_theme.cc (2 cross-layer includes)
+    line 58: third_party/blink/renderer/core/style/computed_style.h
+    line 59: third_party/blink/renderer/core/style/computed_style_initial_values.h
+
+  third_party/blink/renderer/core/layout/layout_theme_default.cc (1 cross-layer includes)
+    line 34: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/layout_theme_mobile.cc (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/layout_theme_test.cc (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/layout_view_transition_root.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/length_utils.cc (1 cross-layer includes)
+    line 22: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/length_utils.h (2 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style.h
+    line 20: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/length_utils_test.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/list/list_marker.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/style/list_style_type_data.h
+
+  third_party/blink/renderer/core/layout/mathml/math_layout_utils.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/naming_scope.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/style_name_scope.h
+
+  third_party/blink/renderer/core/layout/naming_scope.h (2 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/scoped_css_name.h
+    line 12: third_party/blink/renderer/core/style/style_name_scope.h
+
+  third_party/blink/renderer/core/layout/out_of_flow_layout_part.cc (1 cross-layer includes)
+    line 51: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/out_of_flow_layout_part.h (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/outline_utils.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/page_container_layout_algorithm.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/style/content_data.h
+
+  third_party/blink/renderer/core/layout/paginated_root_layout_algorithm.cc (1 cross-layer includes)
+    line 21: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/pagination_utils.cc (1 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/physical_box_fragment.cc (1 cross-layer includes)
+    line 38: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/physical_box_fragment.h (1 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+
+  third_party/blink/renderer/core/layout/physical_fragment.cc (1 cross-layer includes)
+    line 22: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/physical_fragment.h (1 cross-layer includes)
+    line 29: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/layout/pointer_events_hit_rules.h (1 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/relative_utils.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/relative_utils.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/relative_utils_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/scrollable_overflow_calculator.cc (1 cross-layer includes)
+    line 18: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+
+  third_party/blink/renderer/core/layout/shapes/shape.h (2 cross-layer includes)
+    line 37: third_party/blink/renderer/core/style/basic_shapes.h
+    line 38: third_party/blink/renderer/core/style/style_image.h
+
+  third_party/blink/renderer/core/layout/shapes/shape_outside_info.h (1 cross-layer includes)
+    line 38: third_party/blink/renderer/core/style/shape_value.h
+
+  third_party/blink/renderer/core/layout/space_utils.cc (1 cross-layer includes)
+    line 17: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/space_utils.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/svg/layout_svg_block.cc (1 cross-layer includes)
+    line 33: third_party/blink/renderer/core/style/shadow_list.h
+
+  third_party/blink/renderer/core/layout/svg/layout_svg_resource_clipper.h (1 cross-layer includes)
+    line 26: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+
+  third_party/blink/renderer/core/layout/svg/layout_svg_resource_container.cc (2 cross-layer includes)
+    line 25: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+    line 26: third_party/blink/renderer/core/style/style_mask_source_image.h
+
+  third_party/blink/renderer/core/layout/svg/layout_svg_resource_container.h (1 cross-layer includes)
+    line 24: third_party/blink/renderer/core/style/style_svg_resource.h
+
+  third_party/blink/renderer/core/layout/svg/svg_layout_tree_as_text.cc (2 cross-layer includes)
+    line 48: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+    line 49: third_party/blink/renderer/core/style/style_svg_resource.h
+
+  third_party/blink/renderer/core/layout/svg/svg_resources.cc (4 cross-layer includes)
+    line 29: third_party/blink/renderer/core/style/computed_style.h
+    line 30: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+    line 31: third_party/blink/renderer/core/style/reference_offset_path_operation.h
+    line 32: third_party/blink/renderer/core/style/style_svg_resource.h
+
+  third_party/blink/renderer/core/layout/svg/svg_resources.h (2 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 24: third_party/blink/renderer/core/style/style_difference.h
+
+  third_party/blink/renderer/core/layout/svg/transform_helper.cc (2 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style.h
+    line 11: third_party/blink/renderer/core/style/reference_offset_path_operation.h
+
+  third_party/blink/renderer/core/layout/svg/transform_helper.h (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/table/table_borders.cc (1 cross-layer includes)
+    line 17: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/table/table_borders.h (2 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style.h
+    line 14: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/table/table_layout_algorithm_types.cc (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/table/table_layout_algorithm_types.h (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/table/table_layout_utils.h (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/layout/text_decoration_offset.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/text_utils.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/transform_utils.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/layout/unpositioned_float.h (2 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style.h
+    line 16: third_party/blink/renderer/core/style/computed_style_constants.h
+
+--- Extraction Guidance ---
+  To decouple third_party/blink/renderer/core/layout/ from third_party/blink/renderer/core/style/:
+  34 headers need to be either:
+    - Extracted alongside third_party/blink/renderer/core/layout/
+    - Replaced with an adapter/interface
+    - Stubbed with a minimal implementation
+
+  High-traffic headers (most referenced):
+    third_party/blink/renderer/core/style/computed_style.h  (62 references)
+    third_party/blink/renderer/core/style/computed_style_constants.h  (17 references)
+    third_party/blink/renderer/core/style/computed_style_base_constants.h  (12 references)
+    third_party/blink/renderer/core/style/grid_area.h  (8 references)
+    third_party/blink/renderer/core/style/grid_enums.h  (6 references)
+    third_party/blink/renderer/core/style/style_overflow_clip_margin.h  (4 references)
+    third_party/blink/renderer/core/style/reference_clip_path_operation.h  (4 references)
+    third_party/blink/renderer/core/style/style_name_scope.h  (3 references)
+    third_party/blink/renderer/core/style/style_image.h  (3 references)
+    third_party/blink/renderer/core/style/content_data.h  (3 references)
+=== css → style ===
+=== Cross-Layer Analysis: third_party/blink/renderer/core/css/ → third_party/blink/renderer/core/style/ ===
+
+Files scanned in third_party/blink/renderer/core/css/: 1018
+Unique cross-layer includes: 65
+Total cross-references: 250
+
+--- Cross-Layer Includes (by target header) ---
+
+  third_party/blink/renderer/core/style/anchor_specifier_value.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/css/anchor_query.cc:8
+    ← third_party/blink/renderer/core/css/anchor_query.h:13
+    ← third_party/blink/renderer/core/css/css_math_expression_node.cc:58
+    ← third_party/blink/renderer/core/css/resolver/style_resolver_test.cc:45
+
+  third_party/blink/renderer/core/style/basic_shapes.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/basic_shape_functions.cc:48
+    ← third_party/blink/renderer/core/css/basic_shape_functions.h:34
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:46
+
+  third_party/blink/renderer/core/style/border_image_length.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/properties/style_building_utils.h:8
+
+  third_party/blink/renderer/core/style/border_image_length_box.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/style_building_utils.h:9
+    ← third_party/blink/renderer/core/css/resolver/css_to_style_map.cc:53
+
+  third_party/blink/renderer/core/style/computed_style.h  (referenced by 61 files)
+    ← third_party/blink/renderer/core/css/basic_shape_functions.cc:49
+    ← third_party/blink/renderer/core/css/computed_style_css_value_mapping.cc:32
+    ← third_party/blink/renderer/core/css/container_query_evaluator.cc:24
+    ← third_party/blink/renderer/core/css/container_query_evaluator_test.cc:28
+    ← third_party/blink/renderer/core/css/container_query_test.cc:24
+    ← third_party/blink/renderer/core/css/counters_attachment_context.cc:18
+    ← third_party/blink/renderer/core/css/css_computed_style_declaration.cc:48
+    ← third_party/blink/renderer/core/css/css_container_values.cc:11
+    ← third_party/blink/renderer/core/css/css_gap_decoration_property_utils.cc:13
+    ← third_party/blink/renderer/core/css/css_image_value_test.cc:11
+    ← third_party/blink/renderer/core/css/css_math_expression_node_test.cc:47
+    ← third_party/blink/renderer/core/css/css_paint_value_test.cc:20
+    ← third_party/blink/renderer/core/css/css_property_equality.cc:12
+    ← third_party/blink/renderer/core/css/css_rule_test.cc:13
+    ← third_party/blink/renderer/core/css/css_to_length_conversion_data.cc:41
+    ← third_party/blink/renderer/core/css/css_to_length_conversion_data_test.cc:16
+    ← third_party/blink/renderer/core/css/cssom/computed_style_property_map.cc:20
+    ← third_party/blink/renderer/core/css/cssom/paint_worklet_style_property_map.cc:22
+    ← third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.cc:14
+    ← third_party/blink/renderer/core/css/element_rule_collector.cc:73
+    ← third_party/blink/renderer/core/css/element_rule_collector_test.cc:28
+    ← third_party/blink/renderer/core/css/font_display_auto_lcp_align_test.cc:11
+    ← third_party/blink/renderer/core/css/font_face_set_document.cc:50
+    ← third_party/blink/renderer/core/css/font_face_set_worker.cc:22
+    ← third_party/blink/renderer/core/css/font_update_invalidation_test.cc:8
+    ← third_party/blink/renderer/core/css/force_dark_test.cc:8
+    ← third_party/blink/renderer/core/css/layout_upgrade.cc:15
+    ← third_party/blink/renderer/core/css/media_query_evaluator.cc:70
+    ← third_party/blink/renderer/core/css/page_rule_collector.cc:40
+    ← third_party/blink/renderer/core/css/page_rule_collector_test.cc:16
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.h:19
+    ← third_party/blink/renderer/core/css/properties/css_property.cc:12
+    ← third_party/blink/renderer/core/css/properties/css_property_test.cc:27
+    ← third_party/blink/renderer/core/css/properties/longhands/custom_property.cc:15
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:67
+    ← third_party/blink/renderer/core/css/properties/shorthands/shorthands_custom.cc:36
+    ← third_party/blink/renderer/core/css/resolver/css_to_style_map.cc:54
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:41
+    ← third_party/blink/renderer/core/css/resolver/filter_operation_resolver.cc:38
+    ← third_party/blink/renderer/core/css/resolver/font_builder.cc:34
+    ← third_party/blink/renderer/core/css/resolver/font_builder_test.cc:14
+    ← third_party/blink/renderer/core/css/resolver/matched_properties_cache.cc:42
+    ← third_party/blink/renderer/core/css/resolver/matched_properties_cache.h:30
+    ← third_party/blink/renderer/core/css/resolver/matched_properties_cache_test.cc:12
+    ← third_party/blink/renderer/core/css/resolver/style_adjuster.cc:86
+    ← third_party/blink/renderer/core/css/resolver/style_builder.cc:51
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:47
+    ← third_party/blink/renderer/core/css/resolver/style_builder_test.cc:15
+    ← third_party/blink/renderer/core/css/resolver/style_cascade.cc:71
+    ← third_party/blink/renderer/core/css/resolver/style_cascade_test.cc:47
+    ← third_party/blink/renderer/core/css/resolver/style_resolver_state.cc:38
+    ← third_party/blink/renderer/core/css/scroll_target_group_scope.cc:10
+    ← third_party/blink/renderer/core/css/selector_checker.cc:102
+    ← third_party/blink/renderer/core/css/selector_checker_test.cc:20
+    ← third_party/blink/renderer/core/css/style_engine.cc:121
+    ← third_party/blink/renderer/core/css/style_environment_variables_test.cc:13
+    ← third_party/blink/renderer/core/css/style_image_cache_test.cc:12
+    ← third_party/blink/renderer/core/css/style_perftest.cc:36
+    ← third_party/blink/renderer/core/css/style_recalc_change.cc:9
+    ← third_party/blink/renderer/core/css/style_recalc_change_test.cc:14
+    ← third_party/blink/renderer/core/css/style_recalc_context.cc:11
+
+  third_party/blink/renderer/core/style/computed_style_base_constants.h  (referenced by 5 files)
+    ← third_party/blink/renderer/core/css/element_rule_collector.h:37
+    ← third_party/blink/renderer/core/css/resolver/cascade_expansion.h:15
+    ← third_party/blink/renderer/core/css/resolver/element_resolve_context.cc:30
+    ← third_party/blink/renderer/core/css/resolver/style_adjuster.cc:87
+    ← third_party/blink/renderer/core/css/white_space.h:11
+
+  third_party/blink/renderer/core/style/computed_style_constants.h  (referenced by 37 files)
+    ← third_party/blink/renderer/core/css/container_query.cc:9
+    ← third_party/blink/renderer/core/css/container_query_evaluator.h:15
+    ← third_party/blink/renderer/core/css/container_query_test.cc:25
+    ← third_party/blink/renderer/core/css/container_selector.cc:11
+    ← third_party/blink/renderer/core/css/css_computed_style_declaration.cc:49
+    ← third_party/blink/renderer/core/css/css_computed_style_declaration.h:28
+    ← third_party/blink/renderer/core/css/css_default_style_sheets.cc:54
+    ← third_party/blink/renderer/core/css/css_default_style_sheets.h:29
+    ← third_party/blink/renderer/core/css/css_gap_decoration_property_utils.h:10
+    ← third_party/blink/renderer/core/css/css_identifier_value_mappings.h:44
+    ← third_party/blink/renderer/core/css/css_property_value.cc:25
+    ← third_party/blink/renderer/core/css/css_selector.h:36
+    ← third_party/blink/renderer/core/css/css_test_helpers.cc:33
+    ← third_party/blink/renderer/core/css/css_test_helpers.h:13
+    ← third_party/blink/renderer/core/css/css_value_id_mappings.h:11
+    ← third_party/blink/renderer/core/css/dynamic_pseudo_extractor.cc:8
+    ← third_party/blink/renderer/core/css/dynamic_pseudo_extractor.h:11
+    ← third_party/blink/renderer/core/css/dynamic_pseudo_extractor_test.cc:13
+    ← third_party/blink/renderer/core/css/parser/css_selector_parser.cc:32
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.cc:69
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.h:20
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils_test.cc:13
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:68
+    ← third_party/blink/renderer/core/css/resolver/css_to_style_map.cc:55
+    ← third_party/blink/renderer/core/css/resolver/css_to_style_map.h:30
+    ← third_party/blink/renderer/core/css/resolver/element_resolve_context.h:30
+    ← third_party/blink/renderer/core/css/resolver/match_result.h:36
+    ← third_party/blink/renderer/core/css/resolver/style_adjuster.cc:88
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:87
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:48
+    ← third_party/blink/renderer/core/css/resolver/style_resolver.cc:129
+    ← third_party/blink/renderer/core/css/resolver/style_resolver_test.cc:46
+    ← third_party/blink/renderer/core/css/rule_set.cc:72
+    ← third_party/blink/renderer/core/css/selector_checker.cc:103
+    ← third_party/blink/renderer/core/css/selector_checker_test.cc:21
+    ← third_party/blink/renderer/core/css/style_recalc_context.h:10
+    ← third_party/blink/renderer/core/css/style_request.h:27
+
+  third_party/blink/renderer/core/style/computed_style_initial_values.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/parser/sizes_math_function_parser_test.cc:16
+    ← third_party/blink/renderer/core/css/threaded/css_to_length_conversion_data_threaded_test.cc:10
+
+  third_party/blink/renderer/core/style/content_data.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:42
+
+  third_party/blink/renderer/core/style/coord_box_offset_path_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:69
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:88
+
+  third_party/blink/renderer/core/style/cursor_data.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:43
+
+  third_party/blink/renderer/core/style/fill_layer.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/resolver/css_to_style_map.cc:56
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:44
+
+  third_party/blink/renderer/core/style/filter_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:45
+    ← third_party/blink/renderer/core/css/threaded/filter_operation_resolver_threaded_test.cc:12
+
+  third_party/blink/renderer/core/style/filter_operations.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/resolver/filter_operation_resolver.h:29
+    ← third_party/blink/renderer/core/css/resolver/style_resolver.h:38
+    ← third_party/blink/renderer/core/css/style_engine.cc:122
+
+  third_party/blink/renderer/core/style/flow_tolerance.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:49
+
+  third_party/blink/renderer/core/style/font_size_style.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/css_to_length_conversion_data.cc:42
+
+  third_party/blink/renderer/core/style/gap_data_list.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/css_gap_decoration_property_utils.h:11
+
+  third_party/blink/renderer/core/style/geometry_box_clip_path_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:70
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:89
+
+  third_party/blink/renderer/core/style/grid_area.h  (referenced by 6 files)
+    ← third_party/blink/renderer/core/css/css_grid_integer_repeat_value.cc:7
+    ← third_party/blink/renderer/core/css/css_grid_template_areas_value.h:35
+    ← third_party/blink/renderer/core/css/cssom_utils.h:8
+    ← third_party/blink/renderer/core/css/properties/css_parsing_utils.h:25
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:71
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:50
+
+  third_party/blink/renderer/core/style/grid_enums.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/css_gap_decoration_property_utils.h:12
+
+  third_party/blink/renderer/core/style/named_grid_lines_map.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:51
+
+  third_party/blink/renderer/core/style/offset_path_operation.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:90
+
+  third_party/blink/renderer/core/style/ordered_named_grid_lines.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:52
+
+  third_party/blink/renderer/core/style/paint_order_array.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:72
+
+  third_party/blink/renderer/core/style/position_area.h  (referenced by 5 files)
+    ← third_party/blink/renderer/core/css/anchor_evaluator.h:13
+    ← third_party/blink/renderer/core/css/css_identifier_value_mappings.h:45
+    ← third_party/blink/renderer/core/css/css_length_resolver.h:14
+    ← third_party/blink/renderer/core/css/css_to_length_conversion_data.h:40
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.cc:70
+
+  third_party/blink/renderer/core/style/position_try_fallbacks.h  (referenced by 9 files)
+    ← third_party/blink/renderer/core/css/container_query_evaluator.h:16
+    ← third_party/blink/renderer/core/css/css_container_values.cc:12
+    ← third_party/blink/renderer/core/css/media_values.h:19
+    ← third_party/blink/renderer/core/css/out_of_flow_data.h:13
+    ← third_party/blink/renderer/core/css/style_engine.h:66
+    ← third_party/blink/renderer/core/css/successful_position_fallback.cc:8
+    ← third_party/blink/renderer/core/css/successful_position_fallback.h:8
+    ← third_party/blink/renderer/core/css/try_tactic_transform.h:9
+    ← third_party/blink/renderer/core/css/try_value_flips.h:10
+
+  third_party/blink/renderer/core/style/reference_clip_path_operation.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:73
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:46
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:91
+
+  third_party/blink/renderer/core/style/reference_offset_path_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:74
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:92
+
+  third_party/blink/renderer/core/style/scoped_css_name.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/css_custom_ident_value.cc:14
+    ← third_party/blink/renderer/core/css/css_length_resolver.h:15
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:93
+
+  third_party/blink/renderer/core/style/scroll_marker_group.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/css_identifier_value_mappings.h:46
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:94
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:53
+
+  third_party/blink/renderer/core/style/shadow_list.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/css_property_equality.cc:13
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:54
+
+  third_party/blink/renderer/core/style/shape_clip_path_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:75
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:95
+
+  third_party/blink/renderer/core/style/shape_offset_path_operation.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:76
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:96
+
+  third_party/blink/renderer/core/style/style_anchor_scope.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:55
+
+  third_party/blink/renderer/core/style/style_border_shape.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:77
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:97
+
+  third_party/blink/renderer/core/style/style_crossfade_image.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:47
+
+  third_party/blink/renderer/core/style/style_fetched_image.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/css_image_value.cc:32
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:48
+    ← third_party/blink/renderer/core/css/style_image_cache_test.cc:13
+
+  third_party/blink/renderer/core/style/style_generated_image.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/css_paint_value_test.cc:21
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:49
+
+  third_party/blink/renderer/core/style/style_image.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/cssom/css_url_image_value.cc:9
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:50
+
+  third_party/blink/renderer/core/style/style_image_set.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/css_image_set_value.cc:36
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:51
+
+  third_party/blink/renderer/core/style/style_initial_data.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/resolver/style_resolver.cc:130
+    ← third_party/blink/renderer/core/css/style_engine.cc:123
+
+  third_party/blink/renderer/core/style/style_intrinsic_length.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.cc:71
+    ← third_party/blink/renderer/core/css/resolver/style_adjuster.cc:89
+
+  third_party/blink/renderer/core/style/style_mask_source_image.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:52
+
+  third_party/blink/renderer/core/style/style_name.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils_test.cc:14
+
+  third_party/blink/renderer/core/style/style_name_or_keyword.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils_test.cc:15
+
+  third_party/blink/renderer/core/style/style_name_scope.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:56
+
+  third_party/blink/renderer/core/style/style_offset_rotation.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:57
+
+  third_party/blink/renderer/core/style/style_overflow_clip_margin.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:78
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:98
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:58
+
+  third_party/blink/renderer/core/style/style_path.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/css_path_value.cc:9
+    ← third_party/blink/renderer/core/css/css_path_value.h:9
+
+  third_party/blink/renderer/core/style/style_pending_image.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:53
+
+  third_party/blink/renderer/core/style/style_position_anchor.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/css_length_resolver.h:16
+    ← third_party/blink/renderer/core/css/css_to_length_conversion_data.h:41
+
+  third_party/blink/renderer/core/style/style_ray.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/basic_shape_functions.cc:50
+
+  third_party/blink/renderer/core/style/style_reflection.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:59
+
+  third_party/blink/renderer/core/style/style_shape.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/basic_shape_functions.cc:51
+    ← third_party/blink/renderer/core/css/shape_functions.h:10
+
+  third_party/blink/renderer/core/style/style_svg_resource.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.cc:72
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:79
+    ← third_party/blink/renderer/core/css/resolver/element_style_resources.cc:54
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:99
+
+  third_party/blink/renderer/core/style/style_timeline.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/css_to_style_map.h:31
+
+  third_party/blink/renderer/core/style/style_timeline_scope.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:100
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:60
+
+  third_party/blink/renderer/core/style/style_trigger_scope.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:61
+
+  third_party/blink/renderer/core/style/style_view_transition_group.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:101
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:62
+
+  third_party/blink/renderer/core/style/style_view_transition_name.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:63
+
+  third_party/blink/renderer/core/style/superellipse.h  (referenced by 4 files)
+    ← third_party/blink/renderer/core/css/css_superellipse_value.cc:11
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.cc:73
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.h:21
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:102
+
+  third_party/blink/renderer/core/style/text_indent_flags.h  (referenced by 2 files)
+    ← third_party/blink/renderer/core/css/css_value_id_mappings.h:12
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:80
+
+  third_party/blink/renderer/core/style/text_overflow_data.h  (referenced by 3 files)
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.h:22
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.cc:103
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:64
+
+  third_party/blink/renderer/core/style/transform_origin.h  (referenced by 1 files)
+    ← third_party/blink/renderer/core/css/resolver/style_builder_converter.h:65
+
+  third_party/blink/renderer/core/style_property_shorthand.h  (referenced by 22 files)
+    ← third_party/blink/renderer/core/css/abstract_property_set_css_style_declaration.cc:35
+    ← third_party/blink/renderer/core/css/css_keyframe_shorthand_value.cc:6
+    ← third_party/blink/renderer/core/css/css_property_value.cc:26
+    ← third_party/blink/renderer/core/css/css_property_value_set.cc:33
+    ← third_party/blink/renderer/core/css/cssom/css_style_value.cc:12
+    ← third_party/blink/renderer/core/css/cssom/inline_style_property_map_test.cc:11
+    ← third_party/blink/renderer/core/css/cssom/style_property_map.cc:20
+    ← third_party/blink/renderer/core/css/cssom/style_property_map_read_only_main_thread.cc:19
+    ← third_party/blink/renderer/core/css/cssom/style_value_factory.cc:32
+    ← third_party/blink/renderer/core/css/parser/css_parser_fast_paths.cc:42
+    ← third_party/blink/renderer/core/css/parser/css_property_parser.cc:25
+    ← third_party/blink/renderer/core/css/properties/computed_style_utils.cc:74
+    ← third_party/blink/renderer/core/css/properties/css_direction_aware_resolver.cc:12
+    ← third_party/blink/renderer/core/css/properties/css_parsing_utils.cc:101
+    ← third_party/blink/renderer/core/css/properties/css_property.cc:13
+    ← third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc:81
+    ← third_party/blink/renderer/core/css/properties/shorthands/shorthands_custom.cc:37
+    ← third_party/blink/renderer/core/css/resolver/style_cascade.cc:72
+    ← third_party/blink/renderer/core/css/resolver/style_cascade_test.cc:48
+    ← third_party/blink/renderer/core/css/resolver/style_resolver.cc:131
+    ← third_party/blink/renderer/core/css/style_property_serializer.cc:50
+    ← third_party/blink/renderer/core/css/style_property_shorthand_custom.cc:23
+
+--- Source Files with Cross-Layer Includes ---
+
+  third_party/blink/renderer/core/css/abstract_property_set_css_style_declaration.cc (1 cross-layer includes)
+    line 35: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/anchor_evaluator.h (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/position_area.h
+
+  third_party/blink/renderer/core/css/anchor_query.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/anchor_specifier_value.h
+
+  third_party/blink/renderer/core/css/anchor_query.h (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/anchor_specifier_value.h
+
+  third_party/blink/renderer/core/css/basic_shape_functions.cc (4 cross-layer includes)
+    line 48: third_party/blink/renderer/core/style/basic_shapes.h
+    line 49: third_party/blink/renderer/core/style/computed_style.h
+    line 50: third_party/blink/renderer/core/style/style_ray.h
+    line 51: third_party/blink/renderer/core/style/style_shape.h
+
+  third_party/blink/renderer/core/css/basic_shape_functions.h (1 cross-layer includes)
+    line 34: third_party/blink/renderer/core/style/basic_shapes.h
+
+  third_party/blink/renderer/core/css/computed_style_css_value_mapping.cc (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/container_query.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/container_query_evaluator.cc (1 cross-layer includes)
+    line 24: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/container_query_evaluator.h (2 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 16: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/container_query_evaluator_test.cc (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/container_query_test.cc (2 cross-layer includes)
+    line 24: third_party/blink/renderer/core/style/computed_style.h
+    line 25: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/container_selector.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/counters_attachment_context.cc (1 cross-layer includes)
+    line 18: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/css_computed_style_declaration.cc (2 cross-layer includes)
+    line 48: third_party/blink/renderer/core/style/computed_style.h
+    line 49: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_computed_style_declaration.h (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_container_values.cc (2 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+    line 12: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/css_custom_ident_value.cc (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/scoped_css_name.h
+
+  third_party/blink/renderer/core/css/css_default_style_sheets.cc (1 cross-layer includes)
+    line 54: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_default_style_sheets.h (1 cross-layer includes)
+    line 29: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_gap_decoration_property_utils.cc (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/css_gap_decoration_property_utils.h (3 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 11: third_party/blink/renderer/core/style/gap_data_list.h
+    line 12: third_party/blink/renderer/core/style/grid_enums.h
+
+  third_party/blink/renderer/core/css/css_grid_integer_repeat_value.cc (1 cross-layer includes)
+    line 7: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/css/css_grid_template_areas_value.h (1 cross-layer includes)
+    line 35: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/css/css_identifier_value_mappings.h (3 cross-layer includes)
+    line 44: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 45: third_party/blink/renderer/core/style/position_area.h
+    line 46: third_party/blink/renderer/core/style/scroll_marker_group.h
+
+  third_party/blink/renderer/core/css/css_image_set_value.cc (1 cross-layer includes)
+    line 36: third_party/blink/renderer/core/style/style_image_set.h
+
+  third_party/blink/renderer/core/css/css_image_value.cc (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/style_fetched_image.h
+
+  third_party/blink/renderer/core/css/css_image_value_test.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/css_keyframe_shorthand_value.cc (1 cross-layer includes)
+    line 6: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/css_length_resolver.h (3 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/position_area.h
+    line 15: third_party/blink/renderer/core/style/scoped_css_name.h
+    line 16: third_party/blink/renderer/core/style/style_position_anchor.h
+
+  third_party/blink/renderer/core/css/css_math_expression_node.cc (1 cross-layer includes)
+    line 58: third_party/blink/renderer/core/style/anchor_specifier_value.h
+
+  third_party/blink/renderer/core/css/css_math_expression_node_test.cc (1 cross-layer includes)
+    line 47: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/css_paint_value_test.cc (2 cross-layer includes)
+    line 20: third_party/blink/renderer/core/style/computed_style.h
+    line 21: third_party/blink/renderer/core/style/style_generated_image.h
+
+  third_party/blink/renderer/core/css/css_path_value.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/style_path.h
+
+  third_party/blink/renderer/core/css/css_path_value.h (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/style_path.h
+
+  third_party/blink/renderer/core/css/css_property_equality.cc (2 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+    line 13: third_party/blink/renderer/core/style/shadow_list.h
+
+  third_party/blink/renderer/core/css/css_property_value.cc (2 cross-layer includes)
+    line 25: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 26: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/css_property_value_set.cc (1 cross-layer includes)
+    line 33: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/css_rule_test.cc (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/css_selector.h (1 cross-layer includes)
+    line 36: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_superellipse_value.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/superellipse.h
+
+  third_party/blink/renderer/core/css/css_test_helpers.cc (1 cross-layer includes)
+    line 33: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_test_helpers.h (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/css_to_length_conversion_data.cc (2 cross-layer includes)
+    line 41: third_party/blink/renderer/core/style/computed_style.h
+    line 42: third_party/blink/renderer/core/style/font_size_style.h
+
+  third_party/blink/renderer/core/css/css_to_length_conversion_data.h (2 cross-layer includes)
+    line 40: third_party/blink/renderer/core/style/position_area.h
+    line 41: third_party/blink/renderer/core/style/style_position_anchor.h
+
+  third_party/blink/renderer/core/css/css_to_length_conversion_data_test.cc (1 cross-layer includes)
+    line 16: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/css_value_id_mappings.h (2 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 12: third_party/blink/renderer/core/style/text_indent_flags.h
+
+  third_party/blink/renderer/core/css/cssom/computed_style_property_map.cc (1 cross-layer includes)
+    line 20: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/cssom/css_style_value.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/cssom/css_url_image_value.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/style_image.h
+
+  third_party/blink/renderer/core/css/cssom/inline_style_property_map_test.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/cssom/paint_worklet_style_property_map.cc (1 cross-layer includes)
+    line 22: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/cssom/prepopulated_computed_style_property_map.cc (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/cssom/style_property_map.cc (1 cross-layer includes)
+    line 20: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/cssom/style_property_map_read_only_main_thread.cc (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/cssom/style_value_factory.cc (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/cssom_utils.h (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/css/dynamic_pseudo_extractor.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/dynamic_pseudo_extractor.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/dynamic_pseudo_extractor_test.cc (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/element_rule_collector.cc (1 cross-layer includes)
+    line 73: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/element_rule_collector.h (1 cross-layer includes)
+    line 37: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/css/element_rule_collector_test.cc (1 cross-layer includes)
+    line 28: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/font_display_auto_lcp_align_test.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/font_face_set_document.cc (1 cross-layer includes)
+    line 50: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/font_face_set_worker.cc (1 cross-layer includes)
+    line 22: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/font_update_invalidation_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/force_dark_test.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/layout_upgrade.cc (1 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/media_query_evaluator.cc (1 cross-layer includes)
+    line 70: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/media_values.h (1 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/out_of_flow_data.h (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/page_rule_collector.cc (1 cross-layer includes)
+    line 40: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/page_rule_collector_test.cc (1 cross-layer includes)
+    line 16: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/parser/css_parser_fast_paths.cc (1 cross-layer includes)
+    line 42: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/parser/css_property_parser.cc (1 cross-layer includes)
+    line 25: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/parser/css_selector_parser.cc (1 cross-layer includes)
+    line 32: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/parser/sizes_math_function_parser_test.cc (1 cross-layer includes)
+    line 16: third_party/blink/renderer/core/style/computed_style_initial_values.h
+
+  third_party/blink/renderer/core/css/properties/computed_style_utils.cc (6 cross-layer includes)
+    line 69: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 70: third_party/blink/renderer/core/style/position_area.h
+    line 71: third_party/blink/renderer/core/style/style_intrinsic_length.h
+    line 72: third_party/blink/renderer/core/style/style_svg_resource.h
+    line 73: third_party/blink/renderer/core/style/superellipse.h
+    line 74: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/properties/computed_style_utils.h (4 cross-layer includes)
+    line 19: third_party/blink/renderer/core/style/computed_style.h
+    line 20: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 21: third_party/blink/renderer/core/style/superellipse.h
+    line 22: third_party/blink/renderer/core/style/text_overflow_data.h
+
+  third_party/blink/renderer/core/css/properties/computed_style_utils_test.cc (3 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 14: third_party/blink/renderer/core/style/style_name.h
+    line 15: third_party/blink/renderer/core/style/style_name_or_keyword.h
+
+  third_party/blink/renderer/core/css/properties/css_direction_aware_resolver.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/properties/css_parsing_utils.cc (1 cross-layer includes)
+    line 101: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/properties/css_parsing_utils.h (1 cross-layer includes)
+    line 25: third_party/blink/renderer/core/style/grid_area.h
+
+  third_party/blink/renderer/core/css/properties/css_property.cc (2 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+    line 13: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/properties/css_property_test.cc (1 cross-layer includes)
+    line 27: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/properties/longhands/custom_property.cc (1 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/properties/longhands/longhands_custom.cc (15 cross-layer includes)
+    line 67: third_party/blink/renderer/core/style/computed_style.h
+    line 68: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 69: third_party/blink/renderer/core/style/coord_box_offset_path_operation.h
+    line 70: third_party/blink/renderer/core/style/geometry_box_clip_path_operation.h
+    line 71: third_party/blink/renderer/core/style/grid_area.h
+    line 72: third_party/blink/renderer/core/style/paint_order_array.h
+    line 73: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+    line 74: third_party/blink/renderer/core/style/reference_offset_path_operation.h
+    line 75: third_party/blink/renderer/core/style/shape_clip_path_operation.h
+    line 76: third_party/blink/renderer/core/style/shape_offset_path_operation.h
+    line 77: third_party/blink/renderer/core/style/style_border_shape.h
+    line 78: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+    line 79: third_party/blink/renderer/core/style/style_svg_resource.h
+    line 80: third_party/blink/renderer/core/style/text_indent_flags.h
+    line 81: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/properties/shorthands/shorthands_custom.cc (2 cross-layer includes)
+    line 36: third_party/blink/renderer/core/style/computed_style.h
+    line 37: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/properties/style_building_utils.h (2 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/border_image_length.h
+    line 9: third_party/blink/renderer/core/style/border_image_length_box.h
+
+  third_party/blink/renderer/core/css/resolver/cascade_expansion.h (1 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/css/resolver/css_to_style_map.cc (4 cross-layer includes)
+    line 53: third_party/blink/renderer/core/style/border_image_length_box.h
+    line 54: third_party/blink/renderer/core/style/computed_style.h
+    line 55: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 56: third_party/blink/renderer/core/style/fill_layer.h
+
+  third_party/blink/renderer/core/css/resolver/css_to_style_map.h (2 cross-layer includes)
+    line 30: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 31: third_party/blink/renderer/core/style/style_timeline.h
+
+  third_party/blink/renderer/core/css/resolver/element_resolve_context.cc (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+  third_party/blink/renderer/core/css/resolver/element_resolve_context.h (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/resolver/element_style_resources.cc (14 cross-layer includes)
+    line 41: third_party/blink/renderer/core/style/computed_style.h
+    line 42: third_party/blink/renderer/core/style/content_data.h
+    line 43: third_party/blink/renderer/core/style/cursor_data.h
+    line 44: third_party/blink/renderer/core/style/fill_layer.h
+    line 45: third_party/blink/renderer/core/style/filter_operation.h
+    line 46: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+    line 47: third_party/blink/renderer/core/style/style_crossfade_image.h
+    line 48: third_party/blink/renderer/core/style/style_fetched_image.h
+    line 49: third_party/blink/renderer/core/style/style_generated_image.h
+    line 50: third_party/blink/renderer/core/style/style_image.h
+    line 51: third_party/blink/renderer/core/style/style_image_set.h
+    line 52: third_party/blink/renderer/core/style/style_mask_source_image.h
+    line 53: third_party/blink/renderer/core/style/style_pending_image.h
+    line 54: third_party/blink/renderer/core/style/style_svg_resource.h
+
+  third_party/blink/renderer/core/css/resolver/filter_operation_resolver.cc (1 cross-layer includes)
+    line 38: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/filter_operation_resolver.h (1 cross-layer includes)
+    line 29: third_party/blink/renderer/core/style/filter_operations.h
+
+  third_party/blink/renderer/core/css/resolver/font_builder.cc (1 cross-layer includes)
+    line 34: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/font_builder_test.cc (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/match_result.h (1 cross-layer includes)
+    line 36: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/resolver/matched_properties_cache.cc (1 cross-layer includes)
+    line 42: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/matched_properties_cache.h (1 cross-layer includes)
+    line 30: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/matched_properties_cache_test.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/style_adjuster.cc (4 cross-layer includes)
+    line 86: third_party/blink/renderer/core/style/computed_style.h
+    line 87: third_party/blink/renderer/core/style/computed_style_base_constants.h
+    line 88: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 89: third_party/blink/renderer/core/style/style_intrinsic_length.h
+
+  third_party/blink/renderer/core/css/resolver/style_builder.cc (1 cross-layer includes)
+    line 51: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/style_builder_converter.cc (17 cross-layer includes)
+    line 87: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 88: third_party/blink/renderer/core/style/coord_box_offset_path_operation.h
+    line 89: third_party/blink/renderer/core/style/geometry_box_clip_path_operation.h
+    line 90: third_party/blink/renderer/core/style/offset_path_operation.h
+    line 91: third_party/blink/renderer/core/style/reference_clip_path_operation.h
+    line 92: third_party/blink/renderer/core/style/reference_offset_path_operation.h
+    line 93: third_party/blink/renderer/core/style/scoped_css_name.h
+    line 94: third_party/blink/renderer/core/style/scroll_marker_group.h
+    line 95: third_party/blink/renderer/core/style/shape_clip_path_operation.h
+    line 96: third_party/blink/renderer/core/style/shape_offset_path_operation.h
+    line 97: third_party/blink/renderer/core/style/style_border_shape.h
+    line 98: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+    line 99: third_party/blink/renderer/core/style/style_svg_resource.h
+    line 100: third_party/blink/renderer/core/style/style_timeline_scope.h
+    line 101: third_party/blink/renderer/core/style/style_view_transition_group.h
+    line 102: third_party/blink/renderer/core/style/superellipse.h
+    line 103: third_party/blink/renderer/core/style/text_overflow_data.h
+
+  third_party/blink/renderer/core/css/resolver/style_builder_converter.h (20 cross-layer includes)
+    line 46: third_party/blink/renderer/core/style/basic_shapes.h
+    line 47: third_party/blink/renderer/core/style/computed_style.h
+    line 48: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 49: third_party/blink/renderer/core/style/flow_tolerance.h
+    line 50: third_party/blink/renderer/core/style/grid_area.h
+    line 51: third_party/blink/renderer/core/style/named_grid_lines_map.h
+    line 52: third_party/blink/renderer/core/style/ordered_named_grid_lines.h
+    line 53: third_party/blink/renderer/core/style/scroll_marker_group.h
+    line 54: third_party/blink/renderer/core/style/shadow_list.h
+    line 55: third_party/blink/renderer/core/style/style_anchor_scope.h
+    line 56: third_party/blink/renderer/core/style/style_name_scope.h
+    line 57: third_party/blink/renderer/core/style/style_offset_rotation.h
+    line 58: third_party/blink/renderer/core/style/style_overflow_clip_margin.h
+    line 59: third_party/blink/renderer/core/style/style_reflection.h
+    line 60: third_party/blink/renderer/core/style/style_timeline_scope.h
+    line 61: third_party/blink/renderer/core/style/style_trigger_scope.h
+    line 62: third_party/blink/renderer/core/style/style_view_transition_group.h
+    line 63: third_party/blink/renderer/core/style/style_view_transition_name.h
+    line 64: third_party/blink/renderer/core/style/text_overflow_data.h
+    line 65: third_party/blink/renderer/core/style/transform_origin.h
+
+  third_party/blink/renderer/core/css/resolver/style_builder_test.cc (1 cross-layer includes)
+    line 15: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/style_cascade.cc (2 cross-layer includes)
+    line 71: third_party/blink/renderer/core/style/computed_style.h
+    line 72: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/resolver/style_cascade_test.cc (2 cross-layer includes)
+    line 47: third_party/blink/renderer/core/style/computed_style.h
+    line 48: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/resolver/style_resolver.cc (3 cross-layer includes)
+    line 129: third_party/blink/renderer/core/style/computed_style_constants.h
+    line 130: third_party/blink/renderer/core/style/style_initial_data.h
+    line 131: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/resolver/style_resolver.h (1 cross-layer includes)
+    line 38: third_party/blink/renderer/core/style/filter_operations.h
+
+  third_party/blink/renderer/core/css/resolver/style_resolver_state.cc (1 cross-layer includes)
+    line 38: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/resolver/style_resolver_test.cc (2 cross-layer includes)
+    line 45: third_party/blink/renderer/core/style/anchor_specifier_value.h
+    line 46: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/rule_set.cc (1 cross-layer includes)
+    line 72: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/scroll_target_group_scope.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/selector_checker.cc (2 cross-layer includes)
+    line 102: third_party/blink/renderer/core/style/computed_style.h
+    line 103: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/selector_checker_test.cc (2 cross-layer includes)
+    line 20: third_party/blink/renderer/core/style/computed_style.h
+    line 21: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/shape_functions.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/style_shape.h
+
+  third_party/blink/renderer/core/css/style_engine.cc (3 cross-layer includes)
+    line 121: third_party/blink/renderer/core/style/computed_style.h
+    line 122: third_party/blink/renderer/core/style/filter_operations.h
+    line 123: third_party/blink/renderer/core/style/style_initial_data.h
+
+  third_party/blink/renderer/core/css/style_engine.h (1 cross-layer includes)
+    line 66: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/style_environment_variables_test.cc (1 cross-layer includes)
+    line 13: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/style_image_cache_test.cc (2 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/computed_style.h
+    line 13: third_party/blink/renderer/core/style/style_fetched_image.h
+
+  third_party/blink/renderer/core/css/style_perftest.cc (1 cross-layer includes)
+    line 36: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/style_property_serializer.cc (1 cross-layer includes)
+    line 50: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/style_property_shorthand_custom.cc (1 cross-layer includes)
+    line 23: third_party/blink/renderer/core/style_property_shorthand.h
+
+  third_party/blink/renderer/core/css/style_recalc_change.cc (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/style_recalc_change_test.cc (1 cross-layer includes)
+    line 14: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/style_recalc_context.cc (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style.h
+
+  third_party/blink/renderer/core/css/style_recalc_context.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/style_request.h (1 cross-layer includes)
+    line 27: third_party/blink/renderer/core/style/computed_style_constants.h
+
+  third_party/blink/renderer/core/css/successful_position_fallback.cc (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/successful_position_fallback.h (1 cross-layer includes)
+    line 8: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/threaded/css_to_length_conversion_data_threaded_test.cc (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/computed_style_initial_values.h
+
+  third_party/blink/renderer/core/css/threaded/filter_operation_resolver_threaded_test.cc (1 cross-layer includes)
+    line 12: third_party/blink/renderer/core/style/filter_operation.h
+
+  third_party/blink/renderer/core/css/try_tactic_transform.h (1 cross-layer includes)
+    line 9: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/try_value_flips.h (1 cross-layer includes)
+    line 10: third_party/blink/renderer/core/style/position_try_fallbacks.h
+
+  third_party/blink/renderer/core/css/white_space.h (1 cross-layer includes)
+    line 11: third_party/blink/renderer/core/style/computed_style_base_constants.h
+
+--- Extraction Guidance ---
+  To decouple third_party/blink/renderer/core/css/ from third_party/blink/renderer/core/style/:
+  65 headers need to be either:
+    - Extracted alongside third_party/blink/renderer/core/css/
+    - Replaced with an adapter/interface
+    - Stubbed with a minimal implementation
+
+  High-traffic headers (most referenced):
+    third_party/blink/renderer/core/style/computed_style.h  (61 references)
+    third_party/blink/renderer/core/style/computed_style_constants.h  (37 references)
+    third_party/blink/renderer/core/style_property_shorthand.h  (22 references)
+    third_party/blink/renderer/core/style/position_try_fallbacks.h  (9 references)
+    third_party/blink/renderer/core/style/grid_area.h  (6 references)
+    third_party/blink/renderer/core/style/position_area.h  (5 references)
+    third_party/blink/renderer/core/style/computed_style_base_constants.h  (5 references)
+    third_party/blink/renderer/core/style/superellipse.h  (4 references)
+    third_party/blink/renderer/core/style/anchor_specifier_value.h  (4 references)
+    third_party/blink/renderer/core/style/style_svg_resource.h  (4 references)

@@ -1,0 +1,9 @@
+# Shared build configuration
+
+declare_args() {
+  # Build type
+  is_debug = true
+
+  # Chromium submodule root
+  chromium_src = "//third_party/chromium"
+}

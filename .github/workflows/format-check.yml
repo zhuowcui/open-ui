@@ -1,0 +1,37 @@
+name: Format Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+
+      - name: Check C/C++ formatting
+        run: |
+          find src include examples -name '*.cc' -o -name '*.h' -o -name '*.c' | \
+            xargs clang-format --dry-run --Werror
+
+  gn-format:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install depot_tools
+        run: |
+          git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git $HOME/depot_tools
+          echo "$HOME/depot_tools" >> $GITHUB_PATH
+
+      - name: Check GN formatting
+        run: |
+          find . -name 'BUILD.gn' -o -name '*.gni' | while read f; do
+            gn format --dry-run "$f" || { echo "ERROR: $f needs formatting"; exit 1; }
+          done

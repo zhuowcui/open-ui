@@ -1,0 +1,4 @@
+buildconfig = "//BUILDCONFIG.gn"
+
+# Secondary source roots
+secondary_source = "//third_party/chromium/"

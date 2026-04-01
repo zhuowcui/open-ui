@@ -1,0 +1,14 @@
+# Open UI top-level build file
+
+group("all") {
+  deps = [
+    "//examples/skia_poc:skia_poc",
+  ]
+}
+
+# Convenience target for building just the hello world
+group("hello_world") {
+  deps = [
+    "//examples:hello_world",
+  ]
+}
