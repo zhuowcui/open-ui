@@ -1,7 +1,21 @@
+import("//build/config/BUILD.gn")
+
+# Resolve the C/C++ compiler to use.
+# When chromium_src is set, use Chromium's hermetic clang for ABI compatibility.
+if (chromium_src != "") {
+  _cc = "$chromium_src/third_party/llvm-build/Release+Asserts/bin/clang"
+  _cxx = "$chromium_src/third_party/llvm-build/Release+Asserts/bin/clang++"
+  _ar = "$chromium_src/third_party/llvm-build/Release+Asserts/bin/llvm-ar"
+} else {
+  _cc = "clang"
+  _cxx = "clang++"
+  _ar = "ar"
+}
+
 toolchain("clang") {
   tool("cc") {
     depfile = "{{output}}.d"
-    command = "clang -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+    command = "$_cc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
     depsformat = "gcc"
     description = "CC {{output}}"
     outputs = [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
@@ -9,7 +23,7 @@ toolchain("clang") {
 
   tool("cxx") {
     depfile = "{{output}}.d"
-    command = "clang++ -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+    command = "$_cxx -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
     depsformat = "gcc"
     description = "CXX {{output}}"
     outputs = [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
@@ -18,7 +32,7 @@ toolchain("clang") {
   tool("alink") {
     rspfile = "{{output}}.rsp"
     rspfile_content = "{{inputs}}"
-    command = "rm -f {{output}} && ar rcs {{output}} @$rspfile"
+    command = "rm -f {{output}} && $_ar rcs {{output}} @$rspfile"
     description = "AR {{output}}"
     outputs = [ "{{target_out_dir}}/{{target_output_name}}{{output_extension}}" ]
     default_output_extension = ".a"
@@ -29,7 +43,7 @@ toolchain("clang") {
     soname = "{{target_output_name}}{{output_extension}}"
     rspfile = "{{output}}.rsp"
     rspfile_content = "-Wl,--whole-archive {{inputs}} {{solibs}} -Wl,--no-whole-archive {{libs}}"
-    command = "clang++ -shared {{ldflags}} -o {{output}} -Wl,-soname=$soname @$rspfile"
+    command = "$_cxx -shared {{ldflags}} -o {{output}} -Wl,-soname=$soname @$rspfile"
     description = "SOLINK {{output}}"
     outputs = [ "{{root_out_dir}}/$soname" ]
     default_output_extension = ".so"
@@ -39,7 +53,7 @@ toolchain("clang") {
   tool("link") {
     rspfile = "{{output}}.rsp"
     rspfile_content = "{{inputs}} {{solibs}} {{libs}}"
-    command = "clang++ {{ldflags}} -o {{output}} @$rspfile"
+    command = "$_cxx {{ldflags}} -o {{output}} @$rspfile"
     description = "LINK {{output}}"
     outputs = [ "{{root_out_dir}}/{{target_output_name}}{{output_extension}}" ]
   }

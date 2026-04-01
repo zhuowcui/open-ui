@@ -4,6 +4,9 @@ third_party/chromium/
 # Build outputs
 out/
 
+# Generated link deps (machine-specific absolute paths)
+build/config/chromium/skia_link_deps.rsp
+
 # Editor / IDE
 .vscode/
 .idea/

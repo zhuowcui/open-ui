@@ -4,6 +4,12 @@ declare_args() {
   # Build type
   is_debug = true
 
-  # Chromium submodule root
-  chromium_src = "//third_party/chromium"
+  # Path to the Chromium reference build (full checkout with built artifacts).
+  # The sparse checkout at //third_party/chromium/ has headers for base/, cc/,
+  # etc. but NOT third_party/skia/ (separate gclient-managed repo).
+  # This path points to the full Chromium src/ with compiled libraries.
+  chromium_src = ""
+
+  # Chromium build output directory (relative to chromium_src)
+  chromium_out = "out/Release"
 }

@@ -1,0 +1,121 @@
+# Chromium integration configs
+#
+# These configs let Open UI targets compile against Chromium's pre-built
+# libraries using Chromium's hermetic toolchain (clang, libc++, sysroot).
+#
+# Usage in BUILD.gn:
+#   executable("my_target") {
+#     configs += [ "//build/config/chromium:skia" ]
+#   }
+
+import("//build/config/BUILD.gn")
+
+# Common Chromium toolchain flags (libc++, sysroot).
+# Applied automatically by the skia and base configs.
+config("toolchain_common") {
+  assert(chromium_src != "",
+         "Set chromium_src to your Chromium src/ directory, e.g. " +
+         "gn gen out/Default --args='chromium_src=\"/home/user/chromium/src\"'")
+
+  _cr = chromium_src
+
+  cflags_cc = [
+    "-nostdinc++",
+    "-isystem", "$_cr/$chromium_out/gen/third_party/libc++/src/include",
+    "-isystem", "$_cr/third_party/libc++abi/src/include",
+    "--sysroot=$_cr/build/linux/debian_bullseye_amd64-sysroot",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-std=c++23",
+  ]
+
+  defines = [
+    # libc++ hardening mode (must match Chromium's build)
+    "_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE",
+    "_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS",
+    "_LIBCPP_INSTRUMENTED_WITH_ASAN=0",
+  ]
+
+  cflags_c = [
+    "--sysroot=$_cr/build/linux/debian_bullseye_amd64-sysroot",
+  ]
+
+  ldflags = [
+    "-nostdlib++",
+    "--sysroot=$_cr/build/linux/debian_bullseye_amd64-sysroot",
+    "-Wl,--gc-sections",
+    "-Wl,-z,noexecstack",
+    "-Wl,--as-needed",
+    "-fuse-ld=lld",
+    "-pie",
+    "-rdynamic",
+  ]
+}
+
+# Skia headers and compile flags needed to use Chromium's Skia.
+config("skia") {
+  _cr = chromium_src
+
+  configs = [ ":toolchain_common" ]
+
+  include_dirs = [
+    _cr,
+    "$_cr/$chromium_out/gen",
+    "$_cr/third_party/skia",
+    "$_cr/$chromium_out/gen/third_party/skia",
+    "$_cr/skia",
+  ]
+
+  defines = [
+    "SK_ENABLE_SKSL",
+    "SK_UNTIL_CRBUG_1187654_IS_FIXED",
+    "SK_USER_CONFIG_HEADER=\"$_cr/skia/config/SkUserConfig.h\"",
+    "SK_WIN_FONTMGR_NO_SIMULATIONS",
+    "SK_ENABLE_LEGACY_SHADERCONTEXT",
+    "SK_CODEC_DECODES_PNG",
+    "SK_CODEC_DECODES_PNG_WITH_RUST",
+    "SK_CODEC_ENCODES_PNG",
+    "SK_CODEC_ENCODES_PNG_WITH_RUST",
+    "SK_CODEC_DECODES_JPEG",
+    "SK_CODEC_ENCODES_JPEG",
+    "SK_GANESH",
+    "SK_GL",
+    "SK_VULKAN=1",
+    "SK_GRAPHITE",
+    "SK_DAWN",
+    "SK_GAMMA_EXPONENT=1.2",
+    "SK_GAMMA_CONTRAST=0.2",
+    "DCHECK_ALWAYS_ON=1",
+    "_FILE_OFFSET_BITS=64",
+    "_LARGEFILE_SOURCE",
+    "_LARGEFILE64_SOURCE",
+    "_GNU_SOURCE",
+  ]
+
+  lib_dirs = [
+    "$_cr/$chromium_out/obj/skia",
+  ]
+}
+
+# Chromium base/ headers config.
+config("base") {
+  _cr = chromium_src
+
+  configs = [ ":toolchain_common" ]
+
+  include_dirs = [
+    _cr,
+    "$_cr/$chromium_out/gen",
+    "$_cr/base/allocator/partition_allocator/src",
+    "$_cr/$chromium_out/gen/base/allocator/partition_allocator/src",
+    "$_cr/third_party/abseil-cpp",
+  ]
+
+  defines = [
+    "DCHECK_ALWAYS_ON=1",
+  ]
+
+  lib_dirs = [
+    "$_cr/$chromium_out/obj/base",
+  ]
+}
