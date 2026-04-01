@@ -1,6 +1,9 @@
 # Chromium source (managed by tools/setup-chromium.sh, not checked in)
 third_party/chromium/
 
+# Skia source and build (managed by tools/setup-skia.sh, not checked in)
+third_party/skia/
+
 # Build outputs
 out/
 

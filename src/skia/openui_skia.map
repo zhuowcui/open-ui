@@ -1,0 +1,10 @@
+# Open UI Skia — Exported Symbol Map
+# Only oui_sk_* and oui_window_* symbols are exported.
+# All Skia C++ internals and other symbols are hidden.
+{
+  global:
+    oui_sk_*;
+    oui_window_*;
+  local:
+    *;
+};
