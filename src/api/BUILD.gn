@@ -1,0 +1,123 @@
+import("//build/config/c++/c++.gni")
+import("//testing/test.gni")
+import("//v8/gni/v8.gni")
+
+# ─── Common blink deps shared between library and tests ──────────────────
+_blink_deps = [
+  "//base",
+  "//base/test:test_support",
+  "//cc",
+  "//cc/paint",
+  "//gin",
+  "//mojo/core/embedder",
+  "//mojo/public/cpp/bindings",
+  "//skia",
+  "//third_party/blink/renderer/controller",
+  "//third_party/blink/renderer/core",
+  "//third_party/blink/renderer/core:testing",
+  "//third_party/blink/renderer/platform",
+  "//third_party/blink/renderer/platform:test_support",
+  "//ui/base",
+  "//ui/gfx",
+  "//ui/gfx/geometry",
+  "//v8",
+]
+
+_blink_configs = [
+  "//third_party/blink/renderer:config",
+  "//third_party/blink/renderer:inside_blink",
+]
+
+# ─── openui_lib static library ─────────────────────────────────────────
+# NOTE: Currently testonly because we depend on DummyPageHolder and
+# blink::test::TaskEnvironment. SP5 will replace these with production
+# equivalents and build as shared_library("libopenui").
+# V8's initial-exec TLS model prevents shared_library linking for now.
+static_library("openui_lib") {
+  testonly = true
+
+  sources = [
+    "openui.h",
+    "openui_element_factory.cc",
+    "openui_element_factory.h",
+    "openui_impl.cc",
+    "openui_impl.h",
+    "openui_init.cc",
+    "openui_init.h",
+  ]
+
+  defines = [ "OUI_BUILD" ]
+  if (v8_use_external_startup_data) {
+    defines += [ "V8_USE_EXTERNAL_STARTUP_DATA" ]
+  }
+
+  configs += _blink_configs
+
+  deps = _blink_deps
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
+
+# ─── C++ API tests (GTest) ──────────────────────────────────────────────
+test("openui_api_test") {
+  sources = [ "openui_api_test.cc" ]
+
+  defines = []
+  if (v8_use_external_startup_data) {
+    defines += [ "V8_USE_EXTERNAL_STARTUP_DATA" ]
+  }
+
+  configs += _blink_configs
+
+  deps = _blink_deps + [
+    ":openui_lib",
+    "//testing/gtest",
+  ]
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
+
+# ─── Pure C consumer test ────────────────────────────────────────────────
+executable("openui_c_test") {
+  testonly = true
+  sources = [ "openui_c_test.c" ]
+
+  configs += _blink_configs
+
+  deps = [
+    ":openui_lib",
+  ] + _blink_deps
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
+
+# ─── Legacy targets (SP2/SP3) ───────────────────────────────────────────
+executable("openui_smoke_test") {
+  sources = [ "smoke_test.cc" ]
+  deps = [
+    "//base",
+    "//cc/paint",
+    "//skia",
+    "//ui/gfx",
+    "//ui/gfx/geometry",
+  ]
+}
+
+test("openui_rendering_test") {
+  sources = [ "rendering_test.cc" ]
+
+  defines = []
+  if (v8_use_external_startup_data) {
+    defines += [ "V8_USE_EXTERNAL_STARTUP_DATA" ]
+  }
+
+  configs += _blink_configs
+
+  deps = _blink_deps + [ "//testing/gtest" ]
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
