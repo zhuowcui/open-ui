@@ -1,0 +1,51 @@
+import("//build/config/c++/c++.gni")
+import("//testing/test.gni")
+import("//v8/gni/v8.gni")
+
+executable("openui_smoke_test") {
+  sources = [ "smoke_test.cc" ]
+  deps = [
+    "//base",
+    "//cc/paint",
+    "//skia",
+    "//ui/gfx",
+    "//ui/gfx/geometry",
+  ]
+}
+
+test("openui_rendering_test") {
+  sources = [ "rendering_test.cc" ]
+
+  defines = []
+  if (v8_use_external_startup_data) {
+    defines += [ "V8_USE_EXTERNAL_STARTUP_DATA" ]
+  }
+
+  configs += [
+    "//third_party/blink/renderer:config",
+    "//third_party/blink/renderer:inside_blink",
+  ]
+
+  deps = [
+    "//base",
+    "//base/test:test_support",
+    "//cc",
+    "//cc/paint",
+    "//gin",
+    "//mojo/core/embedder",
+    "//skia",
+    "//testing/gtest",
+    "//third_party/blink/renderer/controller",
+    "//third_party/blink/renderer/core",
+    "//third_party/blink/renderer/core:testing",
+    "//third_party/blink/renderer/platform",
+    "//third_party/blink/renderer/platform:test_support",
+    "//ui/base",
+    "//ui/gfx",
+    "//ui/gfx/geometry",
+    "//v8",
+  ]
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
