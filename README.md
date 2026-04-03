@@ -36,32 +36,33 @@ Each layer is independently usable. Use the full stack for app development, or j
 
 ## Status
 
-🚧 **Sub-Project 1: Research & Infrastructure** — Setting up build system and analyzing Chromium's rendering pipeline.
+| Sub-Project | Status | Description |
+|---|---|---|
+| SP1: Research & Infrastructure | ✅ Done | Chromium checkout, build system, dependency analysis |
+| SP2: Skia Extraction | ✅ Done (deprecated) | Standalone Skia wrapper — replaced by direct blink integration |
+| SP3: Rendering Pipeline | ✅ Done | Blink style→layout→paint integrated, 20 tests |
+| SP4: DOM Adapter & C API | ✅ Done | 65-function C API, 130 tests passing |
+| SP5: Offscreen Rendering | 🔨 Next | Rasterize to pixels/PNG via PaintRecord playback |
+| SP6-SP9 | 📋 Planned | Widgets, animations, Rust bindings, platform expansion |
 
 See [`docs/plan/`](docs/plan/) for the full project roadmap.
 
-## Building
+## Getting Started
 
-### Prerequisites (Ubuntu 22.04+)
+See **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)** for complete setup instructions, build guide, and architecture details.
 
-```bash
-# System dependencies
-sudo apt install -y build-essential clang lld ninja-build python3 git curl
-sudo apt install -y libfontconfig-dev libfreetype-dev libvulkan-dev
-sudo apt install -y libx11-xcb-dev libxcb1-dev libwayland-dev
-
-# depot_tools (provides GN)
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-export PATH="$PATH:$(pwd)/depot_tools"
-```
-
-### Build
+### Quick Build (assumes Chromium already checked out)
 
 ```bash
-git clone --recursive https://github.com/user/open-ui.git
-cd open-ui
-gn gen out/Debug
-ninja -C out/Debug
+cd ~/chromium/src
+
+# Build all Open UI targets
+./third_party/ninja/ninja -C out/Release openui_lib openui_api_test openui_c_test openui_rendering_test
+
+# Run all tests (130 total)
+./out/Release/openui_rendering_test   # 20 tests
+./out/Release/openui_api_test         # 78 tests
+./out/Release/openui_c_test           # 32 tests
 ```
 
 ## Chromium Version
