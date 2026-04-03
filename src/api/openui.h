@@ -419,6 +419,56 @@ OUI_EXPORT OuiStatus oui_document_render_to_png_buffer(OuiDocument* doc,
 // Free memory allocated by oui_document_render_to_png_buffer.
 OUI_EXPORT void oui_free(void* ptr);
 
+// ═══════════════════════════════════════════════════════════
+// Resource provider (SP6)
+// ═══════════════════════════════════════════════════════════
+
+// Callback to free resource response data when Blink is done with it.
+typedef void (*OuiResourceFreeFunc)(uint8_t* data, void* user_data);
+
+// Response data returned by the resource provider callback.
+typedef struct {
+  __attribute__((annotate("raw_ptr_exclusion")))
+  uint8_t* data;
+  size_t length;
+  __attribute__((annotate("raw_ptr_exclusion")))
+  const char* mime_type;  // NULL = auto-detect
+  OuiResourceFreeFunc free_func;
+  __attribute__((annotate("raw_ptr_exclusion")))
+  void* free_user_data;
+} OuiResourceResponse;
+
+// Resource provider callback. Return 1 if resource found, 0 if not.
+typedef int (*OuiResourceProviderFunc)(
+    const char* url,
+    OuiResourceResponse* response,
+    void* user_data);
+
+// Set the resource provider for a document.  Must be called before loading
+// HTML that references external resources (images, etc.).
+OUI_EXPORT OuiStatus oui_document_set_resource_provider(
+    OuiDocument* doc,
+    OuiResourceProviderFunc provider,
+    void* user_data);
+
+// ═══════════════════════════════════════════════════════════
+// Direct image injection (SP6)
+// ═══════════════════════════════════════════════════════════
+
+// Set raw RGBA pixel data on an <img> element.  The pixels are copied.
+OUI_EXPORT OuiStatus oui_element_set_image_data(
+    OuiElement* elem,
+    const uint8_t* rgba_pixels,
+    int width,
+    int height);
+
+// Set encoded image data (PNG, JPEG, WebP, GIF, etc.) on an <img> element.
+// Blink's image decoder will decode internally.
+OUI_EXPORT OuiStatus oui_element_set_image_encoded(
+    OuiElement* elem,
+    const uint8_t* data,
+    size_t length);
+
 #ifdef __cplusplus
 }
 #endif

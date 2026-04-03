@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>E-Commerce Website</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #f8f9fa; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Header */
+.header { background: #ffffff; border-bottom: 1px solid #dfe6e9; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+.header .logo { font-size: 16px; font-weight: 800; color: #6c5ce7; }
+.header .search { flex: 1; max-width: 280px; margin: 0 16px; }
+.header .search input { width: 100%; padding: 6px 12px; border: 1px solid #dfe6e9; border-radius: 20px; font-size: 11px; font-family: inherit; background: #f8f9fa; }
+.header .actions { display: flex; gap: 12px; font-size: 11px; color: #636e72; }
+.header .actions .cart-badge { background: #e17055; color: #fff; font-size: 9px; padding: 1px 5px; border-radius: 8px; font-weight: 700; }
+
+/* Breadcrumbs */
+.breadcrumbs { padding: 6px 16px; font-size: 10px; color: #b2bec3; background: #ffffff; border-bottom: 1px solid #f0f0f0; }
+.breadcrumbs a { color: #636e72; }
+.breadcrumbs span { margin: 0 4px; }
+
+/* Layout */
+.layout { display: flex; height: calc(600px - 38px - 26px); }
+.filters { width: 160px; background: #ffffff; border-right: 1px solid #dfe6e9; padding: 12px; overflow: hidden; }
+.products { flex: 1; padding: 12px; overflow: hidden; }
+
+/* Filters */
+.filters h4 { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #2d3436; margin-bottom: 8px; letter-spacing: 0.5px; }
+.filter-group { margin-bottom: 12px; }
+.filter-group h5 { font-size: 10px; font-weight: 600; color: #636e72; margin-bottom: 4px; }
+.filter-group label { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #636e72; padding: 2px 0; cursor: pointer; }
+.filter-group input[type="checkbox"] { width: 12px; height: 12px; }
+.price-range { display: flex; gap: 4px; align-items: center; margin-top: 4px; }
+.price-range input { width: 50px; padding: 3px 6px; border: 1px solid #dfe6e9; border-radius: 3px; font-size: 10px; font-family: inherit; }
+.price-range span { font-size: 10px; color: #b2bec3; }
+
+/* Product Grid */
+.product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.product-card { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 8px; overflow: hidden; }
+.product-card .image { height: 80px; position: relative; }
+.product-card .image .badge { position: absolute; top: 6px; left: 6px; background: #e17055; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+.product-card .info { padding: 8px 10px; }
+.product-card .name { font-size: 11px; font-weight: 600; color: #2d3436; line-height: 1.3; margin-bottom: 4px; }
+.product-card .rating { font-size: 10px; color: #f39c12; margin-bottom: 4px; }
+.product-card .rating span { color: #b2bec3; font-size: 9px; }
+.product-card .price { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.product-card .price .current { font-size: 14px; font-weight: 800; color: #e17055; }
+.product-card .price .original { font-size: 10px; color: #b2bec3; text-decoration: line-through; }
+.product-card .btn { display: block; width: 100%; padding: 6px; background: #6c5ce7; color: #ffffff; border: none; border-radius: 4px; font-size: 10px; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; }
+.product-card .btn:hover { background: #5a4bd1; }
+
+/* Color swatches */
+.swatches { display: flex; gap: 4px; margin: 4px 0; }
+.swatch { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #dfe6e9; }
+.swatch.active { border-color: #6c5ce7; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">ShopHub</div>
+  <div class="search"><input type="text" placeholder="Search products..."></div>
+  <div class="actions">
+    <span>&#9829; Wishlist</span>
+    <span>&#128722; Cart <span class="cart-badge">3</span></span>
+    <span>&#128100; Account</span>
+  </div>
+</header>
+<div class="breadcrumbs">
+  <a href="#">Home</a><span>&#8250;</span><a href="#">Electronics</a><span>&#8250;</span><strong>Headphones</strong>
+</div>
+<div class="layout">
+  <aside class="filters">
+    <h4>Filters</h4>
+    <div class="filter-group">
+      <h5>Category</h5>
+      <label><input type="checkbox" checked> Over-Ear (24)</label>
+      <label><input type="checkbox"> In-Ear (18)</label>
+      <label><input type="checkbox" checked> Wireless (32)</label>
+      <label><input type="checkbox"> Noise Cancel (15)</label>
+    </div>
+    <div class="filter-group">
+      <h5>Price Range</h5>
+      <div class="price-range">
+        <input type="text" value="$0"><span>-</span><input type="text" value="$500">
+      </div>
+    </div>
+    <div class="filter-group">
+      <h5>Brand</h5>
+      <label><input type="checkbox" checked> SoundTech</label>
+      <label><input type="checkbox"> AudioPro</label>
+      <label><input type="checkbox"> BassKing</label>
+      <label><input type="checkbox" checked> ClearTone</label>
+    </div>
+    <div class="filter-group">
+      <h5>Rating</h5>
+      <label><input type="checkbox"> &#9733;&#9733;&#9733;&#9733;&#9733;</label>
+      <label><input type="checkbox" checked> &#9733;&#9733;&#9733;&#9733; &amp; up</label>
+      <label><input type="checkbox"> &#9733;&#9733;&#9733; &amp; up</label>
+    </div>
+  </aside>
+  <main class="products">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="font-size:11px;color:#636e72;">Showing <strong>24</strong> of <strong>128</strong> products</span>
+      <select style="padding:4px 8px;border:1px solid #dfe6e9;border-radius:4px;font-size:10px;font-family:inherit;">
+        <option>Sort by: Featured</option><option>Price: Low to High</option><option>Price: High to Low</option><option>Rating</option>
+      </select>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="image" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);"><div class="badge">-20%</div></div>
+        <div class="info">
+          <div class="name">Pro Wireless ANC Headphones</div>
+          <div class="rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(234)</span></div>
+          <div class="swatches"><div class="swatch active" style="background:#2d3436;"></div><div class="swatch" style="background:#dfe6e9;"></div><div class="swatch" style="background:#0984e3;"></div></div>
+          <div class="price"><span class="current">$199</span><span class="original">$249</span></div>
+          <button class="btn">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="image" style="background:linear-gradient(135deg,#55efc4,#00b894);"></div>
+        <div class="info">
+          <div class="name">Studio Monitor Headphones</div>
+          <div class="rating">&#9733;&#9733;&#9733;&#9733;&#9734; <span>(89)</span></div>
+          <div class="swatches"><div class="swatch active" style="background:#2d3436;"></div><div class="swatch" style="background:#636e72;"></div></div>
+          <div class="price"><span class="current">$149</span></div>
+          <button class="btn">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="image" style="background:linear-gradient(135deg,#fab1a0,#e17055);"><div class="badge">NEW</div></div>
+        <div class="info">
+          <div class="name">Compact True Wireless Earbuds</div>
+          <div class="rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(456)</span></div>
+          <div class="swatches"><div class="swatch active" style="background:#ffffff;border-color:#6c5ce7;"></div><div class="swatch" style="background:#2d3436;"></div><div class="swatch" style="background:#e17055;"></div><div class="swatch" style="background:#0984e3;"></div></div>
+          <div class="price"><span class="current">$79</span></div>
+          <button class="btn">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="image" style="background:linear-gradient(135deg,#74b9ff,#0984e3);"><div class="badge">SALE</div></div>
+        <div class="info">
+          <div class="name">Sports Bluetooth Neckband</div>
+          <div class="rating">&#9733;&#9733;&#9733;&#9734;&#9734; <span>(42)</span></div>
+          <div class="price"><span class="current">$39</span><span class="original">$59</span></div>
+          <button class="btn">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="image" style="background:linear-gradient(135deg,#ffeaa7,#fdcb6e);"></div>
+        <div class="info">
+          <div class="name">Audiophile Open-Back Cans</div>
+          <div class="rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(178)</span></div>
+          <div class="price"><span class="current">$349</span></div>
+          <button class="btn">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="image" style="background:linear-gradient(135deg,#b2bec3,#636e72);"><div class="badge">-35%</div></div>
+        <div class="info">
+          <div class="name">Kids Safe Volume Headphones</div>
+          <div class="rating">&#9733;&#9733;&#9733;&#9733;&#9734; <span>(67)</span></div>
+          <div class="swatches"><div class="swatch" style="background:#e17055;"></div><div class="swatch active" style="background:#0984e3;"></div><div class="swatch" style="background:#00b894;"></div></div>
+          <div class="price"><span class="current">$25</span><span class="original">$39</span></div>
+          <button class="btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

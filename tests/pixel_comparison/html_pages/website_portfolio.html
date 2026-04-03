@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Portfolio Website</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #ffffff; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Header */
+.header { background: #1a1a2e; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; }
+.header .name { font-size: 14px; font-weight: 700; color: #ffffff; }
+.header .name span { color: #6c5ce7; }
+.header nav a { color: #b2bec3; font-size: 11px; margin-left: 16px; }
+.header nav a.active { color: #6c5ce7; }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #1a1a2e 0%, #2d3436 100%); padding: 20px 24px; display: flex; align-items: center; gap: 20px; }
+.hero .avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; font-weight: 800; flex-shrink: 0; }
+.hero .info h1 { font-size: 18px; color: #ffffff; font-weight: 700; }
+.hero .info p { font-size: 11px; color: #b2bec3; line-height: 1.4; margin-top: 2px; }
+.hero .info .tags { margin-top: 6px; display: flex; gap: 4px; }
+.hero .info .tags span { background: rgba(108,92,231,0.2); color: #a29bfe; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 600; }
+
+/* Content */
+.content { display: flex; height: calc(600px - 38px - 88px); }
+.main-col { flex: 1; padding: 14px 20px; overflow: hidden; }
+.side-col { width: 220px; padding: 14px; border-left: 1px solid #f0f0f0; overflow: hidden; }
+
+/* Section titles */
+.section-title { font-size: 12px; font-weight: 700; color: #2d3436; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+.section-title::after { content: ""; flex: 1; height: 1px; background: #dfe6e9; }
+
+/* Project grid */
+.project-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+.project-card { border-radius: 8px; overflow: hidden; position: relative; cursor: pointer; }
+.project-card .thumb { height: 70px; position: relative; }
+.project-card .thumb .overlay { position: absolute; inset: 0; background: rgba(26,26,46,0.7); display: flex; align-items: center; justify-content: center; opacity: 0.8; }
+.project-card .thumb .overlay span { color: #ffffff; font-size: 10px; font-weight: 600; background: rgba(108,92,231,0.8); padding: 3px 10px; border-radius: 12px; }
+.project-card .info { padding: 6px 8px; background: #f8f9fa; }
+.project-card .info .title { font-size: 10px; font-weight: 600; }
+.project-card .info .tech { font-size: 9px; color: #636e72; }
+
+/* Skill bars */
+.skill { margin-bottom: 8px; }
+.skill .header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px; }
+.skill .header .name { font-weight: 600; }
+.skill .header .pct { color: #636e72; }
+.skill .bar { height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+.skill .bar .fill { height: 100%; border-radius: 3px; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 14px; }
+.timeline::before { content: ""; position: absolute; left: 3px; top: 0; bottom: 0; width: 2px; background: #dfe6e9; }
+.timeline .item { position: relative; margin-bottom: 10px; padding-left: 10px; }
+.timeline .item::before { content: ""; position: absolute; left: -14px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: #6c5ce7; border: 2px solid #ffffff; }
+.timeline .item .year { font-size: 9px; color: #6c5ce7; font-weight: 700; }
+.timeline .item .role { font-size: 10px; font-weight: 600; color: #2d3436; }
+.timeline .item .company { font-size: 9px; color: #636e72; }
+
+/* Contact form */
+.contact-form { display: flex; flex-direction: column; gap: 6px; }
+.contact-form input, .contact-form textarea { padding: 6px 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 10px; font-family: inherit; }
+.contact-form textarea { resize: none; height: 50px; }
+.contact-form button { background: #6c5ce7; color: #fff; border: none; padding: 7px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="name">Alex<span>.dev</span></div>
+  <nav>
+    <a href="#" class="active">Work</a>
+    <a href="#">About</a>
+    <a href="#">Blog</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="avatar">A</div>
+  <div class="info">
+    <h1>Alex Rivera</h1>
+    <p>Full-stack developer &amp; UI designer crafting digital experiences that delight users.</p>
+    <div class="tags">
+      <span>React</span><span>TypeScript</span><span>Node.js</span><span>Figma</span><span>Python</span>
+    </div>
+  </div>
+</section>
+
+<div class="content">
+  <div class="main-col">
+    <div class="section-title">Featured Projects</div>
+    <div class="project-grid">
+      <div class="project-card">
+        <div class="thumb" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);">
+          <div class="overlay"><span>View Project</span></div>
+        </div>
+        <div class="info"><div class="title">E-Commerce Platform</div><div class="tech">React, Node.js, PostgreSQL</div></div>
+      </div>
+      <div class="project-card">
+        <div class="thumb" style="background:linear-gradient(135deg,#00b894,#55efc4);">
+          <div class="overlay"><span>View Project</span></div>
+        </div>
+        <div class="info"><div class="title">Health Tracker App</div><div class="tech">React Native, Firebase</div></div>
+      </div>
+      <div class="project-card">
+        <div class="thumb" style="background:linear-gradient(135deg,#e17055,#fab1a0);">
+          <div class="overlay"><span>View Project</span></div>
+        </div>
+        <div class="info"><div class="title">AI Chat Interface</div><div class="tech">Python, FastAPI, Vue.js</div></div>
+      </div>
+      <div class="project-card">
+        <div class="thumb" style="background:linear-gradient(135deg,#0984e3,#74b9ff);">
+          <div class="overlay"><span>View Project</span></div>
+        </div>
+        <div class="info"><div class="title">Analytics Dashboard</div><div class="tech">D3.js, TypeScript</div></div>
+      </div>
+      <div class="project-card">
+        <div class="thumb" style="background:linear-gradient(135deg,#fdcb6e,#f39c12);">
+          <div class="overlay"><span>View Project</span></div>
+        </div>
+        <div class="info"><div class="title">Social Media App</div><div class="tech">Flutter, GraphQL</div></div>
+      </div>
+      <div class="project-card">
+        <div class="thumb" style="background:linear-gradient(135deg,#636e72,#2d3436);">
+          <div class="overlay"><span>View Project</span></div>
+        </div>
+        <div class="info"><div class="title">Dev Tools CLI</div><div class="tech">Rust, WASM</div></div>
+      </div>
+    </div>
+
+    <div class="section-title">Experience</div>
+    <div class="timeline">
+      <div class="item"><div class="year">2023 - Present</div><div class="role">Senior Full-Stack Developer</div><div class="company">TechCorp Inc. — Leading a team of 8 engineers</div></div>
+      <div class="item"><div class="year">2021 - 2023</div><div class="role">Frontend Developer</div><div class="company">StartupXYZ — Built the entire customer-facing platform</div></div>
+      <div class="item"><div class="year">2019 - 2021</div><div class="role">Junior Developer</div><div class="company">WebAgency — Full-stack web development for clients</div></div>
+    </div>
+  </div>
+
+  <div class="side-col">
+    <div class="section-title">Skills</div>
+    <div class="skill"><div class="header"><span class="name">JavaScript</span><span class="pct">95%</span></div><div class="bar"><div class="fill" style="width:95%;background:#f39c12;"></div></div></div>
+    <div class="skill"><div class="header"><span class="name">React</span><span class="pct">92%</span></div><div class="bar"><div class="fill" style="width:92%;background:#0984e3;"></div></div></div>
+    <div class="skill"><div class="header"><span class="name">TypeScript</span><span class="pct">88%</span></div><div class="bar"><div class="fill" style="width:88%;background:#6c5ce7;"></div></div></div>
+    <div class="skill"><div class="header"><span class="name">Node.js</span><span class="pct">85%</span></div><div class="bar"><div class="fill" style="width:85%;background:#00b894;"></div></div></div>
+    <div class="skill"><div class="header"><span class="name">Python</span><span class="pct">78%</span></div><div class="bar"><div class="fill" style="width:78%;background:#e17055;"></div></div></div>
+    <div class="skill"><div class="header"><span class="name">CSS/Design</span><span class="pct">90%</span></div><div class="bar"><div class="fill" style="width:90%;background:#a29bfe;"></div></div></div>
+
+    <div class="section-title" style="margin-top:14px;">Contact Me</div>
+    <form class="contact-form">
+      <input type="text" placeholder="Your Name">
+      <input type="email" placeholder="Your Email">
+      <textarea placeholder="Your message..."></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

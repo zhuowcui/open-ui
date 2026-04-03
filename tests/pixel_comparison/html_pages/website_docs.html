@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Documentation Website</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #ffffff; overflow: hidden; }
+a { text-decoration: none; color: #0984e3; }
+
+/* Header */
+.header { background: #1a1a2e; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; }
+.header .logo { font-size: 14px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px; }
+.header .logo span { background: #6c5ce7; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+.header .search { flex: 1; max-width: 300px; margin: 0 16px; }
+.header .search input { width: 100%; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; font-size: 11px; background: rgba(255,255,255,0.1); color: #ffffff; font-family: inherit; }
+.header .version { background: #00b894; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; }
+
+/* Layout */
+.layout { display: flex; height: calc(600px - 34px); }
+
+/* Sidebar nav */
+.sidebar { width: 180px; background: #f8f9fa; border-right: 1px solid #dfe6e9; padding: 12px 0; overflow: hidden; }
+.sidebar .section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #636e72; padding: 8px 16px 4px; letter-spacing: 0.5px; }
+.sidebar .nav-item { display: block; padding: 4px 16px; font-size: 11px; color: #636e72; border-left: 2px solid transparent; }
+.sidebar .nav-item:hover { color: #2d3436; background: #ffffff; }
+.sidebar .nav-item.active { color: #6c5ce7; border-left-color: #6c5ce7; font-weight: 600; background: #ffffff; }
+.sidebar .nav-sub { padding-left: 28px; font-size: 10px; }
+
+/* Content */
+.content { flex: 1; padding: 16px 24px; overflow: hidden; }
+
+/* Breadcrumbs */
+.breadcrumbs { font-size: 10px; color: #b2bec3; margin-bottom: 12px; }
+.breadcrumbs a { color: #636e72; }
+
+/* Doc styles */
+.doc h1 { font-size: 22px; font-weight: 800; color: #2d3436; margin-bottom: 4px; }
+.doc .subtitle { font-size: 12px; color: #636e72; margin-bottom: 12px; line-height: 1.4; }
+.doc h2 { font-size: 14px; font-weight: 700; color: #2d3436; margin: 14px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #dfe6e9; }
+.doc h3 { font-size: 12px; font-weight: 600; color: #2d3436; margin: 10px 0 4px; }
+.doc p { font-size: 11px; color: #636e72; line-height: 1.6; margin-bottom: 8px; }
+.doc code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-family: monospace; font-size: 10px; color: #e17055; }
+.doc pre { background: #1a1a2e; color: #a29bfe; padding: 10px 12px; border-radius: 6px; font-family: monospace; font-size: 10px; margin: 8px 0; line-height: 1.5; overflow: hidden; }
+.doc pre .comment { color: #636e72; }
+.doc pre .keyword { color: #6c5ce7; }
+.doc pre .string { color: #00b894; }
+.doc pre .fn { color: #fdcb6e; }
+
+/* Table */
+.doc table { width: 100%; border-collapse: collapse; font-size: 10px; margin: 8px 0; }
+.doc table th { text-align: left; background: #f8f9fa; padding: 6px 10px; border: 1px solid #dfe6e9; font-weight: 600; color: #2d3436; }
+.doc table td { padding: 6px 10px; border: 1px solid #dfe6e9; color: #636e72; }
+
+/* Callout */
+.callout { border-radius: 6px; padding: 10px 12px; margin: 8px 0; font-size: 10px; line-height: 1.5; display: flex; gap: 8px; }
+.callout .icon { font-size: 14px; flex-shrink: 0; }
+.callout-info { background: #d1ecf1; color: #0c5460; border-left: 3px solid #0984e3; }
+.callout-warning { background: #fff3cd; color: #856404; border-left: 3px solid #f39c12; }
+.callout-danger { background: #f8d7da; color: #721c24; border-left: 3px solid #e74c3c; }
+.callout-tip { background: #d4edda; color: #155724; border-left: 3px solid #00b894; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">DocHub <span>v3.2</span></div>
+  <div class="search"><input type="text" placeholder="Search documentation... (Ctrl+K)"></div>
+  <span class="version">v3.2.1</span>
+</header>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="section-label">Getting Started</div>
+    <a class="nav-item" href="#">Introduction</a>
+    <a class="nav-item active" href="#">Installation</a>
+    <a class="nav-item" href="#">Quick Start</a>
+    <a class="nav-item" href="#">Configuration</a>
+    <div class="section-label">Core Concepts</div>
+    <a class="nav-item" href="#">Architecture</a>
+    <a class="nav-item" href="#">Components</a>
+    <a class="nav-sub nav-item" href="#">Props</a>
+    <a class="nav-sub nav-item" href="#">State</a>
+    <a class="nav-sub nav-item" href="#">Events</a>
+    <a class="nav-item" href="#">Routing</a>
+    <a class="nav-item" href="#">Data Fetching</a>
+    <div class="section-label">API Reference</div>
+    <a class="nav-item" href="#">Client API</a>
+    <a class="nav-item" href="#">Server API</a>
+    <a class="nav-item" href="#">CLI Reference</a>
+    <div class="section-label">Guides</div>
+    <a class="nav-item" href="#">Authentication</a>
+    <a class="nav-item" href="#">Deployment</a>
+    <a class="nav-item" href="#">Testing</a>
+  </nav>
+  <main class="content">
+    <div class="breadcrumbs">
+      <a href="#">Docs</a> &gt; <a href="#">Getting Started</a> &gt; <strong>Installation</strong>
+    </div>
+    <div class="doc">
+      <h1>Installation</h1>
+      <p class="subtitle">Get up and running with DocHub in under 5 minutes. This guide covers installation via npm, yarn, and from source.</p>
+
+      <h2>Prerequisites</h2>
+      <table>
+        <thead><tr><th>Requirement</th><th>Minimum Version</th><th>Recommended</th></tr></thead>
+        <tbody>
+          <tr><td>Node.js</td><td>18.0</td><td>20.x LTS</td></tr>
+          <tr><td>npm</td><td>9.0</td><td>10.x</td></tr>
+          <tr><td>OS</td><td>macOS, Linux, Windows</td><td>macOS / Linux</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Install via npm</h2>
+      <p>The fastest way to get started is installing the CLI globally:</p>
+      <pre><span class="comment"># Install globally</span>
+<span class="keyword">npm</span> install -g <span class="string">@dochub/cli</span>
+
+<span class="comment"># Create a new project</span>
+<span class="keyword">dochub</span> <span class="fn">init</span> <span class="string">my-project</span>
+<span class="keyword">cd</span> my-project</pre>
+
+      <div class="callout callout-info">
+        <span class="icon">&#9432;</span>
+        <div><strong>Note:</strong> If you prefer not to install globally, you can use <code>npx @dochub/cli init</code> instead.</div>
+      </div>
+
+      <h2>Configuration</h2>
+      <p>After installation, create a <code>dochub.config.js</code> file in your project root:</p>
+      <pre><span class="keyword">export default</span> {
+  <span class="fn">title</span>: <span class="string">"My Documentation"</span>,
+  <span class="fn">theme</span>: <span class="string">"default"</span>,
+  <span class="fn">sidebar</span>: <span class="keyword">true</span>,
+  <span class="fn">search</span>: { <span class="fn">provider</span>: <span class="string">"local"</span> }
+};</pre>
+
+      <div class="callout callout-warning">
+        <span class="icon">&#9888;</span>
+        <div><strong>Warning:</strong> The <code>theme</code> field is required. Omitting it will cause a build error.</div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="icon">&#10004;</span>
+        <div><strong>Tip:</strong> Run <code>dochub dev</code> to start a local development server with hot reload at <code>localhost:3000</code>.</div>
+      </div>
+
+      <h3>Available Options</h3>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>string</td><td>"Docs"</td><td>Site title shown in header</td></tr>
+          <tr><td><code>theme</code></td><td>string</td><td>—</td><td>Theme name or path</td></tr>
+          <tr><td><code>sidebar</code></td><td>boolean</td><td>true</td><td>Show sidebar navigation</td></tr>
+          <tr><td><code>search</code></td><td>object</td><td>{}</td><td>Search configuration</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

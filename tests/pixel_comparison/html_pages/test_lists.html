@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Lists Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 12px; color: #2d3436; background: #ffffff; overflow: hidden; }
+.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 6px; }
+.cell { background: #f8f9fa; border: 1px solid #dfe6e9; border-radius: 4px; padding: 6px; overflow: hidden; }
+.cell h3 { margin: 0 0 3px; font-size: 10px; color: #6c5ce7; text-transform: uppercase; }
+.cell ul, .cell ol, .cell dl { margin: 2px 0; padding-left: 20px; font-size: 11px; }
+.cell dl { padding-left: 0; }
+.cell li { margin: 1px 0; }
+.span2 { grid-column: span 2; }
+.span3 { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <!-- UL variants -->
+  <div class="cell">
+    <h3>ul - disc (default)</h3>
+    <ul style="list-style-type:disc;">
+      <li>Apple</li><li>Banana</li><li>Cherry</li>
+    </ul>
+  </div>
+  <div class="cell">
+    <h3>ul - circle</h3>
+    <ul style="list-style-type:circle;">
+      <li>Dog</li><li>Cat</li><li>Bird</li>
+    </ul>
+  </div>
+  <div class="cell">
+    <h3>ul - square</h3>
+    <ul style="list-style-type:square;">
+      <li>Red</li><li>Green</li><li>Blue</li>
+    </ul>
+  </div>
+
+  <!-- OL variants -->
+  <div class="cell">
+    <h3>ol - decimal (default)</h3>
+    <ol style="list-style-type:decimal;">
+      <li>First</li><li>Second</li><li>Third</li>
+    </ol>
+  </div>
+  <div class="cell">
+    <h3>ol - lower-alpha</h3>
+    <ol style="list-style-type:lower-alpha;">
+      <li>Alpha</li><li>Beta</li><li>Gamma</li>
+    </ol>
+  </div>
+  <div class="cell">
+    <h3>ol - upper-roman</h3>
+    <ol style="list-style-type:upper-roman;">
+      <li>One</li><li>Two</li><li>Three</li>
+    </ol>
+  </div>
+
+  <!-- OL attributes -->
+  <div class="cell">
+    <h3>ol - reversed</h3>
+    <ol reversed>
+      <li>Third</li><li>Second</li><li>First</li>
+    </ol>
+  </div>
+  <div class="cell">
+    <h3>ol - start=5</h3>
+    <ol start="5">
+      <li>Fifth</li><li>Sixth</li><li>Seventh</li>
+    </ol>
+  </div>
+  <div class="cell">
+    <h3>ol - lower-greek</h3>
+    <ol style="list-style-type:lower-greek;">
+      <li>Alpha</li><li>Beta</li><li>Gamma</li>
+    </ol>
+  </div>
+
+  <!-- DL -->
+  <div class="cell">
+    <h3>dl - definition list</h3>
+    <dl>
+      <dt style="font-weight:700;color:#6c5ce7;">HTML</dt>
+      <dd style="margin-left:16px;color:#636e72;">HyperText Markup Language</dd>
+      <dt style="font-weight:700;color:#6c5ce7;">CSS</dt>
+      <dd style="margin-left:16px;color:#636e72;">Cascading Style Sheets</dd>
+      <dt style="font-weight:700;color:#6c5ce7;">JS</dt>
+      <dd style="margin-left:16px;color:#636e72;">JavaScript</dd>
+    </dl>
+  </div>
+
+  <!-- Nested lists -->
+  <div class="cell span2">
+    <h3>Nested Lists (3 levels)</h3>
+    <ul style="list-style-type:disc;">
+      <li>Fruits
+        <ul style="list-style-type:circle;">
+          <li>Citrus
+            <ul style="list-style-type:square;">
+              <li>Orange</li><li>Lemon</li><li>Lime</li>
+            </ul>
+          </li>
+          <li>Berries
+            <ul style="list-style-type:square;">
+              <li>Strawberry</li><li>Blueberry</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Vegetables
+        <ul style="list-style-type:circle;">
+          <li>Root
+            <ul style="list-style-type:square;">
+              <li>Carrot</li><li>Potato</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Nested OL in UL -->
+  <div class="cell">
+    <h3>Mixed: ul &gt; ol</h3>
+    <ul>
+      <li>Group A
+        <ol style="list-style-type:decimal;">
+          <li>Item 1</li><li>Item 2</li>
+        </ol>
+      </li>
+      <li>Group B
+        <ol style="list-style-type:lower-alpha;">
+          <li>Item a</li><li>Item b</li>
+        </ol>
+      </li>
+    </ul>
+  </div>
+  <div class="cell">
+    <h3>Styled DL (horizontal)</h3>
+    <dl style="display:grid;grid-template-columns:auto 1fr;gap:2px 8px;">
+      <dt style="font-weight:700;color:#e17055;">Name:</dt>
+      <dd style="margin:0;color:#2d3436;">John Doe</dd>
+      <dt style="font-weight:700;color:#e17055;">Email:</dt>
+      <dd style="margin:0;color:#2d3436;">john@test.com</dd>
+      <dt style="font-weight:700;color:#e17055;">Role:</dt>
+      <dd style="margin:0;color:#2d3436;">Developer</dd>
+    </dl>
+  </div>
+
+  <!-- Custom list styles -->
+  <div class="cell">
+    <h3>ul - none (custom markers)</h3>
+    <ul style="list-style:none;padding-left:0;">
+      <li style="padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#27ae60;">&#10003;</span> Completed</li>
+      <li style="padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#27ae60;">&#10003;</span> Done</li>
+      <li style="padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#e74c3c;">&#10007;</span> Failed</li>
+      <li style="padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#f39c12;">&#9679;</span> Pending</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

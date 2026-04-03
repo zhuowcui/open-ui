@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Email Client</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #f0f2f5; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Header */
+.header { background: #ffffff; border-bottom: 1px solid #dfe6e9; padding: 6px 12px; display: flex; align-items: center; gap: 12px; }
+.header .logo { font-size: 14px; font-weight: 800; color: #0984e3; }
+.header .search { flex: 1; }
+.header .search input { width: 100%; padding: 5px 12px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 10px; background: #f8f9fa; font-family: inherit; }
+.header .avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+
+/* Layout */
+.layout { display: flex; height: calc(600px - 36px); }
+
+/* Folder sidebar */
+.folder-sidebar { width: 140px; background: #ffffff; border-right: 1px solid #dfe6e9; padding: 8px 0; }
+.compose-btn { display: block; margin: 4px 10px 8px; padding: 7px; background: #0984e3; color: #ffffff; border: none; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; width: calc(100% - 20px); }
+.folder { display: flex; align-items: center; justify-content: space-between; padding: 5px 12px; font-size: 11px; cursor: pointer; border-left: 3px solid transparent; }
+.folder:hover { background: #f8f9fa; }
+.folder.active { background: #e8f4fd; color: #0984e3; font-weight: 600; border-left-color: #0984e3; }
+.folder .icon { margin-right: 6px; font-size: 12px; }
+.folder .count { background: #dfe6e9; color: #636e72; padding: 1px 6px; border-radius: 8px; font-size: 9px; font-weight: 600; }
+.folder.active .count { background: #0984e3; color: #ffffff; }
+.folder-divider { border-top: 1px solid #dfe6e9; margin: 6px 12px; }
+
+/* Email list */
+.email-list { width: 260px; border-right: 1px solid #dfe6e9; background: #ffffff; overflow: hidden; }
+.email-list-header { padding: 8px 10px; border-bottom: 1px solid #dfe6e9; display: flex; align-items: center; justify-content: space-between; }
+.email-list-header h3 { font-size: 12px; font-weight: 700; }
+.email-list-header .sort { font-size: 9px; color: #636e72; }
+.email-item { display: flex; gap: 8px; padding: 8px 10px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+.email-item:hover { background: #f8f9fa; }
+.email-item.active { background: #e8f4fd; border-left: 3px solid #0984e3; }
+.email-item.unread .sender { font-weight: 700; color: #2d3436; }
+.email-item .e-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; font-weight: 700; }
+.email-item .e-content { flex: 1; min-width: 0; }
+.email-item .sender { font-size: 10px; color: #636e72; }
+.email-item .subject { font-size: 10px; font-weight: 600; color: #2d3436; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-item .preview { font-size: 9px; color: #b2bec3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-item .time { font-size: 8px; color: #b2bec3; flex-shrink: 0; }
+.email-item .attachment-icon { font-size: 9px; color: #636e72; }
+
+/* Preview pane */
+.preview-pane { flex: 1; background: #ffffff; padding: 14px; overflow: hidden; }
+.preview-pane .p-header { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #dfe6e9; }
+.preview-pane .p-subject { font-size: 16px; font-weight: 700; color: #2d3436; margin-bottom: 6px; }
+.preview-pane .p-meta { display: flex; align-items: center; gap: 8px; }
+.preview-pane .p-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+.preview-pane .p-from { font-size: 11px; font-weight: 600; }
+.preview-pane .p-to { font-size: 9px; color: #636e72; }
+.preview-pane .p-date { font-size: 9px; color: #b2bec3; margin-left: auto; }
+.preview-pane .p-body { font-size: 11px; color: #636e72; line-height: 1.7; margin-bottom: 12px; }
+.preview-pane .p-body p { margin-bottom: 8px; }
+
+/* Attachments */
+.attachments { display: flex; gap: 6px; flex-wrap: wrap; }
+.attachment-badge { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f8f9fa; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 9px; color: #636e72; }
+.attachment-badge .ext { background: #0984e3; color: #fff; padding: 1px 4px; border-radius: 3px; font-size: 8px; font-weight: 700; }
+.attachment-badge .ext.pdf { background: #e74c3c; }
+.attachment-badge .ext.img { background: #00b894; }
+.attachment-badge .ext.doc { background: #0984e3; }
+
+/* Quick compose */
+.quick-compose { margin-top: 12px; padding-top: 10px; border-top: 1px solid #dfe6e9; }
+.quick-compose .compose-row { display: flex; gap: 4px; }
+.quick-compose input { flex: 1; padding: 6px 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 10px; font-family: inherit; }
+.quick-compose button { padding: 6px 14px; background: #0984e3; color: #fff; border: none; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">MailBox</div>
+  <div class="search"><input type="text" placeholder="Search emails..."></div>
+  <div class="avatar"></div>
+</header>
+<div class="layout">
+  <nav class="folder-sidebar">
+    <button class="compose-btn">&#9998; Compose</button>
+    <div class="folder active"><span><span class="icon">&#128233;</span>Inbox</span><span class="count">24</span></div>
+    <div class="folder"><span><span class="icon">&#11088;</span>Starred</span><span class="count">5</span></div>
+    <div class="folder"><span><span class="icon">&#128228;</span>Sent</span></div>
+    <div class="folder"><span><span class="icon">&#128196;</span>Drafts</span><span class="count">2</span></div>
+    <div class="folder-divider"></div>
+    <div class="folder"><span><span class="icon">&#128681;</span>Spam</span><span class="count">8</span></div>
+    <div class="folder"><span><span class="icon">&#128465;</span>Trash</span></div>
+    <div class="folder-divider"></div>
+    <div class="folder"><span><span class="icon">&#128204;</span>Work</span></div>
+    <div class="folder"><span><span class="icon">&#128204;</span>Personal</span></div>
+    <div class="folder"><span><span class="icon">&#128204;</span>Finance</span></div>
+  </nav>
+
+  <div class="email-list">
+    <div class="email-list-header">
+      <h3>Inbox</h3>
+      <span class="sort">Newest first &#9662;</span>
+    </div>
+    <div class="email-item active unread">
+      <div class="e-avatar" style="background:#6c5ce7;">AC</div>
+      <div class="e-content">
+        <div class="sender">Alice Chen</div>
+        <div class="subject">Q3 Design Review Meeting Notes</div>
+        <div class="preview">Hi team, attached are the notes from our design review meeting yesterday. Please...</div>
+      </div>
+      <div><div class="time">10:24 AM</div><div class="attachment-icon">&#128206;</div></div>
+    </div>
+    <div class="email-item unread">
+      <div class="e-avatar" style="background:#00b894;">BS</div>
+      <div class="e-content">
+        <div class="sender">Bob Smith</div>
+        <div class="subject">Project Alpha - Sprint Update</div>
+        <div class="preview">Quick update on Sprint 14: We completed 23 out of 28 story points...</div>
+      </div>
+      <div><div class="time">9:45 AM</div></div>
+    </div>
+    <div class="email-item">
+      <div class="e-avatar" style="background:#e17055;">CW</div>
+      <div class="e-content">
+        <div class="sender">Carol White</div>
+        <div class="subject">Re: Budget Proposal 2025</div>
+        <div class="preview">I've reviewed the numbers and I think we need to adjust the marketing...</div>
+      </div>
+      <div><div class="time">Yesterday</div></div>
+    </div>
+    <div class="email-item">
+      <div class="e-avatar" style="background:#f39c12;">DJ</div>
+      <div class="e-content">
+        <div class="sender">Dave Johnson</div>
+        <div class="subject">Team Offsite Planning</div>
+        <div class="preview">Hey everyone! I'm starting to plan our Q4 team offsite. Thinking about...</div>
+      </div>
+      <div><div class="time">Yesterday</div><div class="attachment-icon">&#128206;</div></div>
+    </div>
+    <div class="email-item">
+      <div class="e-avatar" style="background:#0984e3;">EB</div>
+      <div class="e-content">
+        <div class="sender">Eve Brown</div>
+        <div class="subject">API Documentation Updates</div>
+        <div class="preview">I've pushed the latest API docs to the staging site. Key changes include...</div>
+      </div>
+      <div><div class="time">Mon</div></div>
+    </div>
+    <div class="email-item">
+      <div class="e-avatar" style="background:#636e72;">FL</div>
+      <div class="e-content">
+        <div class="sender">Frank Lee</div>
+        <div class="subject">Weekly Standup Notes</div>
+        <div class="preview">Blockers: CI pipeline timeout on integration tests. Need DevOps support for...</div>
+      </div>
+      <div><div class="time">Mon</div></div>
+    </div>
+  </div>
+
+  <div class="preview-pane">
+    <div class="p-header">
+      <div class="p-subject">Q3 Design Review Meeting Notes</div>
+      <div class="p-meta">
+        <div class="p-avatar" style="background:#6c5ce7;">AC</div>
+        <div>
+          <div class="p-from">Alice Chen &lt;alice@company.com&gt;</div>
+          <div class="p-to">to me, design-team, bob@company.com</div>
+        </div>
+        <div class="p-date">Today, 10:24 AM</div>
+      </div>
+    </div>
+    <div class="p-body">
+      <p>Hi team,</p>
+      <p>Attached are the notes from our design review meeting yesterday. Here are the key takeaways:</p>
+      <p><strong>1. Homepage Redesign</strong> — We agreed on the new hero section layout with the gradient background. Sarah will finalize the mockups by Friday.</p>
+      <p><strong>2. Component Library</strong> — The button and form components are ready for dev handoff. Bob, can you create the Jira tickets?</p>
+      <p><strong>3. Mobile Navigation</strong> — We need to revisit the hamburger menu approach. The user testing showed some usability issues with the current design.</p>
+      <p>Let me know if I missed anything. Next review is scheduled for July 5th.</p>
+      <p>Best,<br>Alice</p>
+    </div>
+    <div class="attachments">
+      <div class="attachment-badge"><span class="ext pdf">PDF</span> design-review-notes.pdf (2.4 MB)</div>
+      <div class="attachment-badge"><span class="ext img">PNG</span> hero-mockup-v3.png (845 KB)</div>
+      <div class="attachment-badge"><span class="ext doc">DOC</span> component-specs.docx (128 KB)</div>
+    </div>
+    <div class="quick-compose">
+      <div class="compose-row">
+        <input type="text" placeholder="Reply to Alice Chen...">
+        <button>Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

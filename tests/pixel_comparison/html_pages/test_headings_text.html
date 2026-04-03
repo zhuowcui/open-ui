@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Headings &amp; Text Properties Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 12px; color: #2d3436; background: #ffffff; overflow: hidden; }
+.container { display: flex; gap: 8px; padding: 6px; height: 600px; }
+.left, .right { flex: 1; overflow: hidden; }
+.section { margin-bottom: 6px; }
+.section-label { font-size: 10px; font-weight: 700; color: #fff; background: #6c5ce7; padding: 2px 6px; border-radius: 2px; display: inline-block; margin-bottom: 3px; }
+.demo-row { display: flex; align-items: baseline; gap: 6px; margin: 1px 0; }
+.prop-name { font-size: 9px; color: #636e72; min-width: 70px; text-align: right; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="left">
+    <div class="section">
+      <span class="section-label">Headings h1-h6 (default sizes)</span>
+      <h1 style="margin:2px 0;color:#2d3436;">Heading 1</h1>
+      <h2 style="margin:2px 0;color:#2d3436;">Heading 2</h2>
+      <h3 style="margin:2px 0;color:#2d3436;">Heading 3</h3>
+      <h4 style="margin:2px 0;color:#2d3436;">Heading 4</h4>
+      <h5 style="margin:2px 0;color:#2d3436;">Heading 5</h5>
+      <h6 style="margin:2px 0;color:#2d3436;">Heading 6</h6>
+    </div>
+
+    <div class="section">
+      <span class="section-label">Colored Headings</span>
+      <h3 style="margin:2px 0;color:#e74c3c;">Red Heading</h3>
+      <h3 style="margin:2px 0;color:#27ae60;">Green Heading</h3>
+      <h3 style="margin:2px 0;color:#2980b9;">Blue Heading</h3>
+      <h3 style="margin:2px 0;color:#8e44ad;">Purple Heading</h3>
+    </div>
+
+    <div class="section">
+      <span class="section-label">Paragraphs &amp; Breaks</span>
+      <p style="margin:2px 0;">First paragraph with normal text content.</p>
+      <p style="margin:2px 0;">Second paragraph.<br>Line break here.<br>Another line.</p>
+      <p style="margin:2px 0;">Supercalifragilisticexpiali<wbr>docious allows break here.</p>
+      <hr style="border:none;border-top:1px solid #dfe6e9;margin:4px 0;">
+      <hr style="border:none;border-top:2px dashed #6c5ce7;margin:4px 0;">
+      <hr style="border:none;border-top:3px double #e17055;margin:4px 0;">
+    </div>
+
+    <div class="section">
+      <span class="section-label">text-align</span>
+      <p style="margin:2px 0;text-align:left;background:#f8f9fa;padding:2px 4px;">Left aligned text</p>
+      <p style="margin:2px 0;text-align:center;background:#f8f9fa;padding:2px 4px;">Center aligned text</p>
+      <p style="margin:2px 0;text-align:right;background:#f8f9fa;padding:2px 4px;">Right aligned text</p>
+      <p style="margin:2px 0;text-align:justify;background:#f8f9fa;padding:2px 4px;">Justified text that needs to be long enough to wrap onto multiple lines for the justify effect to be visible.</p>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="section">
+      <span class="section-label">letter-spacing</span>
+      <div class="demo-row"><span class="prop-name">0px:</span><span style="letter-spacing:0px;">Normal spacing</span></div>
+      <div class="demo-row"><span class="prop-name">1px:</span><span style="letter-spacing:1px;">1px spacing</span></div>
+      <div class="demo-row"><span class="prop-name">2px:</span><span style="letter-spacing:2px;">2px spacing</span></div>
+      <div class="demo-row"><span class="prop-name">4px:</span><span style="letter-spacing:4px;">4px spacing</span></div>
+      <div class="demo-row"><span class="prop-name">-1px:</span><span style="letter-spacing:-1px;">Negative spacing</span></div>
+    </div>
+
+    <div class="section">
+      <span class="section-label">text-decoration</span>
+      <div class="demo-row"><span class="prop-name">underline:</span><span style="text-decoration:underline;">Underlined text</span></div>
+      <div class="demo-row"><span class="prop-name">overline:</span><span style="text-decoration:overline;">Overlined text</span></div>
+      <div class="demo-row"><span class="prop-name">line-through:</span><span style="text-decoration:line-through;">Line through text</span></div>
+      <div class="demo-row"><span class="prop-name">wavy red:</span><span style="text-decoration:underline wavy #e74c3c;">Wavy red underline</span></div>
+      <div class="demo-row"><span class="prop-name">dashed blue:</span><span style="text-decoration:underline dashed #2980b9;">Dashed blue underline</span></div>
+      <div class="demo-row"><span class="prop-name">dotted green:</span><span style="text-decoration:underline dotted #27ae60;">Dotted green underline</span></div>
+      <div class="demo-row"><span class="prop-name">double:</span><span style="text-decoration:underline double #8e44ad;">Double underline</span></div>
+    </div>
+
+    <div class="section">
+      <span class="section-label">text-transform</span>
+      <div class="demo-row"><span class="prop-name">none:</span><span style="text-transform:none;">hello World test</span></div>
+      <div class="demo-row"><span class="prop-name">uppercase:</span><span style="text-transform:uppercase;">hello World test</span></div>
+      <div class="demo-row"><span class="prop-name">lowercase:</span><span style="text-transform:lowercase;">HELLO World TEST</span></div>
+      <div class="demo-row"><span class="prop-name">capitalize:</span><span style="text-transform:capitalize;">hello world test</span></div>
+    </div>
+
+    <div class="section">
+      <span class="section-label">text-shadow</span>
+      <div class="demo-row"><span class="prop-name">simple:</span><span style="text-shadow:1px 1px 2px #636e72;font-size:14px;">Shadow text</span></div>
+      <div class="demo-row"><span class="prop-name">glow:</span><span style="text-shadow:0 0 8px #6c5ce7;font-size:14px;color:#6c5ce7;">Glow text</span></div>
+      <div class="demo-row"><span class="prop-name">hard:</span><span style="text-shadow:2px 2px 0 #e74c3c;font-size:14px;">Hard shadow</span></div>
+      <div class="demo-row"><span class="prop-name">multi:</span><span style="text-shadow:1px 1px 0 #e74c3c, 2px 2px 0 #f39c12, 3px 3px 0 #27ae60;font-size:14px;">Multi shadow</span></div>
+      <div class="demo-row"><span class="prop-name">outline:</span><span style="text-shadow:-1px -1px 0 #2d3436, 1px -1px 0 #2d3436, -1px 1px 0 #2d3436, 1px 1px 0 #2d3436;font-size:14px;color:#ffffff;">Outline text</span></div>
+    </div>
+
+    <div class="section">
+      <span class="section-label">Combined Heading Styles</span>
+      <h4 style="margin:2px 0;text-transform:uppercase;letter-spacing:3px;color:#6c5ce7;">Uppercase Spaced</h4>
+      <h4 style="margin:2px 0;text-decoration:underline #e17055;text-shadow:1px 1px 2px #b2bec3;">Decorated + Shadow</h4>
+      <h4 style="margin:2px 0;text-align:center;text-transform:capitalize;color:#00b894;">Centered Capitalized</h4>
+    </div>
+  </div>
+</div>
+</body>
+</html>

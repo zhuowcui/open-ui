@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Social Media Website</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #f0f2f5; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Header */
+.header { background: #ffffff; border-bottom: 1px solid #dfe6e9; padding: 6px 16px; display: flex; align-items: center; justify-content: space-between; }
+.header .logo { font-size: 18px; font-weight: 800; color: #6c5ce7; }
+.header .search input { padding: 5px 12px; border: 1px solid #dfe6e9; border-radius: 16px; font-size: 10px; width: 200px; background: #f8f9fa; font-family: inherit; }
+.header .icons { display: flex; gap: 8px; align-items: center; }
+.header .icon-btn { width: 28px; height: 28px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; }
+.header .icon-btn .badge { position: absolute; top: -2px; right: -2px; background: #e74c3c; color: #fff; font-size: 8px; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.header .avatar-sm { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+
+/* Layout */
+.layout { display: flex; height: calc(600px - 40px); }
+
+/* Left sidebar */
+.left-sidebar { width: 160px; padding: 10px; overflow: hidden; }
+.profile-mini { text-align: center; padding: 10px; background: #ffffff; border-radius: 10px; margin-bottom: 8px; }
+.profile-mini .avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #6c5ce7, #a29bfe); margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 800; }
+.profile-mini .name { font-size: 11px; font-weight: 700; }
+.profile-mini .handle { font-size: 9px; color: #636e72; }
+.profile-mini .stats { display: flex; justify-content: center; gap: 12px; margin-top: 6px; font-size: 9px; color: #636e72; }
+.profile-mini .stats strong { color: #2d3436; display: block; }
+
+/* Stories */
+.stories { display: flex; gap: 6px; margin-bottom: 10px; overflow: hidden; }
+.story { flex-shrink: 0; text-align: center; }
+.story .ring { width: 44px; height: 44px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #6c5ce7, #e17055); }
+.story .ring .inner { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #f0f2f5; }
+.story .label { font-size: 8px; margin-top: 2px; color: #636e72; }
+
+/* Feed */
+.feed { flex: 1; padding: 10px; overflow: hidden; }
+
+/* Post card */
+.post { background: #ffffff; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.post .post-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+.post .post-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; }
+.post .post-info .name { font-size: 11px; font-weight: 600; }
+.post .post-info .time { font-size: 9px; color: #b2bec3; }
+.post .post-body { padding: 0 12px 8px; font-size: 11px; color: #636e72; line-height: 1.5; }
+.post .post-image { height: 100px; }
+.post .post-actions { display: flex; gap: 0; padding: 0 4px; border-top: 1px solid #f0f0f0; }
+.post .post-actions button { flex: 1; padding: 6px; background: none; border: none; font-size: 10px; color: #636e72; cursor: pointer; font-family: inherit; font-weight: 500; }
+.post .post-actions button:hover { background: #f8f9fa; }
+.post .post-actions button.liked { color: #e74c3c; font-weight: 700; }
+
+/* Comments */
+.comments { padding: 0 12px 8px; }
+.comment { display: flex; gap: 6px; margin-top: 6px; }
+.comment .c-avatar { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; }
+.comment .c-body { background: #f0f2f5; padding: 4px 8px; border-radius: 10px; font-size: 10px; }
+.comment .c-body .c-name { font-weight: 600; }
+.comment .c-body .c-text { color: #636e72; }
+.comment .c-meta { font-size: 8px; color: #b2bec3; margin-top: 2px; padding-left: 8px; }
+.comment .replies { margin-left: 30px; }
+.comment-nested { display: flex; gap: 6px; margin-top: 4px; }
+
+/* Right sidebar */
+.right-sidebar { width: 180px; padding: 10px; overflow: hidden; }
+
+/* Profile cards */
+.suggestion { display: flex; align-items: center; gap: 6px; padding: 6px 0; }
+.suggestion .s-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; }
+.suggestion .s-info .name { font-size: 10px; font-weight: 600; }
+.suggestion .s-info .mutual { font-size: 8px; color: #b2bec3; }
+.suggestion .follow-btn { margin-left: auto; background: #6c5ce7; color: #fff; border: none; padding: 3px 10px; border-radius: 12px; font-size: 9px; font-weight: 600; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+
+/* Notifications */
+.notif-list { max-height: 180px; overflow: hidden; }
+.notif { display: flex; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 9px; color: #636e72; line-height: 1.3; }
+.notif .n-avatar { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; }
+.notif strong { color: #2d3436; }
+.notif .n-time { color: #b2bec3; font-size: 8px; }
+
+.section-title { font-size: 10px; font-weight: 700; color: #2d3436; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #dfe6e9; }
+.card-panel { background: #ffffff; border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">SocialApp</div>
+  <div class="search"><input type="text" placeholder="Search people, posts..."></div>
+  <div class="icons">
+    <div class="icon-btn">&#9751;<div class="badge">3</div></div>
+    <div class="icon-btn">&#9993;<div class="badge">7</div></div>
+    <div class="icon-btn">&#128276;<div class="badge">12</div></div>
+    <div class="avatar-sm"></div>
+  </div>
+</header>
+<div class="layout">
+  <aside class="left-sidebar">
+    <div class="profile-mini">
+      <div class="avatar">J</div>
+      <div class="name">Jane Cooper</div>
+      <div class="handle">@janecooper</div>
+      <div class="stats">
+        <div><strong>1.2K</strong>Posts</div>
+        <div><strong>8.4K</strong>Followers</div>
+      </div>
+    </div>
+    <div class="card-panel">
+      <div class="section-title">Stories</div>
+      <div class="stories">
+        <div class="story"><div class="ring"><div class="inner" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);"></div></div><div class="label">Alex</div></div>
+        <div class="story"><div class="ring"><div class="inner" style="background:linear-gradient(135deg,#00b894,#55efc4);"></div></div><div class="label">Sarah</div></div>
+        <div class="story"><div class="ring"><div class="inner" style="background:linear-gradient(135deg,#e17055,#fab1a0);"></div></div><div class="label">Mike</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="feed">
+    <div class="post">
+      <div class="post-header">
+        <div class="post-avatar" style="background:linear-gradient(135deg,#00b894,#55efc4);"></div>
+        <div class="post-info"><div class="name">Sarah Chen</div><div class="time">2 hours ago</div></div>
+      </div>
+      <div class="post-body">Just launched my new side project! It's a tool that helps developers track their coding habits and improve productivity. Check it out and let me know what you think! &#128640;</div>
+      <div class="post-image" style="background:linear-gradient(135deg,#6c5ce7,#0984e3);"></div>
+      <div class="post-actions">
+        <button class="liked">&#9829; 234</button>
+        <button>&#128172; 42</button>
+        <button>&#8631; 18</button>
+        <button>&#128278; Share</button>
+      </div>
+      <div class="comments">
+        <div class="comment">
+          <div class="c-avatar" style="background:linear-gradient(135deg,#e17055,#fab1a0);"></div>
+          <div>
+            <div class="c-body"><span class="c-name">Mike Johnson</span> <span class="c-text">This looks amazing! Love the clean UI.</span></div>
+            <div class="c-meta">1h &middot; Like &middot; Reply</div>
+            <div class="comment-nested">
+              <div class="c-avatar" style="background:linear-gradient(135deg,#00b894,#55efc4);width:20px;height:20px;"></div>
+              <div>
+                <div class="c-body"><span class="c-name">Sarah Chen</span> <span class="c-text">Thanks Mike! Took me 3 months 😅</span></div>
+                <div class="c-meta">45m &middot; Like &middot; Reply</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="c-avatar" style="background:linear-gradient(135deg,#0984e3,#74b9ff);"></div>
+          <div>
+            <div class="c-body"><span class="c-name">Alex Rivera</span> <span class="c-text">Starred on GitHub! Great work.</span></div>
+            <div class="c-meta">30m &middot; Like &middot; Reply</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="post">
+      <div class="post-header">
+        <div class="post-avatar" style="background:linear-gradient(135deg,#fdcb6e,#f39c12);"></div>
+        <div class="post-info"><div class="name">Dave Wilson</div><div class="time">5 hours ago</div></div>
+      </div>
+      <div class="post-body">Hot take: TypeScript is the best thing that happened to JavaScript. The DX improvement with proper types is just incredible. Who agrees? &#129300;</div>
+      <div class="post-actions">
+        <button>&#9829; 189</button>
+        <button>&#128172; 87</button>
+        <button>&#8631; 34</button>
+        <button>&#128278; Share</button>
+      </div>
+    </div>
+  </main>
+
+  <aside class="right-sidebar">
+    <div class="card-panel">
+      <div class="section-title">Suggestions</div>
+      <div class="suggestion"><div class="s-avatar" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);"></div><div class="s-info"><div class="name">Emily Zhang</div><div class="mutual">4 mutual friends</div></div><button class="follow-btn">Follow</button></div>
+      <div class="suggestion"><div class="s-avatar" style="background:linear-gradient(135deg,#fdcb6e,#e17055);"></div><div class="s-info"><div class="name">Tom Harris</div><div class="mutual">2 mutual friends</div></div><button class="follow-btn">Follow</button></div>
+      <div class="suggestion"><div class="s-avatar" style="background:linear-gradient(135deg,#55efc4,#00b894);"></div><div class="s-info"><div class="name">Lisa Park</div><div class="mutual">7 mutual friends</div></div><button class="follow-btn">Follow</button></div>
+    </div>
+    <div class="card-panel">
+      <div class="section-title">Notifications</div>
+      <div class="notif-list">
+        <div class="notif"><div class="n-avatar" style="background:linear-gradient(135deg,#e17055,#fab1a0);"></div><div><strong>Mike Johnson</strong> liked your post about CSS Grid tips.<br><span class="n-time">10 min ago</span></div></div>
+        <div class="notif"><div class="n-avatar" style="background:linear-gradient(135deg,#0984e3,#74b9ff);"></div><div><strong>Alex Rivera</strong> started following you.<br><span class="n-time">1 hour ago</span></div></div>
+        <div class="notif"><div class="n-avatar" style="background:linear-gradient(135deg,#00b894,#55efc4);"></div><div><strong>Sarah Chen</strong> commented on your photo.<br><span class="n-time">3 hours ago</span></div></div>
+        <div class="notif"><div class="n-avatar" style="background:linear-gradient(135deg,#fdcb6e,#f39c12);"></div><div><strong>Dave Wilson</strong> shared your article.<br><span class="n-time">5 hours ago</span></div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+</body>
+</html>

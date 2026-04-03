@@ -1288,7 +1288,7 @@ static int RenderHTMLDir(const char* html_dir, const char* output_dir) {
 int main(int argc, char** argv) {
   if (argc < 2) {
     fprintf(stderr,
-            "Usage: %s <output_dir>\n"
+            "Usage: %s <output_dir> [--html-dir <html_pages_dir>]\n"
             "       %s --html <html_dir> <output_dir>\n",
             argv[0], argv[0]);
     return 1;
@@ -1309,16 +1309,23 @@ int main(int argc, char** argv) {
   }
 
   const char* output_dir = argv[1];
+
+  // Optional: --html-dir <path> for SP6 load_html() tests
+  const char* html_dir = nullptr;
+  for (int i = 1; i < argc - 1; i++) {
+    if (strcmp(argv[i], "--html-dir") == 0) {
+      html_dir = argv[i + 1];
+    }
+  }
+
   printf("Rendering pages to %s\n", output_dir);
 
-  // Basic pages (SP5 core)
+  // ─── SP5 hand-crafted C API pages (14) ─────────────────────────────
   RenderRedBox(output_dir);
   RenderRGBFlex(output_dir);
   RenderBorderBox(output_dir);
   RenderNestedFlex(output_dir);
   RenderGridColors(output_dir);
-
-  // Complex CSS pages
   RenderRoundedShadows(output_dir);
   RenderTransforms(output_dir);
   RenderOpacityGradients(output_dir);
@@ -1328,6 +1335,61 @@ int main(int argc, char** argv) {
   RenderTypography(output_dir);
   RenderBordersShadows(output_dir);
   RenderDashboardLayout(output_dir);
+
+  // ─── SP6 pages via oui_document_load_html() ────────────────────────
+  // These test our HTML loading pipeline (element factory, UA styles,
+  // CSS parsing) by loading the same HTML files used for reference.
+  if (!html_dir) {
+    printf("NOTE: Pass --html-dir <path> to also render 25 SP6 test pages.\n");
+  } else {
+    static const char* kSP6Pages[] = {
+      "test_semantic_blocks",
+      "test_inline_text",
+      "test_headings_text",
+      "test_lists",
+      "test_tables",
+      "test_forms",
+      "test_flexbox",
+      "test_grid",
+      "test_positioning",
+      "test_box_model",
+      "test_colors_backgrounds",
+      "test_transforms_filters",
+      "test_advanced_css",
+      "test_svg_shapes",
+      "test_svg_advanced",
+      "website_blog",
+      "website_ecommerce",
+      "website_dashboard",
+      "website_landing",
+      "website_portfolio",
+      "website_news",
+      "website_docs",
+      "website_social",
+      "website_email",
+      "website_analytics",
+    };
+    for (const char* name : kSP6Pages) {
+      std::string html_path =
+          std::string(html_dir) + "/" + name + ".html";
+      std::string html;
+      if (!ReadFile(html_path.c_str(), &html)) {
+        printf("  %s: SKIP (cannot read %s)\n", name, html_path.c_str());
+        continue;
+      }
+      OuiDocument* doc = oui_document_create(800, 600);
+      OuiStatus s = oui_document_load_html(doc, html.c_str());
+      if (s != OUI_OK) {
+        printf("  %s: FAIL (load_html)\n", name);
+        oui_document_destroy(doc);
+        continue;
+      }
+      std::string png_path = MakePath(output_dir, (std::string(name) + ".png").c_str());
+      s = oui_document_render_to_png(doc, png_path.c_str());
+      printf("  %s: %s\n", name, s == OUI_OK ? "OK" : "FAIL");
+      oui_document_destroy(doc);
+    }
+  }
 
   oui_shutdown();
   printf("Done.\n");

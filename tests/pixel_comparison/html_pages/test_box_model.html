@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Box Model Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 10px; color: #2d3436; background: #f8f9fa; overflow: hidden; }
+.outer { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+.panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 4px; padding: 4px; overflow: hidden; }
+.panel h3 { margin: 0 0 3px; font-size: 9px; color: #6c5ce7; text-transform: uppercase; }
+.lbl { font-size: 8px; color: #636e72; margin: 1px 0; font-family: monospace; }
+.demo-box { display: inline-block; font-size: 9px; font-weight: 600; text-align: center; color: #ffffff; vertical-align: top; }
+.span2 { grid-column: span 2; }
+.row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="outer">
+  <!-- Margin -->
+  <div class="panel">
+    <h3>Margin</h3>
+    <div class="lbl">margin: auto (centering)</div>
+    <div style="background:#f0f0f0;padding:2px;margin-bottom:3px;">
+      <div style="width:120px;margin:0 auto;background:#6c5ce7;color:#fff;padding:3px;text-align:center;font-size:9px;border-radius:2px;">auto center</div>
+    </div>
+    <div class="lbl">negative margin (overlap)</div>
+    <div style="background:#f0f0f0;padding:4px;margin-bottom:3px;">
+      <div style="background:#00b894;color:#fff;padding:3px 6px;font-size:9px;border-radius:2px;display:inline-block;">Box A</div>
+      <div style="background:#e17055;color:#fff;padding:3px 6px;font-size:9px;border-radius:2px;display:inline-block;margin-left:-15px;">Box B (ml:-15)</div>
+    </div>
+    <div class="lbl">margin collapse (two 10px margins = 10px)</div>
+    <div style="background:#f0f0f0;padding:0 4px;overflow:hidden;">
+      <div style="background:#6c5ce7;color:#fff;padding:3px;margin:10px 0;font-size:9px;text-align:center;border-radius:2px;">margin:10px</div>
+      <div style="background:#0984e3;color:#fff;padding:3px;margin:10px 0;font-size:9px;text-align:center;border-radius:2px;">margin:10px</div>
+    </div>
+  </div>
+
+  <!-- Padding -->
+  <div class="panel">
+    <h3>Padding</h3>
+    <div class="row">
+      <div style="background:#6c5ce7;color:#fff;padding:2px;font-size:9px;border-radius:2px;">2px</div>
+      <div style="background:#00b894;color:#fff;padding:6px;font-size:9px;border-radius:2px;">6px</div>
+      <div style="background:#e17055;color:#fff;padding:12px;font-size:9px;border-radius:2px;">12px</div>
+      <div style="background:#0984e3;color:#fff;padding:4px 16px;font-size:9px;border-radius:2px;">4px 16px</div>
+    </div>
+    <div class="lbl">per-side padding</div>
+    <div style="background:#fdcb6e;display:inline-block;border-radius:2px;">
+      <div style="background:#2d3436;color:#fff;padding:2px 20px 10px 4px;font-size:9px;">top:2 right:20 bottom:10 left:4</div>
+    </div>
+  </div>
+
+  <!-- Border styles -->
+  <div class="panel span2">
+    <h3>Border Styles (all 8)</h3>
+    <div class="row">
+      <div class="demo-box" style="border:3px solid #6c5ce7;padding:4px 8px;color:#2d3436;">solid</div>
+      <div class="demo-box" style="border:3px dashed #e17055;padding:4px 8px;color:#2d3436;">dashed</div>
+      <div class="demo-box" style="border:3px dotted #00b894;padding:4px 8px;color:#2d3436;">dotted</div>
+      <div class="demo-box" style="border:4px double #0984e3;padding:4px 8px;color:#2d3436;">double</div>
+      <div class="demo-box" style="border:4px groove #b2bec3;padding:4px 8px;color:#2d3436;">groove</div>
+      <div class="demo-box" style="border:4px ridge #b2bec3;padding:4px 8px;color:#2d3436;">ridge</div>
+      <div class="demo-box" style="border:4px inset #b2bec3;padding:4px 8px;color:#2d3436;">inset</div>
+      <div class="demo-box" style="border:4px outset #b2bec3;padding:4px 8px;color:#2d3436;">outset</div>
+    </div>
+    <div class="lbl">border widths: 1px, 2px, 4px, 6px</div>
+    <div class="row">
+      <div class="demo-box" style="border:1px solid #6c5ce7;padding:3px 8px;color:#2d3436;">1px</div>
+      <div class="demo-box" style="border:2px solid #6c5ce7;padding:3px 8px;color:#2d3436;">2px</div>
+      <div class="demo-box" style="border:4px solid #6c5ce7;padding:3px 8px;color:#2d3436;">4px</div>
+      <div class="demo-box" style="border:6px solid #6c5ce7;padding:3px 8px;color:#2d3436;">6px</div>
+    </div>
+    <div class="lbl">per-side borders</div>
+    <div class="row">
+      <div class="demo-box" style="border-top:3px solid #e74c3c;border-right:3px dashed #27ae60;border-bottom:3px dotted #2980b9;border-left:3px double #f39c12;padding:4px 8px;color:#2d3436;">4 sides</div>
+      <div class="demo-box" style="border-left:4px solid #6c5ce7;padding:4px 8px;color:#2d3436;background:#f0f0f0;">left only</div>
+      <div class="demo-box" style="border-bottom:2px solid #e17055;padding:4px 8px;color:#2d3436;">bottom only</div>
+    </div>
+  </div>
+
+  <!-- Border-radius -->
+  <div class="panel">
+    <h3>border-radius</h3>
+    <div class="row">
+      <div class="demo-box" style="background:#6c5ce7;width:36px;height:36px;border-radius:0;">0</div>
+      <div class="demo-box" style="background:#00b894;width:36px;height:36px;border-radius:4px;">4px</div>
+      <div class="demo-box" style="background:#e17055;width:36px;height:36px;border-radius:10px;">10px</div>
+      <div class="demo-box" style="background:#0984e3;width:36px;height:36px;border-radius:50%;">50%</div>
+      <div class="demo-box" style="background:#fdcb6e;color:#2d3436;width:60px;height:36px;border-radius:18px;">pill</div>
+    </div>
+    <div class="lbl">per-corner radius</div>
+    <div class="row">
+      <div class="demo-box" style="background:#a29bfe;width:50px;height:36px;border-radius:12px 0 0 0;">TL</div>
+      <div class="demo-box" style="background:#fab1a0;color:#2d3436;width:50px;height:36px;border-radius:0 12px 12px 0;">TR+BR</div>
+      <div class="demo-box" style="background:#55efc4;color:#2d3436;width:50px;height:36px;border-radius:20px 0 20px 0;">TL+BR</div>
+    </div>
+  </div>
+
+  <!-- box-sizing & outline -->
+  <div class="panel">
+    <h3>box-sizing &amp; outline</h3>
+    <div class="lbl">content-box vs border-box (both width:100px)</div>
+    <div class="row">
+      <div style="width:100px;padding:10px;border:3px solid #6c5ce7;box-sizing:content-box;background:#dfe6e9;font-size:9px;">content-box (126px total)</div>
+      <div style="width:100px;padding:10px;border:3px solid #e17055;box-sizing:border-box;background:#ffeaa7;font-size:9px;">border-box (100px total)</div>
+    </div>
+    <div class="lbl">outline styles</div>
+    <div class="row">
+      <div class="demo-box" style="outline:2px solid #6c5ce7;padding:4px 8px;color:#2d3436;">solid</div>
+      <div class="demo-box" style="outline:2px dashed #e17055;padding:4px 8px;color:#2d3436;">dashed</div>
+      <div class="demo-box" style="outline:2px dotted #00b894;padding:4px 8px;color:#2d3436;">dotted</div>
+      <div class="demo-box" style="outline:3px solid #0984e3;outline-offset:3px;padding:4px 8px;color:#2d3436;">offset:3</div>
+    </div>
+  </div>
+
+  <!-- box-shadow -->
+  <div class="panel span2">
+    <h3>box-shadow (single, multiple, inset)</h3>
+    <div class="row" style="padding:6px;gap:8px;">
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:2px 2px 4px #b2bec3;border-radius:4px;">Simple</div>
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:0 4px 12px rgba(108,92,231,0.3);border-radius:4px;">Soft purple</div>
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:4px 4px 0 #2d3436;border-radius:4px;">Hard</div>
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:inset 0 2px 6px #b2bec3;border-radius:4px;">Inset</div>
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:inset 0 -3px 0 #6c5ce7;border-radius:4px;">Inset bottom</div>
+      <div class="demo-box" style="background:#6c5ce7;padding:8px 12px;color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.2),0 8px 16px rgba(108,92,231,0.3);border-radius:4px;">Multiple</div>
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:3px 3px 0 #e17055,-3px -3px 0 #0984e3;border-radius:4px;">Dual color</div>
+      <div class="demo-box" style="background:#ffffff;padding:8px 12px;color:#2d3436;box-shadow:0 0 0 2px #6c5ce7,0 0 0 4px #00b894,0 0 0 6px #e17055;border-radius:4px;">Ring</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

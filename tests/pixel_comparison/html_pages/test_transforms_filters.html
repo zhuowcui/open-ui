@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Transforms &amp; Filters Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 10px; color: #2d3436; background: #f8f9fa; overflow: hidden; }
+.outer { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+.panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 4px; padding: 4px; overflow: hidden; }
+.panel h3 { margin: 0 0 3px; font-size: 9px; color: #6c5ce7; text-transform: uppercase; }
+.lbl { font-size: 8px; color: #636e72; margin: 1px 0; font-family: monospace; }
+.row { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+.box { width: 44px; height: 44px; background: #6c5ce7; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; border-radius: 3px; flex-shrink: 0; }
+.img-box { width: 60px; height: 40px; background: linear-gradient(135deg, #e74c3c 0%, #f39c12 25%, #2ecc71 50%, #3498db 75%, #9b59b6 100%); border-radius: 3px; flex-shrink: 0; }
+.span2 { grid-column: span 2; }
+</style>
+</head>
+<body>
+<div class="outer">
+  <!-- Translate -->
+  <div class="panel">
+    <h3>translate</h3>
+    <div class="row">
+      <div class="box" style="transform:translate(0,0);">0,0</div>
+      <div class="box" style="transform:translate(10px,0);background:#00b894;">10,0</div>
+      <div class="box" style="transform:translate(0,8px);background:#e17055;">0,8</div>
+      <div class="box" style="transform:translate(10px,8px);background:#0984e3;">10,8</div>
+      <div class="box" style="transform:translate(-5px,-5px);background:#fdcb6e;color:#2d3436;">-5,-5</div>
+    </div>
+  </div>
+
+  <!-- Rotate -->
+  <div class="panel">
+    <h3>rotate</h3>
+    <div class="row">
+      <div class="box" style="transform:rotate(0deg);">0°</div>
+      <div class="box" style="transform:rotate(15deg);background:#00b894;">15°</div>
+      <div class="box" style="transform:rotate(45deg);background:#e17055;">45°</div>
+      <div class="box" style="transform:rotate(90deg);background:#0984e3;">90°</div>
+      <div class="box" style="transform:rotate(-30deg);background:#fdcb6e;color:#2d3436;">-30°</div>
+      <div class="box" style="transform:rotate(180deg);background:#a29bfe;">180°</div>
+    </div>
+  </div>
+
+  <!-- Scale -->
+  <div class="panel">
+    <h3>scale</h3>
+    <div class="row" style="height:50px;align-items:center;">
+      <div class="box" style="transform:scale(0.5);">0.5</div>
+      <div class="box" style="transform:scale(0.75);background:#00b894;">0.75</div>
+      <div class="box" style="transform:scale(1.0);background:#e17055;">1.0</div>
+      <div class="box" style="transform:scale(1.25);background:#0984e3;">1.25</div>
+      <div class="box" style="transform:scaleX(1.5);background:#fdcb6e;color:#2d3436;">X:1.5</div>
+      <div class="box" style="transform:scaleY(0.5);background:#a29bfe;">Y:0.5</div>
+    </div>
+  </div>
+
+  <!-- Skew -->
+  <div class="panel">
+    <h3>skew</h3>
+    <div class="row">
+      <div class="box" style="transform:skewX(0deg);">0</div>
+      <div class="box" style="transform:skewX(15deg);background:#00b894;">X:15</div>
+      <div class="box" style="transform:skewX(-15deg);background:#e17055;">X:-15</div>
+      <div class="box" style="transform:skewY(10deg);background:#0984e3;">Y:10</div>
+      <div class="box" style="transform:skew(10deg,5deg);background:#fdcb6e;color:#2d3436;">10,5</div>
+    </div>
+  </div>
+
+  <!-- Transform-origin -->
+  <div class="panel">
+    <h3>transform-origin + rotate(30deg)</h3>
+    <div class="row" style="height:50px;">
+      <div class="box" style="transform:rotate(30deg);transform-origin:center center;">center</div>
+      <div class="box" style="transform:rotate(30deg);transform-origin:top left;background:#00b894;">TL</div>
+      <div class="box" style="transform:rotate(30deg);transform-origin:bottom right;background:#e17055;">BR</div>
+      <div class="box" style="transform:rotate(30deg);transform-origin:top right;background:#0984e3;">TR</div>
+    </div>
+  </div>
+
+  <!-- Matrix -->
+  <div class="panel">
+    <h3>matrix transform</h3>
+    <div class="row">
+      <div class="box" style="transform:matrix(1,0,0,1,0,0);">identity</div>
+      <div class="box" style="transform:matrix(1,0.2,0,1,0,0);background:#00b894;">skew</div>
+      <div class="box" style="transform:matrix(0.87,0.5,-0.5,0.87,0,0);background:#e17055;">rotate</div>
+      <div class="box" style="transform:matrix(1.2,0,0,0.8,5,3);background:#0984e3;">combo</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="panel span2">
+    <h3>filter functions</h3>
+    <div class="row">
+      <div style="text-align:center;">
+        <div class="img-box"></div>
+        <div class="lbl">original</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:blur(2px);"></div>
+        <div class="lbl">blur(2px)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:brightness(1.5);"></div>
+        <div class="lbl">brightness(1.5)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:contrast(2);"></div>
+        <div class="lbl">contrast(2)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:grayscale(1);"></div>
+        <div class="lbl">grayscale(1)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:hue-rotate(90deg);"></div>
+        <div class="lbl">hue-rotate(90)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:invert(1);"></div>
+        <div class="lbl">invert(1)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:saturate(3);"></div>
+        <div class="lbl">saturate(3)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:sepia(1);"></div>
+        <div class="lbl">sepia(1)</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="img-box" style="filter:drop-shadow(3px 3px 2px #2d3436);"></div>
+        <div class="lbl">drop-shadow</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrop-filter -->
+  <div class="panel">
+    <h3>backdrop-filter</h3>
+    <div style="position:relative;height:60px;background:linear-gradient(135deg,#e74c3c,#f39c12,#2ecc71,#3498db,#9b59b6);border-radius:4px;overflow:hidden;">
+      <div style="position:absolute;top:5px;left:5px;width:90px;height:50px;backdrop-filter:blur(6px);background:rgba(255,255,255,0.2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#ffffff;">blur(6px)</div>
+      <div style="position:absolute;top:5px;left:105px;width:90px;height:50px;backdrop-filter:grayscale(1);background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#ffffff;">grayscale</div>
+      <div style="position:absolute;top:5px;left:205px;width:90px;height:50px;backdrop-filter:brightness(1.5) contrast(1.5);background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#ffffff;">bright+contrast</div>
+    </div>
+  </div>
+
+  <!-- mix-blend-mode -->
+  <div class="panel">
+    <h3>mix-blend-mode</h3>
+    <div style="position:relative;height:60px;background:#2d3436;border-radius:4px;overflow:hidden;">
+      <div style="position:absolute;top:5px;left:5px;width:40px;height:40px;border-radius:50%;background:#e74c3c;mix-blend-mode:screen;"></div>
+      <div style="position:absolute;top:5px;left:25px;width:40px;height:40px;border-radius:50%;background:#2ecc71;mix-blend-mode:screen;"></div>
+      <div style="position:absolute;top:20px;left:15px;width:40px;height:40px;border-radius:50%;background:#3498db;mix-blend-mode:screen;"></div>
+      <div style="position:absolute;top:8px;right:8px;font-size:8px;color:#ffffff;">
+        <div style="display:flex;gap:4px;margin-bottom:2px;">
+          <div style="width:24px;height:14px;background:#e74c3c;mix-blend-mode:multiply;border-radius:2px;"></div>
+          <span>multiply</span>
+        </div>
+        <div style="display:flex;gap:4px;margin-bottom:2px;">
+          <div style="width:24px;height:14px;background:#3498db;mix-blend-mode:overlay;border-radius:2px;"></div>
+          <span>overlay</span>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <div style="width:24px;height:14px;background:#2ecc71;mix-blend-mode:difference;border-radius:2px;"></div>
+          <span>difference</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

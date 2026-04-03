@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Inline Text Elements Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: #2d3436; background: #ffffff; overflow: hidden; }
+.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 6px; }
+.cell { background: #f8f9fa; border: 1px solid #dfe6e9; border-radius: 4px; padding: 6px; }
+.cell h3 { margin: 0 0 3px; font-size: 10px; color: #6c5ce7; text-transform: uppercase; letter-spacing: 0.5px; }
+.cell .example { margin: 2px 0; font-size: 12px; line-height: 1.5; }
+.tag { font-size: 9px; background: #e8e8e8; color: #555555; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+.section-title { grid-column: 1 / -1; font-size: 11px; font-weight: 700; color: #ffffff; background: #6c5ce7; padding: 4px 8px; border-radius: 4px; margin: 0; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="section-title">Default UA Styling</div>
+
+  <div class="cell">
+    <h3>strong &amp; b</h3>
+    <div class="example"><strong>Strong text</strong> vs <b>Bold text</b></div>
+    <div class="example">Normal <strong>strong inside</strong> normal</div>
+  </div>
+  <div class="cell">
+    <h3>em &amp; i</h3>
+    <div class="example"><em>Emphasized text</em> vs <i>Italic text</i></div>
+    <div class="example">Normal <em>emphasis inside</em> normal</div>
+  </div>
+  <div class="cell">
+    <h3>u &amp; s</h3>
+    <div class="example"><u>Underlined text</u> and <s>Strikethrough text</s></div>
+  </div>
+  <div class="cell">
+    <h3>small</h3>
+    <div class="example">Normal text <small>small text here</small> normal again</div>
+  </div>
+  <div class="cell">
+    <h3>sub &amp; sup</h3>
+    <div class="example">H<sub>2</sub>O and E=mc<sup>2</sup></div>
+    <div class="example">x<sub>i</sub><sup>2</sup> + y<sub>j</sub><sup>3</sup></div>
+  </div>
+  <div class="cell">
+    <h3>mark</h3>
+    <div class="example">This is <mark>highlighted text</mark> in a sentence</div>
+  </div>
+  <div class="cell">
+    <h3>code</h3>
+    <div class="example">Run <code>npm install</code> to install deps</div>
+  </div>
+  <div class="cell">
+    <h3>kbd</h3>
+    <div class="example">Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to copy</div>
+  </div>
+  <div class="cell">
+    <h3>var &amp; samp</h3>
+    <div class="example"><var>x</var> = <var>y</var> + 1</div>
+    <div class="example"><samp>Error: not found</samp></div>
+  </div>
+  <div class="cell">
+    <h3>abbr</h3>
+    <div class="example"><abbr title="HyperText Markup Language" style="text-decoration:underline dotted;">HTML</abbr> and <abbr title="Cascading Style Sheets" style="text-decoration:underline dotted;">CSS</abbr></div>
+  </div>
+  <div class="cell">
+    <h3>time</h3>
+    <div class="example">Published <time datetime="2024-01-15">January 15, 2024</time></div>
+  </div>
+  <div class="cell">
+    <h3>span</h3>
+    <div class="example"><span>Default span</span> <span style="color:#e17055;">Colored</span> <span style="font-weight:700;">Bold</span></div>
+  </div>
+
+  <div class="section-title">Custom Colors &amp; Sizes</div>
+
+  <div class="cell">
+    <h3>strong - colors</h3>
+    <div class="example">
+      <strong style="color:#e74c3c;">Red bold</strong>
+      <strong style="color:#27ae60;">Green bold</strong>
+      <strong style="color:#2980b9;">Blue bold</strong>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>em - sizes</h3>
+    <div class="example">
+      <em style="font-size:10px;">10px</em>
+      <em style="font-size:14px;">14px</em>
+      <em style="font-size:18px;">18px</em>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>mark - colors</h3>
+    <div class="example">
+      <mark style="background:#ff7675;color:#fff;">Red</mark>
+      <mark style="background:#74b9ff;">Blue</mark>
+      <mark style="background:#55efc4;">Green</mark>
+      <mark style="background:#fdcb6e;">Gold</mark>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>code - styled</h3>
+    <div class="example">
+      <code style="background:#2d3436;color:#00b894;padding:2px 4px;border-radius:2px;">dark</code>
+      <code style="background:#dfe6e9;color:#6c5ce7;padding:2px 4px;border-radius:2px;">light</code>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>kbd - styled</h3>
+    <div class="example">
+      <kbd style="background:#2d3436;color:#fff;padding:2px 6px;border-radius:3px;border:1px solid #636e72;font-size:11px;">Enter</kbd>
+      <kbd style="background:#ffffff;color:#2d3436;padding:2px 6px;border-radius:3px;border:1px solid #b2bec3;font-size:11px;box-shadow:0 1px 0 #b2bec3;">Space</kbd>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>Combined</h3>
+    <div class="example">
+      <strong><em style="color:#e17055;">Bold+Italic</em></strong>
+      <u><s style="color:#636e72;">Under+Strike</s></u>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>sub/sup colored</h3>
+    <div class="example">
+      A<sub style="color:#e74c3c;">red</sub><sup style="color:#2980b9;">blue</sup>
+      B<sub style="color:#27ae60;font-weight:700;">green</sub>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>span backgrounds</h3>
+    <div class="example">
+      <span style="background:#ff7675;color:#fff;padding:1px 4px;border-radius:2px;">Red</span>
+      <span style="background:#74b9ff;padding:1px 4px;border-radius:2px;">Blue</span>
+      <span style="background:#a29bfe;color:#fff;padding:1px 4px;border-radius:2px;">Purple</span>
+    </div>
+  </div>
+  <div class="cell">
+    <h3>Large decorated</h3>
+    <div class="example">
+      <span style="font-size:16px;color:#6c5ce7;text-decoration:underline wavy #e17055;">Wavy underline</span>
+    </div>
+  </div>
+
+  <div class="section-title">Inline Elements in Context</div>
+
+  <div class="cell" style="grid-column: 1 / -1;">
+    <div class="example" style="line-height:1.8;">
+      The <strong>quick</strong> <em>brown</em> <span style="color:#e17055;">fox</span> <u>jumps</u> <s>walks</s>
+      over the <mark>lazy</mark> <small>dog</small>. Use <code>git commit</code> and press <kbd>Enter</kbd>.
+      Water is H<sub>2</sub>O. Energy is E=mc<sup>2</sup>. The <var>result</var> was <samp>42</samp>.
+      Check <abbr title="Application Programming Interface" style="text-decoration:underline dotted;">API</abbr> docs
+      updated <time datetime="2024-06-01">June 1st</time>.
+      <strong><em>Bold italic</em></strong> and <span style="background:#ffeaa7;padding:1px 4px;border-radius:2px;">highlighted span</span>.
+    </div>
+  </div>
+</div>
+</body>
+</html>

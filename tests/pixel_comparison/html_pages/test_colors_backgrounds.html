@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Colors &amp; Backgrounds Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 10px; color: #2d3436; background: #ffffff; overflow: hidden; }
+.outer { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; padding: 4px; }
+.panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 4px; padding: 4px; overflow: hidden; }
+.panel h3 { margin: 0 0 3px; font-size: 9px; color: #6c5ce7; text-transform: uppercase; }
+.lbl { font-size: 8px; color: #636e72; margin: 1px 0; font-family: monospace; }
+.swatch { width: 100%; height: 32px; border-radius: 3px; margin-bottom: 2px; border: 1px solid #dfe6e9; }
+.row { display: flex; gap: 3px; margin-bottom: 2px; }
+.span2 { grid-column: span 2; }
+.span3 { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<div class="outer">
+  <!-- Background colors -->
+  <div class="panel">
+    <h3>background-color</h3>
+    <div class="row">
+      <div style="flex:1;height:24px;background:#e74c3c;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#e67e22;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#f1c40f;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#2ecc71;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#3498db;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#9b59b6;border-radius:3px;"></div>
+    </div>
+    <div class="row">
+      <div style="flex:1;height:24px;background:#1a1a2e;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#2d3436;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#636e72;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#b2bec3;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#dfe6e9;border-radius:3px;"></div>
+      <div style="flex:1;height:24px;background:#f8f9fa;border-radius:3px;border:1px solid #dfe6e9;"></div>
+    </div>
+  </div>
+
+  <!-- Linear gradients -->
+  <div class="panel">
+    <h3>linear-gradient</h3>
+    <div class="swatch" style="background:linear-gradient(to right,#6c5ce7,#00b894);"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#e74c3c,#f39c12,#f1c40f);"></div>
+    <div class="swatch" style="background:linear-gradient(to bottom,#0984e3,#6c5ce7,#e17055);"></div>
+    <div class="swatch" style="background:linear-gradient(45deg,#2d3436 25%,#6c5ce7 25%,#6c5ce7 50%,#2d3436 50%,#2d3436 75%,#6c5ce7 75%);background-size:20px 20px;"></div>
+  </div>
+
+  <!-- Radial gradients -->
+  <div class="panel">
+    <h3>radial-gradient</h3>
+    <div class="swatch" style="background:radial-gradient(circle,#6c5ce7,#2d3436);"></div>
+    <div class="swatch" style="background:radial-gradient(ellipse at top left,#00b894,#0984e3,#2d3436);"></div>
+    <div class="swatch" style="background:radial-gradient(circle at 30% 50%,#e17055 0%,#e17055 30%,#ffeaa7 30%,#ffeaa7 60%,#6c5ce7 60%);"></div>
+  </div>
+
+  <!-- Conic gradient -->
+  <div class="panel">
+    <h3>conic-gradient</h3>
+    <div class="row">
+      <div style="width:60px;height:60px;border-radius:50%;background:conic-gradient(#e74c3c,#f39c12,#f1c40f,#2ecc71,#3498db,#9b59b6,#e74c3c);"></div>
+      <div style="width:60px;height:60px;border-radius:50%;background:conic-gradient(from 90deg,#6c5ce7 0%,#6c5ce7 25%,#00b894 25%,#00b894 50%,#e17055 50%,#e17055 75%,#fdcb6e 75%);"></div>
+    </div>
+  </div>
+
+  <!-- Repeating gradients -->
+  <div class="panel">
+    <h3>repeating gradients</h3>
+    <div class="swatch" style="background:repeating-linear-gradient(45deg,#6c5ce7,#6c5ce7 8px,#a29bfe 8px,#a29bfe 16px);"></div>
+    <div class="swatch" style="background:repeating-linear-gradient(90deg,#e74c3c 0px,#e74c3c 4px,#ffffff 4px,#ffffff 8px);"></div>
+    <div class="swatch" style="background:repeating-radial-gradient(circle,#00b894,#00b894 6px,#ffffff 6px,#ffffff 12px);"></div>
+  </div>
+
+  <!-- background-size -->
+  <div class="panel">
+    <h3>background-size</h3>
+    <div class="lbl">cover</div>
+    <div class="swatch" style="background:linear-gradient(135deg,#6c5ce7 50%,#00b894 50%);background-size:cover;"></div>
+    <div class="lbl">contain (40px 40px on 100% wide)</div>
+    <div class="swatch" style="background:linear-gradient(135deg,#e17055 50%,#fdcb6e 50%);background-size:40px 40px;background-repeat:repeat;"></div>
+  </div>
+
+  <!-- background-position -->
+  <div class="panel">
+    <h3>background-position</h3>
+    <div class="row">
+      <div style="flex:1;height:40px;background:radial-gradient(circle 10px,#6c5ce7 100%,#f0f0f0 100%);background-repeat:no-repeat;background-position:left top;border:1px solid #dfe6e9;border-radius:3px;"></div>
+      <div style="flex:1;height:40px;background:radial-gradient(circle 10px,#e17055 100%,#f0f0f0 100%);background-repeat:no-repeat;background-position:center center;border:1px solid #dfe6e9;border-radius:3px;"></div>
+      <div style="flex:1;height:40px;background:radial-gradient(circle 10px,#00b894 100%,#f0f0f0 100%);background-repeat:no-repeat;background-position:right bottom;border:1px solid #dfe6e9;border-radius:3px;"></div>
+    </div>
+  </div>
+
+  <!-- background-repeat -->
+  <div class="panel">
+    <h3>background-repeat</h3>
+    <div class="lbl">repeat</div>
+    <div class="swatch" style="background:linear-gradient(45deg,#6c5ce7 25%,transparent 25%,transparent 75%,#6c5ce7 75%);background-size:12px 12px;background-color:#a29bfe;"></div>
+    <div class="lbl">no-repeat</div>
+    <div class="swatch" style="background:radial-gradient(circle 15px at center,#e17055,transparent);background-repeat:no-repeat;background-color:#f0f0f0;"></div>
+  </div>
+
+  <!-- Multiple backgrounds -->
+  <div class="panel">
+    <h3>Multiple Backgrounds</h3>
+    <div class="swatch" style="height:50px;background:
+      radial-gradient(circle 8px at 20% 30%,#e74c3c,transparent),
+      radial-gradient(circle 12px at 60% 50%,#3498db,transparent),
+      radial-gradient(circle 6px at 80% 20%,#2ecc71,transparent),
+      linear-gradient(135deg,#ffeaa7,#dfe6e9);"></div>
+  </div>
+
+  <!-- Opacity -->
+  <div class="panel">
+    <h3>opacity</h3>
+    <div class="row">
+      <div style="flex:1;height:28px;background:#6c5ce7;opacity:1.0;border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">1.0</div>
+      <div style="flex:1;height:28px;background:#6c5ce7;opacity:0.75;border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">0.75</div>
+      <div style="flex:1;height:28px;background:#6c5ce7;opacity:0.5;border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">0.5</div>
+      <div style="flex:1;height:28px;background:#6c5ce7;opacity:0.25;border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">0.25</div>
+      <div style="flex:1;height:28px;background:#6c5ce7;opacity:0.1;border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">0.1</div>
+    </div>
+  </div>
+
+  <!-- rgba / hsla -->
+  <div class="panel span2">
+    <h3>rgba &amp; hsla colors</h3>
+    <div class="row">
+      <div style="flex:1;height:28px;background:rgba(108,92,231,1.0);border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">rgba 1.0</div>
+      <div style="flex:1;height:28px;background:rgba(108,92,231,0.7);border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">rgba 0.7</div>
+      <div style="flex:1;height:28px;background:rgba(108,92,231,0.4);border-radius:3px;text-align:center;line-height:28px;font-size:9px;">rgba 0.4</div>
+      <div style="flex:1;height:28px;background:rgba(108,92,231,0.15);border-radius:3px;text-align:center;line-height:28px;font-size:9px;">rgba 0.15</div>
+    </div>
+    <div class="row">
+      <div style="flex:1;height:28px;background:hsla(0,80%,60%,1.0);border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">hsla red</div>
+      <div style="flex:1;height:28px;background:hsla(120,60%,50%,0.8);border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">hsla green</div>
+      <div style="flex:1;height:28px;background:hsla(240,70%,60%,0.6);border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">hsla blue</div>
+      <div style="flex:1;height:28px;background:hsla(300,60%,55%,0.5);border-radius:3px;text-align:center;color:#fff;line-height:28px;font-size:9px;">hsla purple</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Semantic Block Elements Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: #1a1a2e; background: #f8f9fa; overflow: hidden; }
+.label { font-size: 10px; font-weight: 700; color: #ffffff; background: #6c5ce7; padding: 2px 6px; display: inline-block; margin-bottom: 2px; border-radius: 2px; }
+.row { display: flex; gap: 8px; padding: 4px 8px; }
+.col { flex: 1; min-width: 0; }
+h2.title { font-size: 12px; margin: 4px 0 2px; color: #2d3436; border-bottom: 1px solid #dfe6e9; padding-bottom: 2px; }
+
+/* Section */
+section.demo { background: #dfe6e9; border: 1px solid #b2bec3; padding: 6px; margin: 2px 0; border-radius: 3px; }
+/* Article */
+article.demo { background: #ffeaa7; border: 1px solid #fdcb6e; padding: 6px; margin: 2px 0; border-radius: 3px; }
+/* Aside */
+aside.demo { background: #fab1a0; border-left: 4px solid #e17055; padding: 6px; margin: 2px 0; }
+/* Header */
+header.demo { background: #0984e3; color: #ffffff; padding: 6px 10px; margin: 2px 0; border-radius: 3px; }
+/* Footer */
+footer.demo { background: #2d3436; color: #dfe6e9; padding: 6px 10px; margin: 2px 0; border-radius: 3px; }
+/* Nav */
+nav.demo { background: #00cec9; padding: 4px 8px; margin: 2px 0; border-radius: 3px; }
+nav.demo a { color: #2d3436; text-decoration: none; margin-right: 8px; font-weight: 600; font-size: 11px; }
+nav.demo a:hover { text-decoration: underline; }
+/* Main */
+main.demo { background: #ffffff; border: 2px solid #6c5ce7; padding: 6px; margin: 2px 0; border-radius: 3px; }
+/* Figure */
+figure.demo { background: #e8e8e8; border: 1px solid #aaaaaa; padding: 6px; margin: 2px 0; border-radius: 3px; }
+figure.demo .placeholder { width: 100%; height: 30px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); border-radius: 2px; }
+figcaption.demo { font-size: 10px; color: #636e72; font-style: italic; margin-top: 3px; }
+/* Address */
+address.demo { background: #ffeaa7; border: 1px dashed #fdcb6e; padding: 6px; margin: 2px 0; font-style: italic; font-size: 11px; }
+/* Blockquote */
+blockquote.demo { background: #f0f0f0; border-left: 4px solid #6c5ce7; margin: 2px 0; padding: 6px 10px; font-style: italic; color: #555555; }
+/* Pre */
+pre.demo { background: #2d3436; color: #00b894; padding: 6px; margin: 2px 0; border-radius: 3px; font-family: monospace; font-size: 11px; overflow: hidden; white-space: pre; }
+/* Nesting */
+.nested-outer { background: #dfe6e9; border: 2px solid #0984e3; padding: 6px; margin: 2px 0; border-radius: 3px; }
+.nested-mid { background: #ffeaa7; border: 2px solid #fdcb6e; padding: 6px; margin: 4px 0; border-radius: 3px; }
+.nested-inner { background: #fab1a0; border: 2px solid #e17055; padding: 6px; margin: 4px 0; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="col">
+    <h2 class="title">section</h2>
+    <section class="demo"><span class="label">&lt;section&gt;</span><br>A thematic grouping of content with a heading.</section>
+
+    <h2 class="title">article</h2>
+    <article class="demo"><span class="label">&lt;article&gt;</span><br>Self-contained composition: blog post, news story.</article>
+
+    <h2 class="title">aside</h2>
+    <aside class="demo"><span class="label">&lt;aside&gt;</span><br>Tangentially related content, like a sidebar.</aside>
+
+    <h2 class="title">header</h2>
+    <header class="demo"><span class="label">&lt;header&gt;</span> Introductory content or navigational aids</header>
+
+    <h2 class="title">footer</h2>
+    <footer class="demo"><span class="label">&lt;footer&gt;</span> Footer for its nearest sectioning content</footer>
+
+    <h2 class="title">nav</h2>
+    <nav class="demo"><a href="#">Home</a><a href="#">About</a><a href="#">Services</a><a href="#">Contact</a></nav>
+
+    <h2 class="title">main</h2>
+    <main class="demo"><span class="label">&lt;main&gt;</span> Dominant content of the document body</main>
+  </div>
+  <div class="col">
+    <h2 class="title">figure + figcaption</h2>
+    <figure class="demo">
+      <div class="placeholder"></div>
+      <figcaption class="demo">Fig 1: A gradient placeholder image</figcaption>
+    </figure>
+
+    <h2 class="title">address</h2>
+    <address class="demo">
+      John Doe<br>
+      123 Main Street<br>
+      Anytown, USA 12345<br>
+      john@example.com
+    </address>
+
+    <h2 class="title">blockquote</h2>
+    <blockquote class="demo">"The only way to do great work is to love what you do." — Steve Jobs</blockquote>
+
+    <h2 class="title">pre (preformatted)</h2>
+    <pre class="demo">function hello() {
+  console.log("world");
+  return 42;
+}</pre>
+
+    <h2 class="title">Nesting: section &gt; article &gt; aside</h2>
+    <section class="nested-outer">
+      <span class="label">section</span>
+      <article class="nested-mid">
+        <span class="label">article</span>
+        <aside class="nested-inner">
+          <span class="label">aside</span>
+          <p style="margin:2px 0;font-size:11px;">Deeply nested semantic content</p>
+        </aside>
+      </article>
+    </section>
+
+    <h2 class="title">header + nav + footer combined</h2>
+    <div style="border:1px solid #b2bec3;border-radius:3px;overflow:hidden;">
+      <header style="background:#0984e3;color:#fff;padding:4px 8px;font-size:11px;font-weight:700;">Site Header</header>
+      <nav style="background:#00cec9;padding:3px 8px;font-size:10px;"><a href="#" style="color:#2d3436;margin-right:6px;">Link1</a><a href="#" style="color:#2d3436;margin-right:6px;">Link2</a><a href="#" style="color:#2d3436;">Link3</a></nav>
+      <main style="background:#ffffff;padding:4px 8px;font-size:11px;">Main content area</main>
+      <footer style="background:#2d3436;color:#dfe6e9;padding:4px 8px;font-size:10px;">&copy; 2024 Footer</footer>
+    </div>
+  </div>
+</div>
+</body>
+</html>

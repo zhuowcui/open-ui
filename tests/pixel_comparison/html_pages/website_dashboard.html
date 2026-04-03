@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Admin Dashboard</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #f0f2f5; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Sidebar */
+.sidebar { position: fixed; left: 0; top: 0; width: 180px; height: 600px; background: linear-gradient(180deg, #2d3436, #1a1a2e); padding: 16px 0; overflow: hidden; }
+.sidebar .logo { font-size: 16px; font-weight: 800; color: #ffffff; padding: 0 16px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar .logo span { color: #6c5ce7; }
+.sidebar nav { padding: 8px 0; }
+.sidebar .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 11px; color: #b2bec3; cursor: pointer; border-left: 3px solid transparent; }
+.sidebar .nav-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; }
+.sidebar .nav-item.active { background: rgba(108,92,231,0.2); color: #ffffff; border-left-color: #6c5ce7; }
+.sidebar .nav-item .icon { width: 16px; text-align: center; font-size: 12px; }
+.sidebar .nav-section { font-size: 9px; text-transform: uppercase; color: #636e72; padding: 12px 16px 4px; letter-spacing: 1px; }
+
+/* Main */
+.main { margin-left: 180px; padding: 16px; height: 600px; overflow: hidden; }
+
+/* Top bar */
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.topbar h1 { font-size: 18px; font-weight: 700; color: #2d3436; }
+.topbar .actions { display: flex; gap: 8px; }
+.topbar .btn { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
+.topbar .btn-primary { background: #6c5ce7; color: #ffffff; }
+.topbar .btn-outline { background: #ffffff; color: #636e72; border: 1px solid #dfe6e9; }
+
+/* Stat cards */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: #ffffff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.stat-card .label { font-size: 10px; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.stat-card .value { font-size: 22px; font-weight: 800; color: #2d3436; }
+.stat-card .change { font-size: 10px; margin-top: 4px; }
+.stat-card .change.up { color: #00b894; }
+.stat-card .change.down { color: #e17055; }
+.stat-card .bar { height: 4px; background: #f0f0f0; border-radius: 2px; margin-top: 8px; }
+.stat-card .bar .fill { height: 100%; border-radius: 2px; }
+
+/* Content grid */
+.content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Data table */
+.table-card { background: #ffffff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.table-card h3 { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 10px; }
+table th { text-align: left; color: #636e72; font-weight: 600; padding: 6px 8px; border-bottom: 2px solid #f0f0f0; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+table td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; color: #2d3436; }
+table tr:last-child td { border-bottom: none; }
+
+/* Badge */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 600; }
+.badge-success { background: #d4edda; color: #155724; }
+.badge-warning { background: #fff3cd; color: #856404; }
+.badge-danger { background: #f8d7da; color: #721c24; }
+.badge-info { background: #d1ecf1; color: #0c5460; }
+
+/* Progress bar list */
+.progress-list { display: flex; flex-direction: column; gap: 10px; }
+.progress-item .header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 4px; }
+.progress-item .header .name { font-weight: 600; color: #2d3436; }
+.progress-item .header .pct { color: #636e72; }
+.progress-item .track { height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+.progress-item .track .fill { height: 100%; border-radius: 3px; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo">Admin<span>Hub</span></div>
+  <nav>
+    <div class="nav-item active"><span class="icon">&#9632;</span> Dashboard</div>
+    <div class="nav-item"><span class="icon">&#9830;</span> Analytics</div>
+    <div class="nav-item"><span class="icon">&#9824;</span> Orders</div>
+    <div class="nav-item"><span class="icon">&#9827;</span> Products</div>
+    <div class="nav-section">Management</div>
+    <div class="nav-item"><span class="icon">&#9733;</span> Customers</div>
+    <div class="nav-item"><span class="icon">&#9998;</span> Invoices</div>
+    <div class="nav-item"><span class="icon">&#9881;</span> Settings</div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item"><span class="icon">&#9788;</span> Profile</div>
+    <div class="nav-item"><span class="icon">&#8618;</span> Logout</div>
+  </nav>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <h1>Dashboard</h1>
+    <div class="actions">
+      <button class="btn btn-outline">Export</button>
+      <button class="btn btn-primary">+ New Order</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="label">Total Revenue</div>
+      <div class="value">$48.2K</div>
+      <div class="change up">&#9650; 12.5% from last month</div>
+      <div class="bar"><div class="fill" style="width:75%;background:#6c5ce7;"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Orders</div>
+      <div class="value">1,284</div>
+      <div class="change up">&#9650; 8.3% from last month</div>
+      <div class="bar"><div class="fill" style="width:62%;background:#00b894;"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Customers</div>
+      <div class="value">3,842</div>
+      <div class="change down">&#9660; 2.1% from last month</div>
+      <div class="bar"><div class="fill" style="width:45%;background:#e17055;"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Conversion</div>
+      <div class="value">3.24%</div>
+      <div class="change up">&#9650; 0.8% from last month</div>
+      <div class="bar"><div class="fill" style="width:32%;background:#fdcb6e;"></div></div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="table-card">
+      <h3>Recent Orders</h3>
+      <table>
+        <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>#1042</td><td>Alice Chen</td><td>$245.00</td><td><span class="badge badge-success">Completed</span></td></tr>
+          <tr><td>#1041</td><td>Bob Smith</td><td>$89.50</td><td><span class="badge badge-warning">Pending</span></td></tr>
+          <tr><td>#1040</td><td>Carol White</td><td>$312.00</td><td><span class="badge badge-success">Completed</span></td></tr>
+          <tr><td>#1039</td><td>Dave Johnson</td><td>$57.25</td><td><span class="badge badge-danger">Cancelled</span></td></tr>
+          <tr><td>#1038</td><td>Eve Brown</td><td>$178.80</td><td><span class="badge badge-info">Shipping</span></td></tr>
+          <tr><td>#1037</td><td>Frank Lee</td><td>$425.00</td><td><span class="badge badge-success">Completed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-card">
+      <h3>Sales by Category</h3>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="header"><span class="name">Electronics</span><span class="pct">$18,420 (38%)</span></div>
+          <div class="track"><div class="fill" style="width:38%;background:#6c5ce7;"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="header"><span class="name">Clothing</span><span class="pct">$12,840 (27%)</span></div>
+          <div class="track"><div class="fill" style="width:27%;background:#00b894;"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="header"><span class="name">Home &amp; Garden</span><span class="pct">$8,650 (18%)</span></div>
+          <div class="track"><div class="fill" style="width:18%;background:#0984e3;"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="header"><span class="name">Books</span><span class="pct">$5,280 (11%)</span></div>
+          <div class="track"><div class="fill" style="width:11%;background:#e17055;"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="header"><span class="name">Other</span><span class="pct">$2,910 (6%)</span></div>
+          <div class="track"><div class="fill" style="width:6%;background:#fdcb6e;"></div></div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:16px;">Top Products</h3>
+      <table>
+        <thead><tr><th>Product</th><th>Sales</th><th>Revenue</th></tr></thead>
+        <tbody>
+          <tr><td>Wireless Earbuds</td><td>342</td><td>$27,018</td></tr>
+          <tr><td>Smart Watch</td><td>215</td><td>$21,285</td></tr>
+          <tr><td>Bluetooth Speaker</td><td>189</td><td>$9,450</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Tables Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; color: #2d3436; background: #f8f9fa; overflow: hidden; }
+.container { padding: 6px; display: flex; flex-direction: column; gap: 6px; }
+.row { display: flex; gap: 6px; }
+.panel { flex: 1; background: #ffffff; border: 1px solid #dfe6e9; border-radius: 4px; padding: 6px; overflow: hidden; }
+.panel h3 { margin: 0 0 4px; font-size: 10px; color: #6c5ce7; text-transform: uppercase; }
+table { font-size: 11px; }
+/* Table 1: border-collapse */
+.t1 { border-collapse: collapse; width: 100%; }
+.t1 th, .t1 td { border: 1px solid #b2bec3; padding: 3px 6px; }
+.t1 th { background: #6c5ce7; color: #ffffff; font-weight: 600; }
+.t1 caption { caption-side: top; font-weight: 700; color: #2d3436; margin-bottom: 3px; font-size: 10px; }
+/* Table 2: border-separate */
+.t2 { border-collapse: separate; border-spacing: 3px; width: 100%; }
+.t2 th, .t2 td { border: 1px solid #00cec9; padding: 3px 6px; border-radius: 3px; }
+.t2 th { background: #00cec9; color: #ffffff; }
+/* Table 3: alternating rows */
+.t3 { border-collapse: collapse; width: 100%; }
+.t3 th, .t3 td { padding: 3px 6px; border-bottom: 1px solid #dfe6e9; }
+.t3 th { background: #2d3436; color: #ffffff; text-align: left; }
+.t3 tr:nth-child(even) { background: #f0f0f0; }
+.t3 tr:nth-child(odd) { background: #ffffff; }
+/* Table 4: colspan/rowspan */
+.t4 { border-collapse: collapse; width: 100%; }
+.t4 th, .t4 td { border: 1px solid #b2bec3; padding: 3px 6px; text-align: center; }
+.t4 th { background: #e17055; color: #ffffff; }
+/* Table 5: caption-side bottom */
+.t5 { border-collapse: collapse; width: 100%; }
+.t5 th, .t5 td { border: 1px solid #b2bec3; padding: 3px 6px; }
+.t5 th { background: #fdcb6e; color: #2d3436; }
+.t5 caption { caption-side: bottom; font-size: 10px; color: #636e72; font-style: italic; margin-top: 3px; }
+/* Table 6: vertical-align */
+.t6 { border-collapse: collapse; width: 100%; }
+.t6 th, .t6 td { border: 1px solid #b2bec3; padding: 3px 6px; height: 40px; }
+.t6 th { background: #a29bfe; color: #ffffff; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="panel">
+      <h3>border-collapse + caption top</h3>
+      <table class="t1">
+        <caption>Employee Data</caption>
+        <colgroup>
+          <col style="background:#f8f9fa;">
+          <col>
+          <col style="background:#ffeaa7;">
+        </colgroup>
+        <thead><tr><th>Name</th><th>Role</th><th>Salary</th></tr></thead>
+        <tbody>
+          <tr><td>Alice</td><td>Engineer</td><td>$120k</td></tr>
+          <tr><td>Bob</td><td>Designer</td><td>$105k</td></tr>
+          <tr><td>Carol</td><td>Manager</td><td>$135k</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2" style="font-weight:700;">Average</td><td style="font-weight:700;">$120k</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>border-separate</h3>
+      <table class="t2">
+        <thead><tr><th>Product</th><th>Price</th><th>Stock</th></tr></thead>
+        <tbody>
+          <tr><td>Widget A</td><td>$9.99</td><td>150</td></tr>
+          <tr><td>Widget B</td><td>$14.99</td><td>82</td></tr>
+          <tr><td>Widget C</td><td>$24.99</td><td>34</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>Alternating Rows</h3>
+      <table class="t3">
+        <thead><tr><th>City</th><th>Country</th><th>Pop.</th></tr></thead>
+        <tbody>
+          <tr><td>Tokyo</td><td>Japan</td><td>37.4M</td></tr>
+          <tr><td>Delhi</td><td>India</td><td>30.3M</td></tr>
+          <tr><td>Shanghai</td><td>China</td><td>27.1M</td></tr>
+          <tr><td>São Paulo</td><td>Brazil</td><td>22.0M</td></tr>
+          <tr><td>Mexico City</td><td>Mexico</td><td>21.8M</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel">
+      <h3>colspan &amp; rowspan</h3>
+      <table class="t4">
+        <thead><tr><th colspan="3">Schedule</th></tr><tr><th>Time</th><th>Mon</th><th>Tue</th></tr></thead>
+        <tbody>
+          <tr><td>9:00</td><td rowspan="2" style="background:#dfe6e9;">Meeting</td><td>Code</td></tr>
+          <tr><td>10:00</td><td rowspan="2" style="background:#ffeaa7;">Design</td></tr>
+          <tr><td>11:00</td><td colspan="1">Review</td></tr>
+          <tr><td colspan="3" style="background:#f0f0f0;font-style:italic;">Lunch Break</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>caption-side: bottom</h3>
+      <table class="t5">
+        <caption>Source: World Population Data 2024</caption>
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Population</td><td>8.1B</td></tr>
+          <tr><td>Growth Rate</td><td>0.88%</td></tr>
+          <tr><td>Median Age</td><td>30.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>vertical-align</h3>
+      <table class="t6">
+        <thead><tr><th>Align</th><th>Content</th></tr></thead>
+        <tbody>
+          <tr><td style="vertical-align:top;">top</td><td style="vertical-align:top;">Top aligned</td></tr>
+          <tr><td style="vertical-align:middle;">middle</td><td style="vertical-align:middle;">Middle aligned</td></tr>
+          <tr><td style="vertical-align:bottom;">bottom</td><td style="vertical-align:bottom;">Bottom aligned</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

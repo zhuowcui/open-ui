@@ -46,4 +46,9 @@ struct OuiElementImpl {
   bool is_body = false;  // True for the <body> wrapper (not user-destroyable).
 };
 
+// Invalidate and delete all OuiElementImpl wrappers associated with |impl|.
+// Call before destroying/recreating the DummyPageHolder so that stale
+// Persistent<Element> handles don't dangle.
+void OuiInvalidateElementWrappers(OuiDocumentImpl* impl);
+
 #endif  // OPENUI_OPENUI_IMPL_H_

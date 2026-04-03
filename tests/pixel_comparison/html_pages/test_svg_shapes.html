@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>SVG Shapes Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 10px; color: #2d3436; background: #f8f9fa; overflow: hidden; }
+.outer { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; padding: 4px; }
+.panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 4px; padding: 6px; overflow: hidden; }
+.panel h3 { margin: 0 0 4px; font-size: 9px; color: #6c5ce7; text-transform: uppercase; }
+.lbl { font-size: 8px; color: #636e72; margin: 1px 0; font-family: monospace; }
+.span2 { grid-column: span 2; }
+.span3 { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<div class="outer">
+  <!-- rect -->
+  <div class="panel">
+    <h3>rect</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <rect x="5" y="5" width="50" height="35" fill="#6c5ce7"/>
+      <rect x="65" y="5" width="50" height="35" fill="none" stroke="#e17055" stroke-width="2"/>
+      <rect x="125" y="5" width="50" height="35" rx="8" ry="8" fill="#00b894"/>
+      <rect x="185" y="5" width="50" height="35" fill="#0984e3" opacity="0.5"/>
+      <rect x="5" y="48" width="50" height="28" fill="#fdcb6e" stroke="#2d3436" stroke-width="1"/>
+      <rect x="65" y="48" width="50" height="28" fill="#a29bfe" stroke="#6c5ce7" stroke-width="2" stroke-dasharray="4 2"/>
+      <rect x="125" y="48" width="110" height="28" fill="#fab1a0" rx="14"/>
+    </svg>
+  </div>
+
+  <!-- circle -->
+  <div class="panel">
+    <h3>circle</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <circle cx="30" cy="40" r="25" fill="#6c5ce7"/>
+      <circle cx="85" cy="40" r="25" fill="none" stroke="#e17055" stroke-width="2"/>
+      <circle cx="140" cy="40" r="25" fill="#00b894" opacity="0.6"/>
+      <circle cx="195" cy="40" r="25" fill="#0984e3" stroke="#2d3436" stroke-width="2" stroke-dasharray="5 3"/>
+      <circle cx="195" cy="40" r="12" fill="#fdcb6e"/>
+    </svg>
+  </div>
+
+  <!-- ellipse -->
+  <div class="panel">
+    <h3>ellipse</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <ellipse cx="60" cy="40" rx="50" ry="25" fill="#6c5ce7"/>
+      <ellipse cx="175" cy="40" rx="50" ry="25" fill="none" stroke="#e17055" stroke-width="2"/>
+      <ellipse cx="175" cy="40" rx="30" ry="15" fill="#00b894" opacity="0.7"/>
+    </svg>
+  </div>
+
+  <!-- line -->
+  <div class="panel">
+    <h3>line</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <line x1="5" y1="10" x2="235" y2="10" stroke="#6c5ce7" stroke-width="2"/>
+      <line x1="5" y1="25" x2="235" y2="25" stroke="#e17055" stroke-width="3" stroke-dasharray="8 4"/>
+      <line x1="5" y1="40" x2="235" y2="40" stroke="#00b894" stroke-width="1" stroke-dasharray="2 2"/>
+      <line x1="5" y1="55" x2="235" y2="55" stroke="#0984e3" stroke-width="4" stroke-linecap="round"/>
+      <line x1="5" y1="70" x2="120" y2="70" stroke="#fdcb6e" stroke-width="6" stroke-linecap="square"/>
+      <line x1="130" y1="55" x2="235" y2="75" stroke="#a29bfe" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <!-- polyline -->
+  <div class="panel">
+    <h3>polyline</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <polyline points="5,70 30,20 55,50 80,10 105,60 130,30 155,65 180,15 205,45 230,5" fill="none" stroke="#6c5ce7" stroke-width="2" stroke-linejoin="round"/>
+      <polyline points="5,75 30,40 55,65 80,30 105,70 130,50 155,72 180,35 205,55 230,25" fill="none" stroke="#e17055" stroke-width="1.5" stroke-dasharray="4 2"/>
+    </svg>
+  </div>
+
+  <!-- polygon -->
+  <div class="panel">
+    <h3>polygon</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <polygon points="40,5 75,35 60,75 20,75 5,35" fill="#6c5ce7" stroke="#2d3436" stroke-width="1"/>
+      <polygon points="120,5 155,5 155,75 120,75 95,40" fill="#00b894"/>
+      <polygon points="195,5 230,25 230,60 195,75 170,60 170,25" fill="none" stroke="#e17055" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <!-- path with d attrs -->
+  <div class="panel span2">
+    <h3>path with d attributes</h3>
+    <svg width="500" height="80" viewBox="0 0 500 80">
+      <!-- Simple line path -->
+      <path d="M5,40 L45,10 L85,40 L45,70 Z" fill="#6c5ce7" stroke="#2d3436" stroke-width="1"/>
+      <!-- Curve path (quadratic) -->
+      <path d="M100,60 Q140,5 180,60" fill="none" stroke="#e17055" stroke-width="2"/>
+      <!-- Cubic bezier -->
+      <path d="M200,60 C220,10 260,10 280,60" fill="none" stroke="#00b894" stroke-width="2"/>
+      <!-- Arc -->
+      <path d="M300,40 A30,30 0 1,1 360,40 A30,30 0 1,1 300,40" fill="#0984e3" opacity="0.6"/>
+      <!-- Heart shape -->
+      <path d="M400,30 A15,15 0 0,1 430,30 A15,15 0 0,1 460,30 Q460,50 430,70 Q400,50 400,30 Z" fill="#e74c3c"/>
+    </svg>
+  </div>
+
+  <!-- stroke properties -->
+  <div class="panel">
+    <h3>stroke properties</h3>
+    <svg width="240" height="80" viewBox="0 0 240 80">
+      <line x1="10" y1="15" x2="70" y2="15" stroke="#6c5ce7" stroke-width="1"/>
+      <line x1="10" y1="30" x2="70" y2="30" stroke="#6c5ce7" stroke-width="3"/>
+      <line x1="10" y1="50" x2="70" y2="50" stroke="#6c5ce7" stroke-width="6"/>
+      <text x="80" y="18" font-size="9" fill="#636e72">width: 1</text>
+      <text x="80" y="33" font-size="9" fill="#636e72">width: 3</text>
+      <text x="80" y="53" font-size="9" fill="#636e72">width: 6</text>
+      <line x1="150" y1="15" x2="230" y2="15" stroke="#e17055" stroke-width="4" stroke-linecap="butt"/>
+      <line x1="150" y1="35" x2="230" y2="35" stroke="#e17055" stroke-width="4" stroke-linecap="round"/>
+      <line x1="150" y1="55" x2="230" y2="55" stroke="#e17055" stroke-width="4" stroke-linecap="square"/>
+      <text x="150" y="73" font-size="8" fill="#636e72">butt / round / square</text>
+    </svg>
+  </div>
+
+  <!-- transform on SVG -->
+  <div class="panel span2">
+    <h3>SVG transform</h3>
+    <svg width="500" height="70" viewBox="0 0 500 70">
+      <rect x="10" y="15" width="40" height="40" fill="#6c5ce7"/>
+      <text x="10" y="66" font-size="8" fill="#636e72">original</text>
+
+      <rect x="80" y="15" width="40" height="40" fill="#00b894" transform="translate(20,5)"/>
+      <text x="80" y="66" font-size="8" fill="#636e72">translate</text>
+
+      <rect x="175" y="15" width="40" height="40" fill="#e17055" transform="rotate(25,195,35)"/>
+      <text x="170" y="66" font-size="8" fill="#636e72">rotate(25)</text>
+
+      <rect x="255" y="15" width="40" height="40" fill="#0984e3" transform="scale(0.7)"/>
+      <text x="255" y="66" font-size="8" fill="#636e72">scale(0.7)</text>
+
+      <rect x="365" y="15" width="40" height="40" fill="#fdcb6e" transform="skewX(15)"/>
+      <text x="370" y="66" font-size="8" fill="#636e72">skewX(15)</text>
+
+      <rect x="450" y="15" width="40" height="40" fill="#a29bfe" transform="rotate(45,470,35) scale(0.8)"/>
+      <text x="445" y="66" font-size="8" fill="#636e72">rotate+scale</text>
+    </svg>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Analytics Dashboard</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; color: #2d3436; background: #f0f2f5; overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Header */
+.header { background: #ffffff; border-bottom: 1px solid #dfe6e9; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+.header .logo { font-size: 14px; font-weight: 800; color: #2d3436; display: flex; align-items: center; gap: 6px; }
+.header .logo .dot { width: 8px; height: 8px; border-radius: 50%; background: #00b894; }
+.header .controls { display: flex; gap: 8px; align-items: center; }
+.header .date-range { display: flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 10px; color: #636e72; background: #ffffff; }
+.header .filter-btn { padding: 4px 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 10px; color: #636e72; background: #ffffff; cursor: pointer; font-family: inherit; }
+.header .filter-btn.active { background: #6c5ce7; color: #ffffff; border-color: #6c5ce7; }
+
+/* Main */
+.main { padding: 12px; display: grid; grid-template-columns: 1fr; gap: 10px; height: calc(600px - 38px); overflow: hidden; }
+
+/* KPI Cards */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.kpi-card { background: #ffffff; border-radius: 10px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.kpi-card .kpi-label { font-size: 9px; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.kpi-card .kpi-value { font-size: 22px; font-weight: 800; color: #2d3436; }
+.kpi-card .kpi-change { font-size: 9px; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+.kpi-card .kpi-change.up { color: #00b894; }
+.kpi-card .kpi-change.down { color: #e74c3c; }
+.kpi-card .sparkline { display: flex; align-items: flex-end; gap: 1px; height: 20px; margin-top: 6px; }
+.kpi-card .sparkline .bar { flex: 1; background: #6c5ce7; border-radius: 1px; opacity: 0.6; }
+
+/* Charts row */
+.charts-row { display: grid; grid-template-columns: 3fr 2fr; gap: 10px; }
+.chart-card { background: #ffffff; border-radius: 10px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.chart-card h3 { font-size: 11px; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.chart-card h3 .period { font-size: 9px; color: #b2bec3; font-weight: 400; }
+
+/* Bar chart */
+.bar-chart { display: flex; align-items: flex-end; gap: 3px; height: 100px; padding-top: 8px; }
+.bar-chart .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bar-chart .bar-group .bar-container { width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 2px; height: 80px; }
+.bar-chart .bar-group .bar { width: 12px; border-radius: 2px 2px 0 0; }
+.bar-chart .bar-group .label { font-size: 8px; color: #b2bec3; }
+
+/* Pie chart */
+.pie-container { display: flex; align-items: center; gap: 14px; }
+.pie { width: 90px; height: 90px; border-radius: 50%; position: relative; }
+.pie-legend { flex: 1; }
+.pie-legend .item { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 10px; }
+.pie-legend .item .dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.pie-legend .item .val { margin-left: auto; font-weight: 600; color: #2d3436; }
+
+/* Bottom row */
+.bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Data grid */
+.data-grid { background: #ffffff; border-radius: 10px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.data-grid h3 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 10px; }
+table th { text-align: left; color: #636e72; font-weight: 600; padding: 5px 6px; border-bottom: 2px solid #f0f0f0; font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; }
+table td { padding: 5px 6px; border-bottom: 1px solid #f0f0f0; }
+table tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 8px; font-weight: 600; }
+.badge-green { background: #d4edda; color: #155724; }
+.badge-yellow { background: #fff3cd; color: #856404; }
+.badge-red { background: #f8d7da; color: #721c24; }
+
+/* Mini progress */
+.mini-bar { height: 4px; background: #f0f0f0; border-radius: 2px; width: 60px; display: inline-block; vertical-align: middle; }
+.mini-bar .fill { height: 100%; border-radius: 2px; }
+
+/* Filters panel */
+.filters-card { background: #ffffff; border-radius: 10px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.filters-card h3 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+.filter-group { margin-bottom: 8px; }
+.filter-group label { display: block; font-size: 9px; color: #636e72; margin-bottom: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.filter-group select, .filter-group input { width: 100%; padding: 4px 8px; border: 1px solid #dfe6e9; border-radius: 4px; font-size: 10px; font-family: inherit; }
+.filter-group .date-inputs { display: flex; gap: 4px; }
+.filter-group .date-inputs input { flex: 1; }
+.filter-apply { width: 100%; padding: 6px; background: #6c5ce7; color: #fff; border: none; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 4px; }
+
+/* SVG Mini Charts */
+.svg-chart { width: 100%; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo"><div class="dot"></div>Analytics Pro</div>
+  <div class="controls">
+    <div class="date-range">&#128197; Jun 1 - Jun 17, 2024</div>
+    <button class="filter-btn active">Daily</button>
+    <button class="filter-btn">Weekly</button>
+    <button class="filter-btn">Monthly</button>
+  </div>
+</header>
+<div class="main">
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Visitors</div>
+      <div class="kpi-value">142.8K</div>
+      <div class="kpi-change up">&#9650; 12.3% vs prev period</div>
+      <div class="sparkline">
+        <div class="bar" style="height:40%;"></div><div class="bar" style="height:55%;"></div><div class="bar" style="height:45%;"></div>
+        <div class="bar" style="height:70%;"></div><div class="bar" style="height:60%;"></div><div class="bar" style="height:80%;"></div>
+        <div class="bar" style="height:75%;"></div><div class="bar" style="height:90%;"></div><div class="bar" style="height:85%;"></div>
+        <div class="bar" style="height:95%;"></div><div class="bar" style="height:100%;background:#00b894;opacity:0.8;"></div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Page Views</div>
+      <div class="kpi-value">485.2K</div>
+      <div class="kpi-change up">&#9650; 8.7% vs prev period</div>
+      <div class="sparkline">
+        <div class="bar" style="height:50%;background:#0984e3;"></div><div class="bar" style="height:65%;background:#0984e3;"></div>
+        <div class="bar" style="height:55%;background:#0984e3;"></div><div class="bar" style="height:80%;background:#0984e3;"></div>
+        <div class="bar" style="height:70%;background:#0984e3;"></div><div class="bar" style="height:75%;background:#0984e3;"></div>
+        <div class="bar" style="height:85%;background:#0984e3;"></div><div class="bar" style="height:90%;background:#0984e3;"></div>
+        <div class="bar" style="height:95%;background:#0984e3;"></div><div class="bar" style="height:88%;background:#0984e3;"></div>
+        <div class="bar" style="height:100%;background:#0984e3;opacity:0.8;"></div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Bounce Rate</div>
+      <div class="kpi-value">34.2%</div>
+      <div class="kpi-change down">&#9660; 3.1% vs prev period</div>
+      <div class="sparkline">
+        <div class="bar" style="height:90%;background:#e17055;"></div><div class="bar" style="height:80%;background:#e17055;"></div>
+        <div class="bar" style="height:75%;background:#e17055;"></div><div class="bar" style="height:70%;background:#e17055;"></div>
+        <div class="bar" style="height:65%;background:#e17055;"></div><div class="bar" style="height:60%;background:#e17055;"></div>
+        <div class="bar" style="height:55%;background:#e17055;"></div><div class="bar" style="height:50%;background:#e17055;"></div>
+        <div class="bar" style="height:45%;background:#e17055;"></div><div class="bar" style="height:40%;background:#e17055;"></div>
+        <div class="bar" style="height:35%;background:#00b894;opacity:0.8;"></div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Session</div>
+      <div class="kpi-value">4m 32s</div>
+      <div class="kpi-change up">&#9650; 15.2% vs prev period</div>
+      <div class="sparkline">
+        <div class="bar" style="height:30%;background:#fdcb6e;"></div><div class="bar" style="height:45%;background:#fdcb6e;"></div>
+        <div class="bar" style="height:40%;background:#fdcb6e;"></div><div class="bar" style="height:55%;background:#fdcb6e;"></div>
+        <div class="bar" style="height:60%;background:#fdcb6e;"></div><div class="bar" style="height:50%;background:#fdcb6e;"></div>
+        <div class="bar" style="height:70%;background:#fdcb6e;"></div><div class="bar" style="height:75%;background:#fdcb6e;"></div>
+        <div class="bar" style="height:80%;background:#fdcb6e;"></div><div class="bar" style="height:90%;background:#fdcb6e;"></div>
+        <div class="bar" style="height:100%;background:#fdcb6e;opacity:0.8;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Traffic Overview <span class="period">Last 7 days</span></h3>
+      <div class="bar-chart">
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:45%;background:#6c5ce7;"></div><div class="bar" style="height:35%;background:#00b894;"></div></div><div class="label">Mon</div></div>
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:55%;background:#6c5ce7;"></div><div class="bar" style="height:40%;background:#00b894;"></div></div><div class="label">Tue</div></div>
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:70%;background:#6c5ce7;"></div><div class="bar" style="height:50%;background:#00b894;"></div></div><div class="label">Wed</div></div>
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:65%;background:#6c5ce7;"></div><div class="bar" style="height:48%;background:#00b894;"></div></div><div class="label">Thu</div></div>
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:80%;background:#6c5ce7;"></div><div class="bar" style="height:60%;background:#00b894;"></div></div><div class="label">Fri</div></div>
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:50%;background:#6c5ce7;"></div><div class="bar" style="height:38%;background:#00b894;"></div></div><div class="label">Sat</div></div>
+        <div class="bar-group"><div class="bar-container"><div class="bar" style="height:40%;background:#6c5ce7;"></div><div class="bar" style="height:30%;background:#00b894;"></div></div><div class="label">Sun</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:9px;color:#636e72;">
+        <span><span style="display:inline-block;width:8px;height:8px;background:#6c5ce7;border-radius:2px;margin-right:3px;"></span>Visitors</span>
+        <span><span style="display:inline-block;width:8px;height:8px;background:#00b894;border-radius:2px;margin-right:3px;"></span>Conversions</span>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Traffic Sources <span class="period">This month</span></h3>
+      <div class="pie-container">
+        <svg class="pie" width="90" height="90" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#6c5ce7" stroke-width="5" stroke-dasharray="38 62" stroke-dashoffset="25"/>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#00b894" stroke-width="5" stroke-dasharray="28 72" stroke-dashoffset="87"/>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#e17055" stroke-width="5" stroke-dasharray="18 82" stroke-dashoffset="59"/>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#fdcb6e" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="41"/>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#b2bec3" stroke-width="5" stroke-dasharray="6 94" stroke-dashoffset="31"/>
+        </svg>
+        <div class="pie-legend">
+          <div class="item"><div class="dot" style="background:#6c5ce7;"></div>Organic Search<div class="val">38%</div></div>
+          <div class="item"><div class="dot" style="background:#00b894;"></div>Direct<div class="val">28%</div></div>
+          <div class="item"><div class="dot" style="background:#e17055;"></div>Social<div class="val">18%</div></div>
+          <div class="item"><div class="dot" style="background:#fdcb6e;"></div>Referral<div class="val">10%</div></div>
+          <div class="item"><div class="dot" style="background:#b2bec3;"></div>Other<div class="val">6%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom-row">
+    <div class="data-grid">
+      <h3>Top Pages</h3>
+      <table>
+        <thead><tr><th>Page</th><th>Views</th><th>Bounce</th><th>Conv.</th></tr></thead>
+        <tbody>
+          <tr><td>/home</td><td>42,180</td><td><span class="mini-bar"><span class="fill" style="width:34%;background:#00b894;"></span></span> 34%</td><td><span class="badge badge-green">4.2%</span></td></tr>
+          <tr><td>/products</td><td>28,450</td><td><span class="mini-bar"><span class="fill" style="width:42%;background:#fdcb6e;"></span></span> 42%</td><td><span class="badge badge-green">3.8%</span></td></tr>
+          <tr><td>/pricing</td><td>18,920</td><td><span class="mini-bar"><span class="fill" style="width:28%;background:#00b894;"></span></span> 28%</td><td><span class="badge badge-green">6.1%</span></td></tr>
+          <tr><td>/blog</td><td>15,680</td><td><span class="mini-bar"><span class="fill" style="width:55%;background:#e17055;"></span></span> 55%</td><td><span class="badge badge-yellow">1.2%</span></td></tr>
+          <tr><td>/contact</td><td>8,240</td><td><span class="mini-bar"><span class="fill" style="width:38%;background:#fdcb6e;"></span></span> 38%</td><td><span class="badge badge-green">8.4%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="filters-card">
+      <h3>Filters &amp; Settings</h3>
+      <div class="filter-group">
+        <label>Date Range</label>
+        <div class="date-inputs">
+          <input type="date" value="2024-06-01">
+          <input type="date" value="2024-06-17">
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>Traffic Source</label>
+        <select><option>All Sources</option><option>Organic</option><option>Direct</option><option>Social</option><option>Referral</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Device</label>
+        <select><option>All Devices</option><option>Desktop</option><option>Mobile</option><option>Tablet</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Country</label>
+        <select><option>All Countries</option><option>United States</option><option>United Kingdom</option><option>Germany</option><option>Japan</option></select>
+      </div>
+      <button class="filter-apply">Apply Filters</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -25,90 +25,9 @@
 
 #include "openui/openui.h"
 
-// ═══════════════════════════════════════════════════════════════════════════
-// C API types
-// ═══════════════════════════════════════════════════════════════════════════
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// Callback to free resource response data when Blink is done with it.
-typedef void (*OuiResourceFreeFunc)(uint8_t* data, void* user_data);
-
-// Response data returned by the resource provider callback.
-typedef struct {
-  // Pointer to the resource data (image bytes, CSS text, etc.).
-  // Ownership: the provider retains ownership until free_func is called.
-  __attribute__((annotate("raw_ptr_exclusion")))
-  uint8_t* data;
-  size_t length;
-
-  // MIME type hint (e.g. "image/png"). NULL = auto-detect from data.
-  __attribute__((annotate("raw_ptr_exclusion")))
-  const char* mime_type;
-
-  // Called when Blink is done with |data|. NULL = Blink won't free.
-  OuiResourceFreeFunc free_func;
-  __attribute__((annotate("raw_ptr_exclusion")))
-  void* free_user_data;
-} OuiResourceResponse;
-
-// Resource provider callback type.
-// Called by Blink when it needs to fetch a URL.
-// |url| — the URL being requested (e.g. "asset://logo.png").
-// |response| — out-param: fill in data/length/mime_type on success.
-// |user_data| — the user_data passed to oui_document_set_resource_provider.
-// Return 1 if the resource was found (response filled), 0 if not found.
-typedef int (*OuiResourceProviderFunc)(
-    const char* url,
-    OuiResourceResponse* response,
-    void* user_data);
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Resource provider API
-// ═══════════════════════════════════════════════════════════════════════════
-
-// Set the resource provider callback for a document. The callback will be
-// invoked on the main thread whenever Blink's resource loader needs to fetch
-// a URL. Only one provider per document; setting a new one replaces the old.
-//
-// NOTE: The resource provider must be set BEFORE loading HTML that references
-// images. The provider is installed by passing a custom LocalFrameClient to
-// DummyPageHolder, so oui_document_create must be updated to accept this.
-// For now this function stores the callback on the document impl so it can
-// be wired in during document creation.
-//
-// Returns OUI_OK on success.
-OUI_EXPORT OuiStatus oui_document_set_resource_provider(
-    OuiDocument* doc,
-    OuiResourceProviderFunc provider,
-    void* user_data);
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Direct image injection
-// ═══════════════════════════════════════════════════════════════════════════
-
-// Set raw RGBA pixel data on an <img> element. The element must have been
-// created with tag "img". The pixels are copied — the caller can free
-// rgba_pixels after this call returns. The image will have the given
-// dimensions. Stride is assumed to be width * 4.
-OUI_EXPORT OuiStatus oui_element_set_image_data(
-    OuiElement* elem,
-    const uint8_t* rgba_pixels,
-    int width,
-    int height);
-
-// Set encoded image data (PNG, JPEG, WebP, GIF, etc.) on an <img> element.
-// The data is copied. Blink's image decoder will decode it.
-OUI_EXPORT OuiStatus oui_element_set_image_encoded(
-    OuiElement* elem,
-    const uint8_t* data,
-    size_t length);
-
-#ifdef __cplusplus
-}  // extern "C"
-#endif
+// C API types (OuiResourceResponse, OuiResourceProviderFunc, etc.)
+// and function declarations are in openui.h.  This header extends them
+// with the C++ internals used by openui_resource_provider.cc.
 
 // ═══════════════════════════════════════════════════════════════════════════
 // C++ internals (only visible to .cc files that #include this header)

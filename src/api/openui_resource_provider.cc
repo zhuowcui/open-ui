@@ -23,6 +23,7 @@
 #include "third_party/blink/renderer/platform/graphics/bitmap_image.h"
 #include "third_party/blink/renderer/platform/graphics/image.h"
 #include "third_party/blink/renderer/platform/graphics/unaccelerated_static_bitmap_image.h"
+#include "third_party/blink/renderer/platform/heap/garbage_collected.h"
 #include "third_party/blink/renderer/platform/loader/fetch/url_loader/url_loader_client.h"
 #include "third_party/blink/renderer/platform/scheduler/test/fake_task_runner.h"
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
@@ -287,16 +288,21 @@ OuiStatus oui_document_set_resource_provider(
   impl->resource_provider.callback = provider;
   impl->resource_provider.user_data = user_data;
 
-  // NOTE: For the resource provider to actually intercept requests, the
-  // DummyPageHolder must be created with a ResourceProviderFrameClient.
-  // This means the provider should ideally be set before document creation,
-  // or the document must be recreated. The recommended integration pattern
-  // is to modify oui_document_create() to check for a resource provider
-  // and pass the appropriate frame client.
-  //
-  // For documents already created, we store the callback so that future
-  // navigations/loads can pick it up, but existing loaded resources won't
-  // be retroactively reloaded through this provider.
+  // Invalidate all element wrappers before recreating the page holder.
+  // The old Document/DOM is destroyed when we replace page_holder.
+  OuiInvalidateElementWrappers(impl);
+
+  // Recreate the DummyPageHolder with a ResourceProviderFrameClient so that
+  // all future URL fetches (images, CSS, etc.) are routed through the
+  // user's callback.  The old page holder is replaced; any elements from
+  // a prior DOM are invalidated.
+  auto* frame_client = blink::MakeGarbageCollected<
+      openui::ResourceProviderFrameClient>(&impl->resource_provider);
+  gfx::Size viewport_size = impl->page_holder
+      ? impl->page_holder->GetFrameView().GetLayoutSize()
+      : gfx::Size(800, 600);
+  impl->page_holder = std::make_unique<blink::DummyPageHolder>(
+      viewport_size, /*chrome_client=*/nullptr, frame_client);
 
   return OUI_OK;
 }

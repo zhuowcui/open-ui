@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800">
+<title>Flexbox Test</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; width: 800px; height: 600px; font-family: system-ui, -apple-system, sans-serif; font-size: 10px; color: #2d3436; background: #f8f9fa; overflow: hidden; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+.panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 4px; padding: 4px; overflow: hidden; }
+.panel h3 { margin: 0 0 3px; font-size: 9px; color: #6c5ce7; text-transform: uppercase; }
+.flex-demo { display: flex; background: #f0f0f0; border: 1px solid #dfe6e9; border-radius: 2px; min-height: 28px; margin-bottom: 3px; }
+.flex-demo .item { background: #6c5ce7; color: #ffffff; padding: 2px 6px; font-size: 9px; font-weight: 600; border-radius: 2px; margin: 1px; text-align: center; min-width: 16px; }
+.flex-demo .item:nth-child(2) { background: #00b894; }
+.flex-demo .item:nth-child(3) { background: #e17055; }
+.flex-demo .item:nth-child(4) { background: #0984e3; }
+.flex-demo .item:nth-child(5) { background: #fdcb6e; color: #2d3436; }
+.lbl { font-size: 8px; color: #636e72; margin: 1px 0; font-family: monospace; }
+.span2 { grid-column: span 2; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <!-- flex-direction -->
+  <div class="panel">
+    <h3>flex-direction</h3>
+    <div class="lbl">row (default)</div>
+    <div class="flex-demo" style="flex-direction:row;"><div class="item">1</div><div class="item">2</div><div class="item">3</div></div>
+    <div class="lbl">row-reverse</div>
+    <div class="flex-demo" style="flex-direction:row-reverse;"><div class="item">1</div><div class="item">2</div><div class="item">3</div></div>
+    <div class="lbl">column</div>
+    <div class="flex-demo" style="flex-direction:column;min-height:auto;"><div class="item">1</div><div class="item">2</div><div class="item">3</div></div>
+  </div>
+
+  <!-- flex-wrap -->
+  <div class="panel">
+    <h3>flex-wrap</h3>
+    <div class="lbl">nowrap</div>
+    <div class="flex-demo" style="flex-wrap:nowrap;width:120px;"><div class="item" style="min-width:40px;">A</div><div class="item" style="min-width:40px;">B</div><div class="item" style="min-width:40px;">C</div><div class="item" style="min-width:40px;">D</div></div>
+    <div class="lbl">wrap</div>
+    <div class="flex-demo" style="flex-wrap:wrap;width:120px;"><div class="item" style="min-width:40px;">A</div><div class="item" style="min-width:40px;">B</div><div class="item" style="min-width:40px;">C</div><div class="item" style="min-width:40px;">D</div></div>
+    <div class="lbl">wrap-reverse</div>
+    <div class="flex-demo" style="flex-wrap:wrap-reverse;width:120px;"><div class="item" style="min-width:40px;">A</div><div class="item" style="min-width:40px;">B</div><div class="item" style="min-width:40px;">C</div><div class="item" style="min-width:40px;">D</div></div>
+  </div>
+
+  <!-- justify-content -->
+  <div class="panel span2">
+    <h3>justify-content (all 6 values)</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;">
+      <div><div class="lbl">flex-start</div><div class="flex-demo" style="justify-content:flex-start;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div></div>
+      <div><div class="lbl">flex-end</div><div class="flex-demo" style="justify-content:flex-end;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div></div>
+      <div><div class="lbl">center</div><div class="flex-demo" style="justify-content:center;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div></div>
+      <div><div class="lbl">space-between</div><div class="flex-demo" style="justify-content:space-between;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div></div>
+      <div><div class="lbl">space-around</div><div class="flex-demo" style="justify-content:space-around;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div></div>
+      <div><div class="lbl">space-evenly</div><div class="flex-demo" style="justify-content:space-evenly;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div></div>
+    </div>
+  </div>
+
+  <!-- align-items -->
+  <div class="panel span2">
+    <h3>align-items (all 5 values)</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:3px;">
+      <div><div class="lbl">stretch</div><div class="flex-demo" style="align-items:stretch;height:40px;"><div class="item">A</div><div class="item">B</div></div></div>
+      <div><div class="lbl">flex-start</div><div class="flex-demo" style="align-items:flex-start;height:40px;"><div class="item">A</div><div class="item">B</div></div></div>
+      <div><div class="lbl">flex-end</div><div class="flex-demo" style="align-items:flex-end;height:40px;"><div class="item">A</div><div class="item">B</div></div></div>
+      <div><div class="lbl">center</div><div class="flex-demo" style="align-items:center;height:40px;"><div class="item">A</div><div class="item">B</div></div></div>
+      <div><div class="lbl">baseline</div><div class="flex-demo" style="align-items:baseline;height:40px;"><div class="item" style="font-size:14px;">A</div><div class="item" style="font-size:9px;">B</div></div></div>
+    </div>
+  </div>
+
+  <!-- align-self -->
+  <div class="panel">
+    <h3>align-self</h3>
+    <div class="flex-demo" style="align-items:flex-start;height:50px;">
+      <div class="item" style="align-self:flex-start;">start</div>
+      <div class="item" style="align-self:center;">center</div>
+      <div class="item" style="align-self:flex-end;">end</div>
+      <div class="item" style="align-self:stretch;">stretch</div>
+    </div>
+  </div>
+
+  <!-- flex-grow/shrink/basis -->
+  <div class="panel">
+    <h3>flex-grow / shrink / basis</h3>
+    <div class="lbl">grow: 1, 2, 1</div>
+    <div class="flex-demo"><div class="item" style="flex-grow:1;">1</div><div class="item" style="flex-grow:2;">2</div><div class="item" style="flex-grow:1;">1</div></div>
+    <div class="lbl">basis: 100px, auto, auto</div>
+    <div class="flex-demo"><div class="item" style="flex-basis:100px;">100px</div><div class="item" style="flex:1;">auto</div><div class="item" style="flex:1;">auto</div></div>
+    <div class="lbl">shrink: 0, 1, 2</div>
+    <div class="flex-demo" style="width:150px;"><div class="item" style="flex-shrink:0;min-width:60px;">no</div><div class="item" style="flex-shrink:1;min-width:40px;">1</div><div class="item" style="flex-shrink:2;min-width:30px;">2</div></div>
+  </div>
+
+  <!-- gap -->
+  <div class="panel">
+    <h3>gap</h3>
+    <div class="lbl">gap: 0</div>
+    <div class="flex-demo" style="gap:0;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div>
+    <div class="lbl">gap: 4px</div>
+    <div class="flex-demo" style="gap:4px;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div>
+    <div class="lbl">gap: 10px</div>
+    <div class="flex-demo" style="gap:10px;"><div class="item">A</div><div class="item">B</div><div class="item">C</div></div>
+  </div>
+
+  <!-- order + nested -->
+  <div class="panel">
+    <h3>order &amp; nested flex</h3>
+    <div class="lbl">order: 3, 1, 2</div>
+    <div class="flex-demo"><div class="item" style="order:3;">3rd</div><div class="item" style="order:1;">1st</div><div class="item" style="order:2;">2nd</div></div>
+    <div class="lbl">nested flex (row &gt; column)</div>
+    <div class="flex-demo" style="gap:4px;padding:4px;">
+      <div style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <div class="item">A1</div><div class="item">A2</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <div class="item">B1</div><div class="item">B2</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <div class="item">C1</div><div class="item">C2</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
