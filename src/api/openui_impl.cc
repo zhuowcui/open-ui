@@ -5,6 +5,7 @@
 
 #include "openui/openui.h"
 #include "openui/openui_element_factory.h"
+#include "openui/openui_events.h"
 #include "openui/openui_impl.h"
 #include "openui/openui_init.h"
 
@@ -12,6 +13,10 @@
 #include <string.h>
 #include <string>
 #include <vector>
+
+#include "base/time/time.h"
+#include "third_party/blink/renderer/core/animation/animation_clock.h"
+#include "third_party/blink/renderer/core/animation/document_timeline.h"
 
 #include "third_party/blink/renderer/core/css/css_primitive_value.h"
 #include "third_party/blink/renderer/core/css/css_property_names.h"
@@ -42,6 +47,8 @@ OuiDocumentImpl::OuiDocumentImpl() = default;
 OuiDocumentImpl::~OuiDocumentImpl() = default;
 OuiElementImpl::OuiElementImpl() = default;
 OuiElementImpl::~OuiElementImpl() = default;
+OuiCallbackEntry::OuiCallbackEntry() = default;
+OuiCallbackEntry::~OuiCallbackEntry() = default;
 
 namespace {
 
@@ -139,6 +146,9 @@ OuiElementImpl* FindWrapper(blink::Element* elem) {
   return it != map.end() ? it->second : nullptr;
 }
 
+}  // namespace
+
+// Exposed helpers for cross-file access (declared in openui_impl.h).
 void RegisterWrapper(blink::Element* elem, OuiElementImpl* wrapper) {
   GetElementMap()[static_cast<void*>(elem)] = wrapper;
 }
@@ -147,14 +157,34 @@ void UnregisterWrapper(blink::Element* elem) {
   GetElementMap().erase(static_cast<void*>(elem));
 }
 
-}  // namespace
+OuiElementImpl* LookupElementWrapper(blink::Element* elem) {
+  return FindWrapper(elem);
+}
 
 // Shared helper: invalidate all element wrappers for a document.
+// Remove all registered event listeners from an element wrapper.
+// Must be called before deleting the wrapper to prevent use-after-free
+// of OuiNativeEventListener's dangling owner_ pointer.
+static void RemoveAllCallbacks(OuiElementImpl* impl) {
+  if (!impl->element)
+    return;
+  for (auto& [type, entry] : impl->callbacks) {
+    if (entry.listener) {
+      impl->element->removeEventListener(
+          blink::AtomicString(type.c_str()), entry.listener.Get(), false);
+      // Safe downcast — we only ever store OuiNativeEventListener instances.
+      static_cast<OuiNativeEventListener*>(entry.listener.Get())->ClearOwner();
+    }
+  }
+  impl->callbacks.clear();
+}
+
 void OuiInvalidateElementWrappers(OuiDocumentImpl* impl) {
   auto& map = GetElementMap();
   std::vector<void*> keys_to_remove;
   for (auto& [key, wrapper] : map) {
     if (wrapper->doc == impl) {
+      RemoveAllCallbacks(wrapper);
       keys_to_remove.push_back(key);
     }
   }
@@ -302,6 +332,9 @@ void oui_element_destroy(OuiElement* e) {
     // The <body> wrapper is owned by the document — not user-destroyable.
     return;
   }
+
+  // Remove event listeners before deletion to prevent dangling owner_ pointers.
+  RemoveAllCallbacks(impl);
 
   // Remove from DOM if still attached.
   if (impl->element && impl->element->parentNode()) {
@@ -1040,7 +1073,7 @@ OuiElement* oui_document_hit_test(OuiDocument* doc, float x, float y) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Scroll geometry
+// Scroll geometry & control (SP7)
 // ═══════════════════════════════════════════════════════════════════════════
 
 float oui_element_get_scroll_width(const OuiElement* e) {
@@ -1057,6 +1090,192 @@ float oui_element_get_scroll_height(const OuiElement* e) {
   if (!impl->element) return 0.0f;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return static_cast<float>(mutable_elem->scrollHeight());
+}
+
+double oui_element_get_scroll_left(const OuiElement* e) {
+  if (!e) return 0.0;
+  auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
+  if (!impl->element) return 0.0;
+  auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
+  return mutable_elem->scrollLeft();
+}
+
+double oui_element_get_scroll_top(const OuiElement* e) {
+  if (!e) return 0.0;
+  auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
+  if (!impl->element) return 0.0;
+  auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
+  return mutable_elem->scrollTop();
+}
+
+OuiStatus oui_element_scroll_to(OuiElement* e, double x, double y) {
+  if (!e) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiElementImpl*>(e);
+  if (!impl->element) return OUI_ERROR_INVALID_ARGUMENT;
+  impl->element->setScrollLeft(x);
+  impl->element->setScrollTop(y);
+  return OUI_OK;
+}
+
+OuiStatus oui_element_scroll_by(OuiElement* e, double dx, double dy) {
+  if (!e) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiElementImpl*>(e);
+  if (!impl->element) return OUI_ERROR_INVALID_ARGUMENT;
+  double cur_x = impl->element->scrollLeft();
+  double cur_y = impl->element->scrollTop();
+  impl->element->setScrollLeft(cur_x + dx);
+  impl->element->setScrollTop(cur_y + dy);
+  return OUI_OK;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Frame & time management (SP7)
+// ═══════════════════════════════════════════════════════════════════════════
+
+#include "third_party/blink/renderer/core/animation/document_timeline.h"
+#include "third_party/blink/renderer/core/page/page_animator.h"
+
+namespace {
+
+void EnsureTimeInitialized(OuiDocumentImpl* impl) {
+  if (!impl->time_initialized) {
+    impl->current_time_ms = 0.0;
+    impl->time_initialized = true;
+
+    // Reset the animation clock and document timeline so that transitions
+    // and animations use our controlled time, not wall-clock time.
+    impl->page_holder->GetPage().Animator().Clock().ResetTimeForTesting();
+    impl->GetDocument().Timeline().ResetForTesting();
+
+    // Use a small positive base as epoch. base::TimeTicks() is null/zero
+    // and some Blink code treats it specially.
+    impl->time_epoch = base::TimeTicks() + base::Milliseconds(1);
+
+    // Seed the clock so it's not at the null value.
+    base::TimeTicks seed = impl->time_epoch;
+    impl->GetDocument().GetAnimationClock().UpdateTime(seed);
+    impl->page_holder->GetPage().Animator().ServiceScriptedAnimations(seed);
+    impl->GetDocument().View()->UpdateAllLifecyclePhasesForTest();
+  }
+}
+
+base::TimeTicks TimeFromMs(OuiDocumentImpl* impl, double time_ms) {
+  return impl->time_epoch + base::Milliseconds(time_ms);
+}
+
+}  // namespace
+
+OuiStatus oui_document_advance_time(OuiDocument* doc, double time_ms) {
+  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  EnsureTimeInitialized(impl);
+  impl->current_time_ms = time_ms;
+  base::TimeTicks t = TimeFromMs(impl, time_ms);
+  impl->GetDocument().GetAnimationClock().UpdateTime(t);
+  return OUI_OK;
+}
+
+OuiStatus oui_document_advance_time_by(OuiDocument* doc, double delta_ms) {
+  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  EnsureTimeInitialized(impl);
+  return oui_document_advance_time(doc, impl->current_time_ms + delta_ms);
+}
+
+double oui_document_get_time(OuiDocument* doc) {
+  if (!doc) return 0.0;
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  if (!impl->time_initialized) return 0.0;
+  return impl->current_time_ms;
+}
+
+OuiStatus oui_document_begin_frame(OuiDocument* doc, double time_ms) {
+  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  EnsureTimeInitialized(impl);
+  impl->current_time_ms = time_ms;
+  base::TimeTicks t = TimeFromMs(impl, time_ms);
+
+  // Step 1: Run a lifecycle update to detect pending style changes and
+  // create new transitions/animations from them.
+  impl->GetDocument().View()->UpdateAllLifecyclePhasesForTest();
+
+  // Step 2: Advance animation clock and service animations at the new time.
+  impl->GetDocument().GetAnimationClock().UpdateTime(t);
+  impl->page_holder->GetPage().Animator().ServiceScriptedAnimations(t);
+
+  // Step 3: Full lifecycle pass to apply interpolated animation values.
+  impl->GetDocument().View()->UpdateAllLifecyclePhasesForTest();
+
+  return OUI_OK;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Focus management (SP7)
+// ═══════════════════════════════════════════════════════════════════════════
+
+#include "third_party/blink/renderer/core/page/focus_controller.h"
+#include "third_party/blink/renderer/core/frame/local_frame.h"
+#include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
+
+OuiStatus oui_element_focus(OuiElement* elem) {
+  if (!elem) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiElementImpl*>(elem);
+  if (!impl->element || !impl->doc) return OUI_ERROR_INVALID_ARGUMENT;
+  auto& page = impl->doc->page_holder->GetPage();
+  auto& fc = page.GetFocusController();
+  // Ensure the page is active and focused so focus/blur events dispatch.
+  // We call SetActive/SetFocused unconditionally — in a headless/offscreen
+  // context there's no window manager to provide activation signals.
+  fc.SetActive(true);
+  fc.SetFocused(true);
+  // Note: We use SetFocusedElement directly rather than Element::Focus()
+  // to give framework consumers full control. Non-focusable elements
+  // (no tabindex, not a form control) may not fire DOM focus events
+  // per the HTML spec, but the focus state will still be set.
+  blink::LocalFrame& local_frame = impl->doc->page_holder->GetFrame();
+  fc.SetFocusedElement(
+      impl->element.Get(), static_cast<blink::Frame*>(&local_frame));
+  return OUI_OK;
+}
+
+OuiStatus oui_element_blur(OuiElement* elem) {
+  if (!elem) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiElementImpl*>(elem);
+  if (!impl->doc) return OUI_ERROR_INVALID_ARGUMENT;
+  auto& page = impl->doc->page_holder->GetPage();
+  blink::LocalFrame& local_frame = impl->doc->page_holder->GetFrame();
+  page.GetFocusController().SetFocusedElement(
+      nullptr, static_cast<blink::Frame*>(&local_frame));
+  return OUI_OK;
+}
+
+OuiElement* oui_document_get_focused_element(OuiDocument* doc) {
+  if (!doc) return nullptr;
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  blink::Element* focused = impl->GetDocument().FocusedElement();
+  if (!focused) return nullptr;
+  OuiElementImpl* wrapper = LookupElementWrapper(focused);
+  return wrapper ? reinterpret_cast<OuiElement*>(wrapper) : nullptr;
+}
+
+OuiStatus oui_document_advance_focus(OuiDocument* doc, int direction) {
+  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  auto& page = impl->page_holder->GetPage();
+  auto focus_type = (direction >= 0)
+      ? blink::mojom::blink::FocusType::kForward
+      : blink::mojom::blink::FocusType::kBackward;
+  page.GetFocusController().AdvanceFocus(focus_type);
+  return OUI_OK;
+}
+
+int oui_element_has_focus(const OuiElement* elem) {
+  if (!elem) return 0;
+  auto* impl = reinterpret_cast<const OuiElementImpl*>(elem);
+  if (!impl->element || !impl->doc) return 0;
+  blink::Element* focused = impl->doc->GetDocument().FocusedElement();
+  return (focused == impl->element.Get()) ? 1 : 0;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

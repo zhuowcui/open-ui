@@ -39,6 +39,8 @@ static_library("openui_lib") {
     "openui.h",
     "openui_element_factory.cc",
     "openui_element_factory.h",
+    "openui_events.cc",
+    "openui_events.h",
     "openui_impl.cc",
     "openui_impl.h",
     "openui_init.cc",

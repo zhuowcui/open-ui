@@ -379,11 +379,21 @@ OUI_EXPORT OuiElement* oui_document_hit_test(OuiDocument* doc,
                                              float y);
 
 // ═══════════════════════════════════════════════════════════
-// Scroll geometry
+// Scroll geometry & control (SP7)
 // ═══════════════════════════════════════════════════════════
 
 OUI_EXPORT float oui_element_get_scroll_width(const OuiElement* e);
 OUI_EXPORT float oui_element_get_scroll_height(const OuiElement* e);
+
+// Get current scroll position.
+OUI_EXPORT double oui_element_get_scroll_left(const OuiElement* e);
+OUI_EXPORT double oui_element_get_scroll_top(const OuiElement* e);
+
+// Scroll to absolute position.
+OUI_EXPORT OuiStatus oui_element_scroll_to(OuiElement* e, double x, double y);
+
+// Scroll by a delta (relative to current position).
+OUI_EXPORT OuiStatus oui_element_scroll_by(OuiElement* e, double dx, double dy);
 
 // ═══════════════════════════════════════════════════════════
 // Offscreen rendering (SP5)
@@ -468,6 +478,138 @@ OUI_EXPORT OuiStatus oui_element_set_image_encoded(
     OuiElement* elem,
     const uint8_t* data,
     size_t length);
+
+// ═══════════════════════════════════════════════════════════
+// Frame & time management (SP7)
+// ═══════════════════════════════════════════════════════════
+
+// Advance the animation clock to an absolute time (milliseconds).
+// Time 0.0 is the document's epoch (set on first call to any time function).
+OUI_EXPORT OuiStatus oui_document_advance_time(OuiDocument* doc, double time_ms);
+
+// Advance the animation clock by a delta from the current time.
+OUI_EXPORT OuiStatus oui_document_advance_time_by(OuiDocument* doc,
+                                                    double delta_ms);
+
+// Get the current animation time (milliseconds from epoch).
+OUI_EXPORT double oui_document_get_time(OuiDocument* doc);
+
+// Full frame tick: advance time + service animations + full lifecycle update.
+// This is the primary function callers use in their render loop.
+OUI_EXPORT OuiStatus oui_document_begin_frame(OuiDocument* doc, double time_ms);
+
+// ═══════════════════════════════════════════════════════════
+// Input event dispatch (SP7)
+// ═══════════════════════════════════════════════════════════
+
+typedef enum {
+  OUI_MOUSE_DOWN = 0,
+  OUI_MOUSE_UP = 1,
+  OUI_MOUSE_MOVE = 2,
+} OuiMouseEventType;
+
+typedef enum {
+  OUI_BUTTON_LEFT = 0,
+  OUI_BUTTON_MIDDLE = 1,
+  OUI_BUTTON_RIGHT = 2,
+} OuiMouseButton;
+
+typedef enum {
+  OUI_KEY_DOWN = 0,
+  OUI_KEY_UP = 1,
+  OUI_KEY_CHAR = 2,
+} OuiKeyEventType;
+
+typedef enum {
+  OUI_MOD_SHIFT = 1 << 0,
+  OUI_MOD_CTRL = 1 << 1,
+  OUI_MOD_ALT = 1 << 2,
+  OUI_MOD_META = 1 << 3,
+} OuiModifiers;
+
+// Dispatch a mouse event at viewport coordinates.
+OUI_EXPORT OuiStatus oui_document_dispatch_mouse_event(
+    OuiDocument* doc,
+    OuiMouseEventType type,
+    float x,
+    float y,
+    OuiMouseButton button,
+    int modifiers);
+
+// Dispatch a keyboard event.
+// |key_code| is a platform-independent virtual key code.
+// |key_text| is the character text for OUI_KEY_CHAR (UTF-8, NULL otherwise).
+OUI_EXPORT OuiStatus oui_document_dispatch_key_event(
+    OuiDocument* doc,
+    OuiKeyEventType type,
+    int key_code,
+    const char* key_text,
+    int modifiers);
+
+// Dispatch a mouse wheel event at viewport coordinates.
+OUI_EXPORT OuiStatus oui_document_dispatch_wheel_event(
+    OuiDocument* doc,
+    float x,
+    float y,
+    float delta_x,
+    float delta_y,
+    int modifiers);
+
+// ═══════════════════════════════════════════════════════════
+// Event callbacks (SP7)
+// ═══════════════════════════════════════════════════════════
+
+// Event info passed to callbacks.
+typedef struct {
+  __attribute__((annotate("raw_ptr_exclusion")))
+  const char* type;       // Event type name (e.g. "click")
+  __attribute__((annotate("raw_ptr_exclusion")))
+  OuiElement* target;     // Element that received the event
+  float mouse_x;          // Mouse position (mouse events only)
+  float mouse_y;
+  int mouse_button;       // OuiMouseButton (mouse events only)
+  int key_code;           // Virtual key code (keyboard events only)
+  __attribute__((annotate("raw_ptr_exclusion")))
+  const char* key_text;   // Character text (keyboard events only)
+  int modifiers;          // OuiModifiers bitmask
+  int default_prevented;  // Set to 1 to call preventDefault()
+} OuiEvent;
+
+typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
+
+// Set a callback for an event type on an element (replaces any existing).
+// Supported event types: "click", "mousedown", "mouseup", "mousemove",
+// "mouseenter", "mouseleave", "keydown", "keyup", "input", "scroll",
+// "focus", "blur", "transitionend", "animationend", "animationstart",
+// "animationiteration".
+OUI_EXPORT OuiStatus oui_element_set_event_callback(
+    OuiElement* elem,
+    const char* event_type,
+    OuiEventCallback callback,
+    void* user_data);
+
+// Remove a previously set event callback.
+OUI_EXPORT OuiStatus oui_element_remove_event_callback(OuiElement* elem,
+                                                        const char* event_type);
+
+// ═══════════════════════════════════════════════════════════
+// Focus management (SP7)
+// ═══════════════════════════════════════════════════════════
+
+// Set keyboard focus to an element.
+OUI_EXPORT OuiStatus oui_element_focus(OuiElement* elem);
+
+// Remove keyboard focus from an element.
+OUI_EXPORT OuiStatus oui_element_blur(OuiElement* elem);
+
+// Get the currently focused element (NULL if none).
+OUI_EXPORT OuiElement* oui_document_get_focused_element(OuiDocument* doc);
+
+// Advance focus to next (direction=1) or previous (direction=-1) element.
+OUI_EXPORT OuiStatus oui_document_advance_focus(OuiDocument* doc, int direction);
+
+// Check if an element currently has focus. Returns 1 if focused, 0 otherwise.
+OUI_EXPORT int oui_element_has_focus(const OuiElement* elem);
 
 #ifdef __cplusplus
 }
