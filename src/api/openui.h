@@ -212,9 +212,10 @@ OUI_EXPORT void oui_document_set_viewport(OuiDocument* doc,
 OUI_EXPORT OuiStatus oui_document_layout(OuiDocument* doc);
 OUI_EXPORT OuiStatus oui_document_update_all(OuiDocument* doc);
 
-// Load HTML content into the document body.
-// Sets the body's innerHTML to |html|, which may contain any HTML/CSS.
-// Useful for loading pre-authored pages for rendering.
+// Load HTML content into the document.
+// Sets the <html> element's innerHTML to |html|, replacing both <head> and
+// <body>. The HTML may include <head>, <style>, and <body> tags. Any
+// previously obtained OuiElement* handles are invalidated by this call.
 OUI_EXPORT OuiStatus oui_document_load_html(OuiDocument* doc, const char* html);
 
 // ═══════════════════════════════════════════════════════════

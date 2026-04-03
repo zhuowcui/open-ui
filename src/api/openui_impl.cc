@@ -255,6 +255,27 @@ OuiStatus oui_document_load_html(OuiDocument* doc, const char* html) {
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   blink::Document& document = impl->GetDocument();
 
+  // Invalidate all element wrappers for this document before replacing the DOM.
+  // After SetInnerHTMLWithoutTrustedTypes, previously obtained OuiElement*
+  // handles point to detached nodes. We delete and unregister them now so the
+  // wrapper map stays consistent and callers get a clean slate.
+  {
+    auto& map = GetElementMap();
+    std::vector<void*> keys_to_remove;
+    for (auto& [key, wrapper] : map) {
+      if (wrapper->doc == impl) {
+        keys_to_remove.push_back(key);
+      }
+    }
+    for (void* key : keys_to_remove) {
+      auto it = map.find(key);
+      if (it != map.end()) {
+        delete it->second;
+        map.erase(it);
+      }
+    }
+  }
+
   // Find the <html> element and set its innerHTML so that both <head> (with
   // <style>) and <body> content are loaded.  Blink's HTML parser handles the
   // full lifecycle including CSSOM construction.
