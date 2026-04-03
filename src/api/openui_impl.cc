@@ -529,6 +529,62 @@ void oui_element_clear_styles(OuiElement* e) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// HTML attributes (generic)
+// ═══════════════════════════════════════════════════════════════════════════
+
+OuiStatus oui_element_set_attribute(OuiElement* e,
+                                     const char* name,
+                                     const char* value) {
+  if (!e || !name) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+  auto* impl = reinterpret_cast<OuiElementImpl*>(e);
+  if (!impl->element) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+  impl->element->setAttribute(blink::AtomicString(name),
+                               blink::AtomicString(value ? value : ""));
+  return OUI_OK;
+}
+
+OuiStatus oui_element_remove_attribute(OuiElement* e, const char* name) {
+  if (!e || !name) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+  auto* impl = reinterpret_cast<OuiElementImpl*>(e);
+  if (!impl->element) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+  impl->element->removeAttribute(blink::AtomicString(name));
+  return OUI_OK;
+}
+
+char* oui_element_get_attribute(const OuiElement* e, const char* name) {
+  if (!e || !name) {
+    return nullptr;
+  }
+  auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
+  if (!impl->element) {
+    return nullptr;
+  }
+  const blink::AtomicString& val =
+      impl->element->getAttribute(blink::AtomicString(name));
+  if (val.IsNull()) {
+    return nullptr;
+  }
+  std::string utf8 = val.Utf8();
+  return strdup(utf8.c_str());
+}
+
+OuiStatus oui_element_set_id(OuiElement* e, const char* id) {
+  return oui_element_set_attribute(e, "id", id);
+}
+
+OuiStatus oui_element_set_class(OuiElement* e, const char* classes) {
+  return oui_element_set_attribute(e, "class", classes);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Typed convenience setters — layout dimensions
 // ═══════════════════════════════════════════════════════════════════════════
 

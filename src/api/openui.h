@@ -251,6 +251,34 @@ OUI_EXPORT OuiStatus oui_element_remove_style(OuiElement* e,
 OUI_EXPORT void oui_element_clear_styles(OuiElement* e);
 
 // ═══════════════════════════════════════════════════════════
+// HTML attributes (generic)
+// ═══════════════════════════════════════════════════════════
+
+// Set an HTML attribute on the element (e.g. "type", "value", "checked",
+// "disabled", "placeholder", "src", "href", "alt", "width", "height",
+// "colspan", "rowspan", "class", "id", "role", "aria-label", etc.)
+// For boolean attributes like "checked" or "disabled", pass "" as value to set,
+// or use oui_element_remove_attribute to unset.
+OUI_EXPORT OuiStatus oui_element_set_attribute(OuiElement* e,
+                                                const char* name,
+                                                const char* value);
+
+// Remove an HTML attribute from the element.
+OUI_EXPORT OuiStatus oui_element_remove_attribute(OuiElement* e,
+                                                   const char* name);
+
+// Get the value of an HTML attribute. Returns NULL if not set.
+// Caller must free the returned string with free().
+OUI_EXPORT char* oui_element_get_attribute(const OuiElement* e,
+                                            const char* name);
+
+// Set the "id" attribute (shorthand).
+OUI_EXPORT OuiStatus oui_element_set_id(OuiElement* e, const char* id);
+
+// Set the "class" attribute (shorthand).
+OUI_EXPORT OuiStatus oui_element_set_class(OuiElement* e, const char* classes);
+
+// ═══════════════════════════════════════════════════════════
 // Typed convenience setters — layout dimensions
 // ═══════════════════════════════════════════════════════════
 
