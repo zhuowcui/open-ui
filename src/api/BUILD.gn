@@ -47,6 +47,8 @@ static_library("openui_lib") {
     "openui_pixel_diff.h",
     "openui_render.cc",
     "openui_render.h",
+    "openui_resource_provider.cc",
+    "openui_resource_provider.h",
   ]
 
   defines = [ "OUI_BUILD" ]

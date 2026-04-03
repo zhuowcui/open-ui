@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "base/memory/raw_ptr.h"
+#include "openui/openui_resource_provider.h"
 #include "third_party/blink/renderer/core/dom/document.h"
 #include "third_party/blink/renderer/core/dom/element.h"
 #include "third_party/blink/renderer/core/testing/dummy_page_holder.h"
@@ -25,6 +26,10 @@ struct OuiDocumentImpl {
 
   std::unique_ptr<blink::test::TaskEnvironment> task_env;
   std::unique_ptr<blink::DummyPageHolder> page_holder;
+
+  // Resource provider callback state. When callback is non-null, the document
+  // was created with a ResourceProviderFrameClient that intercepts URL loads.
+  openui::ResourceProviderState resource_provider;
 
   blink::Document& GetDocument() { return page_holder->GetDocument(); }
 };
