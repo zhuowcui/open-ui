@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+  * { margin: 0; padding: 0; }
+  body { background: white; }
+
+  .card {
+    width: 350px;
+    margin: 15px 20px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .card-header {
+    height: 8px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+  }
+  .card-body {
+    padding: 16px 20px;
+  }
+  .card-title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .card-text {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.5;
+  }
+  .card-footer {
+    display: flex;
+    border-top: 1px solid #f0f0f0;
+    padding: 12px 20px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .price {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .sidebar {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    width: 180px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #444;
+    background: #f8f9fa;
+  }
+  .nav-item.active {
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 600;
+  }
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .dot-red { background: #e53935; }
+  .dot-blue { background: #1e88e5; }
+  .dot-green { background: #43a047; }
+  .dot-orange { background: #fb8c00; }
+</style></head>
+<body>
+  <div class="card">
+    <div class="card-header"></div>
+    <div class="card-body">
+      <div class="card-title">Dashboard Widget</div>
+      <div class="card-text">A complex UI component with gradients, rounded corners, shadows, typography, and nested flexbox layout.</div>
+    </div>
+    <div class="card-footer">
+      <div class="badge">Active</div>
+      <div class="price">$49.99</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="background: linear-gradient(90deg, #f093fb, #f5576c);"></div>
+    <div class="card-body">
+      <div class="card-title">Analytics Panel</div>
+      <div class="card-text">Testing multiple CSS properties: font-weight, line-height, border-radius, box-shadow, flex layout, and gradient backgrounds.</div>
+    </div>
+    <div class="card-footer">
+      <div class="badge" style="background: #fce4ec; color: #c62828;">Premium</div>
+      <div class="price">$129.00</div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="nav-item active"><div class="nav-dot dot-blue"></div>Overview</div>
+    <div class="nav-item"><div class="nav-dot dot-red"></div>Alerts</div>
+    <div class="nav-item"><div class="nav-dot dot-green"></div>Reports</div>
+    <div class="nav-item"><div class="nav-dot dot-orange"></div>Settings</div>
+  </div>
+</body>
+</html>

@@ -30,6 +30,7 @@
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/public/platform/scheduler/test/renderer_scheduler_test_support.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
+#include "third_party/blink/public/platform/web_font_render_style.h"
 #include "third_party/blink/public/platform/web_runtime_features.h"
 #include "third_party/blink/public/web/blink.h"
 #include "third_party/blink/renderer/platform/testing/task_environment.h"
@@ -157,6 +158,14 @@ OuiStatus openui_runtime_init(const OuiInitConfig* config) {
   // Phase 5: enable experimental features.
   blink::WebRuntimeFeatures::EnableExperimentalFeatures(true);
   blink::WebRuntimeFeatures::EnableTestOnlyFeatures(true);
+
+  // Phase 5.1: Configure font rendering for deterministic output.
+  // Match headless Chromium: no hinting, grayscale anti-alias, no sub-pixel.
+  blink::WebFontRenderStyle::SetHinting(SkFontHinting::kNone);
+  blink::WebFontRenderStyle::SetAutoHint(false);
+  blink::WebFontRenderStyle::SetAntiAlias(true);
+  blink::WebFontRenderStyle::SetSubpixelRendering(false);
+  blink::WebFontRenderStyle::SetSubpixelPositioning(false);
 
   // Phase 6: Create a global TaskEnvironment for standalone mode.
   // oui_init() always owns the task environment. The only case where we

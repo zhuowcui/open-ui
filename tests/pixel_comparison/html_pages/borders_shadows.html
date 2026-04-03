@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+  * { margin: 0; padding: 0; }
+  body { background: white; }
+
+  .inset {
+    width: 250px;
+    height: 80px;
+    margin: 25px;
+    background: #ecf0f1;
+    border: 3px solid #bdc3c7;
+    border-radius: 12px;
+    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.2),
+                inset -4px -4px 8px rgba(255,255,255,0.7);
+  }
+  .multi-border {
+    width: 200px;
+    height: 200px;
+    margin: 25px;
+    background: #fff;
+    border-top: 8px solid #e74c3c;
+    border-right: 8px solid #3498db;
+    border-bottom: 8px solid #2ecc71;
+    border-left: 8px solid #f39c12;
+    position: absolute;
+    left: 320px;
+    top: 20px;
+  }
+  .outline-box {
+    width: 200px;
+    height: 100px;
+    margin: 25px;
+    background: #fff;
+    border: 2px solid #333;
+    outline: 4px dashed #e74c3c;
+    outline-offset: 6px;
+    position: absolute;
+    left: 20px;
+    top: 170px;
+  }
+  .double-border {
+    width: 200px;
+    height: 100px;
+    margin: 25px;
+    background: #ffeaa7;
+    border: 6px double #2c3e50;
+    border-radius: 8px;
+    position: absolute;
+    left: 320px;
+    top: 280px;
+  }
+  .gradient-border {
+    width: 250px;
+    height: 120px;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #667eea, #764ba2) border-box;
+    border: 4px solid transparent;
+    border-radius: 16px;
+    position: absolute;
+    left: 20px;
+    top: 350px;
+  }
+  .complex-shadow {
+    width: 200px;
+    height: 120px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12),
+                0 4px 6px rgba(0,0,0,0.08),
+                0 12px 24px rgba(0,0,0,0.06);
+    position: absolute;
+    left: 350px;
+    top: 430px;
+  }
+</style></head>
+<body>
+  <div class="inset"></div>
+  <div class="multi-border"></div>
+  <div class="outline-box"></div>
+  <div class="double-border"></div>
+  <div class="gradient-border"></div>
+  <div class="complex-shadow"></div>
+</body>
+</html>

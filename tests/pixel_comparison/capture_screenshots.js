@@ -12,7 +12,20 @@ const SCREENSHOT_DIR = path.join(__dirname, 'screenshots');
 async function main() {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 
-  const browser = await chromium.launch({ headless: true });
+  // Use our own M147 headless_shell to ensure identical Blink/Skia/FreeType
+  // rendering between Playwright screenshots and Open UI's DummyPageHolder.
+  const homedir = require('os').homedir();
+  const execPath = path.join(homedir, 'chromium/src/out/Release/headless_shell');
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath: execPath,
+    args: [
+      '--font-render-hinting=none',
+      '--disable-lcd-text',
+      '--disable-font-subpixel-positioning',
+      '--force-color-profile=srgb',
+    ],
+  });
   const context = await browser.newContext({
     viewport: { width: 800, height: 600 },
     deviceScaleFactor: 1,

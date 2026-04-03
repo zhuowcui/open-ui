@@ -248,6 +248,24 @@ OuiStatus oui_document_update_all(OuiDocument* doc) {
   return OUI_OK;
 }
 
+OuiStatus oui_document_load_html(OuiDocument* doc, const char* html) {
+  if (!doc || !html) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+  auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  blink::Document& document = impl->GetDocument();
+
+  // Find the <html> element and set its innerHTML so that both <head> (with
+  // <style>) and <body> content are loaded.  Blink's HTML parser handles the
+  // full lifecycle including CSSOM construction.
+  blink::Element* html_elem = document.documentElement();
+  if (!html_elem) {
+    return OUI_ERROR_INTERNAL;
+  }
+  html_elem->SetInnerHTMLWithoutTrustedTypes(blink::String::FromUTF8(html));
+  return OUI_OK;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Element lifecycle
 // ═══════════════════════════════════════════════════════════════════════════

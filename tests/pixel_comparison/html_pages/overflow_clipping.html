@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+  * { margin: 0; padding: 0; }
+  body { background: white; }
+  .clip-box {
+    width: 200px;
+    height: 150px;
+    overflow: hidden;
+    background: #ecf0f1;
+    margin: 20px;
+    border: 2px solid #7f8c8d;
+  }
+  .clip-box .inner {
+    width: 300px;
+    height: 300px;
+    background: #e74c3c;
+    margin-top: -20px;
+    margin-left: -30px;
+  }
+  .scroll-box {
+    width: 200px;
+    height: 150px;
+    overflow: hidden;
+    background: #ecf0f1;
+    margin: 20px;
+    border: 2px solid #7f8c8d;
+    position: absolute;
+    left: 260px;
+    top: 20px;
+  }
+  .scroll-box .tall {
+    width: 180px;
+    height: 50px;
+    margin: 10px;
+  }
+  .scroll-box .s1 { background: #3498db; }
+  .scroll-box .s2 { background: #2ecc71; }
+  .scroll-box .s3 { background: #e67e22; }
+  .scroll-box .s4 { background: #9b59b6; }
+
+  .nested-clip {
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    background: #bdc3c7;
+    margin: 20px;
+    position: absolute;
+    left: 20px;
+    top: 220px;
+    border: 3px solid #2c3e50;
+  }
+  .nested-clip .child {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    background: #3498db;
+    margin: 40px;
+    border-radius: 20px;
+  }
+  .nested-clip .child .grandchild {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    margin-top: -50px;
+  }
+</style></head>
+<body>
+  <div class="clip-box">
+    <div class="inner"></div>
+  </div>
+  <div class="scroll-box">
+    <div class="tall s1"></div>
+    <div class="tall s2"></div>
+    <div class="tall s3"></div>
+    <div class="tall s4"></div>
+  </div>
+  <div class="nested-clip">
+    <div class="child">
+      <div class="grandchild"></div>
+    </div>
+  </div>
+</body>
+</html>
