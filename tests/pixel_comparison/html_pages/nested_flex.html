@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+  * { margin: 0; padding: 0; }
+  body { background: white; display: flex; flex-direction: column; }
+  .outer {
+    display: flex;
+    width: 400px;
+    height: 100px;
+    background: #EEEEEE;
+  }
+  .inner1 { flex: 1; background: #FF6600; }
+  .inner2 { flex: 2; background: #0066FF; }
+  .inner3 { flex: 1; background: #66FF00; }
+  .row2 {
+    display: flex;
+    width: 400px;
+    height: 100px;
+    background: #DDDDDD;
+  }
+  .r2a { width: 200px; background: #FF00FF; }
+  .r2b { width: 200px; background: #00FFFF; }
+</style></head>
+<body>
+  <div class="outer">
+    <div class="inner1"></div>
+    <div class="inner2"></div>
+    <div class="inner3"></div>
+  </div>
+  <div class="row2">
+    <div class="r2a"></div>
+    <div class="r2b"></div>
+  </div>
+</body>
+</html>

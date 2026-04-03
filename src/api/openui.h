@@ -351,6 +351,40 @@ OUI_EXPORT OuiElement* oui_document_hit_test(OuiDocument* doc,
 OUI_EXPORT float oui_element_get_scroll_width(const OuiElement* e);
 OUI_EXPORT float oui_element_get_scroll_height(const OuiElement* e);
 
+// ═══════════════════════════════════════════════════════════
+// Offscreen rendering (SP5)
+// ═══════════════════════════════════════════════════════════
+
+typedef struct {
+  __attribute__((annotate("raw_ptr_exclusion")))
+  uint8_t* pixels;  // RGBA pixel data (caller must free with oui_bitmap_free)
+  int width;
+  int height;
+  int stride;  // Bytes per row (width * 4)
+} OuiBitmap;
+
+// Render the current element tree to an RGBA bitmap.
+// Runs the full lifecycle (style → layout → paint → rasterize).
+// On success, populates |out_bitmap| with heap-allocated pixel data.
+OUI_EXPORT OuiStatus oui_document_render_to_bitmap(OuiDocument* doc,
+                                                    OuiBitmap* out_bitmap);
+
+// Free bitmap pixel data returned by oui_document_render_to_bitmap.
+OUI_EXPORT void oui_bitmap_free(OuiBitmap* bitmap);
+
+// Render the current element tree and write a PNG file to |file_path|.
+OUI_EXPORT OuiStatus oui_document_render_to_png(OuiDocument* doc,
+                                                 const char* file_path);
+
+// Render the current element tree to a PNG in memory.
+// On success, |*out_data| is heap-allocated (free with oui_free).
+OUI_EXPORT OuiStatus oui_document_render_to_png_buffer(OuiDocument* doc,
+                                                        uint8_t** out_data,
+                                                        size_t* out_size);
+
+// Free memory allocated by oui_document_render_to_png_buffer.
+OUI_EXPORT void oui_free(void* ptr);
+
 #ifdef __cplusplus
 }
 #endif

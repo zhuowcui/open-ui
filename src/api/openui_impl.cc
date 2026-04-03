@@ -32,7 +32,9 @@
 #include "third_party/blink/renderer/core/style/computed_style.h"
 #include "third_party/blink/renderer/platform/wtf/text/atomic_string.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+#include "ui/gfx/geometry/point.h"
 #include "ui/gfx/geometry/point_f.h"
+#include "ui/gfx/geometry/rect.h"
 #include "ui/gfx/geometry/size.h"
 
 // Out-of-line constructors/destructors for complex structs (chromium-style).
@@ -219,10 +221,12 @@ void oui_document_set_viewport(OuiDocument* doc, int width, int height) {
   }
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   auto& view = impl->page_holder->GetFrameView();
-  // DummyPageHolder fixes layout size to frame size by default.
-  // Unlock it before resizing.
+  // Resize both the frame rect and layout size so that rendering
+  // produces a bitmap matching the requested dimensions.
+  gfx::Size size(width, height);
+  view.SetFrameRect(gfx::Rect(gfx::Point(), size));
   view.SetLayoutSizeFixedToFrameSize(false);
-  view.SetLayoutSize(gfx::Size(width, height));
+  view.SetLayoutSize(size);
 }
 
 OuiStatus oui_document_layout(OuiDocument* doc) {
@@ -977,4 +981,112 @@ float oui_element_get_scroll_height(const OuiElement* e) {
   if (!impl->element) return 0.0f;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return static_cast<float>(mutable_elem->scrollHeight());
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Offscreen rendering (SP5)
+// ═══════════════════════════════════════════════════════════════════════════
+
+#include "openui/openui_render.h"
+
+#include <fstream>
+
+OuiStatus oui_document_render_to_bitmap(OuiDocument* doc,
+                                         OuiBitmap* out_bitmap) {
+  if (!doc || !out_bitmap) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+
+  auto* doc_impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  SkBitmap bitmap;
+  if (!OpenUIRasterize(doc_impl, &bitmap)) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  size_t pixel_size = 0;
+  uint8_t* rgba = OpenUIBitmapToRGBA(bitmap, &pixel_size);
+  if (!rgba) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  out_bitmap->pixels = rgba;
+  out_bitmap->width = bitmap.width();
+  out_bitmap->height = bitmap.height();
+  out_bitmap->stride = bitmap.width() * 4;
+
+  return OUI_OK;
+}
+
+void oui_bitmap_free(OuiBitmap* bitmap) {
+  if (bitmap && bitmap->pixels) {
+    free(bitmap->pixels);
+    bitmap->pixels = nullptr;
+    bitmap->width = 0;
+    bitmap->height = 0;
+    bitmap->stride = 0;
+  }
+}
+
+OuiStatus oui_document_render_to_png(OuiDocument* doc,
+                                      const char* file_path) {
+  if (!doc || !file_path) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+
+  auto* doc_impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  SkBitmap bitmap;
+  if (!OpenUIRasterize(doc_impl, &bitmap)) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  std::vector<uint8_t> png_data;
+  if (!OpenUIEncodePNG(bitmap, &png_data)) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  std::ofstream file(file_path, std::ios::binary);
+  if (!file.is_open()) {
+    return OUI_ERROR_INTERNAL;
+  }
+  file.write(reinterpret_cast<const char*>(png_data.data()),
+             static_cast<std::streamsize>(png_data.size()));
+  if (!file.good()) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  return OUI_OK;
+}
+
+OuiStatus oui_document_render_to_png_buffer(OuiDocument* doc,
+                                             uint8_t** out_data,
+                                             size_t* out_size) {
+  if (!doc || !out_data || !out_size) {
+    return OUI_ERROR_INVALID_ARGUMENT;
+  }
+
+  auto* doc_impl = reinterpret_cast<OuiDocumentImpl*>(doc);
+  SkBitmap bitmap;
+  if (!OpenUIRasterize(doc_impl, &bitmap)) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  std::vector<uint8_t> png_data;
+  if (!OpenUIEncodePNG(bitmap, &png_data)) {
+    return OUI_ERROR_INTERNAL;
+  }
+
+  // Allocate caller-owned buffer and copy.
+  *out_size = png_data.size();
+  *out_data = static_cast<uint8_t*>(malloc(png_data.size()));
+  if (!*out_data) {
+    *out_size = 0;
+    return OUI_ERROR_INTERNAL;
+  }
+  memcpy(*out_data, png_data.data(), png_data.size());
+
+  return OUI_OK;
+}
+
+void oui_free(void* ptr) {
+  free(ptr);
 }

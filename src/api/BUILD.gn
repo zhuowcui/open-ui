@@ -30,9 +30,8 @@ _blink_configs = [
 
 # ─── openui_lib static library ─────────────────────────────────────────
 # NOTE: Currently testonly because we depend on DummyPageHolder and
-# blink::test::TaskEnvironment. SP5 will replace these with production
-# equivalents and build as shared_library("libopenui").
-# V8's initial-exec TLS model prevents shared_library linking for now.
+# blink::test::TaskEnvironment. SP6 will replace these with production
+# equivalents. V8's initial-exec TLS model prevents shared_library linking.
 static_library("openui_lib") {
   testonly = true
 
@@ -44,6 +43,10 @@ static_library("openui_lib") {
     "openui_impl.h",
     "openui_init.cc",
     "openui_init.h",
+    "openui_pixel_diff.cc",
+    "openui_pixel_diff.h",
+    "openui_render.cc",
+    "openui_render.h",
   ]
 
   defines = [ "OUI_BUILD" ]
@@ -53,7 +56,7 @@ static_library("openui_lib") {
 
   configs += _blink_configs
 
-  deps = _blink_deps
+  deps = _blink_deps + [ "//ui/gfx/codec" ]
 
   data_deps = [ "//content/shell:pak" ]
   data = [ "$root_out_dir/content_shell.pak" ]
@@ -83,6 +86,62 @@ test("openui_api_test") {
 executable("openui_c_test") {
   testonly = true
   sources = [ "openui_c_test.c" ]
+
+  configs += _blink_configs
+
+  deps = [
+    ":openui_lib",
+  ] + _blink_deps
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
+
+# ─── SP5: C++ render tests (GTest) ──────────────────────────────────────
+test("openui_render_test") {
+  sources = [ "openui_render_test.cc" ]
+
+  defines = []
+  if (v8_use_external_startup_data) {
+    defines += [ "V8_USE_EXTERNAL_STARTUP_DATA" ]
+  }
+
+  configs += _blink_configs
+
+  deps = _blink_deps + [
+    ":openui_lib",
+    "//testing/gtest",
+    "//ui/gfx/codec",
+  ]
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
+
+# ─── SP5: Pure C render test ────────────────────────────────────────────
+executable("openui_c_render_test") {
+  testonly = true
+  sources = [ "openui_c_render_test.c" ]
+
+  configs += _blink_configs
+
+  deps = [
+    ":openui_lib",
+  ] + _blink_deps
+
+  data_deps = [ "//content/shell:pak" ]
+  data = [ "$root_out_dir/content_shell.pak" ]
+}
+
+# ─── SP5: Pixel comparison page renderer ────────────────────────────────
+executable("openui_render_pages") {
+  testonly = true
+  sources = [ "openui_render_pages.cc" ]
+
+  defines = []
+  if (v8_use_external_startup_data) {
+    defines += [ "V8_USE_EXTERNAL_STARTUP_DATA" ]
+  }
 
   configs += _blink_configs
 
