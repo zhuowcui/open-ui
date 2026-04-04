@@ -1,0 +1,7 @@
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+    "-C", "link-arg=-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+    "-C", "link-arg=--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+    "-C", "link-arg=-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+]

@@ -1,0 +1,7 @@
+[package]
+name = "openui-sys"
+version = "0.1.0"
+edition = "2024"
+links = "openui"
+description = "Raw FFI bindings to the Open UI C API (Chromium rendering pipeline)"
+publish = false

@@ -1,0 +1,8 @@
+[package]
+name = "openui"
+version = "0.1.0"
+edition = "2021"
+description = "Open UI reactive runtime — Leptos-style fine-grained reactivity in pure Rust"
+
+[dependencies]
+openui-sys = { path = "../openui-sys" }
