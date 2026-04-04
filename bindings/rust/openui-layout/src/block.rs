@@ -73,6 +73,29 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // 3. Layout child
     // 4. Position using ComputeInflowPosition
 
+    // Per CSS 2.1 §10.5, percentage heights on children resolve against the
+    // containing block's *specified* height (if definite), not auto-computed.
+    // If the parent's height is auto, percentage heights are indefinite.
+    let child_percentage_block_size = if !style.height.is_auto() {
+        let raw = resolve_length(
+            &style.height,
+            space.percentage_resolution_block_size,
+            LayoutUnit::zero(), // auto fallback (shouldn't reach here)
+            LayoutUnit::zero(), // none fallback
+        );
+        // Convert to content-box size
+        if style.box_sizing == BoxSizing::BorderBox {
+            (raw - border_padding_block).clamp_negative_to_zero()
+        } else {
+            raw
+        }
+    } else {
+        // Auto height → percentage heights on children are indefinite.
+        // Pass through the parent's percentage resolution (which propagates
+        // from the viewport for the root).
+        space.percentage_resolution_block_size
+    };
+
     let content_edge = border.top + padding.top;
     let mut block_offset = content_edge;
     let mut margin_strut = MarginStrut::new();
@@ -97,7 +120,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
         // ── Calculate child margins ──────────────────────────────────
         // Blink: CalculateMargins() (line 3329)
-        let child_margin = resolve_margins(child_style, space.percentage_resolution_inline_size);
+        // Per CSS 2.1 §10.3.3, percentage margins resolve against the
+        // child's containing block width (parent's content-box width).
+        let child_margin = resolve_margins(child_style, child_available_inline);
 
         // ── Margin collapsing ────────────────────────────────────────
         // Blink: ComputeChildData / ComputeInflowPosition
@@ -128,12 +153,33 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
         // ── Create child constraint space ────────────────────────────
         // Blink: CreateConstraintSpaceForChild() (line 3408)
+        //
+        // Per CSS 2.1 §10.3.3, for block-level non-replaced elements in
+        // normal flow, width:auto fills: containing_block_width - margins
+        // - border - padding. We subtract non-auto fixed margins from the
+        // available inline size so that resolve_inline_size auto-fills correctly.
+        let child_non_auto_margin_inline = {
+            let ml = if child_style.margin_left.is_auto() {
+                LayoutUnit::zero()
+            } else {
+                child_margin.left
+            };
+            let mr = if child_style.margin_right.is_auto() {
+                LayoutUnit::zero()
+            } else {
+                child_margin.right
+            };
+            ml + mr
+        };
+        let child_constrained_inline =
+            (child_available_inline - child_non_auto_margin_inline).clamp_negative_to_zero();
+
         let child_is_new_fc = child_style.creates_new_formatting_context();
         let child_space = ConstraintSpace::for_block_child(
-            child_available_inline,
-            space.available_block_size, // pass through for now
-            child_available_inline,     // percentage resolution
-            space.percentage_resolution_block_size,
+            child_constrained_inline,
+            space.available_block_size,
+            child_available_inline,     // percentage resolution uses full content box
+            child_percentage_block_size,
             child_is_new_fc,
         );
 
@@ -929,5 +975,93 @@ mod tests {
         let block_frag = &fragment.children[0];
 
         assert!(block_frag.children.is_empty());
+    }
+
+    #[test]
+    fn auto_width_subtracts_fixed_margins() {
+        // CSS 2.1 §10.3.3: width:auto = containing_block - margin - border - padding
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.margin_left = Length::px(20.0);
+        doc.node_mut(div).style.margin_right = Length::px(20.0);
+        doc.node_mut(div).style.height = Length::px(50.0);
+        // width: auto (default)
+        doc.append_child(vp, div);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let child = &fragment.children[0];
+
+        // width:auto should be 800 - 20 - 20 = 760
+        assert_eq!(child.size.width.to_i32(), 760);
+        // positioned at left margin
+        assert_eq!(child.offset.left.to_i32(), 20);
+    }
+
+    #[test]
+    fn percentage_margin_resolves_against_parent_content_box() {
+        // Percentage margins resolve against the child's containing block
+        // width (parent's content-box), not the grandparent's.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.width = Length::px(400.0);
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
+        doc.node_mut(child).style.height = Length::px(50.0);
+        doc.node_mut(child).style.margin_left = Length::percent(50.0);
+        // margin-left: 50% of 400 = 200
+        doc.append_child(parent, child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let parent_frag = &fragment.children[0];
+        let child_frag = &parent_frag.children[0];
+
+        // margin-left = 50% of 400 = 200
+        assert_eq!(child_frag.offset.left.to_i32(), 200);
+        // child width = 400 - 200 (margin) = 200
+        assert_eq!(child_frag.size.width.to_i32(), 200);
+    }
+
+    #[test]
+    fn percentage_height_resolves_against_parent_height() {
+        // Percentage heights resolve against the parent's specified height
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.height = Length::px(200.0);
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
+        doc.node_mut(child).style.height = Length::percent(50.0);
+        doc.append_child(parent, child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let parent_frag = &fragment.children[0];
+        let child_frag = &parent_frag.children[0];
+
+        // child height = 50% of 200 = 100
+        assert_eq!(child_frag.size.height.to_i32(), 100);
     }
 }

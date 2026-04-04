@@ -150,8 +150,11 @@ fn paint_borders(
 
         canvas.draw_rect(stroke_rect, &paint);
     } else {
-        // Per-side border painting (filled rectangles for each side)
-        // This handles different widths/colors per side.
+        // Per-side border painting (filled rectangles for each side).
+        // NOTE: Corner regions overlap when sides have different colors.
+        // Blink uses trapezoid/polygon drawing for correct diagonal splits.
+        // This will be fixed in SP12 (advanced paint). For SP9, corners
+        // show the later-drawn side's color — acceptable for uniform colors.
         paint_border_side(canvas, style.border_top_style, &style.border_top_color,
             inherited_color, bt,
             Rect::from_xywh(x, y, w, bt));
