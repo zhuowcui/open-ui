@@ -115,7 +115,8 @@ fn transform_full_width_non_ascii_passthrough() {
 
 #[test]
 fn transform_capitalize_after_apostrophe() {
-    assert_eq!(apply_text_transform("it's a test", TextTransform::Capitalize), "It'S A Test");
+    // CSS Text §2.1: apostrophe is NOT a word boundary, so "it's" stays as one word.
+    assert_eq!(apply_text_transform("it's a test", TextTransform::Capitalize), "It's A Test");
 }
 
 // ═══════════════════════════════════════════════════════════════════════

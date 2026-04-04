@@ -11,3 +11,6 @@ openui-layout = { path = "../openui-layout" }
 openui-dom = { path = "../openui-dom" }
 openui-text = { path = "../openui-text" }
 skia-safe = "0.82"
+
+[dev-dependencies]
+png = "0.17"

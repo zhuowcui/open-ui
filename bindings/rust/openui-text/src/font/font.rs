@@ -56,8 +56,9 @@ impl Font {
 
     /// Measure the advance width of a string using the primary font.
     ///
-    /// This is a simplified measurement that doesn't account for shaping,
-    /// kerning, or complex scripts. Full shaping will be added in Wave 2.
+    /// This is a simplified measurement using `SkFont::measure_str` that does
+    /// not account for HarfBuzz shaping, ligatures, or complex scripts. For
+    /// accurate measurement, use `TextShaper::shape()` instead.
     pub fn width(&self, text: &str) -> f32 {
         if let Some(font_data) = self.primary_font() {
             let (width, _) = font_data.sk_font().measure_str(text, None);

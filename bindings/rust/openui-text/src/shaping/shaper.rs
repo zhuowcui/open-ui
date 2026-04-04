@@ -47,8 +47,7 @@ struct CollectedRun {
 }
 
 impl ShapeCollector {
-    fn new(font_data: Arc<FontPlatformData>, direction: TextDirection, text: &str) -> Self {
-        let _ = text;
+    fn new(font_data: Arc<FontPlatformData>, direction: TextDirection) -> Self {
         Self {
             font_data,
             direction,
@@ -83,6 +82,7 @@ impl ShapeCollector {
             let mut run_glyphs = Vec::with_capacity(collected.glyphs.len());
             let mut run_advances = Vec::with_capacity(collected.glyphs.len());
             let mut run_offsets = Vec::with_capacity(collected.glyphs.len());
+            let mut run_clusters = Vec::with_capacity(collected.glyphs.len());
 
             for i in 0..collected.glyphs.len() {
                 run_glyphs.push(collected.glyphs[i]);
@@ -133,6 +133,22 @@ impl ShapeCollector {
                 num_characters
             };
 
+            // Build per-glyph cluster mapping (character index relative to run start).
+            for i in 0..collected.glyphs.len() {
+                if !collected.clusters.is_empty() {
+                    let cluster_byte = collected.clusters[i] as usize;
+                    if cluster_byte < byte_to_char.len() {
+                        let char_idx = byte_to_char[cluster_byte];
+                        run_clusters.push(char_idx.saturating_sub(start_char));
+                    } else {
+                        run_clusters.push(0);
+                    }
+                } else {
+                    // No cluster data: assume 1:1 mapping.
+                    run_clusters.push(i);
+                }
+            }
+
             let run_num_chars = end_char.saturating_sub(start_char);
             let run_num_glyphs = run_glyphs.len();
 
@@ -143,6 +159,7 @@ impl ShapeCollector {
                 glyphs: run_glyphs,
                 advances: run_advances,
                 offsets: run_offsets,
+                clusters: run_clusters,
                 start_index: start_char,
                 num_characters: run_num_chars,
                 num_glyphs: run_num_glyphs,
@@ -210,33 +227,49 @@ impl ShapeCollector {
     }
 
     /// Determine which characters are cluster bases.
+    ///
+    /// A character is a cluster base if at least one glyph's cluster value
+    /// maps to it. Characters that no glyph points to (e.g., the second
+    /// character in a ligature) are non-base. This matches HarfBuzz's
+    /// cluster model used by Blink's `ShapeResult`.
     fn compute_cluster_bases(
         text: &str,
         runs: &[CollectedRun],
         byte_to_char: &[usize],
     ) -> Vec<bool> {
         let num_chars = text.chars().count();
-        let bases = vec![true; num_chars];
+        if num_chars == 0 {
+            return Vec::new();
+        }
 
-        // Mark characters that share a cluster with a preceding character.
+        let mut bases = vec![false; num_chars];
+        let mut had_clusters = false;
+
         for run in runs {
             if run.clusters.is_empty() {
                 continue;
             }
+            had_clusters = true;
+
+            // Each unique cluster value maps to a cluster-base character.
             let mut seen_clusters = std::collections::HashSet::new();
             for &cluster in &run.clusters {
-                let byte_off = cluster as usize;
-                if byte_off < byte_to_char.len() {
-                    let char_idx = byte_to_char[byte_off];
-                    if char_idx < num_chars {
-                        if !seen_clusters.insert(cluster) {
-                            // This cluster was already seen — this glyph shares
-                            // a cluster with another glyph, but the character
-                            // at this index is still a base if it's the first
-                            // glyph with this cluster byte offset.
+                if seen_clusters.insert(cluster) {
+                    let byte_off = cluster as usize;
+                    if byte_off < byte_to_char.len() {
+                        let char_idx = byte_to_char[byte_off];
+                        if char_idx < num_chars {
+                            bases[char_idx] = true;
                         }
                     }
                 }
+            }
+        }
+
+        // If no cluster data was available, treat all characters as bases.
+        if !had_clusters {
+            for b in &mut bases {
+                *b = true;
             }
         }
 
@@ -245,10 +278,13 @@ impl ShapeCollector {
 
     /// Determine safe-to-break points.
     ///
-    /// For simple Latin text, it's safe to break at word boundaries
-    /// (after spaces) and at the start of the text. This matches Blink's
-    /// use of HarfBuzz's `HB_GLYPH_FLAG_UNSAFE_TO_BREAK` flag.
-    fn compute_safe_breaks(text: &str, chars: &[char]) -> Vec<bool> {
+    /// A character position is safe to break before if reshaping the text
+    /// from that point onward would produce the same glyphs. For simple
+    /// Latin text, it's safe to break at word boundaries (after spaces)
+    /// and at the start of the text. This matches Blink's use of
+    /// HarfBuzz's `HB_GLYPH_FLAG_UNSAFE_TO_BREAK` flag for Latin text;
+    /// complex scripts may have fewer safe-to-break points.
+    fn compute_safe_breaks(_text: &str, chars: &[char]) -> Vec<bool> {
         let mut safe = vec![false; chars.len()];
         if safe.is_empty() {
             return safe;
@@ -261,15 +297,11 @@ impl ShapeCollector {
             if i > 0 && prev_was_space {
                 safe[i] = true;
             }
-            // Also safe after any whitespace.
             if ch.is_whitespace() {
                 safe[i] = true;
             }
             prev_was_space = ch.is_whitespace();
         }
-        // Ignore previous logic: for Latin text, every character boundary
-        // is a safe break point at the character level.
-        let _ = text;
         safe
     }
 }
@@ -359,7 +391,7 @@ impl TextShaper {
         let sk_font = font_data.sk_font();
         let left_to_right = direction.is_ltr();
 
-        let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction, text);
+        let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
 
         // Use f32::INFINITY for width to disable line wrapping — we shape
         // the entire string as a single line.

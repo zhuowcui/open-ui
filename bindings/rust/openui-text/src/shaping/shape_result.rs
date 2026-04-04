@@ -61,6 +61,8 @@ pub struct ShapeResultRun {
     pub advances: Vec<f32>,
     /// X/Y offset for each glyph (for combining marks, kerning adjustments).
     pub offsets: Vec<(f32, f32)>,
+    /// Per-glyph cluster mapping: character index (relative to run start) each glyph belongs to.
+    pub clusters: Vec<usize>,
     /// Start character index in original text.
     pub start_index: usize,
     /// Number of characters covered by this run.
@@ -242,6 +244,15 @@ impl ShapeResult {
                 glyphs: run.glyphs[glyph_start..glyph_end].to_vec(),
                 advances: run.advances[glyph_start..glyph_end].to_vec(),
                 offsets: run.offsets[glyph_start..glyph_end].to_vec(),
+                clusters: if !run.clusters.is_empty() {
+                    let char_offset = clip_start - run_start;
+                    run.clusters[glyph_start..glyph_end]
+                        .iter()
+                        .map(|c| c.saturating_sub(char_offset))
+                        .collect()
+                } else {
+                    Vec::new()
+                },
                 start_index: clip_start - start,
                 num_characters: clip_end - clip_start,
                 num_glyphs: glyph_end - glyph_start,
@@ -291,9 +302,8 @@ impl ShapeResult {
 
     /// Find the glyph range within a run that covers a given character range.
     ///
-    /// For simple 1:1 glyph-to-character mapping (Latin text), this is
-    /// straightforward. For ligatures or decomposition, we use the fact
-    /// that `num_glyphs` and `num_characters` may differ.
+    /// Uses the run's cluster data for precise mapping. Falls back to
+    /// proportional mapping when cluster data is unavailable.
     fn glyph_range_for_char_range(
         run: &ShapeResultRun,
         char_start: usize,
@@ -302,14 +312,31 @@ impl ShapeResult {
         if run.num_characters == 0 {
             return (0, 0);
         }
+
+        // Use cluster data for precise glyph-to-character mapping.
+        if !run.clusters.is_empty() {
+            let mut glyph_start = run.num_glyphs;
+            let mut glyph_end = 0;
+            for (gi, &char_idx) in run.clusters.iter().enumerate() {
+                if char_idx >= char_start && char_idx < char_end {
+                    glyph_start = glyph_start.min(gi);
+                    glyph_end = glyph_end.max(gi + 1);
+                }
+            }
+            if glyph_start >= glyph_end {
+                return (0, 0);
+            }
+            return (glyph_start, glyph_end);
+        }
+
         // For 1:1 mapping (common in Latin text):
         if run.num_glyphs == run.num_characters {
             let gs = char_start.min(run.num_glyphs);
             let ge = char_end.min(run.num_glyphs);
             return (gs, ge);
         }
-        // For non-1:1 mapping, use proportional mapping as approximation.
-        // In a full implementation, cluster data would be used here.
+
+        // For non-1:1 mapping without cluster data, use proportional mapping.
         let ratio = run.num_glyphs as f32 / run.num_characters as f32;
         let gs = (char_start as f32 * ratio).round() as usize;
         let ge = (char_end as f32 * ratio).round() as usize;

@@ -18,7 +18,7 @@ pub fn apply_text_transform(text: &str, transform: TextTransform) -> String {
         TextTransform::Lowercase => text.to_lowercase(),
         TextTransform::Capitalize => capitalize(text),
         TextTransform::FullWidth => to_full_width(text),
-        TextTransform::FullSizeKana => text.to_string(), // Pass-through: rare, future work
+        TextTransform::FullSizeKana => to_full_size_kana(text),
     }
 }
 
@@ -27,7 +27,8 @@ pub fn apply_text_transform(text: &str, transform: TextTransform) -> String {
 /// Blink's definition of "word" for capitalize: a letter preceded by
 /// a non-letter or at the start of the string. The CSS spec (§2.1)
 /// says "first typographic letter unit of each word" where word
-/// boundaries include spaces, hyphens, and other punctuation.
+/// boundaries include spaces, hyphens, and other punctuation but
+/// NOT apostrophes within words (e.g., "it's" is one word).
 fn capitalize(text: &str) -> String {
     let mut result = String::with_capacity(text.len());
     let mut capitalize_next = true;
@@ -40,8 +41,9 @@ fn capitalize(text: &str) -> String {
             capitalize_next = false;
         } else {
             result.push(ch);
-            // Word boundaries: whitespace, hyphens, certain punctuation
-            if ch.is_whitespace() || ch == '-' || ch == '\'' {
+            // Word boundaries: whitespace and hyphens.
+            // Apostrophe is NOT a word boundary (CSS Text §2.1: "it's" is one word).
+            if ch.is_whitespace() || ch == '-' {
                 capitalize_next = true;
             }
         }
@@ -65,6 +67,29 @@ fn to_full_width(text: &str) -> String {
             } else {
                 ch
             }
+        })
+        .collect()
+}
+
+/// Convert small kana to their full-size equivalents.
+///
+/// CSS Text Level 4 §2: `text-transform: full-size-kana` converts small
+/// Hiragana and Katakana to their full-size forms. This matches Blink's
+/// `ApplyFullSizeKanaTransform` in `text_transform.cc`.
+fn to_full_size_kana(text: &str) -> String {
+    text.chars()
+        .map(|ch| match ch {
+            // Small Hiragana → Full-size Hiragana
+            'ぁ' => 'あ', 'ぃ' => 'い', 'ぅ' => 'う', 'ぇ' => 'え', 'ぉ' => 'お',
+            'っ' => 'つ', 'ゃ' => 'や', 'ゅ' => 'ゆ', 'ょ' => 'よ', 'ゎ' => 'わ',
+            // Small Katakana → Full-size Katakana
+            'ァ' => 'ア', 'ィ' => 'イ', 'ゥ' => 'ウ', 'ェ' => 'エ', 'ォ' => 'オ',
+            'ッ' => 'ツ', 'ャ' => 'ヤ', 'ュ' => 'ユ', 'ョ' => 'ヨ', 'ヮ' => 'ワ',
+            'ヵ' => 'カ', 'ヶ' => 'ケ',
+            // Half-width small Katakana → Full-size Katakana
+            'ｧ' => 'ア', 'ｨ' => 'イ', 'ｩ' => 'ウ', 'ｪ' => 'エ', 'ｫ' => 'オ',
+            'ｯ' => 'ツ', 'ｬ' => 'ヤ', 'ｭ' => 'ユ', 'ｮ' => 'ヨ',
+            _ => ch,
         })
         .collect()
 }
@@ -114,10 +139,35 @@ mod tests {
     }
 
     #[test]
-    fn full_size_kana_passthrough() {
+    fn full_size_kana_converts_small_kana() {
+        assert_eq!(
+            apply_text_transform("ぁぃぅぇぉ", TextTransform::FullSizeKana),
+            "あいうえお"
+        );
+    }
+
+    #[test]
+    fn full_size_kana_converts_small_katakana() {
+        assert_eq!(
+            apply_text_transform("ァィゥェォ", TextTransform::FullSizeKana),
+            "アイウエオ"
+        );
+    }
+
+    #[test]
+    fn full_size_kana_preserves_normal_text() {
         assert_eq!(
             apply_text_transform("こんにちは", TextTransform::FullSizeKana),
             "こんにちは"
+        );
+    }
+
+    #[test]
+    fn capitalize_apostrophe_not_word_boundary() {
+        // CSS Text §2.1: apostrophe within a word does NOT start a new word.
+        assert_eq!(
+            apply_text_transform("it's a test", TextTransform::Capitalize),
+            "It's A Test"
         );
     }
 }

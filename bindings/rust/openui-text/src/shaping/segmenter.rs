@@ -33,6 +33,10 @@ impl RunSegmenter {
     /// Characters with `Common` or `Inherited` script are merged into the
     /// adjacent run (matching Blink's RunSegmenter behavior). This prevents
     /// spaces, punctuation, and combining marks from fragmenting runs.
+    ///
+    /// The `direction` field is set based on the script's natural writing
+    /// direction (e.g., Arabic/Hebrew → RTL). For bidi-accurate direction,
+    /// use `BidiParagraph` which applies the full UAX#9 algorithm.
     pub fn segment(text: &str) -> Vec<RunSegment> {
         if text.is_empty() {
             return Vec::new();
@@ -57,7 +61,7 @@ impl RunSegmenter {
                     start: seg_start,
                     end: byte_idx,
                     script: current_script,
-                    direction: TextDirection::Ltr,
+                    direction: Self::script_direction(current_script),
                 });
                 seg_start = byte_idx;
             }
@@ -69,7 +73,7 @@ impl RunSegmenter {
             start: seg_start,
             end: text.len(),
             script: current_script,
-            direction: TextDirection::Ltr,
+            direction: Self::script_direction(current_script),
         });
 
         segments
@@ -89,6 +93,43 @@ impl RunSegmenter {
                 }
             }
             _ => char_script,
+        }
+    }
+
+    /// Determine the natural writing direction for a Unicode script.
+    ///
+    /// RTL scripts are those whose characters are written right-to-left
+    /// (Arabic, Hebrew, Syriac, Thaana, etc.). All others default to LTR.
+    /// This matches Blink's `IsRtlScript` in `run_segmenter.cc`.
+    fn script_direction(script: Script) -> TextDirection {
+        match script {
+            Script::Arabic
+            | Script::Hebrew
+            | Script::Syriac
+            | Script::Thaana
+            | Script::Mandaic
+            | Script::Nko
+            | Script::Samaritan
+            | Script::Avestan
+            | Script::Imperial_Aramaic
+            | Script::Inscriptional_Pahlavi
+            | Script::Inscriptional_Parthian
+            | Script::Old_South_Arabian
+            | Script::Old_Turkic
+            | Script::Phoenician
+            | Script::Adlam
+            | Script::Hanifi_Rohingya
+            | Script::Old_Sogdian
+            | Script::Sogdian
+            | Script::Yezidi
+            | Script::Chorasmian
+            | Script::Elymaic
+            | Script::Hatran
+            | Script::Old_Hungarian
+            | Script::Old_Uyghur
+            | Script::Mende_Kikakui
+            | Script::Psalter_Pahlavi => TextDirection::Rtl,
+            _ => TextDirection::Ltr,
         }
     }
 }

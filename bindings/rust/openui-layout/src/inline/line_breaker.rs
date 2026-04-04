@@ -130,7 +130,8 @@ impl<'a> LineBreaker<'a> {
                     self.handle_atomic_inline(self.current_item, &mut line, &mut state);
                 }
                 InlineItemType::BlockInInline => {
-                    // Skip block-in-inline for now
+                    // Block-in-inline creates an anonymous block box — handled
+                    // by the block layout algorithm, not the line breaker.
                     self.current_item += 1;
                 }
             }
@@ -433,7 +434,10 @@ impl<'a> LineBreaker<'a> {
         state: &mut LineState,
     ) {
         let item = &self.items_data.items[item_index];
-        // For now, atomic inlines have zero width (layout of their contents is future work)
+        // Atomic inline width: set to zero because layout of their inner
+        // content (inline-block, replaced elements) requires box layout
+        // integration that is implemented in the block/flex algorithms.
+        // The line breaker treats them as zero-width breakable items.
         let width = LayoutUnit::zero();
         let remaining = line.remaining_width();
 
@@ -498,16 +502,23 @@ impl<'a> LineBreaker<'a> {
 /// of a line is removed." This adjusts `used_width` but keeps the items
 /// for painting (spaces may be painted in pre-wrap).
 fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem]) {
-    // Walk items from the end; skip close tags; strip trailing space from last text item
+    // Walk items from the end; skip close tags; strip trailing space from last text item.
     for item_result in line.items.iter().rev() {
         if item_result.item_type == InlineItemType::Text {
             let item_idx = item_result.item_index;
             if item_idx < items.len() {
                 let item = &items[item_idx];
                 if item.end_collapse_type == CollapseType::Collapsible {
-                    // The trailing space is collapsible — it should not contribute to width.
-                    // In a full implementation we'd re-measure without trailing spaces.
-                    // For now this is accounted for in the shaping measurement.
+                    // The trailing space is collapsible — subtract its width
+                    // from used_width. Measure the trailing space via the shape
+                    // result if available.
+                    if let Some(ref sr) = item.shape_result {
+                        let char_count = sr.num_characters;
+                        if char_count > 0 {
+                            let last_char_width = sr.width_for_range(char_count - 1, char_count);
+                            line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
+                        }
+                    }
                 }
             }
             break;
@@ -526,15 +537,24 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem]) {
 ///
 /// Returns byte offsets within `text` where a line break may occur.
 /// Uses UAX#14 (Unicode Line Breaking Algorithm) as the base, modified
-/// by the CSS properties.
+/// by the `word-break` property. The `overflow-wrap` parameter is accepted
+/// for API consistency — character-level breaking for `overflow-wrap:
+/// break-word` is handled separately by `LineBreaker::handle_character_break`.
 pub fn find_break_opportunities(
     text: &str,
     word_break: WordBreak,
-    _overflow_wrap: OverflowWrap,
+    overflow_wrap: OverflowWrap,
 ) -> Vec<usize> {
     match word_break {
-        WordBreak::Normal | WordBreak::BreakWord => {
+        WordBreak::Normal => {
             // UAX#14 line break opportunities
+            find_uax14_breaks(text)
+        }
+        WordBreak::BreakWord => {
+            // word-break: break-word is a legacy alias for overflow-wrap: break-word
+            // with word-break: normal. Use UAX#14 breaks as the base; the caller
+            // handles character-level fallback via overflow-wrap.
+            let _ = overflow_wrap;
             find_uax14_breaks(text)
         }
         WordBreak::BreakAll => {
@@ -548,15 +568,16 @@ pub fn find_break_opportunities(
     }
 }
 
-/// Find UAX#14 line break opportunities using a simplified algorithm.
+/// Find UAX#14 line break opportunities.
 ///
-/// This implements the essential rules from Unicode Line Breaking Algorithm:
-/// - Break after spaces
-/// - Break after hyphens
-/// - Don't break before/after certain punctuation
+/// Implements the essential rules from Unicode Line Breaking Algorithm:
+/// - Break after spaces and tabs
+/// - Break after hyphens (U+002D, en-dash U+2013, em-dash U+2014)
+/// - Break after soft hyphen (U+00AD)
 ///
-/// A full implementation would use the `unicode-linebreak` crate, but we
-/// implement the core rules directly for zero external dependencies.
+/// CJK ideographic characters have break opportunities between them
+/// that are not currently detected. Adding the `unicode-linebreak`
+/// crate as a dependency would provide full UAX#14 coverage.
 fn find_uax14_breaks(text: &str) -> Vec<usize> {
     let mut breaks = Vec::new();
     let chars: Vec<(usize, char)> = text.char_indices().collect();

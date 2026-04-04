@@ -27,6 +27,16 @@ use openui_layout::{Fragment, FragmentKind};
 /// recursively, with correct coordinate offsets.
 pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offset: PhysicalOffset) {
     let abs_offset = offset + fragment.offset;
+
+    // Line box fragments (from inline layout) have NodeId::NONE — they are
+    // anonymous boxes with no DOM node. Just recurse into children.
+    if fragment.node_id.is_none() {
+        for child in &fragment.children {
+            paint_fragment(canvas, child, doc, abs_offset);
+        }
+        return;
+    }
+
     let style = &doc.node(fragment.node_id).style;
 
     // CSS opacity creates a stacking context and composites the entire

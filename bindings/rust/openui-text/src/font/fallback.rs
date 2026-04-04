@@ -32,7 +32,11 @@ impl FontFallbackList {
 
     /// Try to resolve each family in order, then fall back to sans-serif.
     fn resolve(&mut self, description: &FontDescription) {
-        let mut cache = GLOBAL_FONT_CACHE.lock().unwrap();
+        let mut cache = GLOBAL_FONT_CACHE.lock().unwrap_or_else(|poisoned| {
+            // Recover from a poisoned mutex — the data is still usable.
+            // This can happen if a previous thread panicked while holding the lock.
+            poisoned.into_inner()
+        });
 
         for family in &description.family.families {
             let name = match family {

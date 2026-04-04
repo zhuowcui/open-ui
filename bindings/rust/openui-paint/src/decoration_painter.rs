@@ -90,14 +90,21 @@ pub fn paint_text_decorations(
 /// Blink: `TextDecorationInfo::ComputeThickness()` in
 /// `core/paint/text_decoration_info.cc`.
 fn resolve_thickness(thickness: &TextDecorationThickness, metrics: &FontMetrics) -> f32 {
-    match thickness {
+    let t = match thickness {
         TextDecorationThickness::Auto => {
             // Blink uses the font's underline thickness, clamped to at least 1 CSS pixel.
             metrics.underline_thickness.max(1.0)
         }
-        TextDecorationThickness::FromFont => metrics.underline_thickness,
+        TextDecorationThickness::FromFont => {
+            // Blink: from-font uses the font's preferred thickness,
+            // clamped to at least 1 CSS pixel to avoid zero-width decorations.
+            metrics.underline_thickness.max(1.0)
+        }
         TextDecorationThickness::Length(px) => *px,
-    }
+    };
+    // Clamp to a positive minimum to prevent infinite loops in draw routines
+    // (dotted/wavy loops rely on positive spacing derived from thickness).
+    t.max(0.5)
 }
 
 /// Draw a single decoration line with the given style.

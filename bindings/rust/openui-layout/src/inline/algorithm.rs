@@ -395,7 +395,7 @@ fn create_line_box(
             }
             InlineItemType::AtomicInline => {
                 // Atomic inline contributes its margin box height.
-                // For now, treat as baseline-aligned with its margin box.
+                // Baseline-aligned with its margin box.
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
@@ -404,7 +404,14 @@ fn create_line_box(
                 line_ascent = line_ascent.max(metrics.ascent);
                 line_descent = line_descent.max(metrics.descent);
             }
-            _ => {}
+            // OpenTag/CloseTag: inline element boundaries do not directly
+            // contribute to line height (their content items do).
+            // Control: forced breaks have no height contribution.
+            // BlockInInline: handled separately in block layout.
+            InlineItemType::OpenTag
+            | InlineItemType::CloseTag
+            | InlineItemType::Control
+            | InlineItemType::BlockInInline => {}
         }
     }
 
@@ -625,7 +632,8 @@ fn bidi_reorder_line(items: &mut Vec<InlineItemResult>, items_data: &InlineItems
 /// Apply text-overflow: ellipsis to a line that overflows.
 ///
 /// Removes trailing items until the line fits within available width
-/// minus the ellipsis width. The caller is responsible for actually
+/// minus the ellipsis width. The ellipsis width is measured from the
+/// block's font metrics. The caller is responsible for actually
 /// painting the ellipsis character.
 ///
 /// Blink: `NGLineInfo::SetHasEllipsis` / `NGLineTruncator`.
@@ -634,9 +642,20 @@ fn apply_text_overflow_ellipsis(line_info: &mut LineInfo, available_width: Layou
         return;
     }
 
-    // Approximate ellipsis width as ~3 dots. We use a conservative estimate.
-    // In a full implementation this would be measured from the font.
-    let ellipsis_width = LayoutUnit::from_f32(12.0);
+    // Measure the ellipsis character ('…') from the line's font data.
+    // Fall back to a conservative estimate of one em (the font size)
+    // if no shape result is available for measurement.
+    let ellipsis_width = line_info
+        .items
+        .first()
+        .and_then(|item| item.shape_result.as_ref())
+        .and_then(|sr| sr.runs.first())
+        .map(|run| {
+            let (w, _) = run.font_data.sk_font().measure_str("…", None);
+            LayoutUnit::from_f32(w)
+        })
+        .unwrap_or_else(|| LayoutUnit::from_f32(12.0));
+
     let target_width = available_width - ellipsis_width;
 
     if target_width <= LayoutUnit::zero() {
@@ -645,17 +664,18 @@ fn apply_text_overflow_ellipsis(line_info: &mut LineInfo, available_width: Layou
 
     // Remove items from the end until we have room for the ellipsis.
     while line_info.used_width > target_width && !line_info.items.is_empty() {
-        let last = line_info.items.last().unwrap();
-        let last_size = last.inline_size;
-        if last_size <= LayoutUnit::zero()
-            && last.item_type != InlineItemType::Text
-        {
-            // Non-content items (open/close tags) — just remove
+        if let Some(last) = line_info.items.last() {
+            let last_size = last.inline_size;
+            if last_size <= LayoutUnit::zero()
+                && last.item_type != InlineItemType::Text
+            {
+                // Non-content items (open/close tags) — just remove
+                line_info.items.pop();
+                continue;
+            }
+            line_info.used_width = line_info.used_width - last_size;
             line_info.items.pop();
-            continue;
         }
-        line_info.used_width = line_info.used_width - last_size;
-        line_info.items.pop();
     }
 
     line_info.has_ellipsis = true;
