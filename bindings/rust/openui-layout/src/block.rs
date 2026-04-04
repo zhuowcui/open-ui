@@ -31,6 +31,11 @@ use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
     let style = &doc.node(node_id).style;
 
+    // Dispatch flex containers to the flex algorithm
+    if style.display.is_flex() {
+        return crate::flex::flex_layout(doc, node_id, space);
+    }
+
     // ── Step 1: Resolve border + padding ─────────────────────────────
     // Blink: uses pre-resolved border widths (integers) and resolves padding
     // against percentage_resolution_inline_size.
@@ -295,7 +300,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
 // ── Helper: resolve border widths from style ─────────────────────────
 
-fn resolve_border(style: &ComputedStyle) -> BoxStrut {
+pub fn resolve_border(style: &ComputedStyle) -> BoxStrut {
     BoxStrut::new(
         LayoutUnit::from_i32(style.effective_border_top()),
         LayoutUnit::from_i32(style.effective_border_right()),
@@ -306,7 +311,7 @@ fn resolve_border(style: &ComputedStyle) -> BoxStrut {
 
 // ── Helper: resolve padding lengths ──────────────────────────────────
 
-fn resolve_padding(style: &ComputedStyle, percentage_base: LayoutUnit) -> BoxStrut {
+pub fn resolve_padding(style: &ComputedStyle, percentage_base: LayoutUnit) -> BoxStrut {
     BoxStrut::new(
         resolve_margin_or_padding(&style.padding_top, percentage_base),
         resolve_margin_or_padding(&style.padding_right, percentage_base),
@@ -317,7 +322,7 @@ fn resolve_padding(style: &ComputedStyle, percentage_base: LayoutUnit) -> BoxStr
 
 // ── Helper: resolve margins ──────────────────────────────────────────
 
-fn resolve_margins(style: &ComputedStyle, percentage_base: LayoutUnit) -> BoxStrut {
+pub fn resolve_margins(style: &ComputedStyle, percentage_base: LayoutUnit) -> BoxStrut {
     BoxStrut::new(
         resolve_margin_or_padding(&style.margin_top, percentage_base),
         resolve_margin_or_padding(&style.margin_right, percentage_base),
@@ -334,6 +339,15 @@ fn resolve_inline_size(
     border_padding: LayoutUnit,
 ) -> LayoutUnit {
     let available = space.available_inline_size;
+
+    // When flex layout determines the exact inline size, use it directly.
+    if space.is_fixed_inline_size || space.stretch_inline_size {
+        return if style.box_sizing == BoxSizing::BorderBox {
+            available
+        } else {
+            (available - border_padding).clamp_negative_to_zero()
+        };
+    }
 
     // Resolve the CSS width property
     let resolved = if style.width.is_auto() {
@@ -383,6 +397,16 @@ fn resolve_block_size(
     border_padding_block: LayoutUnit,
     is_viewport: bool,
 ) -> LayoutUnit {
+    // When flex layout determines the exact block size, use it directly.
+    if space.is_fixed_block_size || space.stretch_block_size {
+        let available = space.available_block_size;
+        return if style.box_sizing == BoxSizing::BorderBox {
+            available.max_of(border_padding_block)
+        } else {
+            (available - border_padding_block).clamp_negative_to_zero() + border_padding_block
+        };
+    }
+
     // For the viewport/initial containing block, auto height = viewport height
     // (not content-sized). This matches Blink's initial containing block behavior.
     let resolved = if style.height.is_auto() {

@@ -8,8 +8,8 @@ use openui_geometry::LayoutUnit;
 
 /// Layout input constraints passed from parent to child.
 ///
-/// Mirrors Blink's `ConstraintSpace`. For SP9 (block layout) we only need
-/// the available size and percentage resolution size.
+/// Mirrors Blink's `ConstraintSpace`. Extended in SP10 with flex-specific
+/// fields that control how flex children resolve their sizes.
 #[derive(Debug, Clone)]
 pub struct ConstraintSpace {
     /// Available inline size (width in horizontal-tb).
@@ -30,6 +30,33 @@ pub struct ConstraintSpace {
 
     /// True if this element is at the start of a new BFC.
     pub is_new_formatting_context: bool,
+
+    // ── Flex-specific fields (SP10) ──────────────────────────────────
+
+    /// True when the inline size is externally determined (e.g., row flex main axis).
+    /// Child should use available_inline_size as its exact inline size.
+    /// Blink: `SetIsFixedInlineSize(true)` in `BuildSpaceForLayout`.
+    pub is_fixed_inline_size: bool,
+
+    /// True when the block size is externally determined (e.g., column flex main axis).
+    /// Child should use available_block_size as its exact block size.
+    /// Blink: `SetIsFixedBlockSize(true)` in `BuildSpaceForLayout`.
+    pub is_fixed_block_size: bool,
+
+    /// True when the child should stretch its inline size to fill the
+    /// cross axis (column flex with align-self: stretch).
+    /// Blink: `SetInlineAutoBehavior(AutoSizeBehavior::kStretchExplicit)`.
+    pub stretch_inline_size: bool,
+
+    /// True when the child should stretch its block size to fill the
+    /// cross axis (row flex with align-self: stretch).
+    /// Blink: `SetBlockAutoBehavior(AutoSizeBehavior::kStretchExplicit)`.
+    pub stretch_block_size: bool,
+
+    /// True for column flex children where the container's block size is
+    /// indefinite. Prevents percent heights from resolving.
+    /// Blink: `SetIsInitialBlockSizeIndefinite(true)`.
+    pub is_initial_block_size_indefinite: bool,
 }
 
 impl ConstraintSpace {
@@ -41,6 +68,11 @@ impl ConstraintSpace {
             percentage_resolution_inline_size: width,
             percentage_resolution_block_size: height,
             is_new_formatting_context: true,
+            is_fixed_inline_size: false,
+            is_fixed_block_size: false,
+            stretch_inline_size: false,
+            stretch_block_size: false,
+            is_initial_block_size_indefinite: false,
         }
     }
 
@@ -58,6 +90,33 @@ impl ConstraintSpace {
             percentage_resolution_inline_size: percentage_inline,
             percentage_resolution_block_size: percentage_block,
             is_new_formatting_context: is_new_fc,
+            is_fixed_inline_size: false,
+            is_fixed_block_size: false,
+            stretch_inline_size: false,
+            stretch_block_size: false,
+            is_initial_block_size_indefinite: false,
+        }
+    }
+
+    /// Create a constraint space for a flex child with externally determined sizes.
+    /// Blink: `BuildSpaceForLayout` in `flex_layout_algorithm.cc:694`.
+    pub fn for_flex_child(
+        available_inline_size: LayoutUnit,
+        available_block_size: LayoutUnit,
+        percentage_inline: LayoutUnit,
+        percentage_block: LayoutUnit,
+    ) -> Self {
+        Self {
+            available_inline_size,
+            available_block_size,
+            percentage_resolution_inline_size: percentage_inline,
+            percentage_resolution_block_size: percentage_block,
+            is_new_formatting_context: true, // flex children always establish new FC
+            is_fixed_inline_size: false,
+            is_fixed_block_size: false,
+            stretch_inline_size: false,
+            stretch_block_size: false,
+            is_initial_block_size_indefinite: false,
         }
     }
 }

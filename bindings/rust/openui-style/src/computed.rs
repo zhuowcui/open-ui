@@ -127,6 +127,48 @@ pub struct ComputedStyle {
     /// CSS `z-index`. `None` means `auto` (no stacking context).
     /// Blink stores this as `int` with a separate `HasAutoZIndex()` flag.
     pub z_index: Option<i32>,
+
+    // ── Flexbox properties ───────────────────────────────────────────
+    // Source: Blink css_properties.json5 + computed_style_base.h
+
+    /// CSS `flex-direction`. Initial: `row`. Container property.
+    pub flex_direction: FlexDirection,
+
+    /// CSS `flex-wrap`. Initial: `nowrap`. Container property.
+    pub flex_wrap: FlexWrap,
+
+    /// CSS `justify-content`. Initial: `normal`. Container property.
+    /// In flex context, `normal` behaves like `flex-start`.
+    pub justify_content: ContentAlignment,
+
+    /// CSS `align-items`. Initial: `normal`. Container property.
+    /// In flex context, `normal` behaves like `stretch`.
+    pub align_items: ItemAlignment,
+
+    /// CSS `align-content`. Initial: `normal`. Container property.
+    /// In flex context, `normal` behaves like `stretch` for multi-line.
+    pub align_content: ContentAlignment,
+
+    /// CSS `row-gap`. `None` means `normal` (0px for flex).
+    pub row_gap: Option<Length>,
+
+    /// CSS `column-gap`. `None` means `normal` (0px for flex).
+    pub column_gap: Option<Length>,
+
+    /// CSS `flex-grow`. Initial: `0`. Item property.
+    pub flex_grow: f32,
+
+    /// CSS `flex-shrink`. Initial: `1`. Item property.
+    pub flex_shrink: f32,
+
+    /// CSS `flex-basis`. Initial: `auto`. Item property.
+    pub flex_basis: Length,
+
+    /// CSS `align-self`. Initial: `auto` (inherits from `align-items`).
+    pub align_self: ItemAlignment,
+
+    /// CSS `order`. Initial: `0`. Item property.
+    pub order: i32,
 }
 
 impl ComputedStyle {
@@ -182,6 +224,22 @@ impl ComputedStyle {
             color: Color::BLACK,
             opacity: 1.0,
             z_index: None, // auto
+
+            // Flexbox — container properties
+            flex_direction: FlexDirection::INITIAL,   // row
+            flex_wrap: FlexWrap::INITIAL,             // nowrap
+            justify_content: ContentAlignment::INITIAL, // normal
+            align_items: ItemAlignment::INITIAL_ITEMS,  // normal (→ stretch in flex)
+            align_content: ContentAlignment::INITIAL,   // normal
+            row_gap: None,     // normal = 0px for flex
+            column_gap: None,  // normal = 0px for flex
+
+            // Flexbox — item properties
+            flex_grow: 0.0,
+            flex_shrink: 1.0,
+            flex_basis: Length::auto(),
+            align_self: ItemAlignment::INITIAL_SELF,  // auto (→ inherits align-items)
+            order: 0,
         }
     }
 
@@ -278,6 +336,22 @@ mod tests {
 
         // Overflow
         assert_eq!(s.overflow_x, Overflow::Visible);
+
+        // Flexbox — container properties
+        assert_eq!(s.flex_direction, FlexDirection::Row);
+        assert_eq!(s.flex_wrap, FlexWrap::Nowrap);
+        assert_eq!(s.justify_content, ContentAlignment::INITIAL);
+        assert_eq!(s.align_items, ItemAlignment::INITIAL_ITEMS);
+        assert_eq!(s.align_content, ContentAlignment::INITIAL);
+        assert!(s.row_gap.is_none());
+        assert!(s.column_gap.is_none());
+
+        // Flexbox — item properties
+        assert_eq!(s.flex_grow, 0.0);
+        assert_eq!(s.flex_shrink, 1.0);
+        assert!(s.flex_basis.is_auto());
+        assert_eq!(s.align_self, ItemAlignment::INITIAL_SELF);
+        assert_eq!(s.order, 0);
     }
 
     #[test]

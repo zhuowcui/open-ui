@@ -13,6 +13,7 @@ mod physical_size;
 mod logical_size;
 mod box_strut;
 mod margin_strut;
+mod min_max_sizes;
 
 pub use layout_unit::LayoutUnit;
 pub use length::{Length, LengthType};
@@ -22,3 +23,4 @@ pub use physical_size::PhysicalSize;
 pub use logical_size::LogicalSize;
 pub use box_strut::BoxStrut;
 pub use margin_strut::MarginStrut;
+pub use min_max_sizes::MinMaxSizes;

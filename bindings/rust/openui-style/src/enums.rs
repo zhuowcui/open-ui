@@ -294,3 +294,236 @@ impl WhiteSpace {
 impl Default for WhiteSpace {
     fn default() -> Self { Self::INITIAL }
 }
+
+// ── Flexbox enums (extracted from Blink computed_style_constants.h) ──────
+
+/// CSS `flex-direction` property.
+/// Blink stores this as `EFlexDirection` in 2 bits.
+/// Source: core/css/css_properties.json5:3489
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FlexDirection {
+    Row = 0,
+    RowReverse = 1,
+    Column = 2,
+    ColumnReverse = 3,
+}
+
+impl FlexDirection {
+    pub const INITIAL: Self = Self::Row;
+
+    #[inline]
+    pub fn is_column(self) -> bool {
+        matches!(self, Self::Column | Self::ColumnReverse)
+    }
+
+    #[inline]
+    pub fn is_reverse(self) -> bool {
+        matches!(self, Self::RowReverse | Self::ColumnReverse)
+    }
+}
+
+impl Default for FlexDirection {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `flex-wrap` property.
+/// Blink stores wrap mode in `StyleFlexWrapData` as `FlexWrapMode` (2 bits).
+/// Source: core/style/computed_style_constants.h:638
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FlexWrap {
+    Nowrap = 0,
+    Wrap = 1,
+    WrapReverse = 2,
+}
+
+impl FlexWrap {
+    pub const INITIAL: Self = Self::Nowrap;
+
+    #[inline]
+    pub fn is_wrap(self) -> bool {
+        !matches!(self, Self::Nowrap)
+    }
+
+    #[inline]
+    pub fn is_wrap_reverse(self) -> bool {
+        matches!(self, Self::WrapReverse)
+    }
+}
+
+impl Default for FlexWrap {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// Content position values for `justify-content` and `align-content`.
+/// Blink: `ContentPosition` in computed_style_constants.h:445 (4 bits).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ContentPosition {
+    Normal = 0,
+    Baseline = 1,
+    LastBaseline = 2,
+    Center = 3,
+    Start = 4,
+    End = 5,
+    FlexStart = 6,
+    FlexEnd = 7,
+    Left = 8,
+    Right = 9,
+}
+
+impl ContentPosition {
+    pub const INITIAL: Self = Self::Normal;
+}
+
+impl Default for ContentPosition {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// Content distribution values for `justify-content` and `align-content`.
+/// Blink: `ContentDistributionType` in computed_style_constants.h:458 (3 bits).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ContentDistribution {
+    Default = 0,
+    SpaceBetween = 1,
+    SpaceAround = 2,
+    SpaceEvenly = 3,
+    Stretch = 4,
+}
+
+impl ContentDistribution {
+    pub const INITIAL: Self = Self::Default;
+}
+
+impl Default for ContentDistribution {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// Overflow alignment modifier (`safe` / `unsafe`).
+/// Blink: `OverflowAlignment` in computed_style_constants.h:441 (2 bits).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum OverflowAlignment {
+    Default = 0,
+    Unsafe = 1,
+    Safe = 2,
+}
+
+impl OverflowAlignment {
+    pub const INITIAL: Self = Self::Default;
+}
+
+impl Default for OverflowAlignment {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// Per-item alignment position for `align-items`, `align-self`, `justify-self`.
+/// Blink: `ItemPosition` in computed_style_constants.h:422 (4 bits).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ItemPosition {
+    Legacy = 0,
+    Auto = 1,
+    Normal = 2,
+    Stretch = 3,
+    Baseline = 4,
+    LastBaseline = 5,
+    Center = 6,
+    Start = 7,
+    End = 8,
+    SelfStart = 9,
+    SelfEnd = 10,
+    FlexStart = 11,
+    FlexEnd = 12,
+    Left = 13,
+    Right = 14,
+}
+
+impl ItemPosition {
+    pub const INITIAL: Self = Self::Normal;
+}
+
+impl Default for ItemPosition {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// Compound content-alignment type for `justify-content` and `align-content`.
+/// Maps to Blink's `StyleContentAlignmentData` (style_content_alignment_data.h).
+/// Stores position (4 bits) + distribution (3 bits) + overflow (2 bits).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ContentAlignment {
+    pub position: ContentPosition,
+    pub distribution: ContentDistribution,
+    pub overflow: OverflowAlignment,
+}
+
+impl ContentAlignment {
+    /// Default: `normal` with no distribution, no overflow modifier.
+    /// Matches Blink's `StyleContentAlignmentData(ContentPosition::kNormal,
+    /// ContentDistributionType::kDefault, OverflowAlignment::kDefault)`.
+    pub const INITIAL: Self = Self {
+        position: ContentPosition::Normal,
+        distribution: ContentDistribution::Default,
+        overflow: OverflowAlignment::Default,
+    };
+
+    pub fn new(position: ContentPosition) -> Self {
+        Self {
+            position,
+            distribution: ContentDistribution::Default,
+            overflow: OverflowAlignment::Default,
+        }
+    }
+
+    pub fn with_distribution(distribution: ContentDistribution) -> Self {
+        Self {
+            position: ContentPosition::Normal,
+            distribution,
+            overflow: OverflowAlignment::Default,
+        }
+    }
+}
+
+impl Default for ContentAlignment {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// Compound self-alignment type for `align-items` and `align-self`.
+/// Maps to Blink's `StyleSelfAlignmentData` (style_self_alignment_data.h).
+/// Stores position (4 bits) + overflow (2 bits).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ItemAlignment {
+    pub position: ItemPosition,
+    pub overflow: OverflowAlignment,
+}
+
+impl ItemAlignment {
+    /// `align-items` initial: `normal` (resolves to `stretch` in flex context).
+    pub const INITIAL_ITEMS: Self = Self {
+        position: ItemPosition::Normal,
+        overflow: OverflowAlignment::Default,
+    };
+
+    /// `align-self` initial: `auto` (inherits from parent `align-items`).
+    pub const INITIAL_SELF: Self = Self {
+        position: ItemPosition::Auto,
+        overflow: OverflowAlignment::Default,
+    };
+
+    pub fn new(position: ItemPosition) -> Self {
+        Self {
+            position,
+            overflow: OverflowAlignment::Default,
+        }
+    }
+
+    pub fn with_overflow(position: ItemPosition, overflow: OverflowAlignment) -> Self {
+        Self { position, overflow }
+    }
+}
+
+impl Default for ItemAlignment {
+    fn default() -> Self { Self::INITIAL_ITEMS }
+}
