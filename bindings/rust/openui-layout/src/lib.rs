@@ -7,6 +7,7 @@ mod fragment;
 mod length_resolver;
 pub mod block;
 pub mod flex;
+pub mod inline;
 
 pub use constraint_space::ConstraintSpace;
 pub use fragment::{Fragment, FragmentKind};

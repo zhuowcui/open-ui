@@ -8,3 +8,4 @@ description = "Block/Flex/Grid/Inline layout algorithms extracted from Blink's N
 openui-style = { path = "../openui-style" }
 openui-geometry = { path = "../openui-geometry" }
 openui-dom = { path = "../openui-dom" }
+openui-text = { path = "../openui-text" }
