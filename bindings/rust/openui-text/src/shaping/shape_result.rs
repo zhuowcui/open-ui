@@ -1,0 +1,341 @@
+//! ShapeResult — output of text shaping.
+//!
+//! Mirrors Blink's `ShapeResult` (`platform/fonts/shaping/shape_result.h`).
+//! Contains glyph runs with IDs, positions, and per-character metadata
+//! for cursor placement, hit testing, and line breaking.
+
+use std::sync::Arc;
+
+use skia_safe::{Point, TextBlob, TextBlobBuilder};
+
+use crate::font::FontPlatformData;
+
+/// Direction of text flow within a run or result.
+///
+/// Blink: `TextDirection` in `platform/text/text_direction.h`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TextDirection {
+    Ltr,
+    Rtl,
+}
+
+impl TextDirection {
+    /// Whether this direction is left-to-right.
+    #[inline]
+    pub fn is_ltr(self) -> bool {
+        self == TextDirection::Ltr
+    }
+
+    /// Whether this direction is right-to-left.
+    #[inline]
+    pub fn is_rtl(self) -> bool {
+        self == TextDirection::Rtl
+    }
+}
+
+/// Result of shaping a text range. Contains glyph IDs, positions, and metadata.
+///
+/// Blink: `ShapeResult` in `platform/fonts/shaping/shape_result.h`.
+pub struct ShapeResult {
+    /// Glyph runs (one per font/direction change).
+    pub runs: Vec<ShapeResultRun>,
+    /// Total advance width of all runs.
+    pub width: f32,
+    /// Number of characters in the original text.
+    pub num_characters: usize,
+    /// Direction of the text.
+    pub direction: TextDirection,
+    /// Per-character data for cursor positioning and line breaking.
+    pub character_data: Vec<ShapeResultCharacterData>,
+}
+
+/// A contiguous run of glyphs using the same font.
+///
+/// Blink: `ShapeResult::RunInfo` in `platform/fonts/shaping/shape_result.h`.
+pub struct ShapeResultRun {
+    /// Font used for this run.
+    pub font_data: Arc<FontPlatformData>,
+    /// Glyph IDs from the font.
+    pub glyphs: Vec<u16>,
+    /// Advance width for each glyph.
+    pub advances: Vec<f32>,
+    /// X/Y offset for each glyph (for combining marks, kerning adjustments).
+    pub offsets: Vec<(f32, f32)>,
+    /// Start character index in original text.
+    pub start_index: usize,
+    /// Number of characters covered by this run.
+    pub num_characters: usize,
+    /// Number of glyphs (may differ from num_characters due to ligatures/decomposition).
+    pub num_glyphs: usize,
+    /// Direction of this run.
+    pub direction: TextDirection,
+}
+
+/// Per-character metadata for cursor positioning and line breaking.
+///
+/// Blink: character-index data within `ShapeResult` for offset-to-position mapping.
+#[derive(Clone, Debug)]
+pub struct ShapeResultCharacterData {
+    /// Cumulative advance from the start of the ShapeResult to this character.
+    pub x_position: f32,
+    /// Whether this character starts a new grapheme cluster.
+    pub is_cluster_base: bool,
+    /// Whether it's safe to break the line before this character.
+    pub safe_to_break_before: bool,
+}
+
+impl ShapeResult {
+    /// Create an empty ShapeResult for zero-length text.
+    pub fn empty(direction: TextDirection) -> Self {
+        Self {
+            runs: Vec::new(),
+            width: 0.0,
+            num_characters: 0,
+            direction,
+            character_data: Vec::new(),
+        }
+    }
+
+    /// Total width of the shaped text.
+    #[inline]
+    pub fn width(&self) -> f32 {
+        self.width
+    }
+
+    /// Number of glyphs across all runs.
+    pub fn num_glyphs(&self) -> usize {
+        self.runs.iter().map(|r| r.num_glyphs).sum()
+    }
+
+    /// Get the X position for a character offset (for cursor placement).
+    ///
+    /// Blink: `ShapeResult::XPositionForOffset`.
+    pub fn x_position_for_offset(&self, offset: usize) -> f32 {
+        if self.character_data.is_empty() {
+            return 0.0;
+        }
+        if offset >= self.num_characters {
+            return self.width;
+        }
+        self.character_data[offset].x_position
+    }
+
+    /// Get the character offset for an X position (for hit testing).
+    ///
+    /// Returns the offset of the character whose center is closest to `x`.
+    /// Blink: `ShapeResult::OffsetForPosition`.
+    pub fn offset_for_x_position(&self, x: f32) -> usize {
+        if self.character_data.is_empty() || x <= 0.0 {
+            return 0;
+        }
+        if x >= self.width {
+            return self.num_characters;
+        }
+
+        // Binary search for the character whose range contains x.
+        // Each character spans from character_data[i].x_position to the next
+        // character's x_position (or width for the last character).
+        for i in 0..self.num_characters {
+            let char_start = self.character_data[i].x_position;
+            let char_end = if i + 1 < self.num_characters {
+                self.character_data[i + 1].x_position
+            } else {
+                self.width
+            };
+            let mid = (char_start + char_end) / 2.0;
+            if x < mid {
+                return i;
+            }
+        }
+        self.num_characters
+    }
+
+    /// Check if it's safe to break before a character offset.
+    ///
+    /// Blink: `ShapeResult::SafeToBreakBefore`.
+    pub fn safe_to_break_before(&self, offset: usize) -> bool {
+        if offset == 0 {
+            return true;
+        }
+        if offset >= self.num_characters {
+            return true;
+        }
+        self.character_data[offset].safe_to_break_before
+    }
+
+    /// Width of a sub-range of characters.
+    ///
+    /// Blink: `ShapeResult::Width` with range parameters.
+    pub fn width_for_range(&self, start: usize, end: usize) -> f32 {
+        if start >= end || self.character_data.is_empty() {
+            return 0.0;
+        }
+        let start = start.min(self.num_characters);
+        let end = end.min(self.num_characters);
+        let start_x = if start == 0 {
+            0.0
+        } else {
+            self.character_data[start].x_position
+        };
+        let end_x = if end >= self.num_characters {
+            self.width
+        } else {
+            self.character_data[end].x_position
+        };
+        end_x - start_x
+    }
+
+    /// Get a sub-range of the shape result (for line breaking).
+    ///
+    /// Blink: `ShapeResult::SubRange`.
+    pub fn sub_range(&self, start: usize, end: usize) -> ShapeResult {
+        if start >= end || self.character_data.is_empty() {
+            return ShapeResult::empty(self.direction);
+        }
+        let start = start.min(self.num_characters);
+        let end = end.min(self.num_characters);
+        let sub_width = self.width_for_range(start, end);
+        let start_x = if start > 0 {
+            self.character_data[start].x_position
+        } else {
+            0.0
+        };
+
+        // Build sub-range character data, shifting x_positions to start at 0.
+        let character_data: Vec<ShapeResultCharacterData> = (start..end)
+            .map(|i| ShapeResultCharacterData {
+                x_position: self.character_data[i].x_position - start_x,
+                is_cluster_base: self.character_data[i].is_cluster_base,
+                safe_to_break_before: if i == start {
+                    true
+                } else {
+                    self.character_data[i].safe_to_break_before
+                },
+            })
+            .collect();
+
+        // Build sub-range runs by clipping to the [start, end) character range.
+        let mut sub_runs = Vec::new();
+        for run in &self.runs {
+            let run_start = run.start_index;
+            let run_end = run.start_index + run.num_characters;
+
+            // Skip runs that don't overlap with [start, end).
+            if run_end <= start || run_start >= end {
+                continue;
+            }
+
+            let clip_start = start.max(run_start);
+            let clip_end = end.min(run_end);
+
+            // Find which glyphs correspond to the clipped character range.
+            // Use cluster data stored in the run to map characters to glyphs.
+            let (glyph_start, glyph_end) =
+                Self::glyph_range_for_char_range(run, clip_start - run_start, clip_end - run_start);
+
+            if glyph_start >= glyph_end {
+                continue;
+            }
+
+            sub_runs.push(ShapeResultRun {
+                font_data: Arc::clone(&run.font_data),
+                glyphs: run.glyphs[glyph_start..glyph_end].to_vec(),
+                advances: run.advances[glyph_start..glyph_end].to_vec(),
+                offsets: run.offsets[glyph_start..glyph_end].to_vec(),
+                start_index: clip_start - start,
+                num_characters: clip_end - clip_start,
+                num_glyphs: glyph_end - glyph_start,
+                direction: run.direction,
+            });
+        }
+
+        ShapeResult {
+            runs: sub_runs,
+            width: sub_width,
+            num_characters: end - start,
+            direction: self.direction,
+            character_data,
+        }
+    }
+
+    /// Build a Skia TextBlob from this shape result for rendering.
+    ///
+    /// Returns `None` if the result has no glyphs.
+    pub fn to_text_blob(&self) -> Option<TextBlob> {
+        if self.runs.is_empty() || self.num_glyphs() == 0 {
+            return None;
+        }
+
+        let mut builder = TextBlobBuilder::new();
+        let mut run_x = 0.0f32;
+
+        for run in &self.runs {
+            if run.num_glyphs == 0 {
+                continue;
+            }
+            let sk_font = run.font_data.sk_font();
+            let (glyphs_out, positions_out) =
+                builder.alloc_run_pos(sk_font, run.num_glyphs, None);
+            glyphs_out.copy_from_slice(&run.glyphs);
+
+            let mut x = run_x;
+            for i in 0..run.num_glyphs {
+                positions_out[i] = Point::new(x + run.offsets[i].0, run.offsets[i].1);
+                x += run.advances[i];
+            }
+            run_x = x;
+        }
+
+        builder.make()
+    }
+
+    /// Find the glyph range within a run that covers a given character range.
+    ///
+    /// For simple 1:1 glyph-to-character mapping (Latin text), this is
+    /// straightforward. For ligatures or decomposition, we use the fact
+    /// that `num_glyphs` and `num_characters` may differ.
+    fn glyph_range_for_char_range(
+        run: &ShapeResultRun,
+        char_start: usize,
+        char_end: usize,
+    ) -> (usize, usize) {
+        if run.num_characters == 0 {
+            return (0, 0);
+        }
+        // For 1:1 mapping (common in Latin text):
+        if run.num_glyphs == run.num_characters {
+            let gs = char_start.min(run.num_glyphs);
+            let ge = char_end.min(run.num_glyphs);
+            return (gs, ge);
+        }
+        // For non-1:1 mapping, use proportional mapping as approximation.
+        // In a full implementation, cluster data would be used here.
+        let ratio = run.num_glyphs as f32 / run.num_characters as f32;
+        let gs = (char_start as f32 * ratio).round() as usize;
+        let ge = (char_end as f32 * ratio).round() as usize;
+        (gs.min(run.num_glyphs), ge.min(run.num_glyphs))
+    }
+}
+
+impl std::fmt::Debug for ShapeResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ShapeResult")
+            .field("width", &self.width)
+            .field("num_characters", &self.num_characters)
+            .field("num_glyphs", &self.num_glyphs())
+            .field("runs", &self.runs.len())
+            .field("direction", &self.direction)
+            .finish()
+    }
+}
+
+impl std::fmt::Debug for ShapeResultRun {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ShapeResultRun")
+            .field("num_glyphs", &self.num_glyphs)
+            .field("num_characters", &self.num_characters)
+            .field("start_index", &self.start_index)
+            .field("direction", &self.direction)
+            .finish()
+    }
+}
