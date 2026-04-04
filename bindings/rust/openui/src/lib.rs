@@ -52,7 +52,12 @@ pub mod style;
 // ─── View system modules ────────────────────────────────────
 
 pub mod context;
+pub mod renderer;
 pub mod view_node;
+
+// ─── Application shell ─────────────────────────────────────
+
+pub mod app;
 
 /// Convenience prelude for common imports.
 pub mod prelude;
@@ -77,7 +82,12 @@ pub use style::{
 // ─── Re-exports: view system ────────────────────────────────
 
 pub use context::{current_document, with_document};
+pub use renderer::{DynChild, For, Show};
 pub use view_node::{mount_view, IntoView, ViewNode};
+
+// ─── Re-exports: application shell ─────────────────────────
+
+pub use app::App;
 
 // ─── Re-exports: proc macros ────────────────────────────────
 

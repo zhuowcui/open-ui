@@ -4,10 +4,12 @@
 //! use openui::prelude::*;
 //! ```
 
+pub use crate::app::App;
 pub use crate::context::{current_document, with_document};
 pub use crate::document::Document;
 pub use crate::element::Element;
 pub use crate::events::*;
+pub use crate::renderer::{DynChild, For, Show};
 pub use crate::style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
 pub use openui_macros::{component, view};
