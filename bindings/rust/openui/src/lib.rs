@@ -22,6 +22,18 @@
 //! |------|---------|
 //! | [`Document`] | Blink viewport and rendering context |
 //! | [`Element`] | A node in the DOM tree |
+//!
+//! ## View system
+//!
+//! | Type / Macro | Purpose |
+//! |--------------|---------|
+//! | [`view!`] | JSX-like declarative UI macro |
+//! | [`component`] | Attribute macro to define a component |
+//! | [`ViewNode`] | A renderable node in the UI tree |
+//! | [`IntoView`] | Trait for converting values into view nodes |
+//! | [`mount_view`] | Mount a view node onto a parent element |
+//! | [`with_document`] | Set the render context document |
+//! | [`current_document`] | Access the current render context document |
 
 // ─── Reactive runtime modules ───────────────────────────────
 
@@ -36,6 +48,11 @@ pub mod document;
 pub mod element;
 pub mod events;
 pub mod style;
+
+// ─── View system modules ────────────────────────────────────
+
+pub mod context;
+pub mod view_node;
 
 /// Convenience prelude for common imports.
 pub mod prelude;
@@ -56,6 +73,15 @@ pub use style::{
     AlignItems, Bitmap, Display, FlexDirection, FlexWrap, FontStyle, JustifyContent, Length,
     OuiError, Overflow, Position, Rect, TextAlign,
 };
+
+// ─── Re-exports: view system ────────────────────────────────
+
+pub use context::{current_document, with_document};
+pub use view_node::{mount_view, IntoView, ViewNode};
+
+// ─── Re-exports: proc macros ────────────────────────────────
+
+pub use openui_macros::{component, view};
 
 #[cfg(test)]
 mod tests;

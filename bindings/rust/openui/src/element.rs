@@ -496,6 +496,21 @@ impl Element {
     pub fn as_raw(&self) -> *mut openui_sys::OuiElement {
         self.raw
     }
+
+    /// Create a **borrowed** (non-owning) `Element` handle from a raw pointer.
+    ///
+    /// The returned element will **not** destroy the underlying C object
+    /// when dropped. This is used by the `view!` macro to create references
+    /// inside reactive effects.
+    ///
+    /// # Safety
+    ///
+    /// `raw` must point to a valid, live `OuiElement` for the entire
+    /// lifetime of the returned handle.
+    #[doc(hidden)]
+    pub unsafe fn from_raw_borrowed(raw: *mut openui_sys::OuiElement) -> Self {
+        Element { raw, owned: false }
+    }
 }
 
 impl Drop for Element {
