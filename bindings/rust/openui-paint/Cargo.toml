@@ -9,4 +9,5 @@ openui-style = { path = "../openui-style" }
 openui-geometry = { path = "../openui-geometry" }
 openui-layout = { path = "../openui-layout" }
 openui-dom = { path = "../openui-dom" }
+openui-text = { path = "../openui-text" }
 skia-safe = "0.82"

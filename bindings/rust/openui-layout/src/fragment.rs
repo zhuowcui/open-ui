@@ -7,6 +7,8 @@
 
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize, BoxStrut};
 use openui_dom::NodeId;
+use openui_text::ShapeResult;
+use std::sync::Arc;
 
 /// What kind of fragment this is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -49,6 +51,16 @@ pub struct Fragment {
 
     /// Child fragments, positioned relative to this fragment.
     pub children: Vec<Fragment>,
+
+    /// Shaped text result for text fragments (populated by inline layout).
+    ///
+    /// Contains glyph IDs, positions, and per-character metadata from
+    /// HarfBuzz shaping. Used by the paint system to render glyphs via
+    /// `to_text_blob()`.
+    pub shape_result: Option<Arc<ShapeResult>>,
+
+    /// Text content for text fragments (the original string that was shaped).
+    pub text_content: Option<String>,
 }
 
 impl Fragment {
@@ -63,6 +75,32 @@ impl Fragment {
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
             children: Vec::new(),
+            shape_result: None,
+            text_content: None,
+        }
+    }
+
+    /// Create a new text fragment with a shape result.
+    ///
+    /// Blink: `PhysicalTextFragment` constructor in
+    /// `core/layout/physical_fragment.h`.
+    pub fn new_text(
+        node_id: NodeId,
+        size: PhysicalSize,
+        shape_result: Arc<ShapeResult>,
+        text_content: String,
+    ) -> Self {
+        Self {
+            node_id,
+            kind: FragmentKind::Text,
+            offset: PhysicalOffset::zero(),
+            size,
+            padding: BoxStrut::zero(),
+            border: BoxStrut::zero(),
+            margin: BoxStrut::zero(),
+            children: Vec::new(),
+            shape_result: Some(shape_result),
+            text_content: Some(text_content),
         }
     }
 

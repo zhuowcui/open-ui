@@ -9,6 +9,7 @@
 //! - Text shaping integration
 //! - Line breaking (UAX#14 + CSS word-break/overflow-wrap)
 
+pub mod algorithm;
 pub mod items;
 pub mod items_builder;
 pub mod line_breaker;

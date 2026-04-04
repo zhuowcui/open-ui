@@ -14,3 +14,4 @@ pub use fragment::{Fragment, FragmentKind};
 pub use length_resolver::resolve_length;
 pub use block::block_layout;
 pub use flex::flex_layout;
+pub use crate::inline::algorithm::inline_layout;

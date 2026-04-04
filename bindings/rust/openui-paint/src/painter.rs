@@ -1,5 +1,5 @@
-//! Box painting — extracted from Blink's `box_fragment_painter.cc` and
-//! `box_painter_base.cc`.
+//! Box and text painting — extracted from Blink's `box_fragment_painter.cc`,
+//! `box_painter_base.cc`, and `text_painter.cc`.
 //!
 //! Paint order for a block box (PaintPhase::kBlockBackground):
 //! 1. Box shadows (outset) — SP12
@@ -7,13 +7,19 @@
 //! 3. Box shadows (inset) — SP12
 //! 4. Borders
 //!
+//! Paint order for a text fragment:
+//! 1. Text shadows
+//! 2. Text decorations (underline, overline — behind text)
+//! 3. Text glyphs
+//! 4. Text decorations (line-through — in front of text)
+//!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
 use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace};
 use openui_geometry::PhysicalOffset;
 use openui_style::{Color, ComputedStyle, BorderStyle, StyleColor, Visibility};
 use openui_dom::Document;
-use openui_layout::Fragment;
+use openui_layout::{Fragment, FragmentKind};
 
 /// Paint a fragment tree onto a Skia canvas.
 ///
@@ -31,9 +37,16 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
         canvas.save_layer_alpha_f(None, style.opacity);
     }
 
-    // ── Paint this box (skip if visibility: hidden) ──────────────────
+    // ── Paint this fragment (skip if visibility: hidden) ─────────────
     if style.visibility == Visibility::Visible {
-        paint_box_decoration_background(canvas, fragment, style, abs_offset);
+        match fragment.kind {
+            FragmentKind::Text => {
+                paint_text_fragment(canvas, fragment, style, abs_offset);
+            }
+            FragmentKind::Box | FragmentKind::Viewport => {
+                paint_box_decoration_background(canvas, fragment, style, abs_offset);
+            }
+        }
     }
 
     // ── Paint children in document order ─────────────────────────────
@@ -47,6 +60,46 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     if needs_layer {
         canvas.restore();
     }
+}
+
+/// Paint a text fragment — shadows, decorations, and glyphs.
+///
+/// Extracted from Blink's `TextFragmentPainter::Paint()`.
+///
+/// Paint order:
+/// 1. Text shadows (behind everything)
+/// 2. Underline + overline decorations (behind text glyphs)
+/// 3. Text glyphs
+/// 4. Line-through decoration (in front of text glyphs)
+fn paint_text_fragment(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    abs_offset: PhysicalOffset,
+) {
+    let shape_result = match fragment.shape_result.as_ref() {
+        Some(sr) => sr,
+        None => return,
+    };
+
+    // Resolve font metrics from the shape result's first run.
+    let metrics = crate::text_painter::metrics_from_shape_result(shape_result);
+
+    // The fragment's offset.top is the top of the line's content area.
+    // The baseline is at top + ascent.
+    let x = abs_offset.left.to_f32();
+    let baseline_y = abs_offset.top.to_f32() + metrics.ascent;
+
+    let origin = (x, baseline_y);
+
+    // 1. Text shadows
+    crate::text_painter::paint_text_shadows(canvas, shape_result, origin, style);
+
+    // 2. Text decorations (underline + overline, painted behind text)
+    crate::decoration_painter::paint_text_decorations(canvas, shape_result, origin, style, &metrics);
+
+    // 3. Text glyphs
+    crate::text_painter::paint_text(canvas, shape_result, origin, style);
 }
 
 /// Paint background + border for a single box fragment.

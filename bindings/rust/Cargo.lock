@@ -334,6 +334,7 @@ dependencies = [
  "openui-geometry",
  "openui-layout",
  "openui-style",
+ "openui-text",
  "skia-safe",
 ]
 
