@@ -10,9 +10,16 @@
 //! - Font caching and fallback chains
 //! - Simple text measurement via `SkFont::measure_str`
 //! - HarfBuzz-based text shaping via Skia's `SkShaper`
+//! - Bidirectional text analysis (UAX#9) via `unicode-bidi`
+//! - Text transform (uppercase, lowercase, capitalize, full-width)
 
+pub mod bidi;
 pub mod font;
 pub mod shaping;
+pub mod transform;
+
+pub use bidi::{BidiParagraph, BidiRun};
+pub use transform::apply_text_transform;
 
 pub use font::{
     Font, FontCache, FontDescription, FontFallbackList, FontMetrics, FontPlatformData,

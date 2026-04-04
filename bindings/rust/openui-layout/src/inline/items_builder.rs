@@ -11,8 +11,10 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, WhiteSpace};
-use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+use openui_style::{ComputedStyle, Direction, TextTransform, WhiteSpace};
+use openui_text::{
+    apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
+};
 use std::sync::Arc;
 
 use super::items::{CollapseType, InlineItem, InlineItemType};
@@ -48,6 +50,30 @@ impl InlineItemsData {
                 };
                 let result = shaper.shape(text, &font, direction);
                 item.shape_result = Some(Arc::new(result));
+            }
+        }
+    }
+
+    /// Run UAX#9 bidirectional analysis and set bidi_level on each item.
+    ///
+    /// Blink: `InlineItemsBuilder::SetBidiLevel` / `BidiParagraph::SetParagraph`.
+    pub fn apply_bidi(&mut self, base_direction: TextDirection) {
+        if self.text.is_empty() {
+            return;
+        }
+
+        let bidi = BidiParagraph::new(&self.text, Some(base_direction));
+        let runs = bidi.runs();
+
+        for item in &mut self.items {
+            if item.item_type == InlineItemType::Text && !item.text_range.is_empty() {
+                // Find the bidi run covering this item's start byte offset
+                for run in &runs {
+                    if item.text_range.start >= run.start && item.text_range.start < run.end {
+                        item.bidi_level = run.level;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -150,13 +176,20 @@ impl<'a> InlineItemsBuilder<'a> {
         }
     }
 
-    /// Handle a text node — process white-space and append a Text item.
+    /// Handle a text node — apply text-transform, process white-space, and append a Text item.
     fn append_text(&mut self, node_id: NodeId, text: &str, style: &ComputedStyle) {
         if text.is_empty() {
             return;
         }
 
-        let processed = process_white_space(text, style.white_space);
+        // Apply text-transform before white-space processing (matches Blink order).
+        let transformed = if style.text_transform != TextTransform::None {
+            apply_text_transform(text, style.text_transform)
+        } else {
+            text.to_string()
+        };
+
+        let processed = process_white_space(&transformed, style.white_space);
         if processed.is_empty() {
             return;
         }

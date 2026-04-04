@@ -31,6 +31,9 @@ pub struct LineInfo {
 
     /// Text alignment for this line (from the block container's style).
     pub text_align: TextAlign,
+
+    /// Whether this line has been truncated with an ellipsis.
+    pub has_ellipsis: bool,
 }
 
 impl LineInfo {
@@ -43,6 +46,7 @@ impl LineInfo {
             has_forced_break: false,
             is_last_line: false,
             text_align: TextAlign::Start,
+            has_ellipsis: false,
         }
     }
 

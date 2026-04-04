@@ -19,7 +19,7 @@ use crate::constraint_space::ConstraintSpace;
 use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::resolve_margin_or_padding;
 
-use super::items::InlineItemType;
+use super::items::{InlineItemResult, InlineItemType};
 use super::items_builder::{style_to_font_description, InlineItemsData, InlineItemsBuilder};
 use super::line_breaker::LineBreaker;
 use super::line_info::LineInfo;
@@ -215,12 +215,28 @@ pub fn inline_layout(
     // Step 1: Collect inline items from DOM children.
     let mut items_data = InlineItemsBuilder::collect(doc, node_id);
 
+    // Step 1b: Apply bidi analysis.
+    let base_direction = if style.direction == Direction::Rtl {
+        openui_text::TextDirection::Rtl
+    } else {
+        openui_text::TextDirection::Ltr
+    };
+    items_data.apply_bidi(base_direction);
+
     // Step 2: Shape all text items.
     items_data.shape_text();
 
     // Step 3: Create line breaker.
     let mut line_breaker = LineBreaker::new(&items_data);
     line_breaker.set_text_align(style.text_align);
+
+    // Step 3b: Resolve text-indent for the first line.
+    let text_indent = crate::length_resolver::resolve_length(
+        &style.text_indent,
+        available_inline_size,
+        LayoutUnit::zero(),
+        LayoutUnit::zero(),
+    );
 
     // Get block's font metrics for the strut.
     let block_font_desc = style_to_font_description(style);
@@ -233,9 +249,27 @@ pub fn inline_layout(
     // Step 4: Layout each line.
     let mut line_fragments: Vec<Fragment> = Vec::new();
     let mut block_offset = border_padding.top;
+    let mut is_first_line = true;
 
     while !line_breaker.is_finished() {
-        if let Some(line_info) = line_breaker.next_line(available_inline_size) {
+        // Apply text-indent: reduce available width on first line only.
+        let line_available = if is_first_line && text_indent != LayoutUnit::zero() {
+            (available_inline_size - text_indent).clamp_negative_to_zero()
+        } else {
+            available_inline_size
+        };
+
+        if let Some(mut line_info) = line_breaker.next_line(line_available) {
+            // Step 4b: BiDi reorder items on this line for visual display.
+            bidi_reorder_line(&mut line_info.items, &items_data);
+
+            // Apply text-overflow: ellipsis if configured on the block style.
+            if style.text_overflow == openui_style::TextOverflow::Ellipsis
+                && style.overflow_x == openui_style::Overflow::Hidden
+            {
+                apply_text_overflow_ellipsis(&mut line_info, line_available);
+            }
+
             let line_fragment = create_line_box(
                 doc,
                 &items_data,
@@ -245,9 +279,11 @@ pub fn inline_layout(
                 style,
                 &block_metrics,
                 space.percentage_resolution_inline_size,
+                if is_first_line { text_indent } else { LayoutUnit::zero() },
             );
             block_offset = block_offset + line_fragment.size.height;
             line_fragments.push(line_fragment);
+            is_first_line = false;
         }
     }
 
@@ -286,6 +322,7 @@ fn create_line_box(
     block_style: &ComputedStyle,
     block_metrics: &openui_text::FontMetrics,
     percentage_base: LayoutUnit,
+    text_indent: LayoutUnit,
 ) -> Fragment {
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(
@@ -418,7 +455,7 @@ fn create_line_box(
 
     // === STEP 4: Position each item ===
     let mut children: Vec<Fragment> = Vec::new();
-    let mut inline_offset = text_align_offset;
+    let mut inline_offset = text_align_offset + text_indent;
     let mut justification_accumulator = 0.0f32;
 
     for (_i, item_result) in line_info.items.iter().enumerate() {
@@ -527,6 +564,101 @@ fn create_line_box(
     line_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), block_offset);
     line_fragment.children = children;
     line_fragment
+}
+
+// ── BiDi visual reordering ──────────────────────────────────────────────
+
+/// Reorder items within a line for visual display per UAX#9 L2.
+///
+/// After the line breaker produces a line in logical order, this function
+/// reorders items so RTL runs are visually reversed.
+///
+/// Blink: `InlineLayoutAlgorithm::BidiReorder` / `ReorderInlineItems`.
+fn bidi_reorder_line(items: &mut Vec<InlineItemResult>, items_data: &InlineItemsData) {
+    if items.is_empty() {
+        return;
+    }
+
+    let max_level = items
+        .iter()
+        .map(|ir| items_data.items[ir.item_index].bidi_level)
+        .max()
+        .unwrap_or(0);
+
+    if max_level == 0 {
+        return; // All LTR, no reordering needed
+    }
+
+    let min_odd = items
+        .iter()
+        .map(|ir| items_data.items[ir.item_index].bidi_level)
+        .filter(|l| l % 2 == 1)
+        .min()
+        .unwrap_or(max_level);
+
+    // UAX#9 L2: for each level from max down to min odd level,
+    // reverse every maximal contiguous run of items at that level or higher.
+    for level in (min_odd..=max_level).rev() {
+        let mut i = 0;
+        while i < items.len() {
+            let item_level = items_data.items[items[i].item_index].bidi_level;
+            if item_level >= level {
+                let start = i;
+                while i < items.len() {
+                    let l = items_data.items[items[i].item_index].bidi_level;
+                    if l >= level {
+                        i += 1;
+                    } else {
+                        break;
+                    }
+                }
+                items[start..i].reverse();
+            } else {
+                i += 1;
+            }
+        }
+    }
+}
+
+// ── Text-overflow: ellipsis ─────────────────────────────────────────────
+
+/// Apply text-overflow: ellipsis to a line that overflows.
+///
+/// Removes trailing items until the line fits within available width
+/// minus the ellipsis width. The caller is responsible for actually
+/// painting the ellipsis character.
+///
+/// Blink: `NGLineInfo::SetHasEllipsis` / `NGLineTruncator`.
+fn apply_text_overflow_ellipsis(line_info: &mut LineInfo, available_width: LayoutUnit) {
+    if line_info.used_width <= available_width {
+        return;
+    }
+
+    // Approximate ellipsis width as ~3 dots. We use a conservative estimate.
+    // In a full implementation this would be measured from the font.
+    let ellipsis_width = LayoutUnit::from_f32(12.0);
+    let target_width = available_width - ellipsis_width;
+
+    if target_width <= LayoutUnit::zero() {
+        return;
+    }
+
+    // Remove items from the end until we have room for the ellipsis.
+    while line_info.used_width > target_width && !line_info.items.is_empty() {
+        let last = line_info.items.last().unwrap();
+        let last_size = last.inline_size;
+        if last_size <= LayoutUnit::zero()
+            && last.item_type != InlineItemType::Text
+        {
+            // Non-content items (open/close tags) — just remove
+            line_info.items.pop();
+            continue;
+        }
+        line_info.used_width = line_info.used_width - last_size;
+        line_info.items.pop();
+    }
+
+    line_info.has_ellipsis = true;
 }
 
 /// Check if a block node has any inline children (text or inline-level elements).
