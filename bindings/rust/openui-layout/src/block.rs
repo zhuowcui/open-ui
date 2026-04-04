@@ -84,7 +84,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
         // Skip out-of-flow children (absolute, fixed) — they don't participate
         // in block flow. Floats are also skipped for SP9.
+        // Skip inline-level elements — inline formatting context is SP11.
         if child_style.is_out_of_flow() || child_style.display == Display::None {
+            continue;
+        }
+        if child_style.display == Display::Inline {
+            // Inline elements require an inline formatting context (SP11).
+            // Skip for now to avoid laying them out as blocks.
             continue;
         }
 
@@ -100,15 +106,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // and collapses them per CSS 2.1 §8.3.1.
         margin_strut.append(child_margin.top);
 
-        // If this is a new formatting context, margins don't collapse
-        // through the boundary. Resolve the strut now.
-        if space.is_new_formatting_context && child_fragments.is_empty() {
-            // First child in a new BFC: the parent's top border/padding
-            // prevents margin collapsing with the first child.
-            // Apply the accumulated margin.
-            block_offset += margin_strut.sum();
-            margin_strut = MarginStrut::new();
-        } else if !child_fragments.is_empty() {
+        // Resolve the margin strut in these cases:
+        // 1. First child in a new BFC — border/padding prevents collapse-through
+        // 2. First child when parent has top border or padding (CSS 2.1 §8.3.1:
+        //    "The top margin of an in-flow block-level element collapses with
+        //    its first in-flow block-level child's top margin if the element
+        //    has no top border, no top padding...")
+        // 3. Between siblings — collapse previous bottom + current top
+        if child_fragments.is_empty() {
+            if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+                block_offset += margin_strut.sum();
+                margin_strut = MarginStrut::new();
+            }
+        } else {
             // Between siblings: resolve the collapsed margin between
             // previous sibling's margin-bottom and this child's margin-top.
             block_offset += margin_strut.sum();
@@ -150,10 +160,16 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         let resolved_margin_right;
 
         if child_style.margin_left.is_auto() && child_style.margin_right.is_auto() {
-            // Center: split remaining space equally
-            let half = remaining_space / 2;
-            resolved_margin_left = half;
-            resolved_margin_right = remaining_space - half;
+            // Center: split remaining space equally.
+            // Per CSS 2.1 §10.3.3: if overconstrained, auto margins → 0.
+            if remaining_space > LayoutUnit::zero() {
+                let half = remaining_space / 2;
+                resolved_margin_left = half;
+                resolved_margin_right = remaining_space - half;
+            } else {
+                resolved_margin_left = LayoutUnit::zero();
+                resolved_margin_right = LayoutUnit::zero();
+            }
         } else if child_style.margin_left.is_auto() {
             resolved_margin_right = child_margin.right;
             resolved_margin_left = remaining_space - resolved_margin_right;
@@ -200,11 +216,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
     // ── Step 5: Resolve height ───────────────────────────────────────
     // Blink: ComputeBlockSizeForFragment (length_utils.h:314)
+    let is_viewport = doc.node(node_id).tag == openui_dom::ElementTag::Viewport;
     let resolved_block_size = resolve_block_size(
         style,
         space,
         intrinsic_block_size,
         border_padding_block,
+        is_viewport,
     );
 
     let border_box_size = PhysicalSize::new(border_box_inline, resolved_block_size);
@@ -310,10 +328,16 @@ fn resolve_block_size(
     space: &ConstraintSpace,
     intrinsic_block_size: LayoutUnit,
     border_padding_block: LayoutUnit,
+    is_viewport: bool,
 ) -> LayoutUnit {
+    // For the viewport/initial containing block, auto height = viewport height
+    // (not content-sized). This matches Blink's initial containing block behavior.
     let resolved = if style.height.is_auto() {
-        // Auto height: use intrinsic (content) size
-        intrinsic_block_size
+        if is_viewport {
+            space.available_block_size
+        } else {
+            intrinsic_block_size
+        }
     } else {
         let raw = resolve_length(
             &style.height,
@@ -328,8 +352,11 @@ fn resolve_block_size(
         }
     };
 
-    // Apply min-height / max-height
-    let min = if style.min_height.is_auto() {
+    // Apply min-height / max-height.
+    // min/max values are in content-box space (for box-sizing: content-box),
+    // so convert them to border-box before clamping against the resolved value
+    // which is already in border-box space.
+    let min_raw = if style.min_height.is_auto() {
         LayoutUnit::zero()
     } else {
         resolve_length(
@@ -339,13 +366,27 @@ fn resolve_block_size(
             LayoutUnit::zero(),
         )
     };
+    let min = if style.box_sizing == BoxSizing::ContentBox && min_raw > LayoutUnit::zero() {
+        min_raw + border_padding_block
+    } else if min_raw > LayoutUnit::zero() {
+        min_raw.max_of(border_padding_block)
+    } else {
+        min_raw
+    };
 
-    let max = resolve_length(
+    let max_raw = resolve_length(
         &style.max_height,
         space.percentage_resolution_block_size,
-        LayoutUnit::max(),
-        LayoutUnit::max(),
+        LayoutUnit::max(), // auto → unconstrained
+        LayoutUnit::max(), // none → unconstrained
     );
+    let max = if max_raw == LayoutUnit::max() {
+        max_raw // don't add border_padding to unconstrained
+    } else if style.box_sizing == BoxSizing::ContentBox {
+        max_raw + border_padding_block
+    } else {
+        max_raw.max_of(border_padding_block)
+    };
 
     resolved.clamp(min, max)
 }
@@ -699,5 +740,132 @@ mod tests {
         let child = &fragment.children[0];
 
         assert_eq!(child.size.width.to_i32(), 500); // clamped by max-width
+    }
+
+    #[test]
+    fn overconstrained_auto_margins_become_zero() {
+        // CSS 2.1 §10.3.3: overconstrained auto margins → 0
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.width = Length::px(1000.0); // wider than container
+        doc.node_mut(div).style.height = Length::px(50.0);
+        doc.node_mut(div).style.margin_left = Length::auto();
+        doc.node_mut(div).style.margin_right = Length::auto();
+        doc.append_child(vp, div);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let child = &fragment.children[0];
+
+        // Child should be flush-left (margin-left = 0), not shifted negative
+        assert_eq!(child.offset.left.to_i32(), 0);
+    }
+
+    #[test]
+    fn first_child_margin_with_parent_border() {
+        // CSS 2.1 §8.3.1: border/padding prevents parent-child margin collapsing
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.border_top_width = 1;
+        doc.node_mut(parent).style.border_top_style = BorderStyle::Solid;
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
+        doc.node_mut(child).style.margin_top = Length::px(20.0);
+        doc.node_mut(child).style.height = Length::px(30.0);
+        doc.append_child(parent, child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let parent_frag = &fragment.children[0];
+        let child_frag = &parent_frag.children[0];
+
+        // Child offset = border_top(1) + margin(20) = 21
+        assert_eq!(child_frag.offset.top.to_i32(), 21);
+        // Parent height = border(1) + margin(20) + child(30) = 51
+        assert_eq!(parent_frag.size.height.to_i32(), 51);
+    }
+
+    #[test]
+    fn viewport_uses_available_height() {
+        let doc = Document::new();
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, doc.root(), &space);
+
+        // Viewport should always be full height even with no children
+        assert_eq!(fragment.size.height.to_i32(), 600);
+        assert_eq!(fragment.size.width.to_i32(), 800);
+    }
+
+    #[test]
+    fn inline_children_are_skipped() {
+        // Inline elements are not yet supported (SP11). They should be
+        // skipped in block layout, not laid out as blocks.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.append_child(vp, block);
+
+        // Default display is Inline — this child should be skipped
+        let inline = doc.create_node(ElementTag::Span);
+        doc.node_mut(inline).style.height = Length::px(50.0);
+        doc.append_child(block, inline);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let block_frag = &fragment.children[0];
+
+        // Block should have no children (inline was skipped)
+        assert!(block_frag.children.is_empty());
+    }
+
+    #[test]
+    fn min_height_with_content_box_sizing() {
+        // min-height in content-box space must be converted to border-box
+        // before clamping the border-box resolved height.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.height = Length::px(50.0);
+        doc.node_mut(div).style.min_height = Length::px(100.0);
+        doc.node_mut(div).style.padding_top = Length::px(10.0);
+        doc.node_mut(div).style.padding_bottom = Length::px(10.0);
+        // box-sizing: content-box (default)
+        doc.append_child(vp, div);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let child = &fragment.children[0];
+
+        // min-height(100) > height(50), so content = 100px
+        // border-box = content(100) + padding(20) = 120px
+        assert_eq!(child.size.height.to_i32(), 120);
     }
 }

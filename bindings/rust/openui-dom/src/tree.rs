@@ -115,8 +115,13 @@ impl Document {
     }
 
     /// Append `child` as the last child of `parent`.
+    ///
+    /// # Panics
+    /// Panics if `child` already has a parent (prevents tree corruption).
     pub fn append_child(&mut self, parent: NodeId, child: NodeId) {
-        debug_assert!(self.nodes[child.index()].parent.is_none(), "node already has a parent");
+        assert!(self.nodes[child.index()].parent.is_none(),
+            "append_child: node already has a parent — detach it first");
+        assert!(child != parent, "append_child: cannot append a node to itself");
 
         self.nodes[child.index()].parent = parent;
         self.nodes[child.index()].next_sibling = NodeId::NONE;

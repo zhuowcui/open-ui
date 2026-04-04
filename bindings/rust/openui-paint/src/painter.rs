@@ -11,7 +11,7 @@
 
 use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace};
 use openui_geometry::PhysicalOffset;
-use openui_style::{Color, ComputedStyle, BorderStyle, StyleColor};
+use openui_style::{Color, ComputedStyle, BorderStyle, StyleColor, Visibility};
 use openui_dom::Document;
 use openui_layout::Fragment;
 
@@ -23,13 +23,29 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     let abs_offset = offset + fragment.offset;
     let style = &doc.node(fragment.node_id).style;
 
-    // ── Paint this box ───────────────────────────────────────────────
-    paint_box_decoration_background(canvas, fragment, style, abs_offset);
+    // CSS opacity creates a stacking context and composites the entire
+    // subtree at the given opacity. Blink implements this via
+    // PaintLayerPainter::PaintLayerWithAdjustedRoot() using saveLayerAlphaf().
+    let needs_layer = style.opacity < 1.0;
+    if needs_layer {
+        canvas.save_layer_alpha_f(None, style.opacity);
+    }
+
+    // ── Paint this box (skip if visibility: hidden) ──────────────────
+    if style.visibility == Visibility::Visible {
+        paint_box_decoration_background(canvas, fragment, style, abs_offset);
+    }
 
     // ── Paint children in document order ─────────────────────────────
     // Blink paints children at their offset relative to the parent fragment.
+    // Note: visibility is inherited, but children can override it,
+    // so we always recurse (the child's own visibility check will decide).
     for child in &fragment.children {
         paint_fragment(canvas, child, doc, abs_offset);
+    }
+
+    if needs_layer {
+        canvas.restore();
     }
 }
 
@@ -68,7 +84,7 @@ fn paint_box_decoration_background(
         paint.set_style(PaintStyle::Fill);
         paint.set_anti_alias(true);
         let c = &style.background_color;
-        paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a * style.opacity), None::<&ColorSpace>);
+        paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         canvas.draw_rect(border_box_rect, &paint);
     }
@@ -128,7 +144,7 @@ fn paint_borders(
 
         let resolved = style.border_top_color.resolve(inherited_color);
         paint.set_color4f(
-            Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a * style.opacity),
+            Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
             None::<&ColorSpace>,
         );
 
@@ -137,16 +153,16 @@ fn paint_borders(
         // Per-side border painting (filled rectangles for each side)
         // This handles different widths/colors per side.
         paint_border_side(canvas, style.border_top_style, &style.border_top_color,
-            inherited_color, style.opacity, bt,
+            inherited_color, bt,
             Rect::from_xywh(x, y, w, bt));
         paint_border_side(canvas, style.border_right_style, &style.border_right_color,
-            inherited_color, style.opacity, br,
+            inherited_color, br,
             Rect::from_xywh(x + w - br, y, br, h));
         paint_border_side(canvas, style.border_bottom_style, &style.border_bottom_color,
-            inherited_color, style.opacity, bb,
+            inherited_color, bb,
             Rect::from_xywh(x, y + h - bb, w, bb));
         paint_border_side(canvas, style.border_left_style, &style.border_left_color,
-            inherited_color, style.opacity, bl,
+            inherited_color, bl,
             Rect::from_xywh(x, y, bl, h));
     }
 }
@@ -157,11 +173,18 @@ fn paint_border_side(
     border_style: BorderStyle,
     border_color: &StyleColor,
     inherited_color: &Color,
-    opacity: f32,
     width: f32,
     rect: Rect,
 ) {
-    if width <= 0.0 || !border_style.has_visible_border() {
+    if width <= 0.0 {
+        return;
+    }
+
+    // Only paint solid borders for SP9. Dashed/dotted/double/groove/ridge/
+    // inset/outset require specialized path effects or multi-rect drawing
+    // that will be implemented in SP12. Skipping them prevents visually
+    // wrong output (rendering non-solid styles as solid fills).
+    if !matches!(border_style, BorderStyle::Solid) {
         return;
     }
 
@@ -170,23 +193,11 @@ fn paint_border_side(
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(true);
     paint.set_color4f(
-        Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a * opacity),
+        Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
         None::<&ColorSpace>,
     );
 
-    match border_style {
-        BorderStyle::Solid => {
-            canvas.draw_rect(rect, &paint);
-        }
-        BorderStyle::Dashed | BorderStyle::Dotted => {
-            // TODO SP12: implement dash/dot patterns with PathEffect
-            canvas.draw_rect(rect, &paint);
-        }
-        _ => {
-            // Other styles (double, groove, ridge, inset, outset) — SP12
-            canvas.draw_rect(rect, &paint);
-        }
-    }
+    canvas.draw_rect(rect, &paint);
 }
 
 // ── StyleColor PartialEq needed for border comparison ────────────────
