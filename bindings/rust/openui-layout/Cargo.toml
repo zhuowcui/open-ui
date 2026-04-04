@@ -1,0 +1,10 @@
+[package]
+name = "openui-layout"
+version = "0.1.0"
+edition = "2021"
+description = "Block/Flex/Grid/Inline layout algorithms extracted from Blink's NG layout engine"
+
+[dependencies]
+openui-style = { path = "../openui-style" }
+openui-geometry = { path = "../openui-geometry" }
+openui-dom = { path = "../openui-dom" }

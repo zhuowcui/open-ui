@@ -1,0 +1,8 @@
+[package]
+name = "openui-style"
+version = "0.1.0"
+edition = "2021"
+description = "Typed CSS style properties extracted from Blink's ComputedStyle — no parsing, just typed structs"
+
+[dependencies]
+openui-geometry = { path = "../openui-geometry" }

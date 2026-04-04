@@ -1,6 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
+    "openui-geometry",
+    "openui-style",
+    "openui-dom",
+    "openui-layout",
+    "openui-paint",
     "openui-sys",
     "openui",
     "openui-macros",

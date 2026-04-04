@@ -1,0 +1,12 @@
+[package]
+name = "openui-paint"
+version = "0.1.0"
+edition = "2021"
+description = "Fragment-to-Skia paint pipeline extracted from Blink's paint system"
+
+[dependencies]
+openui-style = { path = "../openui-style" }
+openui-geometry = { path = "../openui-geometry" }
+openui-layout = { path = "../openui-layout" }
+openui-dom = { path = "../openui-dom" }
+skia-safe = "0.82"

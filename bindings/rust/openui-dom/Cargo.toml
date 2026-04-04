@@ -1,0 +1,9 @@
+[package]
+name = "openui-dom"
+version = "0.1.0"
+edition = "2021"
+description = "Native element tree — lightweight node arena with parent/child relationships"
+
+[dependencies]
+openui-style = { path = "../openui-style" }
+openui-geometry = { path = "../openui-geometry" }
