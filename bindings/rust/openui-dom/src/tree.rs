@@ -117,11 +117,22 @@ impl Document {
     /// Append `child` as the last child of `parent`.
     ///
     /// # Panics
-    /// Panics if `child` already has a parent (prevents tree corruption).
+    /// Panics if `child` already has a parent, if `child == parent`,
+    /// or if `parent` is a descendant of `child` (would create a cycle).
     pub fn append_child(&mut self, parent: NodeId, child: NodeId) {
         assert!(self.nodes[child.index()].parent.is_none(),
             "append_child: node already has a parent — detach it first");
         assert!(child != parent, "append_child: cannot append a node to itself");
+        // Walk ancestors of parent to ensure child is not among them.
+        // This prevents ancestor→descendant cycles.
+        {
+            let mut ancestor = parent;
+            while !ancestor.is_none() {
+                assert!(ancestor != child,
+                    "append_child: parent is a descendant of child — would create cycle");
+                ancestor = self.nodes[ancestor.index()].parent;
+            }
+        }
 
         self.nodes[child.index()].parent = parent;
         self.nodes[child.index()].next_sibling = NodeId::NONE;

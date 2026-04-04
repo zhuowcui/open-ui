@@ -88,8 +88,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         if child_style.is_out_of_flow() || child_style.display == Display::None {
             continue;
         }
-        if child_style.display == Display::Inline {
-            // Inline elements require an inline formatting context (SP11).
+        if child_style.display.is_inline_level() {
+            // Inline-level elements (inline, inline-block, inline-flex,
+            // inline-grid) require an inline formatting context (SP11).
             // Skip for now to avoid laying them out as blocks.
             continue;
         }
@@ -206,13 +207,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     }
 
     // ── Step 4: Finish layout (FinishLayout, line 1165) ──────────────
-    // Resolve the trailing margin strut if we're in a new formatting context.
-    if space.is_new_formatting_context && !margin_strut.is_empty() {
+    // Resolve the trailing margin strut if margins can't collapse through
+    // the bottom edge. Per CSS 2.1 §8.3.1, bottom border or padding
+    // prevents the last child's bottom margin from collapsing with the
+    // parent's bottom margin.
+    let bottom_edge = border.bottom + padding.bottom;
+    if !margin_strut.is_empty()
+        && (space.is_new_formatting_context || bottom_edge > LayoutUnit::zero())
+    {
         intrinsic_block_size += margin_strut.sum();
     }
 
     // Add bottom border + padding
-    intrinsic_block_size += border.bottom + padding.bottom;
+    intrinsic_block_size += bottom_edge;
 
     // ── Step 5: Resolve height ───────────────────────────────────────
     // Blink: ComputeBlockSizeForFragment (length_utils.h:314)
@@ -867,5 +874,60 @@ mod tests {
         // min-height(100) > height(50), so content = 100px
         // border-box = content(100) + padding(20) = 120px
         assert_eq!(child.size.height.to_i32(), 120);
+    }
+
+    #[test]
+    fn last_child_bottom_margin_with_parent_border() {
+        // CSS 2.1 §8.3.1: bottom border/padding prevents last child's
+        // bottom margin from collapsing through the parent.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.border_bottom_width = 1;
+        doc.node_mut(parent).style.border_bottom_style = BorderStyle::Solid;
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
+        doc.node_mut(child).style.height = Length::px(30.0);
+        doc.node_mut(child).style.margin_bottom = Length::px(20.0);
+        doc.append_child(parent, child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let parent_frag = &fragment.children[0];
+
+        // Parent height = child(30) + margin(20) + border(1) = 51
+        assert_eq!(parent_frag.size.height.to_i32(), 51);
+    }
+
+    #[test]
+    fn inline_block_children_are_skipped() {
+        // InlineBlock/InlineFlex/InlineGrid should also be skipped
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.append_child(vp, block);
+
+        let ib = doc.create_node(ElementTag::Div);
+        doc.node_mut(ib).style.display = Display::InlineBlock;
+        doc.node_mut(ib).style.height = Length::px(50.0);
+        doc.append_child(block, ib);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let block_frag = &fragment.children[0];
+
+        assert!(block_frag.children.is_empty());
     }
 }
