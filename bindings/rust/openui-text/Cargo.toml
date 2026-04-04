@@ -1,0 +1,10 @@
+[package]
+name = "openui-text"
+version = "0.1.0"
+edition = "2021"
+description = "Font resolution, metrics, and text shaping — extracted from Blink's font subsystem"
+
+[dependencies]
+openui-style = { path = "../openui-style" }
+openui-geometry = { path = "../openui-geometry" }
+skia-safe = "0.82"

@@ -6,6 +6,7 @@ members = [
     "openui-dom",
     "openui-layout",
     "openui-paint",
+    "openui-text",
     "openui-sys",
     "openui",
     "openui-macros",

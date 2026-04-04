@@ -527,3 +527,351 @@ impl ItemAlignment {
 impl Default for ItemAlignment {
     fn default() -> Self { Self::INITIAL_ITEMS }
 }
+
+// ── Text layout enums (extracted from Blink computed_style_constants.h) ──
+
+/// CSS `line-height` computed value.
+/// Blink: `Length` with `kAuto` for `normal`, or a fixed/percentage value.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum LineHeight {
+    /// `normal` — typically ~1.2× font-size, computed by the font.
+    Normal,
+    /// Unitless multiplier (e.g., `line-height: 1.5`).
+    Number(f32),
+    /// Absolute length in pixels (e.g., `line-height: 24px`).
+    Length(f32),
+    /// Percentage of font-size (e.g., `line-height: 150%` stored as 150.0).
+    Percentage(f32),
+}
+
+impl Default for LineHeight {
+    fn default() -> Self { Self::Normal }
+}
+
+/// CSS `text-align-last` property.
+/// Blink: `ETextAlignLast` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextAlignLast {
+    Auto = 0,
+    Start = 1,
+    End = 2,
+    Left = 3,
+    Right = 4,
+    Center = 5,
+    Justify = 6,
+}
+
+impl TextAlignLast {
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for TextAlignLast {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-justify` property.
+/// Blink: `TextJustify` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextJustify {
+    Auto = 0,
+    None = 1,
+    InterWord = 2,
+    InterCharacter = 3,
+}
+
+impl TextJustify {
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for TextJustify {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `word-break` property.
+/// Blink: `EWordBreak` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum WordBreak {
+    Normal = 0,
+    BreakAll = 1,
+    KeepAll = 2,
+    BreakWord = 3,
+}
+
+impl WordBreak {
+    pub const INITIAL: Self = Self::Normal;
+}
+
+impl Default for WordBreak {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `overflow-wrap` property (was `word-wrap`).
+/// Blink: `EOverflowWrap` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum OverflowWrap {
+    Normal = 0,
+    BreakWord = 1,
+    Anywhere = 2,
+}
+
+impl OverflowWrap {
+    pub const INITIAL: Self = Self::Normal;
+}
+
+impl Default for OverflowWrap {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `hyphens` property.
+/// Blink: `Hyphens` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum Hyphens {
+    None = 0,
+    Manual = 1,
+    Auto = 2,
+}
+
+impl Hyphens {
+    pub const INITIAL: Self = Self::Manual;
+}
+
+impl Default for Hyphens {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-decoration-line` — bitflag set.
+/// Blink: `TextDecorationLine` bitfield in `text_decoration.h`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct TextDecorationLine(pub u8);
+
+impl TextDecorationLine {
+    pub const NONE: Self = Self(0);
+    pub const UNDERLINE: Self = Self(1);
+    pub const OVERLINE: Self = Self(2);
+    pub const LINE_THROUGH: Self = Self(4);
+
+    #[inline]
+    pub fn has_underline(self) -> bool { self.0 & 1 != 0 }
+    #[inline]
+    pub fn has_overline(self) -> bool { self.0 & 2 != 0 }
+    #[inline]
+    pub fn has_line_through(self) -> bool { self.0 & 4 != 0 }
+    #[inline]
+    pub fn is_none(self) -> bool { self.0 == 0 }
+}
+
+impl Default for TextDecorationLine {
+    fn default() -> Self { Self::NONE }
+}
+
+/// CSS `text-decoration-style` property.
+/// Blink: `ETextDecorationStyle` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextDecorationStyle {
+    Solid = 0,
+    Double = 1,
+    Dotted = 2,
+    Dashed = 3,
+    Wavy = 4,
+}
+
+impl TextDecorationStyle {
+    pub const INITIAL: Self = Self::Solid;
+}
+
+impl Default for TextDecorationStyle {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-decoration-thickness` computed value.
+/// Blink: `TextDecorationThickness` in `text_decoration_thickness.h`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum TextDecorationThickness {
+    Auto,
+    FromFont,
+    Length(f32),
+}
+
+impl Default for TextDecorationThickness {
+    fn default() -> Self { Self::Auto }
+}
+
+/// CSS `text-underline-position` property.
+/// Blink: `TextUnderlinePosition` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextUnderlinePosition {
+    Auto = 0,
+    Under = 1,
+    Left = 2,
+    Right = 3,
+}
+
+impl TextUnderlinePosition {
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for TextUnderlinePosition {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-transform` property.
+/// Blink: `ETextTransform` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextTransform {
+    None = 0,
+    Capitalize = 1,
+    Uppercase = 2,
+    Lowercase = 3,
+    FullWidth = 4,
+    FullSizeKana = 5,
+}
+
+impl TextTransform {
+    pub const INITIAL: Self = Self::None;
+}
+
+impl Default for TextTransform {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-overflow` property.
+/// Blink: `ETextOverflow` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextOverflow {
+    Clip = 0,
+    Ellipsis = 1,
+}
+
+impl TextOverflow {
+    pub const INITIAL: Self = Self::Clip;
+}
+
+impl Default for TextOverflow {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `vertical-align` computed value.
+/// Blink: `EVerticalAlign` enum + numeric offset in `ComputedStyle`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum VerticalAlign {
+    Baseline,
+    Sub,
+    Super,
+    TextTop,
+    TextBottom,
+    Middle,
+    Top,
+    Bottom,
+    /// Absolute offset from baseline in pixels.
+    Length(f32),
+    /// Percentage of line-height.
+    Percentage(f32),
+}
+
+impl Default for VerticalAlign {
+    fn default() -> Self { Self::Baseline }
+}
+
+/// CSS `unicode-bidi` property.
+/// Blink: `UnicodeBidi` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum UnicodeBidi {
+    Normal = 0,
+    Embed = 1,
+    Override = 2,
+    Isolate = 3,
+    IsolateOverride = 4,
+    Plaintext = 5,
+}
+
+impl UnicodeBidi {
+    pub const INITIAL: Self = Self::Normal;
+}
+
+impl Default for UnicodeBidi {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `writing-mode` property.
+/// Blink: `WritingMode` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum WritingMode {
+    HorizontalTb = 0,
+    VerticalRl = 1,
+    VerticalLr = 2,
+    SidewaysRl = 3,
+    SidewaysLr = 4,
+}
+
+impl WritingMode {
+    pub const INITIAL: Self = Self::HorizontalTb;
+
+    /// True if text flows horizontally.
+    #[inline]
+    pub fn is_horizontal(self) -> bool {
+        matches!(self, Self::HorizontalTb)
+    }
+
+    /// True if text flows vertically.
+    #[inline]
+    pub fn is_vertical(self) -> bool {
+        !self.is_horizontal()
+    }
+}
+
+impl Default for WritingMode {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-orientation` property.
+/// Blink: `ETextOrientation` in computed_style_constants.h.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextOrientation {
+    Mixed = 0,
+    Upright = 1,
+    Sideways = 2,
+}
+
+impl TextOrientation {
+    pub const INITIAL: Self = Self::Mixed;
+}
+
+impl Default for TextOrientation {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-shadow` value.
+/// Blink: `ShadowData` in `shadow_data.h`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TextShadow {
+    pub offset_x: f32,
+    pub offset_y: f32,
+    pub blur_radius: f32,
+    pub color: crate::color::Color,
+}
+
+/// CSS `tab-size` computed value.
+/// Blink: `TabSize` struct in `tab_size.h`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum TabSize {
+    /// Number of spaces (CSS default: 8).
+    Spaces(u32),
+    /// Explicit length in pixels.
+    Length(f32),
+}
+
+impl Default for TabSize {
+    fn default() -> Self { Self::Spaces(8) }
+}

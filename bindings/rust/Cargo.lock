@@ -351,6 +351,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "openui-text"
+version = "0.1.0"
+dependencies = [
+ "openui-geometry",
+ "openui-style",
+ "skia-safe",
+]
+
+[[package]]
 name = "plain"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

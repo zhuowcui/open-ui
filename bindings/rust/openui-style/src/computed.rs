@@ -10,6 +10,7 @@ use openui_geometry::Length;
 
 use crate::color::{Color, StyleColor};
 use crate::enums::*;
+use crate::font_types::*;
 
 /// The complete resolved style for an element.
 ///
@@ -169,6 +170,147 @@ pub struct ComputedStyle {
 
     /// CSS `order`. Initial: `0`. Item property.
     pub order: i32,
+
+    // ── Text & Font properties ───────────────────────────────────────
+
+    /// CSS `text-align`. Initial: `start`. Inherited.
+    pub text_align: TextAlign,
+
+    /// CSS `white-space`. Initial: `normal`. Inherited.
+    pub white_space: WhiteSpace,
+
+    // ── Font Properties ──────────────────────────────────────────────
+
+    /// CSS `font-family`. Initial: platform-dependent (we use sans-serif).
+    pub font_family: FontFamilyList,
+
+    /// CSS `font-size`. Initial: `medium` (16px). Inherited.
+    pub font_size: f32,
+
+    /// CSS `font-weight`. Initial: `normal` (400). Inherited.
+    pub font_weight: FontWeight,
+
+    /// CSS `font-style`. Initial: `normal`. Inherited.
+    pub font_style: FontStyleEnum,
+
+    /// CSS `font-stretch`. Initial: `normal` (100%). Inherited.
+    pub font_stretch: FontStretch,
+
+    /// CSS `font-variant-caps`. Initial: `normal`. Inherited.
+    pub font_variant_caps: FontVariantCaps,
+
+    /// CSS `font-size-adjust`. Initial: `none`.
+    pub font_size_adjust: Option<f32>,
+
+    /// CSS `font-optical-sizing`. Initial: `auto`. Inherited.
+    pub font_optical_sizing: FontOpticalSizing,
+
+    /// CSS `font-synthesis-weight`. Initial: `auto`. Inherited.
+    pub font_synthesis_weight: FontSynthesis,
+
+    /// CSS `font-synthesis-style`. Initial: `auto`. Inherited.
+    pub font_synthesis_style: FontSynthesis,
+
+    /// CSS `font-feature-settings`. Initial: `normal` (empty). Inherited.
+    pub font_feature_settings: Vec<FontFeature>,
+
+    /// CSS `font-variation-settings`. Initial: `normal` (empty). Inherited.
+    pub font_variation_settings: Vec<FontVariation>,
+
+    // ── Line Height ──────────────────────────────────────────────────
+
+    /// CSS `line-height`. Initial: `normal`. Inherited.
+    pub line_height: LineHeight,
+
+    // ── Text Spacing ─────────────────────────────────────────────────
+
+    /// CSS `letter-spacing`. Initial: `normal` (0). Inherited.
+    pub letter_spacing: f32,
+
+    /// CSS `word-spacing`. Initial: `normal` (0). Inherited.
+    pub word_spacing: f32,
+
+    /// CSS `text-indent`. Initial: `0`. Inherited.
+    pub text_indent: Length,
+
+    // ── Text Layout ──────────────────────────────────────────────────
+
+    /// CSS `text-align-last`. Initial: `auto`. Inherited.
+    pub text_align_last: TextAlignLast,
+
+    /// CSS `text-justify`. Initial: `auto`. Inherited.
+    pub text_justify: TextJustify,
+
+    /// CSS `word-break`. Initial: `normal`. Inherited.
+    pub word_break: WordBreak,
+
+    /// CSS `overflow-wrap`. Initial: `normal`. Inherited.
+    pub overflow_wrap: OverflowWrap,
+
+    /// CSS `hyphens`. Initial: `manual`. Inherited.
+    pub hyphens: Hyphens,
+
+    // ── Text Decoration ──────────────────────────────────────────────
+
+    /// CSS `text-decoration-line`. Initial: `none`.
+    pub text_decoration_line: TextDecorationLine,
+
+    /// CSS `text-decoration-style`. Initial: `solid`.
+    pub text_decoration_style: TextDecorationStyle,
+
+    /// CSS `text-decoration-color`. Initial: `currentColor`.
+    pub text_decoration_color: StyleColor,
+
+    /// CSS `text-decoration-thickness`. Initial: `auto`.
+    pub text_decoration_thickness: TextDecorationThickness,
+
+    /// CSS `text-underline-offset`. Initial: `auto`.
+    pub text_underline_offset: Length,
+
+    /// CSS `text-underline-position`. Initial: `auto`. Inherited.
+    pub text_underline_position: TextUnderlinePosition,
+
+    // ── Text Transform ───────────────────────────────────────────────
+
+    /// CSS `text-transform`. Initial: `none`. Inherited.
+    pub text_transform: TextTransform,
+
+    /// CSS `text-overflow`. Initial: `clip`.
+    pub text_overflow: TextOverflow,
+
+    // ── Vertical Alignment ───────────────────────────────────────────
+
+    /// CSS `vertical-align`. Initial: `baseline`.
+    pub vertical_align: VerticalAlign,
+
+    // ── Writing & Bidi ───────────────────────────────────────────────
+
+    /// CSS `unicode-bidi`. Initial: `normal`.
+    pub unicode_bidi: UnicodeBidi,
+
+    /// CSS `writing-mode`. Initial: `horizontal-tb`. Inherited.
+    pub writing_mode: WritingMode,
+
+    /// CSS `text-orientation`. Initial: `mixed`. Inherited.
+    pub text_orientation: TextOrientation,
+
+    // ── Text Rendering ───────────────────────────────────────────────
+
+    /// CSS `text-rendering`. Initial: `auto`. Inherited.
+    pub text_rendering: TextRendering,
+
+    /// CSS `-webkit-font-smoothing`. Initial: `auto`. Inherited.
+    pub font_smoothing: FontSmoothing,
+
+    // ── Text Shadow ──────────────────────────────────────────────────
+
+    /// CSS `text-shadow`. Initial: `none` (empty). Inherited.
+    pub text_shadow: Vec<TextShadow>,
+
+    // ── Tab Size ─────────────────────────────────────────────────────
+
+    /// CSS `tab-size`. Initial: `8`. Inherited.
+    pub tab_size: TabSize,
 }
 
 impl ComputedStyle {
@@ -240,6 +382,69 @@ impl ComputedStyle {
             flex_basis: Length::auto(),
             align_self: ItemAlignment::INITIAL_SELF,  // auto (→ inherits align-items)
             order: 0,
+
+            // Text & Font — inherited text properties
+            text_align: TextAlign::INITIAL,         // start
+            white_space: WhiteSpace::INITIAL,       // normal
+
+            // Font properties
+            font_family: FontFamilyList::default(),      // sans-serif
+            font_size: 16.0,                              // CSS medium
+            font_weight: FontWeight::NORMAL,              // 400
+            font_style: FontStyleEnum::Normal,
+            font_stretch: FontStretch::NORMAL,            // 100%
+            font_variant_caps: FontVariantCaps::Normal,
+            font_size_adjust: None,
+            font_optical_sizing: FontOpticalSizing::Auto,
+            font_synthesis_weight: FontSynthesis::Auto,
+            font_synthesis_style: FontSynthesis::Auto,
+            font_feature_settings: Vec::new(),
+            font_variation_settings: Vec::new(),
+
+            // Line height
+            line_height: LineHeight::Normal,
+
+            // Text spacing
+            letter_spacing: 0.0,
+            word_spacing: 0.0,
+            text_indent: Length::zero(),
+
+            // Text layout
+            text_align_last: TextAlignLast::INITIAL,     // auto
+            text_justify: TextJustify::INITIAL,           // auto
+            word_break: WordBreak::INITIAL,               // normal
+            overflow_wrap: OverflowWrap::INITIAL,         // normal
+            hyphens: Hyphens::INITIAL,                    // manual
+
+            // Text decoration
+            text_decoration_line: TextDecorationLine::NONE,
+            text_decoration_style: TextDecorationStyle::INITIAL,  // solid
+            text_decoration_color: StyleColor::CurrentColor,
+            text_decoration_thickness: TextDecorationThickness::Auto,
+            text_underline_offset: Length::auto(),
+            text_underline_position: TextUnderlinePosition::INITIAL,  // auto
+
+            // Text transform
+            text_transform: TextTransform::INITIAL,       // none
+            text_overflow: TextOverflow::INITIAL,          // clip
+
+            // Vertical alignment
+            vertical_align: VerticalAlign::Baseline,
+
+            // Writing & bidi
+            unicode_bidi: UnicodeBidi::INITIAL,            // normal
+            writing_mode: WritingMode::INITIAL,            // horizontal-tb
+            text_orientation: TextOrientation::INITIAL,    // mixed
+
+            // Text rendering
+            text_rendering: TextRendering::Auto,
+            font_smoothing: FontSmoothing::Auto,
+
+            // Text shadow
+            text_shadow: Vec::new(),
+
+            // Tab size
+            tab_size: TabSize::Spaces(8),
         }
     }
 

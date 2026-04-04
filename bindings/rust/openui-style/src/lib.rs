@@ -7,8 +7,10 @@
 mod color;
 mod computed;
 mod enums;
+mod font_types;
 
 pub use color::{Color, StyleColor};
 pub use computed::ComputedStyle;
 pub use enums::*;
+pub use font_types::*;
 
