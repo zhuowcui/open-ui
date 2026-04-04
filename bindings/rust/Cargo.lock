@@ -3,6 +3,27 @@
 version = 4
 
 [[package]]
+name = "counter"
+version = "0.1.0"
+dependencies = [
+ "openui",
+]
+
+[[package]]
+name = "dashboard"
+version = "0.1.0"
+dependencies = [
+ "openui",
+]
+
+[[package]]
+name = "hello"
+version = "0.1.0"
+dependencies = [
+ "openui",
+]
+
+[[package]]
 name = "openui"
 version = "0.1.0"
 dependencies = [
@@ -50,6 +71,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "todo"
+version = "0.1.0"
+dependencies = [
+ "openui",
 ]
 
 [[package]]

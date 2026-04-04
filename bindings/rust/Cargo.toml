@@ -4,4 +4,8 @@ members = [
     "openui-sys",
     "openui",
     "openui-macros",
+    "examples/hello",
+    "examples/counter",
+    "examples/todo",
+    "examples/dashboard",
 ]
