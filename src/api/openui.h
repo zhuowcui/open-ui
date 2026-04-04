@@ -29,6 +29,7 @@ extern "C" {
 // ─── Opaque handles ─────────────────────────────────────────
 typedef struct OuiDocument OuiDocument;
 typedef struct OuiElement OuiElement;
+typedef struct OuiTextNode OuiTextNode;
 
 // ─── Status codes ───────────────────────────────────────────
 typedef enum {
@@ -223,8 +224,22 @@ OUI_EXPORT OuiStatus oui_document_load_html(OuiDocument* doc, const char* html);
 // ═══════════════════════════════════════════════════════════
 
 OUI_EXPORT OuiElement* oui_element_create(OuiDocument* doc, const char* tag);
+OUI_EXPORT void oui_element_append_text(OuiElement* elem, const char* text);
 OUI_EXPORT void oui_element_destroy(OuiElement* elem);
 OUI_EXPORT OuiElement* oui_document_body(OuiDocument* doc);
+
+// ═══════════════════════════════════════════════════════════
+// Text node lifecycle (for mutable text content)
+// ═══════════════════════════════════════════════════════════
+
+// Create a DOM Text node, append it to parent, and return a mutable handle.
+// The handle can be used with oui_text_node_set_data() for reactive updates.
+OUI_EXPORT OuiTextNode* oui_element_create_text_child(OuiElement* parent,
+                                                       const char* text);
+// Update the text content of a text node.
+OUI_EXPORT void oui_text_node_set_data(OuiTextNode* node, const char* data);
+// Remove from DOM and free. Safe to call on null.
+OUI_EXPORT void oui_text_node_destroy(OuiTextNode* node);
 
 // ═══════════════════════════════════════════════════════════
 // DOM tree manipulation
@@ -238,6 +253,9 @@ OUI_EXPORT void oui_element_insert_before(OuiElement* parent,
 OUI_EXPORT OuiElement* oui_element_first_child(const OuiElement* parent);
 OUI_EXPORT OuiElement* oui_element_next_sibling(const OuiElement* elem);
 OUI_EXPORT OuiElement* oui_element_parent(const OuiElement* elem);
+// Remove ALL child nodes (elements, text nodes, etc.) from the DOM.
+// Element wrappers must be cleaned up before calling this.
+OUI_EXPORT void oui_element_remove_all_child_nodes(OuiElement* elem);
 
 // ═══════════════════════════════════════════════════════════
 // Generic style (any CSS property/value as strings)

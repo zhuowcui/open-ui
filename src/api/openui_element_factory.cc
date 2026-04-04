@@ -35,6 +35,7 @@
 #include "third_party/blink/renderer/core/html/html_quote_element.h"
 #include "third_party/blink/renderer/core/html/html_source_element.h"
 #include "third_party/blink/renderer/core/html/html_span_element.h"
+#include "third_party/blink/renderer/core/html/html_style_element.h"
 #include "third_party/blink/renderer/core/html/html_summary_element.h"
 #include "third_party/blink/renderer/core/html/html_table_caption_element.h"
 #include "third_party/blink/renderer/core/html/html_table_cell_element.h"
@@ -430,6 +431,7 @@ const TagEntry kTagTable[] = {
     {"span", Create<blink::HTMLSpanElement>},
     {"stop", Create<blink::SVGStopElement>},
     {"strong", CreateStrong},
+    {"style", Create<blink::HTMLStyleElement>},
     {"sub", CreateSub},
     {"summary", Create<blink::HTMLSummaryElement>},
     {"sup", CreateSup},

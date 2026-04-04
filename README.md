@@ -44,9 +44,63 @@ Each layer is independently usable. Use the full stack for app development, or j
 | SP4: DOM Adapter & C API | ✅ Done | 65-function C API, 130 tests passing |
 | SP5: Offscreen Rendering | ✅ Done | Rasterize to pixels/PNG, 14 pixel-perfect test pages, 196 tests |
 | SP6: Widget Coverage & SVG | ✅ Done | 117 elements, SVG, resource provider, 39 pixel-perfect pages |
-| SP7-SP9 | 📋 Planned | Animations, Rust bindings, platform expansion |
+| SP7: Events & Animations | ✅ Done | Event system, CSS animations, hit-testing |
+| SP8: React-like Rust API | ✅ Done | `view!` macro, signals, components, 100 Rust tests, 99.1% pixel match |
+| SP9 | 📋 Planned | Platform windowing (winit/SDL2) |
 
 See [`docs/plan/`](docs/plan/) for the full project roadmap.
+
+## Rust Framework — `view!` Macro (SP8)
+
+Write React-like UIs in Rust that render through Chromium's Blink pipeline:
+
+```rust
+use openui::prelude::*;
+
+fn main() {
+    let mut app = App::new(800, 600);
+    app.render(|| {
+        let count = create_signal(0_i32);
+        view! {
+            <div style:text-align="center" style:padding="40px">
+                <h1>"Counter: " {count.get()}</h1>
+                <button on:click={move |_| count.set(count.get() + 1)}>
+                    "Increment"
+                </button>
+            </div>
+        }
+    });
+    app.run_frames(1).render_to_png("counter.png");
+}
+```
+
+### Pixel Comparison: Framework vs Real Chromium
+
+10 web apps were built identically in HTML and with the `view!` macro, then
+pixel-compared. Screenshots in `tests/pixel_apps/screenshots/`.
+
+| Comparison | Match |
+|---|---|
+| Pipeline (`load_html`) vs Web (headless Chromium) | **99.32%** |
+| Framework (`view!` macro) vs Pipeline | **99.64%** |
+| **Framework (`view!` macro) vs Web** | **99.11%** |
+
+| App | Framework vs Web |
+|---|---|
+| 01 Landing Page | 99.37% |
+| 02 Pricing Table | 98.83% |
+| 03 Login Form | 99.75% |
+| 04 Profile Card | 99.44% |
+| 05 Navigation Bar | 99.37% |
+| 06 Data Table | 99.26% |
+| 07 Dashboard Stats | 99.32% |
+| 08 Blog Post | 97.51% |
+| 09 Settings Panel | 99.28% |
+| 10 Kanban Board | 98.98% |
+
+Remaining differences are text anti-aliasing between DummyPageHolder and the
+full Chromium compositor. Background colors, borders, layout, and structure
+match perfectly.
 
 ## Getting Started
 

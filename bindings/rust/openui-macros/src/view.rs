@@ -436,23 +436,28 @@ fn gen_html_element(tag: &Ident, attrs: &[Attr], children: &[ViewNode]) -> Token
 }
 
 /// Generate code for a dynamic view node (reactive text).
+///
+/// Returns a `ViewNode::MountFn` that creates a DOM Text node on the parent
+/// during mount. This avoids wrapper elements like `<span>`.
 fn gen_dynamic_view_node(expr: &Expr, span: Span) -> TokenStream {
     quote_spanned! {span=> {
-        let __doc = ::openui::current_document();
-        let __dyn_el = ::openui::Element::create(__doc, "span")
-            .expect("failed to create text element");
-        let __dyn_raw = __dyn_el.as_raw();
-        ::openui::create_effect({
-            let __dyn_raw = __dyn_raw;
-            move || {
-                let __el_ref = unsafe {
-                    ::openui::Element::from_raw_borrowed(__dyn_raw)
-                };
-                let __val = ::std::string::ToString::to_string(&(#expr));
-                __el_ref.set_text(&__val).expect("set text");
-            }
-        });
-        ::openui::ViewNode::Element(__dyn_el)
+        ::openui::ViewNode::MountFn(Box::new(move |__el: &::openui::Element| {
+            let __text_node = __el.create_text_child(
+                &::std::string::ToString::to_string(&(#expr))
+            );
+            let __text_raw = __text_node.as_raw();
+            ::openui::on_cleanup(move || { drop(__text_node); });
+            ::openui::create_effect({
+                let __text_raw = __text_raw;
+                move || {
+                    let __node_ref = unsafe {
+                        ::openui::TextNode::from_raw_borrowed(__text_raw)
+                    };
+                    let __val = ::std::string::ToString::to_string(&(#expr));
+                    __node_ref.set_data(&__val);
+                }
+            });
+        }))
     }}
 }
 
@@ -523,33 +528,29 @@ fn gen_child_stmt(child: &ViewNode) -> TokenStream {
         } => gen_child_component(tag, attrs, children),
         ViewNode::Text(lit) => {
             let text = lit.value();
-            quote_spanned! {lit.span()=> {
-                let __doc = ::openui::current_document();
-                let __text_el = ::openui::Element::create(__doc, "span")
-                    .expect("failed to create text element");
-                __text_el.set_text(#text).expect("set text");
-                __el.append_child(&__text_el);
-                ::std::mem::forget(__text_el);
-            }}
+            quote_spanned! {lit.span()=>
+                __el.append_text_node(#text);
+            }
         }
         ViewNode::Dynamic { expr, span } => {
             quote_spanned! {*span=> {
-                let __doc = ::openui::current_document();
-                let __text_el = ::openui::Element::create(__doc, "span")
-                    .expect("failed to create text element");
-                let __text_raw = __text_el.as_raw();
+                let __text_node = __el.create_text_child(
+                    &::std::string::ToString::to_string(&(#expr))
+                );
+                let __text_raw = __text_node.as_raw();
+                // Transfer ownership to scope cleanup so the text node is
+                // removed from the DOM when the enclosing scope is disposed.
+                ::openui::on_cleanup(move || { drop(__text_node); });
                 ::openui::create_effect({
                     let __text_raw = __text_raw;
                     move || {
-                        let __el_ref = unsafe {
-                            ::openui::Element::from_raw_borrowed(__text_raw)
+                        let __node_ref = unsafe {
+                            ::openui::TextNode::from_raw_borrowed(__text_raw)
                         };
                         let __val = ::std::string::ToString::to_string(&(#expr));
-                        __el_ref.set_text(&__val).expect("set text");
+                        __node_ref.set_data(&__val);
                     }
                 });
-                __el.append_child(&__text_el);
-                ::std::mem::forget(__text_el);
             }}
         }
     }
@@ -967,7 +968,7 @@ mod tests {
         let body = parse_ok(quote! { <p>"hello"</p> });
         let output = generate(&body);
         let output_str = output.to_string();
-        assert!(output_str.contains("set_text"));
+        assert!(output_str.contains("append_text_node"));
         assert!(output_str.contains("\"hello\""));
     }
 
@@ -977,6 +978,30 @@ mod tests {
         let output = generate(&body);
         let output_str = output.to_string();
         assert!(output_str.contains("Fragment"));
+    }
+
+    #[test]
+    fn codegen_dynamic_child_uses_text_node() {
+        let body = parse_ok(quote! { <p>{val}</p> });
+        let output = generate(&body);
+        let output_str = output.to_string();
+        assert!(output_str.contains("create_text_child"),
+            "expected 'create_text_child' in: {}", output_str);
+        assert!(output_str.contains("set_data"),
+            "expected 'set_data' (not set_text) in: {}", output_str);
+        assert!(!output_str.contains("create(__doc, \"span\")"),
+            "must not create a <span> wrapper for dynamic text: {}", output_str);
+    }
+
+    #[test]
+    fn codegen_standalone_dynamic_uses_mount_fn() {
+        let body = parse_ok(quote! { {val} });
+        let output = generate(&body);
+        let output_str = output.to_string();
+        assert!(output_str.contains("MountFn"),
+            "expected 'MountFn' in standalone dynamic: {}", output_str);
+        assert!(output_str.contains("create_text_child"),
+            "expected 'create_text_child' in: {}", output_str);
     }
 
     #[test]

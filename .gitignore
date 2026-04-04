@@ -24,3 +24,16 @@ Thumbs.db
 # depot_tools
 .gclient
 .gclient_entries
+
+# Rust build artifacts
+bindings/rust/target/
+tests/pixel_apps/rust/target/
+
+# Generated PNGs from examples (re-rendered each build)
+bindings/rust/*.png
+
+# Node.js
+node_modules/
+
+# Pixel comparison diff images (generated, not source)
+tests/pixel_apps/screenshots/diff-*/

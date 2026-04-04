@@ -7,6 +7,7 @@ name = "counter"
 version = "0.1.0"
 dependencies = [
  "openui",
+ "openui-build",
 ]
 
 [[package]]
@@ -14,6 +15,7 @@ name = "dashboard"
 version = "0.1.0"
 dependencies = [
  "openui",
+ "openui-build",
 ]
 
 [[package]]
@@ -21,15 +23,21 @@ name = "hello"
 version = "0.1.0"
 dependencies = [
  "openui",
+ "openui-build",
 ]
 
 [[package]]
 name = "openui"
 version = "0.1.0"
 dependencies = [
+ "openui-build",
  "openui-macros",
  "openui-sys",
 ]
+
+[[package]]
+name = "openui-build"
+version = "0.1.0"
 
 [[package]]
 name = "openui-macros"
@@ -43,6 +51,9 @@ dependencies = [
 [[package]]
 name = "openui-sys"
 version = "0.1.0"
+dependencies = [
+ "openui-build",
+]
 
 [[package]]
 name = "proc-macro2"
@@ -78,6 +89,7 @@ name = "todo"
 version = "0.1.0"
 dependencies = [
  "openui",
+ "openui-build",
 ]
 
 [[package]]

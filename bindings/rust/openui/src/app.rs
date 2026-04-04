@@ -20,6 +20,8 @@
 use crate::context::with_document;
 use crate::document::Document;
 use crate::events::{KeyEventType, Modifiers, MouseButton, MouseEventType};
+use crate::runtime::ScopeId;
+use crate::scope::{create_scope, dispose_scope};
 use crate::style::{Bitmap, OuiError};
 use crate::view_node::{mount_view, IntoView};
 use std::sync::Once;
@@ -63,6 +65,7 @@ fn ensure_init() {
 pub struct App {
     doc: Document,
     frame_time_ms: f64,
+    root_scope: Option<ScopeId>,
 }
 
 impl App {
@@ -76,6 +79,7 @@ impl App {
         App {
             doc,
             frame_time_ms: 0.0,
+            root_scope: None,
         }
     }
 
@@ -87,10 +91,19 @@ impl App {
     ///
     /// Returns `&mut Self` for chaining.
     pub fn render<V: IntoView>(&mut self, f: impl FnOnce() -> V) -> &mut Self {
-        let view = with_document(&self.doc, || f().into_view());
-        if let Some(body) = self.doc.body() {
-            mount_view(&body, view);
+        // Dispose previous root scope if re-rendering.
+        if let Some(old) = self.root_scope.take() {
+            dispose_scope(old);
         }
+
+        let scope_id = create_scope(|| {
+            let view = with_document(&self.doc, || f().into_view());
+            if let Some(body) = self.doc.body() {
+                mount_view(&body, view);
+            }
+        });
+        self.root_scope = Some(scope_id);
+
         // Run initial layout + lifecycle
         self.doc.update_all().expect("initial update_all failed");
         self
@@ -216,6 +229,51 @@ impl App {
     pub fn frame_time(&self) -> f64 {
         self.frame_time_ms
     }
+
+    /// Load an HTML document, replacing the current document contents.
+    ///
+    /// The HTML string is parsed and rendered by Blink just like a browser
+    /// would. After loading, layout is computed and the document is fully
+    /// updated.
+    pub fn load_html(&mut self, html: &str) -> &mut Self {
+        self.doc.load_html(html).expect("load_html failed");
+        self.doc.update_all().expect("update_all after load_html failed");
+        self
+    }
+
+    /// Inject a CSS stylesheet into the document.
+    ///
+    /// Creates a `<style>` element with the given CSS text and appends it to
+    /// the document body. This should be called **before** [`render`] so that
+    /// the styles are available when elements are created.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// app.inject_css("* { box-sizing: border-box; margin: 0; padding: 0; }");
+    /// app.render(|| view! { <div class="my-class">"Hello"</div> });
+    /// ```
+    pub fn inject_css(&mut self, css: &str) -> &mut Self {
+        use crate::element::Element;
+
+        let style_el = Element::create(&self.doc, "style")
+            .expect("failed to create style element");
+        style_el.set_text(css).expect("failed to set style text");
+        if let Some(body) = self.doc.body() {
+            body.append_child(&style_el);
+        }
+        // Leak the element so it stays in the DOM
+        std::mem::forget(style_el);
+        self
+    }
+}
+
+impl Drop for App {
+    fn drop(&mut self) {
+        if let Some(scope_id) = self.root_scope.take() {
+            dispose_scope(scope_id);
+        }
+    }
 }
 
 // ─── Tests ──────────────────────────────────────────────────
@@ -250,6 +308,7 @@ mod tests {
             App {
                 doc,
                 frame_time_ms: 0.0,
+                root_scope: None,
             }
         }
     }

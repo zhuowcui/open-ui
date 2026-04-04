@@ -15,6 +15,10 @@ pub enum ViewNode {
     Fragment(Vec<ViewNode>),
     /// Nothing — used for conditional rendering.
     Empty,
+    /// Deferred mount action — a closure that runs with the parent element
+    /// during [`mount_view`]. Used for dynamic text nodes that need a parent
+    /// to create the text child on.
+    MountFn(Box<dyn FnOnce(&Element)>),
 }
 
 /// Trait for anything that can be converted into a [`ViewNode`].
@@ -65,7 +69,7 @@ impl<T: IntoView> IntoView for Option<T> {
 /// Mount a [`ViewNode`] as a child of `parent`.
 ///
 /// Elements are appended and then "forgotten" (ownership transfers to the
-/// DOM tree). Text nodes are wrapped in a `<span>` element.
+/// DOM tree). Text nodes are appended as proper DOM `Text` nodes.
 pub fn mount_view(parent: &Element, view: ViewNode) {
     match view {
         ViewNode::Element(el) => {
@@ -73,11 +77,7 @@ pub fn mount_view(parent: &Element, view: ViewNode) {
             std::mem::forget(el);
         }
         ViewNode::Text(text) => {
-            let doc = crate::current_document();
-            let el = Element::create(doc, "span").expect("failed to create text element");
-            el.set_text(&text).expect("set text");
-            parent.append_child(&el);
-            std::mem::forget(el);
+            parent.append_text_node(&text);
         }
         ViewNode::Fragment(nodes) => {
             for node in nodes {
@@ -85,5 +85,6 @@ pub fn mount_view(parent: &Element, view: ViewNode) {
             }
         }
         ViewNode::Empty => {}
+        ViewNode::MountFn(f) => f(parent),
     }
 }

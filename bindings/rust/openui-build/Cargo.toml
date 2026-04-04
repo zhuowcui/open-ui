@@ -1,0 +1,5 @@
+[package]
+name = "openui-build"
+version = "0.1.0"
+edition = "2024"
+description = "Build helper for Open UI binaries — emits the linker flags needed to link against Chromium/Blink."

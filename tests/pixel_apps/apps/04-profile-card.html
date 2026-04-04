@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, initial-scale=1.0">
+<title>Profile Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #2d3748;
+  background: #edf2f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 800px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 380px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.banner {
+  height: 100px;
+  background: linear-gradient(135deg, #4299e1, #2b6cb0);
+}
+
+.profile-section {
+  padding: 0 28px 28px;
+  text-align: center;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  background: #3182ce;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  border: 4px solid #ffffff;
+  margin-top: -44px;
+}
+
+.name { font-size: 22px; font-weight: 700; color: #1a202c; margin-top: 12px; }
+.role { font-size: 14px; color: #4299e1; font-weight: 500; margin-top: 4px; }
+.bio { font-size: 14px; color: #718096; line-height: 1.6; margin-top: 12px; padding: 0 8px; }
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+.stat { text-align: center; }
+.stat .number { font-size: 20px; font-weight: 700; color: #1a202c; }
+.stat .label { font-size: 12px; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 0 8px;
+}
+.btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+}
+.btn-primary { background: #4299e1; color: #ffffff; }
+.btn-secondary { background: #edf2f7; color: #4a5568; }
+
+.social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+.social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f7fafc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-decoration: none;
+  border: 1px solid #e2e8f0;
+}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="banner"></div>
+    <div class="profile-section">
+      <div class="avatar">JD</div>
+      <div class="name">Jane Doe</div>
+      <div class="role">Senior Product Designer</div>
+      <p class="bio">Passionate about creating beautiful and intuitive user experiences. Previously at Google and Figma.</p>
+      <div class="stats">
+        <div class="stat">
+          <div class="number">284</div>
+          <div class="label">Posts</div>
+        </div>
+        <div class="stat">
+          <div class="number">14.2k</div>
+          <div class="label">Followers</div>
+        </div>
+        <div class="stat">
+          <div class="number">892</div>
+          <div class="label">Following</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary">Follow</button>
+        <button class="btn btn-secondary">Message</button>
+      </div>
+      <div class="social">
+        <a href="#">🐦</a>
+        <a href="#">💼</a>
+        <a href="#">🌐</a>
+        <a href="#">📷</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

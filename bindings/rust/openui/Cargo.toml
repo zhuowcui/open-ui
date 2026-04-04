@@ -7,3 +7,6 @@ description = "Open UI reactive runtime — Leptos-style fine-grained reactivity
 [dependencies]
 openui-sys = { path = "../openui-sys" }
 openui-macros = { path = "../openui-macros" }
+
+[build-dependencies]
+openui-build = { path = "../openui-build" }

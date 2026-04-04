@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, initial-scale=1.0">
+<title>Data Table</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #2d3748; background: #f7fafc; }
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 40px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+.header h1 { font-size: 28px; color: #1a202c; margin-bottom: 4px; }
+.header p { font-size: 15px; color: #718096; }
+
+.table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e2e8f0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead { background: #f7fafc; }
+th {
+  text-align: left;
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+td {
+  padding: 14px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid #edf2f7;
+}
+tr:nth-child(even) { background: #f7fafc; }
+tr:last-child td { border-bottom: none; }
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.name-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.name-info .full-name { font-weight: 600; color: #1a202c; }
+.name-info .username { font-size: 13px; color: #a0aec0; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-active { background: #c6f6d5; color: #276749; }
+.badge-inactive { background: #fed7d7; color: #9b2c2c; }
+.badge-pending { background: #fefcbf; color: #975a16; }
+
+.role { color: #4a5568; }
+.email { color: #718096; }
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #718096;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Team Members</h1>
+      <p>Manage your team members and their account permissions here.</p>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#4299e1">AL</div><div class="name-info"><div class="full-name">Alice Lee</div><div class="username">@alicelee</div></div></div></td>
+            <td class="email">alice.lee@company.com</td>
+            <td class="role">Admin</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#48bb78">BW</div><div class="name-info"><div class="full-name">Bob Wilson</div><div class="username">@bobwilson</div></div></div></td>
+            <td class="email">bob.wilson@company.com</td>
+            <td class="role">Developer</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#ed8936">CJ</div><div class="name-info"><div class="full-name">Carol Johnson</div><div class="username">@carolj</div></div></div></td>
+            <td class="email">carol.j@company.com</td>
+            <td class="role">Designer</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#9f7aea">DM</div><div class="name-info"><div class="full-name">David Martinez</div><div class="username">@davidm</div></div></div></td>
+            <td class="email">david.m@company.com</td>
+            <td class="role">Developer</td>
+            <td><span class="badge badge-inactive">Inactive</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#f56565">EB</div><div class="name-info"><div class="full-name">Eve Brown</div><div class="username">@evebrown</div></div></div></td>
+            <td class="email">eve.brown@company.com</td>
+            <td class="role">Product Manager</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#38b2ac">FK</div><div class="name-info"><div class="full-name">Frank Kim</div><div class="username">@frankk</div></div></div></td>
+            <td class="email">frank.kim@company.com</td>
+            <td class="role">DevOps</td>
+            <td><span class="badge badge-pending">Pending</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#e53e3e">GD</div><div class="name-info"><div class="full-name">Grace Davis</div><div class="username">@graced</div></div></div></td>
+            <td class="email">grace.d@company.com</td>
+            <td class="role">QA Engineer</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#3182ce">HT</div><div class="name-info"><div class="full-name">Henry Taylor</div><div class="username">@henryt</div></div></div></td>
+            <td class="email">henry.t@company.com</td>
+            <td class="role">Intern</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="name-avatar" style="background:#d69e2e">IN</div><div class="name-info"><div class="full-name">Iris Nguyen</div><div class="username">@irisn</div></div></div></td>
+            <td class="email">iris.n@company.com</td>
+            <td class="role">Designer</td>
+            <td><span class="badge badge-inactive">Inactive</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table-footer">
+        <span>Showing 1-9 of 24 members</span>
+        <span>Page 1 of 3</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

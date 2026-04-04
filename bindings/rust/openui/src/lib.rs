@@ -48,6 +48,7 @@ pub mod document;
 pub mod element;
 pub mod events;
 pub mod style;
+pub mod text_node;
 
 // ─── View system modules ────────────────────────────────────
 
@@ -74,6 +75,7 @@ pub use signal::{create_memo, create_signal, Memo, Signal};
 pub use document::Document;
 pub use element::Element;
 pub use events::{Event, KeyEventType, Modifiers, MouseButton, MouseEventType};
+pub use text_node::TextNode;
 pub use style::{
     AlignItems, Bitmap, Display, FlexDirection, FlexWrap, FontStyle, JustifyContent, Length,
     OuiError, Overflow, Position, Rect, TextAlign,

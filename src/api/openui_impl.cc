@@ -50,6 +50,11 @@ OuiElementImpl::~OuiElementImpl() = default;
 OuiCallbackEntry::OuiCallbackEntry() = default;
 OuiCallbackEntry::~OuiCallbackEntry() = default;
 
+// Opaque wrapper for a DOM Text node, allowing reactive content updates.
+struct OuiTextNodeImpl {
+  blink::Persistent<blink::Text> node;
+};
+
 namespace {
 
 // --------------------------------------------------------------------------
@@ -322,6 +327,56 @@ OuiElement* oui_element_create(OuiDocument* doc, const char* tag) {
   return reinterpret_cast<OuiElement*>(impl);
 }
 
+void oui_element_append_text(OuiElement* e, const char* text) {
+  if (!e || !text) {
+    return;
+  }
+  auto* impl = reinterpret_cast<OuiElementImpl*>(e);
+  blink::Document& doc = impl->element->GetDocument();
+  blink::Text* text_node = doc.createTextNode(blink::String(text));
+  impl->element->AppendChild(text_node);
+}
+
+OuiTextNode* oui_element_create_text_child(OuiElement* parent,
+                                            const char* text) {
+  if (!parent || !text) {
+    return nullptr;
+  }
+  auto* p = reinterpret_cast<OuiElementImpl*>(parent);
+  if (!p->element) {
+    return nullptr;
+  }
+  blink::Document& doc = p->element->GetDocument();
+  blink::Text* text_node = doc.createTextNode(blink::String(text));
+  p->element->AppendChild(text_node);
+
+  auto* impl = new OuiTextNodeImpl();
+  impl->node = text_node;
+  return reinterpret_cast<OuiTextNode*>(impl);
+}
+
+void oui_text_node_set_data(OuiTextNode* node, const char* data) {
+  if (!node || !data) {
+    return;
+  }
+  auto* impl = reinterpret_cast<OuiTextNodeImpl*>(node);
+  if (impl->node) {
+    impl->node->setData(blink::String(data));
+  }
+}
+
+void oui_text_node_destroy(OuiTextNode* node) {
+  if (!node) {
+    return;
+  }
+  auto* impl = reinterpret_cast<OuiTextNodeImpl*>(node);
+  if (impl->node && impl->node->parentNode()) {
+    impl->node->parentNode()->RemoveChild(impl->node.Get());
+  }
+  impl->node = nullptr;
+  delete impl;
+}
+
 void oui_element_destroy(OuiElement* e) {
   if (!e) {
     return;
@@ -486,6 +541,19 @@ OuiElement* oui_element_parent(const OuiElement* e) {
   }
   OuiElementImpl* wrapper = FindWrapper(parent);
   return wrapper ? reinterpret_cast<OuiElement*>(wrapper) : nullptr;
+}
+
+void oui_element_remove_all_child_nodes(OuiElement* e) {
+  if (!e) {
+    return;
+  }
+  auto* impl = reinterpret_cast<OuiElementImpl*>(e);
+  if (!impl->element) {
+    return;
+  }
+  while (blink::Node* child = impl->element->firstChild()) {
+    impl->element->RemoveChild(child);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

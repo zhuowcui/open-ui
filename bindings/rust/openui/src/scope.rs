@@ -41,14 +41,21 @@ pub fn dispose_scope(id: ScopeId) {
 /// Register a cleanup function in the current scope. The function will be
 /// called when the scope is disposed.
 ///
-/// If there is no current scope, the cleanup is silently ignored.
+/// If there is no current scope, the closure is intentionally leaked to keep
+/// its captures (e.g., `TextNode` handles) alive for the application lifetime.
 pub fn on_cleanup(f: impl FnOnce() + 'static) {
+    let boxed: Box<dyn FnOnce()> = Box::new(f);
     RUNTIME.with(|rt| {
         let mut rt = rt.borrow_mut();
         if let Some(scope_id) = rt.current_scope {
             if let Some(Some(scope_slot)) = rt.scopes.get_mut(scope_id.0 as usize) {
-                scope_slot.cleanups.push(Box::new(f));
+                scope_slot.cleanups.push(boxed);
+                return;
             }
         }
+        // No active scope — leak the closure so its captures (e.g., TextNode
+        // handles) stay alive for the application lifetime. DOM cleanup
+        // relies on oui_element_remove_all_child_nodes().
+        std::mem::forget(boxed);
     });
 }

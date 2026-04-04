@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, initial-scale=1.0">
+<title>Blog Post</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #2d3748; background: #ffffff; }
+
+.article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 24px;
+}
+
+.article-header {
+  margin-bottom: 32px;
+}
+.article-header .category {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4299e1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.article-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #718096;
+}
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #4299e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+}
+.author-name { font-weight: 600; color: #2d3748; }
+.meta-sep { color: #cbd5e0; }
+
+.article-body p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #4a5568;
+  margin-bottom: 20px;
+}
+
+.article-body h2 {
+  font-size: 24px;
+  color: #1a202c;
+  margin-top: 36px;
+  margin-bottom: 16px;
+}
+
+.article-body blockquote {
+  border-left: 4px solid #4299e1;
+  padding: 16px 24px;
+  margin: 24px 0;
+  background: #ebf8ff;
+  border-radius: 0 8px 8px 0;
+  font-size: 17px;
+  color: #2b6cb0;
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.article-body pre {
+  background: #1a202c;
+  color: #e2e8f0;
+  padding: 20px 24px;
+  border-radius: 8px;
+  margin: 24px 0;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+.article-body code {
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+.article-body p code {
+  background: #edf2f7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 15px;
+  color: #e53e3e;
+}
+
+.article-body ul {
+  margin: 16px 0 20px 24px;
+}
+.article-body ul li {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #4a5568;
+  margin-bottom: 6px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+.tag {
+  display: inline-block;
+  padding: 4px 14px;
+  background: #edf2f7;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4a5568;
+}
+</style>
+</head>
+<body>
+  <article class="article">
+    <div class="article-header">
+      <div class="category">Engineering</div>
+      <h1>Building Scalable UI Systems with Modern CSS</h1>
+      <div class="article-meta">
+        <div class="author-avatar">JD</div>
+        <div>
+          <span class="author-name">Jane Doe</span>
+          <span class="meta-sep">·</span>
+          <span>December 15, 2024</span>
+          <span class="meta-sep">·</span>
+          <span>8 min read</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="article-body">
+      <p>Modern CSS has evolved far beyond simple styling. With flexbox, grid, custom properties, and container queries, we now have the tools to build truly scalable design systems that adapt across any context.</p>
+
+      <h2>The Foundation</h2>
+      <p>Every good design system starts with a solid foundation. This means establishing your design tokens early — colors, typography scales, spacing values, and breakpoints that form the vocabulary of your system.</p>
+
+      <blockquote>Design systems are not about enforcing consistency — they are about enabling teams to move faster while maintaining coherence across products.</blockquote>
+
+      <p>Consider using CSS custom properties for your tokens. They cascade naturally, can be overridden in context, and work beautifully with component-scoped styles.</p>
+
+      <pre><code>:root {
+  --color-primary: #4299e1;
+  --color-text: #2d3748;
+  --space-md: 16px;
+  --radius-lg: 12px;
+}
+
+.card {
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  color: var(--color-text);
+}</code></pre>
+
+      <h2>Key Principles</h2>
+      <p>When building your UI system, keep these principles in mind:</p>
+      <ul>
+        <li>Compose small, focused components rather than large monolithic ones</li>
+        <li>Use semantic HTML elements as your base building blocks</li>
+        <li>Design for content flexibility — components should handle varying content lengths</li>
+        <li>Test across viewports from the start, not as an afterthought</li>
+        <li>Document usage patterns alongside the component code</li>
+      </ul>
+
+      <p>The goal is to create a system that is both powerful enough for complex interfaces and simple enough that any team member can contribute to it with confidence.</p>
+    </div>
+
+    <div class="tags">
+      <span class="tag">CSS</span>
+      <span class="tag">Design Systems</span>
+      <span class="tag">Frontend</span>
+      <span class="tag">Architecture</span>
+      <span class="tag">Web Development</span>
+    </div>
+  </article>
+</body>
+</html>

@@ -19,6 +19,11 @@ pub struct OuiElement {
     _private: [u8; 0],
 }
 
+#[repr(C)]
+pub struct OuiTextNode {
+    _private: [u8; 0],
+}
+
 // ─── Status codes ───────────────────────────────────────────
 
 #[repr(C)]
@@ -334,8 +339,18 @@ unsafe extern "C" {
         doc: *mut OuiDocument,
         tag: *const c_char,
     ) -> *mut OuiElement;
+    pub unsafe fn oui_element_append_text(elem: *mut OuiElement, text: *const c_char);
     pub unsafe fn oui_element_destroy(elem: *mut OuiElement);
     pub unsafe fn oui_document_body(doc: *mut OuiDocument) -> *mut OuiElement;
+
+    // ═══ Text node lifecycle ══════════════════════════════════
+
+    pub unsafe fn oui_element_create_text_child(
+        parent: *mut OuiElement,
+        text: *const c_char,
+    ) -> *mut OuiTextNode;
+    pub unsafe fn oui_text_node_set_data(node: *mut OuiTextNode, data: *const c_char);
+    pub unsafe fn oui_text_node_destroy(node: *mut OuiTextNode);
 
     // ═══ DOM tree manipulation ════════════════════════════════
 
@@ -361,6 +376,7 @@ unsafe extern "C" {
     pub unsafe fn oui_element_parent(
         elem: *const OuiElement,
     ) -> *mut OuiElement;
+    pub unsafe fn oui_element_remove_all_child_nodes(elem: *mut OuiElement);
 
     // ═══ Generic style ════════════════════════════════════════
 

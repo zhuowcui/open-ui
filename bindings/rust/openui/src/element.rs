@@ -54,6 +54,30 @@ impl Element {
         unsafe { openui_sys::oui_element_append_child(self.raw, child.raw) };
     }
 
+    /// Append a DOM text node to this element.
+    ///
+    /// Creates a proper `Text` node in the DOM (not wrapped in a `<span>`).
+    /// This preserves correct CSS selector behavior when text and elements
+    /// are siblings (e.g., `$9<span>/mo</span>`).
+    pub fn append_text_node(&self, text: &str) {
+        let c_text = std::ffi::CString::new(text).expect("text contains null byte");
+        unsafe { openui_sys::oui_element_append_text(self.raw, c_text.as_ptr()) };
+    }
+
+    /// Create and append a DOM Text node, returning a mutable handle.
+    ///
+    /// Unlike [`append_text_node`](Self::append_text_node), the returned
+    /// [`TextNode`](crate::TextNode) can be updated later via
+    /// [`set_data`](crate::TextNode::set_data), making it suitable for
+    /// reactive text content.
+    pub fn create_text_child(&self, text: &str) -> crate::TextNode {
+        let c_text = CString::new(text).unwrap_or_default();
+        let raw =
+            unsafe { openui_sys::oui_element_create_text_child(self.raw, c_text.as_ptr()) };
+        assert!(!raw.is_null(), "failed to create text child");
+        unsafe { crate::TextNode::from_raw(raw) }
+    }
+
     /// Remove `child` from this element's children.
     pub fn remove_child(&self, child: &Element) {
         unsafe { openui_sys::oui_element_remove_child(self.raw, child.raw) };
@@ -511,6 +535,66 @@ impl Element {
     pub unsafe fn from_raw_borrowed(raw: *mut openui_sys::OuiElement) -> Self {
         Element { raw, owned: false }
     }
+
+    /// Create a borrowed (non-owning) reference to the same underlying element.
+    ///
+    /// The returned `Element` will **not** call `oui_element_destroy` on drop.
+    /// This is useful for capturing an element reference inside closures or
+    /// effects without transferring ownership.
+    ///
+    /// # Example
+    /// ```ignore
+    /// let el = Element::create(doc, "div").unwrap();
+    /// let el_ref = el.clone_ref();
+    /// create_effect(move || {
+    ///     el_ref.set_text("updated").ok();
+    /// });
+    /// ```
+    pub fn clone_ref(&self) -> Element {
+        Element { raw: self.raw, owned: false }
+    }
+
+    /// Remove and destroy all child elements.
+    ///
+    /// Recursively destroys every descendant wrapper (callbacks + C++ objects)
+    /// in the child subtrees, then removes any remaining non-Element children
+    /// (text nodes) from the DOM.
+    ///
+    /// Used by reactive components (`Show`, `For`, `DynChild`) to clear a
+    /// container before re-rendering.
+    pub fn remove_all_children(&self) {
+        // Recursively destroy all element wrappers in child subtrees.
+        loop {
+            let child_raw = unsafe { openui_sys::oui_element_first_child(self.raw) };
+            if child_raw.is_null() {
+                break;
+            }
+            Self::destroy_subtree(child_raw);
+        }
+        // Remove any remaining child nodes (text nodes, etc.)
+        // that are invisible to oui_element_first_child.
+        unsafe { openui_sys::oui_element_remove_all_child_nodes(self.raw) };
+    }
+
+    /// Recursively destroy an element and all its descendant wrappers.
+    ///
+    /// Walks the subtree depth-first (children before parent), freeing
+    /// Rust-side callbacks and destroying C++ wrappers for every descendant.
+    /// This ensures no detached `OuiElementImpl` wrappers leak after removal.
+    pub(crate) fn destroy_subtree(raw: *mut openui_sys::OuiElement) {
+        // Destroy all children first (depth-first).
+        loop {
+            let child = unsafe { openui_sys::oui_element_first_child(raw) };
+            if child.is_null() {
+                break;
+            }
+            Self::destroy_subtree(child);
+        }
+        // Free Rust-side callbacks for this element.
+        free_all_callbacks_for(raw as usize);
+        // Destroy the C++ wrapper (removes from DOM, unregisters, deletes).
+        unsafe { openui_sys::oui_element_destroy(raw) };
+    }
 }
 
 impl Drop for Element {
@@ -526,6 +610,7 @@ impl Drop for Element {
 
 #[cfg(test)]
 mod tests {
+    #[allow(unused_imports)]
     use super::*;
 
     // Ensure Element is not accidentally Send/Sync (it wraps a raw pointer

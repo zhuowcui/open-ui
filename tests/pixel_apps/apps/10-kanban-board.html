@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, initial-scale=1.0">
+<title>Kanban Board</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #2d3748; background: #f7fafc; }
+
+.board-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.board-header h1 { font-size: 22px; color: #1a202c; }
+.board-header .info { font-size: 14px; color: #718096; }
+
+.board {
+  display: flex;
+  gap: 20px;
+  padding: 24px 32px;
+  overflow-x: auto;
+  min-height: calc(800px - 72px);
+  align-items: flex-start;
+}
+
+.column {
+  min-width: 340px;
+  flex: 1;
+  background: #edf2f7;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+.column-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.column-count {
+  background: #cbd5e0;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid #e2e8f0;
+}
+.card:last-child { margin-bottom: 0; }
+
+.card-labels {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.label {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.label-blue { background: #bee3f8; color: #2b6cb0; }
+.label-green { background: #c6f6d5; color: #276749; }
+.label-red { background: #fed7d7; color: #9b2c2c; }
+.label-yellow { background: #fefcbf; color: #975a16; }
+.label-purple { background: #e9d8fd; color: #553c9a; }
+
+.card-title { font-size: 15px; font-weight: 600; color: #1a202c; margin-bottom: 6px; }
+.card-desc { font-size: 13px; color: #718096; line-height: 1.5; margin-bottom: 12px; }
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-assignee {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.card-meta {
+  font-size: 12px;
+  color: #a0aec0;
+}
+</style>
+</head>
+<body>
+  <div class="board-header">
+    <h1>Project Board</h1>
+    <div class="info">Sprint 14 · Dec 9 – Dec 23</div>
+  </div>
+
+  <div class="board">
+    <div class="column">
+      <div class="column-header">
+        <div class="column-title">
+          <span>📋 Todo</span>
+          <span class="column-count">4</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-blue">Feature</span>
+          <span class="label label-yellow">High Priority</span>
+        </div>
+        <div class="card-title">User authentication flow</div>
+        <div class="card-desc">Implement OAuth 2.0 login with Google and GitHub providers.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#4299e1">AL</div>
+          <div class="card-meta">2 subtasks</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-red">Bug</span>
+        </div>
+        <div class="card-title">Fix pagination offset</div>
+        <div class="card-desc">Page 2 shows duplicate results from page 1.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#f56565">BW</div>
+          <div class="card-meta">0 subtasks</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-blue">Feature</span>
+        </div>
+        <div class="card-title">Dashboard analytics</div>
+        <div class="card-desc">Add charts and metrics to the admin dashboard view.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#48bb78">CJ</div>
+          <div class="card-meta">3 subtasks</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-purple">Design</span>
+        </div>
+        <div class="card-title">Update brand guidelines</div>
+        <div class="card-desc">Refresh color palette and typography for v2 launch.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#9f7aea">DM</div>
+          <div class="card-meta">1 subtask</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="column-header">
+        <div class="column-title">
+          <span>🔄 In Progress</span>
+          <span class="column-count">3</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-blue">Feature</span>
+          <span class="label label-green">Backend</span>
+        </div>
+        <div class="card-title">API rate limiting</div>
+        <div class="card-desc">Implement token bucket rate limiting for public endpoints.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#ed8936">EB</div>
+          <div class="card-meta">1 subtask</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-yellow">High Priority</span>
+          <span class="label label-red">Bug</span>
+        </div>
+        <div class="card-title">Memory leak in worker</div>
+        <div class="card-desc">Background job worker memory grows unbounded after 24hrs.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#4299e1">AL</div>
+          <div class="card-meta">0 subtasks</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-green">Backend</span>
+        </div>
+        <div class="card-title">Database migration tool</div>
+        <div class="card-desc">Build automated migration runner for schema updates.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#38b2ac">FK</div>
+          <div class="card-meta">2 subtasks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="column-header">
+        <div class="column-title">
+          <span>✅ Done</span>
+          <span class="column-count">3</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-blue">Feature</span>
+        </div>
+        <div class="card-title">Email notification service</div>
+        <div class="card-desc">Set up transactional email with templates using SendGrid.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#48bb78">CJ</div>
+          <div class="card-meta">Completed</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-red">Bug</span>
+        </div>
+        <div class="card-title">Fix CORS headers</div>
+        <div class="card-desc">API was missing Access-Control headers for preflight requests.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#f56565">BW</div>
+          <div class="card-meta">Completed</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-labels">
+          <span class="label label-purple">Design</span>
+          <span class="label label-blue">Feature</span>
+        </div>
+        <div class="card-title">Component library docs</div>
+        <div class="card-desc">Document all UI components with examples and usage guidelines.</div>
+        <div class="card-footer">
+          <div class="card-assignee" style="background:#9f7aea">DM</div>
+          <div class="card-meta">Completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

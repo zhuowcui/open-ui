@@ -1,0 +1,18 @@
+[package]
+name = "pixel-apps"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "render-all"
+path = "src/main.rs"
+
+[[bin]]
+name = "render-framework"
+path = "src/framework.rs"
+
+[dependencies]
+openui = { path = "../../../bindings/rust/openui" }
+
+[build-dependencies]
+openui-build = { path = "../../../bindings/rust/openui-build" }
