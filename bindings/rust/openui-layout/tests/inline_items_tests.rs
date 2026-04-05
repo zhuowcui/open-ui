@@ -202,9 +202,11 @@ fn process_white_space_pre_with_newlines() {
 
 #[test]
 fn process_white_space_pre_line_with_newlines() {
+    // CSS Text §4.1.1: In pre-line, collapsible spaces after a forced line
+    // break (newline) are removed.
     assert_eq!(
         process_white_space("hello\n  world", WhiteSpace::PreLine),
-        "hello\n world"
+        "hello\nworld"
     );
 }
 
@@ -334,7 +336,8 @@ fn pre_line_collapses_spaces_keeps_newlines() {
     doc.append_child(block, t);
 
     let data = InlineItemsBuilder::collect(&doc, block);
-    assert_eq!(&data.text[data.items[0].text_range.clone()], "hello\n world");
+    // CSS Text §4.1.1: In pre-line, spaces before/after newlines are stripped.
+    assert_eq!(&data.text[data.items[0].text_range.clone()], "hello\nworld");
 }
 
 #[test]
@@ -594,4 +597,116 @@ fn style_to_font_description_preserves_weight() {
     style.font_weight = FontWeight::BOLD;
     let desc = style_to_font_description(&style);
     assert!((desc.weight.0 - 700.0).abs() < 0.01);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SP11 Dual-Model Review Fixes — Regression Tests
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── Issue 2: Bidi splitting ─────────────────────────────────────────────
+
+#[test]
+fn bidi_mixed_text_splits_into_runs() {
+    // "abc אבג def" — should split into at least 2 items after bidi analysis
+    // (LTR "abc ", RTL "אבג", LTR " def")
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let t = doc.create_node(ElementTag::Text);
+    doc.node_mut(t).text = Some("abc \u{05D0}\u{05D1}\u{05D2} def".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.append_child(block, t);
+
+    let mut data = InlineItemsBuilder::collect(&doc, block);
+    data.apply_bidi(openui_text::TextDirection::Ltr);
+
+    // Count text items — should be more than 1 due to bidi split
+    let text_items: Vec<_> = data.items.iter()
+        .filter(|item| item.item_type == InlineItemType::Text)
+        .collect();
+    assert!(
+        text_items.len() >= 2,
+        "Mixed bidi text should be split into multiple items, got {}",
+        text_items.len()
+    );
+}
+
+#[test]
+fn bidi_split_items_have_correct_levels() {
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let t = doc.create_node(ElementTag::Text);
+    // Hebrew characters are RTL (odd bidi level), Latin are LTR (even level)
+    doc.node_mut(t).text = Some("hello \u{05D0}\u{05D1}\u{05D2} world".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.append_child(block, t);
+
+    let mut data = InlineItemsBuilder::collect(&doc, block);
+    data.apply_bidi(openui_text::TextDirection::Ltr);
+
+    let text_items: Vec<_> = data.items.iter()
+        .filter(|item| item.item_type == InlineItemType::Text)
+        .collect();
+
+    // At least some items should have RTL level (odd number)
+    let has_rtl = text_items.iter().any(|item| item.bidi_level % 2 == 1);
+    assert!(has_rtl, "Mixed bidi text should have items with RTL levels");
+}
+
+#[test]
+fn bidi_all_ltr_no_split() {
+    // All-LTR text should not be split
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let t = doc.create_node(ElementTag::Text);
+    doc.node_mut(t).text = Some("hello world".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.append_child(block, t);
+
+    let mut data = InlineItemsBuilder::collect(&doc, block);
+    data.apply_bidi(openui_text::TextDirection::Ltr);
+
+    let text_items: Vec<_> = data.items.iter()
+        .filter(|item| item.item_type == InlineItemType::Text)
+        .collect();
+    assert_eq!(text_items.len(), 1, "All-LTR text should remain one item");
+}
+
+// ── Issue 8: pre-line leading spaces after newlines ─────────────────────
+
+#[test]
+fn pre_line_strips_leading_spaces_after_newline() {
+    // CSS Text §4.1.1: Spaces after a newline in pre-line should be stripped.
+    assert_eq!(
+        collapse_spaces_preserve_newlines("hello\n  world"),
+        "hello\nworld"
+    );
+}
+
+#[test]
+fn pre_line_strips_tabs_after_newline() {
+    assert_eq!(
+        collapse_spaces_preserve_newlines("hello\n\t\tworld"),
+        "hello\nworld"
+    );
+}
+
+#[test]
+fn pre_line_multiple_newlines_strip_intermediate_spaces() {
+    // Each newline should strip following spaces
+    assert_eq!(
+        collapse_spaces_preserve_newlines("a\n  b\n  c"),
+        "a\nb\nc"
+    );
 }

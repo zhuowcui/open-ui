@@ -12,7 +12,8 @@
 use openui_dom::{Document, NodeId};
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
 use openui_style::{ComputedStyle, Direction, LineHeight, TextAlign, VerticalAlign};
-use openui_text::Font;
+use openui_text::{Font, ShapeResult, TextShaper};
+use std::sync::Arc;
 
 use crate::block::{resolve_border, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
@@ -21,7 +22,7 @@ use crate::length_resolver::resolve_margin_or_padding;
 
 use super::items::{InlineItemResult, InlineItemType};
 use super::items_builder::{style_to_font_description, InlineItemsData, InlineItemsBuilder};
-use super::line_breaker::LineBreaker;
+use super::line_breaker::{byte_to_char_offset, LineBreaker};
 use super::line_info::LineInfo;
 
 // ── Line height metrics (CSS 2.2 §10.8.1 half-leading model) ────────────
@@ -516,8 +517,31 @@ fn create_line_box(
                 let text_top = baseline
                     - LayoutUnit::from_f32_ceil(metrics.ascent - effective_shift);
 
+                // Compute sub-range shape result for the line portion.
+                // When text wraps, the item_result's text_range may be a subset
+                // of the full item's text_range. Clip the shape result to only
+                // the characters visible on this line (Issue 1 fix).
+                let line_shape_result = if let Some(ref sr) = item_result.shape_result {
+                    let item_byte_start = item.text_range.start;
+                    let line_byte_start = item_result.text_range.start;
+                    let line_byte_end = item_result.text_range.end;
+                    let full_text = &items_data.text;
+                    let char_start = byte_to_char_offset(full_text, line_byte_start)
+                        - byte_to_char_offset(full_text, item_byte_start);
+                    let char_end = byte_to_char_offset(full_text, line_byte_end)
+                        - byte_to_char_offset(full_text, item_byte_start);
+                    if char_start == 0 && char_end == sr.num_characters {
+                        item_result.shape_result.clone()
+                    } else {
+                        Some(Arc::new(sr.sub_range(char_start, char_end)))
+                    }
+                } else {
+                    None
+                };
+
                 // Compute item width, adding justification if applicable.
                 let mut item_width = item_result.inline_size;
+                let mut justified_shape: Option<Arc<ShapeResult>> = None;
                 if should_justify && justification_per_space > 0.0 {
                     let text = &items_data.text[item_result.text_range.clone()];
                     let space_count = text.chars().filter(|c| *c == ' ').count();
@@ -529,6 +553,13 @@ fn create_line_box(
                                 justification_accumulator - extra,
                             );
                         item_width = item_width + extra_lu;
+                        // Also adjust glyph advances in the shape result so that
+                        // space glyphs are visually wider.
+                        if let Some(ref sr) = line_shape_result {
+                            let mut justified_sr = sr.sub_range(0, sr.num_characters);
+                            justified_sr.apply_justification(justification_per_space, text);
+                            justified_shape = Some(Arc::new(justified_sr));
+                        }
                     }
                 }
 
@@ -540,7 +571,9 @@ fn create_line_box(
                 ));
                 text_fragment.kind = FragmentKind::Text;
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
-                text_fragment.shape_result = item_result.shape_result.clone();
+                // Use justified shape result if justification was applied,
+                // otherwise use the sub-range shape result for this line portion.
+                text_fragment.shape_result = justified_shape.or(line_shape_result);
 
                 children.push(text_fragment);
                 inline_offset = inline_offset + item_width;
@@ -561,6 +594,36 @@ fn create_line_box(
                 inline_offset = inline_offset + item_result.inline_size;
             }
         }
+    }
+
+    // === STEP 5: Paint ellipsis if text-overflow: ellipsis is active ===
+    if line_info.has_ellipsis {
+        // Shape the ellipsis character "…" (U+2026) with the block's font.
+        let block_font_desc = style_to_font_description(block_style);
+        let ellipsis_font = Font::new(block_font_desc);
+        let shaper = TextShaper::new();
+        let ellipsis_text = "\u{2026}";
+        let ellipsis_sr = shaper.shape(
+            ellipsis_text,
+            &ellipsis_font,
+            openui_text::TextDirection::Ltr,
+        );
+        let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
+        let ellipsis_metrics = ellipsis_font.font_metrics().copied().unwrap_or_default();
+        let ellipsis_height = LayoutUnit::from_f32_ceil(
+            ellipsis_metrics.ascent + ellipsis_metrics.descent,
+        );
+        let ellipsis_top = baseline
+            - LayoutUnit::from_f32_ceil(ellipsis_metrics.ascent);
+
+        let mut ellipsis_fragment = Fragment::new_text(
+            NodeId::NONE,
+            PhysicalSize::new(ellipsis_width, ellipsis_height),
+            Arc::new(ellipsis_sr),
+            ellipsis_text.to_string(),
+        );
+        ellipsis_fragment.offset = PhysicalOffset::new(inline_offset, ellipsis_top);
+        children.push(ellipsis_fragment);
     }
 
     // Build the line box fragment.

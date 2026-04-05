@@ -9,3 +9,4 @@ openui-style = { path = "../openui-style" }
 openui-geometry = { path = "../openui-geometry" }
 openui-dom = { path = "../openui-dom" }
 openui-text = { path = "../openui-text" }
+unicode-linebreak = "0.1"

@@ -183,7 +183,7 @@ impl ShapeCollector {
 
         // Determine cluster bases from cluster info.
         let cluster_bases = Self::compute_cluster_bases(text, &self.runs, &byte_to_char);
-        let safe_breaks = Self::compute_safe_breaks(text, &chars);
+        let safe_breaks = Self::compute_safe_breaks(&self.runs, &chars, &byte_to_char);
 
         for i in 0..num_characters {
             character_data.push(ShapeResultCharacterData {
@@ -279,12 +279,13 @@ impl ShapeCollector {
     /// Determine safe-to-break points.
     ///
     /// A character position is safe to break before if reshaping the text
-    /// from that point onward would produce the same glyphs. For simple
-    /// Latin text, it's safe to break at word boundaries (after spaces)
-    /// and at the start of the text. This matches Blink's use of
-    /// HarfBuzz's `HB_GLYPH_FLAG_UNSAFE_TO_BREAK` flag for Latin text;
-    /// complex scripts may have fewer safe-to-break points.
-    fn compute_safe_breaks(_text: &str, chars: &[char]) -> Vec<bool> {
+    /// from that point onward would produce the same glyphs. For fully
+    /// accurate complex-script reshaping (e.g., Arabic initial/medial/final
+    /// forms), HarfBuzz's `HB_GLYPH_FLAG_UNSAFE_TO_BREAK` flag would be
+    /// needed, which is not exposed through SkShaper. This implementation
+    /// uses whitespace boundaries and cluster boundaries as a reasonable
+    /// approximation that works well for Latin, CJK, and most other scripts.
+    fn compute_safe_breaks(runs: &[CollectedRun], chars: &[char], byte_to_char: &[usize]) -> Vec<bool> {
         let mut safe = vec![false; chars.len()];
         if safe.is_empty() {
             return safe;
@@ -292,16 +293,34 @@ impl ShapeCollector {
         // Always safe to break at start.
         safe[0] = true;
 
-        let mut prev_was_space = false;
+        // Safe at whitespace boundaries.
         for (i, &ch) in chars.iter().enumerate() {
-            if i > 0 && prev_was_space {
-                safe[i] = true;
-            }
             if ch.is_whitespace() {
                 safe[i] = true;
+                if i + 1 < chars.len() {
+                    safe[i + 1] = true;
+                }
             }
-            prev_was_space = ch.is_whitespace();
         }
+
+        // Also safe at cluster boundaries within runs — where the cluster
+        // value changes, glyphs can generally be reshaped independently.
+        for run in runs {
+            if run.clusters.len() > 1 {
+                for i in 1..run.clusters.len() {
+                    if run.clusters[i] != run.clusters[i - 1] {
+                        let byte_off = run.clusters[i] as usize;
+                        if byte_off < byte_to_char.len() {
+                            let char_idx = byte_to_char[byte_off];
+                            if char_idx < chars.len() {
+                                safe[char_idx] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         safe
     }
 }
@@ -438,23 +457,37 @@ impl TextShaper {
         }
 
         // Distribute the extra advance to glyph runs.
+        // For ligature or decomposition runs (non-1:1 glyph/character mapping),
+        // accumulate spacing for ALL characters in the run rather than mapping
+        // glyphs individually.
         let mut total_extra = 0.0f32;
         for run in &mut result.runs {
             let run_start = run.start_index;
-            for i in 0..run.num_glyphs {
-                // Map glyph to character (1:1 for simple text).
-                let char_idx = if run.num_glyphs == run.num_characters {
-                    run_start + i
-                } else {
-                    // For non-1:1 mapping, assign first glyph's extra to first char, etc.
-                    let mapped =
-                        run_start + (i * run.num_characters / run.num_glyphs.max(1));
-                    mapped.min(num_chars - 1)
-                };
-                if char_idx < num_chars {
-                    run.advances[i] += extra_advance_per_char[char_idx];
-                    total_extra += extra_advance_per_char[char_idx];
+            let run_chars = run.num_characters;
+
+            if run.num_glyphs == run_chars {
+                // 1:1 mapping — apply per glyph directly.
+                for i in 0..run.num_glyphs {
+                    let char_idx = run_start + i;
+                    if char_idx < num_chars {
+                        run.advances[i] += extra_advance_per_char[char_idx];
+                        total_extra += extra_advance_per_char[char_idx];
+                    }
                 }
+            } else {
+                // Ligature or decomposition — accumulate ALL character spacing
+                // and add to the last glyph of the run so the total advance is
+                // correct.
+                let mut run_extra = 0.0f32;
+                for ci in run_start..run_start + run_chars {
+                    if ci < num_chars {
+                        run_extra += extra_advance_per_char[ci];
+                    }
+                }
+                if run.num_glyphs > 0 {
+                    run.advances[run.num_glyphs - 1] += run_extra;
+                }
+                total_extra += run_extra;
             }
         }
 

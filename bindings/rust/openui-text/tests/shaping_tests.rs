@@ -869,3 +869,100 @@ fn zero_spacing_no_change() {
     let diff = (r1.width() - r2.width()).abs();
     assert!(diff < 0.1, "Zero spacing should not change width: diff={}", diff);
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// SP11 Dual-Model Review Fixes — Regression Tests
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── Issue 9: Ligature spacing ───────────────────────────────────────────
+
+#[test]
+fn letter_spacing_applied_to_all_characters() {
+    // With letter-spacing, every character should get extra width.
+    let mut desc = FontDescription::new();
+    desc.size = 16.0;
+    desc.specified_size = 16.0;
+    desc.letter_spacing = 5.0;
+    let font = Font::new(desc);
+
+    let shaper = TextShaper::new();
+    let result = shaper.shape("ab", &font, TextDirection::Ltr);
+    let no_spacing = shape_text("ab");
+
+    // "ab" (2 chars) with 5.0 letter-spacing should be ~10.0 wider
+    let extra = result.width() - no_spacing.width();
+    assert!(
+        (extra - 10.0).abs() < 1.0,
+        "Letter spacing of 5.0 on 2 chars should add ~10.0, got extra={}",
+        extra
+    );
+}
+
+#[test]
+fn word_spacing_applied_to_spaces() {
+    let mut desc = FontDescription::new();
+    desc.size = 16.0;
+    desc.specified_size = 16.0;
+    desc.word_spacing = 10.0;
+    let font = Font::new(desc);
+
+    let shaper = TextShaper::new();
+    let result = shaper.shape("a b c", &font, TextDirection::Ltr);
+    let no_spacing = shape_text("a b c");
+
+    // "a b c" has 2 spaces, word-spacing: 10.0 should add ~20.0
+    let extra = result.width() - no_spacing.width();
+    assert!(
+        (extra - 20.0).abs() < 2.0,
+        "Word spacing of 10.0 on 2 spaces should add ~20.0, got extra={}",
+        extra
+    );
+}
+
+#[test]
+fn ligature_spacing_accumulates_all_characters() {
+    // For ligature runs (e.g., "fi"), spacing should be applied per-character,
+    // not per-glyph. We test with letter-spacing on text that may ligate.
+    let mut desc = FontDescription::new();
+    desc.size = 16.0;
+    desc.specified_size = 16.0;
+    desc.letter_spacing = 2.0;
+    let font = Font::new(desc);
+
+    let shaper = TextShaper::new();
+    let result = shaper.shape("fi", &font, TextDirection::Ltr);
+    let no_spacing = shape_text("fi");
+
+    // "fi" (2 chars) with 2.0 letter-spacing should add exactly 4.0
+    // regardless of whether the font uses a ligature glyph.
+    let extra = result.width() - no_spacing.width();
+    assert!(
+        (extra - 4.0).abs() < 1.0,
+        "Letter spacing on 'fi' (2 chars) should add ~4.0 total, got extra={}",
+        extra
+    );
+}
+
+// ── Issue 10: Safe breaks documentation and cluster boundaries ──────────
+
+#[test]
+fn safe_break_at_start() {
+    let result = shape_text("hello");
+    // Position 0 should always be safe to break before
+    assert!(result.safe_to_break_before(0));
+}
+
+#[test]
+fn safe_break_after_space() {
+    let result = shape_text("hello world");
+    // Position after space should be safe to break
+    assert!(result.safe_to_break_before(6), "Position after space should be safe to break");
+}
+
+#[test]
+fn safe_break_at_whitespace() {
+    let result = shape_text("a b c");
+    // Spaces themselves and positions after them should be safe
+    assert!(result.safe_to_break_before(1), "Space position should be safe");
+    assert!(result.safe_to_break_before(2), "Position after space should be safe");
+}

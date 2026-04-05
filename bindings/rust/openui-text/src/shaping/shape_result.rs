@@ -342,8 +342,71 @@ impl ShapeResult {
         let ge = (char_end as f32 * ratio).round() as usize;
         (gs.min(run.num_glyphs), ge.min(run.num_glyphs))
     }
-}
 
+    /// Apply justification by distributing extra width to space glyphs.
+    ///
+    /// Finds all space characters (U+0020) in the result and adds
+    /// `extra_per_space` to their corresponding glyph advances, then
+    /// shifts subsequent glyph positions so the total width is correct.
+    ///
+    /// Blink: `ShapeResult::ApplyExpansion`.
+    pub fn apply_justification(&mut self, extra_per_space: f32, text: &str) {
+        if extra_per_space <= 0.0 || self.runs.is_empty() {
+            return;
+        }
+
+        let chars: Vec<char> = text.chars().collect();
+        let mut total_extra = 0.0f32;
+
+        for run in &mut self.runs {
+            let run_start = run.start_index;
+            for gi in 0..run.num_glyphs {
+                // Map glyph to character index using cluster data.
+                let char_idx = if !run.clusters.is_empty() {
+                    run_start + run.clusters[gi]
+                } else if run.num_glyphs == run.num_characters {
+                    run_start + gi
+                } else {
+                    continue;
+                };
+
+                if char_idx < chars.len() && chars[char_idx] == ' ' {
+                    run.advances[gi] += extra_per_space;
+                    total_extra += extra_per_space;
+                }
+            }
+        }
+
+        self.width += total_extra;
+
+        // Rebuild character_data x_positions to reflect adjusted advances.
+        if !self.character_data.is_empty() && !chars.is_empty() {
+            let mut x = 0.0f32;
+            for i in 0..self.num_characters.min(self.character_data.len()) {
+                self.character_data[i].x_position = x;
+                x += self.char_advance_for(i);
+            }
+        }
+    }
+
+    /// Compute the advance width for a specific character from the glyph runs.
+    fn char_advance_for(&self, char_idx: usize) -> f32 {
+        for run in &self.runs {
+            let run_start = run.start_index;
+            let run_end = run.start_index + run.num_characters;
+            if char_idx >= run_start && char_idx < run_end {
+                let local_idx = char_idx - run_start;
+                if run.num_glyphs == run.num_characters {
+                    return run.advances[local_idx];
+                } else {
+                    let total: f32 = run.advances.iter().sum();
+                    return total / run.num_characters.max(1) as f32;
+                }
+            }
+        }
+        0.0
+    }
+}
 impl std::fmt::Debug for ShapeResult {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("ShapeResult")

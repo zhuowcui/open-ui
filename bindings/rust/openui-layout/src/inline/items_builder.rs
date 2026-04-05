@@ -56,6 +56,10 @@ impl InlineItemsData {
 
     /// Run UAX#9 bidirectional analysis and set bidi_level on each item.
     ///
+    /// If a text item spans multiple bidi levels, it is split into multiple
+    /// items at bidi level boundaries so that each sub-item can be shaped
+    /// and reordered independently.
+    ///
     /// Blink: `InlineItemsBuilder::SetBidiLevel` / `BidiParagraph::SetParagraph`.
     pub fn apply_bidi(&mut self, base_direction: TextDirection) {
         if self.text.is_empty() {
@@ -65,9 +69,9 @@ impl InlineItemsData {
         let bidi = BidiParagraph::new(&self.text, Some(base_direction));
         let runs = bidi.runs();
 
+        // First pass: assign levels to each item from the bidi run at its start.
         for item in &mut self.items {
             if item.item_type == InlineItemType::Text && !item.text_range.is_empty() {
-                // Find the bidi run covering this item's start byte offset
                 for run in &runs {
                     if item.text_range.start >= run.start && item.text_range.start < run.end {
                         item.bidi_level = run.level;
@@ -76,6 +80,60 @@ impl InlineItemsData {
                 }
             }
         }
+
+        // Second pass: split text items that span multiple bidi levels.
+        let mut new_items = Vec::with_capacity(self.items.len());
+        for item in self.items.drain(..) {
+            if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
+                new_items.push(item);
+                continue;
+            }
+
+            // Collect bidi runs that overlap this item's text range.
+            let item_start = item.text_range.start;
+            let item_end = item.text_range.end;
+            let mut sub_items: Vec<(usize, usize, u8)> = Vec::new();
+
+            for run in &runs {
+                if run.end <= item_start || run.start >= item_end {
+                    continue;
+                }
+                let overlap_start = run.start.max(item_start);
+                let overlap_end = run.end.min(item_end);
+                if overlap_start < overlap_end {
+                    sub_items.push((overlap_start, overlap_end, run.level));
+                }
+            }
+
+            if sub_items.len() <= 1 {
+                // Item is entirely within one bidi run — keep as-is.
+                new_items.push(item);
+            } else {
+                // Split the item at bidi level boundaries.
+                for (sub_start, sub_end, level) in sub_items {
+                    new_items.push(InlineItem {
+                        item_type: InlineItemType::Text,
+                        text_range: sub_start..sub_end,
+                        node_id: item.node_id,
+                        shape_result: None, // Will be re-shaped below
+                        style_index: item.style_index,
+                        end_collapse_type: if sub_end == item_end {
+                            item.end_collapse_type
+                        } else {
+                            CollapseType::NotCollapsible
+                        },
+                        is_end_collapsible_newline: if sub_end == item_end {
+                            item.is_end_collapsible_newline
+                        } else {
+                            false
+                        },
+                        bidi_level: level,
+                    });
+                }
+            }
+        }
+
+        self.items = new_items;
     }
 }
 
@@ -357,22 +415,27 @@ pub fn collapse_whitespace(text: &str) -> String {
 /// CSS Text Level 3 §4.1.1 for pre-line:
 /// "Collapsible spaces before and after a forced line break are removed."
 /// Newlines are treated as forced breaks. Sequences of spaces collapse to one.
+/// Spaces immediately after a newline are also stripped (they are leading
+/// spaces on the new line and are collapsible per §4.1.1).
 pub fn collapse_spaces_preserve_newlines(text: &str) -> String {
     let mut result = String::with_capacity(text.len());
     let mut in_space_run = false;
+    let mut after_newline = false;
     for ch in text.chars() {
         if ch == '\n' {
-            // Preserve newlines; reset space tracking
-            // Remove any trailing space we just added
-            if in_space_run {
-                // Pop the collapsed space that preceded the newline
-                if result.ends_with(' ') {
-                    result.pop();
-                }
+            // Preserve newlines; reset space tracking.
+            // Remove any trailing space we just added before the newline.
+            if result.ends_with(' ') {
+                result.pop();
             }
             result.push('\n');
             in_space_run = false;
+            after_newline = true;
         } else if ch == ' ' || ch == '\t' || ch == '\r' || ch == '\x0C' {
+            if after_newline {
+                // Skip spaces immediately after a newline (CSS Text §4.1.1).
+                continue;
+            }
             if !in_space_run {
                 result.push(' ');
                 in_space_run = true;
@@ -380,6 +443,7 @@ pub fn collapse_spaces_preserve_newlines(text: &str) -> String {
         } else {
             result.push(ch);
             in_space_run = false;
+            after_newline = false;
         }
     }
     result

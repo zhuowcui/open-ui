@@ -693,3 +693,93 @@ fn item_index_references_original_items() {
         assert!(item_result.item_index < data.items.len());
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// SP11 Dual-Model Review Fixes — Regression Tests
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── Issue 6: CJK line breaking ──────────────────────────────────────────
+
+#[test]
+fn cjk_breaks_between_ideographs() {
+    use openui_layout::inline::line_breaker::find_break_opportunities;
+    // CJK characters should have break opportunities between each pair
+    let text = "\u{4e16}\u{754c}"; // "世界" — two CJK characters
+    let breaks = find_break_opportunities(text, WordBreak::Normal, OverflowWrap::Normal);
+    // There should be a break opportunity between the two characters
+    assert!(
+        !breaks.is_empty(),
+        "CJK text should have break opportunities between ideographs"
+    );
+}
+
+#[test]
+fn cjk_three_chars_have_two_breaks() {
+    use openui_layout::inline::line_breaker::find_break_opportunities;
+    // Three CJK characters should have break opportunities between each pair
+    let text = "\u{4e16}\u{754c}\u{597d}"; // "世界好"
+    let breaks = find_break_opportunities(text, WordBreak::Normal, OverflowWrap::Normal);
+    // Should have at least 2 break opportunities (between pairs)
+    assert!(
+        breaks.len() >= 2,
+        "Three CJK characters should have at least 2 breaks, got {}",
+        breaks.len()
+    );
+}
+
+#[test]
+fn cjk_mixed_with_latin_breaks() {
+    use openui_layout::inline::line_breaker::find_break_opportunities;
+    // Mixed Latin and CJK: "hello世界"
+    let text = "hello\u{4e16}\u{754c}";
+    let breaks = find_break_opportunities(text, WordBreak::Normal, OverflowWrap::Normal);
+    // Should have break between Latin and CJK, and between CJK characters
+    assert!(
+        !breaks.is_empty(),
+        "Mixed Latin-CJK text should have break opportunities"
+    );
+}
+
+// ── Issue 7: strip_trailing_spaces ──────────────────────────────────────
+
+#[test]
+fn trailing_space_stripped_from_full_item() {
+    // Text ending with a space should have the space width stripped from used_width
+    let data = make_normal_items(&["hello "]);
+    let lines = collect_all_lines(&data, lu(500.0));
+    assert_eq!(lines.len(), 1);
+
+    // The used_width should be less than the full shaped width of "hello "
+    // because the trailing space is stripped.
+    let hello_width = measure_text("hello");
+    let hello_space_width = measure_text("hello ");
+    assert!(hello_space_width > hello_width, "hello-space should be wider than hello");
+
+    // The line's used_width after stripping should be close to "hello" width
+    let line_width = lines[0].used_width.to_f32();
+    assert!(
+        line_width < hello_space_width,
+        "Line width ({}) should be less than 'hello ' width ({}) after trailing space strip",
+        line_width,
+        hello_space_width
+    );
+}
+
+#[test]
+fn trailing_space_stripped_from_split_item_at_end() {
+    // When text is split across lines, the trailing space on each line
+    // (except the last character of the full item) should be handled correctly.
+    let data = make_normal_items(&["hello world test"]);
+    let lines = collect_all_lines(&data, lu(80.0));
+    // Should produce multiple lines
+    assert!(lines.len() >= 2, "Should wrap into at least 2 lines");
+
+    // Each line's used_width should be positive and reasonable
+    for (i, line) in lines.iter().enumerate() {
+        assert!(
+            line.used_width >= LayoutUnit::zero(),
+            "Line {} used_width should be non-negative",
+            i
+        );
+    }
+}

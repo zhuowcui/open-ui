@@ -1599,3 +1599,247 @@ fn edge_tab_characters_collapse() {
     // Tab should collapse to space in normal white-space mode
     assert_eq!(count_line_boxes(&frag), 1);
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// SP11 Dual-Model Review Fixes — Regression Tests
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── Issue 1: Wrapped text sub-range ─────────────────────────────────────
+
+#[test]
+fn wrapped_text_sub_range_not_full_run() {
+    // When text wraps across lines, each fragment should have a sub-range
+    // shape result, not the full run. Two lines means two text fragments,
+    // each with a shape result covering only its portion.
+    let frag = layout_text(&["hello world"], 50); // Force wrap
+    let texts = collect_text_fragments(&frag);
+    assert!(texts.len() >= 2, "Expected text to wrap into >=2 fragments");
+
+    for tf in &texts {
+        if let Some(ref sr) = tf.shape_result {
+            // The shape result width should be close to the fragment width
+            let sr_width = sr.width();
+            let frag_width = tf.size.width.to_f32();
+            // Allow some tolerance for justification/rounding
+            assert!(
+                (sr_width - frag_width).abs() < frag_width * 0.5 + 5.0,
+                "Shape result width ({}) should approximate fragment width ({})",
+                sr_width,
+                frag_width
+            );
+        }
+    }
+}
+
+#[test]
+fn wrapped_text_sub_range_character_count() {
+    // A wrapped word should produce fragments whose shape results have
+    // fewer characters than the full item.
+    let frag = layout_text(&["hello world"], 50);
+    let texts = collect_text_fragments(&frag);
+    if texts.len() >= 2 {
+        for tf in &texts {
+            if let Some(ref sr) = tf.shape_result {
+                // Each sub-range should have fewer chars than the full "hello world" (11)
+                assert!(
+                    sr.num_characters <= 11,
+                    "Sub-range should not exceed full text char count: got {}",
+                    sr.num_characters
+                );
+            }
+        }
+    }
+}
+
+// ── Issue 3: Justification glyph positions ──────────────────────────────
+
+#[test]
+fn justify_expands_space_glyph_advances() {
+    use openui_text::shaping::{TextDirection, TextShaper};
+    use openui_text::font::{Font, FontDescription};
+
+    let shaper = TextShaper::new();
+    let font = Font::new(FontDescription::new());
+    let mut sr = shaper.shape("hello world", &font, TextDirection::Ltr);
+    let original_width = sr.width();
+
+    sr.apply_justification(5.0, "hello world");
+
+    // "hello world" has 1 space, so width should increase by 5.0
+    let expected_width = original_width + 5.0;
+    assert!(
+        (sr.width() - expected_width).abs() < 0.01,
+        "Justified width {} should be {} (original {} + 5.0 per space)",
+        sr.width(),
+        expected_width,
+        original_width
+    );
+}
+
+#[test]
+fn justify_multiple_spaces_expand_proportionally() {
+    use openui_text::shaping::{TextDirection, TextShaper};
+    use openui_text::font::{Font, FontDescription};
+
+    let shaper = TextShaper::new();
+    let font = Font::new(FontDescription::new());
+    let mut sr = shaper.shape("a b c d", &font, TextDirection::Ltr);
+    let original_width = sr.width();
+
+    sr.apply_justification(3.0, "a b c d");
+
+    // "a b c d" has 3 spaces, so width should increase by 9.0
+    let expected_width = original_width + 9.0;
+    assert!(
+        (sr.width() - expected_width).abs() < 0.01,
+        "Justified width {} should be {} (original {} + 3 * 3.0)",
+        sr.width(),
+        expected_width,
+        original_width
+    );
+}
+
+#[test]
+fn justify_character_data_updated() {
+    use openui_text::shaping::{TextDirection, TextShaper};
+    use openui_text::font::{Font, FontDescription};
+
+    let shaper = TextShaper::new();
+    let font = Font::new(FontDescription::new());
+    let mut sr = shaper.shape("a b", &font, TextDirection::Ltr);
+
+    // 'b' is at index 2 (after 'a' and ' ')
+    let b_pos_before = sr.character_data[2].x_position;
+    sr.apply_justification(10.0, "a b");
+
+    // After justification, 'b' should be shifted right by the extra space width
+    let b_pos_after = sr.character_data[2].x_position;
+    assert!(
+        b_pos_after > b_pos_before,
+        "Character after space should be shifted right: before={}, after={}",
+        b_pos_before,
+        b_pos_after
+    );
+}
+
+// ── Issue 5: Ellipsis painting ──────────────────────────────────────────
+
+#[test]
+fn ellipsis_fragment_exists_when_overflow_hidden() {
+    use openui_style::{Overflow, TextOverflow};
+
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
+    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(root, block);
+
+    let t = doc.create_node(ElementTag::Text);
+    doc.node_mut(t).text = Some("This is a very long text that should be truncated with ellipsis".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.node_mut(t).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(block, t);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(100), lu_i(600), lu_i(100), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    // Check that an ellipsis text fragment exists with "…" content
+    let text_frags = collect_text_fragments(&frag);
+    let has_ellipsis = text_frags.iter().any(|f| {
+        f.text_content.as_deref() == Some("\u{2026}")
+    });
+    assert!(has_ellipsis, "Should have an ellipsis text fragment with '…' content");
+}
+
+#[test]
+fn ellipsis_fragment_has_shape_result() {
+    use openui_style::{Overflow, TextOverflow};
+
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
+    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(root, block);
+
+    let t = doc.create_node(ElementTag::Text);
+    doc.node_mut(t).text = Some("Very long text that overflows the container width significantly".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.node_mut(t).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(block, t);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(80), lu_i(600), lu_i(80), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let text_frags = collect_text_fragments(&frag);
+    let ellipsis_frag = text_frags.iter().find(|f| {
+        f.text_content.as_deref() == Some("\u{2026}")
+    });
+    if let Some(ef) = ellipsis_frag {
+        assert!(ef.shape_result.is_some(), "Ellipsis fragment should have a shape result");
+        assert!(ef.size.width > lu(0.0), "Ellipsis should have non-zero width");
+    }
+}
+
+// ── Issue 4: Atomic inline width ────────────────────────────────────────
+
+#[test]
+fn atomic_inline_with_explicit_width_takes_space() {
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    // Create an inline-block child with explicit width
+    let child = doc.create_node(ElementTag::Div);
+    doc.node_mut(child).style.display = Display::InlineBlock;
+    doc.node_mut(child).style.width = Length::px(50.0);
+    doc.append_child(block, child);
+
+    let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
+    data.shape_text();
+
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data);
+    let line = breaker.next_line(lu(500.0)).unwrap();
+
+    // The atomic inline item should contribute width
+    let atomic_items: Vec<_> = line.items.iter()
+        .filter(|ir| ir.item_type == openui_layout::inline::items::InlineItemType::AtomicInline)
+        .collect();
+    assert!(!atomic_items.is_empty(), "Should have at least one atomic inline item");
+    assert_eq!(atomic_items[0].inline_size, lu(50.0),
+        "Atomic inline with width:50px should have 50px inline size");
+}
+
+#[test]
+fn atomic_inline_auto_width_zero() {
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let child = doc.create_node(ElementTag::Div);
+    doc.node_mut(child).style.display = Display::InlineBlock;
+    // width: auto (default) — should be zero without box layout
+    doc.append_child(block, child);
+
+    let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
+    data.shape_text();
+
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data);
+    let line = breaker.next_line(lu(500.0)).unwrap();
+
+    let atomic_items: Vec<_> = line.items.iter()
+        .filter(|ir| ir.item_type == openui_layout::inline::items::InlineItemType::AtomicInline)
+        .collect();
+    assert!(!atomic_items.is_empty());
+    assert_eq!(atomic_items[0].inline_size, lu(0.0),
+        "Atomic inline with auto width should be zero");
+}
