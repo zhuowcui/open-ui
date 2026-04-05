@@ -77,6 +77,22 @@ pub struct ComputedStyle {
     pub margin_bottom: Length,
     pub margin_left: Length,
 
+    // ── Inset properties (position offsets) ──────────────────────────
+    // Blink: stored in `surround_data_` as Length values.
+    // Initial value is `auto` for all four (CSS 2.1 §9.3.2).
+
+    /// CSS `top`. Initial: `auto`. Used with positioned elements.
+    pub top: Length,
+
+    /// CSS `right`. Initial: `auto`.
+    pub right: Length,
+
+    /// CSS `bottom`. Initial: `auto`.
+    pub bottom: Length,
+
+    /// CSS `left`. Initial: `auto`.
+    pub left: Length,
+
     // ── Padding (stored as Length in Blink's box_data_) ──────────────
     // Padding cannot be auto or negative per CSS spec.
 
@@ -420,6 +436,11 @@ impl ComputedStyle {
             margin_right: Length::zero(),
             margin_bottom: Length::zero(),
             margin_left: Length::zero(),
+
+            top: Length::auto(),
+            right: Length::auto(),
+            bottom: Length::auto(),
+            left: Length::auto(),
 
             padding_top: Length::zero(),
             padding_right: Length::zero(),

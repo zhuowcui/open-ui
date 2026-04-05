@@ -77,8 +77,9 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     // ── Overflow clipping ────────────────────────────────────────────
     // When a box has overflow: hidden (or clip), clip children to the
     // content box so overflowing content is not painted.
-    let needs_clip = (style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
-        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    let needs_clip = fragment.has_overflow_clip
+        || ((style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
+            && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport));
     if needs_clip {
         canvas.save();
         // Clip to padding box (inset by border widths per CSS spec).

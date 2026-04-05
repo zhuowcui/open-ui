@@ -860,6 +860,8 @@ fn paint_text_fragment_no_shape_result() {
         inherited_style: None,
         baseline_offset: 0.0,
         text_combine: None,
+        overflow_rect: None,
+        has_overflow_clip: false,
     };
 
     let mut surface = make_surface(200, 100);
@@ -1109,6 +1111,8 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         }),
         baseline_offset: metrics.ascent,
         text_combine: None,
+        overflow_rect: None,
+        has_overflow_clip: false,
     };
 
     let mut surface = make_surface(200, 100);

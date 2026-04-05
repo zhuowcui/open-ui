@@ -74,4 +74,21 @@ impl PhysicalRect {
             ),
         }
     }
+
+    /// Compute the smallest rect that contains both `self` and `other`.
+    ///
+    /// Mirrors Blink's `PhysicalRect::Unite()`.
+    pub fn unite(&self, other: &Self) -> Self {
+        if self.is_empty() {
+            return *other;
+        }
+        if other.is_empty() {
+            return *self;
+        }
+        let min_x = self.x().min_of(other.x());
+        let min_y = self.y().min_of(other.y());
+        let max_x = self.right().max_of(other.right());
+        let max_y = self.bottom().max_of(other.bottom());
+        Self::from_xywh(min_x, min_y, max_x - min_x, max_y - min_y)
+    }
 }

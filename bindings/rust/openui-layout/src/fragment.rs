@@ -5,7 +5,7 @@
 //! painting. The fragment tree mirrors the element tree but with concrete
 //! sizes and offsets.
 
-use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize, BoxStrut};
+use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, BoxStrut};
 use openui_dom::NodeId;
 use openui_style::ComputedStyle;
 use openui_text::ShapeResult;
@@ -81,6 +81,20 @@ pub struct Fragment {
     ///
     /// Blink: `LayoutTextCombine` attached to the `LayoutText` object.
     pub text_combine: Option<TextCombineLayout>,
+
+    /// Ink overflow rectangle — the area that child content extends beyond
+    /// this fragment's border-box. `None` means no overflow (children fit
+    /// entirely within the border-box).
+    ///
+    /// Blink: `PhysicalBoxFragment::ScrollableOverflow()`.
+    pub overflow_rect: Option<PhysicalRect>,
+
+    /// Whether this fragment clips overflowing content.
+    ///
+    /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
+    /// `visible`. The paint system uses this flag to apply a clip rect before
+    /// painting children.
+    pub has_overflow_clip: bool,
 }
 
 impl Fragment {
@@ -100,6 +114,8 @@ impl Fragment {
             inherited_style: None,
             baseline_offset: 0.0,
             text_combine: None,
+            overflow_rect: None,
+            has_overflow_clip: false,
         }
     }
 
@@ -127,6 +143,8 @@ impl Fragment {
             inherited_style: None,
             baseline_offset: 0.0,
             text_combine: None,
+            overflow_rect: None,
+            has_overflow_clip: false,
         }
     }
 
@@ -163,4 +181,27 @@ impl Fragment {
     /// Height of the border-box.
     #[inline]
     pub fn height(&self) -> LayoutUnit { self.size.height }
+
+    /// Set whether this fragment clips overflowing content.
+    pub fn set_overflow_clip(&mut self, clip: bool) {
+        self.has_overflow_clip = clip;
+    }
+
+    /// The scrollable overflow area of this fragment.
+    ///
+    /// Returns the explicitly computed `overflow_rect` if present, otherwise
+    /// falls back to the border-box rect (offset=zero, size=border-box).
+    ///
+    /// Mirrors Blink's `PhysicalBoxFragment::ScrollableOverflow()`.
+    pub fn scrollable_overflow(&self) -> PhysicalRect {
+        self.overflow_rect.unwrap_or_else(|| {
+            PhysicalRect::new(PhysicalOffset::zero(), self.size)
+        })
+    }
+
+    /// The border-box rect with offset at zero (local coordinates).
+    #[inline]
+    pub fn border_box_rect(&self) -> PhysicalRect {
+        PhysicalRect::new(PhysicalOffset::zero(), self.size)
+    }
 }

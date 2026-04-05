@@ -14,8 +14,8 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_geometry::{LayoutUnit, BoxStrut, PhysicalOffset, PhysicalSize, MarginStrut};
-use openui_style::{ComputedStyle, Display, BoxSizing};
+use openui_geometry::{LayoutUnit, BoxStrut, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
+use openui_style::{ComputedStyle, Display, BoxSizing, Overflow};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
@@ -272,6 +272,38 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         FragmentKind::Box
     };
 
+    // ── Overflow tracking ────────────────────────────────────────────
+    // Compute the scrollable overflow rect by unioning all child border-box
+    // rects (relative to this fragment). If the union extends beyond this
+    // fragment's border-box, store it as the overflow rect.
+    let border_box_rect = PhysicalRect::new(PhysicalOffset::zero(), border_box_size);
+    let mut overflow = border_box_rect;
+    for child in &fragment.children {
+        let child_rect = PhysicalRect::new(child.offset, child.size);
+        overflow = overflow.unite(&child_rect);
+
+        // Include grandchild overflow that wasn't clipped by the child.
+        if !child.has_overflow_clip {
+            if let Some(child_overflow) = child.overflow_rect {
+                let shifted = PhysicalRect::new(
+                    PhysicalOffset::new(
+                        child.offset.left + child_overflow.offset.left,
+                        child.offset.top + child_overflow.offset.top,
+                    ),
+                    child_overflow.size,
+                );
+                overflow = overflow.unite(&shifted);
+            }
+        }
+    }
+    if overflow != border_box_rect {
+        fragment.overflow_rect = Some(overflow);
+    }
+
+    // Set the overflow clip flag from style.
+    fragment.has_overflow_clip = style.overflow_x != Overflow::Visible
+        || style.overflow_y != Overflow::Visible;
+
     fragment
 }
 
@@ -359,7 +391,7 @@ fn layout_block_child(
     let child_constrained_inline =
         (child_available_inline - child_non_auto_margin_inline).clamp_negative_to_zero();
 
-    let child_is_new_fc = child_style.creates_new_formatting_context();
+    let child_is_new_fc = establishes_new_fc(child_style);
     let child_space = ConstraintSpace::for_block_child(
         child_constrained_inline,
         space.available_block_size,
@@ -400,6 +432,17 @@ fn layout_block_child(
         border.left + padding.left + resolved_margin_left,
         *block_offset,
     );
+
+    // Apply relative positioning offsets (CSS 2.1 §9.4.3).
+    // The fragment retains its normal-flow position for sibling layout;
+    // only the visual offset is shifted.
+    crate::relative::apply_relative_offset(
+        &mut child_fragment,
+        child_style,
+        child_available_inline,
+        space.available_block_size,
+    );
+
     child_fragment.margin = BoxStrut::new(
         child_margin.top,
         resolved_margin_right,
@@ -414,6 +457,19 @@ fn layout_block_child(
 
     *intrinsic_block_size = *block_offset;
     child_fragments.push(child_fragment);
+}
+
+// ── Helper: establishes new formatting context ───────────────────────
+
+/// Whether a style establishes a new formatting context.
+///
+/// overflow != visible, display: flow-root, floats, abs pos, inline-block,
+/// flex, grid — all establish a new block formatting context.
+///
+/// Delegates to `ComputedStyle::creates_new_formatting_context()` which checks
+/// these conditions. Provided as a free function for use in layout algorithms.
+pub fn establishes_new_fc(style: &ComputedStyle) -> bool {
+    style.creates_new_formatting_context()
 }
 
 // ── Helper: resolve border widths from style ─────────────────────────
