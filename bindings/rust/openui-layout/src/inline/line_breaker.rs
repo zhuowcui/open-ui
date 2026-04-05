@@ -52,6 +52,8 @@ pub struct LineBreaker<'a> {
     hyphens: Hyphens,
     /// Hyphenation engine for `hyphens: auto` (lazily initialized).
     hyphenation: Option<Hyphenation>,
+    /// Pre-computed byte-to-char mapping for O(1) lookups.
+    char_map: ByteToCharMap,
 }
 
 /// Internal state for line-building loop.
@@ -64,6 +66,7 @@ enum LineState {
 impl<'a> LineBreaker<'a> {
     /// Create a new line breaker for the given inline items.
     pub fn new(items_data: &'a InlineItemsData, containing_block_width: LayoutUnit) -> Self {
+        let char_map = ByteToCharMap::new(&items_data.text);
         Self {
             items_data,
             current_item: 0,
@@ -73,6 +76,7 @@ impl<'a> LineBreaker<'a> {
             containing_block_width,
             hyphens: Hyphens::Manual,
             hyphenation: None,
+            char_map,
         }
     }
 
@@ -241,9 +245,9 @@ impl<'a> LineBreaker<'a> {
 
         // Measure the text
         let text_width = if let Some(ref sr) = item.shape_result {
-            let char_start = byte_to_char_offset(&self.items_data.text, text_start);
-            let char_end = byte_to_char_offset(&self.items_data.text, text_end);
-            let item_char_start = byte_to_char_offset(&self.items_data.text, item.text_range.start);
+            let char_start = self.char_map.get(text_start);
+            let char_end = self.char_map.get(text_end);
+            let item_char_start = self.char_map.get(item.text_range.start);
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
             LayoutUnit::from_f32(sr.width_for_range(local_start, local_end))
@@ -289,20 +293,26 @@ impl<'a> LineBreaker<'a> {
         let mut best_width = LayoutUnit::zero();
         let mut best_is_hyphen = false;
 
+        // Approximate hyphen glyph width (~0.3em) for soft-hyphen break fitting.
+        // A visible hyphen is inserted at soft-hyphen breaks, consuming line space.
+        let hyphen_advance = LayoutUnit::from_f32(style.font_size * 0.3);
+
         if let Some(ref sr) = item.shape_result {
-            let item_char_start = byte_to_char_offset(&self.items_data.text, item.text_range.start);
-            let char_start = byte_to_char_offset(&self.items_data.text, text_start);
+            let item_char_start = self.char_map.get(item.text_range.start);
+            let char_start = self.char_map.get(text_start);
 
             for &brk in &break_opps {
                 // brk is a byte offset into text_slice
                 let break_byte = text_start + brk;
-                let break_char = byte_to_char_offset(&self.items_data.text, break_byte);
+                let break_char = self.char_map.get(break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
                 let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
-                if width <= remaining {
-                    let is_shy = brk < text_slice.len()
-                        && text_slice[brk..].starts_with('\u{00AD}');
+                let is_shy = brk < text_slice.len()
+                    && text_slice[brk..].starts_with('\u{00AD}');
+                // Soft-hyphen breaks insert a visible hyphen glyph — account for its width.
+                let effective_width = if is_shy { width + hyphen_advance } else { width };
+                if effective_width <= remaining {
                     best_break = Some(brk);
                     best_width = width;
                     best_is_hyphen = is_shy;
@@ -421,10 +431,15 @@ impl<'a> LineBreaker<'a> {
 
         // Try each hyphenation point (from last to first) to find the best
         // one that fits within the remaining width.
+        // Hyphenation breaks always insert a visible hyphen glyph — account
+        // for its advance width (~0.3em) when checking fit.
+        let style = &self.items_data.styles[item.style_index];
+        let hyphen_advance = LayoutUnit::from_f32(style.font_size * 0.3);
+
         if let Some(ref sr) = item.shape_result {
             let item_char_start =
-                byte_to_char_offset(&self.items_data.text, item.text_range.start);
-            let char_start = byte_to_char_offset(&self.items_data.text, text_start);
+                self.char_map.get(item.text_range.start);
+            let char_start = self.char_map.get(text_start);
 
             for &hp in hyphen_points.iter().rev() {
                 // Convert word-relative byte offset to text_slice-relative
@@ -435,13 +450,13 @@ impl<'a> LineBreaker<'a> {
                 }
 
                 let break_char =
-                    byte_to_char_offset(&self.items_data.text, break_byte);
+                    self.char_map.get(break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
                 let width =
                     LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
 
-                if width <= remaining {
+                if width + hyphen_advance <= remaining {
                     line.items.push(InlineItemResult {
                         item_index,
                         text_range: text_start..break_byte,
@@ -521,16 +536,16 @@ impl<'a> LineBreaker<'a> {
                         let mut best_width = LayoutUnit::zero();
 
                         if let Some(ref sr) = item.shape_result {
-                            let item_char_start = byte_to_char_offset(
-                                &self.items_data.text, item.text_range.start,
+                            let item_char_start = self.char_map.get(
+                                item.text_range.start,
                             );
-                            let char_start = byte_to_char_offset(
-                                &self.items_data.text, seg_start,
+                            let char_start = self.char_map.get(
+                                seg_start,
                             );
                             for &brk in &break_opps {
                                 let brk_byte = seg_start + brk;
-                                let brk_char = byte_to_char_offset(
-                                    &self.items_data.text, brk_byte,
+                                let brk_char = self.char_map.get(
+                                    brk_byte,
                                 );
                                 let local_start = char_start - item_char_start;
                                 let local_end = brk_char - item_char_start;
@@ -644,16 +659,16 @@ impl<'a> LineBreaker<'a> {
                     let mut best_width = LayoutUnit::zero();
 
                     if let Some(ref sr) = item.shape_result {
-                        let item_char_start = byte_to_char_offset(
-                            &self.items_data.text, item.text_range.start,
+                        let item_char_start = self.char_map.get(
+                            item.text_range.start,
                         );
-                        let char_start = byte_to_char_offset(
-                            &self.items_data.text, text_start,
+                        let char_start = self.char_map.get(
+                            text_start,
                         );
                         for &brk in &break_opps {
                             let brk_byte = text_start + brk;
-                            let brk_char = byte_to_char_offset(
-                                &self.items_data.text, brk_byte,
+                            let brk_char = self.char_map.get(
+                                brk_byte,
                             );
                             let local_start = char_start - item_char_start;
                             let local_end = brk_char - item_char_start;
@@ -735,8 +750,8 @@ impl<'a> LineBreaker<'a> {
         let text_slice = &self.items_data.text[text_start..text_end];
 
         if let Some(ref sr) = item.shape_result {
-            let item_char_start = byte_to_char_offset(&self.items_data.text, item.text_range.start);
-            let char_start = byte_to_char_offset(&self.items_data.text, text_start);
+            let item_char_start = self.char_map.get(item.text_range.start);
+            let char_start = self.char_map.get(text_start);
 
             // Walk grapheme cluster boundaries to find where to break.
             // Using grapheme clusters instead of raw char_indices() prevents
@@ -748,7 +763,7 @@ impl<'a> LineBreaker<'a> {
 
             for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
                 let break_byte = text_start + byte_offset;
-                let break_char = byte_to_char_offset(&self.items_data.text, break_byte);
+                let break_char = self.char_map.get(break_byte);
                 let local_break = break_char - item_char_start;
                 // Only break where the shaper says it's safe.
                 if !sr.safe_to_break_before(local_break) {
@@ -773,7 +788,7 @@ impl<'a> LineBreaker<'a> {
                     text_slice.grapheme_indices(true).skip(1).any(|(byte_offset, _)| {
                         let break_byte = text_start + byte_offset;
                         let break_char =
-                            byte_to_char_offset(&self.items_data.text, break_byte);
+                            self.char_map.get(break_byte);
                         let local_break = break_char - item_char_start;
                         !sr.safe_to_break_before(local_break)
                     });
@@ -784,7 +799,7 @@ impl<'a> LineBreaker<'a> {
                     for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
                         let break_byte = text_start + byte_offset;
                         let break_char =
-                            byte_to_char_offset(&self.items_data.text, break_byte);
+                            self.char_map.get(break_byte);
                         let local_start = char_start - item_char_start;
                         let local_end = break_char - item_char_start;
                         let width =
@@ -830,7 +845,7 @@ impl<'a> LineBreaker<'a> {
                         .find_map(|(byte_offset, _)| {
                             let break_byte = text_start + byte_offset;
                             let break_char =
-                                byte_to_char_offset(&self.items_data.text, break_byte);
+                                self.char_map.get(break_byte);
                             let local_break = break_char - item_char_start;
                             if sr.safe_to_break_before(local_break) {
                                 Some(break_byte)
@@ -927,9 +942,9 @@ impl<'a> LineBreaker<'a> {
     fn measure_text_range(&self, item_index: usize, start: usize, end: usize) -> LayoutUnit {
         let item = &self.items_data.items[item_index];
         if let Some(ref sr) = item.shape_result {
-            let item_char_start = byte_to_char_offset(&self.items_data.text, item.text_range.start);
-            let char_start = byte_to_char_offset(&self.items_data.text, start);
-            let char_end = byte_to_char_offset(&self.items_data.text, end);
+            let item_char_start = self.char_map.get(item.text_range.start);
+            let char_start = self.char_map.get(start);
+            let char_end = self.char_map.get(end);
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
             LayoutUnit::from_f32(sr.width_for_range(local_start, local_end))
@@ -1480,10 +1495,50 @@ fn resolve_atomic_inline_width(
     }
 }
 
+/// Pre-computed byte-offset → char-offset mapping for O(1) lookups.
+///
+/// Replaces repeated O(n) `byte_to_char_offset` calls with a single O(n)
+/// build step followed by O(1) queries, eliminating O(n²) behavior when
+/// the line breaker queries many offsets within the same text.
+pub struct ByteToCharMap {
+    /// For each valid byte-boundary position, the cumulative char count.
+    map: Vec<usize>,
+}
+
+impl ByteToCharMap {
+    /// Build the map in O(n) time.
+    pub fn new(text: &str) -> Self {
+        let mut map = vec![0usize; text.len() + 1];
+        let mut char_count = 0;
+        for (byte_pos, ch) in text.char_indices() {
+            map[byte_pos] = char_count;
+            char_count += 1;
+            // Fill interior bytes of multi-byte chars with the same count
+            // so that lookups at any byte position within the char are safe.
+            for i in 1..ch.len_utf8() {
+                if byte_pos + i < map.len() {
+                    map[byte_pos + i] = char_count;
+                }
+            }
+        }
+        map[text.len()] = char_count;
+        Self { map }
+    }
+
+    /// O(1) lookup.
+    #[inline]
+    pub fn get(&self, byte_offset: usize) -> usize {
+        self.map[byte_offset]
+    }
+}
+
 /// Convert a byte offset in a string to a character offset.
 ///
 /// This is needed because `ShapeResult` methods work with character indices,
 /// while our text ranges use byte offsets.
+///
+/// Note: For hot paths with many lookups on the same text, prefer
+/// [`ByteToCharMap`] to avoid O(n²) behavior.
 pub fn byte_to_char_offset(text: &str, byte_offset: usize) -> usize {
     text[..byte_offset].chars().count()
 }

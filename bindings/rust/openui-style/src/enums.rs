@@ -1258,6 +1258,10 @@ impl Default for FontOrientation {
 pub fn font_orientation(writing_mode: WritingMode, text_orientation: TextOrientation) -> FontOrientation {
     if writing_mode.is_horizontal() {
         FontOrientation::Horizontal
+    } else if matches!(writing_mode, WritingMode::SidewaysRl | WritingMode::SidewaysLr) {
+        // CSS Writing Modes Level 4 §7.2: text-orientation has no effect in
+        // sideways-rl / sideways-lr — all glyphs are rotated.
+        FontOrientation::VerticalRotated
     } else {
         match text_orientation {
             TextOrientation::Mixed => FontOrientation::VerticalMixed,

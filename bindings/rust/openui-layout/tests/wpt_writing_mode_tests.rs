@@ -329,23 +329,23 @@ mod text_orientation_property {
         );
     }
 
-    /// font_orientation: sideways-rl + Mixed → VerticalMixed.
+    /// font_orientation: sideways-rl ignores text-orientation per CSS Writing Modes §7.2.
     #[test]
     fn font_orientation_sideways_rl_mixed() {
         use openui_style::font_orientation;
         assert_eq!(
             font_orientation(WritingMode::SidewaysRl, TextOrientation::Mixed),
-            FontOrientation::VerticalMixed
+            FontOrientation::VerticalRotated
         );
     }
 
-    /// font_orientation: sideways-lr + Upright → VerticalUpright.
+    /// font_orientation: sideways-lr ignores text-orientation per CSS Writing Modes §7.2.
     #[test]
     fn font_orientation_sideways_lr_upright() {
         use openui_style::font_orientation;
         assert_eq!(
             font_orientation(WritingMode::SidewaysLr, TextOrientation::Upright),
-            FontOrientation::VerticalUpright
+            FontOrientation::VerticalRotated
         );
     }
 

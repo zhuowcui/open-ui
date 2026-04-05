@@ -369,6 +369,8 @@ mod writing_mode_interaction {
     }
 
     /// Vertical-rl produces same column arithmetic as horizontal.
+    /// Note: compute_ruby_layout currently treats all writing modes the same
+    /// (horizontal-only implementation). These tests verify API compatibility.
     #[test]
     fn vertical_rl_same_column_width() {
         let h = compute_ruby_layout(
@@ -401,7 +403,7 @@ mod writing_mode_interaction {
         assert!(r.annotation_block_offset >= 0.0);
     }
 
-    /// Sideways-rl preserves column width logic.
+    /// Sideways-rl: API accepts writing mode (behavior is horizontal-only for now).
     #[test]
     fn sideways_rl_column_width() {
         let r = compute_ruby_layout(
@@ -413,7 +415,7 @@ mod writing_mode_interaction {
         assert!((r.column_width - 110.0).abs() < 1e-4);
     }
 
-    /// Sideways-lr preserves column width logic.
+    /// Sideways-lr: API accepts writing mode (behavior is horizontal-only for now).
     #[test]
     fn sideways_lr_column_width() {
         let r = compute_ruby_layout(
@@ -426,7 +428,7 @@ mod writing_mode_interaction {
         assert!(r.annotation_block_offset >= 0.0);
     }
 
-    /// Writing mode does not affect annotation_size.
+    /// Writing mode does not affect annotation_size (intentionally horizontal-only for now).
     #[test]
     fn annotation_size_constant_across_writing_modes() {
         let modes = [

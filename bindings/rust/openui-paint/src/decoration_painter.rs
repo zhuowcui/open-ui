@@ -365,20 +365,27 @@ fn merge_intercepts(pairs: &mut Vec<(f32, f32)>) {
 pub(crate) fn is_cjk_character(ch: char) -> bool {
     let cp = ch as u32;
     matches!(cp,
+        0x2E80..=0x2EFF |     // CJK Radicals Supplement
+        0x2F00..=0x2FDF |     // Kangxi Radicals
         0x3000..=0x303F |     // CJK Symbols and Punctuation
         0x3040..=0x309F |     // Hiragana
         0x30A0..=0x30FF |     // Katakana
+        0x3100..=0x312F |     // Bopomofo
+        0x3130..=0x318F |     // Hangul Compatibility Jamo
         0x31F0..=0x31FF |     // Katakana Phonetic Extensions
         0x3400..=0x4DBF |     // CJK Unified Ideographs Extension A
         0x4E00..=0x9FFF |     // CJK Unified Ideographs
         0xAC00..=0xD7AF |     // Hangul Syllables
         0xF900..=0xFAFF |     // CJK Compatibility Ideographs
+        0xFE30..=0xFE4F |     // CJK Compatibility Forms
+        0xFF00..=0xFF60 |     // Fullwidth Forms
         0x20000..=0x2A6DF |   // CJK Extension B
         0x2A700..=0x2B73F |   // CJK Extension C
         0x2B740..=0x2B81F |   // CJK Extension D
         0x2B820..=0x2CEAF |   // CJK Extension E
         0x2CEB0..=0x2EBEF |   // CJK Extension F
-        0x2F800..=0x2FA1F     // CJK Compatibility Ideographs Supplement
+        0x2F800..=0x2FA1F |   // CJK Compatibility Ideographs Supplement
+        0x30000..=0x3134F     // CJK Extension G
     )
 }
 

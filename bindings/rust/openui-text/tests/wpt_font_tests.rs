@@ -287,6 +287,7 @@ mod font_weight {
         // Bold glyphs are typically wider; at minimum both should be positive
         assert!(w_normal > 0.0, "Normal weight text should have positive width");
         assert!(w_bold > 0.0, "Bold weight text should have positive width");
+        assert!(w_bold > w_normal, "bold text should be wider than normal");
     }
 }
 
@@ -649,6 +650,38 @@ mod font_variant_caps {
     fn small_caps_emits_smcp_feature() {
         let f = features_for(|d| d.variant_caps = FontVariantCaps::SmallCaps);
         assert!(has_feature(&f, b"smcp", 1), "SmallCaps should emit 'smcp'=1");
+    }
+
+    #[test]
+    fn all_small_caps_emits_smcp_and_c2sc() {
+        let f = features_for(|d| d.variant_caps = FontVariantCaps::AllSmallCaps);
+        assert!(has_feature(&f, b"smcp", 1), "AllSmallCaps should emit 'smcp'=1");
+        assert!(has_feature(&f, b"c2sc", 1), "AllSmallCaps should emit 'c2sc'=1");
+    }
+
+    #[test]
+    fn petite_caps_emits_pcap() {
+        let f = features_for(|d| d.variant_caps = FontVariantCaps::PetiteCaps);
+        assert!(has_feature(&f, b"pcap", 1), "PetiteCaps should emit 'pcap'=1");
+    }
+
+    #[test]
+    fn all_petite_caps_emits_pcap_and_c2pc() {
+        let f = features_for(|d| d.variant_caps = FontVariantCaps::AllPetiteCaps);
+        assert!(has_feature(&f, b"pcap", 1), "AllPetiteCaps should emit 'pcap'=1");
+        assert!(has_feature(&f, b"c2pc", 1), "AllPetiteCaps should emit 'c2pc'=1");
+    }
+
+    #[test]
+    fn unicase_emits_unic() {
+        let f = features_for(|d| d.variant_caps = FontVariantCaps::Unicase);
+        assert!(has_feature(&f, b"unic", 1), "Unicase should emit 'unic'=1");
+    }
+
+    #[test]
+    fn titling_caps_emits_titl() {
+        let f = features_for(|d| d.variant_caps = FontVariantCaps::TitlingCaps);
+        assert!(has_feature(&f, b"titl", 1), "TitlingCaps should emit 'titl'=1");
     }
 }
 

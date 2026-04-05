@@ -100,6 +100,9 @@ pub fn compute_ruby_layout(
     annotation_font_size: f32,
     ruby_align: RubyAlign,
     ruby_position: RubyPosition,
+    // NOTE: _writing_mode is accepted for API completeness but the layout
+    // algorithm currently operates in horizontal-only mode. Writing-mode-
+    // dependent behavior (e.g. block-direction offsets) is not yet implemented.
     _writing_mode: WritingMode,
 ) -> RubyLayout {
     // Sanitize negative inputs — widths and font sizes cannot be negative.

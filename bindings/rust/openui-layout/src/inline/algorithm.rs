@@ -1080,6 +1080,11 @@ fn create_line_box(
                     text_height,
                 ));
                 text_fragment.kind = FragmentKind::Text;
+                // Populate text_content so paint pipeline can use it for
+                // emphasis marks and skip-ink CJK filtering.
+                text_fragment.text_content = Some(
+                    items_data.text[item_result.text_range.clone()].to_string()
+                );
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
                 // Store the baseline offset (distance from fragment top to baseline)
                 // so paint can use it directly instead of recomputing from metrics.

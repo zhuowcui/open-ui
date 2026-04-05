@@ -79,7 +79,11 @@ pub fn compute_text_combine(
 ) -> TextCombineLayout {
     // Tate-chū-yoko only applies in vertical writing modes.
     // In horizontal-tb, the property has no effect.
-    if writing_mode.is_horizontal() || text.is_empty() || font_size <= 0.0 {
+    if writing_mode.is_horizontal()
+        || matches!(writing_mode, WritingMode::SidewaysRl | WritingMode::SidewaysLr)
+        || text.is_empty()
+        || font_size <= 0.0
+    {
         return TextCombineLayout {
             combined_width: combined_advance,
             target_width: font_size,
@@ -131,7 +135,9 @@ pub fn is_text_combine_active(
     text_combine: TextCombineUpright,
     writing_mode: WritingMode,
 ) -> bool {
-    text_combine == TextCombineUpright::All && writing_mode.is_vertical()
+    text_combine == TextCombineUpright::All
+        && writing_mode.is_vertical()
+        && !matches!(writing_mode, WritingMode::SidewaysRl | WritingMode::SidewaysLr)
 }
 
 /// Compute the inline advance that a combined run contributes to the
@@ -238,15 +244,17 @@ mod tests {
     }
 
     #[test]
-    fn sideways_rl_activates() {
+    fn sideways_rl_no_effect() {
+        // CSS Writing Modes §9.1: text-combine-upright has no effect in sideways modes.
         let layout = compute_text_combine("12", 30.0, 16.0, WritingMode::SidewaysRl);
-        assert!(layout.needs_compression);
+        assert!(!layout.needs_compression);
     }
 
     #[test]
-    fn sideways_lr_activates() {
+    fn sideways_lr_no_effect() {
+        // CSS Writing Modes §9.1: text-combine-upright has no effect in sideways modes.
         let layout = compute_text_combine("12", 30.0, 16.0, WritingMode::SidewaysLr);
-        assert!(layout.needs_compression);
+        assert!(!layout.needs_compression);
     }
 
     // ── Edge cases ──────────────────────────────────────────────────

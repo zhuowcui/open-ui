@@ -164,11 +164,23 @@ fn greek_to_upper(text: &str) -> String {
             '\u{0390}' => { result.push('\u{03AA}'); prev_base_greek = true; } // ΐ → Ϊ
             '\u{03B0}' => { result.push('\u{03AB}'); prev_base_greek = true; } // ΰ → Ϋ
             // Combining accents: strip after Greek base letter.
-            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0344}' if prev_base_greek => {
-                // Drop combining tonos / grave / tilde / dialytika-tonos.
+            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0344}' if prev_base_greek => {
+                // Drop combining tonos / grave / tilde / perispomeni / dialytika-tonos.
             }
             // Iota subscript (ypogegrammeni): drop in Greek uppercase context.
             '\u{0345}' if prev_base_greek => {}
+            // Greek Extended block (U+1F00–U+1FFF): uppercase and strip
+            // combining diacritical marks to match CLDR el-Upper behavior.
+            ch if (0x1F00..=0x1FFF).contains(&(ch as u32)) => {
+                let upper: String = ch.to_uppercase().collect();
+                for c in upper.chars() {
+                    if (0x0300..=0x036F).contains(&(c as u32)) {
+                        continue; // strip combining diacritical marks
+                    }
+                    result.push(c);
+                }
+                prev_base_greek = true;
+            }
             _ => {
                 prev_base_greek = is_greek_base(ch);
                 for c in ch.to_uppercase() {
