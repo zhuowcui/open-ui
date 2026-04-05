@@ -181,9 +181,13 @@ impl BidiParagraph {
     }
 
     /// Get the bidi level for a byte offset in the text.
+    ///
+    /// If `byte_offset` falls in the middle of a multi-byte UTF-8 character,
+    /// the offset is adjusted back to the nearest character boundary.
     pub fn level_at_byte(&self, byte_offset: usize) -> u8 {
         let byte_offset = byte_offset.min(self.text.len());
-        let char_index = self.text[..byte_offset].chars().count();
+        let safe_offset = self.text.floor_char_boundary(byte_offset);
+        let char_index = self.text[..safe_offset].chars().count();
         self.level_at(char_index)
     }
 }
@@ -316,5 +320,27 @@ mod tests {
         let bidi = BidiParagraph::new("שלום 42", None);
         let char_count = "שלום 42".chars().count();
         assert_eq!(bidi.levels().len(), char_count);
+    }
+
+    #[test]
+    fn level_at_byte_mid_char_no_panic() {
+        // Hebrew chars are 2 bytes each. Offset 1 is mid-char → should not panic.
+        let text = "שלום";
+        let bidi = BidiParagraph::new(text, None);
+        // Byte offset 1 is inside the first 2-byte Hebrew character.
+        let level = bidi.level_at_byte(1);
+        // Should return the level for the first char (RTL = 1).
+        assert_eq!(level, 1, "Mid-char offset should resolve to first char's level");
+    }
+
+    #[test]
+    fn level_at_byte_valid_offset() {
+        // Valid byte offset at a char boundary should return the correct level.
+        let text = "AB שלום";
+        let bidi = BidiParagraph::new(text, None);
+        // Byte offset 0 is 'A' (LTR).
+        assert_eq!(bidi.level_at_byte(0), 0, "LTR char at offset 0 should have level 0");
+        // Byte offset 3 is the start of the Hebrew text (after "AB ").
+        assert_eq!(bidi.level_at_byte(3), 1, "RTL char at offset 3 should have level 1");
     }
 }

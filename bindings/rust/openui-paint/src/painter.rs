@@ -33,6 +33,9 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     if fragment.kind == FragmentKind::Text && fragment.node_id.is_none() {
         let default_style = ComputedStyle::default();
         let style = fragment.inherited_style.as_ref().unwrap_or(&default_style);
+        if style.visibility != Visibility::Visible {
+            return;
+        }
         paint_text_fragment(canvas, fragment, style, abs_offset);
         return;
     }

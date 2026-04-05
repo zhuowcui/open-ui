@@ -1051,3 +1051,40 @@ fn paint_text_fragment_large_font() {
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
     assert!(has_non_white_pixels(&mut surface));
 }
+
+#[test]
+fn paint_ellipsis_hidden_visibility_no_output() {
+    // An anonymous text fragment (ellipsis) with visibility:hidden should NOT paint.
+    let doc = Document::new();
+
+    let sr = Arc::new(shape_text("\u{2026}"));
+    let metrics = text_painter::metrics_from_shape_result(&sr);
+    let width = sr.width();
+    let height = metrics.ascent + metrics.descent;
+
+    let frag = Fragment {
+        node_id: openui_dom::NodeId::NONE,
+        kind: FragmentKind::Text,
+        offset: PhysicalOffset::new(LayoutUnit::from_f32(10.0), LayoutUnit::from_f32(20.0)),
+        size: PhysicalSize::new(LayoutUnit::from_f32(width), LayoutUnit::from_f32(height)),
+        padding: openui_geometry::BoxStrut::zero(),
+        border: openui_geometry::BoxStrut::zero(),
+        margin: openui_geometry::BoxStrut::zero(),
+        children: Vec::new(),
+        shape_result: Some(Arc::clone(&sr)),
+        text_content: Some("\u{2026}".to_string()),
+        inherited_style: Some({
+            let mut s = ComputedStyle::default();
+            s.color = Color::BLACK;
+            s.visibility = Visibility::Hidden;
+            s
+        }),
+    };
+
+    let mut surface = make_surface(200, 100);
+    paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "Ellipsis with visibility:hidden should not produce visible pixels"
+    );
+}

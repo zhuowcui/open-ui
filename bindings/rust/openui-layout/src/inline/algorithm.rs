@@ -657,9 +657,43 @@ fn create_line_box(
                         LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent)
                     }
                 };
-                let atomic_top = baseline - LayoutUnit::from_f32_ceil(
-                    item_height.to_f32(),
-                );
+                let atomic_top = match style.vertical_align {
+                    VerticalAlign::Top => {
+                        // Flush with top of line box.
+                        LayoutUnit::zero()
+                    }
+                    VerticalAlign::Bottom => {
+                        // Flush with bottom of line box.
+                        line_height - item_height
+                    }
+                    VerticalAlign::Middle => {
+                        // Centered: baseline - x_height/2 - item_height/2
+                        let x_height = LayoutUnit::from_f32(block_metrics.x_height);
+                        baseline - x_height / LayoutUnit::from_f32(2.0)
+                            - item_height / LayoutUnit::from_f32(2.0)
+                    }
+                    VerticalAlign::TextTop => {
+                        // Top of item aligns with top of text (ascent above baseline).
+                        baseline - LayoutUnit::from_f32_ceil(block_metrics.ascent)
+                    }
+                    VerticalAlign::TextBottom => {
+                        // Bottom of item aligns with bottom of text (descent below baseline).
+                        baseline + LayoutUnit::from_f32_ceil(block_metrics.descent)
+                            - item_height
+                    }
+                    VerticalAlign::Sub => {
+                        let shift = LayoutUnit::from_f32(style.font_size / 5.0 + 1.0);
+                        baseline + shift - item_height
+                    }
+                    VerticalAlign::Super => {
+                        let shift = LayoutUnit::from_f32(style.font_size / 3.0 + 1.0);
+                        baseline - shift - item_height
+                    }
+                    _ => {
+                        // Baseline (default): bottom of item sits on baseline.
+                        baseline - item_height
+                    }
+                };
                 let mut atomic_fragment = Fragment::new_box(
                     item.node_id,
                     PhysicalSize::new(item_width, item_height),
