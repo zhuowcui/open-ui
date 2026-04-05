@@ -400,23 +400,36 @@ impl<'a> LineBreaker<'a> {
                             }
                         }
 
-                        // No break opportunity found or break at 0: force
-                        // content if line is empty, otherwise break before.
-                        if !line.has_content() {
-                            self.force_text_on_line(
-                                item_index, seg_start, seg_end, seg_width, line,
-                            );
-                            // Also consume the newline character so the next
-                            // call doesn't see it at offset 0 and emit an
-                            // extra blank forced-break line.
-                            line.has_forced_break = true;
-                            let after_nl = break_byte + 1;
-                            if after_nl >= text_end {
-                                // force_text_on_line already advanced
-                                // current_item and reset offset — correct.
-                            } else {
-                                self.current_text_offset = after_nl;
-                                self.current_item -= 1; // undo force_text_on_line's increment
+                        // No break opportunity found or break at 0: check
+                        // overflow-wrap before forcing content on the line.
+                        match style.overflow_wrap {
+                            OverflowWrap::BreakWord | OverflowWrap::Anywhere => {
+                                // Character-level break for the pre-newline segment.
+                                self.handle_character_break(
+                                    item_index, seg_start, seg_end, remaining, line, state,
+                                );
+                                if *state == LineState::Done {
+                                    return;
+                                }
+                            }
+                            OverflowWrap::Normal => {
+                                if !line.has_content() {
+                                    self.force_text_on_line(
+                                        item_index, seg_start, seg_end, seg_width, line,
+                                    );
+                                    // Also consume the newline character so the next
+                                    // call doesn't see it at offset 0 and emit an
+                                    // extra blank forced-break line.
+                                    line.has_forced_break = true;
+                                    let after_nl = break_byte + 1;
+                                    if after_nl >= text_end {
+                                        // force_text_on_line already advanced
+                                        // current_item and reset offset — correct.
+                                    } else {
+                                        self.current_text_offset = after_nl;
+                                        self.current_item -= 1; // undo force_text_on_line's increment
+                                    }
+                                }
                             }
                         }
                         *state = LineState::Done;
@@ -510,12 +523,22 @@ impl<'a> LineBreaker<'a> {
                         }
                     }
 
-                    if !line.has_content() {
-                        self.force_text_on_line(
-                            item_index, text_start, text_end, text_width, line,
-                        );
+                    match style.overflow_wrap {
+                        OverflowWrap::BreakWord | OverflowWrap::Anywhere => {
+                            let remaining = line.remaining_width();
+                            self.handle_character_break(
+                                item_index, text_start, text_end, remaining, line, state,
+                            );
+                        }
+                        OverflowWrap::Normal => {
+                            if !line.has_content() {
+                                self.force_text_on_line(
+                                    item_index, text_start, text_end, text_width, line,
+                                );
+                            }
+                            *state = LineState::Done;
+                        }
                     }
-                    *state = LineState::Done;
                     return;
                 }
             }
@@ -755,6 +778,18 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                     line.items[target_idx].text_range = line_text_start..new_end;
                 }
             } else if !at_item_end {
+                // Mid-item split: check white-space mode before stripping.
+                let ws = if item.style_index < styles.len() {
+                    styles[item.style_index].white_space
+                } else {
+                    WhiteSpace::Normal
+                };
+
+                // For `pre`: all whitespace is non-collapsible — skip stripping entirely.
+                if ws == WhiteSpace::Pre {
+                    return;
+                }
+
                 // Mid-item split: check if the portion ends with trailing
                 // whitespace by inspecting the actual text.
                 let line_text = &text[line_text_start..line_text_end];
@@ -768,9 +803,15 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                         let space_width = sr.width_for_range(local_end - num_trimmed_chars, local_end);
                         line.used_width = line.used_width - LayoutUnit::from_f32(space_width);
 
-                        // Trim text_range so decorations don't extend into stripped space.
-                        let new_end = line_text_start + trimmed.len();
-                        line.items[target_idx].text_range = line_text_start..new_end;
+                        // For `pre-wrap`: spaces "hang" — subtract from
+                        // alignment width but do NOT trim text_range
+                        // (spaces still render, they just hang past the
+                        // line box).
+                        if ws != WhiteSpace::PreWrap {
+                            // Normal/nowrap/pre-line: trim text_range.
+                            let new_end = line_text_start + trimmed.len();
+                            line.items[target_idx].text_range = line_text_start..new_end;
+                        }
                     }
                 }
             }
@@ -1341,6 +1382,185 @@ mod tests {
             line1_end < 11, // 11 = offset of '\n'
             "Pre-wrap should soft-wrap long text before the newline; line ended at byte {}, expected < 11",
             line1_end,
+        );
+    }
+
+    // ── SP11 Round 13 Issue 5: pre mode preserves trailing spaces ────
+
+    #[test]
+    fn strip_trailing_spaces_pre_preserves_spaces_mid_item() {
+        // In white-space: pre, trailing spaces in a mid-item split
+        // must be preserved — stripping should be skipped entirely.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello world ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let mut pre_style = ComputedStyle::default();
+        pre_style.white_space = WhiteSpace::Pre;
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..12,
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+
+        // Mid-item split: line portion is "hello " (0..6)
+        let item_result = InlineItemResult {
+            item_index: 0,
+            text_range: 0..6, // at_item_end = false (6 != 12)
+            inline_size: LayoutUnit::from_f32(40.0),
+            shape_result: Some(sr_arc),
+            has_forced_break: false,
+            item_type: InlineItemType::Text,
+        };
+
+        let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
+        let original_width = LayoutUnit::from_f32(40.0);
+        line.used_width = original_width;
+        line.items.push(item_result);
+
+        strip_trailing_spaces(&mut line, &[item], text, &[pre_style]);
+
+        // For pre mode, text_range and used_width must be unchanged.
+        assert_eq!(
+            line.items[0].text_range,
+            0..6,
+            "pre mode should preserve trailing spaces in text_range"
+        );
+        assert_eq!(
+            line.used_width, original_width,
+            "pre mode should not subtract space width from used_width"
+        );
+    }
+
+    #[test]
+    fn strip_trailing_spaces_pre_wrap_hangs_spaces() {
+        // In white-space: pre-wrap, trailing spaces should "hang":
+        // width is subtracted (for alignment) but text_range is NOT trimmed.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello world ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let mut pre_wrap_style = ComputedStyle::default();
+        pre_wrap_style.white_space = WhiteSpace::PreWrap;
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..12,
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+
+        // Mid-item split: line portion is "hello " (0..6)
+        let initial_width = LayoutUnit::from_f32(40.0);
+        let item_result = InlineItemResult {
+            item_index: 0,
+            text_range: 0..6,
+            inline_size: initial_width,
+            shape_result: Some(sr_arc),
+            has_forced_break: false,
+            item_type: InlineItemType::Text,
+        };
+
+        let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
+        line.used_width = initial_width;
+        line.items.push(item_result);
+
+        strip_trailing_spaces(&mut line, &[item], text, &[pre_wrap_style]);
+
+        // For pre-wrap, text_range should NOT be trimmed (spaces still render / "hang").
+        assert_eq!(
+            line.items[0].text_range,
+            0..6,
+            "pre-wrap should keep text_range unchanged (spaces hang)"
+        );
+        // But used_width should be reduced (for alignment purposes).
+        assert!(
+            line.used_width < initial_width,
+            "pre-wrap should subtract space width from used_width for alignment"
+        );
+    }
+
+    // ── SP11 Round 13 Issue 6: overflow-wrap: break-word in pre-wrap ─
+
+    #[test]
+    fn pre_wrap_overflow_wrap_break_word_breaks_long_word() {
+        // In pre-wrap with overflow-wrap: break-word, a long word before a
+        // newline that doesn't fit should be broken at character boundaries
+        // instead of being forced onto the line.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "abcdefghijklmnop\nmore";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let mut style = ComputedStyle::default();
+        style.white_space = WhiteSpace::PreWrap;
+        style.overflow_wrap = OverflowWrap::BreakWord;
+
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(sr_arc.clone()),
+                style_index: 0,
+                end_collapse_type: super::super::items::CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+            }],
+            styles: vec![style],
+        };
+
+        // Very narrow width — should only fit ~5 characters.
+        let five_char_width = sr_arc.width_for_range(0, 5);
+        let narrow_width = LayoutUnit::from_f32(five_char_width + 1.0);
+
+        let mut breaker = LineBreaker::new(&items_data);
+        let line1 = breaker.next_line(narrow_width);
+        assert!(line1.is_some(), "Should produce at least one line");
+        let line1 = line1.unwrap();
+
+        let line1_end = line1.items.last()
+            .map(|i| i.text_range.end)
+            .unwrap_or(0);
+
+        // With overflow-wrap: break-word, the line should break within the
+        // long word, NOT force the entire word "abcdefghijklmnop" on one line.
+        assert!(
+            line1_end < 16,
+            "overflow-wrap: break-word should break the long word; line ended at byte {}, expected < 16",
+            line1_end,
+        );
+        assert!(
+            line1_end > 0,
+            "Line should contain at least some characters"
         );
     }
 }

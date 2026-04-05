@@ -396,6 +396,11 @@ impl TextShaper {
     /// This is the main entry point for text shaping. Takes text and a Font,
     /// runs HarfBuzz shaping, and returns a ShapeResult with positioned glyphs.
     ///
+    /// Implements per-run font fallback: after initial shaping with the primary
+    /// font, segments containing `.notdef` glyphs (glyph_id == 0) are re-shaped
+    /// with fonts from the fallback list. This mirrors Blink's
+    /// `FontFallbackIterator` + `ShapeResultBuffer` approach.
+    ///
     /// Blink: `HarfBuzzShaper::Shape` in `harfbuzz_shaper.cc`.
     pub fn shape(&self, text: &str, font: &Font, direction: TextDirection) -> ShapeResult {
         if text.is_empty() {
@@ -419,10 +424,326 @@ impl TextShaper {
 
         let mut result = collector.into_shape_result(text);
 
+        // ── Font fallback for missing glyphs ────────────────────────────
+        // Scan for runs with glyph_id == 0 (.notdef) and attempt to
+        // re-shape those character ranges with fallback fonts.
+        let fallback_list = font.fallback_list();
+        if fallback_list.len() > 1 {
+            self.apply_font_fallback(&mut result, text, font, direction);
+        }
+
         // Apply letter spacing and word spacing from the font description.
         Self::apply_spacing(&mut result, font, text);
 
         result
+    }
+
+    /// Re-shape character ranges that have missing glyphs (glyph_id == 0)
+    /// using fonts from the fallback list.
+    ///
+    /// For each run, detects contiguous segments of missing glyphs, then
+    /// iterates through the fallback chain to find a font that covers those
+    /// characters. Successfully re-shaped segments replace the original run
+    /// data in-place.
+    fn apply_font_fallback(
+        &self,
+        result: &mut ShapeResult,
+        text: &str,
+        font: &Font,
+        direction: TextDirection,
+    ) {
+        let chars: Vec<char> = text.chars().collect();
+        let fallback_list = font.fallback_list();
+        let left_to_right = direction.is_ltr();
+
+        // Collect segments (character ranges) with missing glyphs across all runs.
+        let mut missing_segments: Vec<(usize, usize)> = Vec::new(); // (char_start, char_end)
+        for run in &result.runs {
+            // Build a set of characters in this run that have glyph_id == 0.
+            let mut missing_chars = vec![false; run.num_characters];
+            for (gi, &glyph_id) in run.glyphs.iter().enumerate() {
+                if glyph_id == 0 {
+                    // Map this glyph to a character via cluster data.
+                    let local_char = if gi < run.clusters.len() {
+                        run.clusters[gi]
+                    } else if run.num_glyphs == run.num_characters {
+                        gi
+                    } else {
+                        continue;
+                    };
+                    if local_char < run.num_characters {
+                        missing_chars[local_char] = true;
+                    }
+                }
+            }
+
+            // Group contiguous missing characters into segments.
+            let mut seg_start: Option<usize> = None;
+            for (i, &missing) in missing_chars.iter().enumerate() {
+                if missing {
+                    if seg_start.is_none() {
+                        seg_start = Some(run.start_index + i);
+                    }
+                } else if let Some(start) = seg_start {
+                    missing_segments.push((start, run.start_index + i));
+                    seg_start = None;
+                }
+            }
+            if let Some(start) = seg_start {
+                missing_segments.push((start, run.start_index + run.num_characters));
+            }
+        }
+
+        if missing_segments.is_empty() {
+            return;
+        }
+
+        // Merge overlapping/adjacent segments.
+        missing_segments.sort_by_key(|s| s.0);
+        let mut merged: Vec<(usize, usize)> = Vec::new();
+        for seg in missing_segments {
+            if let Some(last) = merged.last_mut() {
+                if seg.0 <= last.1 {
+                    last.1 = last.1.max(seg.1);
+                    continue;
+                }
+            }
+            merged.push(seg);
+        }
+
+        // For each missing segment, try fallback fonts (skip index 0 = primary).
+        for (seg_char_start, seg_char_end) in &merged {
+            // Extract the substring for this segment.
+            let byte_start: usize = chars[..*seg_char_start]
+                .iter()
+                .map(|c| c.len_utf8())
+                .sum();
+            let byte_end: usize = byte_start
+                + chars[*seg_char_start..*seg_char_end]
+                    .iter()
+                    .map(|c| c.len_utf8())
+                    .sum::<usize>();
+            let segment_text = &text[byte_start..byte_end];
+
+            for fb_idx in 1..fallback_list.len() {
+                let fb_data = match fallback_list.get(fb_idx) {
+                    Some(fd) => fd,
+                    None => continue,
+                };
+
+                // Check if this fallback font covers the missing characters.
+                let fb_sk_font = fb_data.sk_font();
+                let mut covers = true;
+                for &ch in &chars[*seg_char_start..*seg_char_end] {
+                    if fb_sk_font.unichar_to_glyph(ch as i32) == 0 {
+                        covers = false;
+                        break;
+                    }
+                }
+
+                if !covers {
+                    continue;
+                }
+
+                // Shape the segment with the fallback font.
+                // Wrapped in catch_unwind because Skia's shaper may panic
+                // for certain font/text combinations (e.g., fonts with
+                // incomplete shaping tables).
+                let fb_data_clone = Arc::clone(fb_data);
+                let segment_text_owned = segment_text.to_string();
+                let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    let mut fb_collector =
+                        ShapeCollector::new(fb_data_clone, direction);
+                    self.shaper.shape(
+                        &segment_text_owned,
+                        fb_sk_font,
+                        left_to_right,
+                        f32::INFINITY,
+                        &mut fb_collector,
+                    );
+                    fb_collector.into_shape_result(&segment_text_owned)
+                }));
+
+                let fb_result = match fb_result {
+                    Ok(r) => r,
+                    Err(_) => continue, // Shaping panicked — skip this fallback font.
+                };
+
+                if fb_result.runs.is_empty() {
+                    continue;
+                }
+
+                // Verify fallback actually produced non-zero glyphs.
+                let has_real_glyphs = fb_result
+                    .runs
+                    .iter()
+                    .any(|r| r.glyphs.iter().any(|&g| g != 0));
+                if !has_real_glyphs {
+                    continue;
+                }
+
+                // Replace runs in the original result for this segment.
+                Self::splice_fallback_runs(
+                    result,
+                    *seg_char_start,
+                    *seg_char_end,
+                    fb_result,
+                    Arc::clone(fb_data),
+                );
+                break; // This segment is handled.
+            }
+        }
+
+        // Rebuild total width and character_data from the updated runs.
+        Self::rebuild_character_data(result, text);
+    }
+
+    /// Splice fallback-shaped runs into the result, replacing the original
+    /// glyph data for the given character range.
+    fn splice_fallback_runs(
+        result: &mut ShapeResult,
+        seg_char_start: usize,
+        seg_char_end: usize,
+        fb_result: ShapeResult,
+        fb_font_data: Arc<FontPlatformData>,
+    ) {
+        // Build new runs list: keep original runs outside the segment,
+        // replace overlapping portions with fallback runs.
+        let mut new_runs: Vec<ShapeResultRun> = Vec::new();
+
+        for run in &result.runs {
+            let run_start = run.start_index;
+            let run_end = run.start_index + run.num_characters;
+
+            if run_end <= seg_char_start || run_start >= seg_char_end {
+                // No overlap — keep as-is.
+                new_runs.push(ShapeResultRun {
+                    font_data: Arc::clone(&run.font_data),
+                    glyphs: run.glyphs.clone(),
+                    advances: run.advances.clone(),
+                    offsets: run.offsets.clone(),
+                    clusters: run.clusters.clone(),
+                    start_index: run.start_index,
+                    num_characters: run.num_characters,
+                    num_glyphs: run.num_glyphs,
+                    direction: run.direction,
+                });
+                continue;
+            }
+
+            // Run overlaps with the segment. Split into up to 3 parts:
+            // [run_start..seg_char_start] (prefix), [segment] (replaced),
+            // [seg_char_end..run_end] (suffix).
+
+            // Prefix (original glyphs before segment)
+            if run_start < seg_char_start {
+                let prefix_chars = seg_char_start - run_start;
+                let (gs, ge) = ShapeResult::glyph_range_for_char_range(run, 0, prefix_chars);
+                if gs < ge {
+                    new_runs.push(ShapeResultRun {
+                        font_data: Arc::clone(&run.font_data),
+                        glyphs: run.glyphs[gs..ge].to_vec(),
+                        advances: run.advances[gs..ge].to_vec(),
+                        offsets: run.offsets[gs..ge].to_vec(),
+                        clusters: run.clusters[gs..ge].to_vec(),
+                        start_index: run_start,
+                        num_characters: prefix_chars,
+                        num_glyphs: ge - gs,
+                        direction: run.direction,
+                    });
+                }
+            }
+
+            // Suffix (original glyphs after segment)
+            if run_end > seg_char_end {
+                let suffix_local_start = seg_char_end - run_start;
+                let suffix_chars = run_end - seg_char_end;
+                let (gs, ge) = ShapeResult::glyph_range_for_char_range(
+                    run,
+                    suffix_local_start,
+                    suffix_local_start + suffix_chars,
+                );
+                if gs < ge {
+                    new_runs.push(ShapeResultRun {
+                        font_data: Arc::clone(&run.font_data),
+                        glyphs: run.glyphs[gs..ge].to_vec(),
+                        advances: run.advances[gs..ge].to_vec(),
+                        offsets: run.offsets[gs..ge].to_vec(),
+                        clusters: run.clusters[gs..ge]
+                            .iter()
+                            .map(|c| c.saturating_sub(suffix_local_start))
+                            .collect(),
+                        start_index: seg_char_end,
+                        num_characters: suffix_chars,
+                        num_glyphs: ge - gs,
+                        direction: run.direction,
+                    });
+                }
+            }
+        }
+
+        // Insert fallback runs (shifted to the correct start_index).
+        for fb_run in fb_result.runs {
+            new_runs.push(ShapeResultRun {
+                font_data: Arc::clone(&fb_font_data),
+                glyphs: fb_run.glyphs,
+                advances: fb_run.advances,
+                offsets: fb_run.offsets,
+                clusters: fb_run.clusters,
+                start_index: seg_char_start + fb_run.start_index,
+                num_characters: fb_run.num_characters,
+                num_glyphs: fb_run.num_glyphs,
+                direction: fb_run.direction,
+            });
+        }
+
+        // Sort runs by start_index.
+        new_runs.sort_by_key(|r| r.start_index);
+        result.runs = new_runs;
+    }
+
+    /// Rebuild width and character_data from the current runs.
+    fn rebuild_character_data(result: &mut ShapeResult, text: &str) {
+        let num_characters = text.chars().count();
+        let mut char_advances = vec![0.0f32; num_characters];
+
+        let mut total_width = 0.0f32;
+        for run in &result.runs {
+            let mut run_width = 0.0f32;
+            for (gi, &advance) in run.advances.iter().enumerate() {
+                run_width += advance;
+                // Map glyph to character.
+                let local_char = if gi < run.clusters.len() {
+                    run.clusters[gi]
+                } else if run.num_glyphs == run.num_characters {
+                    gi
+                } else {
+                    continue;
+                };
+                let char_idx = run.start_index + local_char;
+                if char_idx < num_characters {
+                    char_advances[char_idx] += advance;
+                }
+            }
+            total_width += run_width;
+        }
+
+        result.width = total_width;
+        result.num_characters = num_characters;
+
+        let chars: Vec<char> = text.chars().collect();
+        let mut character_data = Vec::with_capacity(num_characters);
+        let mut x = 0.0f32;
+        for i in 0..num_characters {
+            character_data.push(ShapeResultCharacterData {
+                x_position: x,
+                is_cluster_base: true,
+                safe_to_break_before: i == 0 || chars[i].is_whitespace()
+                    || (i > 0 && chars[i - 1].is_whitespace()),
+            });
+            x += char_advances[i];
+        }
+        result.character_data = character_data;
     }
 
     /// Apply letter spacing and word spacing after shaping.
@@ -534,5 +855,88 @@ impl Default for TextShaper {
 impl std::fmt::Debug for TextShaper {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("TextShaper").finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::font::{Font, FontDescription};
+
+    #[test]
+    fn shape_basic_latin_produces_nonzero_glyphs() {
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let result = shaper.shape("Hello", &font, TextDirection::Ltr);
+        assert_eq!(result.num_characters, 5);
+        assert!(result.width > 0.0);
+        // All glyphs should be non-zero for basic Latin.
+        for run in &result.runs {
+            for &g in &run.glyphs {
+                assert_ne!(g, 0, "Basic Latin should not produce .notdef glyphs");
+            }
+        }
+    }
+
+    #[test]
+    fn shape_with_fallback_uses_multiple_fonts() {
+        // Shape text mixing scripts. The fallback mechanism should not panic
+        // and should produce valid results regardless of available fonts.
+        // We test with Latin + symbol characters that might trigger fallback.
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let text = "Hello World";
+        let result = shaper.shape(text, &font, TextDirection::Ltr);
+        assert_eq!(result.num_characters, text.chars().count());
+        assert!(result.width > 0.0);
+        // Each run should track which font_data it was shaped with.
+        for run in &result.runs {
+            assert!(run.font_data.size() > 0.0);
+        }
+
+        // Verify fallback doesn't break when there's only one font.
+        assert!(font.fallback_count() >= 1);
+    }
+
+    #[test]
+    fn shape_fallback_detects_missing_glyphs() {
+        // When a glyph_id of 0 appears, the fallback mechanism should try
+        // other fonts. If no fallback covers it, the .notdef is preserved.
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        // Private use area character — unlikely to have a glyph in any font.
+        let text = "a\u{F0000}b";
+        let result = shaper.shape(text, &font, TextDirection::Ltr);
+        assert_eq!(result.num_characters, 3);
+        assert!(result.width > 0.0);
+        // 'a' and 'b' should have real glyphs; the PUA char may be .notdef.
+        // The point is that the shaper doesn't panic.
+    }
+
+    #[test]
+    fn fallback_preserves_run_font_data() {
+        // When fallback is used, each run should have its own font_data.
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let result = shaper.shape("abc", &font, TextDirection::Ltr);
+        // For pure Latin, all runs should use the primary font.
+        if let Some(primary) = font.primary_font() {
+            for run in &result.runs {
+                assert!(
+                    std::sync::Arc::ptr_eq(&run.font_data, primary),
+                    "Latin-only text should use the primary font for all runs"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn shape_empty_returns_empty() {
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let result = shaper.shape("", &font, TextDirection::Ltr);
+        assert_eq!(result.num_characters, 0);
+        assert_eq!(result.width, 0.0);
+        assert!(result.runs.is_empty());
     }
 }

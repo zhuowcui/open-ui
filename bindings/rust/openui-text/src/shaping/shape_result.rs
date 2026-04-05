@@ -310,7 +310,7 @@ impl ShapeResult {
     ///
     /// Uses the run's cluster data for precise mapping. Falls back to
     /// proportional mapping when cluster data is unavailable.
-    fn glyph_range_for_char_range(
+    pub fn glyph_range_for_char_range(
         run: &ShapeResultRun,
         char_start: usize,
         char_end: usize,
