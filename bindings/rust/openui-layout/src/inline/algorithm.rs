@@ -751,7 +751,7 @@ fn create_line_box(
                                 let font_desc = style_to_font_description(style);
                                 let font = Font::new(font_desc);
                                 let metrics = font.font_metrics().copied().unwrap_or_default();
-                                metrics.line_spacing
+                                metrics.int_line_spacing()
                             }
                             LineHeight::Number(n) => style.font_size * n,
                             LineHeight::Length(px) => px,
@@ -1177,7 +1177,7 @@ fn create_line_box(
                                 let font_desc = style_to_font_description(style);
                                 let font = Font::new(font_desc);
                                 let metrics = font.font_metrics().copied().unwrap_or_default();
-                                metrics.line_spacing
+                                metrics.int_line_spacing()
                             }
                             LineHeight::Number(n) => style.font_size * n,
                             LineHeight::Length(px) => px,

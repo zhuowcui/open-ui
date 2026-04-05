@@ -60,7 +60,7 @@ impl BidiParagraph {
         let sanitized: String = text
             .chars()
             .map(|ch| match ch {
-                '\n' | '\r' | '\u{0085}' | '\u{2029}' => '\u{200B}', // ZWSP
+                '\n' | '\r' | '\u{0085}' | '\u{2028}' | '\u{2029}' => '\u{200B}', // ZWSP
                 other => other,
             })
             .collect();

@@ -183,7 +183,13 @@ impl FontCache {
             bcp47_slice,
             codepoint as i32,
         )?;
-        let data = Arc::new(FontPlatformData::new(typeface, description.size));
+        // Thread the oblique angle from the font description so that oblique
+        // text falling back for emoji/CJK still gets the synthetic skew.
+        let oblique_angle = match description.style {
+            openui_style::FontStyleEnum::Oblique(angle) => angle,
+            _ => 0.0,
+        };
+        let data = Arc::new(FontPlatformData::with_oblique_angle(typeface, description.size, oblique_angle));
         Some(data)
     }
 }
