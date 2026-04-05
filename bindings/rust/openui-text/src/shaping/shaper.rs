@@ -1012,9 +1012,42 @@ impl TextShaper {
                 if run.num_glyphs == run.num_characters {
                     return run.advances[local_idx];
                 } else {
-                    // Non-1:1 mapping: distribute run width proportionally.
-                    let total: f32 = run.advances.iter().sum();
-                    return total / run.num_characters as f32;
+                    // Non-1:1 mapping: use cluster data to determine per-character advances.
+                // For ligature glyphs covering N characters, assign the full advance
+                // to the first character and 0 to the rest (matching Blink's caret
+                // positioning behavior). Issue 6 fix.
+                if !run.clusters.is_empty() {
+                    // Sort glyphs by cluster to find coverage.
+                    let mut glyph_by_cluster: Vec<(usize, usize)> = run
+                        .clusters
+                        .iter()
+                        .enumerate()
+                        .map(|(gi, &c)| (c, gi))
+                        .collect();
+                    glyph_by_cluster.sort_by_key(|(c, _)| *c);
+
+                    for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
+                        let next_cluster = if idx + 1 < glyph_by_cluster.len() {
+                            glyph_by_cluster[idx + 1].0
+                        } else {
+                            run.num_characters
+                        };
+                        // This glyph covers characters [cluster, next_cluster).
+                        if local_idx >= cluster && local_idx < next_cluster {
+                            let chars_in_cluster = next_cluster - cluster;
+                            if local_idx == cluster {
+                                // First char of cluster gets full advance / chars.
+                                return run.advances[gi] / chars_in_cluster as f32;
+                            } else {
+                                // Non-first chars get their share.
+                                return run.advances[gi] / chars_in_cluster as f32;
+                            }
+                        }
+                    }
+                }
+                // Fallback: distribute run width proportionally.
+                let total: f32 = run.advances.iter().sum();
+                return total / run.num_characters as f32;
                 }
             }
         }

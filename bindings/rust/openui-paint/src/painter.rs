@@ -15,7 +15,8 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace, ClipOp};
+use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace, ClipOp, PathEffect, Point};
+use skia_safe::paint::Cap;
 use openui_geometry::PhysicalOffset;
 use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
 use openui_dom::Document;
@@ -292,7 +293,10 @@ fn paint_borders(
     }
 }
 
-/// Paint a single border side as a filled rectangle.
+/// Paint a single border side.
+///
+/// Supports all CSS border styles: solid, dashed, dotted, double,
+/// groove, ridge, inset, outset. None/hidden are skipped.
 fn paint_border_side(
     canvas: &Canvas,
     border_style: BorderStyle,
@@ -305,24 +309,169 @@ fn paint_border_side(
         return;
     }
 
-    // Only paint solid borders for SP9. Dashed/dotted/double/groove/ridge/
-    // inset/outset require specialized path effects or multi-rect drawing
-    // that will be implemented in SP12. Skipping them prevents visually
-    // wrong output (rendering non-solid styles as solid fills).
-    if !matches!(border_style, BorderStyle::Solid) {
+    // None and hidden produce no visible border.
+    if matches!(border_style, BorderStyle::None | BorderStyle::Hidden) {
         return;
     }
 
     let resolved = border_color.resolve(inherited_color);
+    let base_color = Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a);
+
+    match border_style {
+        BorderStyle::Solid => {
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Fill);
+            paint.set_anti_alias(true);
+            paint.set_color4f(base_color, None::<&ColorSpace>);
+            canvas.draw_rect(rect, &paint);
+        }
+        BorderStyle::Dashed => {
+            // Dash length = 3 * border-width, gap = border-width.
+            let dash_len = width * 3.0;
+            let gap_len = width;
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Stroke);
+            paint.set_stroke_width(width);
+            paint.set_anti_alias(true);
+            paint.set_color4f(base_color, None::<&ColorSpace>);
+            if let Some(effect) = PathEffect::dash(&[dash_len, gap_len], 0.0) {
+                paint.set_path_effect(effect);
+            }
+            // Draw along the center of the border side.
+            let (p0, p1) = border_side_center_line(&rect, width);
+            canvas.draw_line(p0, p1, &paint);
+        }
+        BorderStyle::Dotted => {
+            // Dot = border-width, gap = border-width, with round caps.
+            let dot_len = 0.01; // near-zero dash to produce dots with round caps
+            let gap_len = width * 2.0;
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Stroke);
+            paint.set_stroke_width(width);
+            paint.set_stroke_cap(Cap::Round);
+            paint.set_anti_alias(true);
+            paint.set_color4f(base_color, None::<&ColorSpace>);
+            if let Some(effect) = PathEffect::dash(&[dot_len, gap_len], 0.0) {
+                paint.set_path_effect(effect);
+            }
+            let (p0, p1) = border_side_center_line(&rect, width);
+            canvas.draw_line(p0, p1, &paint);
+        }
+        BorderStyle::Double => {
+            // Two lines: outer at full position, inner offset inward.
+            // Each line is width/3 thick, with width/3 gap between them.
+            let line_width = (width / 3.0).max(1.0);
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Fill);
+            paint.set_anti_alias(true);
+            paint.set_color4f(base_color, None::<&ColorSpace>);
+            // Outer line.
+            let outer_rect = shrink_border_rect(&rect, width, 0.0, line_width);
+            canvas.draw_rect(outer_rect, &paint);
+            // Inner line.
+            let inner_rect = shrink_border_rect(&rect, width, width - line_width, line_width);
+            canvas.draw_rect(inner_rect, &paint);
+        }
+        BorderStyle::Groove => {
+            // Top/left half darkened, bottom/right half lightened.
+            paint_3d_border(canvas, &base_color, width, &rect, true);
+        }
+        BorderStyle::Ridge => {
+            // Opposite of groove.
+            paint_3d_border(canvas, &base_color, width, &rect, false);
+        }
+        BorderStyle::Inset => {
+            // Darken the color for inset effect.
+            let dark = darken_color(&base_color);
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Fill);
+            paint.set_anti_alias(true);
+            paint.set_color4f(dark, None::<&ColorSpace>);
+            canvas.draw_rect(rect, &paint);
+        }
+        BorderStyle::Outset => {
+            // Lighten the color for outset effect.
+            let light = lighten_color(&base_color);
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Fill);
+            paint.set_anti_alias(true);
+            paint.set_color4f(light, None::<&ColorSpace>);
+            canvas.draw_rect(rect, &paint);
+        }
+        BorderStyle::None | BorderStyle::Hidden => {
+            // Already handled above, but satisfy exhaustive match.
+        }
+    }
+}
+
+/// Compute the center line of a border side for stroke-based drawing.
+fn border_side_center_line(rect: &Rect, width: f32) -> (Point, Point) {
+    let half = width / 2.0;
+    if rect.width() > rect.height() {
+        // Horizontal side (top or bottom).
+        let y = rect.top + half;
+        (Point::new(rect.left, y), Point::new(rect.right, y))
+    } else {
+        // Vertical side (left or right).
+        let x = rect.left + half;
+        (Point::new(x, rect.top), Point::new(x, rect.bottom))
+    }
+}
+
+/// Shrink a border rect inward for double-line border painting.
+fn shrink_border_rect(rect: &Rect, _border_width: f32, inset: f32, line_width: f32) -> Rect {
+    if rect.width() > rect.height() {
+        // Horizontal side.
+        Rect::from_xywh(rect.left, rect.top + inset, rect.width(), line_width)
+    } else {
+        // Vertical side.
+        Rect::from_xywh(rect.left + inset, rect.top, line_width, rect.height())
+    }
+}
+
+/// Paint a 3D-style border (groove or ridge).
+///
+/// `darken_first`: true for groove (outer half dark, inner half light),
+/// false for ridge (outer half light, inner half dark).
+fn paint_3d_border(canvas: &Canvas, color: &Color4f, width: f32, rect: &Rect, darken_first: bool) {
+    let half_width = (width / 2.0).max(1.0);
+    let dark = darken_color(color);
+    let light = lighten_color(color);
+
+    let (first_color, second_color) = if darken_first {
+        (dark, light)
+    } else {
+        (light, dark)
+    };
+
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(true);
-    paint.set_color4f(
-        Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
-        None::<&ColorSpace>,
-    );
 
-    canvas.draw_rect(rect, &paint);
+    // Outer half.
+    let outer = shrink_border_rect(rect, width, 0.0, half_width);
+    paint.set_color4f(first_color, None::<&ColorSpace>);
+    canvas.draw_rect(outer, &paint);
+
+    // Inner half.
+    let inner = shrink_border_rect(rect, width, half_width, width - half_width);
+    paint.set_color4f(second_color, None::<&ColorSpace>);
+    canvas.draw_rect(inner, &paint);
+}
+
+/// Darken a color by multiplying RGB by 0.5.
+fn darken_color(color: &Color4f) -> Color4f {
+    Color4f::new(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
+}
+
+/// Lighten a color by averaging with white.
+fn lighten_color(color: &Color4f) -> Color4f {
+    Color4f::new(
+        (color.r + 1.0) / 2.0,
+        (color.g + 1.0) / 2.0,
+        (color.b + 1.0) / 2.0,
+        color.a,
+    )
 }
 
 // ── StyleColor PartialEq needed for border comparison ────────────────

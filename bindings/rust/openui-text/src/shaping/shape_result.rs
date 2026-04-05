@@ -320,11 +320,32 @@ impl ShapeResult {
         }
 
         // Use cluster data for precise glyph-to-character mapping.
+        // Derive each glyph's covered character interval from successive
+        // cluster boundaries. Include the glyph if its covered interval
+        // overlaps with [char_start, char_end). This correctly handles
+        // ligature glyphs whose cluster base is before char_start but
+        // that cover characters within the range (Issue 5 fix).
         if !run.clusters.is_empty() {
+            // Sort glyphs by cluster to determine each glyph's character coverage.
+            let mut glyph_by_cluster: Vec<(usize, usize)> = run
+                .clusters
+                .iter()
+                .enumerate()
+                .map(|(gi, &c)| (c, gi))
+                .collect();
+            glyph_by_cluster.sort_by_key(|(c, _)| *c);
+
             let mut glyph_start = run.num_glyphs;
             let mut glyph_end = 0;
-            for (gi, &char_idx) in run.clusters.iter().enumerate() {
-                if char_idx >= char_start && char_idx < char_end {
+            for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
+                let next_cluster = if idx + 1 < glyph_by_cluster.len() {
+                    glyph_by_cluster[idx + 1].0
+                } else {
+                    run.num_characters
+                };
+                // Glyph covers characters [cluster, next_cluster).
+                // Include if it overlaps with [char_start, char_end).
+                if cluster < char_end && next_cluster > char_start {
                     glyph_start = glyph_start.min(gi);
                     glyph_end = glyph_end.max(gi + 1);
                 }
@@ -417,6 +438,77 @@ impl ShapeResult {
         }
     }
 
+    /// Apply inter-character justification by distributing extra space
+    /// between all character boundaries (not just spaces).
+    ///
+    /// `extra_per_gap` is added to each glyph's advance. For a run with
+    /// N characters, there are N-1 internal gaps. Each glyph that starts
+    /// a character gets `extra_per_gap` added except the last character
+    /// in the entire result.
+    ///
+    /// Blink: `ShapeResult::ApplyExpansion` with inter-character mode.
+    pub fn apply_inter_character_justification(&mut self, extra_per_gap: f32) {
+        if extra_per_gap <= 0.0 || self.runs.is_empty() || self.num_characters <= 1 {
+            return;
+        }
+
+        let mut total_extra = 0.0f32;
+        let total_chars = self.num_characters;
+        // We need to expand gaps between every adjacent pair of characters
+        // across the entire result. That's (total_chars - 1) gaps total.
+        // Each glyph gets extra_per_gap added to its advance for every
+        // character it covers, except the very last character overall.
+        for run in &mut self.runs {
+            let run_start = run.start_index;
+            if !run.clusters.is_empty() {
+                // With cluster data: add extra_per_gap to each glyph,
+                // except for the glyph that covers the last character.
+                for gi in 0..run.num_glyphs {
+                    let char_idx = run_start + run.clusters[gi];
+                    if char_idx < total_chars - 1 {
+                        run.advances[gi] += extra_per_gap;
+                        total_extra += extra_per_gap;
+                    }
+                }
+            } else if run.num_glyphs == run.num_characters {
+                // 1:1 mapping
+                for gi in 0..run.num_glyphs {
+                    let char_idx = run_start + gi;
+                    if char_idx < total_chars - 1 {
+                        run.advances[gi] += extra_per_gap;
+                        total_extra += extra_per_gap;
+                    }
+                }
+            } else {
+                // Non-1:1 without clusters: distribute proportionally.
+                // Add extra to all glyphs except last.
+                let gaps_in_run = if run_start + run.num_characters >= total_chars {
+                    run.num_characters.saturating_sub(1)
+                } else {
+                    run.num_characters
+                };
+                if gaps_in_run > 0 && run.num_glyphs > 0 {
+                    let per_glyph = (extra_per_gap * gaps_in_run as f32) / run.num_glyphs as f32;
+                    for gi in 0..run.num_glyphs {
+                        run.advances[gi] += per_glyph;
+                        total_extra += per_glyph;
+                    }
+                }
+            }
+        }
+
+        self.width += total_extra;
+
+        // Rebuild character_data x_positions.
+        if !self.character_data.is_empty() {
+            let mut x = 0.0f32;
+            for i in 0..self.num_characters.min(self.character_data.len()) {
+                self.character_data[i].x_position = x;
+                x += self.char_advance_for(i);
+            }
+        }
+    }
+
     /// Compute the advance width for a specific character from the glyph runs.
     fn char_advance_for(&self, char_idx: usize) -> f32 {
         for run in &self.runs {
@@ -427,6 +519,30 @@ impl ShapeResult {
                 if run.num_glyphs == run.num_characters {
                     return run.advances[local_idx];
                 } else {
+                    // Non-1:1 mapping: use cluster data for precise advance.
+                    // Issue 6 fix: distribute based on cluster boundaries
+                    // rather than averaging uniformly.
+                    if !run.clusters.is_empty() {
+                        let mut glyph_by_cluster: Vec<(usize, usize)> = run
+                            .clusters
+                            .iter()
+                            .enumerate()
+                            .map(|(gi, &c)| (c, gi))
+                            .collect();
+                        glyph_by_cluster.sort_by_key(|(c, _)| *c);
+
+                        for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
+                            let next_cluster = if idx + 1 < glyph_by_cluster.len() {
+                                glyph_by_cluster[idx + 1].0
+                            } else {
+                                run.num_characters
+                            };
+                            if local_idx >= cluster && local_idx < next_cluster {
+                                let chars_in_cluster = next_cluster - cluster;
+                                return run.advances[gi] / chars_in_cluster as f32;
+                            }
+                        }
+                    }
                     let total: f32 = run.advances.iter().sum();
                     return total / run.num_characters.max(1) as f32;
                 }

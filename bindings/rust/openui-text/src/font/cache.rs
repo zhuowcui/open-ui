@@ -159,15 +159,18 @@ impl FontCache {
             description.stretch.0,
             &description.style,
         );
-        let bcp47: &[&str] = if description.locale.as_ref().map_or(true, |l| l.is_empty()) {
-            &["en"]
+        let locale_owned: String;
+        let bcp47: Vec<&str> = if description.locale.as_ref().map_or(true, |l| l.is_empty()) {
+            vec!["en"]
         } else {
-            &["en"]
+            locale_owned = description.locale.as_ref().unwrap().clone();
+            vec![locale_owned.as_str()]
         };
+        let bcp47_slice: &[&str] = &bcp47;
         let typeface = self.font_mgr.0.match_family_style_character(
             "",
             sk_style,
-            bcp47,
+            bcp47_slice,
             codepoint as i32,
         )?;
         let data = Arc::new(FontPlatformData::new(typeface, description.size));

@@ -133,21 +133,22 @@ fn compute_text_align_offset(
         return LayoutUnit::zero();
     }
 
-    // On the last line or forced-break line, use text-align-last for
-    // justified text. Per CSS Text §7.3, if text-align-last is `auto`,
-    // fall back to `start` (for justify) or the text-align value itself.
+    // On the last line or forced-break line, always check text-align-last
+    // first. Per CSS Text Level 3 §7.3, text-align-last overrides the
+    // last line's alignment regardless of text-align's value (unless
+    // text-align-last is `auto`).
     let effective_align = if line_info.is_last_line || line_info.has_forced_break {
-        match line_info.text_align {
-            TextAlign::Justify => match text_align_last {
-                TextAlignLast::Auto => TextAlign::Start,
-                TextAlignLast::Start => TextAlign::Start,
-                TextAlignLast::End => TextAlign::End,
-                TextAlignLast::Left => TextAlign::Left,
-                TextAlignLast::Right => TextAlign::Right,
-                TextAlignLast::Center => TextAlign::Center,
-                TextAlignLast::Justify => TextAlign::Justify,
+        match text_align_last {
+            TextAlignLast::Auto => match line_info.text_align {
+                TextAlign::Justify => TextAlign::Start,
+                other => other,
             },
-            other => other,
+            TextAlignLast::Start => TextAlign::Start,
+            TextAlignLast::End => TextAlign::End,
+            TextAlignLast::Left => TextAlign::Left,
+            TextAlignLast::Right => TextAlign::Right,
+            TextAlignLast::Center => TextAlign::Center,
+            TextAlignLast::Justify => TextAlign::Justify,
         }
     } else {
         line_info.text_align
@@ -774,6 +775,9 @@ fn create_line_box(
     let mut children: Vec<Fragment> = Vec::new();
     let mut inline_offset = text_align_offset + text_indent;
     let mut justification_accumulator = 0.0f32;
+    // Track how many characters we've seen before this item (for inter-character
+    // justification boundary gaps — Issue 4 fix).
+    let mut inter_char_chars_before = 0usize;
 
     // Reset the inline metrics stack for the positioning pass.
     inline_metrics_stack.clear();
@@ -882,15 +886,36 @@ fn create_line_box(
                         // Inter-character justification: distribute extra space
                         // between every character boundary.
                         let char_count = text.chars().count().saturating_sub(trailing_spaces);
-                        let gaps = char_count.saturating_sub(1);
-                        if gaps > 0 {
-                            let extra = justification_per_char * gaps as f32;
+                        let internal_gaps = char_count.saturating_sub(1);
+                        // Boundary gap: if there are characters before this item,
+                        // add one gap for the boundary between the previous text
+                        // item's last char and this item's first char (Issue 4 fix).
+                        let boundary_gap = if inter_char_chars_before > 0 && char_count > 0 { 1 } else { 0 };
+                        let total_item_gaps = internal_gaps + boundary_gap;
+                        if total_item_gaps > 0 {
+                            let extra = justification_per_char * total_item_gaps as f32;
                             let old_acc = justification_accumulator;
                             justification_accumulator += extra;
                             let extra_lu = LayoutUnit::from_f32(justification_accumulator)
                                 - LayoutUnit::from_f32(old_acc);
                             item_width = item_width + extra_lu;
+                            // Shift x position by boundary gap amount.
+                            if boundary_gap > 0 {
+                                let boundary_shift = LayoutUnit::from_f32(justification_per_char);
+                                inline_offset = inline_offset + boundary_shift;
+                                // Reduce item_width by boundary_shift since it's positional.
+                                item_width = item_width - boundary_shift;
+                            }
+                            // Create justified shape result with modified glyph advances.
+                            if let Some(ref sr) = line_shape_result {
+                                let mut justified_sr = sr.sub_range(0, sr.num_characters);
+                                justified_sr.apply_inter_character_justification(
+                                    justification_per_char,
+                                );
+                                justified_shape = Some(Arc::new(justified_sr));
+                            }
                         }
+                        inter_char_chars_before += char_count;
                     } else {
                         let total = text.chars().filter(|c| *c == ' ').count();
                         let space_count = total - trailing_spaces;
