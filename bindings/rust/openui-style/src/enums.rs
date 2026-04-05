@@ -1163,6 +1163,45 @@ impl Default for TextCombineUpright {
     fn default() -> Self { Self::INITIAL }
 }
 
+// ── Font Palette ────────────────────────────────────────────────────────
+
+/// CSS `font-palette` property.
+///
+/// Controls which color palette is used for color fonts (COLR/CPAL).
+/// Color fonts can define multiple palettes of colors; this property
+/// selects which one to use for rendering.
+///
+/// Blink: `FontPalette` in `third_party/blink/renderer/platform/fonts/font_palette.h`.
+/// CSS Fonts Level 4: <https://drafts.csswg.org/css-fonts-4/#font-palette-prop>
+#[derive(Debug, Clone, PartialEq)]
+pub enum FontPalette {
+    /// Use the font's default palette (palette index 0).
+    Normal,
+    /// Use a light-mode optimized palette.
+    /// The font declares which palette is suitable for light backgrounds.
+    Light,
+    /// Use a dark-mode optimized palette.
+    /// The font declares which palette is suitable for dark backgrounds.
+    Dark,
+    /// Use a custom palette defined via `@font-palette-values` by name.
+    Custom(String),
+}
+
+impl FontPalette {
+    /// CSS initial value: `normal`.
+    pub const INITIAL: Self = Self::Normal;
+
+    /// True if this is the default (normal) palette.
+    #[inline]
+    pub fn is_normal(&self) -> bool {
+        matches!(self, Self::Normal)
+    }
+}
+
+impl Default for FontPalette {
+    fn default() -> Self { Self::INITIAL }
+}
+
 // ── Font Orientation (from WritingMode + TextOrientation) ───────────────
 
 /// Resolved font orientation — determines how glyphs are laid out in the
@@ -1226,4 +1265,79 @@ pub fn font_orientation(writing_mode: WritingMode, text_orientation: TextOrienta
             TextOrientation::Sideways => FontOrientation::VerticalRotated,
         }
     }
+}
+
+// ── Ruby Annotation ─────────────────────────────────────────────────────
+
+/// CSS `ruby-position` property.
+///
+/// Determines where ruby annotation text is rendered relative to the base text.
+/// Blink: `ERubyPosition` in `computed_style_constants.h`.
+///
+/// Reference: CSS Ruby Annotation Layout Module Level 1 §3.1
+/// <https://drafts.csswg.org/css-ruby-1/#ruby-position-property>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum RubyPosition {
+    /// Annotation appears above (horizontal) or to the right (vertical) of the
+    /// base text. This is the default for Japanese furigana.
+    Over = 0,
+    /// Annotation appears below (horizontal) or to the left (vertical) of the
+    /// base text. Used for Zhuyin (bopomofo) in Traditional Chinese.
+    Under = 1,
+}
+
+impl RubyPosition {
+    /// Blink's initial value: `kOver`.
+    pub const INITIAL: Self = Self::Over;
+
+    /// True when the annotation is positioned above/right of base text.
+    #[inline]
+    pub fn is_over(self) -> bool {
+        self == Self::Over
+    }
+
+    /// True when the annotation is positioned below/left of base text.
+    #[inline]
+    pub fn is_under(self) -> bool {
+        self == Self::Under
+    }
+}
+
+impl Default for RubyPosition {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `ruby-align` property.
+///
+/// Controls how inline-level content of a ruby annotation box is aligned
+/// with respect to its base.
+/// Blink: `ERubyAlign` in `computed_style_constants.h`.
+///
+/// Reference: CSS Ruby Annotation Layout Module Level 1 §4.1
+/// <https://drafts.csswg.org/css-ruby-1/#ruby-align-property>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum RubyAlign {
+    /// The content is expanded so that it is evenly distributed across the
+    /// width of the ruby annotation box, with space inserted before the first
+    /// and after the last character. This is the default value.
+    SpaceAround = 0,
+    /// The content is centered within the ruby annotation box.
+    Center = 1,
+    /// The content is expanded so that it is evenly distributed across the
+    /// width, but no extra space is inserted before the first or after the
+    /// last character (like CSS `text-align: justify`).
+    SpaceBetween = 2,
+    /// The content is aligned to the start edge of the ruby annotation box.
+    Start = 3,
+}
+
+impl RubyAlign {
+    /// Blink's initial value: `kSpaceAround`.
+    pub const INITIAL: Self = Self::SpaceAround;
+}
+
+impl Default for RubyAlign {
+    fn default() -> Self { Self::INITIAL }
 }

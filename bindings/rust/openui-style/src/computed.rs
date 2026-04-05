@@ -367,10 +367,26 @@ pub struct ComputedStyle {
     /// CSS `text-combine-upright`. Initial: `none`.
     pub text_combine_upright: TextCombineUpright,
 
+    // ── Ruby Annotation ─────────────────────────────────────────────
+
+    /// CSS `ruby-position`. Initial: `over`. Inherited.
+    /// Determines where annotation text is placed relative to base text.
+    pub ruby_position: RubyPosition,
+
+    /// CSS `ruby-align`. Initial: `space-around`. Inherited.
+    /// Controls how annotation content is distributed within its box.
+    pub ruby_align: RubyAlign,
+
     // ── Tab Size ─────────────────────────────────────────────────────
 
     /// CSS `tab-size`. Initial: `8`. Inherited.
     pub tab_size: TabSize,
+
+    // ── Font Palette ─────────────────────────────────────────────────
+
+    /// CSS `font-palette`. Initial: `normal`.
+    /// Controls which color palette is used for COLR/CPAL color fonts.
+    pub font_palette: FontPalette,
 
     // ── Locale ───────────────────────────────────────────────────────
 
@@ -527,8 +543,15 @@ impl ComputedStyle {
             text_emphasis_color: StyleColor::CurrentColor,
             text_combine_upright: TextCombineUpright::INITIAL,   // none
 
+            // Ruby annotation
+            ruby_position: RubyPosition::INITIAL,                   // over
+            ruby_align: RubyAlign::INITIAL,                         // space-around
+
             // Tab size
             tab_size: TabSize::Spaces(8),
+
+            // Font palette
+            font_palette: FontPalette::INITIAL,  // normal
 
             // Locale
             locale: None,
