@@ -83,6 +83,7 @@ fn to_full_size_kana(text: &str) -> String {
             // Small Hiragana → Full-size Hiragana
             'ぁ' => 'あ', 'ぃ' => 'い', 'ぅ' => 'う', 'ぇ' => 'え', 'ぉ' => 'お',
             'っ' => 'つ', 'ゃ' => 'や', 'ゅ' => 'ゆ', 'ょ' => 'よ', 'ゎ' => 'わ',
+            'ゕ' => 'か', 'ゖ' => 'け', // U+3095 → U+304B, U+3096 → U+3051
             // Small Katakana → Full-size Katakana
             'ァ' => 'ア', 'ィ' => 'イ', 'ゥ' => 'ウ', 'ェ' => 'エ', 'ォ' => 'オ',
             'ッ' => 'ツ', 'ャ' => 'ヤ', 'ュ' => 'ユ', 'ョ' => 'ヨ', 'ヮ' => 'ワ',
@@ -160,6 +161,16 @@ mod tests {
         assert_eq!(
             apply_text_transform("こんにちは", TextTransform::FullSizeKana),
             "こんにちは"
+        );
+    }
+
+    // ── SP11 Round 17 Issue 2: ゕ (U+3095) and ゖ (U+3096) mappings ──
+
+    #[test]
+    fn full_size_kana_converts_small_hiragana_ka_ke() {
+        assert_eq!(
+            apply_text_transform("ゕゖ", TextTransform::FullSizeKana),
+            "かけ"
         );
     }
 

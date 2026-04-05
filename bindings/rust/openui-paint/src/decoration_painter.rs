@@ -90,7 +90,10 @@ pub fn paint_text_decorations(
             // which is a positive value below the baseline.
             if decoration_line.has_underline() {
                 // Apply CSS text-underline-offset if it's a resolved length.
-                let css_offset = if !style.text_underline_offset.is_auto() {
+                // Percentages resolve against 1em (the computed font size).
+                let css_offset = if style.text_underline_offset.is_percent() {
+                    style.text_underline_offset.value() / 100.0 * style.font_size
+                } else if style.text_underline_offset.is_fixed() {
                     style.text_underline_offset.value()
                 } else {
                     0.0
@@ -426,32 +429,73 @@ mod tests {
 
     // ── SP11 Round 14 Issue 4: text-underline-offset applied ─────────
 
+    /// Resolve text-underline-offset the same way the painter does.
+    fn resolve_underline_offset(offset: &openui_geometry::Length, font_size: f32) -> f32 {
+        if offset.is_percent() {
+            offset.value() / 100.0 * font_size
+        } else if offset.is_fixed() {
+            offset.value()
+        } else {
+            0.0
+        }
+    }
+
     #[test]
     fn text_underline_offset_shifts_underline_position() {
         // When text_underline_offset is a fixed length, the underline Y position
         // should be shifted by that amount relative to the baseline + metrics offset.
         let baseline_y = 20.0_f32;
+        let font_size = 16.0_f32;
         let metrics = FontMetrics {
             underline_offset: 2.0,
             ..FontMetrics::zero()
         };
         // auto → css_offset = 0.0
         let offset_auto = openui_geometry::Length::auto();
-        let css_offset_auto = if !offset_auto.is_auto() { offset_auto.value() } else { 0.0 };
+        let css_offset_auto = resolve_underline_offset(&offset_auto, font_size);
         let y_auto = baseline_y + metrics.underline_offset + css_offset_auto;
         assert_eq!(y_auto, 22.0, "Auto offset should not shift underline");
 
         // 3px offset → css_offset = 3.0
         let offset_px = openui_geometry::Length::px(3.0);
-        let css_offset_px = if !offset_px.is_auto() { offset_px.value() } else { 0.0 };
+        let css_offset_px = resolve_underline_offset(&offset_px, font_size);
         let y_px = baseline_y + metrics.underline_offset + css_offset_px;
         assert_eq!(y_px, 25.0, "3px offset should shift underline down by 3");
 
         // Negative offset → shifts underline up
         let offset_neg = openui_geometry::Length::px(-2.0);
-        let css_offset_neg = if !offset_neg.is_auto() { offset_neg.value() } else { 0.0 };
+        let css_offset_neg = resolve_underline_offset(&offset_neg, font_size);
         let y_neg = baseline_y + metrics.underline_offset + css_offset_neg;
         assert_eq!(y_neg, 20.0, "Negative offset should shift underline up");
+    }
+
+    // ── SP11 Round 17 Issue 1: percentage offset resolved against 1em ──
+
+    #[test]
+    fn text_underline_offset_percent_resolves_against_font_size() {
+        let baseline_y = 20.0_f32;
+        let font_size = 16.0_f32;
+        let metrics = FontMetrics {
+            underline_offset: 2.0,
+            ..FontMetrics::zero()
+        };
+
+        // 50% of 16px font_size = 8px offset
+        let offset_pct = openui_geometry::Length::percent(50.0);
+        let css_offset = resolve_underline_offset(&offset_pct, font_size);
+        assert_eq!(css_offset, 8.0, "50% of 16px font-size should be 8px");
+        let y = baseline_y + metrics.underline_offset + css_offset;
+        assert_eq!(y, 30.0, "Underline should be at baseline + metrics + 8px");
+
+        // 100% = full em
+        let offset_full = openui_geometry::Length::percent(100.0);
+        let css_full = resolve_underline_offset(&offset_full, font_size);
+        assert_eq!(css_full, 16.0, "100% should equal font-size");
+
+        // 0% = no shift
+        let offset_zero = openui_geometry::Length::percent(0.0);
+        let css_zero = resolve_underline_offset(&offset_zero, font_size);
+        assert_eq!(css_zero, 0.0, "0% should be zero offset");
     }
 
     // ── SP11 Round 15 Issue 3: decoration metrics use styled font ────
