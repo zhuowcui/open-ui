@@ -454,6 +454,9 @@ fn create_line_box(
                         });
                     }
                     VerticalAlign::Middle => {
+                        // TODO: CSS defines "middle" relative to the parent inline's
+                        // x-height, not the block's. We use block_metrics here because
+                        // parent inline metrics are not yet threaded through to items.
                         let x_height = block_metrics.x_height;
                         let above_baseline = item_height / 2.0 + x_height / 2.0;
                         let below_baseline = (item_height / 2.0 - x_height / 2.0).max(0.0);
@@ -462,7 +465,7 @@ fn create_line_box(
                     }
                     VerticalAlign::Length(px) => {
                         // Shift from baseline by px (negative = down).
-                        let shifted_ascent = item_height + px.max(0.0);
+                        let shifted_ascent = (item_height + px).max(0.0);
                         let shifted_descent = (-px).max(0.0);
                         line_ascent = line_ascent.max(shifted_ascent);
                         line_descent = line_descent.max(shifted_descent);
@@ -481,10 +484,36 @@ fn create_line_box(
                             LineHeight::Percentage(p) => style.font_size * p / 100.0,
                         };
                         let shift = element_line_height * pct / 100.0;
-                        let shifted_ascent = item_height + shift.max(0.0);
+                        let shifted_ascent = (item_height + shift).max(0.0);
                         let shifted_descent = (-shift).max(0.0);
                         line_ascent = line_ascent.max(shifted_ascent);
                         line_descent = line_descent.max(shifted_descent);
+                    }
+                    VerticalAlign::TextTop => {
+                        // Item top aligns with font ascent line.
+                        let font_ascent = block_metrics.ascent;
+                        line_ascent = line_ascent.max(font_ascent);
+                        line_descent =
+                            line_descent.max((item_height - font_ascent).max(0.0));
+                    }
+                    VerticalAlign::TextBottom => {
+                        // Item bottom aligns with font descent line.
+                        let font_descent = block_metrics.descent;
+                        line_ascent =
+                            line_ascent.max((item_height - font_descent).max(0.0));
+                        line_descent = line_descent.max(font_descent);
+                    }
+                    VerticalAlign::Sub => {
+                        // Lowered by sub_offset below the baseline.
+                        let sub_offset = style.font_size / 5.0 + 1.0;
+                        line_ascent =
+                            line_ascent.max((item_height - sub_offset).max(0.0));
+                        line_descent = line_descent.max(sub_offset);
+                    }
+                    VerticalAlign::Super => {
+                        // Raised by super_offset above the baseline.
+                        let super_offset = style.font_size / 3.0 + 1.0;
+                        line_ascent = line_ascent.max(item_height + super_offset);
                     }
                     _ => {
                         // Baseline-aligned: bottom sits on baseline, full height above.
@@ -711,6 +740,7 @@ fn create_line_box(
                     }
                     VerticalAlign::Middle => {
                         // Centered: baseline - x_height/2 - item_height/2
+                        // TODO: Should use parent inline's x_height, not block's.
                         let x_height = LayoutUnit::from_f32(block_metrics.x_height);
                         baseline - x_height / LayoutUnit::from_f32(2.0)
                             - item_height / LayoutUnit::from_f32(2.0)
