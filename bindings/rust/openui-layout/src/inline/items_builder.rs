@@ -494,7 +494,16 @@ impl<'a> InlineItemsBuilder<'a> {
             }
             ElementTag::Div => {
                 let display = node.style.display;
-                if display.is_inline_level() {
+                if display == Display::Inline {
+                    // display:inline on a div creates a normal inline box, not atomic.
+                    let style = node.style.clone();
+                    self.enter_inline(child_id, &style);
+                    self.collect_children(child_id);
+                    self.exit_inline(child_id, &style);
+                } else if display == Display::InlineBlock
+                    || display == Display::InlineFlex
+                    || display == Display::InlineGrid
+                {
                     let style = node.style.clone();
                     self.append_atomic_inline(child_id, &style);
                 }

@@ -141,6 +141,38 @@ impl FontCache {
     pub fn is_empty(&self) -> bool {
         self.cache.is_empty()
     }
+
+    /// Find a platform font covering a specific Unicode code point.
+    ///
+    /// Delegates to Skia's `FontMgr::match_family_style_character()` which
+    /// queries the OS font registry. This is the last-resort fallback after
+    /// the CSS font-family list is exhausted.
+    ///
+    /// Blink: `FontCache::PlatformFallbackFontForCharacter`.
+    pub fn platform_fallback_for_character(
+        &mut self,
+        codepoint: char,
+        description: &FontDescription,
+    ) -> Option<Arc<FontPlatformData>> {
+        let sk_style = FontPlatformData::to_sk_font_style(
+            description.weight.0,
+            description.stretch.0,
+            &description.style,
+        );
+        let bcp47: &[&str] = if description.locale.as_ref().map_or(true, |l| l.is_empty()) {
+            &["en"]
+        } else {
+            &["en"]
+        };
+        let typeface = self.font_mgr.0.match_family_style_character(
+            "",
+            sk_style,
+            bcp47,
+            codepoint as i32,
+        )?;
+        let data = Arc::new(FontPlatformData::new(typeface, description.size));
+        Some(data)
+    }
 }
 
 impl Default for FontCache {

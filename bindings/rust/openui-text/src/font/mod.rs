@@ -7,7 +7,7 @@
 //! - `FontFallbackList` — ordered chain of resolved fonts for a description
 //! - `Font` — main entry point combining description + fallback
 
-mod cache;
+pub mod cache;
 mod description;
 mod fallback;
 mod font;

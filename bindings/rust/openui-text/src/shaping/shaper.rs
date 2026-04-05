@@ -573,6 +573,8 @@ impl TextShaper {
                     .sum::<usize>();
             let segment_text = &text[byte_start..byte_end];
 
+            let mut segment_handled = false;
+
             for fb_idx in 1..fallback_list.len() {
                 let fb_data = match fallback_list.get(fb_idx) {
                     Some(fd) => fd,
@@ -638,7 +640,53 @@ impl TextShaper {
                     fb_result,
                     Arc::clone(fb_data),
                 );
+                segment_handled = true;
                 break; // This segment is handled.
+            }
+
+            // Platform fallback: ask the OS for a font covering the first
+            // missing character. Blink: FontCache::PlatformFallbackFontForCharacter.
+            if !segment_handled {
+                let first_missing = chars[*seg_char_start];
+                let desc = font.description();
+                let platform_data = {
+                    let mut cache = crate::font::cache::GLOBAL_FONT_CACHE
+                        .lock()
+                        .unwrap_or_else(|p| p.into_inner());
+                    cache.platform_fallback_for_character(first_missing, desc)
+                };
+                if let Some(fb_data) = platform_data {
+                    let fb_sk_font = fb_data.sk_font();
+                    let fb_data_clone = Arc::clone(&fb_data);
+                    let segment_text_owned = segment_text.to_string();
+                    let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                        let mut fb_collector =
+                            ShapeCollector::new(fb_data_clone, direction);
+                        self.shaper.shape(
+                            &segment_text_owned,
+                            fb_sk_font,
+                            left_to_right,
+                            f32::INFINITY,
+                            &mut fb_collector,
+                        );
+                        fb_collector.into_shape_result(&segment_text_owned)
+                    }));
+                    if let Ok(fb_result) = fb_result {
+                        let has_real_glyphs = fb_result
+                            .runs
+                            .iter()
+                            .any(|r| r.glyphs.iter().any(|&g| g != 0));
+                        if has_real_glyphs && !fb_result.runs.is_empty() {
+                            Self::splice_fallback_runs(
+                                result,
+                                *seg_char_start,
+                                *seg_char_end,
+                                fb_result,
+                                Arc::clone(&fb_data),
+                            );
+                        }
+                    }
+                }
             }
         }
 

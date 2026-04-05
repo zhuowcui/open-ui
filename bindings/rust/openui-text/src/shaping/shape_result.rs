@@ -365,12 +365,24 @@ impl ShapeResult {
 
         let chars: Vec<char> = text.chars().collect();
 
-        // Identify indices of spaces that should be excluded (trailing).
-        let total_spaces = chars.iter().filter(|c| **c == ' ').count();
-        let expandable_spaces = total_spaces.saturating_sub(exclude_trailing);
+        // Pre-compute the set of character indices that are trailing spaces
+        // (the last N spaces in LOGICAL order). This avoids depending on
+        // glyph iteration order, which differs between LTR and RTL runs.
+        let mut trailing_space_indices: std::collections::HashSet<usize> = std::collections::HashSet::new();
+        if exclude_trailing > 0 {
+            let mut remaining = exclude_trailing;
+            for (i, &ch) in chars.iter().enumerate().rev() {
+                if remaining == 0 {
+                    break;
+                }
+                if ch == ' ' {
+                    trailing_space_indices.insert(i);
+                    remaining -= 1;
+                }
+            }
+        }
 
         let mut total_extra = 0.0f32;
-        let mut space_ordinal = 0usize;
 
         for run in &mut self.runs {
             let run_start = run.start_index;
@@ -385,11 +397,10 @@ impl ShapeResult {
                 };
 
                 if char_idx < chars.len() && chars[char_idx] == ' ' {
-                    if space_ordinal < expandable_spaces {
+                    if !trailing_space_indices.contains(&char_idx) {
                         run.advances[gi] += extra_per_space;
                         total_extra += extra_per_space;
                     }
-                    space_ordinal += 1;
                 }
             }
         }

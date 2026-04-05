@@ -11,7 +11,7 @@
 
 use openui_dom::{Document, NodeId};
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
-use openui_style::{ComputedStyle, Direction, Display, LineHeight, TextAlign, VerticalAlign};
+use openui_style::{ComputedStyle, Direction, Display, LineHeight, TextAlign, TextAlignLast, TextJustify, VerticalAlign};
 use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
 use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
@@ -63,12 +63,16 @@ fn compute_line_height_metrics(
     };
 
     let leading = computed_line_height - (font_ascent + font_descent);
-    let half_leading = leading / 2.0;
-    let half_leading_rest = leading - half_leading;
+    // Blink snaps to LayoutUnit grid (1/64 px): floor on ascent side,
+    // ceil on descent side. Computing descent as `leading - ascent_half`
+    // ensures the total exactly equals computed line-height after snapping.
+    let grid = 1.0 / 64.0; // LayoutUnit precision
+    let ascent_half = (leading / 2.0 / grid).floor() * grid;
+    let descent_half = leading - ascent_half;
 
     LineHeightMetrics {
-        ascent: font_ascent + half_leading,
-        descent: font_descent + half_leading_rest,
+        ascent: font_ascent + ascent_half,
+        descent: font_descent + descent_half,
     }
 }
 
@@ -122,16 +126,27 @@ fn compute_text_align_offset(
     line_info: &LineInfo,
     available_width: LayoutUnit,
     direction: Direction,
+    text_align_last: TextAlignLast,
 ) -> LayoutUnit {
     let remaining = available_width - line_info.used_width;
     if remaining <= LayoutUnit::zero() {
         return LayoutUnit::zero();
     }
 
-    // On the last line, justify falls back to start alignment.
+    // On the last line or forced-break line, use text-align-last for
+    // justified text. Per CSS Text §7.3, if text-align-last is `auto`,
+    // fall back to `start` (for justify) or the text-align value itself.
     let effective_align = if line_info.is_last_line || line_info.has_forced_break {
         match line_info.text_align {
-            TextAlign::Justify => TextAlign::Start,
+            TextAlign::Justify => match text_align_last {
+                TextAlignLast::Auto => TextAlign::Start,
+                TextAlignLast::Start => TextAlign::Start,
+                TextAlignLast::End => TextAlign::End,
+                TextAlignLast::Left => TextAlign::Left,
+                TextAlignLast::Right => TextAlign::Right,
+                TextAlignLast::Center => TextAlign::Center,
+                TextAlignLast::Justify => TextAlign::Justify,
+            },
             other => other,
         }
     } else {
@@ -194,6 +209,35 @@ fn count_expansion_opportunities(line_info: &LineInfo, items_data: &InlineItemsD
         }
     }
     count
+}
+
+/// Count inter-character expansion opportunities for `text-justify: inter-character`.
+///
+/// Every character boundary (excluding trailing spaces) is an expansion point.
+/// Returns the number of gaps between characters (char_count - 1 for non-empty text).
+fn count_inter_character_opportunities(line_info: &LineInfo, items_data: &InlineItemsData) -> usize {
+    let mut total_chars = 0usize;
+    for item_result in &line_info.items {
+        if item_result.item_type == InlineItemType::Text {
+            let text = &items_data.text[item_result.text_range.clone()];
+            total_chars += text.chars().count();
+        }
+    }
+    // Exclude trailing spaces from the count.
+    for item_result in line_info.items.iter().rev() {
+        if item_result.item_type == InlineItemType::Text {
+            let text = &items_data.text[item_result.text_range.clone()];
+            let trailing_spaces = text.chars().rev().take_while(|c| *c == ' ').count();
+            total_chars = total_chars.saturating_sub(trailing_spaces);
+            break;
+        }
+        if item_result.item_type != InlineItemType::CloseTag
+            && item_result.item_type != InlineItemType::OpenTag
+        {
+            break;
+        }
+    }
+    total_chars.saturating_sub(1)
 }
 
 // ── Inline start/end resolution for open/close tag items ─────────────────
@@ -686,20 +730,42 @@ fn create_line_box(
         line_info,
         align_available,
         block_style.direction,
+        block_style.text_align_last,
     );
 
     // === STEP 3b: Justification ===
-    // Distribute extra space among word gaps if text-align: justify.
+    // Distribute extra space among word gaps (or character gaps) if justified.
     let mut justification_per_space = 0.0f32;
-    let should_justify = line_info.text_align == TextAlign::Justify
-        && !line_info.is_last_line
-        && !line_info.has_forced_break;
-    if should_justify {
+    let mut justification_per_char = 0.0f32;
+    let text_justify = block_style.text_justify;
+
+    // Determine if this line should be justified: text-align:justify on
+    // non-last, non-forced-break lines, OR text-align-last:justify on last lines.
+    let should_justify = if line_info.is_last_line || line_info.has_forced_break {
+        block_style.text_align_last == TextAlignLast::Justify
+    } else {
+        line_info.text_align == TextAlign::Justify
+    };
+
+    if should_justify && text_justify != TextJustify::None {
         let remaining = align_available - line_info.used_width;
         if remaining > LayoutUnit::zero() {
-            let space_count = count_expansion_opportunities(line_info, items_data);
-            if space_count > 0 {
-                justification_per_space = remaining.to_f32() / space_count as f32;
+            match text_justify {
+                TextJustify::InterCharacter => {
+                    let char_count = count_inter_character_opportunities(line_info, items_data);
+                    if char_count > 0 {
+                        justification_per_char = remaining.to_f32() / char_count as f32;
+                    }
+                }
+                // Auto and InterWord both use inter-word justification
+                // (for Latin scripts; CJK auto-detection is future work).
+                TextJustify::Auto | TextJustify::InterWord => {
+                    let space_count = count_expansion_opportunities(line_info, items_data);
+                    if space_count > 0 {
+                        justification_per_space = remaining.to_f32() / space_count as f32;
+                    }
+                }
+                TextJustify::None => {} // unreachable due to outer guard
             }
         }
     }
@@ -793,7 +859,7 @@ fn create_line_box(
                 // Compute item width, adding justification if applicable.
                 let mut item_width = item_result.inline_size;
                 let mut justified_shape: Option<Arc<ShapeResult>> = None;
-                if should_justify && justification_per_space > 0.0 {
+                if should_justify && (justification_per_space > 0.0 || justification_per_char > 0.0) {
                     let text = &items_data.text[item_result.text_range.clone()];
                     // In pre-wrap mode, the last text item's trailing spaces
                     // hang and must not receive justification expansion.
@@ -811,23 +877,39 @@ fn create_line_box(
                     } else {
                         0
                     };
-                    let total = text.chars().filter(|c| *c == ' ').count();
-                    let space_count = total - trailing_spaces;
-                    if space_count > 0 {
-                        let extra = justification_per_space * space_count as f32;
-                        let old_acc = justification_accumulator;
-                        justification_accumulator += extra;
-                        let extra_lu = LayoutUnit::from_f32(justification_accumulator)
-                            - LayoutUnit::from_f32(old_acc);
-                        item_width = item_width + extra_lu;
-                        // Also adjust glyph advances in the shape result so that
-                        // space glyphs are visually wider — exclude trailing spaces.
-                        if let Some(ref sr) = line_shape_result {
-                            let mut justified_sr = sr.sub_range(0, sr.num_characters);
-                            justified_sr.apply_justification(
-                                justification_per_space, text, trailing_spaces,
-                            );
-                            justified_shape = Some(Arc::new(justified_sr));
+
+                    if justification_per_char > 0.0 {
+                        // Inter-character justification: distribute extra space
+                        // between every character boundary.
+                        let char_count = text.chars().count().saturating_sub(trailing_spaces);
+                        let gaps = char_count.saturating_sub(1);
+                        if gaps > 0 {
+                            let extra = justification_per_char * gaps as f32;
+                            let old_acc = justification_accumulator;
+                            justification_accumulator += extra;
+                            let extra_lu = LayoutUnit::from_f32(justification_accumulator)
+                                - LayoutUnit::from_f32(old_acc);
+                            item_width = item_width + extra_lu;
+                        }
+                    } else {
+                        let total = text.chars().filter(|c| *c == ' ').count();
+                        let space_count = total - trailing_spaces;
+                        if space_count > 0 {
+                            let extra = justification_per_space * space_count as f32;
+                            let old_acc = justification_accumulator;
+                            justification_accumulator += extra;
+                            let extra_lu = LayoutUnit::from_f32(justification_accumulator)
+                                - LayoutUnit::from_f32(old_acc);
+                            item_width = item_width + extra_lu;
+                            // Also adjust glyph advances in the shape result so that
+                            // space glyphs are visually wider — exclude trailing spaces.
+                            if let Some(ref sr) = line_shape_result {
+                                let mut justified_sr = sr.sub_range(0, sr.num_characters);
+                                justified_sr.apply_justification(
+                                    justification_per_space, text, trailing_spaces,
+                                );
+                                justified_shape = Some(Arc::new(justified_sr));
+                            }
                         }
                     }
                 }
@@ -1447,49 +1529,49 @@ mod tests {
     #[test]
     fn text_align_left() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Left, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::zero());
     }
 
     #[test]
     fn text_align_right() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Right, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::from_i32(40));
     }
 
     #[test]
     fn text_align_center() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Center, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset.to_i32(), 20);
     }
 
     #[test]
     fn text_align_start_ltr() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Start, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::zero());
     }
 
     #[test]
     fn text_align_start_rtl() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Start, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Rtl);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Rtl, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::from_i32(40));
     }
 
     #[test]
     fn text_align_end_ltr() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::End, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::from_i32(40));
     }
 
     #[test]
     fn text_align_end_rtl() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::End, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Rtl);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Rtl, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::zero());
     }
 
@@ -1498,7 +1580,7 @@ mod tests {
         // Justify on the last line falls back to start alignment.
         let mut line = make_test_line_info(100.0, 60.0, TextAlign::Justify, false);
         line.is_last_line = true;
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::zero());
     }
 
@@ -1506,7 +1588,7 @@ mod tests {
     fn text_align_overflow_no_offset() {
         // When content overflows, offset should be 0.
         let line = make_test_line_info(100.0, 150.0, TextAlign::Right, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr);
+        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
         assert_eq!(offset, LayoutUnit::zero());
     }
 

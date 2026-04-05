@@ -11,7 +11,7 @@
 //! - Forced breaks (`<br>`, newlines in pre/pre-line)
 //! - Trailing space stripping per CSS Text §4.1.3
 
-use openui_geometry::{LayoutUnit, Length, LengthType};
+use openui_geometry::{LayoutUnit, LengthType};
 use openui_style::{ComputedStyle, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -735,7 +735,7 @@ impl<'a> LineBreaker<'a> {
         // For `auto` or percentage widths without a definite containing block,
         // fall back to zero (full box layout integration is required for
         // intrinsic sizing of inline-block content).
-        let width = resolve_atomic_inline_width(&style.width);
+        let width = resolve_atomic_inline_width(style, self.containing_block_width);
         let remaining = line.remaining_width();
 
         if width <= remaining || !line.has_content() {
@@ -1060,14 +1060,59 @@ fn allows_line_wrap(white_space: WhiteSpace) -> bool {
 
 /// Resolve the width of an atomic inline element from its CSS `width` property.
 ///
-/// Returns the fixed pixel width if explicitly specified, otherwise zero
-/// (full box layout of inline-block content is needed for intrinsic sizing).
-fn resolve_atomic_inline_width(width: &Length) -> LayoutUnit {
-    match width.length_type() {
-        LengthType::Fixed => LayoutUnit::from_f32(width.value()),
-        // Percentages, auto, intrinsic sizes require containing-block context
-        // or full box layout, which is handled by the block/flex algorithms.
-        _ => LayoutUnit::zero(),
+/// For `Fixed`: use the specified pixel value.
+/// For `Percent`: resolve against the containing block width.
+/// For `Auto`: use the element's min-width if specified (fixed), otherwise zero.
+/// Full intrinsic sizing of auto-width atomic inlines requires block layout
+/// integration which is handled by the block/flex algorithms.
+fn resolve_atomic_inline_width(
+    style: &ComputedStyle,
+    containing_block_width: LayoutUnit,
+) -> LayoutUnit {
+    let base = match style.width.length_type() {
+        LengthType::Fixed => LayoutUnit::from_f32(style.width.value()),
+        LengthType::Percent => {
+            if containing_block_width > LayoutUnit::zero() {
+                LayoutUnit::from_f32(style.width.value() / 100.0 * containing_block_width.to_f32())
+            } else {
+                LayoutUnit::zero()
+            }
+        }
+        // Auto: try min-width as a floor, or zero.
+        _ => {
+            match style.min_width.length_type() {
+                LengthType::Fixed => LayoutUnit::from_f32(style.min_width.value()),
+                LengthType::Percent => {
+                    if containing_block_width > LayoutUnit::zero() {
+                        LayoutUnit::from_f32(
+                            style.min_width.value() / 100.0 * containing_block_width.to_f32(),
+                        )
+                    } else {
+                        LayoutUnit::zero()
+                    }
+                }
+                _ => LayoutUnit::zero(),
+            }
+        }
+    };
+
+    // Clamp to max-width if specified.
+    match style.max_width.length_type() {
+        LengthType::Fixed => {
+            let max = LayoutUnit::from_f32(style.max_width.value());
+            if base > max { max } else { base }
+        }
+        LengthType::Percent => {
+            if containing_block_width > LayoutUnit::zero() {
+                let max = LayoutUnit::from_f32(
+                    style.max_width.value() / 100.0 * containing_block_width.to_f32(),
+                );
+                if base > max { max } else { base }
+            } else {
+                base
+            }
+        }
+        _ => base,
     }
 }
 

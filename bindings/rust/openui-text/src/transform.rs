@@ -81,6 +81,17 @@ fn to_titlecase(ch: char) -> Vec<char> {
         '\u{00DF}' => vec!['S', 's'],   // ß → Ss
         // Armenian ligature ech-yiwn
         '\u{0587}' => vec!['\u{0535}', '\u{0582}'], // և → Եւ
+        // Unicode Latin ligatures — titlecase differs from uppercase
+        '\u{FB00}' => vec!['F', 'f'],       // ﬀ → Ff
+        '\u{FB01}' => vec!['F', 'i'],       // ﬁ → Fi
+        '\u{FB02}' => vec!['F', 'l'],       // ﬂ → Fl
+        '\u{FB03}' => vec!['F', 'f', 'i'],  // ﬃ → Ffi
+        '\u{FB04}' => vec!['F', 'f', 'l'],  // ﬄ → Ffl
+        '\u{FB05}' => vec!['S', 't'],       // ﬅ → St
+        '\u{FB06}' => vec!['S', 't'],       // ﬆ → St
+        // Dutch IJ digraph
+        '\u{0133}' => vec!['\u{0132}'],     // ĳ → Ĳ
+        '\u{0132}' => vec!['\u{0132}'],     // Ĳ → Ĳ (already uppercase)
         _ => ch.to_uppercase().collect(),
     }
 }
