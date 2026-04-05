@@ -1003,6 +1003,10 @@ impl TextShaper {
     }
 
     /// Compute the advance width for a specific character from the glyph runs.
+    ///
+    /// Uses the same dedup + advance-summing pattern as `ShapeResult::char_advance_for`:
+    /// deduplicate cluster values, sum all glyph advances sharing a cluster, then
+    /// distribute equally among covered characters.
     fn char_advance_from_runs(runs: &[ShapeResultRun], char_idx: usize) -> f32 {
         for run in runs {
             let run_start = run.start_index;
@@ -1012,42 +1016,47 @@ impl TextShaper {
                 if run.num_glyphs == run.num_characters {
                     return run.advances[local_idx];
                 } else {
-                    // Non-1:1 mapping: use cluster data to determine per-character advances.
-                // For ligature glyphs covering N characters, assign the full advance
-                // to the first character and 0 to the rest (matching Blink's caret
-                // positioning behavior). Issue 6 fix.
-                if !run.clusters.is_empty() {
-                    // Sort glyphs by cluster to find coverage.
-                    let mut glyph_by_cluster: Vec<(usize, usize)> = run
-                        .clusters
-                        .iter()
-                        .enumerate()
-                        .map(|(gi, &c)| (c, gi))
-                        .collect();
-                    glyph_by_cluster.sort_by_key(|(c, _)| *c);
+                    // Non-1:1 mapping: use cluster data for precise advance.
+                    // Deduplicate clusters and sum advances of all glyphs sharing
+                    // the same cluster value (matches char_advance_for in shape_result.rs).
+                    if !run.clusters.is_empty() {
+                        let mut glyph_by_cluster: Vec<(usize, usize)> = run
+                            .clusters
+                            .iter()
+                            .enumerate()
+                            .map(|(gi, &c)| (c, gi))
+                            .collect();
+                        glyph_by_cluster.sort_by_key(|(c, _)| *c);
 
-                    for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
-                        let next_cluster = if idx + 1 < glyph_by_cluster.len() {
-                            glyph_by_cluster[idx + 1].0
-                        } else {
-                            run.num_characters
-                        };
-                        // This glyph covers characters [cluster, next_cluster).
-                        if local_idx >= cluster && local_idx < next_cluster {
-                            let chars_in_cluster = next_cluster - cluster;
-                            if local_idx == cluster {
-                                // First char of cluster gets full advance / chars.
-                                return run.advances[gi] / chars_in_cluster as f32;
+                        let mut unique_clusters: Vec<usize> = glyph_by_cluster
+                            .iter()
+                            .map(|(c, _)| *c)
+                            .collect();
+                        unique_clusters.dedup();
+
+                        for (uc_idx, &uc) in unique_clusters.iter().enumerate() {
+                            let next_cluster = if uc_idx + 1 < unique_clusters.len() {
+                                unique_clusters[uc_idx + 1]
                             } else {
-                                // Non-first chars get their share.
-                                return run.advances[gi] / chars_in_cluster as f32;
+                                run.num_characters
+                            };
+                            if local_idx >= uc && local_idx < next_cluster {
+                                // Sum advances of all glyphs in this cluster group.
+                                let cluster_advance: f32 = run
+                                    .clusters
+                                    .iter()
+                                    .enumerate()
+                                    .filter(|(_, &c)| c == uc)
+                                    .map(|(gi, _)| run.advances[gi])
+                                    .sum();
+                                let chars_in_cluster = next_cluster - uc;
+                                return cluster_advance / chars_in_cluster as f32;
                             }
                         }
                     }
-                }
-                // Fallback: distribute run width proportionally.
-                let total: f32 = run.advances.iter().sum();
-                return total / run.num_characters as f32;
+                    // Fallback: distribute run width proportionally.
+                    let total: f32 = run.advances.iter().sum();
+                    return total / run.num_characters.max(1) as f32;
                 }
             }
         }
@@ -1358,5 +1367,108 @@ mod tests {
             space_width,
             a_width
         );
+    }
+
+    // ── Issue 1 (R24): char_advance_from_runs dedup + sum ────────────────
+
+    #[test]
+    fn char_advance_from_runs_sums_duplicate_cluster_glyphs() {
+        // 2 glyphs with cluster=0 (advances 8.0 and 4.0), 1 glyph with cluster=1 (advance 10.0).
+        // char_advance_from_runs(_, 0) should be (8+4)/1 = 12.0
+        // char_advance_from_runs(_, 1) should be 10.0
+        let font_data = {
+            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let desc = FontDescription::default();
+            cache.get_font_platform_data("sans-serif", &desc)
+                .unwrap_or_else(|| cache.get_font_platform_data("serif", &desc).unwrap())
+        };
+        let runs = vec![ShapeResultRun {
+            font_data,
+            glyphs: vec![1, 2, 3],
+            advances: vec![8.0, 4.0, 10.0],
+            offsets: vec![(0.0, 0.0); 3],
+            clusters: vec![0, 0, 1],
+            start_index: 0,
+            num_characters: 2,
+            num_glyphs: 3,
+            direction: crate::shaping::shape_result::TextDirection::Ltr,
+        }];
+
+        let adv0 = TextShaper::char_advance_from_runs(&runs, 0);
+        assert!(
+            (adv0 - 12.0).abs() < 0.01,
+            "char 0 advance should be 12.0 (8+4), got {adv0}"
+        );
+        let adv1 = TextShaper::char_advance_from_runs(&runs, 1);
+        assert!(
+            (adv1 - 10.0).abs() < 0.01,
+            "char 1 advance should be 10.0, got {adv1}"
+        );
+    }
+
+    #[test]
+    fn char_advance_from_runs_three_glyphs_same_cluster() {
+        // 3 glyphs all with cluster=0 covering 2 chars, 1 glyph with cluster=2.
+        // cluster 0 covers chars [0,2), advance sum = 5+3+2 = 10, per-char = 5.0
+        let font_data = {
+            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let desc = FontDescription::default();
+            cache.get_font_platform_data("sans-serif", &desc)
+                .unwrap_or_else(|| cache.get_font_platform_data("serif", &desc).unwrap())
+        };
+        let runs = vec![ShapeResultRun {
+            font_data,
+            glyphs: vec![1, 2, 3, 4],
+            advances: vec![5.0, 3.0, 2.0, 8.0],
+            offsets: vec![(0.0, 0.0); 4],
+            clusters: vec![0, 0, 0, 2],
+            start_index: 0,
+            num_characters: 3,
+            num_glyphs: 4,
+            direction: crate::shaping::shape_result::TextDirection::Ltr,
+        }];
+
+        let adv0 = TextShaper::char_advance_from_runs(&runs, 0);
+        let adv1 = TextShaper::char_advance_from_runs(&runs, 1);
+        // Cluster 0 covers chars [0, 2), sum = 10, per-char = 5.0
+        assert!(
+            (adv0 - 5.0).abs() < 0.01,
+            "char 0 advance should be 5.0 (10/2), got {adv0}"
+        );
+        assert!(
+            (adv1 - 5.0).abs() < 0.01,
+            "char 1 advance should be 5.0 (10/2), got {adv1}"
+        );
+        let adv2 = TextShaper::char_advance_from_runs(&runs, 2);
+        assert!(
+            (adv2 - 8.0).abs() < 0.01,
+            "char 2 advance should be 8.0, got {adv2}"
+        );
+    }
+
+    #[test]
+    fn char_advance_from_runs_1to1_mapping_unchanged() {
+        // 1:1 mapping should still work correctly.
+        let font_data = {
+            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let desc = FontDescription::default();
+            cache.get_font_platform_data("sans-serif", &desc)
+                .unwrap_or_else(|| cache.get_font_platform_data("serif", &desc).unwrap())
+        };
+        let runs = vec![ShapeResultRun {
+            font_data,
+            glyphs: vec![1, 2, 3],
+            advances: vec![10.0, 20.0, 30.0],
+            offsets: vec![(0.0, 0.0); 3],
+            clusters: vec![0, 1, 2],
+            start_index: 0,
+            num_characters: 3,
+            num_glyphs: 3,
+            direction: crate::shaping::shape_result::TextDirection::Ltr,
+        }];
+
+        assert!((TextShaper::char_advance_from_runs(&runs, 0) - 10.0).abs() < 0.01);
+        assert!((TextShaper::char_advance_from_runs(&runs, 1) - 20.0).abs() < 0.01);
+        assert!((TextShaper::char_advance_from_runs(&runs, 2) - 30.0).abs() < 0.01);
     }
 }

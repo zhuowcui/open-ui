@@ -735,7 +735,7 @@ impl<'a> LineBreaker<'a> {
         // For `auto` or percentage widths without a definite containing block,
         // fall back to zero (full box layout integration is required for
         // intrinsic sizing of inline-block content).
-        let width = resolve_atomic_inline_width(style, self.containing_block_width);
+        let width = resolve_atomic_inline_width(style, self.containing_block_width, item.intrinsic_inline_size);
         let remaining = line.remaining_width();
 
         if width <= remaining || !line.has_content() {
@@ -1062,12 +1062,11 @@ fn allows_line_wrap(white_space: WhiteSpace) -> bool {
 ///
 /// For `Fixed`: use the specified pixel value.
 /// For `Percent`: resolve against the containing block width.
-/// For `Auto`: use the element's min-width if specified (fixed), otherwise zero.
-/// Full intrinsic sizing of auto-width atomic inlines requires block layout
-/// integration which is handled by the block/flex algorithms.
+/// For `Auto`: use intrinsic size if available, else min-width if specified, otherwise zero.
 fn resolve_atomic_inline_width(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
+    intrinsic_inline_size: Option<f32>,
 ) -> LayoutUnit {
     let base = match style.width.length_type() {
         LengthType::Fixed => LayoutUnit::from_f32(style.width.value()),
@@ -1078,9 +1077,14 @@ fn resolve_atomic_inline_width(
                 LayoutUnit::zero()
             }
         }
-        // Auto: try min-width as a floor, or zero.
+        // Auto: use intrinsic size (shrink-to-fit), then min-width as floor, then zero.
         _ => {
-            match style.min_width.length_type() {
+            let intrinsic = intrinsic_inline_size
+                .map(LayoutUnit::from_f32)
+                .unwrap_or(LayoutUnit::zero());
+
+            // Apply min-width as a floor.
+            let min_w = match style.min_width.length_type() {
                 LengthType::Fixed => LayoutUnit::from_f32(style.min_width.value()),
                 LengthType::Percent => {
                     if containing_block_width > LayoutUnit::zero() {
@@ -1092,7 +1096,22 @@ fn resolve_atomic_inline_width(
                     }
                 }
                 _ => LayoutUnit::zero(),
-            }
+            };
+
+            // Shrink-to-fit: min(max(min_content, available), max_content).
+            // Since we only have one intrinsic measure, use it clamped to
+            // [min_width, containing_block_width].
+            let result = if intrinsic > LayoutUnit::zero() {
+                let capped = if containing_block_width > LayoutUnit::zero() {
+                    intrinsic.min_of(containing_block_width)
+                } else {
+                    intrinsic
+                };
+                capped.max_of(min_w)
+            } else {
+                min_w
+            };
+            result
         }
     };
 
@@ -1218,6 +1237,7 @@ mod tests {
             end_collapse_type: CollapseType::Collapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
 
         let item_result = InlineItemResult {
@@ -1266,6 +1286,7 @@ mod tests {
             end_collapse_type: CollapseType::Collapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
 
         // Line portion is only "hello " (0..6), a mid-item split
@@ -1319,6 +1340,7 @@ mod tests {
             end_collapse_type: CollapseType::Collapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
 
         let item_result = InlineItemResult {
@@ -1374,6 +1396,7 @@ mod tests {
             end_collapse_type: CollapseType::Collapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
 
         let item_result = InlineItemResult {
@@ -1495,6 +1518,7 @@ mod tests {
                 end_collapse_type: super::super::items::CollapseType::NotCollapsible,
                 is_end_collapsible_newline: false,
                 bidi_level: 0,
+            intrinsic_inline_size: None,
             }],
             styles: vec![style],
         };
@@ -1549,6 +1573,7 @@ mod tests {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
 
         // Mid-item split: line portion is "hello " (0..6)
@@ -1606,6 +1631,7 @@ mod tests {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
 
         // Mid-item split: line portion is "hello " (0..6)
@@ -1670,6 +1696,7 @@ mod tests {
                 end_collapse_type: super::super::items::CollapseType::NotCollapsible,
                 is_end_collapsible_newline: false,
                 bidi_level: 0,
+            intrinsic_inline_size: None,
             }],
             styles: vec![style],
         };
@@ -1757,6 +1784,7 @@ mod tests {
             end_collapse_type: CollapseType::Collapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
         let items = vec![item];
 
@@ -1816,6 +1844,7 @@ mod tests {
             end_collapse_type: CollapseType::Collapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         };
         let items = vec![item];
 
@@ -1875,6 +1904,7 @@ mod tests {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 1,
+            intrinsic_inline_size: None,
         };
 
         let mut style = ComputedStyle::default();

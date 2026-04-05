@@ -245,6 +245,7 @@ impl InlineItemsData {
                             false
                         },
                         bidi_level: level,
+                        intrinsic_inline_size: None,
                     });
                 }
             }
@@ -634,6 +635,7 @@ impl<'a> InlineItemsBuilder<'a> {
             end_collapse_type: end_collapse,
             is_end_collapsible_newline: is_newline,
             bidi_level: if style.direction == Direction::Rtl { 1 } else { 0 },
+            intrinsic_inline_size: None,
         });
     }
 
@@ -650,6 +652,7 @@ impl<'a> InlineItemsBuilder<'a> {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         });
     }
 
@@ -666,16 +669,24 @@ impl<'a> InlineItemsBuilder<'a> {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         });
     }
 
     /// Handle an atomic inline element (inline-block, etc.).
+    ///
+    /// Computes intrinsic inline size from the element's children for
+    /// use by the line breaker when CSS `width` is `auto`.
     fn append_atomic_inline(&mut self, node_id: NodeId, style: &ComputedStyle) {
         let style_index = self.intern_style(style);
         let offset = self.text.len();
         // Insert object replacement character U+FFFC as placeholder
         self.text.push('\u{FFFC}');
         let end = self.text.len();
+
+        // Compute intrinsic inline size by examining children.
+        let intrinsic = self.compute_intrinsic_inline_size(node_id);
+
         self.items.push(InlineItem {
             item_type: InlineItemType::AtomicInline,
             text_range: offset..end,
@@ -685,7 +696,46 @@ impl<'a> InlineItemsBuilder<'a> {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
+            intrinsic_inline_size: intrinsic,
         });
+    }
+
+    /// Compute the intrinsic inline size of an atomic inline's content.
+    ///
+    /// Walks children, shapes text content, and sums explicit child widths
+    /// to approximate the shrink-to-fit width for `width: auto` elements.
+    fn compute_intrinsic_inline_size(&self, node_id: NodeId) -> Option<f32> {
+        let mut total_width = 0.0f32;
+        let mut has_content = false;
+
+        let shaper = TextShaper::new();
+
+        for child_id in self.doc.children(node_id) {
+            let child = self.doc.node(child_id);
+            match child.tag {
+                ElementTag::Text => {
+                    if let Some(ref text) = child.text {
+                        if !text.is_empty() {
+                            has_content = true;
+                            let font_desc = style_to_font_description(&child.style);
+                            let font = Font::new(font_desc);
+                            let sr = shaper.shape(text, &font, TextDirection::Ltr);
+                            total_width += sr.width();
+                        }
+                    }
+                }
+                _ => {
+                    // For non-text children, use explicit width if available.
+                    let child_style = &child.style;
+                    if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
+                        has_content = true;
+                        total_width += child_style.width.value();
+                    }
+                }
+            }
+        }
+
+        if has_content { Some(total_width) } else { None }
     }
 
     /// Handle a forced line break.
@@ -703,6 +753,7 @@ impl<'a> InlineItemsBuilder<'a> {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: true,
             bidi_level: 0,
+            intrinsic_inline_size: None,
         });
     }
 }

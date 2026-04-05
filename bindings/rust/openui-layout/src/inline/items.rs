@@ -73,6 +73,10 @@ pub struct InlineItem {
 
     /// BiDi embedding level (0 = LTR default).
     pub bidi_level: u8,
+
+    /// Intrinsic inline size for AtomicInline items (computed from children).
+    /// Used when CSS `width` is `auto` to provide shrink-to-fit width.
+    pub intrinsic_inline_size: Option<f32>,
 }
 
 /// Result of measuring/breaking an InlineItem for a specific line.

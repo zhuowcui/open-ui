@@ -268,6 +268,46 @@ fn count_inter_character_opportunities(line_info: &LineInfo, items_data: &Inline
     segments.iter().map(|&c| c.saturating_sub(1)).sum()
 }
 
+/// Detect whether the current line contains CJK characters.
+///
+/// Used by `text-justify: auto` to select inter-character justification
+/// for CJK text instead of inter-word justification. Checks the actual
+/// text content of items on the current line.
+///
+/// CJK character ranges checked:
+/// - CJK Unified Ideographs: U+4E00–U+9FFF
+/// - CJK Extension A: U+3400–U+4DBF
+/// - Katakana: U+30A0–U+30FF
+/// - Hiragana: U+3040–U+309F
+/// - Hangul Syllables: U+AC00–U+D7AF
+/// - CJK Compatibility Ideographs: U+F900–U+FAFF
+fn detect_cjk_content(line_info: &LineInfo, items_data: &InlineItemsData) -> bool {
+    for item_result in &line_info.items {
+        if item_result.item_type == InlineItemType::Text {
+            let text = &items_data.text[item_result.text_range.clone()];
+            for ch in text.chars() {
+                if is_cjk_character(ch) {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
+/// Check if a character is in a CJK Unicode range.
+#[inline]
+fn is_cjk_character(ch: char) -> bool {
+    matches!(ch,
+        '\u{4E00}'..='\u{9FFF}'   // CJK Unified Ideographs
+        | '\u{3400}'..='\u{4DBF}' // CJK Extension A
+        | '\u{30A0}'..='\u{30FF}' // Katakana
+        | '\u{3040}'..='\u{309F}' // Hiragana
+        | '\u{AC00}'..='\u{D7AF}' // Hangul Syllables
+        | '\u{F900}'..='\u{FAFF}' // CJK Compatibility Ideographs
+    )
+}
+
 // ── Inline start/end resolution for open/close tag items ─────────────────
 
 /// Resolve inline-start MBP contribution of an OpenTag item.
@@ -514,7 +554,7 @@ pub fn inline_layout_for_children(
 ///
 /// Blink: `InlineLayoutAlgorithm::CreateLine()`.
 fn create_line_box(
-    _doc: &Document,
+    doc: &Document,
     items_data: &InlineItemsData,
     line_info: &LineInfo,
     available_width: LayoutUnit,
@@ -785,9 +825,21 @@ fn create_line_box(
                         justification_per_char = remaining.to_f32() / char_count as f32;
                     }
                 }
-                // Auto and InterWord both use inter-word justification
-                // (for Latin scripts; CJK auto-detection is future work).
-                TextJustify::Auto | TextJustify::InterWord => {
+                // Auto: use inter-character for CJK content, inter-word otherwise.
+                TextJustify::Auto => {
+                    if detect_cjk_content(line_info, items_data) {
+                        let char_count = count_inter_character_opportunities(line_info, items_data);
+                        if char_count > 0 {
+                            justification_per_char = remaining.to_f32() / char_count as f32;
+                        }
+                    } else {
+                        let space_count = count_expansion_opportunities(line_info, items_data);
+                        if space_count > 0 {
+                            justification_per_space = remaining.to_f32() / space_count as f32;
+                        }
+                    }
+                }
+                TextJustify::InterWord => {
                     let space_count = count_expansion_opportunities(line_info, items_data);
                     if space_count > 0 {
                         justification_per_space = remaining.to_f32() / space_count as f32;
@@ -1091,6 +1143,22 @@ fn create_line_box(
                     PhysicalSize::new(item_width, item_height),
                 );
                 atomic_fragment.offset = PhysicalOffset::new(inline_offset, atomic_top);
+
+                // Recursively lay out children of the atomic inline element.
+                // Atomic inlines (inline-block, inline-flex, inline-grid) establish
+                // a new block formatting context for their contents.
+                if !item.node_id.is_none() {
+                    let child_space = ConstraintSpace::for_block_child(
+                        item_width,
+                        item_height,
+                        item_width,
+                        item_height,
+                        false,
+                    );
+                    let child_result = crate::block::block_layout(doc, item.node_id, &child_space);
+                    atomic_fragment.children = child_result.children;
+                }
+
                 children.push(atomic_fragment);
                 inline_offset = inline_offset + item_result.inline_size;
             }
@@ -2020,5 +2088,24 @@ mod tests {
             "text-top inner text should align near outer span's text top; outer_top={}, inner_top={}, diff={}",
             outer_top, inner_top, diff,
         );
+    }
+
+    // ── Issue 4 (R24): detect_cjk_content ──────────────────────────────
+
+    #[test]
+    fn is_cjk_character_detects_han_ideographs() {
+        assert!(is_cjk_character('\u{4E00}')); // CJK Unified start
+        assert!(is_cjk_character('\u{9FFF}')); // CJK Unified end
+        assert!(is_cjk_character('\u{5927}')); // 大
+        assert!(!is_cjk_character('A'));
+        assert!(!is_cjk_character(' '));
+    }
+
+    #[test]
+    fn is_cjk_character_detects_kana_and_hangul() {
+        assert!(is_cjk_character('\u{3042}')); // Hiragana あ
+        assert!(is_cjk_character('\u{30A2}')); // Katakana ア
+        assert!(is_cjk_character('\u{AC00}')); // Hangul 가
+        assert!(!is_cjk_character('Z'));
     }
 }

@@ -15,7 +15,7 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace, ClipOp, PathEffect, Point};
+use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, ColorSpace, ClipOp, PathEffect, Point};
 use skia_safe::paint::Cap;
 use openui_geometry::PhysicalOffset;
 use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
@@ -273,23 +273,50 @@ fn paint_borders(
 
         canvas.draw_rect(stroke_rect, &paint);
     } else {
-        // Per-side border painting (filled rectangles for each side).
-        // NOTE: Corner regions overlap when sides have different colors.
-        // Blink uses trapezoid/polygon drawing for correct diagonal splits.
-        // This will be fixed in SP12 (advanced paint). For SP9, corners
-        // show the later-drawn side's color — acceptable for uniform colors.
-        paint_border_side(canvas, style.border_top_style, &style.border_top_color,
-            inherited_color, bt,
-            Rect::from_xywh(x, y, w, bt), BorderSide::Top);
-        paint_border_side(canvas, style.border_right_style, &style.border_right_color,
-            inherited_color, br,
-            Rect::from_xywh(x + w - br, y, br, h), BorderSide::Right);
-        paint_border_side(canvas, style.border_bottom_style, &style.border_bottom_color,
-            inherited_color, bb,
-            Rect::from_xywh(x, y + h - bb, w, bb), BorderSide::Bottom);
-        paint_border_side(canvas, style.border_left_style, &style.border_left_color,
-            inherited_color, bl,
-            Rect::from_xywh(x, y, bl, h), BorderSide::Left);
+        // Per-side border painting using trapezoid polygons.
+        // Each side is drawn as a 4-point polygon with diagonal corner joins
+        // from the outer corner to the inner corner (mitered join).
+        // This matches Blink's BoxBorderPainter approach.
+        //
+        // Outer rect corners:
+        let ox0 = x;
+        let oy0 = y;
+        let ox1 = x + w;
+        let oy1 = y + h;
+        // Inner rect corners:
+        let ix0 = x + bl;
+        let iy0 = y + bt;
+        let ix1 = x + w - br;
+        let iy1 = y + h - bb;
+
+        // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
+        if bt > 0.0 {
+            paint_border_side_path(canvas, style.border_top_style, &style.border_top_color,
+                inherited_color, bt,
+                &[(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)],
+                BorderSide::Top);
+        }
+        // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
+        if br > 0.0 {
+            paint_border_side_path(canvas, style.border_right_style, &style.border_right_color,
+                inherited_color, br,
+                &[(ox1, oy0), (ox1, oy1), (ix1, iy1), (ix1, iy0)],
+                BorderSide::Right);
+        }
+        // Bottom border: outer-bottom-right → outer-bottom-left → inner-bottom-left → inner-bottom-right
+        if bb > 0.0 {
+            paint_border_side_path(canvas, style.border_bottom_style, &style.border_bottom_color,
+                inherited_color, bb,
+                &[(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)],
+                BorderSide::Bottom);
+        }
+        // Left border: outer-bottom-left → outer-top-left → inner-top-left → inner-bottom-left
+        if bl > 0.0 {
+            paint_border_side_path(canvas, style.border_left_style, &style.border_left_color,
+                inherited_color, bl,
+                &[(ox0, oy1), (ox0, oy0), (ix0, iy0), (ix0, iy1)],
+                BorderSide::Left);
+        }
     }
 }
 
@@ -301,6 +328,72 @@ pub enum BorderSide {
     Right,
     Bottom,
     Left,
+}
+
+/// Paint a single border side using a trapezoid polygon path.
+///
+/// The `points` array contains 4 (x, y) pairs forming the trapezoid.
+/// For solid borders, the path is filled directly. For dashed/dotted/double
+/// and 3D styles, falls back to the rectangle-based `paint_border_side`.
+fn paint_border_side_path(
+    canvas: &Canvas,
+    border_style: BorderStyle,
+    border_color: &StyleColor,
+    inherited_color: &Color,
+    width: f32,
+    points: &[(f32, f32); 4],
+    side: BorderSide,
+) {
+    if width <= 0.0 {
+        return;
+    }
+    if matches!(border_style, BorderStyle::None | BorderStyle::Hidden) {
+        return;
+    }
+
+    let resolved = border_color.resolve(inherited_color);
+    let base_color = Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a);
+
+    match border_style {
+        BorderStyle::Solid => {
+            let mut path = Path::new();
+            path.move_to(Point::new(points[0].0, points[0].1));
+            path.line_to(Point::new(points[1].0, points[1].1));
+            path.line_to(Point::new(points[2].0, points[2].1));
+            path.line_to(Point::new(points[3].0, points[3].1));
+            path.close();
+
+            let mut paint = Paint::default();
+            paint.set_style(PaintStyle::Fill);
+            paint.set_anti_alias(true);
+            paint.set_color4f(base_color, None::<&ColorSpace>);
+            canvas.draw_path(&path, &paint);
+        }
+        _ => {
+            // For non-solid styles (dashed, dotted, double, groove, ridge,
+            // inset, outset), compute a bounding rect from the polygon
+            // and delegate to the rectangle-based painter.
+            let min_x = points.iter().map(|p| p.0).fold(f32::INFINITY, f32::min);
+            let min_y = points.iter().map(|p| p.1).fold(f32::INFINITY, f32::min);
+            let max_x = points.iter().map(|p| p.0).fold(f32::NEG_INFINITY, f32::max);
+            let max_y = points.iter().map(|p| p.1).fold(f32::NEG_INFINITY, f32::max);
+            let rect = Rect::from_ltrb(min_x, min_y, max_x, max_y);
+
+            // Clip to the trapezoid so non-solid styles don't bleed outside.
+            canvas.save();
+            let mut clip_path = Path::new();
+            clip_path.move_to(Point::new(points[0].0, points[0].1));
+            clip_path.line_to(Point::new(points[1].0, points[1].1));
+            clip_path.line_to(Point::new(points[2].0, points[2].1));
+            clip_path.line_to(Point::new(points[3].0, points[3].1));
+            clip_path.close();
+            canvas.clip_path(&clip_path, ClipOp::Intersect, true);
+
+            paint_border_side(canvas, border_style, border_color,
+                inherited_color, width, rect, side);
+            canvas.restore();
+        }
+    }
 }
 
 /// Paint a single border side.
