@@ -543,37 +543,37 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) 
         if line_text_start < line_text_end {
             let at_item_end = line_text_end == item.text_range.end;
             if at_item_end && item.end_collapse_type == CollapseType::Collapsible {
-                // Trailing space is collapsible — measure width of
-                // trailing space from the line portion's end.
+                // Trailing spaces are collapsible — measure width of
+                // ALL trailing whitespace from the line portion's end.
                 let char_count = sr.num_characters;
-                if char_count > 0 {
-                    let last_char_width = sr.width_for_range(char_count - 1, char_count);
-                    line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
+                let line_text = &text[line_text_start..line_text_end];
+                let trimmed = line_text.trim_end_matches(|c: char| c == ' ' || c == '\t');
+                let num_trimmed_chars = line_text[trimmed.len()..].chars().count();
+                if char_count > 0 && num_trimmed_chars > 0 {
+                    let space_width = sr.width_for_range(char_count - num_trimmed_chars, char_count);
+                    line.used_width = line.used_width - LayoutUnit::from_f32(space_width);
 
                     // Trim text_range so decorations don't extend into stripped space.
-                    let line_text = &text[line_text_start..line_text_end];
-                    let trimmed = line_text.trim_end_matches(|c: char| c == ' ' || c == '\t');
                     let new_end = line_text_start + trimmed.len();
                     line.items[target_idx].text_range = line_text_start..new_end;
                 }
             } else if !at_item_end {
-                // Mid-item split: check if the portion ends with a space
-                // by inspecting the actual text.
+                // Mid-item split: check if the portion ends with trailing
+                // whitespace by inspecting the actual text.
                 let line_text = &text[line_text_start..line_text_end];
-                if let Some(last_ch) = line_text.chars().next_back() {
-                    if last_ch == ' ' || last_ch == '\t' {
-                        let item_text = &text[item.text_range.clone()];
-                        let offset_in_item = line_text_end - item.text_range.start;
-                        let local_end = item_text[..offset_in_item].chars().count();
-                        if local_end > 0 && local_end <= sr.num_characters {
-                            let last_char_width = sr.width_for_range(local_end - 1, local_end);
-                            line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
+                let trimmed = line_text.trim_end_matches(|c: char| c == ' ' || c == '\t');
+                let num_trimmed_chars = line_text[trimmed.len()..].chars().count();
+                if num_trimmed_chars > 0 {
+                    let item_text = &text[item.text_range.clone()];
+                    let offset_in_item = line_text_end - item.text_range.start;
+                    let local_end = item_text[..offset_in_item].chars().count();
+                    if local_end >= num_trimmed_chars && local_end <= sr.num_characters {
+                        let space_width = sr.width_for_range(local_end - num_trimmed_chars, local_end);
+                        line.used_width = line.used_width - LayoutUnit::from_f32(space_width);
 
-                            // Trim text_range so decorations don't extend into stripped space.
-                            let trimmed = line_text.trim_end_matches(|c: char| c == ' ' || c == '\t');
-                            let new_end = line_text_start + trimmed.len();
-                            line.items[target_idx].text_range = line_text_start..new_end;
-                        }
+                        // Trim text_range so decorations don't extend into stripped space.
+                        let new_end = line_text_start + trimmed.len();
+                        line.items[target_idx].text_range = line_text_start..new_end;
                     }
                 }
             }
@@ -857,6 +857,117 @@ mod tests {
             line.items[0].text_range,
             0..5,
             "text_range should be trimmed to exclude trailing space in mid-item split"
+        );
+    }
+
+    #[test]
+    fn strip_trailing_spaces_multi_space_at_item_end() {
+        // "hello   " (3 trailing spaces) — all 3 space widths must be subtracted.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello   ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        // Measure width of all 3 trailing spaces.
+        let total_chars = sr_arc.num_characters; // 8
+        let three_space_width = sr_arc.width_for_range(total_chars - 3, total_chars);
+        let initial_width = sr_arc.width;
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..8,
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::Collapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+
+        let item_result = InlineItemResult {
+            item_index: 0,
+            text_range: 0..8,
+            inline_size: LayoutUnit::from_f32(initial_width),
+            shape_result: Some(sr_arc),
+            has_forced_break: false,
+            item_type: InlineItemType::Text,
+        };
+
+        let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
+        line.used_width = LayoutUnit::from_f32(initial_width);
+        line.items.push(item_result);
+
+        strip_trailing_spaces(&mut line, &[item], text);
+
+        assert_eq!(
+            line.items[0].text_range,
+            0..5,
+            "text_range should trim all 3 trailing spaces"
+        );
+        let expected_width = LayoutUnit::from_f32(initial_width) - LayoutUnit::from_f32(three_space_width);
+        assert_eq!(
+            line.used_width, expected_width,
+            "used_width should subtract width of all 3 trailing spaces"
+        );
+    }
+
+    #[test]
+    fn strip_trailing_spaces_single_space_at_item_end() {
+        // Regression: "hello " (1 trailing space) — exactly 1 space width subtracted.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let total_chars = sr_arc.num_characters; // 6
+        let one_space_width = sr_arc.width_for_range(total_chars - 1, total_chars);
+        let initial_width = sr_arc.width;
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..6,
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::Collapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+
+        let item_result = InlineItemResult {
+            item_index: 0,
+            text_range: 0..6,
+            inline_size: LayoutUnit::from_f32(initial_width),
+            shape_result: Some(sr_arc),
+            has_forced_break: false,
+            item_type: InlineItemType::Text,
+        };
+
+        let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
+        line.used_width = LayoutUnit::from_f32(initial_width);
+        line.items.push(item_result);
+
+        strip_trailing_spaces(&mut line, &[item], text);
+
+        assert_eq!(
+            line.items[0].text_range,
+            0..5,
+            "text_range should trim the single trailing space"
+        );
+        let expected_width = LayoutUnit::from_f32(initial_width) - LayoutUnit::from_f32(one_space_width);
+        assert_eq!(
+            line.used_width, expected_width,
+            "used_width should subtract width of 1 trailing space"
         );
     }
 }

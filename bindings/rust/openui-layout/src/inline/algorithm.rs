@@ -83,7 +83,7 @@ fn compute_baseline_shift(
     parent_x_height: f32,
     item_ascent: f32,
     item_descent: f32,
-    parent_line_spacing: f32,
+    element_line_height: f32,
 ) -> f32 {
     match vertical_align {
         VerticalAlign::Baseline => 0.0,
@@ -100,7 +100,8 @@ fn compute_baseline_shift(
         }
         VerticalAlign::Length(px) => -px,
         VerticalAlign::Percentage(pct) => {
-            -(parent_line_spacing * pct / 100.0)
+            // CSS 2.2 §10.8.1: percentage is of the element's own line-height.
+            -(element_line_height * pct / 100.0)
         }
         // Top/Bottom need deferred resolution after full line height is known.
         // Return 0.0 here; resolved in a second pass.
@@ -383,6 +384,13 @@ fn create_line_box(
                     metrics.line_spacing,
                 );
 
+                let element_line_height = match style.line_height {
+                    LineHeight::Normal => metrics.line_spacing,
+                    LineHeight::Number(n) => style.font_size * n,
+                    LineHeight::Length(px) => px,
+                    LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
+                };
+
                 let baseline_shift = compute_baseline_shift(
                     &style.vertical_align,
                     style.font_size,
@@ -391,7 +399,7 @@ fn create_line_box(
                     block_metrics.x_height,
                     metrics.ascent,
                     metrics.descent,
-                    block_metrics.line_spacing,
+                    element_line_height,
                 );
 
                 match style.vertical_align {
@@ -526,6 +534,13 @@ fn create_line_box(
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
 
+                let element_line_height = match style.line_height {
+                    LineHeight::Normal => metrics.line_spacing,
+                    LineHeight::Number(n) => style.font_size * n,
+                    LineHeight::Length(px) => px,
+                    LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
+                };
+
                 let baseline_shift = compute_baseline_shift(
                     &style.vertical_align,
                     style.font_size,
@@ -534,7 +549,7 @@ fn create_line_box(
                     block_metrics.x_height,
                     metrics.ascent,
                     metrics.descent,
-                    block_metrics.line_spacing,
+                    element_line_height,
                 );
 
                 // Compute vertical offset for top/bottom aligned items.
@@ -1040,6 +1055,28 @@ mod tests {
             16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0,
         );
         assert_eq!(shift, -(16.0 / 3.0 + 1.0));
+    }
+
+    #[test]
+    fn baseline_shift_percentage_uses_element_line_height() {
+        // CSS 2.2 §10.8.1: percentage is of the element's own line-height.
+        // element_line_height = 40px, 50% => shift = -(40 * 50 / 100) = -20
+        let shift = compute_baseline_shift(
+            &VerticalAlign::Percentage(50.0),
+            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 40.0,
+        );
+        assert_eq!(shift, -20.0);
+    }
+
+    #[test]
+    fn baseline_shift_percentage_with_normal_line_height() {
+        // When line-height is normal, element_line_height = font line_spacing.
+        // Use line_spacing = 18.0, 50% => shift = -(18 * 50 / 100) = -9
+        let shift = compute_baseline_shift(
+            &VerticalAlign::Percentage(50.0),
+            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 18.0,
+        );
+        assert_eq!(shift, -9.0);
     }
 
     #[test]
