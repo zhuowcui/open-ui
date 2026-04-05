@@ -1227,6 +1227,40 @@ fn create_line_box(
         }
     }
 
+    // === STEP 4b: Append visible hyphen if line was broken at a soft hyphen ===
+    if line_info.has_forced_hyphen {
+        let last_style = line_info.items.last()
+            .map(|r| &items_data.styles[items_data.items[r.item_index].style_index])
+            .unwrap_or(block_style);
+        let hyphen_font_desc = style_to_font_description(last_style);
+        let hyphen_font = Font::new(hyphen_font_desc);
+        let shaper = TextShaper::new();
+        let hyphen_text = "-";
+        let hyphen_sr = shaper.shape(
+            hyphen_text,
+            &hyphen_font,
+            openui_text::TextDirection::Ltr,
+        );
+        let hyphen_width = LayoutUnit::from_f32(hyphen_sr.width);
+        let hyphen_metrics = hyphen_font.font_metrics().copied().unwrap_or_default();
+        let hyphen_height = LayoutUnit::from_f32_ceil(
+            hyphen_metrics.ascent + hyphen_metrics.descent,
+        );
+        let hyphen_top = baseline - LayoutUnit::from_f32_ceil(hyphen_metrics.ascent);
+
+        let mut hyphen_fragment = Fragment::new_text(
+            NodeId::NONE,
+            PhysicalSize::new(hyphen_width, hyphen_height),
+            Arc::new(hyphen_sr),
+            hyphen_text.to_string(),
+        );
+        hyphen_fragment.offset = PhysicalOffset::new(inline_offset, hyphen_top);
+        hyphen_fragment.inherited_style = Some(last_style.clone());
+        hyphen_fragment.baseline_offset = (baseline - hyphen_top).to_f32();
+        children.push(hyphen_fragment);
+        inline_offset = inline_offset + hyphen_width;
+    }
+
     // === STEP 5: Paint ellipsis if text-overflow: ellipsis is active ===
     if line_info.has_ellipsis {
         // Shape the ellipsis character "…" (U+2026) with the block's font.

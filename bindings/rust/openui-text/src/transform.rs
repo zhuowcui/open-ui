@@ -170,12 +170,18 @@ fn greek_to_upper(text: &str) -> String {
             // Iota subscript (ypogegrammeni): drop in Greek uppercase context.
             '\u{0345}' if prev_base_greek => {}
             // Greek Extended block (U+1F00–U+1FFF): uppercase and strip
-            // combining diacritical marks to match CLDR el-Upper behavior.
+            // combining accent marks to match CLDR el-Upper behavior.
+            // Preserve diaeresis (U+0308) which indicates vowel distinction.
             ch if (0x1F00..=0x1FFF).contains(&(ch as u32)) => {
                 let upper: String = ch.to_uppercase().collect();
                 for c in upper.chars() {
-                    if (0x0300..=0x036F).contains(&(c as u32)) {
-                        continue; // strip combining diacritical marks
+                    let cp = c as u32;
+                    // Strip Greek tonos-class accents but keep diaeresis (U+0308)
+                    if matches!(cp,
+                        0x0300 | 0x0301 | 0x0303 | 0x0342 | 0x0344 | 0x0345 |
+                        0x0313 | 0x0314  // smooth/rough breathing
+                    ) {
+                        continue;
                     }
                     result.push(c);
                 }
