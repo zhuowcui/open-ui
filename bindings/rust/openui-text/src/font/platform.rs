@@ -20,6 +20,9 @@ pub struct FontPlatformData {
     sk_font: SkFont,
     size: f32,
     metrics: FontMetrics,
+    /// Oblique angle in degrees for synthetic oblique synthesis.
+    /// 0.0 for normal/italic styles. CSS default oblique is 14°.
+    synthetic_oblique_angle: f32,
 }
 
 impl FontPlatformData {
@@ -29,9 +32,22 @@ impl FontPlatformData {
     /// (matching Blink's default Linux/ChromeOS configuration), then extracts
     /// and caches all typographic metrics.
     pub fn new(typeface: Typeface, size: f32) -> Self {
+        Self::with_oblique_angle(typeface, size, 0.0)
+    }
+
+    /// Create platform data with a specific oblique angle for synthetic oblique.
+    ///
+    /// The angle is stored and can be retrieved via `synthetic_oblique_angle()`
+    /// for applying a skew transform during text painting.
+    pub fn with_oblique_angle(typeface: Typeface, size: f32, oblique_angle: f32) -> Self {
         let mut sk_font = SkFont::from_typeface(&typeface, size);
         sk_font.set_subpixel(true);
         sk_font.set_hinting(FontHinting::Slight);
+
+        // Apply synthetic oblique via skew if angle is non-zero.
+        if oblique_angle != 0.0 {
+            sk_font.set_skew_x(-oblique_angle.to_radians().tan());
+        }
 
         let (_, sk_metrics) = sk_font.metrics();
         let metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
@@ -41,6 +57,7 @@ impl FontPlatformData {
             sk_font,
             size,
             metrics,
+            synthetic_oblique_angle: oblique_angle,
         }
     }
 
@@ -66,6 +83,13 @@ impl FontPlatformData {
     #[inline]
     pub fn metrics(&self) -> &FontMetrics {
         &self.metrics
+    }
+
+    /// The oblique angle in degrees used for synthetic oblique.
+    /// Returns 0.0 for normal and italic styles.
+    #[inline]
+    pub fn synthetic_oblique_angle(&self) -> f32 {
+        self.synthetic_oblique_angle
     }
 
     /// Convert Skia's `SkFontMetrics` to our `FontMetrics`.
@@ -196,5 +220,41 @@ mod tests {
         assert_eq!(FontPlatformData::stretch_to_sk_width(87.4), 4);
         // 87.5 rounds to 88 → SemiCondensed (4)
         assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4);
+    }
+
+    // ── Issue 6 (R26): oblique angle preserved ──────────────────────────
+
+    #[test]
+    fn oblique_with_angle_stores_angle() {
+        use skia_safe::FontMgr;
+        // Create a font with an oblique angle and verify it's stored.
+        let mgr = FontMgr::default();
+        let sk_style = FontPlatformData::to_sk_font_style(
+            400.0,
+            100.0,
+            &openui_style::FontStyleEnum::Oblique(20.0),
+        );
+        if let Some(typeface) = mgr.match_family_style("sans-serif", sk_style) {
+            let data = FontPlatformData::with_oblique_angle(typeface, 16.0, 20.0);
+            assert_eq!(data.synthetic_oblique_angle(), 20.0);
+        }
+    }
+
+    #[test]
+    fn oblique_default_angle_differs_from_zero() {
+        use skia_safe::FontMgr;
+        // The CSS default oblique angle is 14°. Verify it's stored.
+        let mgr = FontMgr::default();
+        let sk_style = FontPlatformData::to_sk_font_style(
+            400.0,
+            100.0,
+            &openui_style::FontStyleEnum::Oblique(14.0),
+        );
+        if let Some(typeface) = mgr.match_family_style("sans-serif", sk_style) {
+            let data_oblique = FontPlatformData::with_oblique_angle(typeface.clone(), 16.0, 14.0);
+            let data_normal = FontPlatformData::new(typeface, 16.0);
+            assert_eq!(data_oblique.synthetic_oblique_angle(), 14.0);
+            assert_eq!(data_normal.synthetic_oblique_angle(), 0.0);
+        }
     }
 }

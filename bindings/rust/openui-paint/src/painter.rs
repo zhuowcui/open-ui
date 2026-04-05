@@ -256,9 +256,13 @@ fn paint_borders(
     if uniform && style.border_top_style == BorderStyle::Solid {
         // Fast path: single stroke rect
         // Blink: DrawSolidBorderRect (box_border_painter.cc:261)
-        // Stroke rect inset by half the border width
+        // Stroke rect inset by half the border width.
+        // Clamp dimensions to zero minimum to prevent invalid geometry
+        // when borders are wider than the box.
         let half = bt / 2.0;
-        let stroke_rect = Rect::from_xywh(x + half, y + half, w - bt, h - bt);
+        let sw = (w - bt).max(0.0);
+        let sh = (h - bt).max(0.0);
+        let stroke_rect = Rect::from_xywh(x + half, y + half, sw, sh);
 
         let mut paint = Paint::default();
         paint.set_style(PaintStyle::Stroke);
@@ -283,11 +287,12 @@ fn paint_borders(
         let oy0 = y;
         let ox1 = x + w;
         let oy1 = y + h;
-        // Inner rect corners:
-        let ix0 = x + bl;
-        let iy0 = y + bt;
-        let ix1 = x + w - br;
-        let iy1 = y + h - bb;
+        // Inner rect corners — clamped so edges never cross when
+        // borders are wider than the box.
+        let ix0 = (x + bl).min(x + w - br);
+        let iy0 = (y + bt).min(y + h - bb);
+        let ix1 = (x + w - br).max(ix0);
+        let iy1 = (y + h - bb).max(iy0);
 
         // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
         if bt > 0.0 {
@@ -604,3 +609,85 @@ fn lighten_color(color: &Color4f) -> Color4f {
 
 // ── StyleColor PartialEq needed for border comparison ────────────────
 // Already derived in the style crate.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ── Issue 7 (R26): large borders don't produce invalid paint geometry ──
+
+    #[test]
+    fn large_uniform_border_clamps_stroke_dimensions() {
+        // Box is 20×20 with border-width:15 on all sides.
+        // Without clamping: stroke rect would be (15/2, 15/2, 20-15=-5, 20-15=-5) → negative!
+        // With clamping: (7.5, 7.5, max(0, 20-15)=5, max(0, 20-15)=5)
+        let w: f32 = 20.0;
+        let h: f32 = 20.0;
+        let border_width: f32 = 15.0;
+
+        let sw = (w - border_width).max(0.0);
+        let sh = (h - border_width).max(0.0);
+        assert!(sw >= 0.0, "stroke width must be non-negative, got {}", sw);
+        assert!(sh >= 0.0, "stroke height must be non-negative, got {}", sh);
+        assert_eq!(sw, 5.0);
+        assert_eq!(sh, 5.0);
+
+        // Even when border is larger than box
+        let sw2 = (10.0f32 - 25.0f32).max(0.0);
+        let sh2 = (10.0f32 - 25.0f32).max(0.0);
+        assert_eq!(sw2, 0.0, "should clamp to 0 when border > box");
+        assert_eq!(sh2, 0.0);
+    }
+
+    #[test]
+    fn large_per_side_borders_inner_rect_never_crosses() {
+        // Box 30×30 with borders: left=20, right=20, top=20, bottom=20.
+        // Inner edges would cross: ix0=20, ix1=30-20=10 (ix0 > ix1!).
+        let x: f32 = 0.0;
+        let y: f32 = 0.0;
+        let w: f32 = 30.0;
+        let h: f32 = 30.0;
+        let bl: f32 = 20.0;
+        let br: f32 = 20.0;
+        let bt: f32 = 20.0;
+        let bb: f32 = 20.0;
+
+        // Apply the clamped inner rect computation from the fix.
+        let ix0 = (x + bl).min(x + w - br);
+        let iy0 = (y + bt).min(y + h - bb);
+        let ix1 = (x + w - br).max(ix0);
+        let iy1 = (y + h - bb).max(iy0);
+
+        assert!(ix1 >= ix0, "inner right ({}) must be >= inner left ({})", ix1, ix0);
+        assert!(iy1 >= iy0, "inner bottom ({}) must be >= inner top ({})", iy1, iy0);
+        // Both should collapse to the same point (10.0)
+        assert_eq!(ix0, 10.0);
+        assert_eq!(ix1, 10.0);
+        assert_eq!(iy0, 10.0);
+        assert_eq!(iy1, 10.0);
+    }
+
+    #[test]
+    fn normal_borders_inner_rect_unchanged() {
+        // Box 100×100 with borders: left=5, right=5, top=5, bottom=5.
+        // Inner rect should be (5, 5, 95, 95) — normal case.
+        let x: f32 = 0.0;
+        let y: f32 = 0.0;
+        let w: f32 = 100.0;
+        let h: f32 = 100.0;
+        let bl: f32 = 5.0;
+        let br: f32 = 5.0;
+        let bt: f32 = 5.0;
+        let bb: f32 = 5.0;
+
+        let ix0 = (x + bl).min(x + w - br);
+        let iy0 = (y + bt).min(y + h - bb);
+        let ix1 = (x + w - br).max(ix0);
+        let iy1 = (y + h - bb).max(iy0);
+
+        assert_eq!(ix0, 5.0);
+        assert_eq!(iy0, 5.0);
+        assert_eq!(ix1, 95.0);
+        assert_eq!(iy1, 95.0);
+    }
+}

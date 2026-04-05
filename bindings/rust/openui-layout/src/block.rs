@@ -119,7 +119,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             child_available_inline,
             space.available_block_size,
             child_available_inline,
-            space.percentage_resolution_block_size,
+            child_percentage_block_size,
             false,
         );
         let inline_fragment = crate::inline::algorithm::inline_layout(
@@ -177,7 +177,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     child_available_inline,
                     space.available_block_size,
                     child_available_inline,
-                    space.percentage_resolution_block_size,
+                    child_percentage_block_size,
                     false,
                 );
                 let anon_fragment = crate::inline::algorithm::inline_layout_for_children(

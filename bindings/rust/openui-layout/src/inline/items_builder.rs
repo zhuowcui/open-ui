@@ -11,13 +11,14 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, Display, TabSize, TextTransform, UnicodeBidi, WhiteSpace};
+use openui_style::{ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace};
 use openui_text::{
     apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
 };
 use std::sync::Arc;
 
 use super::items::{CollapseType, InlineItem, InlineItemType};
+use crate::length_resolver::resolve_margin_or_padding;
 
 /// The collected inline items data — output of the builder.
 #[derive(Clone, Debug)]
@@ -719,24 +720,58 @@ impl<'a> InlineItemsBuilder<'a> {
 
         for child_id in self.doc.children(node_id) {
             let child = self.doc.node(child_id);
+
+            // Issue 4: Skip display:none — generates no boxes.
+            if child.style.display == Display::None {
+                continue;
+            }
+            // Issue 4: Skip absolutely positioned elements — out of flow.
+            if child.style.position.is_absolutely_positioned() {
+                continue;
+            }
+            // Issue 4: Skip floated elements — out of flow.
+            if child.style.float != Float::None {
+                continue;
+            }
+
             match child.tag {
                 ElementTag::Text => {
                     if let Some(ref text) = child.text {
                         if !text.is_empty() {
-                            has_content = true;
-                            let font_desc = style_to_font_description(&child.style);
-                            let font = Font::new(font_desc);
-                            let sr = shaper.shape(text, &font, TextDirection::Ltr);
-                            total_width += sr.width();
+                            // Issue 5: Apply the same text preprocessing as real layout.
+                            let processed = preprocess_text_for_shaping(text, &child.style);
+                            if !processed.is_empty() {
+                                has_content = true;
+                                let font_desc = style_to_font_description(&child.style);
+                                let font = Font::new(font_desc);
+                                let sr = shaper.shape(&processed, &font, TextDirection::Ltr);
+                                total_width += sr.width();
+                            }
                         }
                     }
                 }
                 _ => {
                     let child_style = &child.style;
+
+                    // Compute the child's own border+padding contribution.
+                    let bp_left = child_style.effective_border_left() as f32
+                        + resolve_margin_or_padding(
+                            &child_style.padding_left,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32();
+                    let bp_right = child_style.effective_border_right() as f32
+                        + resolve_margin_or_padding(
+                            &child_style.padding_right,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32();
+                    let child_bp = bp_left + bp_right;
+
                     // Use explicit width if available.
                     if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
                         has_content = true;
-                        total_width += child_style.width.value();
+                        total_width += child_style.width.value() + child_bp;
                     } else {
                         // Recurse into child to find nested text/content.
                         let (child_width, child_has_content) =
@@ -745,10 +780,11 @@ impl<'a> InlineItemsBuilder<'a> {
                             has_content = true;
                             // Block-level children stack vertically → take max width.
                             // Inline-level children flow horizontally → sum widths.
+                            let child_total = child_width + child_bp;
                             if child_style.display == Display::Block {
-                                total_width = total_width.max(child_width);
+                                total_width = total_width.max(child_total);
                             } else {
-                                total_width += child_width;
+                                total_width += child_total;
                             }
                         }
                     }
@@ -785,6 +821,46 @@ impl<'a> InlineItemsBuilder<'a> {
 /// Returns true if the white-space mode collapses adjacent spaces.
 fn is_collapsible_ws_mode(ws: WhiteSpace) -> bool {
     matches!(ws, WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine)
+}
+
+/// Apply the same text preprocessing as real inline layout:
+/// 1. text-transform (capitalize, uppercase, lowercase)
+/// 2. white-space processing (collapse, preserve, etc.)
+/// 3. Tab expansion for pre-like modes
+///
+/// Shared by `append_text` (real layout) and `compute_intrinsic_inline_size_recursive`
+/// (intrinsic sizing) so that measured widths match rendered output.
+pub fn preprocess_text_for_shaping(text: &str, style: &ComputedStyle) -> String {
+    if text.is_empty() {
+        return String::new();
+    }
+
+    // Step 1: text-transform
+    let transformed = if style.text_transform != TextTransform::None {
+        apply_text_transform(text, style.text_transform)
+    } else {
+        text.to_string()
+    };
+
+    // Step 2: white-space processing
+    let processed = process_white_space(&transformed, style.white_space);
+
+    // Step 3: tab expansion for pre-like modes
+    if matches!(
+        style.white_space,
+        WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces
+    ) {
+        let font_desc = style_to_font_description(style);
+        let font = Font::new(font_desc);
+        let space_advance = font.width(" ");
+        let font_clone = font;
+        expand_tabs(&processed, &style.tab_size, space_advance, |ch| {
+            let mut buf = [0u8; 4];
+            font_clone.width(ch.encode_utf8(&mut buf))
+        })
+    } else {
+        processed
+    }
 }
 
 ///
@@ -1111,5 +1187,219 @@ mod tests {
         // IsolateOverride + RTL should inject RLI + RLO on open.
         let open_rtl = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Rtl);
         assert_eq!(open_rtl, vec!['\u{2067}', '\u{202E}'], "RTL isolate-override: RLI + RLO");
+    }
+
+    // ── Issue 4 (R26): intrinsic sizing skips out-of-flow & display:none ──
+
+    #[test]
+    fn intrinsic_size_skips_display_none() {
+        // A child with display:none should not contribute to intrinsic size.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let visible_text = doc.create_node(ElementTag::Text);
+        doc.node_mut(visible_text).text = Some("Hello".to_string());
+        doc.append_child(container, visible_text);
+
+        let hidden = doc.create_node(ElementTag::Span);
+        doc.node_mut(hidden).style.display = Display::None;
+        doc.append_child(container, hidden);
+
+        let hidden_text = doc.create_node(ElementTag::Text);
+        doc.node_mut(hidden_text).text = Some("This is hidden and very long text that should not count".to_string());
+        doc.append_child(hidden, hidden_text);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size_with_hidden = builder.compute_intrinsic_inline_size(container);
+
+        // Now test without hidden: the size should be the same since display:none
+        // children are skipped.
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("Hello".to_string());
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_without = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size_with_hidden, size_without,
+            "display:none child should not affect intrinsic size"
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_skips_absolutely_positioned() {
+        // An absolutely positioned child should not contribute to intrinsic size.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text_node = doc.create_node(ElementTag::Text);
+        doc.node_mut(text_node).text = Some("A".to_string());
+        doc.append_child(container, text_node);
+
+        let abs_child = doc.create_node(ElementTag::Div);
+        doc.node_mut(abs_child).style.position = openui_style::Position::Absolute;
+        doc.node_mut(abs_child).style.width = openui_geometry::Length::px(999.0);
+        doc.append_child(container, abs_child);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        // Without the absolute child, we should get the same size.
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("A".to_string());
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_without = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size, size_without,
+            "absolutely positioned child should not affect intrinsic size"
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_skips_floated_child() {
+        // A floated child should not contribute to intrinsic size.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text_node = doc.create_node(ElementTag::Text);
+        doc.node_mut(text_node).text = Some("B".to_string());
+        doc.append_child(container, text_node);
+
+        let floated = doc.create_node(ElementTag::Div);
+        doc.node_mut(floated).style.float = openui_style::Float::Left;
+        doc.node_mut(floated).style.width = openui_geometry::Length::px(500.0);
+        doc.append_child(container, floated);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("B".to_string());
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_without = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size, size_without,
+            "floated child should not affect intrinsic size"
+        );
+    }
+
+    // ── Issue 5 (R26): intrinsic sizing applies text preprocessing ──────
+
+    #[test]
+    fn intrinsic_size_applies_text_transform() {
+        // "abc" with text-transform:uppercase → "ABC".
+        // The measured width should differ since uppercase chars are typically wider.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("iii".to_string()); // 'i' is narrow
+        doc.node_mut(text).style.text_transform = openui_style::TextTransform::Uppercase;
+        doc.append_child(container, text);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size_upper = builder.compute_intrinsic_inline_size(container);
+
+        // Compare with no transform
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("iii".to_string());
+        doc2.node_mut(text2).style.text_transform = openui_style::TextTransform::None;
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_normal = builder2.compute_intrinsic_inline_size(container2);
+
+        // The uppercase version ("III") should be wider than lowercase ("iii").
+        assert!(
+            size_upper.unwrap_or(0.0) >= size_normal.unwrap_or(0.0),
+            "uppercase text should be at least as wide: upper={:?}, normal={:?}",
+            size_upper, size_normal,
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_collapses_whitespace_in_normal_mode() {
+        // "a   b" with white-space:normal collapses to "a b".
+        // Should match the width of pre-collapsed "a b".
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("a     b".to_string());
+        doc.node_mut(text).style.white_space = WhiteSpace::Normal;
+        doc.append_child(container, text);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size_collapsed = builder.compute_intrinsic_inline_size(container);
+
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("a b".to_string());
+        doc2.node_mut(text2).style.white_space = WhiteSpace::Normal;
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_single_space = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size_collapsed, size_single_space,
+            "collapsed 'a     b' should have same width as 'a b'"
+        );
     }
 }

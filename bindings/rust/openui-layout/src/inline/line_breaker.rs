@@ -12,7 +12,7 @@
 //! - Trailing space stripping per CSS Text §4.1.3
 
 use openui_geometry::{LayoutUnit, LengthType};
-use openui_style::{ComputedStyle, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
+use openui_style::{BoxSizing, ComputedStyle, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
 use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemResult, InlineItemType};
@@ -1058,39 +1058,86 @@ fn allows_line_wrap(white_space: WhiteSpace) -> bool {
     }
 }
 
+/// Compute the horizontal border+padding for an element's style.
+///
+/// Used to convert content-box widths to border-box widths for atomic inlines.
+fn compute_border_padding_inline(
+    style: &ComputedStyle,
+    containing_block_width: LayoutUnit,
+) -> LayoutUnit {
+    let border_left = LayoutUnit::from_i32(style.effective_border_left());
+    let border_right = LayoutUnit::from_i32(style.effective_border_right());
+    let pad_left = resolve_margin_or_padding(&style.padding_left, containing_block_width);
+    let pad_right = resolve_margin_or_padding(&style.padding_right, containing_block_width);
+    border_left + border_right + pad_left + pad_right
+}
+
 /// Resolve the width of an atomic inline element from its CSS `width` property.
 ///
 /// For `Fixed`: use the specified pixel value.
 /// For `Percent`: resolve against the containing block width.
 /// For `Auto`: use intrinsic size if available, else min-width if specified, otherwise zero.
+///
+/// The returned value is always a **border-box** width: for `content-box` sizing
+/// the element's own border+padding is added; for `border-box` the CSS width
+/// already includes them.
 fn resolve_atomic_inline_width(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
     intrinsic_inline_size: Option<f32>,
 ) -> LayoutUnit {
+    let border_padding = compute_border_padding_inline(style, containing_block_width);
+
     let base = match style.width.length_type() {
-        LengthType::Fixed => LayoutUnit::from_f32(style.width.value()),
+        LengthType::Fixed => {
+            let css_w = LayoutUnit::from_f32(style.width.value());
+            if style.box_sizing == BoxSizing::ContentBox {
+                css_w + border_padding
+            } else {
+                css_w
+            }
+        }
         LengthType::Percent => {
             if containing_block_width > LayoutUnit::zero() {
-                LayoutUnit::from_f32(style.width.value() / 100.0 * containing_block_width.to_f32())
+                let css_w = LayoutUnit::from_f32(
+                    style.width.value() / 100.0 * containing_block_width.to_f32(),
+                );
+                if style.box_sizing == BoxSizing::ContentBox {
+                    css_w + border_padding
+                } else {
+                    css_w
+                }
             } else {
                 LayoutUnit::zero()
             }
         }
         // Auto: use intrinsic size (shrink-to-fit), then min-width as floor, then zero.
+        // Intrinsic size is content-box, so always add border+padding.
         _ => {
             let intrinsic = intrinsic_inline_size
-                .map(LayoutUnit::from_f32)
-                .unwrap_or(LayoutUnit::zero());
+                .map(|v| LayoutUnit::from_f32(v) + border_padding)
+                .unwrap_or(border_padding);
 
             // Apply min-width as a floor.
             let min_w = match style.min_width.length_type() {
-                LengthType::Fixed => LayoutUnit::from_f32(style.min_width.value()),
+                LengthType::Fixed => {
+                    let mw = LayoutUnit::from_f32(style.min_width.value());
+                    if style.box_sizing == BoxSizing::ContentBox {
+                        mw + border_padding
+                    } else {
+                        mw
+                    }
+                }
                 LengthType::Percent => {
                     if containing_block_width > LayoutUnit::zero() {
-                        LayoutUnit::from_f32(
+                        let mw = LayoutUnit::from_f32(
                             style.min_width.value() / 100.0 * containing_block_width.to_f32(),
-                        )
+                        );
+                        if style.box_sizing == BoxSizing::ContentBox {
+                            mw + border_padding
+                        } else {
+                            mw
+                        }
                     } else {
                         LayoutUnit::zero()
                     }
@@ -1119,6 +1166,11 @@ fn resolve_atomic_inline_width(
     match style.max_width.length_type() {
         LengthType::Fixed => {
             let max = LayoutUnit::from_f32(style.max_width.value());
+            let max = if style.box_sizing == BoxSizing::ContentBox {
+                max + border_padding
+            } else {
+                max
+            };
             if base > max { max } else { base }
         }
         LengthType::Percent => {
@@ -1126,6 +1178,11 @@ fn resolve_atomic_inline_width(
                 let max = LayoutUnit::from_f32(
                     style.max_width.value() / 100.0 * containing_block_width.to_f32(),
                 );
+                let max = if style.box_sizing == BoxSizing::ContentBox {
+                    max + border_padding
+                } else {
+                    max
+                };
                 if base > max { max } else { base }
             } else {
                 base
@@ -1942,6 +1999,77 @@ mod tests {
             item_result.text_range.end,
             text.len(),
             "should include entire Arabic word (overflow) instead of splitting joining sequence"
+        );
+    }
+
+    // ── Issue 1 (R26): resolve_atomic_inline_width includes border+padding ──
+
+    #[test]
+    fn atomic_inline_width_content_box_adds_border_padding() {
+        // A content-box element with width:100px, border:5px, padding:10px
+        // should resolve to 100 + 2*5 + 2*10 = 130px total.
+        use openui_style::BorderStyle;
+        let mut style = ComputedStyle::default();
+        style.width = openui_geometry::Length::px(100.0);
+        style.border_left_width = 5;
+        style.border_right_width = 5;
+        style.border_left_style = BorderStyle::Solid;
+        style.border_right_style = BorderStyle::Solid;
+        style.padding_left = openui_geometry::Length::px(10.0);
+        style.padding_right = openui_geometry::Length::px(10.0);
+        style.box_sizing = openui_style::BoxSizing::ContentBox;
+
+        let cb = LayoutUnit::from_i32(500);
+        let w = resolve_atomic_inline_width(&style, cb, None);
+        assert_eq!(
+            w.to_f32(), 130.0,
+            "content-box width:100 + border:10 + padding:20 = 130"
+        );
+    }
+
+    #[test]
+    fn atomic_inline_width_border_box_does_not_double_add() {
+        // A border-box element with width:100px, border:5px, padding:10px
+        // should resolve to exactly 100px (border-box already includes them).
+        use openui_style::BorderStyle;
+        let mut style = ComputedStyle::default();
+        style.width = openui_geometry::Length::px(100.0);
+        style.border_left_width = 5;
+        style.border_right_width = 5;
+        style.border_left_style = BorderStyle::Solid;
+        style.border_right_style = BorderStyle::Solid;
+        style.padding_left = openui_geometry::Length::px(10.0);
+        style.padding_right = openui_geometry::Length::px(10.0);
+        style.box_sizing = openui_style::BoxSizing::BorderBox;
+
+        let cb = LayoutUnit::from_i32(500);
+        let w = resolve_atomic_inline_width(&style, cb, None);
+        assert_eq!(
+            w.to_f32(), 100.0,
+            "border-box width:100 already includes border+padding"
+        );
+    }
+
+    #[test]
+    fn atomic_inline_width_auto_adds_border_padding_to_intrinsic() {
+        // width:auto with intrinsic=80px, border:3px each, padding:7px each
+        // should return 80 + 6 + 14 = 100.
+        use openui_style::BorderStyle;
+        let mut style = ComputedStyle::default();
+        style.width = openui_geometry::Length::auto();
+        style.border_left_width = 3;
+        style.border_right_width = 3;
+        style.border_left_style = BorderStyle::Solid;
+        style.border_right_style = BorderStyle::Solid;
+        style.padding_left = openui_geometry::Length::px(7.0);
+        style.padding_right = openui_geometry::Length::px(7.0);
+        style.box_sizing = openui_style::BoxSizing::ContentBox;
+
+        let cb = LayoutUnit::from_i32(500);
+        let w = resolve_atomic_inline_width(&style, cb, Some(80.0));
+        assert_eq!(
+            w.to_f32(), 100.0,
+            "auto width: intrinsic(80) + border(6) + padding(14) = 100"
         );
     }
 }

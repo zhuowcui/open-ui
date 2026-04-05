@@ -26,6 +26,9 @@ struct FontCacheKey {
     stretch_tenths: i32,
     /// 0 = normal, 1 = italic, 2 = oblique.
     style_tag: u8,
+    /// Oblique angle as raw f32 bits (0 for normal/italic).
+    /// Different oblique angles produce different synthetic skew transforms.
+    oblique_angle_bits: u32,
 }
 
 /// Wrapper to assert Send+Sync for FontMgr.
@@ -86,7 +89,13 @@ impl FontCache {
         );
         let typeface = self.font_mgr.0.match_family_style(family_name, sk_style)?;
 
-        let data = Arc::new(FontPlatformData::new(typeface, description.size));
+        // Extract oblique angle for synthetic oblique synthesis.
+        let oblique_angle = match description.style {
+            openui_style::FontStyleEnum::Oblique(angle) => angle,
+            _ => 0.0,
+        };
+
+        let data = Arc::new(FontPlatformData::with_oblique_angle(typeface, description.size, oblique_angle));
         self.cache.insert(key, Arc::clone(&data));
         Some(data)
     }
@@ -113,10 +122,10 @@ impl FontCache {
 
     /// Build a cache key from family name and description.
     fn make_key(family_name: &str, desc: &FontDescription) -> FontCacheKey {
-        let style_tag = match desc.style {
-            openui_style::FontStyleEnum::Normal => 0,
-            openui_style::FontStyleEnum::Italic => 1,
-            openui_style::FontStyleEnum::Oblique(_) => 2,
+        let (style_tag, oblique_angle_bits) = match desc.style {
+            openui_style::FontStyleEnum::Normal => (0, 0u32),
+            openui_style::FontStyleEnum::Italic => (1, 0u32),
+            openui_style::FontStyleEnum::Oblique(angle) => (2, angle.to_bits()),
         };
         FontCacheKey {
             family: family_name.to_ascii_lowercase(),
@@ -124,6 +133,7 @@ impl FontCache {
             weight_tenths: (desc.weight.0 * 10.0) as i32,
             stretch_tenths: (desc.stretch.0 * 10.0) as i32,
             style_tag,
+            oblique_angle_bits,
         }
     }
 
@@ -220,5 +230,41 @@ mod tests {
         let key2 = FontCache::make_key("sans-serif", &desc2);
 
         assert_eq!(key1, key2, "Identical sizes should produce identical keys");
+    }
+
+    // ── Issue 6 (R26): oblique angle in cache key ───────────────────────
+
+    #[test]
+    fn cache_key_distinguishes_oblique_angles() {
+        // Oblique(14) and Oblique(20) should produce distinct keys.
+        let mut desc1 = FontDescription::default();
+        desc1.style = openui_style::FontStyleEnum::Oblique(14.0);
+        let mut desc2 = FontDescription::default();
+        desc2.style = openui_style::FontStyleEnum::Oblique(20.0);
+
+        let key1 = FontCache::make_key("sans-serif", &desc1);
+        let key2 = FontCache::make_key("sans-serif", &desc2);
+
+        assert_ne!(
+            key1, key2,
+            "Different oblique angles should produce distinct cache keys"
+        );
+    }
+
+    #[test]
+    fn cache_key_oblique_same_angle_same_key() {
+        // Two oblique with same angle should produce identical keys.
+        let mut desc1 = FontDescription::default();
+        desc1.style = openui_style::FontStyleEnum::Oblique(14.0);
+        let mut desc2 = FontDescription::default();
+        desc2.style = openui_style::FontStyleEnum::Oblique(14.0);
+
+        let key1 = FontCache::make_key("sans-serif", &desc1);
+        let key2 = FontCache::make_key("sans-serif", &desc2);
+
+        assert_eq!(
+            key1, key2,
+            "Same oblique angle should produce identical cache keys"
+        );
     }
 }

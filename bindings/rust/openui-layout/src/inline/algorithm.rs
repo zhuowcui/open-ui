@@ -437,6 +437,7 @@ pub fn inline_layout(
                 &block_metrics,
                 space.percentage_resolution_inline_size,
                 if is_first_line { text_indent } else { LayoutUnit::zero() },
+                space.percentage_resolution_block_size,
             );
             block_offset = block_offset + line_fragment.size.height;
             line_fragments.push(line_fragment);
@@ -528,6 +529,7 @@ pub fn inline_layout_for_children(
                 &block_metrics,
                 space.percentage_resolution_inline_size,
                 if is_first_line { text_indent } else { LayoutUnit::zero() },
+                space.percentage_resolution_block_size,
             );
             block_offset = block_offset + line_fragment.size.height;
             line_fragments.push(line_fragment);
@@ -563,6 +565,7 @@ fn create_line_box(
     block_metrics: &openui_text::FontMetrics,
     percentage_base: LayoutUnit,
     text_indent: LayoutUnit,
+    percentage_block_base: LayoutUnit,
 ) -> Fragment {
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(
@@ -606,11 +609,23 @@ fn create_line_box(
                     }
                     _ => LayoutUnit::max(),
                 };
+                // Use the containing block's actual block size for percentage
+                // resolution so that `height: 50%` etc. resolve correctly.
+                // When the containing block height is indefinite or LayoutUnit::max(),
+                // keep LayoutUnit::max() which correctly triggers auto behavior.
+                let percentage_block = if !percentage_block_base.is_indefinite()
+                    && percentage_block_base > LayoutUnit::zero()
+                    && percentage_block_base < LayoutUnit::max()
+                {
+                    percentage_block_base
+                } else {
+                    available_block
+                };
                 let child_space = ConstraintSpace::for_block_child(
                     item_width,
                     available_block,
                     item_width,
-                    available_block,
+                    percentage_block,
                     true,
                 );
                 let result = crate::block::block_layout(doc, item.node_id, &child_space);
@@ -1182,7 +1197,9 @@ fn create_line_box(
                 // Only fall back to a new empty box when block_layout was not run.
                 let atomic_fragment = if let Some(result) = atomic_layout_results[step4_idx].take() {
                     let mut frag = result;
-                    frag.size = PhysicalSize::new(item_width, item_height);
+                    // Use block_layout's authoritative width; only override height
+                    // and position. block_layout already accounts for border+padding.
+                    frag.size.height = item_height;
                     frag.offset = PhysicalOffset::new(inline_offset, atomic_top);
                     frag
                 } else {
@@ -2142,5 +2159,159 @@ mod tests {
         assert!(is_cjk_character('\u{30A2}')); // Katakana ア
         assert!(is_cjk_character('\u{AC00}')); // Hangul 가
         assert!(!is_cjk_character('Z'));
+    }
+
+    // ── Issue 2 (R26): atomic fragment uses block_layout width ──────────
+
+    #[test]
+    fn atomic_inline_block_layout_width_preserved() {
+        // An inline-block child with width:80px inside a 400px container.
+        // The fragment width should come from block_layout (80px), not from
+        // the line breaker's item_result.inline_size which previously
+        // overwrote the block_layout result.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.font_size = 16.0;
+        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.append_child(vp, div);
+
+        let inline_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline_block).style.display = Display::InlineBlock;
+        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(80.0);
+        doc.node_mut(inline_block).style.height = openui_geometry::Length::px(30.0);
+        doc.append_child(div, inline_block);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(400),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+        assert!(!div_frag.children.is_empty(), "should have line boxes");
+        let line = &div_frag.children[0];
+        assert!(!line.children.is_empty(), "line should have atomic inline child");
+        let atomic = &line.children[0];
+        // Width should be 80px from block_layout, not overridden.
+        assert!(
+            (atomic.size.width.to_f32() - 80.0).abs() < 1.0,
+            "atomic inline width should be ~80px from block_layout, got {}",
+            atomic.size.width.to_f32(),
+        );
+    }
+
+    #[test]
+    fn atomic_inline_block_layout_width_not_overridden_with_border() {
+        // An inline-block with width:60px and 5px border on each side.
+        // block_layout should produce border-box width of 70px.
+        // The fragment should preserve that, not override it.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.font_size = 16.0;
+        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.append_child(vp, div);
+
+        let inline_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline_block).style.display = Display::InlineBlock;
+        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(60.0);
+        doc.node_mut(inline_block).style.height = openui_geometry::Length::px(30.0);
+        doc.node_mut(inline_block).style.border_left_width = 5;
+        doc.node_mut(inline_block).style.border_right_width = 5;
+        doc.node_mut(inline_block).style.border_left_style = openui_style::BorderStyle::Solid;
+        doc.node_mut(inline_block).style.border_right_style = openui_style::BorderStyle::Solid;
+        doc.append_child(div, inline_block);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(400),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+        let line = &div_frag.children[0];
+        let atomic = &line.children[0];
+        // Width should be content(60) + border(10) = 70.
+        assert!(
+            (atomic.size.width.to_f32() - 70.0).abs() < 1.0,
+            "atomic inline width should be ~70 (60+border 10), got {}",
+            atomic.size.width.to_f32(),
+        );
+    }
+
+    // ── Issue 3 (R26): percentage heights on atomic inlines resolve ──────
+
+    #[test]
+    fn atomic_inline_percentage_height_resolves_against_container() {
+        // Container has fixed height 200px. Inline-block has height:50%.
+        // Should resolve to 100px, not auto/0.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.font_size = 16.0;
+        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.node_mut(div).style.height = openui_geometry::Length::px(200.0);
+        doc.append_child(vp, div);
+
+        let inline_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline_block).style.display = Display::InlineBlock;
+        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(50.0);
+        doc.node_mut(inline_block).style.height = openui_geometry::Length::percent(50.0);
+        doc.append_child(div, inline_block);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(400),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+        assert!(!div_frag.children.is_empty(), "should have line boxes");
+        let line = &div_frag.children[0];
+        assert!(!line.children.is_empty(), "line should have the inline-block");
+        let atomic = &line.children[0];
+        // Height should be 50% of 200 = 100px.
+        let h = atomic.size.height.to_f32();
+        assert!(
+            h > 50.0 && h <= 100.0 + 1.0,
+            "atomic inline height should be ~100px (50% of 200), got {}",
+            h,
+        );
+    }
+
+    #[test]
+    fn atomic_inline_percentage_height_indefinite_container_uses_auto() {
+        // Container has auto height (indefinite). Inline-block has height:50%.
+        // Should behave as auto (not crash, and produce some reasonable height).
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.font_size = 16.0;
+        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        // height: auto (default)
+        doc.append_child(vp, div);
+
+        let inline_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline_block).style.display = Display::InlineBlock;
+        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(50.0);
+        doc.node_mut(inline_block).style.height = openui_geometry::Length::percent(50.0);
+        doc.append_child(div, inline_block);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(400),
+            LayoutUnit::max(),
+        );
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+        assert!(!div_frag.children.is_empty(), "should have line boxes");
+        // Just verify it doesn't crash/panic with indefinite containing block.
+        let line = &div_frag.children[0];
+        assert!(!line.children.is_empty(), "line should have the inline-block");
     }
 }
