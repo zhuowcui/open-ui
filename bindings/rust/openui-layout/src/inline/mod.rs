@@ -14,3 +14,4 @@ pub mod items;
 pub mod items_builder;
 pub mod line_breaker;
 pub mod line_info;
+pub mod text_combine;

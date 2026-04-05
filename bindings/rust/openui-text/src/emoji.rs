@@ -43,24 +43,8 @@ pub fn is_emoji(ch: char) -> bool {
         // ── Medium squares ──────────────────────────────────────────
         0x25FB..=0x25FE |
 
-        // ── Miscellaneous Symbols (partial — emoji subset) ──────────
+        // ── Miscellaneous Symbols + Dingbats (emoji subset) ─────────
         0x2600..=0x27BF |
-
-        // ── Dingbats (partial — emoji subset) ───────────────────────
-        0x2702 | 0x2705 |
-        0x2708..=0x270D |
-        0x270F | 0x2712 |
-        0x2714 | 0x2716 |
-        0x271D | 0x2721 |
-        0x2728 |
-        0x2733..=0x2734 |
-        0x2744 | 0x2747 |
-        0x274C | 0x274E |
-        0x2753..=0x2755 |
-        0x2757 |
-        0x2763..=0x2764 |
-        0x2795..=0x2797 |
-        0x27A1 | 0x27B0 |
 
         // ── Supplemental Arrows-B (rightwards arrow) ────────────────
         0x2934..=0x2935 |

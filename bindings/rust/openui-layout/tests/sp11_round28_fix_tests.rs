@@ -4,15 +4,16 @@
 //! Issue 5: vertical-align percentage uses wrong line-height:normal basis.
 
 use openui_dom::{Document, ElementTag};
-use openui_geometry::{LayoutUnit, Length};
+use openui_geometry::LayoutUnit;
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 use openui_style::{
-    ComputedStyle, Display, LineHeight, VerticalAlign,
+    Display, LineHeight, VerticalAlign,
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
+#[allow(dead_code)]
 fn lu(px: f32) -> LayoutUnit {
     LayoutUnit::from_f32(px)
 }

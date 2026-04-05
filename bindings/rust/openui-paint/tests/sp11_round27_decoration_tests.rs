@@ -53,7 +53,7 @@ fn from_font_line_through_also_uses_underline_thickness() {
 #[test]
 fn from_font_fallback_when_underline_zero() {
     // When underline_thickness is 0, from-font falls back to auto formula.
-    let metrics = metrics_with_distinct_thicknesses(0.0, 3.0);
+    let _metrics = metrics_with_distinct_thicknesses(0.0, 3.0);
     let font_size = 20.0;
 
     // underline_thickness is 0 → fallback to auto: font_size / 10.0 = 2.0 (no rounding)

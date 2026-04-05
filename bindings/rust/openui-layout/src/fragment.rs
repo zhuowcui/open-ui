@@ -11,6 +11,8 @@ use openui_style::ComputedStyle;
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
+use crate::inline::text_combine::TextCombineLayout;
+
 /// What kind of fragment this is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FragmentKind {
@@ -70,6 +72,15 @@ pub struct Fragment {
     /// Distance from the fragment's top edge to the text baseline.
     /// Computed during layout; used by paint to avoid recomputing from metrics.
     pub baseline_offset: f32,
+
+    /// Text-combine-upright (tate-chū-yoko) layout data.
+    ///
+    /// Present only on text fragments inside a vertical writing mode where
+    /// `text-combine-upright: all` is active. The paint system uses this to
+    /// apply horizontal scaling and centering transforms.
+    ///
+    /// Blink: `LayoutTextCombine` attached to the `LayoutText` object.
+    pub text_combine: Option<TextCombineLayout>,
 }
 
 impl Fragment {
@@ -88,6 +99,7 @@ impl Fragment {
             text_content: None,
             inherited_style: None,
             baseline_offset: 0.0,
+            text_combine: None,
         }
     }
 
@@ -114,6 +126,7 @@ impl Fragment {
             text_content: Some(text_content),
             inherited_style: None,
             baseline_offset: 0.0,
+            text_combine: None,
         }
     }
 

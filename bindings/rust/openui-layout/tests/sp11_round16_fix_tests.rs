@@ -11,10 +11,9 @@ use openui_geometry::{LayoutUnit, Length};
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::inline::items_builder::InlineItemsBuilder;
 use openui_layout::inline::line_breaker::LineBreaker;
-use openui_layout::inline::line_info::LineInfo;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 use openui_style::{
-    Direction, Display, LineHeight, Overflow, TextAlign, TextOverflow, WhiteSpace,
+    Direction, Display, LineHeight, Overflow, TextOverflow, WhiteSpace,
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────

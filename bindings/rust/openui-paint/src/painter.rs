@@ -628,6 +628,7 @@ fn lighten_color(color: &Color4f) -> Color4f {
 
 #[cfg(test)]
 mod tests {
+    #[allow(unused_imports)]
     use super::*;
 
     // ── Issue 7 (R26): large borders don't produce invalid paint geometry ──

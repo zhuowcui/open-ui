@@ -18,6 +18,7 @@ use openui_style::{
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
+#[allow(dead_code)]
 fn lu(px: f32) -> LayoutUnit {
     LayoutUnit::from_f32(px)
 }

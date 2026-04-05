@@ -1569,7 +1569,6 @@ mod tests {
         // and verify that apply_spacing distributes evenly per-cluster
         // instead of piling everything on the last glyph.
         use std::sync::Arc;
-        use crate::font::FontPlatformData;
 
         let font = Font::new(FontDescription::default());
         let font_data = font.primary_font().unwrap().clone();
