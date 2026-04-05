@@ -9,6 +9,7 @@
 mod painter;
 pub mod text_painter;
 pub mod decoration_painter;
+pub mod emphasis_painter;
 mod render;
 
 pub use painter::paint_fragment;

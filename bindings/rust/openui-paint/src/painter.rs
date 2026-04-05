@@ -11,7 +11,8 @@
 //! 1. Text shadows
 //! 2. Text decorations (underline, overline — behind text)
 //! 3. Text glyphs
-//! 4. Text decorations (line-through — in front of text)
+//! 4. Emphasis marks (above/below each character)
+//! 5. Text decorations (line-through — in front of text)
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
@@ -121,7 +122,7 @@ fn resolve_decoration_metrics(style: &ComputedStyle, shape_result: &openui_text:
         .unwrap_or_else(|| crate::text_painter::metrics_from_shape_result(shape_result))
 }
 
-/// Paint a text fragment — shadows, decorations, and glyphs.
+/// Paint a text fragment — shadows, decorations, glyphs, and emphasis marks.
 ///
 /// Extracted from Blink's `TextFragmentPainter::Paint()`.
 ///
@@ -129,7 +130,8 @@ fn resolve_decoration_metrics(style: &ComputedStyle, shape_result: &openui_text:
 /// 1. Text shadows (behind everything)
 /// 2. Underline + overline decorations (behind text glyphs)
 /// 3. Text glyphs
-/// 4. Line-through decoration (in front of text glyphs)
+/// 4. Emphasis marks (above/below each character per text-emphasis)
+/// 5. Line-through decoration (in front of text glyphs)
 fn paint_text_fragment(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -166,10 +168,19 @@ fn paint_text_fragment(
         text_content,
     );
 
-    // 3. Text glyphs
-    crate::text_painter::paint_text(canvas, shape_result, origin, style);
+    // 3. Text glyphs — use text-combine-upright transform when active
+    if let Some(ref tc_layout) = fragment.text_combine {
+        crate::text_painter::paint_text_combine(canvas, shape_result, origin, style, tc_layout);
+    } else {
+        crate::text_painter::paint_text(canvas, shape_result, origin, style);
+    }
 
-    // 4. Line-through decoration (painted in front of text per CSS spec)
+    // 4. Emphasis marks (painted after text glyphs, before line-through)
+    crate::emphasis_painter::paint_emphasis_marks(
+        canvas, shape_result, origin, style, text_content,
+    );
+
+    // 5. Line-through decoration (painted in front of text per CSS spec)
     crate::decoration_painter::paint_text_decorations(
         canvas, shape_result, origin, style, &metrics,
         crate::decoration_painter::DecorationPhase::AfterText,
