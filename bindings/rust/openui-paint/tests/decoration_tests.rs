@@ -113,6 +113,7 @@ fn underline_renders_visible_pixels() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -132,6 +133,7 @@ fn no_decoration_produces_no_pixels() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         !has_non_white_pixels(&mut surface),
@@ -152,6 +154,7 @@ fn underline_position_uses_font_metrics_offset() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -170,6 +173,7 @@ fn underline_with_custom_color() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -193,6 +197,7 @@ fn overline_renders_visible_pixels() {
         (10.0, 60.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -214,6 +219,7 @@ fn overline_positioned_above_baseline() {
         (10.0, 60.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -232,6 +238,7 @@ fn overline_with_custom_thickness() {
         (10.0, 60.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -252,6 +259,7 @@ fn line_through_renders_visible_pixels() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -272,6 +280,7 @@ fn line_through_at_middle_of_text() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -290,6 +299,7 @@ fn line_through_with_dashed_style() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -312,6 +322,7 @@ fn solid_style_renders() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -330,6 +341,7 @@ fn double_style_renders() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -348,6 +360,7 @@ fn dotted_style_renders() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -366,6 +379,7 @@ fn dashed_style_renders() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -384,6 +398,7 @@ fn wavy_style_renders() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -407,6 +422,7 @@ fn current_color_resolves_to_element_color() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -428,6 +444,7 @@ fn specified_red_underline_color() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -449,6 +466,7 @@ fn transparent_decoration_produces_no_visible_pixels() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         !has_non_white_pixels(&mut surface),
@@ -474,6 +492,7 @@ fn underline_and_overline_simultaneously() {
         (10.0, 60.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -496,6 +515,7 @@ fn underline_and_line_through_simultaneously() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -524,6 +544,7 @@ fn auto_thickness_uses_font_metric_at_least_1px() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(
         has_non_white_pixels(&mut surface),
@@ -545,6 +566,7 @@ fn from_font_uses_underline_thickness() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -563,6 +585,7 @@ fn explicit_length_thickness() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -584,6 +607,7 @@ fn empty_text_does_not_crash() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
 }
 
@@ -605,6 +629,7 @@ fn decoration_on_zero_width_text_does_not_crash() {
         (10.0, 50.0),
         &style,
         &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(
         !has_non_white_pixels(&mut surface),

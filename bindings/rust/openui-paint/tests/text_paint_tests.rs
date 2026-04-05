@@ -354,6 +354,7 @@ fn underline_draws_visible_line() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface), "Underline should be visible");
 }
@@ -367,6 +368,7 @@ fn overline_draws_visible_line() {
     style.text_decoration_line = TextDecorationLine::OVERLINE;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface), "Overline should be visible");
 }
@@ -380,6 +382,7 @@ fn line_through_draws_visible_line() {
     style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface), "Line-through should be visible");
 }
@@ -393,6 +396,7 @@ fn no_decoration_when_none() {
     style.text_decoration_line = TextDecorationLine::NONE;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(!has_non_white_pixels(&mut surface), "No decoration should be drawn when NONE");
 }
@@ -408,6 +412,7 @@ fn decoration_color_matches_current_color() {
     style.text_decoration_color = StyleColor::CurrentColor;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -422,6 +427,7 @@ fn decoration_color_explicit() {
     style.text_decoration_color = StyleColor::Resolved(Color::BLUE);
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -436,6 +442,7 @@ fn decoration_style_solid() {
     style.text_decoration_style = TextDecorationStyle::Solid;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -450,6 +457,7 @@ fn decoration_style_double() {
     style.text_decoration_style = TextDecorationStyle::Double;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -464,6 +472,7 @@ fn decoration_style_dotted() {
     style.text_decoration_style = TextDecorationStyle::Dotted;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -478,6 +487,7 @@ fn decoration_style_dashed() {
     style.text_decoration_style = TextDecorationStyle::Dashed;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -492,6 +502,7 @@ fn decoration_style_wavy() {
     style.text_decoration_style = TextDecorationStyle::Wavy;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -506,6 +517,7 @@ fn decoration_thickness_auto() {
     style.text_decoration_thickness = TextDecorationThickness::Auto;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -520,6 +532,7 @@ fn decoration_thickness_from_font() {
     style.text_decoration_thickness = TextDecorationThickness::FromFont;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -534,6 +547,7 @@ fn decoration_thickness_explicit_length() {
     style.text_decoration_thickness = TextDecorationThickness::Length(3.0);
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -550,6 +564,7 @@ fn multiple_decorations_underline_and_line_through() {
     );
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -567,6 +582,7 @@ fn all_three_decorations_combined() {
     );
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -581,6 +597,7 @@ fn decoration_transparent_color_not_visible() {
     style.text_decoration_color = StyleColor::Resolved(Color::TRANSPARENT);
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(!has_non_white_pixels(&mut surface),
         "Transparent decoration should not be visible");
@@ -595,6 +612,7 @@ fn decoration_on_empty_text_does_not_crash() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     // Should not crash, and nothing drawn (zero width)
 }
@@ -609,6 +627,7 @@ fn decoration_wavy_overline() {
     style.text_decoration_style = TextDecorationStyle::Wavy;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 60.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -623,6 +642,7 @@ fn decoration_dashed_line_through() {
     style.text_decoration_style = TextDecorationStyle::Dashed;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -637,6 +657,7 @@ fn decoration_dotted_overline() {
     style.text_decoration_style = TextDecorationStyle::Dotted;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 60.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -651,6 +672,7 @@ fn decoration_double_line_through() {
     style.text_decoration_style = TextDecorationStyle::Double;
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::AfterText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -665,6 +687,7 @@ fn decoration_thick_underline() {
     style.text_decoration_thickness = TextDecorationThickness::Length(5.0);
     decoration_painter::paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        decoration_painter::DecorationPhase::BeforeText,
     );
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -1005,6 +1028,7 @@ fn paint_text_with_all_decoration_styles_does_not_crash() {
             style.text_decoration_style = deco_style;
             decoration_painter::paint_text_decorations(
                 surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+                decoration_painter::DecorationPhase::AfterText,
             );
             // Should not panic for any combination
         }

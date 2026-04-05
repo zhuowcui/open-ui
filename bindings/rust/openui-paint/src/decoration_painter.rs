@@ -16,6 +16,18 @@ use openui_text::shaping::ShapeResult;
 
 use crate::text_painter::to_sk_color4f;
 
+/// Phase of decoration painting relative to text glyphs.
+///
+/// CSS spec requires underline/overline to be painted behind text glyphs,
+/// while line-through must be painted in front of text glyphs.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DecorationPhase {
+    /// Underline + overline (painted behind text).
+    BeforeText,
+    /// Line-through (painted in front of text).
+    AfterText,
+}
+
 /// Paint text decorations (underline, overline, line-through) for a text fragment.
 ///
 /// Mirrors Blink's `TextDecorationPainter::Paint()`.
@@ -35,6 +47,7 @@ pub fn paint_text_decorations(
     origin: (f32, f32),
     style: &ComputedStyle,
     metrics: &FontMetrics,
+    phase: DecorationPhase,
 ) {
     let decoration_line = style.text_decoration_line;
     if decoration_line.is_none() {
@@ -62,26 +75,31 @@ pub fn paint_text_decorations(
     paint.set_anti_alias(true);
     paint.set_color4f(to_sk_color4f(&resolved_color), None::<&ColorSpace>);
 
-    // ── Underline ────────────────────────────────────────────────────
-    // Blink: underline_offset = font_metrics.UnderlinePosition()
-    // which is a positive value below the baseline.
-    if decoration_line.has_underline() {
-        let y = baseline_y + metrics.underline_offset;
-        draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
-    }
+    match phase {
+        DecorationPhase::BeforeText => {
+            // ── Underline ────────────────────────────────────────────────────
+            // Blink: underline_offset = font_metrics.UnderlinePosition()
+            // which is a positive value below the baseline.
+            if decoration_line.has_underline() {
+                let y = baseline_y + metrics.underline_offset;
+                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+            }
 
-    // ── Overline ─────────────────────────────────────────────────────
-    // Blink: overline positioned at -ascent from baseline (top of em box).
-    if decoration_line.has_overline() {
-        let y = baseline_y - metrics.ascent;
-        draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
-    }
-
-    // ── Line-through ─────────────────────────────────────────────────
-    // Blink: strikeout_position is positive above baseline.
-    if decoration_line.has_line_through() {
-        let y = baseline_y - metrics.strikeout_position;
-        draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+            // ── Overline ─────────────────────────────────────────────────────
+            // Blink: overline positioned at -ascent from baseline (top of em box).
+            if decoration_line.has_overline() {
+                let y = baseline_y - metrics.ascent;
+                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+            }
+        }
+        DecorationPhase::AfterText => {
+            // ── Line-through ─────────────────────────────────────────────────
+            // Blink: strikeout_position is positive above baseline.
+            if decoration_line.has_line_through() {
+                let y = baseline_y - metrics.strikeout_position;
+                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+            }
+        }
     }
 }
 

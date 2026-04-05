@@ -159,12 +159,33 @@ fn compute_text_align_offset(
 }
 
 /// Count expansion opportunities (spaces between words) for justification.
+///
+/// Excludes trailing spaces, which are already stripped from width measurement
+/// and should not be counted as expansion opportunities.
 fn count_expansion_opportunities(line_info: &LineInfo, items_data: &InlineItemsData) -> usize {
     let mut count = 0;
     for item_result in &line_info.items {
         if item_result.item_type == InlineItemType::Text {
             let text = &items_data.text[item_result.text_range.clone()];
             count += text.chars().filter(|c| *c == ' ').count();
+        }
+    }
+    // Exclude trailing space: the last text item's trailing space was already
+    // stripped from width and should not be an expansion opportunity.
+    if count > 0 {
+        for item_result in line_info.items.iter().rev() {
+            if item_result.item_type == InlineItemType::Text {
+                let text = &items_data.text[item_result.text_range.clone()];
+                if text.ends_with(' ') {
+                    count -= 1;
+                }
+                break;
+            }
+            if item_result.item_type != InlineItemType::CloseTag
+                && item_result.item_type != InlineItemType::OpenTag
+            {
+                break;
+            }
         }
     }
     count
@@ -268,7 +289,7 @@ pub fn inline_layout(
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
                 && style.overflow_x == openui_style::Overflow::Hidden
             {
-                apply_text_overflow_ellipsis(&mut line_info, line_available);
+                apply_text_overflow_ellipsis(&mut line_info, line_available, &items_data);
             }
 
             let line_fragment = create_line_box(
@@ -590,7 +611,31 @@ fn create_line_box(
                 // <br> — no visual contribution, line break already handled.
             }
             InlineItemType::AtomicInline | InlineItemType::BlockInInline => {
-                // AtomicInline uses its measured inline_size from the line breaker.
+                // Create a box fragment for the atomic inline element.
+                let item_width = item_result.inline_size;
+                let style = &items_data.styles[item.style_index];
+                // Resolve height: use explicit CSS height if available, else font metrics.
+                let item_height = match style.height.length_type() {
+                    openui_geometry::LengthType::Fixed => {
+                        LayoutUnit::from_f32(style.height.value())
+                    }
+                    _ => {
+                        // Fall back to font metrics (ascent + descent) for the item's font
+                        let font_desc = style_to_font_description(style);
+                        let font = Font::new(font_desc);
+                        let metrics = font.font_metrics().copied().unwrap_or_default();
+                        LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent)
+                    }
+                };
+                let atomic_top = baseline - LayoutUnit::from_f32_ceil(
+                    item_height.to_f32(),
+                );
+                let mut atomic_fragment = Fragment::new_box(
+                    item.node_id,
+                    PhysicalSize::new(item_width, item_height),
+                );
+                atomic_fragment.offset = PhysicalOffset::new(inline_offset, atomic_top);
+                children.push(atomic_fragment);
                 inline_offset = inline_offset + item_result.inline_size;
             }
         }
@@ -695,12 +740,16 @@ fn bidi_reorder_line(items: &mut Vec<InlineItemResult>, items_data: &InlineItems
 /// Apply text-overflow: ellipsis to a line that overflows.
 ///
 /// Removes trailing items until the line fits within available width
-/// minus the ellipsis width. The ellipsis width is measured from the
-/// block's font metrics. The caller is responsible for actually
-/// painting the ellipsis character.
+/// minus the ellipsis width. When the last remaining item is text and
+/// partially fits, it is trimmed instead of fully removed. The caller
+/// is responsible for actually painting the ellipsis character.
 ///
 /// Blink: `NGLineInfo::SetHasEllipsis` / `NGLineTruncator`.
-fn apply_text_overflow_ellipsis(line_info: &mut LineInfo, available_width: LayoutUnit) {
+fn apply_text_overflow_ellipsis(
+    line_info: &mut LineInfo,
+    available_width: LayoutUnit,
+    items_data: &InlineItemsData,
+) {
     if line_info.used_width <= available_width {
         return;
     }
@@ -736,6 +785,75 @@ fn apply_text_overflow_ellipsis(line_info: &mut LineInfo, available_width: Layou
                 line_info.items.pop();
                 continue;
             }
+
+            // Check if removing this item would bring us under target.
+            // If not, and it's a text item, try to trim it instead.
+            let excess = line_info.used_width - target_width;
+            if last.item_type == InlineItemType::Text && last_size > excess {
+                // Partial fit — clip this text item to fit
+                let item_target = last_size - excess;
+                let item = &items_data.items[last.item_index];
+                if let Some(ref sr) = item.shape_result {
+                    // Find how many characters fit within item_target width.
+                    // Walk from the end of the line portion toward the start.
+                    let line_text = &items_data.text[last.text_range.clone()];
+                    let item_char_start = byte_to_char_offset(
+                        &items_data.text,
+                        item.text_range.start,
+                    );
+                    let portion_char_start = byte_to_char_offset(
+                        &items_data.text,
+                        last.text_range.start,
+                    );
+                    let portion_char_end = byte_to_char_offset(
+                        &items_data.text,
+                        last.text_range.end,
+                    );
+                    let local_start = portion_char_start - item_char_start;
+                    let local_end = portion_char_end - item_char_start;
+                    let total_chars = local_end - local_start;
+
+                    let mut fit_chars = 0;
+                    for n in (1..=total_chars).rev() {
+                        let w = LayoutUnit::from_f32(
+                            sr.width_for_range(local_start, local_start + n),
+                        );
+                        if w <= item_target {
+                            fit_chars = n;
+                            break;
+                        }
+                    }
+
+                    if fit_chars > 0 {
+                        // Trim the item result
+                        let trimmed_width = LayoutUnit::from_f32(
+                            sr.width_for_range(local_start, local_start + fit_chars),
+                        );
+                        // Calculate byte offset for the trimmed end
+                        let byte_end = line_text
+                            .char_indices()
+                            .nth(fit_chars)
+                            .map(|(i, _)| i)
+                            .unwrap_or(line_text.len());
+                        let new_text_end = last.text_range.start + byte_end;
+                        let old_size = last_size;
+
+                        let last_mut = line_info.items.last_mut().unwrap();
+                        last_mut.inline_size = trimmed_width;
+                        last_mut.text_range = last_mut.text_range.start..new_text_end;
+                        line_info.used_width = line_info.used_width - old_size + trimmed_width;
+                    } else {
+                        // Can't fit any characters — remove entirely
+                        line_info.used_width = line_info.used_width - last_size;
+                        line_info.items.pop();
+                    }
+                } else {
+                    line_info.used_width = line_info.used_width - last_size;
+                    line_info.items.pop();
+                }
+                break;
+            }
+
             line_info.used_width = line_info.used_width - last_size;
             line_info.items.pop();
         }

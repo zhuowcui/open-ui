@@ -28,6 +28,14 @@ use openui_layout::{Fragment, FragmentKind};
 pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offset: PhysicalOffset) {
     let abs_offset = offset + fragment.offset;
 
+    // Text fragments with NodeId::NONE (e.g., ellipsis "…") need to be painted
+    // even though they have no DOM node. Use a default style (black text).
+    if fragment.kind == FragmentKind::Text && fragment.node_id.is_none() {
+        let default_style = ComputedStyle::default();
+        paint_text_fragment(canvas, fragment, &default_style, abs_offset);
+        return;
+    }
+
     // Line box fragments (from inline layout) have NodeId::NONE — they are
     // anonymous boxes with no DOM node. Just recurse into children.
     if fragment.node_id.is_none() {
@@ -106,10 +114,19 @@ fn paint_text_fragment(
     crate::text_painter::paint_text_shadows(canvas, shape_result, origin, style);
 
     // 2. Text decorations (underline + overline, painted behind text)
-    crate::decoration_painter::paint_text_decorations(canvas, shape_result, origin, style, &metrics);
+    crate::decoration_painter::paint_text_decorations(
+        canvas, shape_result, origin, style, &metrics,
+        crate::decoration_painter::DecorationPhase::BeforeText,
+    );
 
     // 3. Text glyphs
     crate::text_painter::paint_text(canvas, shape_result, origin, style);
+
+    // 4. Line-through decoration (painted in front of text per CSS spec)
+    crate::decoration_painter::paint_text_decorations(
+        canvas, shape_result, origin, style, &metrics,
+        crate::decoration_painter::DecorationPhase::AfterText,
+    );
 }
 
 /// Paint background + border for a single box fragment.

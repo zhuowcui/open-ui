@@ -43,7 +43,10 @@ impl InlineItemsData {
                 let style = &self.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
                 let font = Font::new(font_desc);
-                let direction = if style.direction == Direction::Rtl {
+                // Use bidi level for direction: odd = RTL, even = LTR.
+                // This ensures RTL sub-items (after bidi splitting) are shaped
+                // with RTL direction, not the CSS direction property.
+                let direction = if item.bidi_level % 2 == 1 {
                     TextDirection::Rtl
                 } else {
                     TextDirection::Ltr

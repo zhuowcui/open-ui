@@ -138,7 +138,7 @@ impl<'a> LineBreaker<'a> {
         }
 
         // Strip trailing collapsible spaces from the line
-        strip_trailing_spaces(&mut line, &self.items_data.items);
+        strip_trailing_spaces(&mut line, &self.items_data.items, &self.items_data.text);
 
         // Check if this is the last line
         line.is_last_line = self.current_item >= self.items_data.items.len();
@@ -507,7 +507,7 @@ impl<'a> LineBreaker<'a> {
 /// Uses the actual text on the current line (the item_result's text_range)
 /// rather than the full item's collapse metadata, so that split items are
 /// handled correctly.
-fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem]) {
+fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) {
     // Walk items from the end; skip close tags; strip trailing space from last text item.
     for item_result in line.items.iter().rev() {
         if item_result.item_type == InlineItemType::Text {
@@ -521,12 +521,6 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem]) {
                     let line_text_start = item_result.text_range.start;
                     let line_text_end = item_result.text_range.end;
                     if line_text_start < line_text_end {
-                        // Get the full text. We need to reconstruct from byte range,
-                        // but we don't have direct access to items_data.text here.
-                        // Use shape_result character metrics instead.
-                        //
-                        // Check the item's end_collapse_type combined with whether
-                        // this line portion actually reaches the item end.
                         let at_item_end = line_text_end == item.text_range.end;
                         if at_item_end && item.end_collapse_type == CollapseType::Collapsible {
                             // Trailing space is collapsible — measure width of
@@ -537,22 +531,18 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem]) {
                                 line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
                             }
                         } else if !at_item_end {
-                            // Mid-item split: check if the portion ends with a space.
-                            // Convert byte range to character range within the shape result.
-                            let start_chars = count_chars_in_bytes(item_char_start, line_text_start);
-                            let end_chars = count_chars_in_bytes(item_char_start, line_text_end);
-                            let local_end = end_chars;
-                            if local_end > 0 && local_end <= sr.num_characters {
-                                // Measure the last character of the line portion.
-                                let last_char_width = sr.width_for_range(local_end - 1, local_end);
-                                // We only strip if the character is whitespace. Since
-                                // we can't read the text here directly, rely on the
-                                // width being very small (spaces typically have uniform
-                                // width) combined with the item being collapsible overall.
-                                let _ = (start_chars, last_char_width);
-                                // For mid-item splits, the line breaker already
-                                // accounts for trailing space in its measurement, so
-                                // no additional stripping is needed.
+                            // Mid-item split: check if the portion ends with a space
+                            // by inspecting the actual text.
+                            let line_text = &text[item_result.text_range.clone()];
+                            if let Some(last_ch) = line_text.chars().next_back() {
+                                if last_ch == ' ' || last_ch == '\t' {
+                                    let end_chars = count_chars_in_bytes(item_char_start, line_text_end);
+                                    let local_end = end_chars;
+                                    if local_end > 0 && local_end <= sr.num_characters {
+                                        let last_char_width = sr.width_for_range(local_end - 1, local_end);
+                                        line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
+                                    }
+                                }
                             }
                         }
                     }
