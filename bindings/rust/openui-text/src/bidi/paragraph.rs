@@ -55,20 +55,30 @@ impl BidiParagraph {
             };
         }
 
+        // Replace paragraph separators with neutral chars so unicode-bidi
+        // treats the entire text as a single paragraph (CSS Writing Modes §2.4.1).
+        let sanitized: String = text
+            .chars()
+            .map(|ch| match ch {
+                '\n' | '\r' | '\u{0085}' | '\u{2029}' => '\u{200B}', // ZWSP
+                other => other,
+            })
+            .collect();
+
         let default_level = match base_direction {
             Some(TextDirection::Rtl) => Some(Level::rtl()),
             Some(TextDirection::Ltr) => Some(Level::ltr()),
             None => None,
         };
 
-        let bidi_info = BidiInfo::new(text, default_level);
+        let bidi_info = BidiInfo::new(&sanitized, default_level);
 
-        // Get the first paragraph.
+        // Now guaranteed to be a single paragraph covering the entire text.
         let paragraph = &bidi_info.paragraphs[0];
 
         // BidiInfo.levels is per-byte. Convert to per-character levels.
         let para_range = paragraph.range.clone();
-        let para_text = &text[para_range.clone()];
+        let para_text = &sanitized[para_range.clone()];
         let per_char_levels: Vec<Level> = para_text
             .char_indices()
             .map(|(byte_idx, _)| bidi_info.levels[para_range.start + byte_idx])
@@ -81,7 +91,7 @@ impl BidiParagraph {
         };
 
         Self {
-            text: text.to_string(),
+            text: text.to_string(), // Store original text for correct byte offsets
             levels: per_char_levels,
             base_direction: detected_direction,
         }
@@ -342,5 +352,57 @@ mod tests {
         assert_eq!(bidi.level_at_byte(0), 0, "LTR char at offset 0 should have level 0");
         // Byte offset 3 is the start of the Hebrew text (after "AB ").
         assert_eq!(bidi.level_at_byte(3), 1, "RTL char at offset 3 should have level 1");
+    }
+
+    #[test]
+    fn multi_paragraph_newline_bidi_levels() {
+        // "Hello\nمرحبا" — Arabic after newline must get RTL level,
+        // not LTR level 0 (the old bug: only first paragraph was analyzed).
+        let text = "Hello\n\u{0645}\u{0631}\u{062D}\u{0628}\u{0627}";
+        let bidi = BidiParagraph::new(text, None);
+
+        // Levels should cover the entire text (all characters).
+        let char_count = text.chars().count();
+        assert_eq!(bidi.levels().len(), char_count, "levels must span entire text");
+
+        // Arabic chars after newline must be RTL (level >= 1, odd).
+        // 'H' is char 0 (LTR), '\n' is char 5, Arabic starts at char 6.
+        for i in 6..char_count {
+            assert!(
+                bidi.levels()[i].is_rtl(),
+                "Arabic char at index {} should be RTL, got level {}",
+                i,
+                bidi.levels()[i].number(),
+            );
+        }
+    }
+
+    #[test]
+    fn multi_paragraph_preserves_original_text() {
+        // Ensure the original text (with newlines) is stored, not the sanitized version.
+        let text = "Hello\nWorld";
+        let bidi = BidiParagraph::new(text, None);
+        assert_eq!(bidi.text(), text);
+        assert!(bidi.text().contains('\n'));
+    }
+
+    #[test]
+    fn multi_paragraph_crlf_bidi_levels() {
+        // Windows-style \r\n should not break bidi analysis across paragraphs.
+        let text = "Hello\r\n\u{05E9}\u{05DC}\u{05D5}\u{05DD}"; // Hello\r\nשלום
+        let bidi = BidiParagraph::new(text, None);
+
+        let char_count = text.chars().count();
+        assert_eq!(bidi.levels().len(), char_count);
+
+        // Hebrew starts after "Hello\r\n" = 7 chars
+        for i in 7..char_count {
+            assert!(
+                bidi.levels()[i].is_rtl(),
+                "Hebrew char at index {} should be RTL after \\r\\n, got level {}",
+                i,
+                bidi.levels()[i].number(),
+            );
+        }
     }
 }

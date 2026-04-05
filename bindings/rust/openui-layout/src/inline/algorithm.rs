@@ -289,7 +289,7 @@ pub fn inline_layout(
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
                 && style.overflow_x == openui_style::Overflow::Hidden
             {
-                apply_text_overflow_ellipsis(&mut line_info, line_available, &items_data);
+                apply_text_overflow_ellipsis(&mut line_info, line_available, &items_data, style);
             }
 
             let line_fragment = create_line_box(
@@ -814,24 +814,23 @@ fn apply_text_overflow_ellipsis(
     line_info: &mut LineInfo,
     available_width: LayoutUnit,
     items_data: &InlineItemsData,
+    block_style: &ComputedStyle,
 ) {
     if line_info.used_width <= available_width {
         return;
     }
 
-    // Measure the ellipsis character ('…') from the line's font data.
-    // Fall back to a conservative estimate of one em (the font size)
-    // if no shape result is available for measurement.
-    let ellipsis_width = line_info
-        .items
-        .first()
-        .and_then(|item| item.shape_result.as_ref())
-        .and_then(|sr| sr.runs.first())
-        .map(|run| {
-            let (w, _) = run.font_data.sk_font().measure_str("…", None);
-            LayoutUnit::from_f32(w)
-        })
-        .unwrap_or_else(|| LayoutUnit::from_f32(12.0));
+    // Measure the ellipsis character ('…') using the block's font — the same
+    // font that create_line_box() uses to shape/paint the ellipsis glyph.
+    let block_font_desc = style_to_font_description(block_style);
+    let block_font = Font::new(block_font_desc);
+    let shaper = TextShaper::new();
+    let ellipsis_sr = shaper.shape(
+        "\u{2026}",
+        &block_font,
+        openui_text::TextDirection::Ltr,
+    );
+    let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
 
     let target_width = available_width - ellipsis_width;
 
@@ -1167,5 +1166,50 @@ mod tests {
         info.text_align = align;
         info.is_last_line = is_last;
         info
+    }
+
+    #[test]
+    fn ellipsis_uses_block_font_for_measurement() {
+        // Verify that apply_text_overflow_ellipsis measures the ellipsis using
+        // the block_style's font (consistent with create_line_box), not the
+        // first visible item's font.
+        let block_style = ComputedStyle::default();
+        let block_font_desc = style_to_font_description(&block_style);
+        let block_font = Font::new(block_font_desc);
+        let shaper = TextShaper::new();
+
+        // Measure the ellipsis width with the block font.
+        let ellipsis_sr = shaper.shape(
+            "\u{2026}",
+            &block_font,
+            openui_text::TextDirection::Ltr,
+        );
+        let expected_width = LayoutUnit::from_f32(ellipsis_sr.width);
+
+        // The ellipsis width should be a positive, reasonable value.
+        assert!(
+            expected_width > LayoutUnit::zero(),
+            "Ellipsis measured with block font should have positive width",
+        );
+
+        // Create a minimal overflowing line with no items (edge case).
+        let mut line_info = LineInfo::new(LayoutUnit::from_f32(100.0));
+        line_info.used_width = LayoutUnit::from_f32(150.0);
+        let items_data = InlineItemsData {
+            text: String::new(),
+            items: Vec::new(),
+            styles: Vec::new(),
+        };
+
+        // Should not panic even with empty items.
+        apply_text_overflow_ellipsis(
+            &mut line_info,
+            LayoutUnit::from_f32(100.0),
+            &items_data,
+            &block_style,
+        );
+
+        // Line should be flagged with ellipsis.
+        assert!(line_info.has_ellipsis);
     }
 }

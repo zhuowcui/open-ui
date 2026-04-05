@@ -508,52 +508,75 @@ impl<'a> LineBreaker<'a> {
 /// rather than the full item's collapse metadata, so that split items are
 /// handled correctly.
 fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) {
-    // Walk items from the end; skip close tags; strip trailing space from last text item.
-    for item_result in line.items.iter().rev() {
-        if item_result.item_type == InlineItemType::Text {
-            let item_idx = item_result.item_index;
-            if item_idx < items.len() {
-                let item = &items[item_idx];
-                // Check the actual text on this line, not the full item's collapse type.
-                if let Some(ref sr) = item.shape_result {
-                    // Compute character offsets for the line portion.
-                    let line_text_start = item_result.text_range.start;
-                    let line_text_end = item_result.text_range.end;
-                    if line_text_start < line_text_end {
-                        let at_item_end = line_text_end == item.text_range.end;
-                        if at_item_end && item.end_collapse_type == CollapseType::Collapsible {
-                            // Trailing space is collapsible — measure width of
-                            // trailing space from the line portion's end.
-                            let char_count = sr.num_characters;
-                            if char_count > 0 {
-                                let last_char_width = sr.width_for_range(char_count - 1, char_count);
-                                line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
-                            }
-                        } else if !at_item_end {
-                            // Mid-item split: check if the portion ends with a space
-                            // by inspecting the actual text.
-                            let line_text = &text[item_result.text_range.clone()];
-                            if let Some(last_ch) = line_text.chars().next_back() {
-                                if last_ch == ' ' || last_ch == '\t' {
-                                    let item_text = &text[item.text_range.clone()];
-                                    let offset_in_item = line_text_end - item.text_range.start;
-                                    let local_end = item_text[..offset_in_item].chars().count();
-                                    if local_end > 0 && local_end <= sr.num_characters {
-                                        let last_char_width = sr.width_for_range(local_end - 1, local_end);
-                                        line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
-                                    }
-                                }
-                            }
+    // Walk items from the end; skip close/open tags; find last text item index.
+    let target_idx = {
+        let mut idx = None;
+        for (i, item_result) in line.items.iter().enumerate().rev() {
+            if item_result.item_type == InlineItemType::Text {
+                idx = Some(i);
+                break;
+            }
+            if item_result.item_type != InlineItemType::CloseTag
+                && item_result.item_type != InlineItemType::OpenTag
+            {
+                break;
+            }
+        }
+        idx
+    };
+
+    let target_idx = match target_idx {
+        Some(i) => i,
+        None => return,
+    };
+
+    let item_idx = line.items[target_idx].item_index;
+    if item_idx >= items.len() {
+        return;
+    }
+
+    let item = &items[item_idx];
+
+    if let Some(ref sr) = item.shape_result {
+        let line_text_start = line.items[target_idx].text_range.start;
+        let line_text_end = line.items[target_idx].text_range.end;
+        if line_text_start < line_text_end {
+            let at_item_end = line_text_end == item.text_range.end;
+            if at_item_end && item.end_collapse_type == CollapseType::Collapsible {
+                // Trailing space is collapsible — measure width of
+                // trailing space from the line portion's end.
+                let char_count = sr.num_characters;
+                if char_count > 0 {
+                    let last_char_width = sr.width_for_range(char_count - 1, char_count);
+                    line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
+
+                    // Trim text_range so decorations don't extend into stripped space.
+                    let line_text = &text[line_text_start..line_text_end];
+                    let trimmed = line_text.trim_end_matches(|c: char| c == ' ' || c == '\t');
+                    let new_end = line_text_start + trimmed.len();
+                    line.items[target_idx].text_range = line_text_start..new_end;
+                }
+            } else if !at_item_end {
+                // Mid-item split: check if the portion ends with a space
+                // by inspecting the actual text.
+                let line_text = &text[line_text_start..line_text_end];
+                if let Some(last_ch) = line_text.chars().next_back() {
+                    if last_ch == ' ' || last_ch == '\t' {
+                        let item_text = &text[item.text_range.clone()];
+                        let offset_in_item = line_text_end - item.text_range.start;
+                        let local_end = item_text[..offset_in_item].chars().count();
+                        if local_end > 0 && local_end <= sr.num_characters {
+                            let last_char_width = sr.width_for_range(local_end - 1, local_end);
+                            line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
+
+                            // Trim text_range so decorations don't extend into stripped space.
+                            let trimmed = line_text.trim_end_matches(|c: char| c == ' ' || c == '\t');
+                            let new_end = line_text_start + trimmed.len();
+                            line.items[target_idx].text_range = line_text_start..new_end;
                         }
                     }
                 }
             }
-            break;
-        }
-        if item_result.item_type != InlineItemType::CloseTag
-            && item_result.item_type != InlineItemType::OpenTag
-        {
-            break;
         }
     }
 }
@@ -738,5 +761,102 @@ mod tests {
         assert!(has_forced_newline("hello\nworld", WhiteSpace::Pre));
         assert!(has_forced_newline("hello\nworld", WhiteSpace::PreLine));
         assert!(has_forced_newline("hello\nworld", WhiteSpace::PreWrap));
+    }
+
+    #[test]
+    fn strip_trailing_spaces_trims_text_range_at_item_end() {
+        // When stripping trailing space at the end of an item (at_item_end case),
+        // text_range should be trimmed so decorations don't extend into the space.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..6,
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::Collapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+
+        let item_result = InlineItemResult {
+            item_index: 0,
+            text_range: 0..6, // at_item_end = true
+            inline_size: LayoutUnit::from_f32(sr_arc.width),
+            shape_result: Some(sr_arc),
+            has_forced_break: false,
+            item_type: InlineItemType::Text,
+        };
+
+        let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
+        line.used_width = LayoutUnit::from_f32(50.0);
+        line.items.push(item_result);
+
+        strip_trailing_spaces(&mut line, &[item], text);
+
+        // text_range should now exclude the trailing space: 0..5 ("hello")
+        assert_eq!(
+            line.items[0].text_range,
+            0..5,
+            "text_range should be trimmed to exclude trailing space"
+        );
+    }
+
+    #[test]
+    fn strip_trailing_spaces_trims_text_range_mid_item() {
+        // When stripping trailing space from a mid-item split (!at_item_end case),
+        // text_range should also be trimmed.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello world ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..12, // full item: "hello world "
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::Collapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+
+        // Line portion is only "hello " (0..6), a mid-item split
+        let item_result = InlineItemResult {
+            item_index: 0,
+            text_range: 0..6, // at_item_end = false (6 != 12)
+            inline_size: LayoutUnit::from_f32(40.0),
+            shape_result: Some(sr_arc),
+            has_forced_break: false,
+            item_type: InlineItemType::Text,
+        };
+
+        let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
+        line.used_width = LayoutUnit::from_f32(40.0);
+        line.items.push(item_result);
+
+        strip_trailing_spaces(&mut line, &[item], text);
+
+        // text_range should be trimmed to exclude the trailing space: 0..5 ("hello")
+        assert_eq!(
+            line.items[0].text_range,
+            0..5,
+            "text_range should be trimmed to exclude trailing space in mid-item split"
+        );
     }
 }
