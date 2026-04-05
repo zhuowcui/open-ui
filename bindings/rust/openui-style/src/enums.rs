@@ -626,6 +626,46 @@ impl Default for OverflowWrap {
     fn default() -> Self { Self::INITIAL }
 }
 
+/// CSS `line-break` property.
+/// Controls line breaking rules, especially for CJK (Chinese, Japanese, Korean) text.
+///
+/// Blink: `LineBreak` in `computed_style_base_constants.h`.
+/// Blink converts this to a `LineBreakStrictness` enum and passes it as a
+/// Unicode locale keyword (`@lb=loose|normal|strict`) to ICU's BreakIterator.
+///
+/// CSS Text Module Level 3 §5.2 — <https://www.w3.org/TR/css-text-3/#line-break-property>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum LineBreak {
+    /// Default browser behavior. Blink maps this to default strictness (same
+    /// as `Normal` in practice — no ICU keyword).
+    Auto = 0,
+    /// Looser line breaking rules: allows more break opportunities in CJK text.
+    /// Blink ICU keyword: `@lb=loose`.
+    Loose = 1,
+    /// Standard line breaking rules per UAX#14.
+    /// Blink ICU keyword: `@lb=normal`.
+    Normal = 2,
+    /// Stricter line breaking rules: fewer breaks allowed in CJK text.
+    /// Prohibits breaks before small kana, iteration marks, prolonged sound
+    /// mark, and certain CJK punctuation.
+    /// Blink ICU keyword: `@lb=strict`.
+    Strict = 3,
+    /// Allow breaks at every typographic character unit.
+    /// Blink maps this to character-level breaking (no ICU keyword — uses
+    /// character break type instead of line break type).
+    Anywhere = 4,
+}
+
+impl LineBreak {
+    /// Initial value: `auto` (Blink's `LineBreak::kAuto`).
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for LineBreak {
+    fn default() -> Self { Self::INITIAL }
+}
+
 /// CSS `hyphens` property.
 /// Blink: `Hyphens` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -874,4 +914,43 @@ pub enum TabSize {
 
 impl Default for TabSize {
     fn default() -> Self { Self::Spaces(8) }
+}
+
+/// CSS `hanging-punctuation` property (CSS Text Module Level 3 §9).
+///
+/// NOTE: Not currently applied during layout — matching Chromium, which does
+/// not implement this property. Stored for spec compliance and future use.
+///
+/// The property is a set of keywords (each may be on or off). `first` and
+/// `force-end`/`allow-end` can appear together; `force-end` and `allow-end`
+/// are mutually exclusive.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct HangingPunctuation {
+    /// `first` — opening bracket or quote at the start of the first line hangs.
+    pub first: bool,
+    /// `last` — closing bracket or quote at the end of the last line hangs.
+    pub last: bool,
+    /// `force-end` — stop/comma at the end of a line always hangs.
+    pub force_end: bool,
+    /// `allow-end` — stop/comma at the end of a line hangs if it doesn't fit.
+    pub allow_end: bool,
+}
+
+impl HangingPunctuation {
+    /// Initial value: `none` (all flags false).
+    pub const NONE: Self = Self {
+        first: false,
+        last: false,
+        force_end: false,
+        allow_end: false,
+    };
+
+    /// Whether any hanging punctuation behaviour is requested.
+    pub fn is_none(self) -> bool {
+        !self.first && !self.last && !self.force_end && !self.allow_end
+    }
+}
+
+impl Default for HangingPunctuation {
+    fn default() -> Self { Self::NONE }
 }

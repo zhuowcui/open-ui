@@ -7,7 +7,7 @@
 //! - Inline item collection (flattening the DOM into a linear sequence)
 //! - White-space processing (CSS Text Module Level 3 §4)
 //! - Text shaping integration
-//! - Line breaking (UAX#14 + CSS word-break/overflow-wrap)
+//! - Line breaking (UAX#14 + CSS word-break/overflow-wrap/line-break)
 
 pub mod algorithm;
 pub mod items;
