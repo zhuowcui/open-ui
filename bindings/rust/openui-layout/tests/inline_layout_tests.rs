@@ -1805,7 +1805,7 @@ fn atomic_inline_with_explicit_width_takes_space() {
     let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
     data.shape_text();
 
-    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data);
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data, lu(500.0));
     let line = breaker.next_line(lu(500.0)).unwrap();
 
     // The atomic inline item should contribute width
@@ -1833,7 +1833,7 @@ fn atomic_inline_auto_width_zero() {
     let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
     data.shape_text();
 
-    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data);
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data, lu(500.0));
     let line = breaker.next_line(lu(500.0)).unwrap();
 
     let atomic_items: Vec<_> = line.items.iter()

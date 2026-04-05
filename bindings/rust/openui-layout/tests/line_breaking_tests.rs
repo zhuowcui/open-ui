@@ -55,7 +55,7 @@ fn collect_all_lines(
     data: &openui_layout::inline::items_builder::InlineItemsData,
     available_width: LayoutUnit,
 ) -> Vec<openui_layout::inline::line_info::LineInfo> {
-    let mut breaker = LineBreaker::new(data);
+    let mut breaker = LineBreaker::new(data, available_width);
     let mut lines = Vec::new();
     while let Some(line) = breaker.next_line(available_width) {
         lines.push(line);
@@ -318,7 +318,7 @@ fn keep_all_only_breaks_at_spaces() {
 #[test]
 fn text_align_is_propagated() {
     let data = make_normal_items(&["hello"]);
-    let mut breaker = LineBreaker::new(&data);
+    let mut breaker = LineBreaker::new(&data, lu(500.0));
     breaker.set_text_align(TextAlign::Center);
     let line = breaker.next_line(lu(500.0)).unwrap();
     assert_eq!(line.text_align, TextAlign::Center);
@@ -327,7 +327,7 @@ fn text_align_is_propagated() {
 #[test]
 fn line_breaker_is_finished_after_all_consumed() {
     let data = make_normal_items(&["hello"]);
-    let mut breaker = LineBreaker::new(&data);
+    let mut breaker = LineBreaker::new(&data, lu(500.0));
     let _ = breaker.next_line(lu(500.0));
     assert!(breaker.next_line(lu(500.0)).is_none());
     assert!(breaker.is_finished());
@@ -336,7 +336,7 @@ fn line_breaker_is_finished_after_all_consumed() {
 #[test]
 fn line_breaker_finished_on_empty() {
     let data = make_normal_items(&[]);
-    let mut breaker = LineBreaker::new(&data);
+    let mut breaker = LineBreaker::new(&data, lu(500.0));
     assert!(breaker.next_line(lu(500.0)).is_none());
     assert!(breaker.is_finished());
 }

@@ -24,7 +24,7 @@ use crate::length_resolver::resolve_margin_or_padding;
 ///
 /// Usage:
 /// ```ignore
-/// let mut breaker = LineBreaker::new(&items_data);
+/// let mut breaker = LineBreaker::new(&items_data, available_width);
 /// while let Some(line) = breaker.next_line(available_width) {
 ///     // process line
 /// }
@@ -39,6 +39,10 @@ pub struct LineBreaker<'a> {
     is_finished: bool,
     /// Text alignment from the block container.
     text_align: TextAlign,
+    /// Containing block's content-box width for percentage resolution.
+    /// Percentages on inline margin/border/padding resolve against this,
+    /// not the per-line available width (CSS 2.2 §10.3.3).
+    containing_block_width: LayoutUnit,
 }
 
 /// Internal state for line-building loop.
@@ -50,13 +54,14 @@ enum LineState {
 
 impl<'a> LineBreaker<'a> {
     /// Create a new line breaker for the given inline items.
-    pub fn new(items_data: &'a InlineItemsData) -> Self {
+    pub fn new(items_data: &'a InlineItemsData, containing_block_width: LayoutUnit) -> Self {
         Self {
             items_data,
             current_item: 0,
             current_text_offset: 0,
             is_finished: false,
             text_align: TextAlign::Start,
+            containing_block_width,
         }
     }
 
@@ -93,7 +98,7 @@ impl<'a> LineBreaker<'a> {
                 }
                 InlineItemType::OpenTag => {
                     let style = &self.items_data.styles[item.style_index];
-                    let pct_base = line.available_width;
+                    let pct_base = self.containing_block_width;
                     let mbp = resolve_margin_or_padding(&style.margin_left, pct_base)
                         + LayoutUnit::from_i32(style.effective_border_left())
                         + resolve_margin_or_padding(&style.padding_left, pct_base);
@@ -110,7 +115,7 @@ impl<'a> LineBreaker<'a> {
                 }
                 InlineItemType::CloseTag => {
                     let style = &self.items_data.styles[item.style_index];
-                    let pct_base = line.available_width;
+                    let pct_base = self.containing_block_width;
                     let mbp = resolve_margin_or_padding(&style.padding_right, pct_base)
                         + LayoutUnit::from_i32(style.effective_border_right())
                         + resolve_margin_or_padding(&style.margin_right, pct_base);
@@ -1407,7 +1412,7 @@ mod tests {
         let hello_width = sr_arc.width_for_range(0, 6); // "hello " = 6 chars
         let narrow_width = LayoutUnit::from_f32(hello_width + 1.0);
 
-        let mut breaker = LineBreaker::new(&items_data);
+        let mut breaker = LineBreaker::new(&items_data, narrow_width);
         let line1 = breaker.next_line(narrow_width);
         assert!(line1.is_some(), "Should produce at least one line");
         let line1 = line1.unwrap();
@@ -1581,7 +1586,7 @@ mod tests {
         let five_char_width = sr_arc.width_for_range(0, 5);
         let narrow_width = LayoutUnit::from_f32(five_char_width + 1.0);
 
-        let mut breaker = LineBreaker::new(&items_data);
+        let mut breaker = LineBreaker::new(&items_data, narrow_width);
         let line1 = breaker.next_line(narrow_width);
         assert!(line1.is_some(), "Should produce at least one line");
         let line1 = line1.unwrap();

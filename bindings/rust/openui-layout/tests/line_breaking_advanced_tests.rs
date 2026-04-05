@@ -52,7 +52,7 @@ fn collect_all_lines(
     data: &openui_layout::inline::items_builder::InlineItemsData,
     available_width: LayoutUnit,
 ) -> Vec<openui_layout::inline::line_info::LineInfo> {
-    let mut breaker = LineBreaker::new(data);
+    let mut breaker = LineBreaker::new(data, available_width);
     let mut lines = Vec::new();
     while let Some(line) = breaker.next_line(available_width) {
         lines.push(line);
@@ -792,7 +792,7 @@ fn cjk_mixed_with_latin() {
 #[test]
 fn text_align_left_default() {
     let data = make_normal_items(&["hello"]);
-    let mut breaker = LineBreaker::new(&data);
+    let mut breaker = LineBreaker::new(&data, lu(500.0));
     breaker.set_text_align(TextAlign::Left);
     let line = breaker.next_line(lu(500.0)).unwrap();
     assert_eq!(line.text_align, TextAlign::Left);
@@ -801,7 +801,7 @@ fn text_align_left_default() {
 #[test]
 fn text_align_right_propagated() {
     let data = make_normal_items(&["hello world"]);
-    let mut breaker = LineBreaker::new(&data);
+    let mut breaker = LineBreaker::new(&data, lu(500.0));
     breaker.set_text_align(TextAlign::Right);
     let w = measure_text("hello ") + 1.0;
     let line = breaker.next_line(lu(w)).unwrap();
@@ -811,7 +811,7 @@ fn text_align_right_propagated() {
 #[test]
 fn text_align_justify_propagated() {
     let data = make_normal_items(&["hello world foo"]);
-    let mut breaker = LineBreaker::new(&data);
+    let mut breaker = LineBreaker::new(&data, lu(500.0));
     breaker.set_text_align(TextAlign::Justify);
     let w = measure_text("hello ") + 2.0;
     let line = breaker.next_line(lu(w)).unwrap();

@@ -118,7 +118,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         let inline_space = ConstraintSpace::for_block_child(
             child_available_inline,
             space.available_block_size,
-            space.percentage_resolution_inline_size,
+            child_available_inline,
             space.percentage_resolution_block_size,
             false,
         );
@@ -130,7 +130,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             let mut positioned_line = line_frag;
             positioned_line.offset = PhysicalOffset::new(
                 border.left + padding.left + positioned_line.offset.left,
-                positioned_line.offset.top,
+                content_edge + positioned_line.offset.top,
             );
             intrinsic_block_size = intrinsic_block_size.max_of(
                 positioned_line.offset.top + line_height,
@@ -176,7 +176,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 let inline_space = ConstraintSpace::for_block_child(
                     child_available_inline,
                     space.available_block_size,
-                    space.percentage_resolution_inline_size,
+                    child_available_inline,
                     space.percentage_resolution_block_size,
                     false,
                 );

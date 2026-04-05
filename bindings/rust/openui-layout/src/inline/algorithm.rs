@@ -14,8 +14,8 @@ use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
 use openui_style::{ComputedStyle, Direction, Display, LineHeight, TextAlign, VerticalAlign};
 use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
 use std::sync::Arc;
+use unicode_segmentation::UnicodeSegmentation;
 
-use crate::block::{resolve_border, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::resolve_margin_or_padding;
@@ -59,12 +59,12 @@ fn compute_line_height_metrics(
     };
 
     let leading = computed_line_height - (font_ascent + font_descent);
-    let half_leading_floor = (leading / 2.0).floor();
-    let half_leading_ceil = leading - half_leading_floor;
+    let half_leading = leading / 2.0;
+    let half_leading_rest = leading - half_leading;
 
     LineHeightMetrics {
-        ascent: font_ascent + half_leading_floor,
-        descent: font_descent + half_leading_ceil,
+        ascent: font_ascent + half_leading,
+        descent: font_descent + half_leading_rest,
     }
 }
 
@@ -225,14 +225,12 @@ pub fn inline_layout(
 ) -> Fragment {
     let style = &doc.node(node_id).style;
 
-    // Resolve border + padding for the containing block.
-    let border = resolve_border(style);
-    let padding = resolve_padding(style, space.percentage_resolution_inline_size);
-    let border_padding = border + padding;
-
-    // The caller (block_layout) already subtracts border+padding to produce
-    // the content-box width in space.available_inline_size. Use it directly
-    // to avoid double subtraction (CSS 2.2 §10.3.3).
+    // The caller (block_layout) already resolves border+padding for this
+    // container and subtracts it to produce the content-box width in
+    // space.available_inline_size. We do NOT re-resolve border+padding here
+    // because the percentage_resolution_inline_size is now this block's
+    // content-box width (correct for descendants), which would give wrong
+    // results for the container's own percentage padding.
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
     // Step 1: Collect inline items from DOM children.
@@ -250,7 +248,7 @@ pub fn inline_layout(
     items_data.shape_text();
 
     // Step 3: Create line breaker.
-    let mut line_breaker = LineBreaker::new(&items_data);
+    let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
     line_breaker.set_text_align(style.text_align);
 
     // Step 3b: Resolve text-indent for the first line.
@@ -270,8 +268,10 @@ pub fn inline_layout(
         .unwrap_or_default();
 
     // Step 4: Layout each line.
+    // Line offsets are relative to the content box (0-based). The caller
+    // (block_layout) adds border+padding offsets when positioning.
     let mut line_fragments: Vec<Fragment> = Vec::new();
-    let mut block_offset = border_padding.top;
+    let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
 
     while !line_breaker.is_finished() {
@@ -310,17 +310,13 @@ pub fn inline_layout(
         }
     }
 
-    // If no lines were produced but the block has inline content (e.g., empty
-    // text), ensure at least the strut height.
-    let intrinsic_block_size = block_offset + border_padding.bottom;
+    let intrinsic_block_size = block_offset;
 
     // Build the container fragment.
     let border_box_inline = space.available_inline_size;
     let border_box_size = PhysicalSize::new(border_box_inline, intrinsic_block_size);
 
     let mut fragment = Fragment::new_box(node_id, border_box_size);
-    fragment.border = border;
-    fragment.padding = padding;
     fragment.children = line_fragments;
     fragment
 }
@@ -338,9 +334,6 @@ pub fn inline_layout_for_children(
 ) -> Fragment {
     let style = &doc.node(node_id).style;
 
-    let border = resolve_border(style);
-    let padding = resolve_padding(style, space.percentage_resolution_inline_size);
-
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
     // Collect inline items only from the specified children.
@@ -354,7 +347,7 @@ pub fn inline_layout_for_children(
     items_data.apply_bidi(base_direction);
     items_data.shape_text();
 
-    let mut line_breaker = LineBreaker::new(&items_data);
+    let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
     line_breaker.set_text_align(style.text_align);
 
     let text_indent = crate::length_resolver::resolve_length(
@@ -413,8 +406,6 @@ pub fn inline_layout_for_children(
     let border_box_size = PhysicalSize::new(border_box_inline, intrinsic_block_size);
 
     let mut fragment = Fragment::new_box(node_id, border_box_size);
-    fragment.border = border;
-    fragment.padding = padding;
     fragment.children = line_fragments;
     fragment
 }
@@ -1081,14 +1072,17 @@ fn apply_text_overflow_ellipsis(
 
     let target_width = available_width - ellipsis_width;
 
+    let is_rtl = block_style.direction == Direction::Rtl;
+
     if target_width <= LayoutUnit::zero() {
         line_info.items.clear();
         line_info.used_width = LayoutUnit::zero();
         line_info.has_ellipsis = true;
+        if is_rtl {
+            line_info.ellipsis_at_start = true;
+        }
         return;
     }
-
-    let is_rtl = block_style.direction == Direction::Rtl;
 
     if is_rtl {
         // RTL: truncate from the visual left (beginning of items after bidi reorder).
@@ -1125,14 +1119,24 @@ fn apply_text_overflow_ellipsis(
                     let local_end = portion_char_end - item_char_start;
                     let total_chars = local_end - local_start;
 
-                    // Find how many characters to trim from the start to fit.
+                    // Find the first grapheme-safe trim point from the start
+                    // that fits. Use grapheme clusters and safe_to_break_before
+                    // to avoid splitting emoji/ZWJ sequences.
                     let mut trim_chars = 0;
-                    for n in 1..=total_chars {
+                    let mut trim_byte_offset = 0;
+                    for (byte_offset, _grapheme) in line_text.grapheme_indices(true).skip(1) {
+                        let char_count = line_text[..byte_offset].chars().count();
+                        let local_trim = local_start + char_count;
+                        // Only trim at shaping-safe positions.
+                        if !sr.safe_to_break_before(local_trim) {
+                            continue;
+                        }
                         let remaining_width = LayoutUnit::from_f32(
-                            sr.width_for_range(local_start + n, local_end),
+                            sr.width_for_range(local_trim, local_end),
                         );
                         if remaining_width <= item_target {
-                            trim_chars = n;
+                            trim_chars = char_count;
+                            trim_byte_offset = byte_offset;
                             break;
                         }
                     }
@@ -1141,12 +1145,7 @@ fn apply_text_overflow_ellipsis(
                         let trimmed_width = LayoutUnit::from_f32(
                             sr.width_for_range(local_start + trim_chars, local_end),
                         );
-                        let byte_start_offset = line_text
-                            .char_indices()
-                            .nth(trim_chars)
-                            .map(|(i, _)| i)
-                            .unwrap_or(0);
-                        let new_text_start = line_info.items[0].text_range.start + byte_start_offset;
+                        let new_text_start = line_info.items[0].text_range.start + trim_byte_offset;
                         let old_size = first_size;
 
                         let first_mut = &mut line_info.items[0];
@@ -1193,21 +1192,29 @@ fn apply_text_overflow_ellipsis(
                             &items_data.text,
                             last.text_range.start,
                         );
-                        let portion_char_end = byte_to_char_offset(
-                            &items_data.text,
-                            last.text_range.end,
-                        );
                         let local_start = portion_char_start - item_char_start;
-                        let local_end = portion_char_end - item_char_start;
-                        let total_chars = local_end - local_start;
 
+                        // Walk grapheme boundaries from end to find the
+                        // largest safe-to-break prefix that fits.
                         let mut fit_chars = 0;
-                        for n in (1..=total_chars).rev() {
+                        let mut fit_byte_end = 0;
+                        let grapheme_offsets: Vec<usize> = line_text
+                            .grapheme_indices(true)
+                            .skip(1)
+                            .map(|(off, _)| off)
+                            .collect();
+                        for &byte_offset in grapheme_offsets.iter().rev() {
+                            let char_count = line_text[..byte_offset].chars().count();
+                            let local_trim = local_start + char_count;
+                            if !sr.safe_to_break_before(local_trim) {
+                                continue;
+                            }
                             let w = LayoutUnit::from_f32(
-                                sr.width_for_range(local_start, local_start + n),
+                                sr.width_for_range(local_start, local_trim),
                             );
                             if w <= item_target {
-                                fit_chars = n;
+                                fit_chars = char_count;
+                                fit_byte_end = byte_offset;
                                 break;
                             }
                         }
@@ -1216,12 +1223,7 @@ fn apply_text_overflow_ellipsis(
                             let trimmed_width = LayoutUnit::from_f32(
                                 sr.width_for_range(local_start, local_start + fit_chars),
                             );
-                            let byte_end = line_text
-                                .char_indices()
-                                .nth(fit_chars)
-                                .map(|(i, _)| i)
-                                .unwrap_or(line_text.len());
-                            let new_text_end = last.text_range.start + byte_end;
+                            let new_text_end = last.text_range.start + fit_byte_end;
                             let old_size = last_size;
 
                             let last_mut = line_info.items.last_mut().unwrap();
@@ -1331,15 +1333,15 @@ mod tests {
 
     #[test]
     fn line_height_half_leading_odd() {
-        // Odd leading: floor on ascent, ceil on descent
+        // Odd leading: sub-pixel precision preserved (no floor/ceil rounding)
         let m = compute_line_height_metrics(
             10.0, 4.0,
             &LineHeight::Length(25.0),
             16.0, 16.0,
         );
-        // leading = 25 - 14 = 11, floor(5.5) = 5, ceil = 6
-        assert_eq!(m.ascent, 15.0);
-        assert_eq!(m.descent, 10.0);
+        // leading = 25 - 14 = 11, half = 5.5, rest = 5.5
+        assert_eq!(m.ascent, 15.5);
+        assert_eq!(m.descent, 9.5);
     }
 
     #[test]
