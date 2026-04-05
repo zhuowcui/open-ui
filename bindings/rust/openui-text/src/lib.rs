@@ -24,6 +24,7 @@ pub use transform::apply_text_transform;
 pub use font::{
     Font, FontCache, FontDescription, FontFallbackList, FontMetrics, FontPlatformData,
 };
+pub use font::features::collect_font_features;
 
 pub use shaping::{
     RunSegment, RunSegmenter, ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection,

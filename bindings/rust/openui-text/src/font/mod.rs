@@ -10,6 +10,7 @@
 pub mod cache;
 mod description;
 mod fallback;
+pub mod features;
 mod font;
 mod metrics;
 mod platform;

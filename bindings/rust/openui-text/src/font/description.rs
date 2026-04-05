@@ -6,7 +6,8 @@
 
 use openui_style::{
     FontFamilyList, FontOpticalSizing, FontSmoothing, FontStretch, FontStyleEnum, FontSynthesis,
-    FontVariantCaps, FontWeight, TextRendering, FontFeature, FontVariation,
+    FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantLigatures,
+    FontVariantNumeric, FontVariantPosition, FontWeight, TextRendering, FontFeature, FontVariation,
 };
 
 /// Complete description of desired font properties, derived from CSS.
@@ -29,6 +30,16 @@ pub struct FontDescription {
     pub style: FontStyleEnum,
     /// Small-caps and other variant caps (CSS `font-variant-caps`).
     pub variant_caps: FontVariantCaps,
+    /// Ligature control (CSS `font-variant-ligatures`).
+    pub variant_ligatures: FontVariantLigatures,
+    /// Numeric glyph variants (CSS `font-variant-numeric`).
+    pub variant_numeric: FontVariantNumeric,
+    /// East Asian glyph variants (CSS `font-variant-east-asian`).
+    pub variant_east_asian: FontVariantEastAsian,
+    /// Sub/superscript glyph variants (CSS `font-variant-position`).
+    pub variant_position: FontVariantPosition,
+    /// Alternate glyph forms (CSS `font-variant-alternates`).
+    pub variant_alternates: FontVariantAlternates,
     /// Extra spacing between characters in pixels (CSS `letter-spacing`).
     pub letter_spacing: f32,
     /// Extra spacing at word boundaries in pixels (CSS `word-spacing`).
@@ -62,6 +73,11 @@ impl FontDescription {
             stretch: FontStretch::NORMAL,
             style: FontStyleEnum::Normal,
             variant_caps: FontVariantCaps::Normal,
+            variant_ligatures: FontVariantLigatures::default(),
+            variant_numeric: FontVariantNumeric::default(),
+            variant_east_asian: FontVariantEastAsian::default(),
+            variant_position: FontVariantPosition::Normal,
+            variant_alternates: FontVariantAlternates::Normal,
             letter_spacing: 0.0,
             word_spacing: 0.0,
             locale: None,

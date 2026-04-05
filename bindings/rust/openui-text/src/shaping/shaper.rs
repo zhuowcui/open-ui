@@ -7,12 +7,13 @@
 use std::sync::Arc;
 
 use skia_safe::{
-    shaper::{run_handler, RunHandler as SkRunHandler},
+    shaper::{self, run_handler, RunHandler as SkRunHandler},
     GlyphId, Point, Shaper, Vector,
 };
 use unicode_script::{Script, UnicodeScript};
 
 use crate::font::{Font, FontPlatformData};
+use crate::font::features::{collect_font_features, to_skia_features};
 
 use super::shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
 
@@ -465,10 +466,40 @@ impl TextShaper {
 
         let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
 
-        // Use f32::INFINITY for width to disable line wrapping — we shape
-        // the entire string as a single line.
-        self.shaper
-            .shape(text, sk_font, left_to_right, f32::INFINITY, &mut collector);
+        // Collect OpenType features from font-variant-* properties and
+        // explicit font-feature-settings, matching Blink's FontFeatures.
+        let font_features = collect_font_features(font.description());
+        let skia_features = to_skia_features(&font_features, text.len());
+
+        if skia_features.is_empty() {
+            // Fast path: no features — use the simple shaping API.
+            self.shaper
+                .shape(text, sk_font, left_to_right, f32::INFINITY, &mut collector);
+        } else {
+            // Feature-aware path: set up run iterators for the full API.
+            let mut font_iter =
+                shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
+            let bidi_level = if left_to_right { 0 } else { 1 };
+            #[allow(deprecated)]
+            let mut bidi_iter =
+                shaper::Shaper::new_trivial_bidi_run_iterator(bidi_level, text.len());
+            #[allow(deprecated)]
+            let mut script_iter =
+                shaper::Shaper::new_trivial_script_run_iterator(0, text.len());
+            let mut lang_iter =
+                shaper::Shaper::new_trivial_language_run_iterator("und", text.len());
+
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut lang_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
+        }
 
         let mut result = collector.into_shape_result(text);
 

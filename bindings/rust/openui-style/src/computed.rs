@@ -199,6 +199,21 @@ pub struct ComputedStyle {
     /// CSS `font-variant-caps`. Initial: `normal`. Inherited.
     pub font_variant_caps: FontVariantCaps,
 
+    /// CSS `font-variant-ligatures`. Initial: `normal`. Inherited.
+    pub font_variant_ligatures: FontVariantLigatures,
+
+    /// CSS `font-variant-numeric`. Initial: `normal`. Inherited.
+    pub font_variant_numeric: FontVariantNumeric,
+
+    /// CSS `font-variant-east-asian`. Initial: `normal`. Inherited.
+    pub font_variant_east_asian: FontVariantEastAsian,
+
+    /// CSS `font-variant-position`. Initial: `normal`. Inherited.
+    pub font_variant_position: FontVariantPosition,
+
+    /// CSS `font-variant-alternates`. Initial: `normal`. Inherited.
+    pub font_variant_alternates: FontVariantAlternates,
+
     /// CSS `font-size-adjust`. Initial: `none`.
     pub font_size_adjust: Option<f32>,
 
@@ -246,6 +261,11 @@ pub struct ComputedStyle {
 
     /// CSS `overflow-wrap`. Initial: `normal`. Inherited.
     pub overflow_wrap: OverflowWrap,
+
+    /// CSS `line-break`. Initial: `auto`. Inherited.
+    /// Controls line breaking rules for CJK text.
+    /// CSS Text Module Level 3 §5.2.
+    pub line_break: LineBreak,
 
     /// CSS `hyphens`. Initial: `manual`. Inherited.
     pub hyphens: Hyphens,
@@ -306,6 +326,13 @@ pub struct ComputedStyle {
 
     /// CSS `text-shadow`. Initial: `none` (empty). Inherited.
     pub text_shadow: Vec<TextShadow>,
+
+    // ── Hanging Punctuation ─────────────────────────────────────────
+
+    /// CSS `hanging-punctuation`. Initial: `none`. Inherited.
+    /// NOTE: Stored for spec compliance; not applied during layout
+    /// (matching Chromium, which does not implement this property).
+    pub hanging_punctuation: HangingPunctuation,
 
     // ── Tab Size ─────────────────────────────────────────────────────
 
@@ -400,6 +427,11 @@ impl ComputedStyle {
             font_style: FontStyleEnum::Normal,
             font_stretch: FontStretch::NORMAL,            // 100%
             font_variant_caps: FontVariantCaps::Normal,
+            font_variant_ligatures: FontVariantLigatures::NORMAL,
+            font_variant_numeric: FontVariantNumeric::NORMAL,
+            font_variant_east_asian: FontVariantEastAsian::NORMAL,
+            font_variant_position: FontVariantPosition::Normal,
+            font_variant_alternates: FontVariantAlternates::Normal,
             font_size_adjust: None,
             font_optical_sizing: FontOpticalSizing::Auto,
             font_synthesis_weight: FontSynthesis::Auto,
@@ -420,6 +452,7 @@ impl ComputedStyle {
             text_justify: TextJustify::INITIAL,           // auto
             word_break: WordBreak::INITIAL,               // normal
             overflow_wrap: OverflowWrap::INITIAL,         // normal
+            line_break: LineBreak::INITIAL,               // auto
             hyphens: Hyphens::INITIAL,                    // manual
 
             // Text decoration
@@ -448,6 +481,9 @@ impl ComputedStyle {
 
             // Text shadow
             text_shadow: Vec::new(),
+
+            // Hanging punctuation
+            hanging_punctuation: HangingPunctuation::NONE,
 
             // Tab size
             tab_size: TabSize::Spaces(8),

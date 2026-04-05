@@ -74,16 +74,315 @@ impl Default for FontStyleEnum {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum FontVariantCaps {
+    /// `normal` — no variant caps.
     Normal = 0,
+    /// `small-caps` → OpenType `"smcp"`.
     SmallCaps = 1,
+    /// `all-small-caps` → OpenType `"smcp"` + `"c2sc"`.
     AllSmallCaps = 2,
+    /// `petite-caps` → OpenType `"pcap"`.
     PetiteCaps = 3,
+    /// `all-petite-caps` → OpenType `"pcap"` + `"c2pc"`.
     AllPetiteCaps = 4,
+    /// `unicase` → OpenType `"unic"`.
     Unicase = 5,
+    /// `titling-caps` → OpenType `"titl"`.
     TitlingCaps = 6,
 }
 
 impl Default for FontVariantCaps {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+// ── font-variant-ligatures ──────────────────────────────────────────────
+
+/// Tri-state for each ligature sub-property.
+///
+/// `Normal` means "use the font's default behavior" (no explicit feature tag
+/// is emitted). `Enabled` forces the feature on (`value = 1`), `Disabled`
+/// forces it off (`value = 0`).
+///
+/// Blink: individual bits inside `FontDescription::font_variant_ligatures_`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum LigatureState {
+    /// Use font default — no feature tag emitted.
+    Normal = 0,
+    /// Feature explicitly enabled (`value = 1`).
+    Enabled = 1,
+    /// Feature explicitly disabled (`value = 0`).
+    Disabled = 2,
+}
+
+impl Default for LigatureState {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+/// CSS `font-variant-ligatures` — controls OpenType ligature features.
+///
+/// Each sub-property is independent. The CSS keyword `normal` leaves all
+/// four at `LigatureState::Normal`; the keyword `none` sets all four to
+/// `LigatureState::Disabled`.
+///
+/// Blink: `FontDescription` stores four separate 2-bit fields
+/// (`common_ligatures_state_`, `discretionary_ligatures_state_`, etc.).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FontVariantLigatures {
+    /// `common-ligatures` / `no-common-ligatures` → `"liga"`, `"clig"`.
+    pub common: LigatureState,
+    /// `discretionary-ligatures` / `no-discretionary-ligatures` → `"dlig"`.
+    pub discretionary: LigatureState,
+    /// `historical-ligatures` / `no-historical-ligatures` → `"hlig"`.
+    pub historical: LigatureState,
+    /// `contextual` / `no-contextual` → `"calt"`.
+    pub contextual: LigatureState,
+}
+
+impl FontVariantLigatures {
+    /// CSS `font-variant-ligatures: normal` — all sub-properties at font default.
+    pub const NORMAL: Self = Self {
+        common: LigatureState::Normal,
+        discretionary: LigatureState::Normal,
+        historical: LigatureState::Normal,
+        contextual: LigatureState::Normal,
+    };
+
+    /// CSS `font-variant-ligatures: none` — all ligatures explicitly disabled.
+    pub fn none() -> Self {
+        Self {
+            common: LigatureState::Disabled,
+            discretionary: LigatureState::Disabled,
+            historical: LigatureState::Disabled,
+            contextual: LigatureState::Disabled,
+        }
+    }
+}
+
+impl Default for FontVariantLigatures {
+    fn default() -> Self {
+        Self::NORMAL
+    }
+}
+
+// ── font-variant-numeric ────────────────────────────────────────────────
+
+/// CSS `font-variant-numeric` figure sub-property.
+///
+/// Blink: `FontDescription::numeric_figure_` (2-bit field).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum NumericFigure {
+    /// `normal` — use font default.
+    Normal = 0,
+    /// `lining-nums` → OpenType `"lnum"`.
+    LiningNums = 1,
+    /// `oldstyle-nums` → OpenType `"onum"`.
+    OldstyleNums = 2,
+}
+
+impl Default for NumericFigure {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+/// CSS `font-variant-numeric` spacing sub-property.
+///
+/// Blink: `FontDescription::numeric_spacing_` (2-bit field).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum NumericSpacing {
+    /// `normal` — use font default.
+    Normal = 0,
+    /// `proportional-nums` → OpenType `"pnum"`.
+    ProportionalNums = 1,
+    /// `tabular-nums` → OpenType `"tnum"`.
+    TabularNums = 2,
+}
+
+impl Default for NumericSpacing {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+/// CSS `font-variant-numeric` fraction sub-property.
+///
+/// Blink: `FontDescription::numeric_fraction_` (2-bit field).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum NumericFraction {
+    /// `normal` — use font default.
+    Normal = 0,
+    /// `diagonal-fractions` → OpenType `"frac"`.
+    DiagonalFractions = 1,
+    /// `stacked-fractions` → OpenType `"afrc"`.
+    StackedFractions = 2,
+}
+
+impl Default for NumericFraction {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+/// CSS `font-variant-numeric` — controls numeric glyph features.
+///
+/// Blink: individual 1-2 bit fields in `FontDescription`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FontVariantNumeric {
+    /// `lining-nums` / `oldstyle-nums`.
+    pub figure: NumericFigure,
+    /// `proportional-nums` / `tabular-nums`.
+    pub spacing: NumericSpacing,
+    /// `diagonal-fractions` / `stacked-fractions`.
+    pub fraction: NumericFraction,
+    /// `ordinal` → OpenType `"ordn"`.
+    pub ordinal: bool,
+    /// `slashed-zero` → OpenType `"zero"`.
+    pub slashed_zero: bool,
+}
+
+impl FontVariantNumeric {
+    /// CSS `font-variant-numeric: normal`.
+    pub const NORMAL: Self = Self {
+        figure: NumericFigure::Normal,
+        spacing: NumericSpacing::Normal,
+        fraction: NumericFraction::Normal,
+        ordinal: false,
+        slashed_zero: false,
+    };
+}
+
+impl Default for FontVariantNumeric {
+    fn default() -> Self {
+        Self::NORMAL
+    }
+}
+
+// ── font-variant-east-asian ─────────────────────────────────────────────
+
+/// CSS `font-variant-east-asian` form sub-property.
+///
+/// Blink: `FontDescription::east_asian_form_` (3-bit field).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum EastAsianForm {
+    /// `normal` — use font default.
+    Normal = 0,
+    /// `jis78` → OpenType `"jp78"`.
+    Jis78 = 1,
+    /// `jis83` → OpenType `"jp83"`.
+    Jis83 = 2,
+    /// `jis90` → OpenType `"jp90"`.
+    Jis90 = 3,
+    /// `jis04` → OpenType `"jp04"`.
+    Jis04 = 4,
+    /// `simplified` → OpenType `"smpl"`.
+    Simplified = 5,
+    /// `traditional` → OpenType `"trad"`.
+    Traditional = 6,
+}
+
+impl Default for EastAsianForm {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+/// CSS `font-variant-east-asian` width sub-property.
+///
+/// Blink: `FontDescription::east_asian_width_` (2-bit field).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum EastAsianWidth {
+    /// `normal` — use font default.
+    Normal = 0,
+    /// `full-width` → OpenType `"fwid"`.
+    FullWidth = 1,
+    /// `proportional-width` → OpenType `"pwid"`.
+    ProportionalWidth = 2,
+}
+
+impl Default for EastAsianWidth {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+/// CSS `font-variant-east-asian` — controls East Asian text features.
+///
+/// Blink: individual bit fields in `FontDescription`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FontVariantEastAsian {
+    /// `jis78` / `jis83` / `jis90` / `jis04` / `simplified` / `traditional`.
+    pub form: EastAsianForm,
+    /// `full-width` / `proportional-width`.
+    pub width: EastAsianWidth,
+    /// `ruby` → OpenType `"ruby"`.
+    pub ruby: bool,
+}
+
+impl FontVariantEastAsian {
+    /// CSS `font-variant-east-asian: normal`.
+    pub const NORMAL: Self = Self {
+        form: EastAsianForm::Normal,
+        width: EastAsianWidth::Normal,
+        ruby: false,
+    };
+}
+
+impl Default for FontVariantEastAsian {
+    fn default() -> Self {
+        Self::NORMAL
+    }
+}
+
+// ── font-variant-position ───────────────────────────────────────────────
+
+/// CSS `font-variant-position` — controls sub/superscript glyph variants.
+///
+/// Blink: `FontDescription::VariantPosition` enum.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FontVariantPosition {
+    /// `normal` — no positional variant.
+    Normal = 0,
+    /// `sub` → OpenType `"subs"`.
+    Sub = 1,
+    /// `super` → OpenType `"sups"`.
+    Super = 2,
+}
+
+impl Default for FontVariantPosition {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+// ── font-variant-alternates (basic) ─────────────────────────────────────
+
+/// CSS `font-variant-alternates` — basic keyword values.
+///
+/// The full CSS spec includes function values (`stylistic()`, `swash()`, etc.)
+/// that require `@font-feature-values` rules. This enum covers the keyword-only
+/// subset matching Blink's `FontDescription::VariantAlternates`.
+///
+/// Blink: `FontDescription::font_variant_alternates_` (bit field).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FontVariantAlternates {
+    /// `normal` — no alternates.
+    Normal = 0,
+    /// `historical-forms` → OpenType `"hist"`.
+    HistoricalForms = 1,
+}
+
+impl Default for FontVariantAlternates {
     fn default() -> Self {
         Self::Normal
     }
