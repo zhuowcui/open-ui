@@ -15,9 +15,9 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace};
+use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Rect, ColorSpace, ClipOp};
 use openui_geometry::PhysicalOffset;
-use openui_style::{Color, ComputedStyle, BorderStyle, StyleColor, Visibility};
+use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
 use openui_dom::Document;
 use openui_layout::{Fragment, FragmentKind};
 
@@ -71,12 +71,35 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
         }
     }
 
+    // ── Overflow clipping ────────────────────────────────────────────
+    // When a box has overflow: hidden (or clip), clip children to the
+    // content box so overflowing content is not painted.
+    let needs_clip = (style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
+        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    if needs_clip {
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_xywh(
+                abs_offset.left.to_f32(),
+                abs_offset.top.to_f32(),
+                fragment.size.width.to_f32(),
+                fragment.size.height.to_f32(),
+            ),
+            ClipOp::Intersect,
+            false,
+        );
+    }
+
     // ── Paint children in document order ─────────────────────────────
     // Blink paints children at their offset relative to the parent fragment.
     // Note: visibility is inherited, but children can override it,
     // so we always recurse (the child's own visibility check will decide).
     for child in &fragment.children {
         paint_fragment(canvas, child, doc, abs_offset);
+    }
+
+    if needs_clip {
+        canvas.restore();
     }
 
     if needs_layer {

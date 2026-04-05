@@ -458,6 +458,21 @@ fn create_line_box(
                         line_ascent = line_ascent.max(half);
                         line_descent = line_descent.max(half);
                     }
+                    VerticalAlign::Length(px) => {
+                        // Shift from baseline by px (negative = down).
+                        let shifted_ascent = item_height + px.max(0.0);
+                        let shifted_descent = (-px).max(0.0);
+                        line_ascent = line_ascent.max(shifted_ascent);
+                        line_descent = line_descent.max(shifted_descent);
+                    }
+                    VerticalAlign::Percentage(pct) => {
+                        let element_line_height = item_height;
+                        let shift = element_line_height * pct / 100.0;
+                        let shifted_ascent = item_height + shift.max(0.0);
+                        let shifted_descent = (-shift).max(0.0);
+                        line_ascent = line_ascent.max(shifted_ascent);
+                        line_descent = line_descent.max(shifted_descent);
+                    }
                     _ => {
                         // Baseline-aligned: bottom sits on baseline, full height above.
                         line_ascent = line_ascent.max(item_height);
@@ -704,6 +719,17 @@ fn create_line_box(
                         let shift = LayoutUnit::from_f32(style.font_size / 3.0 + 1.0);
                         baseline - shift - item_height
                     }
+                    VerticalAlign::Length(px) => {
+                        // Positive length shifts up from baseline.
+                        let shift = LayoutUnit::from_f32(px);
+                        baseline - item_height - shift
+                    }
+                    VerticalAlign::Percentage(pct) => {
+                        // Percentage of the element's own line-height.
+                        let element_line_height = item_height.to_f32();
+                        let shift = LayoutUnit::from_f32(element_line_height * pct / 100.0);
+                        baseline - item_height - shift
+                    }
                     _ => {
                         // Baseline (default): bottom of item sits on baseline.
                         baseline - item_height
@@ -850,6 +876,10 @@ fn apply_text_overflow_ellipsis(
     let target_width = available_width - ellipsis_width;
 
     if target_width <= LayoutUnit::zero() {
+        // Box too narrow for any content + ellipsis — remove all items, show just ellipsis.
+        line_info.items.clear();
+        line_info.used_width = LayoutUnit::zero();
+        line_info.has_ellipsis = true;
         return;
     }
 

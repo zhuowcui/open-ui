@@ -271,11 +271,19 @@ impl<'a> InlineItemsBuilder<'a> {
                 }
             }
             WhiteSpace::Pre => (CollapseType::NotCollapsible, false),
-            WhiteSpace::PreWrap | WhiteSpace::BreakSpaces => {
+            WhiteSpace::PreWrap => {
                 if last_char == b' ' || last_char == b'\t' {
                     (CollapseType::Collapsible, false)
                 } else if last_char == b'\n' {
                     (CollapseType::Collapsible, true)
+                } else {
+                    (CollapseType::NotCollapsible, false)
+                }
+            }
+            WhiteSpace::BreakSpaces => {
+                // CSS Text §3: break-spaces preserves all spaces (including trailing).
+                if last_char == b'\n' {
+                    (CollapseType::NotCollapsible, true)
                 } else {
                     (CollapseType::NotCollapsible, false)
                 }

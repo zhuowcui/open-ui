@@ -12,7 +12,7 @@
 //! - Trailing space stripping per CSS Text §4.1.3
 
 use openui_geometry::{LayoutUnit, Length, LengthType};
-use openui_style::{OverflowWrap, TextAlign, WhiteSpace, WordBreak};
+use openui_style::{ComputedStyle, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
 
 use super::items::{CollapseType, InlineItem, InlineItemResult, InlineItemType};
 use super::items_builder::InlineItemsData;
@@ -138,7 +138,7 @@ impl<'a> LineBreaker<'a> {
         }
 
         // Strip trailing collapsible spaces from the line
-        strip_trailing_spaces(&mut line, &self.items_data.items, &self.items_data.text);
+        strip_trailing_spaces(&mut line, &self.items_data.items, &self.items_data.text, &self.items_data.styles);
 
         // Check if this is the last line
         line.is_last_line = self.current_item >= self.items_data.items.len();
@@ -507,7 +507,7 @@ impl<'a> LineBreaker<'a> {
 /// Uses the actual text on the current line (the item_result's text_range)
 /// rather than the full item's collapse metadata, so that split items are
 /// handled correctly.
-fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) {
+fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, styles: &[ComputedStyle]) {
     // Walk items from the end; skip close/open tags; find last text item index.
     let target_idx = {
         let mut idx = None;
@@ -536,6 +536,11 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) 
     }
 
     let item = &items[item_idx];
+
+    // CSS Text §3: break-spaces preserves all spaces, including trailing.
+    if item.style_index < styles.len() && styles[item.style_index].white_space == WhiteSpace::BreakSpaces {
+        return;
+    }
 
     if let Some(ref sr) = item.shape_result {
         let line_text_start = line.items[target_idx].text_range.start;
@@ -801,7 +806,7 @@ mod tests {
         line.used_width = LayoutUnit::from_f32(50.0);
         line.items.push(item_result);
 
-        strip_trailing_spaces(&mut line, &[item], text);
+        strip_trailing_spaces(&mut line, &[item], text, &[ComputedStyle::default()]);
 
         // text_range should now exclude the trailing space: 0..5 ("hello")
         assert_eq!(
@@ -850,7 +855,7 @@ mod tests {
         line.used_width = LayoutUnit::from_f32(40.0);
         line.items.push(item_result);
 
-        strip_trailing_spaces(&mut line, &[item], text);
+        strip_trailing_spaces(&mut line, &[item], text, &[ComputedStyle::default()]);
 
         // text_range should be trimmed to exclude the trailing space: 0..5 ("hello")
         assert_eq!(
@@ -902,7 +907,7 @@ mod tests {
         line.used_width = LayoutUnit::from_f32(initial_width);
         line.items.push(item_result);
 
-        strip_trailing_spaces(&mut line, &[item], text);
+        strip_trailing_spaces(&mut line, &[item], text, &[ComputedStyle::default()]);
 
         assert_eq!(
             line.items[0].text_range,
@@ -957,7 +962,7 @@ mod tests {
         line.used_width = LayoutUnit::from_f32(initial_width);
         line.items.push(item_result);
 
-        strip_trailing_spaces(&mut line, &[item], text);
+        strip_trailing_spaces(&mut line, &[item], text, &[ComputedStyle::default()]);
 
         assert_eq!(
             line.items[0].text_range,
