@@ -18,6 +18,8 @@ pub mod bfc_resolution;
 pub mod new_formatting_context;
 pub mod fragmentation;
 pub mod sticky;
+pub mod multicol;
+pub mod margin_collapsing;
 
 pub use constraint_space::{ConstraintSpace, ConstraintSpaceBuilder};
 pub use fragment::{Fragment, FragmentKind};
@@ -36,3 +38,4 @@ pub use bfc_resolution::{BfcBlockOffsetState, PendingFloats};
 pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
 pub use fragmentation::{BlockBreakToken, BreakToken, BreakAppeal, FragmentainerSpace};
 pub use sticky::{apply_sticky_offset, StickyPositionData, compute_sticky_offset};
+pub use multicol::{layout_columns, resolve_column_count_and_width};

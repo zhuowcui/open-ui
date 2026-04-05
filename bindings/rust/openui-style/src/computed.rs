@@ -436,6 +436,29 @@ pub struct ComputedStyle {
     /// CSS `break-inside`. Initial: `auto`.
     /// Controls whether breaks are allowed inside this box.
     pub break_inside: BreakInside,
+
+    // ── Multi-column Layout (CSS Multicol Level 1) ──────────────────
+
+    /// CSS `column-count`. `None` = `auto` (no explicit count).
+    pub column_count: Option<u32>,
+
+    /// CSS `column-width`. `None` = `auto` (no explicit width).
+    pub column_width: Option<Length>,
+
+    /// CSS `column-fill`. Initial: `balance`.
+    pub column_fill: ColumnFill,
+
+    /// CSS `column-span`. Initial: `none`.
+    pub column_span: ColumnSpan,
+
+    /// CSS `column-rule-width`. Initial: `medium` (3px, matching border).
+    pub column_rule_width: i32,
+
+    /// CSS `column-rule-style`. Initial: `none`.
+    pub column_rule_style: BorderStyle,
+
+    /// CSS `column-rule-color`. Initial: `currentColor`.
+    pub column_rule_color: StyleColor,
 }
 
 impl ComputedStyle {
@@ -613,6 +636,15 @@ impl ComputedStyle {
             break_before: BreakValue::INITIAL,     // auto
             break_after: BreakValue::INITIAL,      // auto
             break_inside: BreakInside::INITIAL,    // auto
+
+            // Multi-column layout
+            column_count: None,                        // auto
+            column_width: None,                        // auto
+            column_fill: ColumnFill::INITIAL,          // balance
+            column_span: ColumnSpan::INITIAL,          // none
+            column_rule_width: 3,                      // medium (3px)
+            column_rule_style: BorderStyle::INITIAL,   // none
+            column_rule_color: StyleColor::default(),  // currentColor
         }
     }
 

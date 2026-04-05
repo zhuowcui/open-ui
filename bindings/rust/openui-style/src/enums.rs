@@ -1438,3 +1438,48 @@ impl BreakInside {
 impl Default for BreakInside {
     fn default() -> Self { Self::INITIAL }
 }
+
+// ── Multicol enums (CSS Multi-column Layout Module Level 1) ───────────
+
+/// CSS `column-fill` property.
+///
+/// Blink: `EColumnFill` in `computed_style_base_constants.h`.
+/// Controls whether columns are balanced or filled sequentially.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ColumnFill {
+    /// Balance column heights so they are approximately equal.
+    Balance = 0,
+    /// Balance all columns, including in overflow (fragmented) containers.
+    BalanceAll = 1,
+    /// Fill columns sequentially; do not balance.
+    Auto = 2,
+}
+
+impl ColumnFill {
+    pub const INITIAL: Self = Self::Balance;
+}
+
+impl Default for ColumnFill {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `column-span` property.
+///
+/// Blink: `EColumnSpan` in `computed_style_base_constants.h`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ColumnSpan {
+    /// Element does not span columns.
+    None = 0,
+    /// Element spans all columns of the nearest multicol ancestor.
+    All = 1,
+}
+
+impl ColumnSpan {
+    pub const INITIAL: Self = Self::None;
+}
+
+impl Default for ColumnSpan {
+    fn default() -> Self { Self::INITIAL }
+}
