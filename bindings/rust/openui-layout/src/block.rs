@@ -118,7 +118,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         let inline_space = ConstraintSpace::for_block_child(
             child_available_inline,
             space.available_block_size,
-            child_available_inline,
+            space.percentage_resolution_inline_size,
             space.percentage_resolution_block_size,
             false,
         );
@@ -176,7 +176,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 let inline_space = ConstraintSpace::for_block_child(
                     child_available_inline,
                     space.available_block_size,
-                    child_available_inline,
+                    space.percentage_resolution_inline_size,
                     space.percentage_resolution_block_size,
                     false,
                 );
@@ -1473,6 +1473,48 @@ mod tests {
             child_frag.size.height.to_i32(), 0,
             "50% height in auto-height parent should be 0 (indefinite), got {}",
             child_frag.size.height.to_i32(),
+        );
+    }
+
+    // ── SP11 Round 15 Issue 5: percentage padding resolves against containing block ──
+
+    #[test]
+    fn percentage_padding_resolves_against_containing_block_not_content_box() {
+        // A block with padding has its content-box smaller than its width.
+        // When inline_layout re-resolves the SAME block's percentage padding,
+        // it should use the containing block's width (from the parent), not
+        // the block's own content-box width.
+        //
+        // Setup: viewport(800) → div(width:200, padding-left:10%)
+        // Before fix: padding resolved as 10% of 200 = 20px (wrong)
+        // After fix: padding resolved as 10% of 800 = 80px (correct)
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.width = Length::px(200.0);
+        doc.node_mut(div).style.padding_left = Length::percent(10.0);
+        doc.append_child(vp, div);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("Hello".to_string());
+        doc.append_child(div, text);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+
+        // 10% of containing block (800px viewport) = 80px.
+        // The fix ensures inline_layout receives the correct percentage base.
+        let resolved_padding = div_frag.padding.left.to_i32();
+        assert_eq!(
+            resolved_padding, 80,
+            "10% padding-left should resolve against containing block (800px) = 80px, got {}",
+            resolved_padding,
         );
     }
 }

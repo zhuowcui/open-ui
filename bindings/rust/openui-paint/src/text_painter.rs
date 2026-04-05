@@ -115,3 +115,27 @@ pub fn metrics_from_shape_result(shape_result: &ShapeResult) -> FontMetrics {
 pub(crate) fn to_sk_color4f(color: &Color) -> Color4f {
     Color4f::new(color.r, color.g, color.b, color.a)
 }
+
+/// Convert a `ComputedStyle` to a `FontDescription` for resolving primary
+/// font metrics. Mirrors `openui_layout::inline::items_builder::style_to_font_description`.
+pub fn style_to_font_description(style: &ComputedStyle) -> openui_text::FontDescription {
+    openui_text::FontDescription {
+        family: style.font_family.clone(),
+        size: style.font_size,
+        specified_size: style.font_size,
+        weight: style.font_weight,
+        stretch: style.font_stretch,
+        style: style.font_style,
+        variant_caps: style.font_variant_caps,
+        letter_spacing: style.letter_spacing,
+        word_spacing: style.word_spacing,
+        locale: None,
+        font_smoothing: style.font_smoothing,
+        text_rendering: style.text_rendering,
+        feature_settings: style.font_feature_settings.clone(),
+        variation_settings: style.font_variation_settings.clone(),
+        font_synthesis_weight: style.font_synthesis_weight,
+        font_synthesis_style: style.font_synthesis_style,
+        font_optical_sizing: style.font_optical_sizing,
+    }
+}

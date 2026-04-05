@@ -12,7 +12,7 @@
 use openui_dom::{Document, NodeId};
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
 use openui_style::{ComputedStyle, Direction, Display, LineHeight, TextAlign, VerticalAlign};
-use openui_text::{Font, ShapeResult, TextShaper};
+use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
 use std::sync::Arc;
 
 use crate::block::{resolve_border, resolve_padding};
@@ -459,6 +459,13 @@ fn create_line_box(
     }
     let mut deferred_items: Vec<DeferredItem> = Vec::new();
 
+    // Stack of parent inline font metrics for vertical-align resolution.
+    // When inside a nested inline (e.g., <span style="font-size:30px">),
+    // text-top/text-bottom/middle should align to the parent inline's font
+    // metrics, not the block container's. The stack is pushed on OpenTag
+    // and popped on CloseTag.
+    let mut inline_metrics_stack: Vec<FontMetrics> = Vec::new();
+
     // === STEP 2: Compute per-item metrics and unite ===
     for item_result in &line_info.items {
         match item_result.item_type {
@@ -483,12 +490,16 @@ fn create_line_box(
                     LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
                 };
 
+                // Use parent inline's metrics if inside a nested inline,
+                // otherwise fall back to block container metrics.
+                let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+
                 let baseline_shift = compute_baseline_shift(
                     &style.vertical_align,
                     style.font_size,
-                    block_metrics.ascent,
-                    block_metrics.descent,
-                    block_metrics.x_height,
+                    parent_metrics.ascent,
+                    parent_metrics.descent,
+                    parent_metrics.x_height,
                     item_lh.ascent,
                     item_lh.descent,
                     element_line_height,
@@ -546,10 +557,10 @@ fn create_line_box(
                         });
                     }
                     VerticalAlign::Middle => {
-                        // TODO: CSS defines "middle" relative to the parent inline's
-                        // x-height, not the block's. We use block_metrics here because
-                        // parent inline metrics are not yet threaded through to items.
-                        let x_height = block_metrics.x_height;
+                        // CSS defines "middle" relative to the parent inline's
+                        // x-height, not the block's.
+                        let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                        let x_height = parent_metrics.x_height;
                         let above_baseline = item_height / 2.0 + x_height / 2.0;
                         let below_baseline = (item_height / 2.0 - x_height / 2.0).max(0.0);
                         line_ascent = line_ascent.max(above_baseline);
@@ -582,15 +593,17 @@ fn create_line_box(
                         line_descent = line_descent.max(shifted_descent);
                     }
                     VerticalAlign::TextTop => {
-                        // Item top aligns with font ascent line.
-                        let font_ascent = block_metrics.ascent;
+                        // Item top aligns with parent inline's font ascent line.
+                        let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                        let font_ascent = parent_metrics.ascent;
                         line_ascent = line_ascent.max(font_ascent);
                         line_descent =
                             line_descent.max((item_height - font_ascent).max(0.0));
                     }
                     VerticalAlign::TextBottom => {
-                        // Item bottom aligns with font descent line.
-                        let font_descent = block_metrics.descent;
+                        // Item bottom aligns with parent inline's font descent line.
+                        let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                        let font_descent = parent_metrics.descent;
                         line_ascent =
                             line_ascent.max((item_height - font_descent).max(0.0));
                         line_descent = line_descent.max(font_descent);
@@ -613,13 +626,23 @@ fn create_line_box(
                     }
                 }
             }
-            // OpenTag/CloseTag: inline element boundaries do not directly
-            // contribute to line height (their content items do).
+            // OpenTag: push this inline element's font metrics onto the stack
+            // so nested content uses the parent inline's metrics for vertical-align.
+            InlineItemType::OpenTag => {
+                let item = &items_data.items[item_result.item_index];
+                let style = &items_data.styles[item.style_index];
+                let font_desc = style_to_font_description(style);
+                let font = Font::new(font_desc);
+                let metrics = font.font_metrics().copied().unwrap_or_default();
+                inline_metrics_stack.push(metrics);
+            }
+            // CloseTag: pop the parent inline's font metrics.
+            InlineItemType::CloseTag => {
+                inline_metrics_stack.pop();
+            }
             // Control: forced breaks have no height contribution.
             // BlockInInline: handled separately in block layout.
-            InlineItemType::OpenTag
-            | InlineItemType::CloseTag
-            | InlineItemType::Control
+            InlineItemType::Control
             | InlineItemType::BlockInInline => {}
         }
     }
@@ -677,6 +700,9 @@ fn create_line_box(
     let mut inline_offset = text_align_offset + text_indent;
     let mut justification_accumulator = 0.0f32;
 
+    // Reset the inline metrics stack for the positioning pass.
+    inline_metrics_stack.clear();
+
     for (_i, item_result) in line_info.items.iter().enumerate() {
         let item = &items_data.items[item_result.item_index];
         match item_result.item_type {
@@ -704,12 +730,15 @@ fn create_line_box(
                     metrics.line_spacing,
                 );
 
+                // Use parent inline's metrics if inside a nested inline.
+                let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+
                 let baseline_shift = compute_baseline_shift(
                     &style.vertical_align,
                     style.font_size,
-                    block_metrics.ascent,
-                    block_metrics.descent,
-                    block_metrics.x_height,
+                    parent_metrics.ascent,
+                    parent_metrics.descent,
+                    parent_metrics.x_height,
                     item_lh.ascent,
                     item_lh.descent,
                     element_line_height,
@@ -800,10 +829,16 @@ fn create_line_box(
             InlineItemType::OpenTag => {
                 let style = &items_data.styles[item.style_index];
                 inline_offset = inline_offset + resolve_inline_start(style, percentage_base);
+                // Push this inline element's font metrics for nested content.
+                let font_desc = style_to_font_description(style);
+                let font = Font::new(font_desc);
+                let metrics = font.font_metrics().copied().unwrap_or_default();
+                inline_metrics_stack.push(metrics);
             }
             InlineItemType::CloseTag => {
                 let style = &items_data.styles[item.style_index];
                 inline_offset = inline_offset + resolve_inline_end(style, percentage_base);
+                inline_metrics_stack.pop();
             }
             InlineItemType::Control => {
                 // <br> — no visual contribution, line break already handled.
@@ -836,18 +871,20 @@ fn create_line_box(
                     }
                     VerticalAlign::Middle => {
                         // Centered: baseline - x_height/2 - item_height/2
-                        // TODO: Should use parent inline's x_height, not block's.
-                        let x_height = LayoutUnit::from_f32(block_metrics.x_height);
+                        let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                        let x_height = LayoutUnit::from_f32(parent_metrics.x_height);
                         baseline - x_height / LayoutUnit::from_f32(2.0)
                             - item_height / LayoutUnit::from_f32(2.0)
                     }
                     VerticalAlign::TextTop => {
                         // Top of item aligns with top of text (ascent above baseline).
-                        baseline - LayoutUnit::from_f32_ceil(block_metrics.ascent)
+                        let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                        baseline - LayoutUnit::from_f32_ceil(parent_metrics.ascent)
                     }
                     VerticalAlign::TextBottom => {
                         // Bottom of item aligns with bottom of text (descent below baseline).
-                        baseline + LayoutUnit::from_f32_ceil(block_metrics.descent)
+                        let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                        baseline + LayoutUnit::from_f32_ceil(parent_metrics.descent)
                             - item_height
                     }
                     VerticalAlign::Sub => {
@@ -1665,6 +1702,130 @@ mod tests {
             text_frag.baseline_offset > 0.0,
             "Text fragment baseline_offset should be positive (ascent), got {}",
             text_frag.baseline_offset,
+        );
+    }
+
+    // ── SP11 Round 15 Issue 1: vertical-align uses parent inline metrics ──
+
+    #[test]
+    fn vertical_align_text_top_uses_parent_inline_metrics() {
+        // Verify that compute_baseline_shift correctly receives parent inline
+        // metrics. With a parent ascent of 25.0, text-top should produce
+        // item_ascent - parent_ascent = 10 - 25 = -15.
+        // With block metrics (ascent=12), it would be 10 - 12 = -2.
+        let shift_parent = compute_baseline_shift(
+            &VerticalAlign::TextTop,
+            12.0,
+            25.0,  // parent inline ascent (larger font)
+            8.0,   // parent inline descent
+            10.0,  // parent inline x_height
+            10.0,  // item ascent
+            3.0,   // item descent
+            14.0,  // element_line_height
+        );
+        // text-top: item_ascent - parent_ascent = 10 - 25 = -15
+        assert_eq!(shift_parent, -15.0);
+
+        let shift_block = compute_baseline_shift(
+            &VerticalAlign::TextTop,
+            12.0,
+            12.0,  // block ascent (smaller)
+            4.0,
+            6.0,
+            10.0,
+            3.0,
+            14.0,
+        );
+        // text-top: item_ascent - parent_ascent = 10 - 12 = -2
+        assert_eq!(shift_block, -2.0);
+
+        // The shift differs when using parent inline vs block metrics.
+        assert_ne!(shift_parent, shift_block,
+            "text-top shift should differ between parent inline (30px) and block (16px)");
+    }
+
+    #[test]
+    fn vertical_align_middle_uses_parent_x_height() {
+        // Verify that middle alignment uses the parent's x_height.
+        // With parent x_height=10: (item_ascent - item_descent)/2 - 10/2
+        let shift = compute_baseline_shift(
+            &VerticalAlign::Middle,
+            12.0,
+            20.0,  // parent ascent
+            5.0,   // parent descent
+            10.0,  // parent x_height
+            8.0,   // item ascent
+            3.0,   // item descent
+            14.0,
+        );
+        // middle: (8 - 3)/2 - 10/2 = 2.5 - 5.0 = -2.5
+        assert_eq!(shift, -2.5);
+    }
+
+    #[test]
+    fn inline_metrics_stack_affects_layout() {
+        // Build: <div font-size=16><span font-size=30><text font-size=12 v-align=text-top>X</text></span></div>
+        // The text-top aligned text should be positioned based on the 30px
+        // span's metrics, not the 16px block's metrics.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.font_size = 16.0;
+        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.append_child(vp, div);
+
+        // Outer span with 30px font
+        let outer_span = doc.create_node(ElementTag::Span);
+        doc.node_mut(outer_span).style.display = Display::Inline;
+        doc.node_mut(outer_span).style.font_size = 30.0;
+        doc.append_child(div, outer_span);
+
+        let outer_text = doc.create_node(ElementTag::Text);
+        doc.node_mut(outer_text).text = Some("A".to_string());
+        doc.node_mut(outer_text).style.font_size = 30.0;
+        doc.append_child(outer_span, outer_text);
+
+        // Text with text-top inside the outer span (no intermediate span)
+        let inner_text = doc.create_node(ElementTag::Text);
+        doc.node_mut(inner_text).text = Some("X".to_string());
+        doc.node_mut(inner_text).style.font_size = 12.0;
+        doc.node_mut(inner_text).style.vertical_align = VerticalAlign::TextTop;
+        doc.append_child(outer_span, inner_text);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+        assert!(!div_frag.children.is_empty(), "Should have line boxes");
+        let line = &div_frag.children[0];
+
+        assert!(
+            line.children.len() >= 2,
+            "Line should have at least 2 text fragments, got {}",
+            line.children.len(),
+        );
+
+        let outer_frag = &line.children[0]; // "A" at 30px
+        let inner_frag = &line.children[1]; // "X" at 12px, text-top
+
+        // text-top: the top of the inner item aligns with the parent inline's
+        // text top. Since the parent inline has 30px font, the inner item's top
+        // should be near the outer item's top.
+        let outer_top = outer_frag.offset.top.to_f32();
+        let inner_top = inner_frag.offset.top.to_f32();
+
+        // With block metrics (16px), text-top would align to the block's ascent,
+        // producing a larger offset difference. With parent inline metrics (30px),
+        // the inner text's top should be closer to the outer text's top.
+        let diff = (inner_top - outer_top).abs();
+        assert!(
+            diff < 5.0,
+            "text-top inner text should align near outer span's text top; outer_top={}, inner_top={}, diff={}",
+            outer_top, inner_top, diff,
         );
     }
 }

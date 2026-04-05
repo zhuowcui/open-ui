@@ -801,9 +801,20 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                     let space_width = sr.width_for_range(char_count - num_trimmed_chars, char_count);
                     line.used_width = line.used_width - LayoutUnit::from_f32(space_width);
 
-                    // Trim text_range so decorations don't extend into stripped space.
-                    let new_end = line_text_start + trimmed.len();
-                    line.items[target_idx].text_range = line_text_start..new_end;
+                    // For `pre-wrap`: spaces "hang" — subtract from alignment
+                    // width but do NOT trim text_range (spaces still render,
+                    // they just hang past the line box).
+                    let ws = if item.style_index < styles.len() {
+                        styles[item.style_index].white_space
+                    } else {
+                        WhiteSpace::Normal
+                    };
+                    if ws != WhiteSpace::PreWrap {
+                        // Normal/nowrap/pre-line: trim text_range so decorations
+                        // don't extend into stripped space.
+                        let new_end = line_text_start + trimmed.len();
+                        line.items[target_idx].text_range = line_text_start..new_end;
+                    }
                 }
             } else if !at_item_end {
                 // Mid-item split: check white-space mode before stripping.
@@ -1618,5 +1629,125 @@ mod tests {
         }
         // There should be at least one break (after 'a').
         assert!(!breaks.is_empty(), "BreakAll should still produce some break opportunities");
+    }
+
+    // ── SP11 Round 15 Issue 4: pre-wrap at_item_end preserves text_range ──
+
+    #[test]
+    fn strip_trailing_spaces_prewrap_at_item_end_preserves_text_range() {
+        // In white-space: pre-wrap, trailing spaces at item end should
+        // subtract width (for alignment) but NOT trim text_range
+        // (spaces still render — they "hang" past the line box).
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello   ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let mut prewrap_style = ComputedStyle::default();
+        prewrap_style.white_space = WhiteSpace::PreWrap;
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::Collapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+        let items = vec![item];
+
+        let original_width = LayoutUnit::from_f32(sr_arc.width());
+
+        // at_item_end case: line text_range.end == item.text_range.end
+        let mut line = LineInfo::new(LayoutUnit::from_i32(1000));
+        line.items.push(InlineItemResult {
+            item_index: 0,
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            inline_size: original_width,
+            shape_result: Some(sr_arc.clone()),
+            has_forced_break: false,
+        });
+        line.used_width = original_width;
+
+        strip_trailing_spaces(&mut line, &items, text, &[prewrap_style]);
+
+        // Width should be reduced (spaces subtracted for alignment).
+        assert!(
+            line.used_width < original_width,
+            "pre-wrap should subtract trailing space width; used_width={:?}, original={:?}",
+            line.used_width, original_width,
+        );
+
+        // But text_range should be PRESERVED (not trimmed) — spaces hang.
+        assert_eq!(
+            line.items[0].text_range.end, text.len(),
+            "pre-wrap at_item_end should preserve text_range; got {}..{}, expected 0..{}",
+            line.items[0].text_range.start, line.items[0].text_range.end, text.len(),
+        );
+    }
+
+    #[test]
+    fn strip_trailing_spaces_normal_at_item_end_trims_text_range() {
+        // In white-space: normal, trailing spaces at item end should
+        // both subtract width AND trim text_range.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "hello   ";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let style = ComputedStyle::default(); // white_space: Normal
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::Collapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+        };
+        let items = vec![item];
+
+        let original_width = LayoutUnit::from_f32(sr_arc.width());
+
+        let mut line = LineInfo::new(LayoutUnit::from_i32(1000));
+        line.items.push(InlineItemResult {
+            item_index: 0,
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            inline_size: original_width,
+            shape_result: Some(sr_arc.clone()),
+            has_forced_break: false,
+        });
+        line.used_width = original_width;
+
+        strip_trailing_spaces(&mut line, &items, text, &[style]);
+
+        // Width should be reduced.
+        assert!(
+            line.used_width < original_width,
+            "Normal mode should subtract trailing space width",
+        );
+
+        // text_range should be trimmed to exclude trailing spaces.
+        assert_eq!(
+            line.items[0].text_range.end, 5,
+            "Normal mode at_item_end should trim text_range to 'hello' (5 bytes), got {}",
+            line.items[0].text_range.end,
+        );
     }
 }

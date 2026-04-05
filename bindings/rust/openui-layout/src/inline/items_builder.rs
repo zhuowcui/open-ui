@@ -11,7 +11,7 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, Display, TabSize, TextTransform, WhiteSpace};
+use openui_style::{ComputedStyle, Direction, Display, TabSize, TextTransform, UnicodeBidi, WhiteSpace};
 use openui_text::{
     apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
 };
@@ -63,28 +63,99 @@ impl InlineItemsData {
     /// items at bidi level boundaries so that each sub-item can be shaped
     /// and reordered independently.
     ///
+    /// CSS `unicode-bidi` control characters (LRE, RLE, LRO, RLO, LRI, RLI,
+    /// FSI, PDF, PDI) are injected around inline element boundaries before
+    /// bidi analysis, then mapped back to the original text positions.
+    ///
     /// Blink: `InlineItemsBuilder::SetBidiLevel` / `BidiParagraph::SetParagraph`.
     pub fn apply_bidi(&mut self, base_direction: TextDirection) {
         if self.text.is_empty() {
             return;
         }
 
-        let bidi = BidiParagraph::new(&self.text, Some(base_direction));
+        // Build a bidi text buffer that includes unicode-bidi control characters
+        // injected at inline element boundaries (OpenTag/CloseTag).
+        // We also build a mapping from bidi buffer positions back to original
+        // text positions so we can assign levels correctly.
+        let mut bidi_text = String::with_capacity(self.text.len() + self.items.len() * 2);
+        // Maps each byte in bidi_text back to the corresponding byte in self.text.
+        // Control characters map to the tag item's text_range position.
+        let mut bidi_to_orig: Vec<usize> = Vec::with_capacity(self.text.len() + self.items.len() * 2);
+
+        for item in &self.items {
+            match item.item_type {
+                InlineItemType::OpenTag => {
+                    let style = &self.styles[item.style_index];
+                    let tag_pos = item.text_range.start;
+                    for ch in bidi_open_chars(style.unicode_bidi, style.direction) {
+                        let ch_str = String::from(ch);
+                        for _ in 0..ch_str.len() {
+                            bidi_to_orig.push(tag_pos);
+                        }
+                        bidi_text.push(ch);
+                    }
+                }
+                InlineItemType::CloseTag => {
+                    let style = &self.styles[item.style_index];
+                    let tag_pos = item.text_range.start;
+                    for ch in bidi_close_chars(style.unicode_bidi) {
+                        let ch_str = String::from(ch);
+                        for _ in 0..ch_str.len() {
+                            bidi_to_orig.push(tag_pos);
+                        }
+                        bidi_text.push(ch);
+                    }
+                }
+                InlineItemType::Text | InlineItemType::AtomicInline => {
+                    // Copy the actual text content.
+                    let range = item.text_range.clone();
+                    let segment = &self.text[range.clone()];
+                    for (i, _) in segment.as_bytes().iter().enumerate() {
+                        bidi_to_orig.push(range.start + i);
+                    }
+                    bidi_text.push_str(segment);
+                }
+                InlineItemType::Control => {
+                    let range = item.text_range.clone();
+                    let segment = &self.text[range.clone()];
+                    for (i, _) in segment.as_bytes().iter().enumerate() {
+                        bidi_to_orig.push(range.start + i);
+                    }
+                    bidi_text.push_str(segment);
+                }
+                _ => {}
+            }
+        }
+
+        let bidi = BidiParagraph::new(&bidi_text, Some(base_direction));
         let runs = bidi.runs();
 
-        // First pass: assign levels to each item from the bidi run at its start.
-        // This covers both Text and AtomicInline items (which have U+FFFC
-        // placeholders in the bidi text buffer).
+        // Build a mapping from original text byte positions to bidi levels.
+        // We use the bidi runs (which are in bidi_text coordinates) and map
+        // them back to original text coordinates via bidi_to_orig.
+        // Create a per-byte level map for the original text.
+        let mut orig_levels = vec![0u8; self.text.len()];
+        for run in &runs {
+            // Walk each byte in the bidi run and map back to original position.
+            for bidi_byte_pos in run.start..run.end {
+                if bidi_byte_pos < bidi_to_orig.len() {
+                    let orig_byte_pos = bidi_to_orig[bidi_byte_pos];
+                    if orig_byte_pos < orig_levels.len() {
+                        orig_levels[orig_byte_pos] = run.level;
+                    }
+                }
+            }
+        }
+
+        // First pass: assign levels to each item from the level at its start byte.
         for item in &mut self.items {
             if (item.item_type == InlineItemType::Text
                 || item.item_type == InlineItemType::AtomicInline)
                 && !item.text_range.is_empty()
             {
-                for run in &runs {
-                    if item.text_range.start >= run.start && item.text_range.start < run.end {
-                        item.bidi_level = run.level;
-                        break;
-                    }
+                let start = item.text_range.start;
+                if start < orig_levels.len() {
+                    item.bidi_level = orig_levels[start];
                 }
             }
         }
@@ -125,6 +196,9 @@ impl InlineItemsData {
         }
 
         // Third pass: split text items that span multiple bidi levels.
+        // Re-derive runs in original text coordinates from orig_levels.
+        let orig_runs = derive_runs_from_levels(&self.text, &orig_levels);
+
         let mut new_items = Vec::with_capacity(self.items.len());
         for item in self.items.drain(..) {
             if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
@@ -137,7 +211,7 @@ impl InlineItemsData {
             let item_end = item.text_range.end;
             let mut sub_items: Vec<(usize, usize, u8)> = Vec::new();
 
-            for run in &runs {
+            for run in &orig_runs {
                 if run.end <= item_start || run.start >= item_end {
                     continue;
                 }
@@ -178,6 +252,112 @@ impl InlineItemsData {
 
         self.items = new_items;
     }
+}
+
+/// Return bidi control characters to insert BEFORE an inline element's content
+/// based on its `unicode-bidi` and `direction` properties.
+///
+/// CSS Writing Modes §2.2: unicode-bidi controls how the element interacts
+/// with the bidirectional algorithm.
+fn bidi_open_chars(unicode_bidi: UnicodeBidi, direction: Direction) -> Vec<char> {
+    match unicode_bidi {
+        UnicodeBidi::Normal => vec![],
+        UnicodeBidi::Embed => {
+            if direction == Direction::Ltr {
+                vec!['\u{202A}'] // LRE
+            } else {
+                vec!['\u{202B}'] // RLE
+            }
+        }
+        UnicodeBidi::Override => {
+            if direction == Direction::Ltr {
+                vec!['\u{202D}'] // LRO
+            } else {
+                vec!['\u{202E}'] // RLO
+            }
+        }
+        UnicodeBidi::Isolate => {
+            if direction == Direction::Ltr {
+                vec!['\u{2066}'] // LRI
+            } else {
+                vec!['\u{2067}'] // RLI
+            }
+        }
+        UnicodeBidi::IsolateOverride => {
+            if direction == Direction::Ltr {
+                vec!['\u{2066}', '\u{202D}'] // LRI + LRO
+            } else {
+                vec!['\u{2067}', '\u{202E}'] // RLI + RLO
+            }
+        }
+        UnicodeBidi::Plaintext => {
+            vec!['\u{2068}'] // FSI
+        }
+    }
+}
+
+/// Return bidi control characters to insert AFTER an inline element's content
+/// based on its `unicode-bidi` property.
+fn bidi_close_chars(unicode_bidi: UnicodeBidi) -> Vec<char> {
+    match unicode_bidi {
+        UnicodeBidi::Normal => vec![],
+        UnicodeBidi::Embed | UnicodeBidi::Override => {
+            vec!['\u{202C}'] // PDF
+        }
+        UnicodeBidi::Isolate => {
+            vec!['\u{2069}'] // PDI
+        }
+        UnicodeBidi::IsolateOverride => {
+            vec!['\u{202C}', '\u{2069}'] // PDF + PDI
+        }
+        UnicodeBidi::Plaintext => {
+            vec!['\u{2069}'] // PDI
+        }
+    }
+}
+
+/// A simple bidi run in original text coordinates.
+struct OrigBidiRun {
+    start: usize,
+    end: usize,
+    level: u8,
+}
+
+/// Derive contiguous same-level runs from per-byte levels.
+fn derive_runs_from_levels(text: &str, levels: &[u8]) -> Vec<OrigBidiRun> {
+    if levels.is_empty() {
+        return Vec::new();
+    }
+    let char_byte_offsets: Vec<usize> = text.char_indices().map(|(i, _)| i).collect();
+    if char_byte_offsets.is_empty() {
+        return Vec::new();
+    }
+
+    let mut runs = Vec::new();
+    let mut run_start = 0usize;
+    let mut current_level = levels[0];
+
+    for i in 1..levels.len() {
+        // Only consider char boundaries to avoid splitting mid-char.
+        if !text.is_char_boundary(i) {
+            continue;
+        }
+        if levels[i] != current_level {
+            runs.push(OrigBidiRun {
+                start: run_start,
+                end: i,
+                level: current_level,
+            });
+            run_start = i;
+            current_level = levels[i];
+        }
+    }
+    runs.push(OrigBidiRun {
+        start: run_start,
+        end: text.len(),
+        level: current_level,
+    });
+    runs
 }
 
 /// Convert a `ComputedStyle` to a `FontDescription` for text shaping.
@@ -702,5 +882,112 @@ mod tests {
             "Atomic inline in RTL context should have odd bidi level, got {}",
             atomic.bidi_level,
         );
+    }
+
+    // ── SP11 Round 15 Issue 2: unicode-bidi control character injection ──
+
+    #[test]
+    fn unicode_bidi_embed_ltr_affects_bidi_level() {
+        // <div dir=ltr> <span unicode-bidi=embed dir=rtl> neutral text </span> </div>
+        // With embed + RTL, neutral/weak characters inside should get an RTL
+        // bidi level. Strong LTR chars may remain LTR per UAX#9 rules.
+        // We use digits (weak) which are affected by embedding direction.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.node_mut(container).style.direction = Direction::Ltr;
+        doc.append_child(vp, container);
+
+        let span = doc.create_node(ElementTag::Span);
+        doc.node_mut(span).style.display = Display::Inline;
+        doc.node_mut(span).style.unicode_bidi = UnicodeBidi::Embed;
+        doc.node_mut(span).style.direction = Direction::Rtl;
+        doc.append_child(container, span);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("123".to_string());
+        doc.node_mut(text).style.direction = Direction::Rtl;
+        doc.append_child(span, text);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Ltr);
+
+        // The text inside the embed+RTL span should have a non-zero bidi level,
+        // indicating the embedding was applied. Exact level depends on UAX#9
+        // resolution but should be > 0.
+        let text_item = data.items.iter().find(|i| i.item_type == InlineItemType::Text);
+        assert!(
+            text_item.is_some(),
+            "Should have a Text item"
+        );
+        let text_item = text_item.unwrap();
+        assert!(
+            text_item.bidi_level > 0,
+            "Text inside unicode-bidi:embed+RTL should have non-zero bidi level, got {}",
+            text_item.bidi_level,
+        );
+    }
+
+    #[test]
+    fn unicode_bidi_override_forces_direction() {
+        // <div dir=ltr> <span unicode-bidi=bidi-override dir=rtl> abc </span> </div>
+        // With override + RTL, ALL text should be forced RTL (odd bidi level).
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.node_mut(container).style.direction = Direction::Ltr;
+        doc.append_child(vp, container);
+
+        let span = doc.create_node(ElementTag::Span);
+        doc.node_mut(span).style.display = Display::Inline;
+        doc.node_mut(span).style.unicode_bidi = UnicodeBidi::Override;
+        doc.node_mut(span).style.direction = Direction::Rtl;
+        doc.append_child(container, span);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("abc".to_string());
+        doc.node_mut(text).style.direction = Direction::Rtl;
+        doc.append_child(span, text);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Ltr);
+
+        // All text items should have RTL level (override forces it).
+        for item in &data.items {
+            if item.item_type == InlineItemType::Text {
+                assert!(
+                    item.bidi_level % 2 == 1,
+                    "Text inside unicode-bidi:override+RTL should have odd bidi level, got {}",
+                    item.bidi_level,
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn unicode_bidi_normal_does_not_inject_control_chars() {
+        // With unicode-bidi: normal, no control chars should be injected.
+        let chars = bidi_open_chars(UnicodeBidi::Normal, Direction::Ltr);
+        assert!(chars.is_empty(), "Normal should produce no open chars");
+        let chars = bidi_close_chars(UnicodeBidi::Normal);
+        assert!(chars.is_empty(), "Normal should produce no close chars");
+    }
+
+    #[test]
+    fn unicode_bidi_isolate_override_injects_correct_chars() {
+        // IsolateOverride + LTR should inject LRI + LRO on open, PDF + PDI on close.
+        let open = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Ltr);
+        assert_eq!(open, vec!['\u{2066}', '\u{202D}'], "LTR isolate-override: LRI + LRO");
+
+        let close = bidi_close_chars(UnicodeBidi::IsolateOverride);
+        assert_eq!(close, vec!['\u{202C}', '\u{2069}'], "isolate-override close: PDF + PDI");
+
+        // IsolateOverride + RTL should inject RLI + RLO on open.
+        let open_rtl = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Rtl);
+        assert_eq!(open_rtl, vec!['\u{2067}', '\u{202E}'], "RTL isolate-override: RLI + RLO");
     }
 }

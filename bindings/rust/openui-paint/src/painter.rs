@@ -20,6 +20,7 @@ use openui_geometry::PhysicalOffset;
 use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
 use openui_dom::Document;
 use openui_layout::{Fragment, FragmentKind};
+use openui_text::font::FontMetrics;
 
 /// Paint a fragment tree onto a Skia canvas.
 ///
@@ -107,6 +108,18 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     }
 }
 
+/// Resolve decoration metrics from the styled font (CSS font-family/size),
+/// falling back to the first shaped run's metrics if the primary font lookup
+/// fails. This ensures decoration positioning uses the intended CSS font
+/// even when the first shaped run uses a fallback (emoji, CJK, etc.).
+fn resolve_decoration_metrics(style: &ComputedStyle, shape_result: &openui_text::shaping::ShapeResult) -> FontMetrics {
+    let font_desc = crate::text_painter::style_to_font_description(style);
+    let font = openui_text::Font::new(font_desc);
+    font.font_metrics()
+        .copied()
+        .unwrap_or_else(|| crate::text_painter::metrics_from_shape_result(shape_result))
+}
+
 /// Paint a text fragment — shadows, decorations, and glyphs.
 ///
 /// Extracted from Blink's `TextFragmentPainter::Paint()`.
@@ -127,8 +140,9 @@ fn paint_text_fragment(
         None => return,
     };
 
-    // Resolve font metrics from the shape result's first run.
-    let metrics = crate::text_painter::metrics_from_shape_result(shape_result);
+    // Resolve font metrics from the styled font (CSS font-family/size), not
+    // from the first shaped run which may be a fallback font (emoji, CJK).
+    let metrics = resolve_decoration_metrics(style, shape_result);
 
     // Use the layout-computed baseline offset stored on the fragment,
     // rather than recomputing from font metrics (which can differ with
