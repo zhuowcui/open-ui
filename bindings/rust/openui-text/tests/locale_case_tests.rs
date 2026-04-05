@@ -328,6 +328,33 @@ fn el_upper_decomposed_alpha_rough_breathing() {
     );
 }
 
+#[test]
+fn el_upper_greek_extended_alpha_oxia_ypogegrammeni() {
+    // ᾴ (U+1FB4) → ΑΙ — tonos stripped from Ά, ypogegrammeni becomes Ι
+    assert_eq!(
+        apply_text_transform("\u{1FB4}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}\u{0399}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_eta_oxia_ypogegrammeni() {
+    // ῄ (U+1FC4) → ΗΙ — tonos stripped from Ή, ypogegrammeni becomes Ι
+    assert_eq!(
+        apply_text_transform("\u{1FC4}", TextTransform::Uppercase, Some("el")),
+        "\u{0397}\u{0399}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_omega_oxia_ypogegrammeni() {
+    // ῴ (U+1FF4) → ΩΙ — tonos stripped from Ώ, ypogegrammeni becomes Ι
+    assert_eq!(
+        apply_text_transform("\u{1FF4}", TextTransform::Uppercase, Some("el")),
+        "\u{03A9}\u{0399}"
+    );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Greek sigma — context-dependent σ vs ς (default Unicode rules)
 // Rust's str::to_lowercase() handles this per Unicode Default Case Conversion.

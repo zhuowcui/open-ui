@@ -183,6 +183,12 @@ fn greek_to_upper(text: &str) -> String {
                     ) {
                         continue;
                     }
+                    // Precomposed capitals with tonos (Ά Έ Ή Ί Ό Ύ Ώ) — strip
+                    // the accent by mapping to the unaccented base capital.
+                    if let Some(base) = strip_precomposed_tonos(cp) {
+                        result.push(base);
+                        continue;
+                    }
                     // Precomposed Greek Extended uppercase chars (e.g., Ἀ U+1F08
                     // from ἀ U+1F00) must be decomposed to extract the base capital.
                     if let Some(base) = greek_extended_base_capital(cp) {
@@ -212,6 +218,24 @@ fn is_greek_base(ch: char) -> bool {
         // Greek Extended block: ἀ-ῼ
         0x1F00..=0x1FFF
     )
+}
+
+/// Strip tonos from precomposed Greek capitals with accent.
+///
+/// Maps Ά→Α, Έ→Ε, Ή→Η, Ί→Ι, Ό→Ο, Ύ→Υ, Ώ→Ω.
+/// These arise when `char::to_uppercase()` produces an accented capital
+/// (e.g., ᾴ U+1FB4 → "ΆΙ" where Ά is U+0386).
+fn strip_precomposed_tonos(cp: u32) -> Option<char> {
+    match cp {
+        0x0386 => Some('\u{0391}'), // Ά → Α
+        0x0388 => Some('\u{0395}'), // Έ → Ε
+        0x0389 => Some('\u{0397}'), // Ή → Η
+        0x038A => Some('\u{0399}'), // Ί → Ι
+        0x038C => Some('\u{039F}'), // Ό → Ο
+        0x038E => Some('\u{03A5}'), // Ύ → Υ
+        0x038F => Some('\u{03A9}'), // Ώ → Ω
+        _ => None,
+    }
 }
 
 /// Map a Greek Extended code point to its base Greek capital letter.

@@ -891,7 +891,7 @@ fn create_line_box(
     };
 
     if should_justify && text_justify != TextJustify::None {
-        let remaining = align_available - line_info.used_width;
+        let remaining = align_available - hyphen_extra_width - line_info.used_width;
         if remaining > LayoutUnit::zero() {
             match text_justify {
                 TextJustify::InterCharacter => {
@@ -1269,14 +1269,17 @@ fn create_line_box(
         hyphen_fragment.baseline_offset = (baseline - hyphen_top).to_f32();
 
         if block_style.direction == Direction::Rtl {
-            // RTL: place hyphen at visual start (left edge), shift content right.
+            // RTL: place hyphen at visual start (left of content), shift content right.
             for child in &mut children {
                 child.offset = PhysicalOffset::new(
                     child.offset.left + hyphen_width,
                     child.offset.top,
                 );
             }
-            hyphen_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), hyphen_top);
+            hyphen_fragment.offset = PhysicalOffset::new(
+                text_align_offset + text_indent,
+                hyphen_top,
+            );
             children.insert(0, hyphen_fragment);
         } else {
             hyphen_fragment.offset = PhysicalOffset::new(inline_offset, hyphen_top);
