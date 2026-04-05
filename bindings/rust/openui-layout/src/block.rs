@@ -14,13 +14,16 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_geometry::{LayoutUnit, BoxStrut, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
-use openui_style::{ComputedStyle, Display, BoxSizing, Overflow};
+use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
+use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
+use crate::exclusions::{ExclusionSpace, ClearType};
+use crate::exclusions::float_utils::{UnpositionedFloat, position_float};
 use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
+use crate::out_of_flow::OutOfFlowCandidate;
 
 /// Perform block layout on a node and its descendants.
 ///
@@ -108,6 +111,31 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let mut child_fragments: Vec<Fragment> = Vec::new();
     let mut intrinsic_block_size = content_edge;
 
+    // Collect out-of-flow (absolute/fixed) candidates for deferred layout.
+    let mut oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
+
+    // Scan all children for absolutely/fixed positioned elements.
+    // These are skipped in the normal-flow layout below but need to be
+    // laid out after the in-flow pass completes.
+    let containing_block_size = PhysicalSize::new(child_available_inline, space.available_block_size);
+    for child_id in doc.children(node_id) {
+        let child_style = &doc.node(child_id).style;
+        if child_style.position.is_absolutely_positioned() && child_style.display != Display::None {
+            oof_candidates.push(OutOfFlowCandidate {
+                node_id: child_id,
+                style: child_style.clone(),
+                // Static position = current block offset (top of content area initially).
+                // This is a simplified heuristic — the true static position depends on
+                // where the child would appear in normal flow.
+                static_position: PhysicalOffset::new(
+                    border.left + padding.left,
+                    block_offset,
+                ),
+                containing_block_size,
+            });
+        }
+    }
+
     // Classify children: detect whether we have only inline, only block,
     // or mixed content (CSS 2.2 §9.2.1.1 — anonymous block boxes).
     let has_inline = crate::inline::algorithm::has_inline_children(doc, node_id);
@@ -144,26 +172,45 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // interleaved with real block-level children.
         let children_ids: Vec<NodeId> = doc.children(node_id).collect();
         let mut i = 0;
+        let mut exclusion_space_mixed = ExclusionSpace::new();
+
         while i < children_ids.len() {
             let child_id = children_ids[i];
             let child_style = &doc.node(child_id).style;
 
-            if child_style.is_out_of_flow() || child_style.display == Display::None {
+            // Skip absolutely positioned and display:none children.
+            if child_style.position.is_absolutely_positioned() || child_style.display == Display::None {
+                i += 1;
+                continue;
+            }
+
+            // Handle floated children.
+            if child_style.float != Float::None {
+                handle_float(
+                    doc, child_id, space,
+                    child_available_inline, child_percentage_block_size,
+                    &border, &padding, content_edge,
+                    &block_offset, &mut exclusion_space_mixed,
+                    &mut child_fragments,
+                );
                 i += 1;
                 continue;
             }
 
             if is_inline_level_child(doc, child_id) {
                 // Gather contiguous run of inline children.
-                // display:none and out-of-flow children are transparent to
-                // inline run gathering — they don't break the run.
+                // display:none and abs-pos children are transparent to
+                // inline run gathering. Floats break the run.
                 let run_start = i;
                 while i < children_ids.len() {
                     let cid = children_ids[i];
                     let cs = &doc.node(cid).style;
-                    if cs.display == Display::None || cs.is_out_of_flow() {
+                    if cs.display == Display::None || cs.position.is_absolutely_positioned() {
                         i += 1;
                         continue;
+                    }
+                    if cs.float != Float::None {
+                        break;
                     }
                     if !is_inline_level_child(doc, cid) {
                         break;
@@ -197,42 +244,132 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 }
                 block_offset = intrinsic_block_size;
             } else {
-                // Block-level child — lay out normally.
+                // Block-level child.
+
+                // Handle clear property.
+                if child_style.clear != Clear::None {
+                    let clearance = exclusion_space_mixed.clearance_offset(
+                        clear_type_from_style(child_style.clear),
+                    );
+                    let clearance_in_parent = clearance + content_edge;
+                    if clearance_in_parent > block_offset {
+                        block_offset = clearance_in_parent;
+                        intrinsic_block_size = block_offset;
+                    }
+                }
+
+                // Adjust available inline size for float exclusions.
+                let (float_inline_offset, adjusted_available) = if exclusion_space_mixed.has_floats() {
+                    let content_block_offset = block_offset - content_edge;
+                    let opp = exclusion_space_mixed.find_layout_opportunity(
+                        &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                        child_available_inline,
+                        LayoutUnit::zero(),
+                    );
+                    (opp.rect.line_start_offset(), opp.inline_size())
+                } else {
+                    (LayoutUnit::zero(), child_available_inline)
+                };
+
                 layout_block_child(
                     doc, child_id, space,
-                    child_available_inline, child_percentage_block_size,
+                    adjusted_available, child_percentage_block_size,
                     &border, &padding, content_edge,
                     &mut block_offset, &mut margin_strut,
                     &mut intrinsic_block_size, &mut child_fragments,
                 );
+
+                // Offset inline position for left floats.
+                if float_inline_offset > LayoutUnit::zero() {
+                    if let Some(last) = child_fragments.last_mut() {
+                        last.offset.left = last.offset.left + float_inline_offset;
+                    }
+                }
+
                 i += 1;
             }
         }
     } else {
         // ── Pure block formatting context ────────────────────────────
+    let mut exclusion_space = ExclusionSpace::new();
 
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
 
-        // Skip out-of-flow children (absolute, fixed) — they don't participate
-        // in block flow. Floats are also skipped for SP9.
-        if child_style.is_out_of_flow() || child_style.display == Display::None {
+        // Skip absolutely positioned and display:none children.
+        if child_style.position.is_absolutely_positioned() || child_style.display == Display::None {
             continue;
         }
         if child_style.display.is_inline_level() {
             continue;
         }
 
+        // Handle floated children — they are positioned in the exclusion
+        // space and do not advance the block offset.
+        if child_style.float != Float::None {
+            handle_float(
+                doc, child_id, space,
+                child_available_inline, child_percentage_block_size,
+                &border, &padding, content_edge,
+                &block_offset, &mut exclusion_space,
+                &mut child_fragments,
+            );
+            continue;
+        }
+
+        // Handle clear property — move block offset below cleared floats.
+        if child_style.clear != Clear::None {
+            let clearance = exclusion_space.clearance_offset(
+                clear_type_from_style(child_style.clear),
+            );
+            let clearance_in_parent = clearance + content_edge;
+            if clearance_in_parent > block_offset {
+                block_offset = clearance_in_parent;
+                intrinsic_block_size = block_offset;
+            }
+        }
+
+        // Adjust available inline size for float exclusions.
+        let (float_inline_offset, adjusted_available) = if exclusion_space.has_floats() {
+            let content_block_offset = block_offset - content_edge;
+            let opp = exclusion_space.find_layout_opportunity(
+                &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                child_available_inline,
+                LayoutUnit::zero(),
+            );
+            (opp.rect.line_start_offset(), opp.inline_size())
+        } else {
+            (LayoutUnit::zero(), child_available_inline)
+        };
+
         layout_block_child(
             doc, child_id, space,
-            child_available_inline, child_percentage_block_size,
+            adjusted_available, child_percentage_block_size,
             &border, &padding, content_edge,
             &mut block_offset, &mut margin_strut,
             &mut intrinsic_block_size, &mut child_fragments,
         );
+
+        // Offset inline position for left floats.
+        if float_inline_offset > LayoutUnit::zero() {
+            if let Some(last) = child_fragments.last_mut() {
+                last.offset.left = last.offset.left + float_inline_offset;
+            }
+        }
     }
 
     } // end block children
+
+    // ── Out-of-flow layout ───────────────────────────────────────────
+    // Layout absolutely and fixed positioned children that were collected
+    // earlier. These are positioned relative to this containing block.
+    if !oof_candidates.is_empty() {
+        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(
+            doc,
+            &oof_candidates,
+        );
+        child_fragments.extend(oof_fragments);
+    }
 
     // ── Step 4: Finish layout (FinishLayout, line 1165) ──────────────
     // Resolve the trailing margin strut if margins can't collapse through
@@ -310,11 +447,16 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 // ── Helper: detect block-level children ──────────────────────────────
 
 /// Check if a node has any block-level children (CSS 2.2 §9.2.1.1).
+/// Floated children are treated as block-level for content classification.
 fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
     for child_id in doc.children(node_id) {
         let child = doc.node(child_id);
-        if child.style.is_out_of_flow() || child.style.display == Display::None {
+        if child.style.position.is_absolutely_positioned() || child.style.display == Display::None {
             continue;
+        }
+        // Floated elements trigger block-level content classification
+        if child.style.float != Float::None {
+            return true;
         }
         if child.tag == openui_dom::ElementTag::Text {
             continue;
@@ -333,6 +475,79 @@ fn is_inline_level_child(doc: &Document, child_id: NodeId) -> bool {
         return false;
     }
     child.tag == openui_dom::ElementTag::Text || child.style.display.is_inline_level()
+}
+
+// ── Helper: map CSS Clear to ClearType ───────────────────────────────
+
+fn clear_type_from_style(clear: Clear) -> ClearType {
+    match clear {
+        Clear::None => ClearType::None,
+        Clear::Left => ClearType::Left,
+        Clear::Right => ClearType::Right,
+        Clear::Both => ClearType::Both,
+    }
+}
+
+// ── Helper: handle a floated child ───────────────────────────────────
+
+/// Position a floated child within the exclusion space.
+///
+/// The float is laid out to determine its size, then positioned using the
+/// exclusion space algorithm. The resulting exclusion area is added to the
+/// exclusion space. Float children do NOT advance the block offset.
+#[allow(clippy::too_many_arguments)]
+fn handle_float(
+    doc: &Document,
+    child_id: NodeId,
+    space: &ConstraintSpace,
+    child_available_inline: LayoutUnit,
+    child_percentage_block_size: LayoutUnit,
+    border: &BoxStrut,
+    padding: &BoxStrut,
+    content_edge: LayoutUnit,
+    block_offset: &LayoutUnit,
+    exclusion_space: &mut ExclusionSpace,
+    child_fragments: &mut Vec<Fragment>,
+) {
+    let child_style = &doc.node(child_id).style;
+    let child_margin = resolve_margins(child_style, child_available_inline);
+    let is_left = child_style.float == Float::Left;
+
+    // Layout the float child to determine its size.
+    // Floats always establish a new formatting context.
+    let child_space = ConstraintSpace::for_block_child(
+        child_available_inline,
+        space.available_block_size,
+        child_available_inline,
+        child_percentage_block_size,
+        true,
+    );
+    let child_fragment = block_layout(doc, child_id, &child_space);
+
+    // BFC coordinates: (0, 0) = content area start of the container.
+    let content_block_offset = *block_offset - content_edge;
+    let unpositioned = UnpositionedFloat {
+        node_id: child_id,
+        available_size: child_available_inline,
+        origin_bfc_offset: BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+        margins: child_margin,
+        inline_size: child_fragment.size.width,
+        block_size: child_fragment.size.height,
+        is_left,
+    };
+
+    let (positioned, exclusion) = position_float(&unpositioned, exclusion_space);
+    exclusion_space.add(exclusion);
+
+    // Convert BFC coordinates back to parent border-box coordinates.
+    let mut fragment = child_fragment;
+    fragment.offset = PhysicalOffset::new(
+        positioned.bfc_offset.line_offset + border.left + padding.left,
+        positioned.bfc_offset.block_offset + content_edge,
+    );
+    fragment.margin = child_margin;
+
+    child_fragments.push(fragment);
 }
 
 // ── Helper: layout a single block child ──────────────────────────────
@@ -1488,10 +1703,10 @@ mod tests {
         let fragment = block_layout(&doc, vp, &space);
         let container_frag = &fragment.children[0];
 
-        // 1 inline wrapper (single IFC) + 1 block child = 2
+        // 1 inline wrapper (single IFC) + 1 block child + 1 OOF child = 3
         assert_eq!(
-            container_frag.children.len(), 2,
-            "Out-of-flow child should not split inline run; expected 2 fragments, got {}",
+            container_frag.children.len(), 3,
+            "Out-of-flow child should not split inline run; expected 3 fragments (inline + block + OOF), got {}",
             container_frag.children.len(),
         );
     }

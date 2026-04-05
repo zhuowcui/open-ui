@@ -16,7 +16,7 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, ColorSpace, ClipOp, PathEffect, Point};
+use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, RRect, ColorSpace, ClipOp, PathEffect, Point};
 use skia_safe::paint::Cap;
 use openui_geometry::PhysicalOffset;
 use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
@@ -74,41 +74,132 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
         }
     }
 
-    // ── Overflow clipping ────────────────────────────────────────────
-    // When a box has overflow: hidden (or clip), clip children to the
-    // content box so overflowing content is not painted.
-    let needs_clip = fragment.has_overflow_clip
-        || ((style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
-            && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport));
+    // ── Overflow clipping + children ──────────────────────────────────
+    let needs_clip = needs_overflow_clip(fragment, style);
     if needs_clip {
-        canvas.save();
-        // Clip to padding box (inset by border widths per CSS spec).
-        let clip_x = abs_offset.left.to_f32() + fragment.border.left.to_f32();
-        let clip_y = abs_offset.top.to_f32() + fragment.border.top.to_f32();
-        let clip_w = fragment.size.width.to_f32() - fragment.border.left.to_f32() - fragment.border.right.to_f32();
-        let clip_h = fragment.size.height.to_f32() - fragment.border.top.to_f32() - fragment.border.bottom.to_f32();
-        canvas.clip_rect(
-            Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
-            ClipOp::Intersect,
-            false,
-        );
-    }
-
-    // ── Paint children in document order ─────────────────────────────
-    // Blink paints children at their offset relative to the parent fragment.
-    // Note: visibility is inherited, but children can override it,
-    // so we always recurse (the child's own visibility check will decide).
-    for child in &fragment.children {
-        paint_fragment(canvas, child, doc, abs_offset);
-    }
-
-    if needs_clip {
-        canvas.restore();
+        paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
+    } else {
+        // Paint children directly (no clipping needed).
+        for child in &fragment.children {
+            paint_fragment(canvas, child, doc, abs_offset);
+        }
     }
 
     if needs_layer {
         canvas.restore();
     }
+}
+
+// ── Overflow clipping helpers ────────────────────────────────────────
+
+/// Determine whether a fragment needs overflow clipping.
+///
+/// Returns `true` when either the layout-computed `has_overflow_clip` flag is
+/// set, or the style's `overflow-x`/`overflow-y` is not `visible` for a
+/// box-level fragment.
+fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle) -> bool {
+    fragment.has_overflow_clip
+        || ((style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
+            && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport))
+}
+
+/// Compute the clip rectangle for overflow clipping.
+///
+/// Per CSS spec, overflow clips to the **padding box** — the border-box
+/// inset by each side's border width. Returns `(x, y, width, height)`.
+pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
+    let clip_x = offset.left.to_f32() + fragment.border.left.to_f32();
+    let clip_y = offset.top.to_f32() + fragment.border.top.to_f32();
+    let clip_w = (fragment.size.width.to_f32()
+        - fragment.border.left.to_f32()
+        - fragment.border.right.to_f32())
+    .max(0.0);
+    let clip_h = (fragment.size.height.to_f32()
+        - fragment.border.top.to_f32()
+        - fragment.border.bottom.to_f32())
+    .max(0.0);
+    (clip_x, clip_y, clip_w, clip_h)
+}
+
+/// Apply overflow clipping, paint children, then restore the canvas.
+///
+/// Mirrors Blink's `BoxFragmentPainter::PaintOverflowClip()`:
+///   1. `canvas.save()`
+///   2. Clip to padding box (with rounded corners when border-radius is set)
+///   3. Translate for scroll offset (overflow: scroll/auto — currently 0,0)
+///   4. Paint children
+///   5. `canvas.restore()`
+fn paint_with_overflow_clip(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    style: &ComputedStyle,
+) {
+    let (clip_x, clip_y, clip_w, clip_h) = compute_clip_rect(fragment, offset);
+    let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
+
+    canvas.save();
+
+    // When border-radius is set, clip to a rounded rect so children are
+    // clipped along the curves. Otherwise use a simple rect clip.
+    if style.has_border_radius() {
+        let rrect = build_clip_rrect(&clip_rect, style);
+        canvas.clip_rrect(rrect, ClipOp::Intersect, true);
+    } else {
+        canvas.clip_rect(clip_rect, ClipOp::Intersect, true);
+    }
+
+    // For scrollable overflow (scroll / auto), apply scroll offset
+    // translation. Actual scroll offsets will be supplied by the scroll
+    // system in a future task; for now they default to (0, 0).
+    if style.overflow_x.is_scrollable() || style.overflow_y.is_scrollable() {
+        let scroll_x: f32 = 0.0;
+        let scroll_y: f32 = 0.0;
+        if scroll_x != 0.0 || scroll_y != 0.0 {
+            canvas.translate((-scroll_x, -scroll_y));
+        }
+    }
+
+    // Paint children inside the clip.
+    for child in &fragment.children {
+        paint_fragment(canvas, child, doc, offset);
+    }
+
+    canvas.restore();
+}
+
+/// Build a Skia `RRect` from the padding-box clip rect and the style's
+/// border-radius values.
+///
+/// The radii are adjusted inward from the border-box radii by the
+/// corresponding border widths (per CSS Backgrounds §5.3 "inner rounded
+/// corners"). Each radius is clamped to a minimum of 0.
+fn build_clip_rrect(clip_rect: &Rect, style: &ComputedStyle) -> RRect {
+    let bt = style.effective_border_top() as f32;
+    let br = style.effective_border_right() as f32;
+    let bb = style.effective_border_bottom() as f32;
+    let bl = style.effective_border_left() as f32;
+
+    // Adjust each corner's radii inward by the adjacent border widths.
+    let tl_x = (style.border_top_left_radius.0 - bl).max(0.0);
+    let tl_y = (style.border_top_left_radius.1 - bt).max(0.0);
+    let tr_x = (style.border_top_right_radius.0 - br).max(0.0);
+    let tr_y = (style.border_top_right_radius.1 - bt).max(0.0);
+    let br_x = (style.border_bottom_right_radius.0 - br).max(0.0);
+    let br_y = (style.border_bottom_right_radius.1 - bb).max(0.0);
+    let bl_x = (style.border_bottom_left_radius.0 - bl).max(0.0);
+    let bl_y = (style.border_bottom_left_radius.1 - bb).max(0.0);
+
+    // skia_safe::RRect radii order: top-left, top-right, bottom-right, bottom-left
+    let radii = [
+        Point::new(tl_x, tl_y),
+        Point::new(tr_x, tr_y),
+        Point::new(br_x, br_y),
+        Point::new(bl_x, bl_y),
+    ];
+
+    RRect::new_rect_radii(*clip_rect, &radii)
 }
 
 /// Resolve decoration metrics from the styled font (CSS font-family/size),

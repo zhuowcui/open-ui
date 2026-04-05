@@ -1345,3 +1345,96 @@ impl RubyAlign {
 impl Default for RubyAlign {
     fn default() -> Self { Self::INITIAL }
 }
+
+// ── Fragmentation enums (extracted from Blink computed_style_constants.h) ──
+
+/// CSS `break-before` / `break-after` computed value.
+///
+/// Blink: `EBreakBetween` in `computed_style_base_constants.h`.
+/// Maps both modern `break-before`/`break-after` and legacy
+/// `page-break-before`/`page-break-after` properties.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum BreakValue {
+    Auto = 0,
+    Avoid = 1,
+    AvoidPage = 2,
+    AvoidColumn = 3,
+    Page = 4,
+    Column = 5,
+    Left = 6,
+    Right = 7,
+    /// `break-before: always` / `break-after: always` — force a break.
+    Always = 8,
+}
+
+impl BreakValue {
+    pub const INITIAL: Self = Self::Auto;
+
+    /// True if this value forces a break.
+    #[inline]
+    pub fn is_forced(self) -> bool {
+        matches!(self, Self::Always | Self::Page | Self::Column | Self::Left | Self::Right)
+    }
+
+    /// True if this value requests avoiding a break.
+    #[inline]
+    pub fn is_avoid(self) -> bool {
+        matches!(self, Self::Avoid | Self::AvoidPage | Self::AvoidColumn)
+    }
+
+    /// Convert from legacy `page-break-before`/`page-break-after` keywords.
+    /// `always` → `Page`, `avoid` → `Avoid`, `left` → `Left`, `right` → `Right`.
+    #[inline]
+    pub fn from_legacy_page_break(value: &str) -> Self {
+        match value {
+            "auto" => Self::Auto,
+            "always" => Self::Page,
+            "avoid" => Self::Avoid,
+            "left" => Self::Left,
+            "right" => Self::Right,
+            _ => Self::Auto,
+        }
+    }
+}
+
+impl Default for BreakValue {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `break-inside` computed value.
+///
+/// Blink: `EBreakInside` in `computed_style_base_constants.h`.
+/// Maps both modern `break-inside` and legacy `page-break-inside`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum BreakInside {
+    Auto = 0,
+    Avoid = 1,
+    AvoidPage = 2,
+    AvoidColumn = 3,
+}
+
+impl BreakInside {
+    pub const INITIAL: Self = Self::Auto;
+
+    /// True if this value requests avoiding breaks inside.
+    #[inline]
+    pub fn is_avoid(self) -> bool {
+        matches!(self, Self::Avoid | Self::AvoidPage | Self::AvoidColumn)
+    }
+
+    /// Convert from legacy `page-break-inside` keywords.
+    #[inline]
+    pub fn from_legacy_page_break_inside(value: &str) -> Self {
+        match value {
+            "auto" => Self::Auto,
+            "avoid" => Self::Avoid,
+            _ => Self::Auto,
+        }
+    }
+}
+
+impl Default for BreakInside {
+    fn default() -> Self { Self::INITIAL }
+}

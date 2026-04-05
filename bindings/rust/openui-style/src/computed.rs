@@ -127,6 +127,19 @@ pub struct ComputedStyle {
     pub border_bottom_color: StyleColor,
     pub border_left_color: StyleColor,
 
+    // ── Border radii (Blink: LengthSize stored in SurroundData) ─────
+    // Each corner stores horizontal and vertical radii as `f32` pixels.
+    // Initial value: `0.0` (no rounding).
+
+    /// CSS `border-top-left-radius`. Initial: `0.0`.
+    pub border_top_left_radius: (f32, f32),
+    /// CSS `border-top-right-radius`. Initial: `0.0`.
+    pub border_top_right_radius: (f32, f32),
+    /// CSS `border-bottom-right-radius`. Initial: `0.0`.
+    pub border_bottom_right_radius: (f32, f32),
+    /// CSS `border-bottom-left-radius`. Initial: `0.0`.
+    pub border_bottom_left_radius: (f32, f32),
+
     // ── Colors ───────────────────────────────────────────────────────
 
     /// CSS `background-color`. Initial: `transparent`.
@@ -409,6 +422,20 @@ pub struct ComputedStyle {
     /// BCP 47 locale derived from the `lang` HTML attribute.
     /// Used for locale-dependent shaping (e.g., CJK font selection).
     pub locale: Option<String>,
+
+    // ── Fragmentation ───────────────────────────────────────────────
+
+    /// CSS `break-before`. Initial: `auto`.
+    /// Controls forced/avoided breaks before this box.
+    pub break_before: BreakValue,
+
+    /// CSS `break-after`. Initial: `auto`.
+    /// Controls forced/avoided breaks after this box.
+    pub break_after: BreakValue,
+
+    /// CSS `break-inside`. Initial: `auto`.
+    /// Controls whether breaks are allowed inside this box.
+    pub break_inside: BreakInside,
 }
 
 impl ComputedStyle {
@@ -464,6 +491,11 @@ impl ComputedStyle {
             border_right_color: StyleColor::default(),
             border_bottom_color: StyleColor::default(),
             border_left_color: StyleColor::default(),
+
+            border_top_left_radius: (0.0, 0.0),
+            border_top_right_radius: (0.0, 0.0),
+            border_bottom_right_radius: (0.0, 0.0),
+            border_bottom_left_radius: (0.0, 0.0),
 
             background_color: Color::TRANSPARENT,
             color: Color::BLACK,
@@ -576,6 +608,11 @@ impl ComputedStyle {
 
             // Locale
             locale: None,
+
+            // Fragmentation
+            break_before: BreakValue::INITIAL,     // auto
+            break_after: BreakValue::INITIAL,      // auto
+            break_inside: BreakInside::INITIAL,    // auto
         }
     }
 
@@ -624,6 +661,15 @@ impl ComputedStyle {
     #[inline]
     pub fn is_out_of_flow(&self) -> bool {
         self.position.is_absolutely_positioned() || self.float != Float::None
+    }
+
+    /// True if any border-radius corner is non-zero.
+    #[inline]
+    pub fn has_border_radius(&self) -> bool {
+        self.border_top_left_radius != (0.0, 0.0)
+            || self.border_top_right_radius != (0.0, 0.0)
+            || self.border_bottom_right_radius != (0.0, 0.0)
+            || self.border_bottom_left_radius != (0.0, 0.0)
     }
 }
 
