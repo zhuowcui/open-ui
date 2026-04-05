@@ -12,6 +12,20 @@ use crate::color::{Color, StyleColor};
 use crate::enums::*;
 use crate::font_types::*;
 
+/// CSS `aspect-ratio` property — stores the ratio and optional auto flag.
+///
+/// `aspect-ratio: auto` → `None` at the ComputedStyle level.
+/// `aspect-ratio: 16/9` → `Some(AspectRatio { ratio: (16.0, 9.0), auto_flag: false })`.
+/// `aspect-ratio: auto 16/9` → `Some(AspectRatio { ratio: (16.0, 9.0), auto_flag: true })`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AspectRatio {
+    /// Width / height components. E.g., `(16.0, 9.0)` for 16:9.
+    pub ratio: (f32, f32),
+    /// If true, the intrinsic aspect ratio is preferred over the specified one
+    /// (CSS Sizing L3: `aspect-ratio: auto 16/9`).
+    pub auto_flag: bool,
+}
+
 /// The complete resolved style for an element.
 ///
 /// Mirrors Blink's `ComputedStyle`. Only the properties needed for SP9
@@ -459,6 +473,13 @@ pub struct ComputedStyle {
 
     /// CSS `column-rule-color`. Initial: `currentColor`.
     pub column_rule_color: StyleColor,
+
+    // ── Aspect Ratio (CSS Sizing Level 3) ────────────────────────────
+
+    /// CSS `aspect-ratio`. Initial: `auto` (None).
+    /// Stores `(width, height)` ratio and an auto flag for
+    /// `aspect-ratio: auto 16/9`.
+    pub aspect_ratio: Option<AspectRatio>,
 }
 
 impl ComputedStyle {
@@ -645,6 +666,9 @@ impl ComputedStyle {
             column_rule_width: 3,                      // medium (3px)
             column_rule_style: BorderStyle::INITIAL,   // none
             column_rule_color: StyleColor::default(),  // currentColor
+
+            // Aspect ratio
+            aspect_ratio: None,                        // auto (no specified ratio)
         }
     }
 
