@@ -37,6 +37,18 @@ pub struct LineInfo {
 
     /// Whether the ellipsis should appear at the start (left) of the line (RTL).
     pub ellipsis_at_start: bool,
+
+    /// Width of trailing spaces that "hang" past the line box end.
+    ///
+    /// CSS Text Level 3 §4.2: preserved trailing spaces hang when wrapping.
+    /// This value is subtracted from `used_width` for overflow/alignment
+    /// purposes but the spaces are still rendered.
+    ///
+    /// For collapsed white-space modes (normal, nowrap, pre-line) the spaces
+    /// are stripped entirely (removed from `used_width`) and `hang_width` is 0.
+    /// For `pre-wrap` trailing spaces conditionally or unconditionally hang,
+    /// tracked here. For `break-spaces` nothing hangs (spaces cause breaks).
+    pub hang_width: LayoutUnit,
 }
 
 impl LineInfo {
@@ -51,6 +63,7 @@ impl LineInfo {
             text_align: TextAlign::Start,
             has_ellipsis: false,
             ellipsis_at_start: false,
+            hang_width: LayoutUnit::zero(),
         }
     }
 

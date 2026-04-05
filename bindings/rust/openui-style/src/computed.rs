@@ -635,4 +635,102 @@ mod tests {
         assert!(!s.is_in_flow());
         assert!(s.is_out_of_flow());
     }
+
+    #[test]
+    fn hanging_punctuation_initial_value() {
+        let s = ComputedStyle::initial();
+        assert_eq!(s.hanging_punctuation, HangingPunctuation::NONE);
+        assert!(s.hanging_punctuation.is_none());
+    }
+
+    #[test]
+    fn hanging_punctuation_none_is_default() {
+        let hp = HangingPunctuation::default();
+        assert!(hp.is_none());
+        assert!(!hp.first);
+        assert!(!hp.last);
+        assert!(!hp.force_end);
+        assert!(!hp.allow_end);
+    }
+
+    #[test]
+    fn hanging_punctuation_first() {
+        let hp = HangingPunctuation {
+            first: true,
+            ..HangingPunctuation::NONE
+        };
+        assert!(!hp.is_none());
+        assert!(hp.first);
+    }
+
+    #[test]
+    fn hanging_punctuation_last() {
+        let hp = HangingPunctuation {
+            last: true,
+            ..HangingPunctuation::NONE
+        };
+        assert!(!hp.is_none());
+        assert!(hp.last);
+    }
+
+    #[test]
+    fn hanging_punctuation_force_end() {
+        let hp = HangingPunctuation {
+            force_end: true,
+            ..HangingPunctuation::NONE
+        };
+        assert!(!hp.is_none());
+        assert!(hp.force_end);
+        assert!(!hp.allow_end);
+    }
+
+    #[test]
+    fn hanging_punctuation_allow_end() {
+        let hp = HangingPunctuation {
+            allow_end: true,
+            ..HangingPunctuation::NONE
+        };
+        assert!(!hp.is_none());
+        assert!(hp.allow_end);
+        assert!(!hp.force_end);
+    }
+
+    #[test]
+    fn hanging_punctuation_combined() {
+        let hp = HangingPunctuation {
+            first: true,
+            last: true,
+            force_end: true,
+            allow_end: false,
+        };
+        assert!(!hp.is_none());
+        assert!(hp.first);
+        assert!(hp.last);
+        assert!(hp.force_end);
+    }
+
+    #[test]
+    fn hanging_punctuation_equality() {
+        let a = HangingPunctuation { first: true, last: false, force_end: false, allow_end: false };
+        let b = HangingPunctuation { first: true, last: false, force_end: false, allow_end: false };
+        let c = HangingPunctuation { first: false, last: true, force_end: false, allow_end: false };
+        assert_eq!(a, b);
+        assert_ne!(a, c);
+    }
+
+    #[test]
+    fn hanging_punctuation_stored_on_style() {
+        let mut s = ComputedStyle::initial();
+        s.hanging_punctuation = HangingPunctuation {
+            first: true,
+            last: true,
+            force_end: false,
+            allow_end: true,
+        };
+        assert!(s.hanging_punctuation.first);
+        assert!(s.hanging_punctuation.last);
+        assert!(!s.hanging_punctuation.force_end);
+        assert!(s.hanging_punctuation.allow_end);
+        assert!(!s.hanging_punctuation.is_none());
+    }
 }

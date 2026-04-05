@@ -122,6 +122,11 @@ fn compute_baseline_shift(
 /// Compute the inline-start offset for text-align.
 ///
 /// Blink: `InlineLayoutAlgorithm::ApplyTextAlign`.
+///
+/// The effective content width is `used_width` (which already has trailing
+/// space widths subtracted). For `pre-wrap` the spaces "hang" past the line
+/// box — their width is recorded in `hang_width` and *not* included in
+/// `used_width`, so the alignment math naturally excludes them.
 fn compute_text_align_offset(
     line_info: &LineInfo,
     available_width: LayoutUnit,
@@ -2313,5 +2318,118 @@ mod tests {
         // Just verify it doesn't crash/panic with indefinite containing block.
         let line = &div_frag.children[0];
         assert!(!line.children.is_empty(), "line should have the inline-block");
+    }
+
+    // ── Hang width + alignment tests ─────────────────────────────────
+
+    #[test]
+    fn text_align_right_with_hang_width() {
+        // When hang_width > 0, the remaining space for alignment should be
+        // based on used_width (which already excludes hung spaces), not on
+        // used_width + hang_width.
+        let mut line = make_test_line_info(200.0, 100.0, TextAlign::Right, false);
+        // Simulate 20px of hung trailing spaces: used_width is 100 (after
+        // subtraction), and hang_width records what was subtracted.
+        line.hang_width = LayoutUnit::from_f32(20.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+        );
+        // remaining = 200 - 100 = 100 → right-align offset = 100
+        assert_eq!(offset, LayoutUnit::from_i32(100),
+            "right-align should use used_width (not used_width + hang_width)");
+    }
+
+    #[test]
+    fn text_align_center_with_hang_width() {
+        let mut line = make_test_line_info(200.0, 80.0, TextAlign::Center, false);
+        line.hang_width = LayoutUnit::from_f32(10.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+        );
+        // remaining = 200 - 80 = 120 → center offset = 60
+        assert_eq!(offset.to_i32(), 60,
+            "center-align should use used_width (excluding hang_width)");
+    }
+
+    #[test]
+    fn text_align_left_unaffected_by_hang_width() {
+        let mut line = make_test_line_info(200.0, 100.0, TextAlign::Left, false);
+        line.hang_width = LayoutUnit::from_f32(30.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+        );
+        assert_eq!(offset, LayoutUnit::zero(),
+            "left-align offset is always 0 regardless of hang_width");
+    }
+
+    #[test]
+    fn text_align_start_rtl_with_hang_width() {
+        let mut line = make_test_line_info(200.0, 100.0, TextAlign::Start, false);
+        line.hang_width = LayoutUnit::from_f32(15.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Rtl, TextAlignLast::Auto,
+        );
+        // RTL start = right-align: remaining = 200 - 100 = 100
+        assert_eq!(offset, LayoutUnit::from_i32(100),
+            "RTL start-align with hang_width");
+    }
+
+    #[test]
+    fn text_align_end_ltr_with_hang_width() {
+        let mut line = make_test_line_info(200.0, 100.0, TextAlign::End, false);
+        line.hang_width = LayoutUnit::from_f32(25.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+        );
+        // LTR end = right-align: remaining = 200 - 100 = 100
+        assert_eq!(offset, LayoutUnit::from_i32(100),
+            "LTR end-align with hang_width");
+    }
+
+    #[test]
+    fn text_align_justify_with_hang_width() {
+        let mut line = make_test_line_info(200.0, 100.0, TextAlign::Justify, false);
+        line.hang_width = LayoutUnit::from_f32(20.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+        );
+        // Justify offset is always 0 (justification done by space expansion).
+        assert_eq!(offset, LayoutUnit::zero(),
+            "justify offset is 0 regardless of hang_width");
+    }
+
+    #[test]
+    fn text_align_last_center_with_hang_width() {
+        let mut line = make_test_line_info(200.0, 80.0, TextAlign::Justify, false);
+        line.is_last_line = true;
+        line.hang_width = LayoutUnit::from_f32(10.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Center,
+        );
+        // Last line with text-align-last: center; remaining = 200 - 80 = 120; offset = 60
+        assert_eq!(offset.to_i32(), 60,
+            "text-align-last: center with hang_width on last line");
+    }
+
+    #[test]
+    fn hang_width_does_not_cause_overflow_alignment() {
+        // If used_width < available but used_width + hang_width > available,
+        // alignment should still work (hang_width is excluded from overflow check).
+        let mut line = make_test_line_info(100.0, 90.0, TextAlign::Right, false);
+        line.hang_width = LayoutUnit::from_f32(20.0);
+
+        let offset = compute_text_align_offset(
+            &line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto,
+        );
+        // remaining = 100 - 90 = 10 → still positive → offset = 10
+        assert_eq!(offset, LayoutUnit::from_i32(10),
+            "hang_width overflow should not affect alignment");
     }
 }
