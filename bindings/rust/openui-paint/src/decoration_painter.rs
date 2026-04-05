@@ -75,7 +75,8 @@ pub fn paint_text_decorations(
     let resolved_color = style.text_decoration_color.resolve(&style.color);
 
     // Resolve decoration thickness.
-    // Blink: TextDecorationInfo::ResolvedThickness()
+    // Blink: TextDecorationInfo::ResolvedThickness() — uses UnderlineThickness()
+    // for ALL decoration types (underline, overline, and line-through).
     let thickness = resolve_thickness(&style.text_decoration_thickness, metrics, style.font_size);
 
     // Build the base paint for decorations.
@@ -125,27 +126,30 @@ pub fn paint_text_decorations(
 /// Blink: `TextDecorationInfo::ComputeThickness()` in
 /// `core/paint/text_decoration_info.cc`.
 ///
-/// - `auto`: `font_size / 10.0`, rounded to device pixel, minimum 1px.
-/// - `from-font`: font's underline metric if > 0, rounded; else falls back to auto.
-/// - explicit length: rounded to device pixel, minimum 1px.
+/// - `auto`: `font_size / 10.0`, minimum 1px (no rounding — Blink returns raw).
+/// - `from-font`: font's `UnderlineThickness()` for ALL decoration types,
+///   minimum 1px (no rounding). Falls back to auto formula when unavailable.
+/// - explicit length: `roundf()` to device pixel, minimum 1px (Blink rounds only
+///   explicit `text-decoration-thickness` lengths).
 fn resolve_thickness(thickness: &TextDecorationThickness, metrics: &FontMetrics, font_size: f32) -> f32 {
     let t = match thickness {
         TextDecorationThickness::Auto => {
-            // Blink: computed_font_size / 10.0, rounded to nearest device pixel.
-            (font_size / 10.0).max(1.0).round()
+            // Blink: computed_font_size / 10.f — raw, no rounding.
+            (font_size / 10.0).max(1.0)
         }
         TextDecorationThickness::FromFont => {
-            // Blink: from-font uses the font's preferred thickness when available.
+            // Blink: UnderlineThickness() for ALL decoration types (underline,
+            // overline, and line-through). The thickness is computed once and shared.
             let from_metric = metrics.underline_thickness;
             if from_metric > 0.0 {
-                from_metric.round().max(1.0)
+                from_metric.max(1.0)
             } else {
                 // Fallback to auto formula when metric unavailable.
-                (font_size / 10.0).max(1.0).round()
+                (font_size / 10.0).max(1.0)
             }
         }
         TextDecorationThickness::Length(px) => {
-            // Explicit length: round to device pixel, minimum 1px.
+            // Blink: roundf(text_decoration_thickness_pixels), minimum 1px.
             px.round().max(1.0)
         }
     };
@@ -321,17 +325,17 @@ mod tests {
     #[test]
     fn auto_thickness_uses_font_size_over_10() {
         let metrics = FontMetrics { underline_thickness: 0.8, ..FontMetrics::zero() };
-        // auto: font_size / 10.0, rounded, min 1px
+        // auto: font_size / 10.0, no rounding (matches Blink), min 1px
         let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 16.0);
-        // 16.0 / 10.0 = 1.6 → round → 2.0
-        assert_eq!(t, 2.0);
+        // 16.0 / 10.0 = 1.6 → max(1.0) → 1.6 (no rounding)
+        assert_eq!(t, 1.6);
     }
 
     #[test]
     fn auto_thickness_small_font_clamps_to_1() {
         let metrics = FontMetrics::zero();
         let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 8.0);
-        // 8.0 / 10.0 = 0.8 → max(1.0) → 1.0 → round → 1.0
+        // 8.0 / 10.0 = 0.8 → max(1.0) → 1.0
         assert_eq!(t, 1.0);
     }
 
@@ -339,15 +343,15 @@ mod tests {
     fn from_font_uses_metric_when_positive() {
         let metrics = FontMetrics { underline_thickness: 1.7, ..FontMetrics::zero() };
         let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
-        // 1.7 → round → 2.0, max(1.0) → 2.0
-        assert_eq!(t, 2.0);
+        // 1.7 → max(1.0) → 1.7 (no rounding, matches Blink)
+        assert_eq!(t, 1.7);
     }
 
     #[test]
     fn from_font_falls_back_to_auto_when_zero() {
         let metrics = FontMetrics { underline_thickness: 0.0, ..FontMetrics::zero() };
         let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 20.0);
-        // fallback: 20.0 / 10.0 = 2.0 → round → 2.0
+        // fallback: 20.0 / 10.0 = 2.0 → max(1.0) → 2.0
         assert_eq!(t, 2.0);
     }
 
@@ -358,6 +362,61 @@ mod tests {
         assert_eq!(t, 1.0); // 1.4 → round → 1.0
         let t2 = resolve_thickness(&TextDecorationThickness::Length(1.6), &metrics, 16.0);
         assert_eq!(t2, 2.0); // 1.6 → round → 2.0
+    }
+
+    // ── from-font always uses underline_thickness (Issue 1) ──────────
+
+    #[test]
+    fn from_font_line_through_uses_underline_thickness() {
+        // Blink always uses UnderlineThickness() for from-font, regardless
+        // of decoration type. Verify that strikeout_thickness is NOT used.
+        let metrics = FontMetrics {
+            underline_thickness: 1.5,
+            strikeout_thickness: 3.0,
+            ..FontMetrics::zero()
+        };
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        // Should use underline_thickness (1.5), not strikeout_thickness (3.0)
+        assert_eq!(t, 1.5);
+    }
+
+    #[test]
+    fn from_font_shared_thickness_for_all_decoration_types() {
+        // There's only one resolve_thickness call now (no is_line_through param),
+        // so underline, overline, and line-through all share the same value.
+        let metrics = FontMetrics {
+            underline_thickness: 2.3,
+            strikeout_thickness: 4.0,
+            ..FontMetrics::zero()
+        };
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        assert_eq!(t, 2.3);
+    }
+
+    // ── auto thickness: no rounding (Issue 2) ────────────────────────
+
+    #[test]
+    fn auto_thickness_14px_matches_blink() {
+        let metrics = FontMetrics::zero();
+        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 14.0);
+        // Blink: 14.0 / 10.0 = 1.4 (raw, no rounding)
+        assert_eq!(t, 1.4);
+    }
+
+    #[test]
+    fn auto_thickness_12px_matches_blink() {
+        let metrics = FontMetrics::zero();
+        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 12.0);
+        // Blink: 12.0 / 10.0 = 1.2 (raw, no rounding)
+        assert_eq!(t, 1.2);
+    }
+
+    #[test]
+    fn from_font_no_rounding() {
+        // from-font should not round; Blink returns raw metric value.
+        let metrics = FontMetrics { underline_thickness: 1.3, ..FontMetrics::zero() };
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        assert_eq!(t, 1.3);
     }
 
     // ── Issue 3: double decoration offset = thickness + 1px ──────────

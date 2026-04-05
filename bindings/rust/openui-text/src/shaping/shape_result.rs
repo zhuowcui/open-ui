@@ -374,9 +374,11 @@ impl ShapeResult {
         }
 
         // For non-1:1 mapping without cluster data, use proportional mapping.
+        // Use floor() for start and ceil() for end to guarantee at least one
+        // glyph for any non-empty character range.
         let ratio = run.num_glyphs as f32 / run.num_characters as f32;
-        let gs = (char_start as f32 * ratio).round() as usize;
-        let ge = (char_end as f32 * ratio).round() as usize;
+        let gs = (char_start as f32 * ratio).floor() as usize;
+        let ge = (char_end as f32 * ratio).ceil() as usize;
         (gs.min(run.num_glyphs), ge.min(run.num_glyphs))
     }
 
@@ -575,6 +577,16 @@ impl ShapeResult {
             if char_idx >= run_start && char_idx < run_end {
                 let local_idx = char_idx - run_start;
                 if run.num_glyphs == run.num_characters {
+                    // For RTL runs, glyphs are in visual order so glyph
+                    // local_idx may map to a different character. Use cluster
+                    // data when available to find the correct glyph.
+                    if !run.clusters.is_empty() {
+                        for gi in 0..run.num_glyphs {
+                            if run.clusters[gi] == local_idx {
+                                return run.advances[gi];
+                            }
+                        }
+                    }
                     return run.advances[local_idx];
                 } else {
                     // Non-1:1 mapping: use cluster data for precise advance.
