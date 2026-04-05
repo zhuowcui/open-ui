@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; padding: 20px; font-family: "DejaVu Sans", sans-serif; background: white; color: black; font-size: 16px; }
+.container { width: 400px; }
+.ws-normal { white-space: normal; margin-bottom: 10px; border: 1px solid #ccc; padding: 4px; }
+.ws-nowrap { white-space: nowrap; margin-bottom: 10px; border: 1px solid #ccc; padding: 4px; overflow: hidden; }
+.ws-pre { white-space: pre; margin-bottom: 10px; border: 1px solid #ccc; padding: 4px; overflow: hidden; }
+.ws-pre-wrap { white-space: pre-wrap; margin-bottom: 10px; border: 1px solid #ccc; padding: 4px; }
+.ws-pre-line { white-space: pre-line; margin-bottom: 10px; border: 1px solid #ccc; padding: 4px; }
+p { margin: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="ws-normal"><p>Normal:   multiple   spaces   and
+newlines   collapse   to   single   spaces   here.</p></div>
+  <div class="ws-nowrap"><p>Nowrap: this text should not wrap at all even if it is very long and exceeds the container width boundary.</p></div>
+  <div class="ws-pre"><p>Pre:   multiple   spaces   preserved.
+Newlines	and	tabs	preserved too.</p></div>
+  <div class="ws-pre-wrap"><p>Pre-wrap:   multiple   spaces   preserved   and   the   text   wraps   at   container   edge.</p></div>
+  <div class="ws-pre-line"><p>Pre-line:   spaces   collapse   but
+newlines are preserved here.</p></div>
+</div>
+</body>
+</html>
