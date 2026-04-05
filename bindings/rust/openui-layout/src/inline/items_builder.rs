@@ -389,6 +389,11 @@ pub struct InlineItemsBuilder<'a> {
     text: String,
     items: Vec<InlineItem>,
     styles: Vec<ComputedStyle>,
+    /// Whether the last space appended to `text` came from a collapsible
+    /// white-space mode (normal/nowrap/pre-line). A preserved space from
+    /// `pre` or `pre-wrap` should not cause collapsing of the next node's
+    /// leading space.
+    last_space_collapsible: bool,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
@@ -398,6 +403,7 @@ impl<'a> InlineItemsBuilder<'a> {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
+            last_space_collapsible: false,
         }
     }
 
@@ -523,7 +529,12 @@ impl<'a> InlineItemsBuilder<'a> {
             let font_desc = style_to_font_description(style);
             let font = Font::new(font_desc);
             let space_advance = font.width(" ");
-            expand_tabs(&processed, &style.tab_size, space_advance)
+            let font_clone = font;
+            expand_tabs(&processed, &style.tab_size, space_advance, |ch| {
+                // Use the actual shaped glyph advance for each character.
+                let mut buf = [0u8; 4];
+                font_clone.width(ch.encode_utf8(&mut buf))
+            })
         } else {
             processed
         };
@@ -532,10 +543,12 @@ impl<'a> InlineItemsBuilder<'a> {
         }
 
         // CSS Text Level 3 §4.1.1 Phase I Rule 4: collapse cross-node
-        // adjacent collapsible spaces. If the buffer already ends with a
-        // space and the new processed text starts with a collapsible space,
-        // strip the leading space to avoid a double-space.
+        // adjacent collapsible spaces. Only strip the leading space when
+        // BOTH the previous space was collapsible AND the current mode is
+        // collapsible — a preserved space from `pre` must not trigger
+        // collapsing.
         let processed = if is_collapsible_ws_mode(style.white_space)
+            && self.last_space_collapsible
             && self.text.ends_with(' ')
             && processed.starts_with(' ')
         {
@@ -552,27 +565,36 @@ impl<'a> InlineItemsBuilder<'a> {
         self.text.push_str(&processed);
         let end = self.text.len();
 
-        // Determine collapse type at the end
+        // Determine collapse type at the end and update last_space_collapsible.
         let last_char = processed.as_bytes()[processed.len() - 1];
         let (end_collapse, is_newline) = match style.white_space {
             WhiteSpace::Normal | WhiteSpace::Nowrap => {
                 if last_char == b' ' {
+                    self.last_space_collapsible = true;
                     (CollapseType::Collapsible, false)
                 } else {
+                    self.last_space_collapsible = false;
                     (CollapseType::NotCollapsible, false)
                 }
             }
-            WhiteSpace::Pre => (CollapseType::NotCollapsible, false),
+            WhiteSpace::Pre => {
+                self.last_space_collapsible = false;
+                (CollapseType::NotCollapsible, false)
+            }
             WhiteSpace::PreWrap => {
                 if last_char == b' ' || last_char == b'\t' {
+                    self.last_space_collapsible = false;
                     (CollapseType::Collapsible, false)
                 } else if last_char == b'\n' {
+                    self.last_space_collapsible = false;
                     (CollapseType::Collapsible, true)
                 } else {
+                    self.last_space_collapsible = false;
                     (CollapseType::NotCollapsible, false)
                 }
             }
             WhiteSpace::BreakSpaces => {
+                self.last_space_collapsible = false;
                 // CSS Text §3: break-spaces preserves all spaces (including trailing).
                 if last_char == b'\n' {
                     (CollapseType::NotCollapsible, true)
@@ -582,10 +604,13 @@ impl<'a> InlineItemsBuilder<'a> {
             }
             WhiteSpace::PreLine => {
                 if last_char == b' ' {
+                    self.last_space_collapsible = true;
                     (CollapseType::Collapsible, false)
                 } else if last_char == b'\n' {
+                    self.last_space_collapsible = false;
                     (CollapseType::NotCollapsible, true)
                 } else {
+                    self.last_space_collapsible = false;
                     (CollapseType::NotCollapsible, false)
                 }
             }
@@ -696,11 +721,18 @@ pub fn process_white_space(text: &str, white_space: WhiteSpace) -> String {
 
 /// Expand tab characters to spaces according to the CSS `tab-size` property.
 ///
-/// Tab stops are computed from a running advance width rather than a character
-/// column counter, so that proportional fonts and letter-spacing are accounted
-/// for correctly.  A `space_advance` (width of a single U+0020 glyph in the
-/// current font) is required.
-pub fn expand_tabs(text: &str, tab_size: &TabSize, space_advance: f32) -> String {
+/// Tab stops are computed from a running advance width. For non-tab characters,
+/// the `char_width` callback returns the actual shaped advance (or falls back
+/// to `space_advance`), so that proportional fonts produce correct tab stops.
+pub fn expand_tabs<F>(
+    text: &str,
+    tab_size: &TabSize,
+    space_advance: f32,
+    char_width: F,
+) -> String
+where
+    F: Fn(char) -> f32,
+{
     if !text.contains('\t') {
         return text.to_string();
     }
@@ -730,10 +762,7 @@ pub fn expand_tabs(text: &str, tab_size: &TabSize, space_advance: f32) -> String
             current_advance = 0.0;
         } else {
             result.push(ch);
-            // Approximate: use space_advance for non-space characters too.
-            // This is still more accurate than 1-column-per-char since
-            // space_advance reflects the actual font size.
-            current_advance += space_adv;
+            current_advance += char_width(ch);
         }
     }
     result

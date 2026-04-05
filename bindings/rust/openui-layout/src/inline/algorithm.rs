@@ -45,14 +45,18 @@ struct LineHeightMetrics {
 /// Blink puts floor on ascent side, ceil on descent side, so the total
 /// exactly equals the computed line-height.
 fn compute_line_height_metrics(
-    font_ascent: f32,
-    font_descent: f32,
+    metrics: &FontMetrics,
     line_height: &LineHeight,
     font_size: f32,
-    line_spacing: f32,
 ) -> LineHeightMetrics {
+    // Blink uses integer-rounded ascent/descent (FixedAscent/FixedDescent)
+    // BEFORE the half-leading calculation.
+    let font_ascent = metrics.int_ascent();
+    let font_descent = metrics.int_descent();
+
     let computed_line_height = match line_height {
-        LineHeight::Normal => line_spacing,
+        // Blink uses the rounded sum for line-height: normal.
+        LineHeight::Normal => metrics.int_line_spacing(),
         LineHeight::Number(n) => font_size * n,
         LineHeight::Length(px) => *px,
         LineHeight::Percentage(pct) => font_size * pct / 100.0,
@@ -450,11 +454,9 @@ fn create_line_box(
 ) -> Fragment {
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(
-        block_metrics.ascent,
-        block_metrics.descent,
+        block_metrics,
         &block_style.line_height,
         block_style.font_size,
-        block_metrics.line_spacing,
     );
 
     let mut line_ascent = strut.ascent;
@@ -485,15 +487,13 @@ fn create_line_box(
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
                 let item_lh = compute_line_height_metrics(
-                    metrics.ascent,
-                    metrics.descent,
+                    &metrics,
                     &style.line_height,
                     style.font_size,
-                    metrics.line_spacing,
                 );
 
                 let element_line_height = match style.line_height {
-                    LineHeight::Normal => metrics.line_spacing,
+                    LineHeight::Normal => metrics.int_line_spacing(),
                     LineHeight::Number(n) => style.font_size * n,
                     LineHeight::Length(px) => px,
                     LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
@@ -722,7 +722,7 @@ fn create_line_box(
                 let metrics = font.font_metrics().copied().unwrap_or_default();
 
                 let element_line_height = match style.line_height {
-                    LineHeight::Normal => metrics.line_spacing,
+                    LineHeight::Normal => metrics.int_line_spacing(),
                     LineHeight::Number(n) => style.font_size * n,
                     LineHeight::Length(px) => px,
                     LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
@@ -732,11 +732,9 @@ fn create_line_box(
                 // (CSS 2.2 §10.8.1: text-top/text-bottom/middle use the inline
                 // box, not the content area).
                 let item_lh = compute_line_height_metrics(
-                    metrics.ascent,
-                    metrics.descent,
+                    &metrics,
                     &style.line_height,
                     style.font_size,
-                    metrics.line_spacing,
                 );
 
                 // Use parent inline's metrics if inside a nested inline.
@@ -803,31 +801,32 @@ fn create_line_box(
                         .iter()
                         .all(|ir| ir.item_type != InlineItemType::Text);
                     let style_for_item = &items_data.styles[item.style_index];
-                    let space_count = if is_last_text
+                    let trailing_spaces = if is_last_text
                         && matches!(
                             style_for_item.white_space,
                             openui_style::WhiteSpace::PreWrap | openui_style::WhiteSpace::BreakSpaces
                         )
                     {
-                        let total = text.chars().filter(|c| *c == ' ').count();
-                        let trailing = text.chars().rev().take_while(|c| *c == ' ').count();
-                        total - trailing
+                        text.chars().rev().take_while(|c| *c == ' ').count()
                     } else {
-                        text.chars().filter(|c| *c == ' ').count()
+                        0
                     };
+                    let total = text.chars().filter(|c| *c == ' ').count();
+                    let space_count = total - trailing_spaces;
                     if space_count > 0 {
                         let extra = justification_per_space * space_count as f32;
+                        let old_acc = justification_accumulator;
                         justification_accumulator += extra;
                         let extra_lu = LayoutUnit::from_f32(justification_accumulator)
-                            - LayoutUnit::from_f32(
-                                justification_accumulator - extra,
-                            );
+                            - LayoutUnit::from_f32(old_acc);
                         item_width = item_width + extra_lu;
                         // Also adjust glyph advances in the shape result so that
-                        // space glyphs are visually wider.
+                        // space glyphs are visually wider — exclude trailing spaces.
                         if let Some(ref sr) = line_shape_result {
                             let mut justified_sr = sr.sub_range(0, sr.num_characters);
-                            justified_sr.apply_justification(justification_per_space, text);
+                            justified_sr.apply_justification(
+                                justification_per_space, text, trailing_spaces,
+                            );
                             justified_shape = Some(Arc::new(justified_sr));
                         }
                     }
@@ -1044,12 +1043,15 @@ fn bidi_reorder_line(items: &mut Vec<InlineItemResult>, items_data: &InlineItems
         return; // All LTR, no reordering needed
     }
 
-    let min_odd = items
+    let min_odd = match items
         .iter()
         .map(|ir| items_data.items[ir.item_index].bidi_level)
         .filter(|l| l % 2 == 1)
         .min()
-        .unwrap_or(max_level);
+    {
+        Some(v) => v,
+        None => return, // No odd levels → no reordering needed
+    };
 
     // UAX#9 L2: for each level from max down to min odd level,
     // reverse every maximal contiguous run of items at that level or higher.
@@ -1312,17 +1314,28 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_style::Display;
 
+    /// Helper to build a FontMetrics with specific ascent, descent, and line_gap.
+    fn test_metrics(ascent: f32, descent: f32, line_gap: f32) -> FontMetrics {
+        FontMetrics {
+            ascent,
+            descent,
+            line_gap,
+            line_spacing: ascent + descent + line_gap,
+            ..FontMetrics::zero()
+        }
+    }
+
     #[test]
     fn line_height_metrics_normal() {
-        // Normal line height uses line_spacing from font metrics
+        // Normal line height uses int_line_spacing from font metrics.
+        // ascent=10, descent=4, gap=2 → int_line_spacing = round(16) = 16
+        let metrics = test_metrics(10.0, 4.0, 2.0);
         let m = compute_line_height_metrics(
-            10.0,  // ascent
-            4.0,   // descent
+            &metrics,
             &LineHeight::Normal,
             16.0,  // font_size
-            16.0,  // line_spacing (ascent + descent + gap = 10 + 4 + 2)
         );
-        // leading = 16 - 14 = 2, half_leading_floor = 1, half_leading_ceil = 1
+        // leading = 16 - 14 = 2, half_leading = 1, rest = 1
         assert_eq!(m.ascent, 11.0);
         assert_eq!(m.descent, 5.0);
     }
@@ -1330,36 +1343,38 @@ mod tests {
     #[test]
     fn line_height_metrics_number() {
         // line-height: 2.0 doubles line height
+        let metrics = test_metrics(10.0, 4.0, 2.0);
         let m = compute_line_height_metrics(
-            10.0, 4.0,
+            &metrics,
             &LineHeight::Number(2.0),
             16.0,  // font_size
-            16.0,  // line_spacing
         );
         // computed = 16 * 2 = 32, leading = 32 - 14 = 18
-        // half_leading_floor = 9, half_leading_ceil = 9
+        // half_leading = 9, rest = 9
         assert_eq!(m.ascent, 19.0);
         assert_eq!(m.descent, 13.0);
     }
 
     #[test]
     fn line_height_metrics_length() {
+        let metrics = test_metrics(10.0, 4.0, 2.0);
         let m = compute_line_height_metrics(
-            10.0, 4.0,
+            &metrics,
             &LineHeight::Length(24.0),
-            16.0, 16.0,
+            16.0,
         );
-        // leading = 24 - 14 = 10, floor(5) = 5, ceil = 5
+        // leading = 24 - 14 = 10, half = 5, rest = 5
         assert_eq!(m.ascent, 15.0);
         assert_eq!(m.descent, 9.0);
     }
 
     #[test]
     fn line_height_metrics_percentage() {
+        let metrics = test_metrics(10.0, 4.0, 2.0);
         let m = compute_line_height_metrics(
-            10.0, 4.0,
+            &metrics,
             &LineHeight::Percentage(150.0),
-            16.0, 16.0,
+            16.0,
         );
         // computed = 16 * 150 / 100 = 24, leading = 10
         assert_eq!(m.ascent, 15.0);
@@ -1369,10 +1384,11 @@ mod tests {
     #[test]
     fn line_height_half_leading_odd() {
         // Odd leading: sub-pixel precision preserved (no floor/ceil rounding)
+        let metrics = test_metrics(10.0, 4.0, 2.0);
         let m = compute_line_height_metrics(
-            10.0, 4.0,
+            &metrics,
             &LineHeight::Length(25.0),
-            16.0, 16.0,
+            16.0,
         );
         // leading = 25 - 14 = 11, half = 5.5, rest = 5.5
         assert_eq!(m.ascent, 15.5);

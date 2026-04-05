@@ -216,12 +216,15 @@ fn reorder_visual(runs: &mut Vec<BidiRun>) {
         return; // All LTR, no reordering needed
     }
 
-    let min_odd_level = runs
+    let min_odd_level = match runs
         .iter()
         .map(|r| r.level)
         .filter(|l| l % 2 == 1)
         .min()
-        .unwrap_or(max_level);
+    {
+        Some(v) => v,
+        None => return, // No odd levels → no reordering needed
+    };
 
     for level in (min_odd_level..=max_level).rev() {
         let mut i = 0;

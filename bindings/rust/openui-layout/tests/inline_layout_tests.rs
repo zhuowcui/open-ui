@@ -1663,7 +1663,7 @@ fn justify_expands_space_glyph_advances() {
     let mut sr = shaper.shape("hello world", &font, TextDirection::Ltr);
     let original_width = sr.width();
 
-    sr.apply_justification(5.0, "hello world");
+    sr.apply_justification(5.0, "hello world", 0);
 
     // "hello world" has 1 space, so width should increase by 5.0
     let expected_width = original_width + 5.0;
@@ -1686,7 +1686,7 @@ fn justify_multiple_spaces_expand_proportionally() {
     let mut sr = shaper.shape("a b c d", &font, TextDirection::Ltr);
     let original_width = sr.width();
 
-    sr.apply_justification(3.0, "a b c d");
+    sr.apply_justification(3.0, "a b c d", 0);
 
     // "a b c d" has 3 spaces, so width should increase by 9.0
     let expected_width = original_width + 9.0;
@@ -1710,7 +1710,7 @@ fn justify_character_data_updated() {
 
     // 'b' is at index 2 (after 'a' and ' ')
     let b_pos_before = sr.character_data[2].x_position;
-    sr.apply_justification(10.0, "a b");
+    sr.apply_justification(10.0, "a b", 0);
 
     // After justification, 'b' should be shifted right by the extra space width
     let b_pos_after = sr.character_data[2].x_position;

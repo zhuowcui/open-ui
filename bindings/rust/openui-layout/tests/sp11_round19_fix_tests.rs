@@ -181,7 +181,7 @@ fn rtl_span_asymmetric_border_uses_correct_side() {
 fn tab_expansion_advance_based_with_larger_space() {
     // With space_advance = 10.0, tab-size: 4 → tab_interval = 40.0.
     // "\t" at position 0 → next stop at 40 → 4 spaces (4 * 10 = 40).
-    let result = expand_tabs("\thello", &TabSize::Spaces(4), 10.0);
+    let result = expand_tabs("\thello", &TabSize::Spaces(4), 10.0, |_| 10.0);
     assert_eq!(
         result, "    hello",
         "Tab at start with space_advance=10 and tab-size=4 should produce 4 spaces"
@@ -192,7 +192,7 @@ fn tab_expansion_advance_based_with_larger_space() {
 fn tab_expansion_length_based_tab_size() {
     // TabSize::Length(40.0) with space_advance=10.0 → tab_interval = 40.0.
     // "ab\t" at advance 20.0 → next stop at 40 → 2 spaces.
-    let result = expand_tabs("ab\tx", &TabSize::Length(40.0), 10.0);
+    let result = expand_tabs("ab\tx", &TabSize::Length(40.0), 10.0, |_| 10.0);
     assert_eq!(
         result, "ab  x",
         "TabSize::Length(40) with space_advance=10 after 2 chars should give 2 spaces"
@@ -204,7 +204,7 @@ fn tab_expansion_position_dependent_not_column_count() {
     // With space_advance = 8.0 and tab-size: 4, tab_interval = 32.0.
     // "abc\t" → advance = 24.0, next stop = 32.0, spaces = round(8/8) = 1 space.
     // But 1 space (8.0) < space_advance(8.0) edge — we get exactly 1.
-    let result = expand_tabs("abc\tx", &TabSize::Spaces(4), 8.0);
+    let result = expand_tabs("abc\tx", &TabSize::Spaces(4), 8.0, |_| 8.0);
     assert_eq!(
         result, "abc x",
         "Tab after 3 chars (24px advance) with tab_interval=32px should produce 1 space to reach 32px"

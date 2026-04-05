@@ -66,6 +66,26 @@ pub struct FontMetrics {
 }
 
 impl FontMetrics {
+    /// Ascent rounded to nearest integer, matching Blink's `FixedAscent()`.
+    #[inline]
+    pub fn int_ascent(&self) -> f32 {
+        self.ascent.round()
+    }
+
+    /// Descent rounded to nearest integer, matching Blink's `FixedDescent()`.
+    #[inline]
+    pub fn int_descent(&self) -> f32 {
+        self.descent.round()
+    }
+
+    /// Rounded line spacing: `round(ascent + descent + line_gap)`.
+    ///
+    /// Blink uses the integer-rounded sum for `line-height: normal`.
+    #[inline]
+    pub fn int_line_spacing(&self) -> f32 {
+        (self.ascent + self.descent + self.line_gap).round()
+    }
+
     /// Create zeroed metrics (used as fallback when no font is resolved).
     pub fn zero() -> Self {
         Self {

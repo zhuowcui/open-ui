@@ -24,11 +24,10 @@ pub fn apply_text_transform(text: &str, transform: TextTransform) -> String {
 
 /// Capitalize the first letter of each word.
 ///
-/// Blink's definition of "word" for capitalize: a letter preceded by
-/// a non-letter or at the start of the string. The CSS spec (§2.1)
-/// says "first typographic letter unit of each word" where word
-/// boundaries include spaces, hyphens, and other punctuation but
-/// NOT apostrophes within words (e.g., "it's" is one word).
+/// CSS Text §2.1 "first typographic letter unit of each word": word
+/// boundaries include spaces, hyphens, and other punctuation (but NOT
+/// apostrophes within words). Digits are treated as word-internal —
+/// "1st" is one word, so the 's' is NOT capitalised.
 fn capitalize(text: &str) -> String {
     let mut result = String::with_capacity(text.len());
     let mut capitalize_next = true;
@@ -41,12 +40,14 @@ fn capitalize(text: &str) -> String {
             capitalize_next = false;
         } else {
             result.push(ch);
-            // Word boundary: any non-alphabetic character except apostrophes.
-            // Apostrophe within a word (e.g., "don't") is NOT a word boundary
-            // per CSS Text §2.1.
-            if !ch.is_alphabetic() && ch != '\'' && ch != '\u{2019}' {
+            if ch.is_alphanumeric() {
+                // Inside a word — don't capitalise the next character.
+                capitalize_next = false;
+            } else if ch != '\'' && ch != '\u{2019}' {
+                // Non-word, non-apostrophe character → next letter starts a word.
                 capitalize_next = true;
             }
+            // Apostrophe: preserve capitalize_next (word-internal per CSS Text §2.1).
         }
     }
     result
@@ -54,10 +55,9 @@ fn capitalize(text: &str) -> String {
 
 /// Map a character to its Unicode titlecase form.
 ///
-/// For the ~30 characters where titlecase differs from uppercase (Latin
-/// ligatures like ǳ/ǆ/ǉ/ǌ and their uppercase counterparts), this
-/// returns the correct titlecase codepoint.  For everything else it
-/// falls back to `char::to_uppercase()`.
+/// Handles the characters where titlecase differs from uppercase:
+/// digraph ligatures, ß→Ss, Armenian ligature, and titlecase-form identity.
+/// For everything else, falls back to `char::to_uppercase()`.
 fn to_titlecase(ch: char) -> Vec<char> {
     match ch {
         // Latin small letter dz digraph variants
@@ -72,6 +72,15 @@ fn to_titlecase(ch: char) -> Vec<char> {
         // Latin small letter dz variants
         '\u{01CC}' => vec!['\u{01CB}'], // ǌ → ǋ
         '\u{01CA}' => vec!['\u{01CB}'], // Ǌ → ǋ
+        // Already-titlecase forms map to themselves
+        '\u{01F2}' => vec!['\u{01F2}'], // ǲ → ǲ
+        '\u{01C5}' => vec!['\u{01C5}'], // ǅ → ǅ
+        '\u{01C8}' => vec!['\u{01C8}'], // ǈ → ǈ
+        '\u{01CB}' => vec!['\u{01CB}'], // ǋ → ǋ
+        // German sharp s: titlecase is Ss (not SS)
+        '\u{00DF}' => vec!['S', 's'],   // ß → Ss
+        // Armenian ligature ech-yiwn
+        '\u{0587}' => vec!['\u{0535}', '\u{0582}'], // և → Եւ
         _ => ch.to_uppercase().collect(),
     }
 }

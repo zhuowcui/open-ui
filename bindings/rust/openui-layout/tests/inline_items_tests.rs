@@ -768,37 +768,37 @@ fn open_close_tag_bidi_level_rtl_with_span() {
 #[test]
 fn expand_tabs_basic_tab_size_8() {
     // Tab at column 0 should expand to 8 spaces (space_advance=1.0 → column-equivalent).
-    let result = expand_tabs("\thello", &TabSize::Spaces(8), 1.0);
+    let result = expand_tabs("\thello", &TabSize::Spaces(8), 1.0, |_| 1.0);
     assert_eq!(result, "        hello");
 }
 
 #[test]
 fn expand_tabs_mid_line() {
     // "ab\t" — column 2, tab-size 8 → need 6 spaces to reach column 8.
-    let result = expand_tabs("ab\tx", &TabSize::Spaces(8), 1.0);
+    let result = expand_tabs("ab\tx", &TabSize::Spaces(8), 1.0, |_| 1.0);
     assert_eq!(result, "ab      x");
 }
 
 #[test]
 fn expand_tabs_tab_size_4() {
     // Tab at column 0, tab-size 4 → 4 spaces.
-    let result = expand_tabs("\tx", &TabSize::Spaces(4), 1.0);
+    let result = expand_tabs("\tx", &TabSize::Spaces(4), 1.0, |_| 1.0);
     assert_eq!(result, "    x");
     // Tab at column 2, tab-size 4 → 2 spaces.
-    let result2 = expand_tabs("ab\tx", &TabSize::Spaces(4), 1.0);
+    let result2 = expand_tabs("ab\tx", &TabSize::Spaces(4), 1.0, |_| 1.0);
     assert_eq!(result2, "ab  x");
 }
 
 #[test]
 fn expand_tabs_resets_at_newline() {
     // After a newline, column resets to 0.
-    let result = expand_tabs("ab\n\tx", &TabSize::Spaces(4), 1.0);
+    let result = expand_tabs("ab\n\tx", &TabSize::Spaces(4), 1.0, |_| 1.0);
     assert_eq!(result, "ab\n    x");
 }
 
 #[test]
 fn expand_tabs_no_tabs_returns_same() {
     let input = "hello world";
-    let result = expand_tabs(input, &TabSize::Spaces(8), 1.0);
+    let result = expand_tabs(input, &TabSize::Spaces(8), 1.0, |_| 1.0);
     assert_eq!(result, input);
 }

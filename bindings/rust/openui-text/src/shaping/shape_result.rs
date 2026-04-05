@@ -354,15 +354,23 @@ impl ShapeResult {
     /// Finds all space characters (U+0020) in the result and adds
     /// `extra_per_space` to their corresponding glyph advances, then
     /// shifts subsequent glyph positions so the total width is correct.
+    /// The last `exclude_trailing` space characters are skipped so that
+    /// trailing spaces (which hang in pre-wrap) are not expanded.
     ///
     /// Blink: `ShapeResult::ApplyExpansion`.
-    pub fn apply_justification(&mut self, extra_per_space: f32, text: &str) {
+    pub fn apply_justification(&mut self, extra_per_space: f32, text: &str, exclude_trailing: usize) {
         if extra_per_space <= 0.0 || self.runs.is_empty() {
             return;
         }
 
         let chars: Vec<char> = text.chars().collect();
+
+        // Identify indices of spaces that should be excluded (trailing).
+        let total_spaces = chars.iter().filter(|c| **c == ' ').count();
+        let expandable_spaces = total_spaces.saturating_sub(exclude_trailing);
+
         let mut total_extra = 0.0f32;
+        let mut space_ordinal = 0usize;
 
         for run in &mut self.runs {
             let run_start = run.start_index;
@@ -377,8 +385,11 @@ impl ShapeResult {
                 };
 
                 if char_idx < chars.len() && chars[char_idx] == ' ' {
-                    run.advances[gi] += extra_per_space;
-                    total_extra += extra_per_space;
+                    if space_ordinal < expandable_spaces {
+                        run.advances[gi] += extra_per_space;
+                        total_extra += extra_per_space;
+                    }
+                    space_ordinal += 1;
                 }
             }
         }

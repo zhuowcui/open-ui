@@ -91,11 +91,12 @@ fn capitalize_after_double_hyphen() {
 
 #[test]
 fn capitalize_numbers_pass_through_flag() {
-    // Digits are not alphabetic, so they don't consume the start-of-string
-    // capitalize flag — the first alphabetic char after them is capitalized.
+    // Digits are word-internal (like Blink's ICU segmentation), so "123hello"
+    // is one word that starts with digits. The first letter is NOT capitalized
+    // because the word already started with non-letter characters.
     assert_eq!(
         apply_text_transform("123hello", TextTransform::Capitalize),
-        "123Hello"
+        "123hello"
     );
 }
 
