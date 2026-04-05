@@ -5,9 +5,22 @@
 //! Renders shaped text glyphs onto a Skia canvas. The `ShapeResult` from
 //! HarfBuzz shaping is converted to a `TextBlob` and drawn at the text
 //! baseline position with the correct paint color and anti-aliasing.
+//!
+//! ## Color Font Support
+//!
+//! Color fonts (COLR/CPAL, CBDT/CBLC, sbix, SVG-in-OpenType) contain
+//! embedded glyph colors. Skia handles these natively through
+//! `Canvas::draw_text_blob()` — when a glyph has embedded color data,
+//! Skia uses the glyph's own colors instead of the paint color.
+//!
+//! Our pipeline preserves this by:
+//! 1. Using anti-aliased rendering (required for color glyph rasterization)
+//! 2. Letting Skia's `drawTextBlob` handle color/non-color dispatch
+//! 3. Not forcing monochrome rendering paths
 
 use skia_safe::{Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point};
 
+use openui_layout::inline::text_combine::TextCombineLayout;
 use openui_style::{Color, ComputedStyle};
 use openui_text::shaping::ShapeResult;
 use openui_text::font::FontMetrics;
@@ -19,6 +32,11 @@ use openui_text::font::FontMetrics;
 /// The origin is the (x, baseline_y) position — the same coordinate system
 /// used by `ShapeResult::to_text_blob()` where glyph Y offsets are relative
 /// to the baseline.
+///
+/// For color fonts (COLR/CPAL, CBDT/CBLC, sbix, SVG), Skia automatically
+/// uses the glyph's embedded colors. The paint color is set as a fallback
+/// for non-color glyphs in the same run — Skia's `drawTextBlob` handles
+/// the dispatch per-glyph.
 ///
 /// # Arguments
 /// * `canvas` — Skia raster canvas
@@ -38,7 +56,10 @@ pub fn paint_text(
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
 
-        // Text color from the computed `color` property.
+        // Set the text color from the computed `color` property.
+        // For non-color glyphs, this is used directly. For color glyphs
+        // (COLR/CPAL, CBDT/CBLC, sbix, SVG), Skia overrides this paint
+        // color with the glyph's embedded palette colors automatically.
         // Blink: TextPainterBase::UpdatePaint sets the fill color.
         let c = &style.color;
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
@@ -144,4 +165,63 @@ pub fn style_to_font_description(style: &ComputedStyle) -> openui_text::FontDesc
         variant_alternates: style.font_variant_alternates,
         orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
     }
+}
+
+/// Paint text with text-combine-upright (tate-chū-yoko) transforms.
+///
+/// Mirrors Blink's `TextCombinePainter::Paint()` in
+/// `core/paint/text_combine_painter.cc`.
+///
+/// When `text-combine-upright: all` is active in vertical writing, the
+/// combined characters are rendered horizontally and scaled to fit within
+/// one em-width of the vertical line. This function:
+///
+/// 1. Saves the canvas state.
+/// 2. Translates by the centering offset (to center short text in the cell).
+/// 3. Applies a horizontal scale (`scale_x`) to compress wide text.
+/// 4. Draws the text blob at the adjusted origin.
+/// 5. Restores the canvas state.
+///
+/// CSS Writing Modes Level 4 §9.1
+/// <https://www.w3.org/TR/css-writing-modes-4/#text-combine-upright>
+pub fn paint_text_combine(
+    canvas: &Canvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    layout: &TextCombineLayout,
+) {
+    let text_blob = match shape_result.to_text_blob() {
+        Some(blob) => blob,
+        None => return,
+    };
+
+    let mut paint = Paint::default();
+    paint.set_anti_alias(true);
+    paint.set_style(PaintStyle::Fill);
+
+    let c = &style.color;
+    paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
+
+    let (translate_x, translate_y, scale_x) =
+        openui_layout::inline::text_combine::paint_transform(layout);
+
+    canvas.save();
+
+    // Translate to the centering position within the character cell.
+    let draw_x = origin.0 + translate_x;
+    let draw_y = origin.1 + translate_y;
+
+    // Apply horizontal compression if the combined text exceeds one em.
+    if layout.needs_compression {
+        // Scale around the draw origin: translate to origin, scale, then
+        // draw at (0, 0) — equivalent to translating first.
+        canvas.translate(Point::new(draw_x, draw_y));
+        canvas.scale((scale_x, 1.0));
+        canvas.draw_text_blob(&text_blob, Point::new(0.0, 0.0), &paint);
+    } else {
+        canvas.draw_text_blob(&text_blob, Point::new(draw_x, draw_y), &paint);
+    }
+
+    canvas.restore();
 }

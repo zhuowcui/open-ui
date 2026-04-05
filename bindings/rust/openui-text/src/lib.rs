@@ -15,6 +15,7 @@
 
 pub mod bidi;
 pub mod char_orientation;
+pub mod emoji;
 pub mod emphasis;
 pub mod font;
 pub mod hyphenation;
@@ -23,6 +24,11 @@ pub mod transform;
 
 pub use bidi::{BidiParagraph, BidiRun};
 pub use char_orientation::is_upright_in_mixed_vertical;
+pub use emoji::{
+    contains_emoji, is_emoji, is_emoji_modifier, is_emoji_presentation_selector,
+    is_regional_indicator, is_tag_character, is_text_presentation_selector,
+    is_zero_width_joiner,
+};
 pub use emphasis::{
     ResolvedEmphasisMark, default_mark_for_writing_mode, default_position_for_writing_mode,
     resolve_emphasis_mark, should_draw_emphasis_mark,
