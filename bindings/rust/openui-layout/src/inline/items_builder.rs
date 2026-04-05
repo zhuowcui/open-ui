@@ -702,9 +702,16 @@ impl<'a> InlineItemsBuilder<'a> {
 
     /// Compute the intrinsic inline size of an atomic inline's content.
     ///
-    /// Walks children, shapes text content, and sums explicit child widths
-    /// to approximate the shrink-to-fit width for `width: auto` elements.
+    /// Recursively walks all descendants, shapes text content, and accumulates
+    /// widths to approximate the shrink-to-fit width for `width: auto` elements.
+    /// Inline children sum widths; block children take the max (they stack vertically).
     fn compute_intrinsic_inline_size(&self, node_id: NodeId) -> Option<f32> {
+        let (width, has_content) = self.compute_intrinsic_inline_size_recursive(node_id);
+        if has_content { Some(width) } else { None }
+    }
+
+    /// Recursive helper: returns (accumulated_width, has_content).
+    fn compute_intrinsic_inline_size_recursive(&self, node_id: NodeId) -> (f32, bool) {
         let mut total_width = 0.0f32;
         let mut has_content = false;
 
@@ -725,17 +732,31 @@ impl<'a> InlineItemsBuilder<'a> {
                     }
                 }
                 _ => {
-                    // For non-text children, use explicit width if available.
                     let child_style = &child.style;
+                    // Use explicit width if available.
                     if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
                         has_content = true;
                         total_width += child_style.width.value();
+                    } else {
+                        // Recurse into child to find nested text/content.
+                        let (child_width, child_has_content) =
+                            self.compute_intrinsic_inline_size_recursive(child_id);
+                        if child_has_content {
+                            has_content = true;
+                            // Block-level children stack vertically → take max width.
+                            // Inline-level children flow horizontally → sum widths.
+                            if child_style.display == Display::Block {
+                                total_width = total_width.max(child_width);
+                            } else {
+                                total_width += child_width;
+                            }
+                        }
                     }
                 }
             }
         }
 
-        if has_content { Some(total_width) } else { None }
+        (total_width, has_content)
     }
 
     /// Handle a forced line break.

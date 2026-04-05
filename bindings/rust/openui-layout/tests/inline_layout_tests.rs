@@ -1843,3 +1843,412 @@ fn atomic_inline_auto_width_zero() {
     assert_eq!(atomic_items[0].inline_size, lu(0.0),
         "Atomic inline with auto width should be zero");
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// ISSUE 1 TESTS: BFC margin containment in inline-blocks
+// ═══════════════════════════════════════════════════════════════════════
+
+#[test]
+fn inline_block_bfc_contains_child_margin_top() {
+    // CSS 2.1 §10.6.1: inline-block establishes a new BFC, so child margins
+    // must not collapse through the inline-block boundary.
+    // <div><span style="display:inline-block"><div style="margin-top:20px">Hello</div></span></div>
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.node_mut(inline_block).style.width = Length::px(100.0);
+    doc.append_child(block, inline_block);
+
+    let inner_div = doc.create_node(ElementTag::Div);
+    doc.node_mut(inner_div).style.display = Display::Block;
+    doc.node_mut(inner_div).style.margin_top = Length::px(20.0);
+    doc.append_child(inline_block, inner_div);
+
+    let text = doc.create_node(ElementTag::Text);
+    doc.node_mut(text).text = Some("Hello".to_string());
+    doc.node_mut(text).style.display = Display::Inline;
+    doc.append_child(inner_div, text);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    // The inline-block fragment should contain the child margin.
+    // With BFC (is_new_formatting_context=true), the 20px margin-top should be
+    // included in the inline-block's height, making it taller than without.
+    assert!(frag.size.height > lu(0.0), "Line should have positive height");
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should have an atomic inline-block fragment");
+
+    // The atomic inline-block's height should include the 20px margin.
+    // Without BFC fix, height would just be font metrics (~16px).
+    // With BFC fix, height >= font_metrics + 20px.
+    assert!(atomic.size.height >= lu(20.0),
+        "Inline-block height {:?} should include child's 20px margin-top",
+        atomic.size.height);
+}
+
+#[test]
+fn inline_block_bfc_contains_child_margin_bottom() {
+    // Bottom margin should also be contained by the inline-block BFC.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.node_mut(inline_block).style.width = Length::px(100.0);
+    doc.append_child(block, inline_block);
+
+    let inner_div = doc.create_node(ElementTag::Div);
+    doc.node_mut(inner_div).style.display = Display::Block;
+    doc.node_mut(inner_div).style.margin_bottom = Length::px(15.0);
+    doc.append_child(inline_block, inner_div);
+
+    let text = doc.create_node(ElementTag::Text);
+    doc.node_mut(text).text = Some("World".to_string());
+    doc.node_mut(text).style.display = Display::Inline;
+    doc.append_child(inner_div, text);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should have an atomic inline-block fragment");
+
+    // Height should include the 15px bottom margin from the child.
+    assert!(atomic.size.height >= lu(15.0),
+        "Inline-block height {:?} should include child's 15px margin-bottom",
+        atomic.size.height);
+}
+
+#[test]
+fn inline_block_bfc_multiple_child_margins() {
+    // Multiple children with margins — all should be contained.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.node_mut(inline_block).style.width = Length::px(100.0);
+    doc.append_child(block, inline_block);
+
+    // First child with margin-top: 10px
+    let div1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(div1).style.display = Display::Block;
+    doc.node_mut(div1).style.margin_top = Length::px(10.0);
+    doc.append_child(inline_block, div1);
+    let t1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(t1).text = Some("A".to_string());
+    doc.node_mut(t1).style.display = Display::Inline;
+    doc.append_child(div1, t1);
+
+    // Second child with margin-top: 10px
+    let div2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(div2).style.display = Display::Block;
+    doc.node_mut(div2).style.margin_top = Length::px(10.0);
+    doc.append_child(inline_block, div2);
+    let t2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(t2).text = Some("B".to_string());
+    doc.node_mut(t2).style.display = Display::Inline;
+    doc.append_child(div2, t2);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should have an atomic inline-block fragment");
+
+    // Two children + margins: height should be > 2 * font_metrics
+    assert!(atomic.size.height >= lu(20.0),
+        "Inline-block with two margined children should have substantial height: {:?}",
+        atomic.size.height);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ISSUE 2 TESTS: block_layout result used for atomic inline dimensions
+// ═══════════════════════════════════════════════════════════════════════
+
+#[test]
+fn inline_block_auto_height_from_block_layout() {
+    // height:auto inline-block should get its height from block_layout,
+    // not from font metrics.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.node_mut(inline_block).style.width = Length::px(100.0);
+    // height: auto (default)
+    doc.append_child(block, inline_block);
+
+    // Two block children — should stack vertically, producing ~2x line height.
+    let div1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(div1).style.display = Display::Block;
+    doc.append_child(inline_block, div1);
+    let t1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(t1).text = Some("Line 1".to_string());
+    doc.node_mut(t1).style.display = Display::Inline;
+    doc.append_child(div1, t1);
+
+    let div2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(div2).style.display = Display::Block;
+    doc.append_child(inline_block, div2);
+    let t2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(t2).text = Some("Line 2".to_string());
+    doc.node_mut(t2).style.display = Display::Inline;
+    doc.append_child(div2, t2);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should have inline-block fragment");
+
+    // With two block children, height should be roughly 2x a single line.
+    // Font metrics for 16px = ~18-19px, so 2 lines ~36-38px.
+    // Old code would give ~18px (single line font metrics).
+    assert!(atomic.size.height > lu(30.0),
+        "Auto-height inline-block with 2 children should be > 30px, got {:?}",
+        atomic.size.height);
+}
+
+#[test]
+fn inline_block_preserves_children_from_block_layout() {
+    // The atomic fragment should have children from block_layout.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.node_mut(inline_block).style.width = Length::px(100.0);
+    doc.append_child(block, inline_block);
+
+    let inner = doc.create_node(ElementTag::Div);
+    doc.node_mut(inner).style.display = Display::Block;
+    doc.append_child(inline_block, inner);
+    let t = doc.create_node(ElementTag::Text);
+    doc.node_mut(t).text = Some("Content".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.append_child(inner, t);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should have inline-block fragment");
+
+    // Should have children from the block_layout result.
+    assert!(!atomic.children.is_empty(),
+        "Inline-block should have children from block_layout");
+
+    // Text should be findable deep inside.
+    let texts = collect_text_fragments(atomic);
+    assert!(!texts.is_empty(), "Should find text fragments inside inline-block");
+}
+
+#[test]
+fn inline_block_explicit_height_respected() {
+    // Explicit height should still be used even with block_layout.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.node_mut(inline_block).style.width = Length::px(100.0);
+    doc.node_mut(inline_block).style.height = Length::px(50.0);
+    doc.append_child(block, inline_block);
+
+    let t = doc.create_node(ElementTag::Text);
+    doc.node_mut(t).text = Some("X".to_string());
+    doc.node_mut(t).style.display = Display::Inline;
+    doc.append_child(inline_block, t);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should have inline-block fragment");
+
+    // With explicit height: 50px, the block_layout result's height should be 50px.
+    assert_eq!(atomic.size.height, lu(50.0),
+        "Inline-block with explicit height:50px should be 50px, got {:?}",
+        atomic.size.height);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ISSUE 3 TESTS: Recursive intrinsic sizing for auto-width inline-blocks
+// ═══════════════════════════════════════════════════════════════════════
+
+#[test]
+fn inline_block_auto_width_nested_text_nonzero() {
+    // <span style="display:inline-block"><span>Hello World</span></span>
+    // should have non-zero width from the nested text.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Div);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    // width: auto (default)
+    doc.append_child(block, inline_block);
+
+    let span = doc.create_node(ElementTag::Span);
+    doc.node_mut(span).style.display = Display::Inline;
+    doc.append_child(inline_block, span);
+
+    let text = doc.create_node(ElementTag::Text);
+    doc.node_mut(text).text = Some("Hello World".to_string());
+    doc.node_mut(text).style.display = Display::Inline;
+    doc.append_child(span, text);
+
+    let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
+    data.shape_text();
+
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data, lu(500.0));
+    let line = breaker.next_line(lu(500.0)).unwrap();
+
+    let atomic_items: Vec<_> = line.items.iter()
+        .filter(|ir| ir.item_type == openui_layout::inline::items::InlineItemType::AtomicInline)
+        .collect();
+    assert!(!atomic_items.is_empty(), "Should have atomic inline item");
+    assert!(atomic_items[0].inline_size > lu(0.0),
+        "Auto-width inline-block with nested text should have non-zero width, got {:?}",
+        atomic_items[0].inline_size);
+}
+
+#[test]
+fn inline_block_auto_width_deeply_nested_text() {
+    // <div style="display:inline-block"><div><span>Deep</span></div></div>
+    // Text nested 2 levels deep should still contribute to intrinsic width.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Div);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.append_child(block, inline_block);
+
+    let inner_div = doc.create_node(ElementTag::Div);
+    doc.node_mut(inner_div).style.display = Display::Block;
+    doc.append_child(inline_block, inner_div);
+
+    let span = doc.create_node(ElementTag::Span);
+    doc.node_mut(span).style.display = Display::Inline;
+    doc.append_child(inner_div, span);
+
+    let text = doc.create_node(ElementTag::Text);
+    doc.node_mut(text).text = Some("Deep".to_string());
+    doc.node_mut(text).style.display = Display::Inline;
+    doc.append_child(span, text);
+
+    let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
+    data.shape_text();
+
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data, lu(500.0));
+    let line = breaker.next_line(lu(500.0)).unwrap();
+
+    let atomic_items: Vec<_> = line.items.iter()
+        .filter(|ir| ir.item_type == openui_layout::inline::items::InlineItemType::AtomicInline)
+        .collect();
+    assert!(!atomic_items.is_empty());
+    assert!(atomic_items[0].inline_size > lu(0.0),
+        "Deeply nested text should produce non-zero intrinsic width, got {:?}",
+        atomic_items[0].inline_size);
+}
+
+#[test]
+fn inline_block_auto_width_no_children_still_zero() {
+    // An inline-block with no children should still have zero auto width.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Div);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.append_child(block, inline_block);
+
+    let mut data = openui_layout::inline::items_builder::InlineItemsBuilder::collect(&doc, block);
+    data.shape_text();
+
+    let mut breaker = openui_layout::inline::line_breaker::LineBreaker::new(&data, lu(500.0));
+    let line = breaker.next_line(lu(500.0)).unwrap();
+
+    let atomic_items: Vec<_> = line.items.iter()
+        .filter(|ir| ir.item_type == openui_layout::inline::items::InlineItemType::AtomicInline)
+        .collect();
+    assert!(!atomic_items.is_empty());
+    assert_eq!(atomic_items[0].inline_size, lu(0.0),
+        "Empty inline-block should have zero width");
+}
+
+#[test]
+fn inline_block_nested_text_full_layout_has_width() {
+    // Full layout integration: inline-block with nested text should produce
+    // a fragment with non-zero width.
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let inline_block = doc.create_node(ElementTag::Span);
+    doc.node_mut(inline_block).style.display = Display::InlineBlock;
+    doc.append_child(block, inline_block);
+
+    let span = doc.create_node(ElementTag::Span);
+    doc.node_mut(span).style.display = Display::Inline;
+    doc.append_child(inline_block, span);
+
+    let text = doc.create_node(ElementTag::Text);
+    doc.node_mut(text).text = Some("Test".to_string());
+    doc.node_mut(text).style.display = Display::Inline;
+    doc.append_child(span, text);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
+    let frag = inline_layout(&doc, block, &sp);
+
+    let line = &frag.children[0];
+    let atomic = line.children.iter()
+        .find(|f| f.kind == FragmentKind::Box && f.node_id == inline_block)
+        .expect("Should find inline-block fragment");
+    assert!(atomic.size.width > lu(0.0),
+        "Inline-block with nested text should have non-zero width in layout, got {:?}",
+        atomic.size.width);
+}

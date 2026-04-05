@@ -589,8 +589,38 @@ fn create_line_box(
     // and popped on CloseTag.
     let mut inline_metrics_stack: Vec<FontMetrics> = Vec::new();
 
+    // === PRE-STEP: Run block_layout for atomic inlines ===
+    // Per CSS 2.1 §10.6.1, inline-block/inline-flex/inline-grid establish a new
+    // block formatting context. We pre-compute their layout so the result's
+    // dimensions are authoritative for both line metrics and fragment creation.
+    let mut atomic_layout_results: Vec<Option<Fragment>> = (0..line_info.items.len()).map(|_| None).collect();
+    for (idx, item_result) in line_info.items.iter().enumerate() {
+        if item_result.item_type == InlineItemType::AtomicInline {
+            let item = &items_data.items[item_result.item_index];
+            if !item.node_id.is_none() {
+                let item_width = item_result.inline_size;
+                let style = &items_data.styles[item.style_index];
+                let available_block = match style.height.length_type() {
+                    openui_geometry::LengthType::Fixed => {
+                        LayoutUnit::from_f32(style.height.value())
+                    }
+                    _ => LayoutUnit::max(),
+                };
+                let child_space = ConstraintSpace::for_block_child(
+                    item_width,
+                    available_block,
+                    item_width,
+                    available_block,
+                    true,
+                );
+                let result = crate::block::block_layout(doc, item.node_id, &child_space);
+                atomic_layout_results[idx] = Some(result);
+            }
+        }
+    }
+
     // === STEP 2: Compute per-item metrics and unite ===
-    for item_result in &line_info.items {
+    for (step2_idx, item_result) in line_info.items.iter().enumerate() {
         match item_result.item_type {
             InlineItemType::Text => {
                 let item = &items_data.items[item_result.item_index];
@@ -649,16 +679,21 @@ fn create_line_box(
             }
             InlineItemType::AtomicInline => {
                 // Atomic inline contributes its actual height to line metrics.
+                // Use the pre-computed block_layout result if available.
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
 
-                let item_height = match style.height.length_type() {
-                    openui_geometry::LengthType::Fixed => style.height.value(),
-                    _ => {
-                        let font_desc = style_to_font_description(style);
-                        let font = Font::new(font_desc);
-                        let metrics = font.font_metrics().copied().unwrap_or_default();
-                        metrics.ascent + metrics.descent
+                let item_height = if let Some(ref result) = atomic_layout_results[step2_idx] {
+                    result.size.height.to_f32()
+                } else {
+                    match style.height.length_type() {
+                        openui_geometry::LengthType::Fixed => style.height.value(),
+                        _ => {
+                            let font_desc = style_to_font_description(style);
+                            let font = Font::new(font_desc);
+                            let metrics = font.font_metrics().copied().unwrap_or_default();
+                            metrics.ascent + metrics.descent
+                        }
                     }
                 };
 
@@ -861,7 +896,7 @@ fn create_line_box(
     // Reset the inline metrics stack for the positioning pass.
     inline_metrics_stack.clear();
 
-    for (_i, item_result) in line_info.items.iter().enumerate() {
+    for (step4_idx, item_result) in line_info.items.iter().enumerate() {
         let item = &items_data.items[item_result.item_index];
         match item_result.item_type {
             InlineItemType::Text => {
@@ -946,7 +981,7 @@ fn create_line_box(
                     let text = &items_data.text[item_result.text_range.clone()];
                     // In pre-wrap mode, the last text item's trailing spaces
                     // hang and must not receive justification expansion.
-                    let is_last_text = line_info.items[(_i + 1)..]
+                    let is_last_text = line_info.items[(step4_idx + 1)..]
                         .iter()
                         .all(|ir| ir.item_type != InlineItemType::Text);
                     let style_for_item = &items_data.styles[item.style_index];
@@ -1061,20 +1096,23 @@ fn create_line_box(
                 // Reset inter-character tracking so no boundary gap is added
                 // between text items separated by an atomic inline.
                 inter_char_chars_before = 0;
-                // Create a box fragment for the atomic inline element.
+                // Use pre-computed block_layout result as authoritative source
+                // for atomic inline dimensions (Issue 2 fix).
                 let item_width = item_result.inline_size;
                 let style = &items_data.styles[item.style_index];
-                // Resolve height: use explicit CSS height if available, else font metrics.
-                let item_height = match style.height.length_type() {
-                    openui_geometry::LengthType::Fixed => {
-                        LayoutUnit::from_f32(style.height.value())
-                    }
-                    _ => {
-                        // Fall back to font metrics (ascent + descent) for the item's font
-                        let font_desc = style_to_font_description(style);
-                        let font = Font::new(font_desc);
-                        let metrics = font.font_metrics().copied().unwrap_or_default();
-                        LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent)
+                let item_height = if let Some(ref result) = atomic_layout_results[step4_idx] {
+                    result.size.height
+                } else {
+                    match style.height.length_type() {
+                        openui_geometry::LengthType::Fixed => {
+                            LayoutUnit::from_f32(style.height.value())
+                        }
+                        _ => {
+                            let font_desc = style_to_font_description(style);
+                            let font = Font::new(font_desc);
+                            let metrics = font.font_metrics().copied().unwrap_or_default();
+                            LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent)
+                        }
                     }
                 };
                 let atomic_top = match style.vertical_align {
@@ -1138,26 +1176,23 @@ fn create_line_box(
                         baseline - item_height
                     }
                 };
-                let mut atomic_fragment = Fragment::new_box(
-                    item.node_id,
-                    PhysicalSize::new(item_width, item_height),
-                );
-                atomic_fragment.offset = PhysicalOffset::new(inline_offset, atomic_top);
 
-                // Recursively lay out children of the atomic inline element.
-                // Atomic inlines (inline-block, inline-flex, inline-grid) establish
-                // a new block formatting context for their contents.
-                if !item.node_id.is_none() {
-                    let child_space = ConstraintSpace::for_block_child(
-                        item_width,
-                        item_height,
-                        item_width,
-                        item_height,
-                        false,
+                // Use the pre-computed block_layout result as the atomic fragment,
+                // preserving its computed size, border, padding, margin, and children.
+                // Only fall back to a new empty box when block_layout was not run.
+                let atomic_fragment = if let Some(result) = atomic_layout_results[step4_idx].take() {
+                    let mut frag = result;
+                    frag.size = PhysicalSize::new(item_width, item_height);
+                    frag.offset = PhysicalOffset::new(inline_offset, atomic_top);
+                    frag
+                } else {
+                    let mut frag = Fragment::new_box(
+                        item.node_id,
+                        PhysicalSize::new(item_width, item_height),
                     );
-                    let child_result = crate::block::block_layout(doc, item.node_id, &child_space);
-                    atomic_fragment.children = child_result.children;
-                }
+                    frag.offset = PhysicalOffset::new(inline_offset, atomic_top);
+                    frag
+                };
 
                 children.push(atomic_fragment);
                 inline_offset = inline_offset + item_result.inline_size;
