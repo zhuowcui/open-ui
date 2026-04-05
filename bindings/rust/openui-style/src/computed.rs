@@ -270,6 +270,17 @@ pub struct ComputedStyle {
     /// CSS `hyphens`. Initial: `manual`. Inherited.
     pub hyphens: Hyphens,
 
+    /// CSS `hyphenate-limit-chars`. Initial: `(5, 2, 2)`. Inherited.
+    ///
+    /// Controls minimum character counts for hyphenation:
+    /// `(min_word, min_prefix, min_suffix)`
+    ///
+    /// Blink defaults from `third_party/blink/renderer/core/style/computed_style.h`:
+    /// - min_word = 5 (minimum word length to hyphenate)
+    /// - min_prefix = 2 (minimum characters before hyphen)
+    /// - min_suffix = 2 (minimum characters after hyphen)
+    pub hyphenate_limit_chars: (u8, u8, u8),
+
     // ── Text Decoration ──────────────────────────────────────────────
 
     /// CSS `text-decoration-line`. Initial: `none`.
@@ -289,6 +300,9 @@ pub struct ComputedStyle {
 
     /// CSS `text-underline-position`. Initial: `auto`. Inherited.
     pub text_underline_position: TextUnderlinePosition,
+
+    /// CSS `text-decoration-skip-ink`. Initial: `auto`. Inherited.
+    pub text_decoration_skip_ink: TextDecorationSkipInk,
 
     // ── Text Transform ───────────────────────────────────────────────
 
@@ -333,6 +347,25 @@ pub struct ComputedStyle {
     /// NOTE: Stored for spec compliance; not applied during layout
     /// (matching Chromium, which does not implement this property).
     pub hanging_punctuation: HangingPunctuation,
+
+    // ── Text Emphasis ────────────────────────────────────────────────
+
+    /// CSS `text-emphasis-style` mark shape. Initial: `none`. Inherited.
+    pub text_emphasis_mark: TextEmphasisMark,
+
+    /// CSS `text-emphasis-style` fill mode. Initial: `filled`. Inherited.
+    pub text_emphasis_fill: TextEmphasisFill,
+
+    /// CSS `text-emphasis-position`. Initial: `over right`. Inherited.
+    pub text_emphasis_position: TextEmphasisPosition,
+
+    /// CSS `text-emphasis-color`. Initial: `currentColor`. Inherited.
+    pub text_emphasis_color: StyleColor,
+
+    // ── Text Combine ─────────────────────────────────────────────────
+
+    /// CSS `text-combine-upright`. Initial: `none`.
+    pub text_combine_upright: TextCombineUpright,
 
     // ── Tab Size ─────────────────────────────────────────────────────
 
@@ -454,6 +487,7 @@ impl ComputedStyle {
             overflow_wrap: OverflowWrap::INITIAL,         // normal
             line_break: LineBreak::INITIAL,               // auto
             hyphens: Hyphens::INITIAL,                    // manual
+            hyphenate_limit_chars: (5, 2, 2),              // Blink defaults
 
             // Text decoration
             text_decoration_line: TextDecorationLine::NONE,
@@ -462,6 +496,7 @@ impl ComputedStyle {
             text_decoration_thickness: TextDecorationThickness::Auto,
             text_underline_offset: Length::auto(),
             text_underline_position: TextUnderlinePosition::INITIAL,  // auto
+            text_decoration_skip_ink: TextDecorationSkipInk::INITIAL, // auto
 
             // Text transform
             text_transform: TextTransform::INITIAL,       // none
@@ -484,6 +519,13 @@ impl ComputedStyle {
 
             // Hanging punctuation
             hanging_punctuation: HangingPunctuation::NONE,
+
+            // Text emphasis
+            text_emphasis_mark: TextEmphasisMark::INITIAL,       // none
+            text_emphasis_fill: TextEmphasisFill::INITIAL,       // filled
+            text_emphasis_position: TextEmphasisPosition::INITIAL, // over right
+            text_emphasis_color: StyleColor::CurrentColor,
+            text_combine_upright: TextCombineUpright::INITIAL,   // none
 
             // Tab size
             tab_size: TabSize::Spaces(8),
@@ -732,5 +774,78 @@ mod tests {
         assert!(!s.hanging_punctuation.force_end);
         assert!(s.hanging_punctuation.allow_end);
         assert!(!s.hanging_punctuation.is_none());
+    }
+
+    // ── Text Emphasis ──────────────────────────────────────────────
+
+    #[test]
+    fn text_emphasis_initial_values() {
+        let s = ComputedStyle::initial();
+        assert_eq!(s.text_emphasis_mark, TextEmphasisMark::None);
+        assert_eq!(s.text_emphasis_fill, TextEmphasisFill::Filled);
+        assert_eq!(s.text_emphasis_position, TextEmphasisPosition::INITIAL);
+        assert!(s.text_emphasis_position.over);
+        assert!(s.text_emphasis_position.right);
+        assert_eq!(s.text_emphasis_color, StyleColor::CurrentColor);
+    }
+
+    #[test]
+    fn text_emphasis_mark_set_dot() {
+        let mut s = ComputedStyle::initial();
+        s.text_emphasis_mark = TextEmphasisMark::Dot;
+        assert_eq!(s.text_emphasis_mark, TextEmphasisMark::Dot);
+    }
+
+    #[test]
+    fn text_emphasis_fill_open() {
+        let mut s = ComputedStyle::initial();
+        s.text_emphasis_fill = TextEmphasisFill::Open;
+        assert_eq!(s.text_emphasis_fill, TextEmphasisFill::Open);
+    }
+
+    #[test]
+    fn text_emphasis_position_under_left() {
+        let mut s = ComputedStyle::initial();
+        s.text_emphasis_position = TextEmphasisPosition { over: false, right: false };
+        assert!(!s.text_emphasis_position.over);
+        assert!(!s.text_emphasis_position.right);
+    }
+
+    #[test]
+    fn text_emphasis_color_custom() {
+        let mut s = ComputedStyle::initial();
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        s.text_emphasis_color = StyleColor::Resolved(red);
+        match s.text_emphasis_color {
+            StyleColor::Resolved(c) => assert_eq!(c, Color::from_rgba8(255, 0, 0, 255)),
+            _ => panic!("expected Resolved color"),
+        }
+    }
+
+    #[test]
+    fn text_emphasis_custom_char() {
+        let mut s = ComputedStyle::initial();
+        s.text_emphasis_mark = TextEmphasisMark::Custom('★');
+        assert_eq!(s.text_emphasis_mark, TextEmphasisMark::Custom('★'));
+    }
+
+    // ── Text Combine Upright ───────────────────────────────────────
+
+    #[test]
+    fn text_combine_upright_initial() {
+        let s = ComputedStyle::initial();
+        assert_eq!(s.text_combine_upright, TextCombineUpright::None);
+    }
+
+    #[test]
+    fn text_combine_upright_all() {
+        let mut s = ComputedStyle::initial();
+        s.text_combine_upright = TextCombineUpright::All;
+        assert_eq!(s.text_combine_upright, TextCombineUpright::All);
+    }
+
+    #[test]
+    fn text_combine_upright_default_trait() {
+        assert_eq!(TextCombineUpright::default(), TextCombineUpright::None);
     }
 }

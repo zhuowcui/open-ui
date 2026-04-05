@@ -742,6 +742,36 @@ impl Default for TextDecorationThickness {
     fn default() -> Self { Self::Auto }
 }
 
+/// CSS `text-decoration-skip-ink` property.
+///
+/// Controls whether decoration lines (underline, overline) skip over glyph ink.
+/// Blink: `ETextDecorationSkipInk` in `computed_style_base_constants.h`.
+///
+/// - `None`: decoration line is drawn continuously through glyph ink.
+/// - `Auto` (default): decoration line skips glyph ink for non-CJK characters.
+/// - `All`: decoration line skips glyph ink for all characters including CJK.
+///
+/// Per CSS spec, skip-ink does NOT apply to `line-through` decorations.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextDecorationSkipInk {
+    /// No skipping — draw continuous decoration line.
+    None = 0,
+    /// Skip glyph ink for non-CJK characters (default).
+    Auto = 1,
+    /// Skip glyph ink for all characters including CJK.
+    All = 2,
+}
+
+impl TextDecorationSkipInk {
+    /// Blink's initial value: `kAuto`.
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for TextDecorationSkipInk {
+    fn default() -> Self { Self::INITIAL }
+}
+
 /// CSS `text-underline-position` property.
 /// Blink: `TextUnderlinePosition` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -953,4 +983,135 @@ impl HangingPunctuation {
 
 impl Default for HangingPunctuation {
     fn default() -> Self { Self::NONE }
+}
+
+// ── Text Emphasis (CSS Text Decoration Module Level 3 §3) ───────────────
+
+/// CSS `text-emphasis-style` — shape of emphasis marks.
+///
+/// Blink: `TextEmphasisMark` in `computed_style_constants.h`.
+///
+/// CSS Text Decoration Module Level 3 §3.4
+/// <https://www.w3.org/TR/css-text-decor-3/#text-emphasis-style-property>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TextEmphasisMark {
+    /// No emphasis marks.
+    None,
+    /// Dot: '•' (filled) / '◦' (open). Default for CJK horizontal text.
+    Dot,
+    /// Circle: '●' (filled) / '○' (open).
+    Circle,
+    /// Double circle: '◉' (filled) / '◎' (open).
+    DoubleCircle,
+    /// Triangle: '▲' (filled) / '△' (open).
+    Triangle,
+    /// Sesame: '﹅' (filled) / '﹆' (open). Default for CJK vertical text.
+    Sesame,
+    /// Custom single character specified by the author.
+    Custom(char),
+}
+
+impl TextEmphasisMark {
+    pub const INITIAL: Self = Self::None;
+
+    /// Returns the Unicode character for this mark shape and fill.
+    ///
+    /// Custom marks ignore the fill parameter and return the stored character.
+    /// Returns `None` for `TextEmphasisMark::None`.
+    pub fn character(self, fill: TextEmphasisFill) -> Option<char> {
+        match (self, fill) {
+            (Self::None, _) => None,
+            (Self::Dot, TextEmphasisFill::Filled) => Some('\u{2022}'),       // •
+            (Self::Dot, TextEmphasisFill::Open) => Some('\u{25E6}'),         // ◦
+            (Self::Circle, TextEmphasisFill::Filled) => Some('\u{25CF}'),    // ●
+            (Self::Circle, TextEmphasisFill::Open) => Some('\u{25CB}'),      // ○
+            (Self::DoubleCircle, TextEmphasisFill::Filled) => Some('\u{25C9}'), // ◉
+            (Self::DoubleCircle, TextEmphasisFill::Open) => Some('\u{25CE}'),   // ◎
+            (Self::Triangle, TextEmphasisFill::Filled) => Some('\u{25B2}'),  // ▲
+            (Self::Triangle, TextEmphasisFill::Open) => Some('\u{25B3}'),    // △
+            (Self::Sesame, TextEmphasisFill::Filled) => Some('\u{FE45}'),    // ﹅
+            (Self::Sesame, TextEmphasisFill::Open) => Some('\u{FE46}'),      // ﹆
+            (Self::Custom(ch), _) => Some(ch),
+        }
+    }
+}
+
+impl Default for TextEmphasisMark {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-emphasis-style` fill mode — filled or open marks.
+///
+/// Blink: `TextEmphasisFill` in `computed_style_constants.h`.
+///
+/// CSS Text Decoration Module Level 3 §3.4
+/// <https://www.w3.org/TR/css-text-decor-3/#text-emphasis-style-property>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextEmphasisFill {
+    /// Filled marks (default per CSS spec).
+    Filled = 0,
+    /// Open (outline) marks.
+    Open = 1,
+}
+
+impl TextEmphasisFill {
+    pub const INITIAL: Self = Self::Filled;
+}
+
+impl Default for TextEmphasisFill {
+    fn default() -> Self { Self::INITIAL }
+}
+
+/// CSS `text-emphasis-position` — placement of emphasis marks.
+///
+/// Blink: `TextEmphasisPosition` in `computed_style_constants.h`.
+/// Stored as two independent axes: over/under and right/left.
+///
+/// CSS Text Decoration Module Level 3 §3.5
+/// <https://www.w3.org/TR/css-text-decor-3/#text-emphasis-position-property>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct TextEmphasisPosition {
+    /// `true` = over/above the text, `false` = under/below.
+    /// Initial: `true` (over) for horizontal text.
+    pub over: bool,
+    /// `true` = right side (for vertical text), `false` = left side.
+    /// Initial: `true` (right) for vertical text.
+    pub right: bool,
+}
+
+impl TextEmphasisPosition {
+    /// Initial value: `over right` per CSS spec.
+    pub const INITIAL: Self = Self { over: true, right: true };
+}
+
+impl Default for TextEmphasisPosition {
+    fn default() -> Self { Self::INITIAL }
+}
+
+// ── Text Combine Upright (CSS Writing Modes Level 3 §9.1) ───────────────
+
+/// CSS `text-combine-upright` — tate-chū-yoko (horizontal-in-vertical).
+///
+/// Combines multiple characters into a single upright glyph in vertical text.
+///
+/// Blink: `TextCombine` in `computed_style_constants.h`.
+///
+/// CSS Writing Modes Level 3 §9.1
+/// <https://www.w3.org/TR/css-writing-modes-3/#text-combine-upright>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextCombineUpright {
+    /// No combination — characters rendered individually.
+    None = 0,
+    /// All consecutive characters are combined into a single upright glyph.
+    All = 1,
+}
+
+impl TextCombineUpright {
+    pub const INITIAL: Self = Self::None;
+}
+
+impl Default for TextCombineUpright {
+    fn default() -> Self { Self::INITIAL }
 }

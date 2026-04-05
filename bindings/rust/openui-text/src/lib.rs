@@ -14,11 +14,16 @@
 //! - Text transform (uppercase, lowercase, capitalize, full-width)
 
 pub mod bidi;
+pub mod emphasis;
 pub mod font;
 pub mod shaping;
 pub mod transform;
 
 pub use bidi::{BidiParagraph, BidiRun};
+pub use emphasis::{
+    ResolvedEmphasisMark, default_mark_for_writing_mode, default_position_for_writing_mode,
+    resolve_emphasis_mark, should_draw_emphasis_mark,
+};
 pub use transform::apply_text_transform;
 
 pub use font::{
