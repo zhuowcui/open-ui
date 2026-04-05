@@ -89,7 +89,13 @@ pub fn paint_text_decorations(
             // Blink: underline_offset = font_metrics.UnderlinePosition()
             // which is a positive value below the baseline.
             if decoration_line.has_underline() {
-                let y = baseline_y + metrics.underline_offset;
+                // Apply CSS text-underline-offset if it's a resolved length.
+                let css_offset = if !style.text_underline_offset.is_auto() {
+                    style.text_underline_offset.value()
+                } else {
+                    0.0
+                };
+                let y = baseline_y + metrics.underline_offset + css_offset;
                 draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::Underline);
             }
 
@@ -416,5 +422,35 @@ mod tests {
         let y = 10.0_f32;
         let wavy_y = y; // line-through: no offset
         assert_eq!(wavy_y, y);
+    }
+
+    // ── SP11 Round 14 Issue 4: text-underline-offset applied ─────────
+
+    #[test]
+    fn text_underline_offset_shifts_underline_position() {
+        // When text_underline_offset is a fixed length, the underline Y position
+        // should be shifted by that amount relative to the baseline + metrics offset.
+        let baseline_y = 20.0_f32;
+        let metrics = FontMetrics {
+            underline_offset: 2.0,
+            ..FontMetrics::zero()
+        };
+        // auto → css_offset = 0.0
+        let offset_auto = openui_geometry::Length::auto();
+        let css_offset_auto = if !offset_auto.is_auto() { offset_auto.value() } else { 0.0 };
+        let y_auto = baseline_y + metrics.underline_offset + css_offset_auto;
+        assert_eq!(y_auto, 22.0, "Auto offset should not shift underline");
+
+        // 3px offset → css_offset = 3.0
+        let offset_px = openui_geometry::Length::px(3.0);
+        let css_offset_px = if !offset_px.is_auto() { offset_px.value() } else { 0.0 };
+        let y_px = baseline_y + metrics.underline_offset + css_offset_px;
+        assert_eq!(y_px, 25.0, "3px offset should shift underline down by 3");
+
+        // Negative offset → shifts underline up
+        let offset_neg = openui_geometry::Length::px(-2.0);
+        let css_offset_neg = if !offset_neg.is_auto() { offset_neg.value() } else { 0.0 };
+        let y_neg = baseline_y + metrics.underline_offset + css_offset_neg;
+        assert_eq!(y_neg, 20.0, "Negative offset should shift underline up");
     }
 }

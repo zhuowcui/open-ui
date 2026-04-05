@@ -7,9 +7,10 @@
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_layout::inline::items::{CollapseType, InlineItemType};
 use openui_layout::inline::items_builder::{
-    collapse_spaces_preserve_newlines, collapse_whitespace, process_white_space, InlineItemsBuilder,
+    collapse_spaces_preserve_newlines, collapse_whitespace, expand_tabs, process_white_space,
+    InlineItemsBuilder,
 };
-use openui_style::{ComputedStyle, Direction, Display, WhiteSpace};
+use openui_style::{ComputedStyle, Direction, Display, TabSize, WhiteSpace};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
@@ -709,4 +710,95 @@ fn pre_line_multiple_newlines_strip_intermediate_spaces() {
         collapse_spaces_preserve_newlines("a\n  b\n  c"),
         "a\nb\nc"
     );
+}
+
+// ── SP11 Round 14 Issue 1: OpenTag/CloseTag bidi level ──────────────────
+
+#[test]
+fn open_close_tag_bidi_level_rtl_with_span() {
+    // RTL text wrapped in a span: the OpenTag and CloseTag should get the
+    // same bidi level as their content, not remain at 0.
+    use openui_text::TextDirection;
+
+    let mut doc = Document::new();
+    let root = doc.root();
+    let block = doc.create_node(ElementTag::Div);
+    doc.node_mut(block).style.display = Display::Block;
+    doc.append_child(root, block);
+
+    let span = doc.create_node(ElementTag::Span);
+    doc.node_mut(span).style.display = Display::Inline;
+    doc.append_child(block, span);
+
+    let text = doc.create_node(ElementTag::Text);
+    // Arabic text — should be RTL (odd bidi level).
+    doc.node_mut(text).text = Some("\u{0627}\u{0644}\u{0639}\u{0631}\u{0628}".to_string());
+    doc.node_mut(text).style.display = Display::Inline;
+    doc.append_child(span, text);
+
+    let mut data = InlineItemsBuilder::collect(&doc, block);
+    data.apply_bidi(TextDirection::Rtl);
+
+    let open_tag = data.items.iter().find(|i| i.item_type == InlineItemType::OpenTag);
+    let close_tag = data.items.iter().find(|i| i.item_type == InlineItemType::CloseTag);
+    let text_item = data.items.iter().find(|i| i.item_type == InlineItemType::Text);
+
+    assert!(open_tag.is_some(), "Should have an OpenTag item");
+    assert!(close_tag.is_some(), "Should have a CloseTag item");
+    assert!(text_item.is_some(), "Should have a Text item");
+
+    let text_level = text_item.unwrap().bidi_level;
+    assert!(
+        text_level % 2 == 1,
+        "Arabic text should have odd bidi level, got {}",
+        text_level,
+    );
+    assert_eq!(
+        open_tag.unwrap().bidi_level, text_level,
+        "OpenTag should have the same bidi level as its content text"
+    );
+    assert_eq!(
+        close_tag.unwrap().bidi_level, text_level,
+        "CloseTag should have the same bidi level as its content text"
+    );
+}
+
+// ── SP11 Round 14 Issue 5: Tab expansion ────────────────────────────────
+
+#[test]
+fn expand_tabs_basic_tab_size_8() {
+    // Tab at column 0 should expand to 8 spaces.
+    let result = expand_tabs("\thello", &TabSize::Spaces(8));
+    assert_eq!(result, "        hello");
+}
+
+#[test]
+fn expand_tabs_mid_line() {
+    // "ab\t" — column 2, tab-size 8 → need 6 spaces to reach column 8.
+    let result = expand_tabs("ab\tx", &TabSize::Spaces(8));
+    assert_eq!(result, "ab      x");
+}
+
+#[test]
+fn expand_tabs_tab_size_4() {
+    // Tab at column 0, tab-size 4 → 4 spaces.
+    let result = expand_tabs("\tx", &TabSize::Spaces(4));
+    assert_eq!(result, "    x");
+    // Tab at column 2, tab-size 4 → 2 spaces.
+    let result2 = expand_tabs("ab\tx", &TabSize::Spaces(4));
+    assert_eq!(result2, "ab  x");
+}
+
+#[test]
+fn expand_tabs_resets_at_newline() {
+    // After a newline, column resets to 0.
+    let result = expand_tabs("ab\n\tx", &TabSize::Spaces(4));
+    assert_eq!(result, "ab\n    x");
+}
+
+#[test]
+fn expand_tabs_no_tabs_returns_same() {
+    let input = "hello world";
+    let result = expand_tabs(input, &TabSize::Spaces(8));
+    assert_eq!(result, input);
 }

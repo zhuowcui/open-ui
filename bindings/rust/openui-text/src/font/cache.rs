@@ -18,8 +18,8 @@ use super::platform::FontPlatformData;
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 struct FontCacheKey {
     family: String,
-    /// Font size × 100, truncated to integer for stable hashing.
-    size_hundredths: i32,
+    /// Font size as raw f32 bits for exact equality.
+    size_bits: u32,
     /// Weight × 10, truncated to integer.
     weight_tenths: i32,
     /// Stretch × 10, truncated to integer.
@@ -120,7 +120,7 @@ impl FontCache {
         };
         FontCacheKey {
             family: family_name.to_ascii_lowercase(),
-            size_hundredths: (desc.size * 100.0) as i32,
+            size_bits: desc.size.to_bits(),
             weight_tenths: (desc.weight.0 * 10.0) as i32,
             stretch_tenths: (desc.stretch.0 * 10.0) as i32,
             style_tag,
@@ -146,5 +146,44 @@ impl FontCache {
 impl Default for FontCache {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ── SP11 Round 14 Issue 6: cache key precision ──────────────────
+
+    #[test]
+    fn cache_key_distinguishes_very_similar_sizes() {
+        // Sizes 16.001 and 16.009 differ by less than 0.01 and would
+        // collide under the old (size * 100) as i32 truncation.
+        // With f32::to_bits() they must produce distinct keys.
+        let mut desc1 = FontDescription::default();
+        desc1.size = 16.001;
+        let mut desc2 = FontDescription::default();
+        desc2.size = 16.009;
+
+        let key1 = FontCache::make_key("sans-serif", &desc1);
+        let key2 = FontCache::make_key("sans-serif", &desc2);
+
+        assert_ne!(
+            key1, key2,
+            "Distinct float sizes should produce distinct cache keys"
+        );
+    }
+
+    #[test]
+    fn cache_key_same_size_same_key() {
+        let mut desc1 = FontDescription::default();
+        desc1.size = 16.0;
+        let mut desc2 = FontDescription::default();
+        desc2.size = 16.0;
+
+        let key1 = FontCache::make_key("sans-serif", &desc1);
+        let key2 = FontCache::make_key("sans-serif", &desc2);
+
+        assert_eq!(key1, key2, "Identical sizes should produce identical keys");
     }
 }

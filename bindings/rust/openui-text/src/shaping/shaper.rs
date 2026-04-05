@@ -731,15 +731,68 @@ impl TextShaper {
         result.width = total_width;
         result.num_characters = num_characters;
 
+        // Recompute cluster-base flags from actual run cluster data.
+        let mut is_cluster_base = vec![false; num_characters];
+        let mut has_cluster_data = false;
+        for run in &result.runs {
+            if run.clusters.is_empty() {
+                continue;
+            }
+            has_cluster_data = true;
+            let mut seen_clusters = std::collections::HashSet::new();
+            for &cluster in &run.clusters {
+                if seen_clusters.insert(cluster) {
+                    let char_idx = run.start_index + cluster;
+                    if char_idx < num_characters {
+                        is_cluster_base[char_idx] = true;
+                    }
+                }
+            }
+        }
+        // If no cluster data available, treat all characters as bases.
+        if !has_cluster_data {
+            for b in &mut is_cluster_base {
+                *b = true;
+            }
+        }
+
+        // Recompute safe-to-break flags from run cluster boundaries.
         let chars: Vec<char> = text.chars().collect();
+        let mut safe_to_break = vec![false; num_characters];
+        if num_characters > 0 {
+            // Always safe at start.
+            safe_to_break[0] = true;
+            // Safe at whitespace boundaries.
+            for (i, &ch) in chars.iter().enumerate() {
+                if ch.is_whitespace() {
+                    safe_to_break[i] = true;
+                    if i + 1 < num_characters {
+                        safe_to_break[i + 1] = true;
+                    }
+                }
+            }
+            // Safe at cluster boundaries within runs.
+            for run in &result.runs {
+                if run.clusters.len() > 1 {
+                    for i in 1..run.clusters.len() {
+                        if run.clusters[i] != run.clusters[i - 1] {
+                            let char_idx = run.start_index + run.clusters[i];
+                            if char_idx < num_characters {
+                                safe_to_break[char_idx] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         let mut character_data = Vec::with_capacity(num_characters);
         let mut x = 0.0f32;
         for i in 0..num_characters {
             character_data.push(ShapeResultCharacterData {
                 x_position: x,
-                is_cluster_base: true,
-                safe_to_break_before: i == 0 || chars[i].is_whitespace()
-                    || (i > 0 && chars[i - 1].is_whitespace()),
+                is_cluster_base: is_cluster_base[i],
+                safe_to_break_before: safe_to_break[i],
             });
             x += char_advances[i];
         }
@@ -938,5 +991,41 @@ mod tests {
         assert_eq!(result.num_characters, 0);
         assert_eq!(result.width, 0.0);
         assert!(result.runs.is_empty());
+    }
+
+    // ── SP11 Round 14 Issue 3: rebuild_character_data retains cluster metadata ──
+
+    #[test]
+    fn rebuild_character_data_retains_cluster_metadata() {
+        // After shaping, the character_data should have correct cluster-base
+        // and safe-to-break information. Shape text with spaces — whitespace
+        // boundaries should be marked safe_to_break, and each character that
+        // starts a new cluster should be marked is_cluster_base.
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let text = "ab cd";
+        let result = shaper.shape(text, &font, TextDirection::Ltr);
+
+        assert_eq!(result.character_data.len(), 5);
+        // Position 0 should always be safe to break.
+        assert!(result.character_data[0].safe_to_break_before);
+        // The space at index 2 should be safe to break before.
+        assert!(
+            result.character_data[2].safe_to_break_before,
+            "Whitespace should be marked safe_to_break_before"
+        );
+        // Character after space (index 3) should also be safe.
+        assert!(
+            result.character_data[3].safe_to_break_before,
+            "Position after whitespace should be safe_to_break_before"
+        );
+        // For basic Latin, each character should be its own cluster base.
+        for (i, cd) in result.character_data.iter().enumerate() {
+            assert!(
+                cd.is_cluster_base,
+                "Character {} should be a cluster base for basic Latin text",
+                i
+            );
+        }
     }
 }

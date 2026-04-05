@@ -11,7 +11,7 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, Display, TextTransform, WhiteSpace};
+use openui_style::{ComputedStyle, Direction, Display, TabSize, TextTransform, WhiteSpace};
 use openui_text::{
     apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
 };
@@ -89,7 +89,42 @@ impl InlineItemsData {
             }
         }
 
-        // Second pass: split text items that span multiple bidi levels.
+        // Second pass: assign bidi levels to OpenTag/CloseTag items from
+        // their neighboring content items. OpenTag inherits the level of the
+        // first subsequent Text/AtomicInline; CloseTag inherits the level of
+        // the last preceding Text/AtomicInline. This ensures tag items don't
+        // break contiguous bidi runs during UAX#9 L2 reordering.
+        let base_level = if base_direction == TextDirection::Rtl { 1 } else { 0 };
+        for i in 0..self.items.len() {
+            match self.items[i].item_type {
+                InlineItemType::OpenTag => {
+                    let level = self.items[i + 1..]
+                        .iter()
+                        .find(|it| {
+                            it.item_type == InlineItemType::Text
+                                || it.item_type == InlineItemType::AtomicInline
+                        })
+                        .map(|it| it.bidi_level)
+                        .unwrap_or(base_level);
+                    self.items[i].bidi_level = level;
+                }
+                InlineItemType::CloseTag => {
+                    let level = self.items[..i]
+                        .iter()
+                        .rev()
+                        .find(|it| {
+                            it.item_type == InlineItemType::Text
+                                || it.item_type == InlineItemType::AtomicInline
+                        })
+                        .map(|it| it.bidi_level)
+                        .unwrap_or(base_level);
+                    self.items[i].bidi_level = level;
+                }
+                _ => {}
+            }
+        }
+
+        // Third pass: split text items that span multiple bidi levels.
         let mut new_items = Vec::with_capacity(self.items.len());
         for item in self.items.drain(..) {
             if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
@@ -298,6 +333,17 @@ impl<'a> InlineItemsBuilder<'a> {
         };
 
         let processed = process_white_space(&transformed, style.white_space);
+        // Expand tab characters to spaces using CSS tab-size property.
+        // In pre/pre-wrap/break-spaces modes, tabs are preserved by
+        // process_white_space but need expansion to tab stops.
+        let processed = if matches!(
+            style.white_space,
+            WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces
+        ) {
+            expand_tabs(&processed, &style.tab_size)
+        } else {
+            processed
+        };
         if processed.is_empty() {
             return;
         }
@@ -463,6 +509,42 @@ pub fn process_white_space(text: &str, white_space: WhiteSpace) -> String {
         WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces => text.to_string(),
         WhiteSpace::PreLine => collapse_spaces_preserve_newlines(text),
     }
+}
+
+/// Expand tab characters to spaces according to the CSS `tab-size` property.
+///
+/// Each tab is replaced by enough spaces to reach the next tab stop.
+/// Tab stops are at every `tab_size` columns (default 8). Column counting
+/// resets at each newline.
+pub fn expand_tabs(text: &str, tab_size: &TabSize) -> String {
+    if !text.contains('\t') {
+        return text.to_string();
+    }
+    let stop = match *tab_size {
+        TabSize::Spaces(n) => n.max(1) as usize,
+        // For Length-based tab-size, approximate in character columns.
+        // The real position-based expansion would need glyph metrics;
+        // using space-count as a reasonable fallback.
+        TabSize::Length(_) => 8,
+    };
+    let mut result = String::with_capacity(text.len());
+    let mut column = 0usize;
+    for ch in text.chars() {
+        if ch == '\t' {
+            let spaces = stop - (column % stop);
+            for _ in 0..spaces {
+                result.push(' ');
+            }
+            column += spaces;
+        } else if ch == '\n' {
+            result.push(ch);
+            column = 0;
+        } else {
+            result.push(ch);
+            column += 1;
+        }
+    }
+    result
 }
 
 /// Collapse runs of ASCII whitespace (space, tab, newline, CR, FF) to a single space.

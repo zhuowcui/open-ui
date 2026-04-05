@@ -10,3 +10,4 @@ openui-geometry = { path = "../openui-geometry" }
 openui-dom = { path = "../openui-dom" }
 openui-text = { path = "../openui-text" }
 unicode-linebreak = "0.1"
+unicode-segmentation = "1.10"

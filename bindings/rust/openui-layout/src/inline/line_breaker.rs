@@ -13,6 +13,7 @@
 
 use openui_geometry::{LayoutUnit, Length, LengthType};
 use openui_style::{ComputedStyle, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
+use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemResult, InlineItemType};
 use super::items_builder::InlineItemsData;
@@ -574,21 +575,48 @@ impl<'a> LineBreaker<'a> {
             let item_char_start = byte_to_char_offset(&self.items_data.text, item.text_range.start);
             let char_start = byte_to_char_offset(&self.items_data.text, text_start);
 
-            // Walk character by character to find where to break
+            // Walk grapheme cluster boundaries to find where to break.
+            // Using grapheme clusters instead of raw char_indices() prevents
+            // splitting inside ZWJ emoji, Arabic joining sequences, and
+            // ligature clusters. Also check safe_to_break_before from the
+            // shape result to avoid breaking inside shaped glyph clusters.
             let mut best_byte: Option<usize> = None;
             let mut best_width = LayoutUnit::zero();
 
-            for (byte_offset, _ch) in text_slice.char_indices().skip(1) {
+            for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
                 let break_byte = text_start + byte_offset;
                 let break_char = byte_to_char_offset(&self.items_data.text, break_byte);
+                let local_break = break_char - item_char_start;
+                // Only break where the shaper says it's safe.
+                if !sr.safe_to_break_before(local_break) {
+                    continue;
+                }
                 let local_start = char_start - item_char_start;
-                let local_end = break_char - item_char_start;
+                let local_end = local_break;
                 let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
                 if width <= remaining {
                     best_byte = Some(break_byte);
                     best_width = width;
                 } else {
                     break;
+                }
+            }
+
+            // If no safe-to-break position was found, fall back to the nearest
+            // grapheme boundary regardless of safe-to-break.
+            if best_byte.is_none() {
+                for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
+                    let break_byte = text_start + byte_offset;
+                    let break_char = byte_to_char_offset(&self.items_data.text, break_byte);
+                    let local_start = char_start - item_char_start;
+                    let local_end = break_char - item_char_start;
+                    let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                    if width <= remaining {
+                        best_byte = Some(break_byte);
+                        best_width = width;
+                    } else {
+                        break;
+                    }
                 }
             }
 
@@ -607,27 +635,27 @@ impl<'a> LineBreaker<'a> {
             } else {
                 // Can't even fit one character
                 if !line.has_content() {
-                    // Force at least one character
-                    let first_char_end = text_slice
-                        .char_indices()
+                    // Force at least one grapheme cluster on the line.
+                    let first_grapheme_end = text_slice
+                        .grapheme_indices(true)
                         .nth(1)
                         .map(|(i, _)| text_start + i)
                         .unwrap_or(text_end);
-                    let width = self.measure_text_range(item_index, text_start, first_char_end);
+                    let width = self.measure_text_range(item_index, text_start, first_grapheme_end);
                     line.items.push(InlineItemResult {
                         item_index,
-                        text_range: text_start..first_char_end,
+                        text_range: text_start..first_grapheme_end,
                         inline_size: width,
                         shape_result: item.shape_result.clone(),
                         has_forced_break: false,
                         item_type: InlineItemType::Text,
                     });
                     line.used_width = line.used_width + width;
-                    if first_char_end >= text_end {
+                    if first_grapheme_end >= text_end {
                         self.current_item += 1;
                         self.current_text_offset = 0;
                     } else {
-                        self.current_text_offset = first_char_end;
+                        self.current_text_offset = first_grapheme_end;
                     }
                 }
                 *state = LineState::Done;
@@ -846,8 +874,8 @@ pub fn find_break_opportunities(
             find_uax14_breaks(text)
         }
         WordBreak::BreakAll => {
-            // Break between any two characters (grapheme cluster boundaries)
-            text.char_indices().map(|(i, _)| i).skip(1).collect()
+            // Break between grapheme clusters (not raw Unicode characters).
+            text.grapheme_indices(true).map(|(i, _)| i).skip(1).collect()
         }
         WordBreak::KeepAll => {
             // Start from normal UAX#14 breaks, but suppress CJK-specific
@@ -1562,5 +1590,33 @@ mod tests {
             line1_end > 0,
             "Line should contain at least some characters"
         );
+    }
+
+    // ── SP11 Round 14 Issue 2: grapheme cluster aware break-all ──────
+
+    #[test]
+    fn break_all_respects_grapheme_clusters() {
+        // A ZWJ emoji sequence like 👨‍👩‍👧 (family) is a single grapheme cluster
+        // composed of multiple Unicode code points joined by U+200D (ZWJ).
+        // BreakAll should NOT produce break opportunities inside the cluster.
+        let family = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}"; // 👨‍👩‍👧
+        let text = format!("a{}b", family);
+        let breaks = find_break_opportunities(&text, WordBreak::BreakAll, OverflowWrap::Normal);
+
+        // The emoji occupies multiple bytes. Break opportunities should only
+        // be at grapheme boundaries: after 'a' and after the emoji, NOT inside it.
+        let a_end = 1; // 'a' is 1 byte
+        let emoji_end = 1 + family.len(); // byte offset after the emoji
+
+        // There should be break opportunities at grapheme boundaries only.
+        for &brk in &breaks {
+            assert!(
+                brk == a_end || brk == emoji_end,
+                "Break at byte {} is inside a grapheme cluster; expected only at {} or {}",
+                brk, a_end, emoji_end,
+            );
+        }
+        // There should be at least one break (after 'a').
+        assert!(!breaks.is_empty(), "BreakAll should still produce some break opportunities");
     }
 }
