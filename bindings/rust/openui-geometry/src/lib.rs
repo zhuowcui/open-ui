@@ -15,7 +15,7 @@ mod box_strut;
 mod margin_strut;
 mod min_max_sizes;
 
-pub use layout_unit::LayoutUnit;
+pub use layout_unit::{LayoutUnit, INDEFINITE_SIZE};
 pub use length::{Length, LengthType};
 pub use physical_offset::PhysicalOffset;
 pub use physical_rect::PhysicalRect;

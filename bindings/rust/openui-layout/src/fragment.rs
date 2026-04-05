@@ -66,6 +66,10 @@ pub struct Fragment {
     /// Inherited style for anonymous fragments (e.g., ellipsis "…") that have
     /// no DOM node. Used by the painter to render with the correct color/font.
     pub inherited_style: Option<ComputedStyle>,
+
+    /// Distance from the fragment's top edge to the text baseline.
+    /// Computed during layout; used by paint to avoid recomputing from metrics.
+    pub baseline_offset: f32,
 }
 
 impl Fragment {
@@ -83,6 +87,7 @@ impl Fragment {
             shape_result: None,
             text_content: None,
             inherited_style: None,
+            baseline_offset: 0.0,
         }
     }
 
@@ -108,6 +113,7 @@ impl Fragment {
             shape_result: Some(shape_result),
             text_content: Some(text_content),
             inherited_style: None,
+            baseline_offset: 0.0,
         }
     }
 

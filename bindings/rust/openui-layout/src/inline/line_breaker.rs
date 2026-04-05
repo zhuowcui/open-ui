@@ -286,6 +286,11 @@ impl<'a> LineBreaker<'a> {
     }
 
     /// Handle text that contains forced newlines (in pre or pre-line modes).
+    ///
+    /// For `white-space: pre` (no wrapping), text before the newline is placed
+    /// unconditionally. For wrappable modes (`pre-wrap`, `pre-line`,
+    /// `break-spaces`), the segment before the newline is processed through
+    /// normal wrapping logic before the forced break.
     fn handle_text_with_newlines(
         &mut self,
         item_index: usize,
@@ -295,24 +300,123 @@ impl<'a> LineBreaker<'a> {
         state: &mut LineState,
     ) {
         let item = &self.items_data.items[item_index];
+        let style = &self.items_data.styles[item.style_index];
         let text_slice = &self.items_data.text[text_start..text_end];
+        let wrappable = allows_line_wrap(style.white_space);
 
         // Find the first newline
         if let Some(nl_pos) = text_slice.find('\n') {
             let break_byte = text_start + nl_pos;
 
-            // Text before the newline goes on this line
+            // Text before the newline
             if nl_pos > 0 {
-                let pre_nl_width = self.measure_text_range(item_index, text_start, break_byte);
-                line.items.push(InlineItemResult {
-                    item_index,
-                    text_range: text_start..break_byte,
-                    inline_size: pre_nl_width,
-                    shape_result: item.shape_result.clone(),
-                    has_forced_break: false,
-                    item_type: InlineItemType::Text,
-                });
-                line.used_width = line.used_width + pre_nl_width;
+                if wrappable {
+                    // Wrappable mode: the pre-newline segment may need soft
+                    // wrapping. Measure and find break opportunities just like
+                    // handle_text does for normal text.
+                    let seg_start = text_start;
+                    let seg_end = break_byte;
+                    let seg_width = self.measure_text_range(item_index, seg_start, seg_end);
+                    let remaining = line.remaining_width();
+
+                    if seg_width <= remaining {
+                        // Fits — place it all
+                        line.items.push(InlineItemResult {
+                            item_index,
+                            text_range: seg_start..seg_end,
+                            inline_size: seg_width,
+                            shape_result: item.shape_result.clone(),
+                            has_forced_break: false,
+                            item_type: InlineItemType::Text,
+                        });
+                        line.used_width = line.used_width + seg_width;
+                    } else {
+                        // Doesn't fit — find a break opportunity within the
+                        // pre-newline segment and break the line there. The
+                        // newline (and remainder) will be handled on the next
+                        // line via the normal loop.
+                        let seg_text = &self.items_data.text[seg_start..seg_end];
+                        let break_opps = find_break_opportunities(
+                            seg_text, style.word_break, style.overflow_wrap,
+                        );
+
+                        let mut best_break: Option<usize> = None;
+                        let mut best_width = LayoutUnit::zero();
+
+                        if let Some(ref sr) = item.shape_result {
+                            let item_char_start = byte_to_char_offset(
+                                &self.items_data.text, item.text_range.start,
+                            );
+                            let char_start = byte_to_char_offset(
+                                &self.items_data.text, seg_start,
+                            );
+                            for &brk in &break_opps {
+                                let brk_byte = seg_start + brk;
+                                let brk_char = byte_to_char_offset(
+                                    &self.items_data.text, brk_byte,
+                                );
+                                let local_start = char_start - item_char_start;
+                                let local_end = brk_char - item_char_start;
+                                let width = LayoutUnit::from_f32(
+                                    sr.width_for_range(local_start, local_end),
+                                );
+                                if width <= remaining {
+                                    best_break = Some(brk);
+                                    best_width = width;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if let Some(brk_at) = best_break {
+                            if brk_at > 0 {
+                                let brk_byte = seg_start + brk_at;
+                                line.items.push(InlineItemResult {
+                                    item_index,
+                                    text_range: seg_start..brk_byte,
+                                    inline_size: best_width,
+                                    shape_result: item.shape_result.clone(),
+                                    has_forced_break: false,
+                                    item_type: InlineItemType::Text,
+                                });
+                                line.used_width = line.used_width + best_width;
+                                self.current_text_offset = brk_byte;
+                                *state = LineState::Done;
+                                return;
+                            }
+                        }
+
+                        // No break opportunity found or break at 0: force
+                        // content if line is empty, otherwise break before.
+                        if !line.has_content() {
+                            self.force_text_on_line(
+                                item_index, seg_start, seg_end, seg_width, line,
+                            );
+                            // After forcing, advance to the newline
+                            self.current_text_offset = break_byte;
+                            // Don't increment current_item — there's still
+                            // the newline and possibly more text
+                            self.current_item -= 1; // force_text_on_line increments
+                        }
+                        *state = LineState::Done;
+                        return;
+                    }
+                } else {
+                    // Non-wrappable (pre): place unconditionally
+                    let pre_nl_width = self.measure_text_range(
+                        item_index, text_start, break_byte,
+                    );
+                    line.items.push(InlineItemResult {
+                        item_index,
+                        text_range: text_start..break_byte,
+                        inline_size: pre_nl_width,
+                        shape_result: item.shape_result.clone(),
+                        has_forced_break: false,
+                        item_type: InlineItemType::Text,
+                    });
+                    line.used_width = line.used_width + pre_nl_width;
+                }
             }
 
             line.has_forced_break = true;
@@ -328,6 +432,74 @@ impl<'a> LineBreaker<'a> {
         } else {
             // No newline found in remaining text — treat normally
             let text_width = self.measure_text_range(item_index, text_start, text_end);
+            if wrappable {
+                let remaining = line.remaining_width();
+                if text_width > remaining {
+                    // Doesn't fit — process through normal wrapping.
+                    // Re-enter handle_text which won't see a newline
+                    // since there's none in this segment.
+                    // Temporarily adjust text bounds and delegate.
+                    let seg_text = &self.items_data.text[text_start..text_end];
+                    let break_opps = find_break_opportunities(
+                        seg_text, style.word_break, style.overflow_wrap,
+                    );
+                    let mut best_break: Option<usize> = None;
+                    let mut best_width = LayoutUnit::zero();
+
+                    if let Some(ref sr) = item.shape_result {
+                        let item_char_start = byte_to_char_offset(
+                            &self.items_data.text, item.text_range.start,
+                        );
+                        let char_start = byte_to_char_offset(
+                            &self.items_data.text, text_start,
+                        );
+                        for &brk in &break_opps {
+                            let brk_byte = text_start + brk;
+                            let brk_char = byte_to_char_offset(
+                                &self.items_data.text, brk_byte,
+                            );
+                            let local_start = char_start - item_char_start;
+                            let local_end = brk_char - item_char_start;
+                            let width = LayoutUnit::from_f32(
+                                sr.width_for_range(local_start, local_end),
+                            );
+                            if width <= remaining {
+                                best_break = Some(brk);
+                                best_width = width;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
+                    if let Some(brk_at) = best_break {
+                        if brk_at > 0 {
+                            let brk_byte = text_start + brk_at;
+                            line.items.push(InlineItemResult {
+                                item_index,
+                                text_range: text_start..brk_byte,
+                                inline_size: best_width,
+                                shape_result: item.shape_result.clone(),
+                                has_forced_break: false,
+                                item_type: InlineItemType::Text,
+                            });
+                            line.used_width = line.used_width + best_width;
+                            self.current_text_offset = brk_byte;
+                            *state = LineState::Done;
+                            return;
+                        }
+                    }
+
+                    if !line.has_content() {
+                        self.force_text_on_line(
+                            item_index, text_start, text_end, text_width, line,
+                        );
+                    }
+                    *state = LineState::Done;
+                    return;
+                }
+            }
+
             line.items.push(InlineItemResult {
                 item_index,
                 text_range: text_start..text_end,
@@ -1091,5 +1263,64 @@ mod tests {
         assert!(!is_cjk_character('A'));
         assert!(!is_cjk_character('-'));
         assert!(!is_cjk_character(' '));
+    }
+
+    // ── SP11 Round 11 Issue 6: pre-wrap wraps long text before newline ──
+
+    #[test]
+    fn pre_wrap_wraps_before_newline() {
+        // In pre-wrap mode, text before a newline should be wrapped at
+        // soft break opportunities if it overflows the available width.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        // "hello world\nmore" — in a narrow container, "hello world" should
+        // wrap at the space, not be placed unconditionally on one line.
+        let text = "hello world\nmore";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let mut style = ComputedStyle::default();
+        style.white_space = WhiteSpace::PreWrap;
+        let style_index = 0;
+
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(sr_arc.clone()),
+                style_index,
+                end_collapse_type: super::super::items::CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+            }],
+            styles: vec![style],
+        };
+
+        // Use a very narrow width — narrower than "hello world" but
+        // wider than "hello " so we can break at the space.
+        let hello_width = sr_arc.width_for_range(0, 6); // "hello " = 6 chars
+        let narrow_width = LayoutUnit::from_f32(hello_width + 1.0);
+
+        let mut breaker = LineBreaker::new(&items_data);
+        let line1 = breaker.next_line(narrow_width);
+        assert!(line1.is_some(), "Should produce at least one line");
+        let line1 = line1.unwrap();
+
+        // The first line should NOT contain all text up to the newline;
+        // it should break at the space.
+        let line1_end = line1.items.last()
+            .map(|i| i.text_range.end)
+            .unwrap_or(0);
+        assert!(
+            line1_end < 11, // 11 = offset of '\n'
+            "Pre-wrap should soft-wrap long text before the newline; line ended at byte {}, expected < 11",
+            line1_end,
+        );
     }
 }

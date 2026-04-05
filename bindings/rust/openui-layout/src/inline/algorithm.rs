@@ -11,7 +11,7 @@
 
 use openui_dom::{Document, NodeId};
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
-use openui_style::{ComputedStyle, Direction, LineHeight, TextAlign, VerticalAlign};
+use openui_style::{ComputedStyle, Direction, Display, LineHeight, TextAlign, VerticalAlign};
 use openui_text::{Font, ShapeResult, TextShaper};
 use std::sync::Arc;
 
@@ -783,6 +783,10 @@ fn create_line_box(
                 ));
                 text_fragment.kind = FragmentKind::Text;
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
+                // Store the baseline offset (distance from fragment top to baseline)
+                // so paint can use it directly instead of recomputing from metrics.
+                text_fragment.baseline_offset =
+                    (baseline - text_top).to_f32();
                 // Use justified shape result if justification was applied,
                 // otherwise use the sub-range shape result for this line portion.
                 text_fragment.shape_result = justified_shape.or(line_shape_result);
@@ -924,6 +928,7 @@ fn create_line_box(
             );
             ellipsis_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
+            ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             children.insert(0, ellipsis_fragment);
         } else {
             // LTR: place ellipsis at the right edge (after content).
@@ -935,6 +940,7 @@ fn create_line_box(
             );
             ellipsis_fragment.offset = PhysicalOffset::new(inline_offset, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
+            ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             children.push(ellipsis_fragment);
         }
     }
@@ -1209,6 +1215,10 @@ fn apply_text_overflow_ellipsis(
 pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
     for child_id in doc.children(node_id) {
         let child = doc.node(child_id);
+        // display:none and out-of-flow children don't participate in layout.
+        if child.style.display == Display::None || child.style.is_out_of_flow() {
+            continue;
+        }
         if child.tag == openui_dom::ElementTag::Text {
             return true;
         }
@@ -1614,6 +1624,44 @@ mod tests {
         assert!(
             !line_info.ellipsis_at_start,
             "LTR ellipsis should not be at start"
+        );
+    }
+
+    // ── SP11 Round 11 Issue 4: baseline_offset stored on text fragments ──
+
+    #[test]
+    fn text_fragment_has_nonzero_baseline_offset() {
+        // Layout a simple text node and verify that the resulting text
+        // fragment has a positive baseline_offset (ascent-based).
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.width = openui_geometry::Length::px(200.0);
+        doc.append_child(vp, div);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("Hello".to_string());
+        doc.append_child(div, text);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+
+        // Line box → text fragment
+        assert!(!div_frag.children.is_empty(), "Should have line boxes");
+        let line = &div_frag.children[0];
+        assert!(!line.children.is_empty(), "Line should have text fragments");
+
+        let text_frag = &line.children[0];
+        assert!(
+            text_frag.baseline_offset > 0.0,
+            "Text fragment baseline_offset should be positive (ascent), got {}",
+            text_frag.baseline_offset,
         );
     }
 }

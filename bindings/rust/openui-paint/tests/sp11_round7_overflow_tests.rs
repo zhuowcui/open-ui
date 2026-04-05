@@ -116,6 +116,7 @@ fn overflow_hidden_clips_text_beyond_box() {
         "XXXXXXXXXXXXX".to_string(),
     );
     text_frag.offset = PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::zero());
+    text_frag.baseline_offset = metrics.ascent;
     box_frag.children.push(text_frag);
 
     // Surface wider than the box to check if pixels leak beyond

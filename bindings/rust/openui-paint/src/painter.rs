@@ -130,10 +130,11 @@ fn paint_text_fragment(
     // Resolve font metrics from the shape result's first run.
     let metrics = crate::text_painter::metrics_from_shape_result(shape_result);
 
-    // The fragment's offset.top is the top of the line's content area.
-    // The baseline is at top + ascent.
+    // Use the layout-computed baseline offset stored on the fragment,
+    // rather than recomputing from font metrics (which can differ with
+    // fallback fonts, vertical-align shifts, or fractional ascents).
     let x = abs_offset.left.to_f32();
-    let baseline_y = abs_offset.top.to_f32() + metrics.ascent;
+    let baseline_y = abs_offset.top.to_f32() + fragment.baseline_offset;
 
     let origin = (x, baseline_y);
 

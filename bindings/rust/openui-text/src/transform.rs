@@ -41,9 +41,10 @@ fn capitalize(text: &str) -> String {
             capitalize_next = false;
         } else {
             result.push(ch);
-            // Word boundaries: whitespace and hyphens.
-            // Apostrophe is NOT a word boundary (CSS Text §2.1: "it's" is one word).
-            if ch.is_whitespace() || ch == '-' {
+            // Word boundary: any non-alphabetic character except apostrophes.
+            // Apostrophe within a word (e.g., "don't") is NOT a word boundary
+            // per CSS Text §2.1.
+            if !ch.is_alphabetic() && ch != '\'' && ch != '\u{2019}' {
                 capitalize_next = true;
             }
         }
@@ -168,6 +169,50 @@ mod tests {
         assert_eq!(
             apply_text_transform("it's a test", TextTransform::Capitalize),
             "It's A Test"
+        );
+    }
+
+    // ── SP11 Round 11 Issue 5: capitalize after punctuation ──
+
+    #[test]
+    fn capitalize_after_open_paren() {
+        assert_eq!(
+            apply_text_transform("(hello) world", TextTransform::Capitalize),
+            "(Hello) World"
+        );
+    }
+
+    #[test]
+    fn capitalize_after_slash() {
+        assert_eq!(
+            apply_text_transform("foo/bar", TextTransform::Capitalize),
+            "Foo/Bar"
+        );
+    }
+
+    #[test]
+    fn capitalize_after_dot() {
+        assert_eq!(
+            apply_text_transform("first.second", TextTransform::Capitalize),
+            "First.Second"
+        );
+    }
+
+    #[test]
+    fn capitalize_after_colon() {
+        assert_eq!(
+            apply_text_transform("key:value", TextTransform::Capitalize),
+            "Key:Value"
+        );
+    }
+
+    #[test]
+    fn capitalize_smart_apostrophe_not_word_boundary() {
+        // Right single quotation mark U+2019 within a word should NOT start
+        // a new word, just like ASCII apostrophe.
+        assert_eq!(
+            apply_text_transform("don\u{2019}t stop", TextTransform::Capitalize),
+            "Don\u{2019}t Stop"
         );
     }
 }

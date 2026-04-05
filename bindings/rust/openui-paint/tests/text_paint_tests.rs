@@ -75,7 +75,7 @@ fn make_text_fragment(
 ) -> Fragment {
     let width = shape_result.width();
     let height = metrics.ascent + metrics.descent;
-    Fragment::new_text(
+    let mut frag = Fragment::new_text(
         node_id,
         PhysicalSize::new(
             LayoutUnit::from_f32(width),
@@ -83,7 +83,9 @@ fn make_text_fragment(
         ),
         Arc::clone(shape_result),
         String::new(),
-    )
+    );
+    frag.baseline_offset = metrics.ascent;
+    frag
 }
 
 /// Create a minimal Document with one text node for testing.
@@ -833,6 +835,7 @@ fn paint_text_fragment_no_shape_result() {
         shape_result: None,
         text_content: None,
         inherited_style: None,
+        baseline_offset: 0.0,
     };
 
     let mut surface = make_surface(200, 100);
@@ -1079,6 +1082,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
             s.visibility = Visibility::Hidden;
             s
         }),
+        baseline_offset: metrics.ascent,
     };
 
     let mut surface = make_surface(200, 100);

@@ -95,10 +95,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             raw
         }
     } else {
-        // Auto height → percentage heights on children are indefinite.
-        // Pass through the parent's percentage resolution (which propagates
-        // from the viewport for the root).
-        space.percentage_resolution_block_size
+        // Auto height → per CSS 2.2 §10.5, percentage heights on children
+        // are indefinite (treated as auto). Do NOT pass through the parent's
+        // percentage resolution — that would incorrectly let grandchildren
+        // resolve percentage heights against an ancestor's explicit height.
+        openui_geometry::INDEFINITE_SIZE
     };
 
     let content_edge = border.top + padding.top;
@@ -154,10 +155,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
             if is_inline_level_child(doc, child_id) {
                 // Gather contiguous run of inline children.
+                // display:none and out-of-flow children are transparent to
+                // inline run gathering — they don't break the run.
                 let run_start = i;
-                while i < children_ids.len()
-                    && is_inline_level_child(doc, children_ids[i])
-                {
+                while i < children_ids.len() {
+                    let cid = children_ids[i];
+                    let cs = &doc.node(cid).style;
+                    if cs.display == Display::None || cs.is_out_of_flow() {
+                        i += 1;
+                        continue;
+                    }
+                    if !is_inline_level_child(doc, cid) {
+                        break;
+                    }
                     i += 1;
                 }
                 let inline_run = &children_ids[run_start..i];
@@ -1334,6 +1344,135 @@ mod tests {
         assert!(
             !container_frag.children.is_empty(),
             "Container with inline-block span should produce line boxes"
+        );
+    }
+
+    // ── SP11 Round 11 Issue 1: display:none doesn't split inline runs ──
+
+    #[test]
+    fn display_none_child_does_not_split_inline_run() {
+        // [Text, Span(display:none), Text, Div(block)] should produce
+        // ONE anonymous inline wrapper for both text nodes, not two.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.node_mut(container).style.width = Length::px(400.0);
+        doc.append_child(vp, container);
+
+        let text1 = doc.create_node(ElementTag::Text);
+        doc.node_mut(text1).text = Some("Before".to_string());
+        doc.append_child(container, text1);
+
+        let hidden_span = doc.create_node(ElementTag::Span);
+        doc.node_mut(hidden_span).style.display = Display::None;
+        doc.append_child(container, hidden_span);
+
+        let text2 = doc.create_node(ElementTag::Text);
+        doc.node_mut(text2).text = Some("After".to_string());
+        doc.append_child(container, text2);
+
+        let block_child = doc.create_node(ElementTag::Div);
+        doc.node_mut(block_child).style.display = Display::Block;
+        doc.node_mut(block_child).style.height = Length::px(10.0);
+        doc.append_child(container, block_child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let container_frag = &fragment.children[0];
+
+        // Should produce 2 fragments: 1 anonymous inline wrapper (one IFC
+        // for both text nodes) + 1 block child. Before the fix, the
+        // display:none span split it into 3 fragments.
+        assert_eq!(
+            container_frag.children.len(), 2,
+            "display:none child should not split inline run; expected 2 fragments, got {}",
+            container_frag.children.len(),
+        );
+    }
+
+    #[test]
+    fn out_of_flow_child_does_not_split_inline_run() {
+        // An absolutely positioned child between inline content should not
+        // split the inline run.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.node_mut(container).style.width = Length::px(400.0);
+        doc.append_child(vp, container);
+
+        let text1 = doc.create_node(ElementTag::Text);
+        doc.node_mut(text1).text = Some("A".to_string());
+        doc.append_child(container, text1);
+
+        let abs_child = doc.create_node(ElementTag::Div);
+        doc.node_mut(abs_child).style.display = Display::Block;
+        doc.node_mut(abs_child).style.position = Position::Absolute;
+        doc.append_child(container, abs_child);
+
+        let text2 = doc.create_node(ElementTag::Text);
+        doc.node_mut(text2).text = Some("B".to_string());
+        doc.append_child(container, text2);
+
+        let block_child = doc.create_node(ElementTag::Div);
+        doc.node_mut(block_child).style.display = Display::Block;
+        doc.node_mut(block_child).style.height = Length::px(10.0);
+        doc.append_child(container, block_child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let container_frag = &fragment.children[0];
+
+        // 1 inline wrapper (single IFC) + 1 block child = 2
+        assert_eq!(
+            container_frag.children.len(), 2,
+            "Out-of-flow child should not split inline run; expected 2 fragments, got {}",
+            container_frag.children.len(),
+        );
+    }
+
+    // ── SP11 Round 11 Issue 3: percentage height in auto-height parent ──
+
+    #[test]
+    fn percentage_height_in_auto_height_parent_is_indefinite() {
+        // A child with height:50% inside a parent with height:auto should
+        // resolve to 0 (indefinite), not 50% of the viewport.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        // height is auto (default)
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
+        doc.node_mut(child).style.height = Length::percent(50.0);
+        doc.append_child(parent, child);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let parent_frag = &fragment.children[0];
+        let child_frag = &parent_frag.children[0];
+
+        // With auto-height parent, 50% height should resolve to 0 (indefinite).
+        // Before the fix, it resolved to 50% of 600 = 300.
+        assert_eq!(
+            child_frag.size.height.to_i32(), 0,
+            "50% height in auto-height parent should be 0 (indefinite), got {}",
+            child_frag.size.height.to_i32(),
         );
     }
 }

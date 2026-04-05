@@ -112,6 +112,7 @@ fn overflow_hidden_clips_at_padding_box_not_border_box() {
         LayoutUnit::from_f32(20.0),
         LayoutUnit::from_f32(20.0),
     );
+    text_frag.baseline_offset = metrics.ascent;
 
     let mut box_frag = Fragment::new_box(
         div,
@@ -179,6 +180,7 @@ fn overflow_hidden_no_border_still_clips() {
         "XXXXXXXXXXXXX".to_string(),
     );
     text_frag.offset = PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::zero());
+    text_frag.baseline_offset = metrics.ascent;
 
     let mut box_frag = Fragment::new_box(
         div,

@@ -73,8 +73,13 @@ impl InlineItemsData {
         let runs = bidi.runs();
 
         // First pass: assign levels to each item from the bidi run at its start.
+        // This covers both Text and AtomicInline items (which have U+FFFC
+        // placeholders in the bidi text buffer).
         for item in &mut self.items {
-            if item.item_type == InlineItemType::Text && !item.text_range.is_empty() {
+            if (item.item_type == InlineItemType::Text
+                || item.item_type == InlineItemType::AtomicInline)
+                && !item.text_range.is_empty()
+            {
                 for run in &runs {
                     if item.text_range.start >= run.start && item.text_range.start < run.end {
                         item.bidi_level = run.level;
@@ -234,6 +239,17 @@ impl<'a> InlineItemsBuilder<'a> {
     /// Process a single child node into inline items.
     fn collect_single_child(&mut self, child_id: NodeId) {
         let node = self.doc.node(child_id);
+
+        // display:none generates no boxes at all.
+        if node.style.display == Display::None {
+            return;
+        }
+        // Out-of-flow children (absolute, fixed, floated) don't participate
+        // in inline layout.
+        if node.style.is_out_of_flow() {
+            return;
+        }
+
         match node.tag {
             ElementTag::Text => {
                 if let Some(ref text) = node.text {
@@ -489,4 +505,99 @@ pub fn collapse_spaces_preserve_newlines(text: &str) -> String {
         }
     }
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openui_dom::{Document, ElementTag};
+    use openui_text::TextDirection;
+
+    // ── SP11 Round 11 Issue 1B: display:none / out-of-flow skipped in IFC ──
+
+    #[test]
+    fn display_none_child_not_collected_in_ifc() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("Hello".to_string());
+        doc.append_child(container, text);
+
+        let hidden = doc.create_node(ElementTag::Span);
+        doc.node_mut(hidden).style.display = Display::None;
+        doc.append_child(container, hidden);
+
+        let data = InlineItemsBuilder::collect(&doc, container);
+        let has_hidden_items = data.items.iter().any(|item| item.node_id == hidden);
+        assert!(
+            !has_hidden_items,
+            "display:none child should not produce inline items"
+        );
+    }
+
+    #[test]
+    fn out_of_flow_child_not_collected_in_ifc() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("Hello".to_string());
+        doc.append_child(container, text);
+
+        let abs_span = doc.create_node(ElementTag::Span);
+        doc.node_mut(abs_span).style.position = openui_style::Position::Absolute;
+        doc.append_child(container, abs_span);
+
+        let data = InlineItemsBuilder::collect(&doc, container);
+        let has_abs_items = data.items.iter().any(|item| item.node_id == abs_span);
+        assert!(
+            !has_abs_items,
+            "Out-of-flow child should not produce inline items"
+        );
+    }
+
+    // ── SP11 Round 11 Issue 2: Atomic inline bidi level ──
+
+    #[test]
+    fn atomic_inline_gets_bidi_level_from_rtl_context() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("\u{0627}\u{0644}\u{0639}\u{0631}\u{0628}".to_string());
+        doc.append_child(container, text);
+
+        let inline_block = doc.create_node(ElementTag::Span);
+        doc.node_mut(inline_block).style.display = Display::InlineBlock;
+        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(50.0);
+        doc.append_child(container, inline_block);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Rtl);
+
+        let atomic = data.items.iter().find(|i| i.item_type == InlineItemType::AtomicInline);
+        assert!(
+            atomic.is_some(),
+            "Should have an AtomicInline item"
+        );
+        let atomic = atomic.unwrap();
+        assert!(
+            atomic.bidi_level % 2 == 1,
+            "Atomic inline in RTL context should have odd bidi level, got {}",
+            atomic.bidi_level,
+        );
+    }
 }
