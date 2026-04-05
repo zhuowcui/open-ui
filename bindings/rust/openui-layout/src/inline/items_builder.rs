@@ -372,7 +372,7 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
         variant_caps: style.font_variant_caps,
         letter_spacing: style.letter_spacing,
         word_spacing: style.word_spacing,
-        locale: None,
+        locale: style.locale.clone(),
         font_smoothing: style.font_smoothing,
         text_rendering: style.text_rendering,
         feature_settings: style.font_feature_settings.clone(),

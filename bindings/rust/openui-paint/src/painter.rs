@@ -280,23 +280,39 @@ fn paint_borders(
         // show the later-drawn side's color — acceptable for uniform colors.
         paint_border_side(canvas, style.border_top_style, &style.border_top_color,
             inherited_color, bt,
-            Rect::from_xywh(x, y, w, bt));
+            Rect::from_xywh(x, y, w, bt), BorderSide::Top);
         paint_border_side(canvas, style.border_right_style, &style.border_right_color,
             inherited_color, br,
-            Rect::from_xywh(x + w - br, y, br, h));
+            Rect::from_xywh(x + w - br, y, br, h), BorderSide::Right);
         paint_border_side(canvas, style.border_bottom_style, &style.border_bottom_color,
             inherited_color, bb,
-            Rect::from_xywh(x, y + h - bb, w, bb));
+            Rect::from_xywh(x, y + h - bb, w, bb), BorderSide::Bottom);
         paint_border_side(canvas, style.border_left_style, &style.border_left_color,
             inherited_color, bl,
-            Rect::from_xywh(x, y, bl, h));
+            Rect::from_xywh(x, y, bl, h), BorderSide::Left);
     }
+}
+
+/// Physical side of a border box, used for side-dependent shading
+/// in 3D border styles (inset, outset, groove, ridge).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BorderSide {
+    Top,
+    Right,
+    Bottom,
+    Left,
 }
 
 /// Paint a single border side.
 ///
 /// Supports all CSS border styles: solid, dashed, dotted, double,
 /// groove, ridge, inset, outset. None/hidden are skipped.
+///
+/// The `side` parameter controls shading for 3D styles:
+/// - **inset**: top+left darkened, bottom+right lightened
+/// - **outset**: top+left lightened, bottom+right darkened
+/// - **groove**: outer half uses inset shading, inner half uses outset shading
+/// - **ridge**: outer half uses outset shading, inner half uses inset shading
 fn paint_border_side(
     canvas: &Canvas,
     border_style: BorderStyle,
@@ -304,6 +320,7 @@ fn paint_border_side(
     inherited_color: &Color,
     width: f32,
     rect: Rect,
+    side: BorderSide,
 ) {
     if width <= 0.0 {
         return;
@@ -373,29 +390,39 @@ fn paint_border_side(
             canvas.draw_rect(inner_rect, &paint);
         }
         BorderStyle::Groove => {
-            // Top/left half darkened, bottom/right half lightened.
-            paint_3d_border(canvas, &base_color, width, &rect, true);
+            // Outer half uses inset shading for this side,
+            // inner half uses outset shading for this side.
+            paint_3d_border(canvas, &base_color, width, &rect, side, true);
         }
         BorderStyle::Ridge => {
-            // Opposite of groove.
-            paint_3d_border(canvas, &base_color, width, &rect, false);
+            // Outer half uses outset shading for this side,
+            // inner half uses inset shading for this side.
+            paint_3d_border(canvas, &base_color, width, &rect, side, false);
         }
         BorderStyle::Inset => {
-            // Darken the color for inset effect.
-            let dark = darken_color(&base_color);
+            // Per CSS: top+left darkened, bottom+right lightened.
+            let shaded = if matches!(side, BorderSide::Top | BorderSide::Left) {
+                darken_color(&base_color)
+            } else {
+                lighten_color(&base_color)
+            };
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
             paint.set_anti_alias(true);
-            paint.set_color4f(dark, None::<&ColorSpace>);
+            paint.set_color4f(shaded, None::<&ColorSpace>);
             canvas.draw_rect(rect, &paint);
         }
         BorderStyle::Outset => {
-            // Lighten the color for outset effect.
-            let light = lighten_color(&base_color);
+            // Per CSS: top+left lightened, bottom+right darkened.
+            let shaded = if matches!(side, BorderSide::Top | BorderSide::Left) {
+                lighten_color(&base_color)
+            } else {
+                darken_color(&base_color)
+            };
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
             paint.set_anti_alias(true);
-            paint.set_color4f(light, None::<&ColorSpace>);
+            paint.set_color4f(shaded, None::<&ColorSpace>);
             canvas.draw_rect(rect, &paint);
         }
         BorderStyle::None | BorderStyle::Hidden => {
@@ -431,17 +458,25 @@ fn shrink_border_rect(rect: &Rect, _border_width: f32, inset: f32, line_width: f
 
 /// Paint a 3D-style border (groove or ridge).
 ///
-/// `darken_first`: true for groove (outer half dark, inner half light),
-/// false for ridge (outer half light, inner half dark).
-fn paint_3d_border(canvas: &Canvas, color: &Color4f, width: f32, rect: &Rect, darken_first: bool) {
+/// For groove: outer half uses inset shading, inner half uses outset shading.
+/// For ridge: outer half uses outset shading, inner half uses inset shading.
+///
+/// `inset_outer`: true for groove (outer=inset, inner=outset),
+/// false for ridge (outer=outset, inner=inset).
+fn paint_3d_border(canvas: &Canvas, color: &Color4f, width: f32, rect: &Rect, side: BorderSide, inset_outer: bool) {
     let half_width = (width / 2.0).max(1.0);
     let dark = darken_color(color);
     let light = lighten_color(color);
 
-    let (first_color, second_color) = if darken_first {
-        (dark, light)
+    // Inset shading for a side: top+left → dark, bottom+right → light.
+    let inset_color = if matches!(side, BorderSide::Top | BorderSide::Left) { dark } else { light };
+    // Outset shading for a side: top+left → light, bottom+right → dark.
+    let outset_color = if matches!(side, BorderSide::Top | BorderSide::Left) { light } else { dark };
+
+    let (outer_color, inner_color) = if inset_outer {
+        (inset_color, outset_color)
     } else {
-        (light, dark)
+        (outset_color, inset_color)
     };
 
     let mut paint = Paint::default();
@@ -450,12 +485,12 @@ fn paint_3d_border(canvas: &Canvas, color: &Color4f, width: f32, rect: &Rect, da
 
     // Outer half.
     let outer = shrink_border_rect(rect, width, 0.0, half_width);
-    paint.set_color4f(first_color, None::<&ColorSpace>);
+    paint.set_color4f(outer_color, None::<&ColorSpace>);
     canvas.draw_rect(outer, &paint);
 
     // Inner half.
     let inner = shrink_border_rect(rect, width, half_width, width - half_width);
-    paint.set_color4f(second_color, None::<&ColorSpace>);
+    paint.set_color4f(inner_color, None::<&ColorSpace>);
     canvas.draw_rect(inner, &paint);
 }
 

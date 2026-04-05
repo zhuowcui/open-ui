@@ -311,6 +311,12 @@ pub struct ComputedStyle {
 
     /// CSS `tab-size`. Initial: `8`. Inherited.
     pub tab_size: TabSize,
+
+    // ── Locale ───────────────────────────────────────────────────────
+
+    /// BCP 47 locale derived from the `lang` HTML attribute.
+    /// Used for locale-dependent shaping (e.g., CJK font selection).
+    pub locale: Option<String>,
 }
 
 impl ComputedStyle {
@@ -445,6 +451,9 @@ impl ComputedStyle {
 
             // Tab size
             tab_size: TabSize::Spaces(8),
+
+            // Locale
+            locale: None,
         }
     }
 

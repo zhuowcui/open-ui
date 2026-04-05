@@ -216,29 +216,56 @@ fn count_expansion_opportunities(line_info: &LineInfo, items_data: &InlineItemsD
 ///
 /// Every character boundary (excluding trailing spaces) is an expansion point.
 /// Returns the number of gaps between characters (char_count - 1 for non-empty text).
+///
+/// Only counts boundaries between text items that are logically adjacent
+/// (separated only by OpenTag/CloseTag). AtomicInline or Control items
+/// break the adjacency, so no boundary gap is counted across them.
 fn count_inter_character_opportunities(line_info: &LineInfo, items_data: &InlineItemsData) -> usize {
-    let mut total_chars = 0usize;
+    // Collect character counts per contiguous text segment, where segments
+    // are separated by AtomicInline or Control items.
+    let mut segments: Vec<usize> = Vec::new();
+    let mut current_segment_chars = 0usize;
     for item_result in &line_info.items {
-        if item_result.item_type == InlineItemType::Text {
-            let text = &items_data.text[item_result.text_range.clone()];
-            total_chars += text.chars().count();
+        match item_result.item_type {
+            InlineItemType::Text => {
+                let text = &items_data.text[item_result.text_range.clone()];
+                current_segment_chars += text.chars().count();
+            }
+            InlineItemType::OpenTag | InlineItemType::CloseTag => {
+                // Tags don't break adjacency — continue accumulating.
+            }
+            InlineItemType::AtomicInline | InlineItemType::Control | InlineItemType::BlockInInline => {
+                // Non-text items break adjacency.
+                if current_segment_chars > 0 {
+                    segments.push(current_segment_chars);
+                    current_segment_chars = 0;
+                }
+            }
         }
     }
-    // Exclude trailing spaces from the count.
-    for item_result in line_info.items.iter().rev() {
-        if item_result.item_type == InlineItemType::Text {
-            let text = &items_data.text[item_result.text_range.clone()];
-            let trailing_spaces = text.chars().rev().take_while(|c| *c == ' ').count();
-            total_chars = total_chars.saturating_sub(trailing_spaces);
-            break;
-        }
-        if item_result.item_type != InlineItemType::CloseTag
-            && item_result.item_type != InlineItemType::OpenTag
-        {
-            break;
+    if current_segment_chars > 0 {
+        segments.push(current_segment_chars);
+    }
+
+    // Exclude trailing spaces from the last segment.
+    if let Some(last_seg) = segments.last_mut() {
+        for item_result in line_info.items.iter().rev() {
+            if item_result.item_type == InlineItemType::Text {
+                let text = &items_data.text[item_result.text_range.clone()];
+                let trailing_spaces = text.chars().rev().take_while(|c| *c == ' ').count();
+                *last_seg = last_seg.saturating_sub(trailing_spaces);
+                break;
+            }
+            if item_result.item_type != InlineItemType::CloseTag
+                && item_result.item_type != InlineItemType::OpenTag
+            {
+                break;
+            }
         }
     }
-    total_chars.saturating_sub(1)
+
+    // Total gaps = sum of (segment_chars - 1) for each segment.
+    segments.iter().map(|&c| c.saturating_sub(1)).sum()
 }
 
 // ── Inline start/end resolution for open/close tag items ─────────────────
@@ -974,8 +1001,14 @@ fn create_line_box(
             }
             InlineItemType::Control => {
                 // <br> — no visual contribution, line break already handled.
+                // Reset inter-character tracking so no boundary gap is added
+                // between text items separated by a control.
+                inter_char_chars_before = 0;
             }
             InlineItemType::AtomicInline | InlineItemType::BlockInInline => {
+                // Reset inter-character tracking so no boundary gap is added
+                // between text items separated by an atomic inline.
+                inter_char_chars_before = 0;
                 // Create a box fragment for the atomic inline element.
                 let item_width = item_result.inline_size;
                 let style = &items_data.styles[item.style_index];

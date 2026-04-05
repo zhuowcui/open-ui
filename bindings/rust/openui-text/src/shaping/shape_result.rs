@@ -310,6 +310,10 @@ impl ShapeResult {
     ///
     /// Uses the run's cluster data for precise mapping. Falls back to
     /// proportional mapping when cluster data is unavailable.
+    ///
+    /// When multiple glyphs share the same cluster value (combining marks,
+    /// decompositions), they are grouped together. The character coverage
+    /// of a cluster group is `[cluster_value, next_different_cluster_value)`.
     pub fn glyph_range_for_char_range(
         run: &ShapeResultRun,
         char_start: usize,
@@ -320,26 +324,32 @@ impl ShapeResult {
         }
 
         // Use cluster data for precise glyph-to-character mapping.
-        // Derive each glyph's covered character interval from successive
-        // cluster boundaries. Include the glyph if its covered interval
-        // overlaps with [char_start, char_end). This correctly handles
-        // ligature glyphs whose cluster base is before char_start but
-        // that cover characters within the range (Issue 5 fix).
+        // Group glyphs with the same cluster value together. The coverage
+        // of a cluster group is [cluster_value, next_different_cluster_value).
         if !run.clusters.is_empty() {
-            // Sort glyphs by cluster to determine each glyph's character coverage.
+            // Build sorted unique cluster values with their glyph indices.
             let mut glyph_by_cluster: Vec<(usize, usize)> = run
                 .clusters
                 .iter()
                 .enumerate()
                 .map(|(gi, &c)| (c, gi))
                 .collect();
-            glyph_by_cluster.sort_by_key(|(c, _)| *c);
+            glyph_by_cluster.sort_by_key(|(c, gi)| (*c, *gi));
+
+            // Deduplicate cluster values to find distinct cluster boundaries.
+            let mut unique_clusters: Vec<usize> = glyph_by_cluster
+                .iter()
+                .map(|(c, _)| *c)
+                .collect();
+            unique_clusters.dedup();
 
             let mut glyph_start = run.num_glyphs;
             let mut glyph_end = 0;
-            for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
-                let next_cluster = if idx + 1 < glyph_by_cluster.len() {
-                    glyph_by_cluster[idx + 1].0
+            for (_idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
+                // Find the next *different* cluster value.
+                let unique_pos = unique_clusters.iter().position(|&c| c == cluster).unwrap();
+                let next_cluster = if unique_pos + 1 < unique_clusters.len() {
+                    unique_clusters[unique_pos + 1]
                 } else {
                     run.num_characters
                 };
@@ -456,18 +466,66 @@ impl ShapeResult {
         let total_chars = self.num_characters;
         // We need to expand gaps between every adjacent pair of characters
         // across the entire result. That's (total_chars - 1) gaps total.
-        // Each glyph gets extra_per_gap added to its advance for every
-        // character it covers, except the very last character overall.
         for run in &mut self.runs {
             let run_start = run.start_index;
             if !run.clusters.is_empty() {
-                // With cluster data: add extra_per_gap to each glyph,
-                // except for the glyph that covers the last character.
-                for gi in 0..run.num_glyphs {
-                    let char_idx = run_start + run.clusters[gi];
-                    if char_idx < total_chars - 1 {
-                        run.advances[gi] += extra_per_gap;
-                        total_extra += extra_per_gap;
+                // With cluster data: determine each glyph's character coverage
+                // using unique cluster boundaries. For a ligature covering N
+                // characters, add extra_per_gap * (N - 1) to the first glyph
+                // in the cluster group (if it's not covering the last character).
+                // Skip duplicate-cluster glyphs (don't add extra spacing).
+                let mut sorted_pairs: Vec<(usize, usize)> = run
+                    .clusters
+                    .iter()
+                    .enumerate()
+                    .map(|(gi, &c)| (c, gi))
+                    .collect();
+                sorted_pairs.sort_by_key(|(c, gi)| (*c, *gi));
+
+                let mut unique_clusters: Vec<usize> = sorted_pairs.iter().map(|(c, _)| *c).collect();
+                unique_clusters.dedup();
+
+                // Track which cluster groups we've already processed.
+                let mut processed_clusters = std::collections::HashSet::new();
+                for &(cluster, gi) in &sorted_pairs {
+                    if processed_clusters.contains(&cluster) {
+                        // Duplicate-cluster glyph — skip.
+                        continue;
+                    }
+                    processed_clusters.insert(cluster);
+
+                    let abs_cluster = run_start + cluster;
+                    let unique_pos = unique_clusters.iter().position(|&c| c == cluster).unwrap();
+                    let next_cluster = if unique_pos + 1 < unique_clusters.len() {
+                        unique_clusters[unique_pos + 1]
+                    } else {
+                        run.num_characters
+                    };
+                    let chars_covered = next_cluster - cluster;
+                    let abs_end = run_start + next_cluster;
+
+                    // Count gaps: each character boundary within/after this
+                    // cluster contributes a gap, except the very last character
+                    // in the entire result.
+                    let mut gaps = 0usize;
+                    // Internal gaps within a ligature cluster.
+                    if chars_covered > 1 {
+                        gaps += chars_covered - 1;
+                    }
+                    // Boundary gap after this cluster (if not the last char overall).
+                    if abs_end <= total_chars - 1 {
+                        gaps += 1;
+                    } else if abs_end > total_chars - 1 && abs_cluster < total_chars - 1 {
+                        // Cluster ends at last char but starts before — count
+                        // only the internal gaps up to the second-to-last char.
+                        let chars_before_last = (total_chars - 1).saturating_sub(abs_cluster);
+                        gaps = chars_before_last;
+                    }
+
+                    if gaps > 0 {
+                        let extra = extra_per_gap * gaps as f32;
+                        run.advances[gi] += extra;
+                        total_extra += extra;
                     }
                 }
             } else if run.num_glyphs == run.num_characters {
@@ -523,6 +581,8 @@ impl ShapeResult {
                     // Issue 6 fix: distribute based on cluster boundaries
                     // rather than averaging uniformly.
                     if !run.clusters.is_empty() {
+                        // Build unique cluster groups and sum advances of
+                        // all glyphs sharing the same cluster value.
                         let mut glyph_by_cluster: Vec<(usize, usize)> = run
                             .clusters
                             .iter()
@@ -531,15 +591,29 @@ impl ShapeResult {
                             .collect();
                         glyph_by_cluster.sort_by_key(|(c, _)| *c);
 
-                        for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
-                            let next_cluster = if idx + 1 < glyph_by_cluster.len() {
-                                glyph_by_cluster[idx + 1].0
+                        let mut unique_clusters: Vec<usize> = glyph_by_cluster
+                            .iter()
+                            .map(|(c, _)| *c)
+                            .collect();
+                        unique_clusters.dedup();
+
+                        for (uc_idx, &uc) in unique_clusters.iter().enumerate() {
+                            let next_cluster = if uc_idx + 1 < unique_clusters.len() {
+                                unique_clusters[uc_idx + 1]
                             } else {
                                 run.num_characters
                             };
-                            if local_idx >= cluster && local_idx < next_cluster {
-                                let chars_in_cluster = next_cluster - cluster;
-                                return run.advances[gi] / chars_in_cluster as f32;
+                            if local_idx >= uc && local_idx < next_cluster {
+                                // Sum advances of all glyphs in this cluster group.
+                                let cluster_advance: f32 = run
+                                    .clusters
+                                    .iter()
+                                    .enumerate()
+                                    .filter(|(_, &c)| c == uc)
+                                    .map(|(gi, _)| run.advances[gi])
+                                    .sum();
+                                let chars_in_cluster = next_cluster - uc;
+                                return cluster_advance / chars_in_cluster as f32;
                             }
                         }
                     }
