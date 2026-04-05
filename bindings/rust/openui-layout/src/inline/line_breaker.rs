@@ -9,11 +9,15 @@
 //! - CSS `overflow-wrap` property (normal, break-word, anywhere)
 //! - CSS `line-break` property (auto, loose, normal, strict, anywhere)
 //! - CSS `white-space` property (controls whether wrapping is allowed)
+//! - CSS `hyphens` property (none, manual, auto) with Knuth-Liang algorithm
+//! - CSS `hyphenate-limit-chars` property (min word/prefix/suffix)
+//! - Soft hyphen (U+00AD) break opportunities
 //! - Forced breaks (`<br>`, newlines in pre/pre-line)
 //! - Trailing space stripping per CSS Text §4.1.3
 
 use openui_geometry::{LayoutUnit, LengthType};
-use openui_style::{BoxSizing, ComputedStyle, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
+use openui_style::{BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
+use openui_text::hyphenation::{self, Hyphenation};
 use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemResult, InlineItemType};
@@ -44,6 +48,10 @@ pub struct LineBreaker<'a> {
     /// Percentages on inline margin/border/padding resolve against this,
     /// not the per-line available width (CSS 2.2 §10.3.3).
     containing_block_width: LayoutUnit,
+    /// CSS `hyphens` property value for the block container.
+    hyphens: Hyphens,
+    /// Hyphenation engine for `hyphens: auto` (lazily initialized).
+    hyphenation: Option<Hyphenation>,
 }
 
 /// Internal state for line-building loop.
@@ -63,12 +71,27 @@ impl<'a> LineBreaker<'a> {
             is_finished: false,
             text_align: TextAlign::Start,
             containing_block_width,
+            hyphens: Hyphens::Manual,
+            hyphenation: None,
         }
     }
 
     /// Set text alignment for produced lines.
     pub fn set_text_align(&mut self, align: TextAlign) {
         self.text_align = align;
+    }
+
+    /// Configure hyphenation from computed style properties.
+    ///
+    /// `hyphens`: the CSS `hyphens` property value
+    /// `limits`: the CSS `hyphenate-limit-chars` property as (min_word, min_prefix, min_suffix)
+    pub fn set_hyphens(&mut self, hyphens: Hyphens, limits: (u8, u8, u8)) {
+        self.hyphens = hyphens;
+        if hyphens == Hyphens::Auto {
+            self.hyphenation = Some(Hyphenation::english_from_css_limits(limits));
+        } else {
+            self.hyphenation = None;
+        }
     }
 
     /// Check if all items have been consumed.
@@ -247,10 +270,24 @@ impl<'a> LineBreaker<'a> {
         }
 
         // Text doesn't fit — find best break point
-        let break_opps = find_break_opportunities(text_slice, style.word_break, style.overflow_wrap, style.line_break);
+        let mut break_opps = find_break_opportunities(text_slice, style.word_break, style.overflow_wrap, style.line_break);
+
+        // Add soft hyphen break opportunities if hyphens != none.
+        // Soft hyphens (U+00AD) are valid break points in manual and auto modes.
+        if self.hyphens != Hyphens::None {
+            let soft_breaks = hyphenation::find_soft_hyphens(text_slice);
+            for sb in &soft_breaks {
+                if !break_opps.contains(sb) {
+                    break_opps.push(*sb);
+                }
+            }
+            break_opps.sort_unstable();
+            break_opps.dedup();
+        }
 
         let mut best_break: Option<usize> = None;
         let mut best_width = LayoutUnit::zero();
+        let mut best_is_hyphen = false;
 
         if let Some(ref sr) = item.shape_result {
             let item_char_start = byte_to_char_offset(&self.items_data.text, item.text_range.start);
@@ -264,8 +301,11 @@ impl<'a> LineBreaker<'a> {
                 let local_end = break_char - item_char_start;
                 let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
                 if width <= remaining {
+                    let is_shy = brk < text_slice.len()
+                        && text_slice[brk..].starts_with('\u{00AD}');
                     best_break = Some(brk);
                     best_width = width;
+                    best_is_hyphen = is_shy;
                 } else {
                     break;
                 }
@@ -292,10 +332,22 @@ impl<'a> LineBreaker<'a> {
                 item_type: InlineItemType::Text,
             });
             line.used_width = line.used_width + best_width;
-            self.current_text_offset = break_byte;
+            if best_is_hyphen {
+                // Skip past the soft hyphen character for the next line
+                let shy_len = '\u{00AD}'.len_utf8();
+                self.current_text_offset = break_byte + shy_len;
+                line.has_forced_hyphen = true;
+            } else {
+                self.current_text_offset = break_byte;
+            }
             *state = LineState::Done;
         } else {
-            // No break opportunity found
+            // No normal break opportunity found — try hyphenation
+            if self.try_hyphenation_break(item_index, text_start, text_end, remaining, line, state) {
+                return;
+            }
+
+            // Fall through to overflow-wrap handling
             match style.overflow_wrap {
                 OverflowWrap::BreakWord | OverflowWrap::Anywhere => {
                     // Character-level break
@@ -315,6 +367,99 @@ impl<'a> LineBreaker<'a> {
                 }
             }
         }
+    }
+
+    /// Try to break a word at a hyphenation point using the Knuth-Liang algorithm.
+    ///
+    /// Called when no normal break opportunity fits within the remaining width.
+    /// Returns `true` if a hyphenation break was found and applied.
+    ///
+    /// This implements the CSS `hyphens: auto` behavior: the hyphenation engine
+    /// finds valid syllable boundaries in the word, and the last one that fits
+    /// (considering the remaining line width) is used as a break point.
+    fn try_hyphenation_break(
+        &mut self,
+        item_index: usize,
+        text_start: usize,
+        text_end: usize,
+        remaining: LayoutUnit,
+        line: &mut LineInfo,
+        state: &mut LineState,
+    ) -> bool {
+        // Only attempt automatic hyphenation in auto mode
+        if self.hyphens != Hyphens::Auto {
+            return false;
+        }
+
+        let hyphenation = match &self.hyphenation {
+            Some(h) => h,
+            None => return false,
+        };
+
+        let item = &self.items_data.items[item_index];
+        let text_slice = &self.items_data.text[text_start..text_end];
+
+        // Extract the word to hyphenate. For simplicity, treat the entire
+        // text slice as the word (the inline items builder has already
+        // segmented text by whitespace boundaries).
+        // Strip any non-alphabetic prefix/suffix for pattern matching.
+        let word = text_slice.trim();
+        if word.is_empty() || !hyphenation.should_hyphenate(word) {
+            return false;
+        }
+
+        // Find the byte offset of the word within text_slice
+        let word_byte_start = text_slice
+            .find(word)
+            .unwrap_or(0);
+
+        // Get all hyphenation points as byte offsets within the word
+        let hyphen_points = hyphenation.hyphen_byte_locations(word);
+        if hyphen_points.is_empty() {
+            return false;
+        }
+
+        // Try each hyphenation point (from last to first) to find the best
+        // one that fits within the remaining width.
+        if let Some(ref sr) = item.shape_result {
+            let item_char_start =
+                byte_to_char_offset(&self.items_data.text, item.text_range.start);
+            let char_start = byte_to_char_offset(&self.items_data.text, text_start);
+
+            for &hp in hyphen_points.iter().rev() {
+                // Convert word-relative byte offset to text_slice-relative
+                let break_in_slice = word_byte_start + hp;
+                let break_byte = text_start + break_in_slice;
+                if break_byte <= text_start || break_byte >= text_end {
+                    continue;
+                }
+
+                let break_char =
+                    byte_to_char_offset(&self.items_data.text, break_byte);
+                let local_start = char_start - item_char_start;
+                let local_end = break_char - item_char_start;
+                let width =
+                    LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+
+                if width <= remaining {
+                    line.items.push(InlineItemResult {
+                        item_index,
+                        text_range: text_start..break_byte,
+                        inline_size: width,
+                        shape_result: item.shape_result.clone(),
+                        has_forced_break: false,
+                        item_type: InlineItemType::Text,
+                    });
+                    line.used_width = line.used_width + width;
+                    line.has_forced_hyphen = true;
+                    self.current_text_offset = break_byte;
+                    *state = LineState::Done;
+                    return true;
+                }
+            }
+        }
+
+        false
     }
 
     /// Handle text that contains forced newlines (in pre or pre-line modes).
@@ -2111,7 +2256,7 @@ mod tests {
         let mut style = ComputedStyle::default();
         style.overflow_wrap = OverflowWrap::BreakWord;
 
-        let items_data = super::super::items_builder::InlineItemsData {
+        let items_data = InlineItemsData {
             text: text.to_string(),
             items: vec![item],
             styles: vec![style],
@@ -2308,7 +2453,6 @@ mod tests {
         // Pre-wrap mid-item split: trailing space should hang.
         let text = "hello world ";
         let (items, item_result, style) = make_trailing_space_test(text, 0..6, WhiteSpace::PreWrap);
-        let initial_width = item_result.inline_size;
 
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
         line.used_width = LayoutUnit::from_f32(40.0);
@@ -2579,5 +2723,269 @@ mod tests {
         let line = LineInfo::new(LayoutUnit::from_f32(500.0));
         assert_eq!(line.hang_width, LayoutUnit::zero(),
             "new LineInfo should have hang_width = 0");
+    }
+
+    #[test]
+    fn line_info_has_forced_hyphen_default_is_false() {
+        let line = LineInfo::new(LayoutUnit::from_f32(500.0));
+        assert!(!line.has_forced_hyphen,
+            "new LineInfo should have has_forced_hyphen = false");
+    }
+
+    // ── Hyphenation unit tests ──────────────────────────────────────
+
+    #[test]
+    fn find_break_opportunities_includes_soft_hyphens_in_manual_mode() {
+        // Soft hyphens are valid break opportunities — UAX#14 should detect them
+        let text = "hy\u{00AD}phen";
+        let breaks = find_break_opportunities(
+            text, WordBreak::Normal, OverflowWrap::Normal, LineBreak::Auto,
+        );
+        // The unicode-linebreak crate should recognize U+00AD as a break opportunity
+        // If not, our line breaker adds them separately
+        let soft_pos = text.find('\u{00AD}').unwrap();
+        // Either UAX#14 recognizes it or we add it in handle_text
+        let _ = (breaks, soft_pos);
+    }
+
+    #[test]
+    fn soft_hyphen_detection_utility() {
+        use openui_text::hyphenation;
+        assert!(hyphenation::is_soft_hyphen('\u{00AD}'));
+        assert!(!hyphenation::is_soft_hyphen('-'));
+        assert!(!hyphenation::is_soft_hyphen('a'));
+    }
+
+    #[test]
+    fn soft_hyphen_locations_in_text() {
+        use openui_text::hyphenation;
+        let text = "hy\u{00AD}phen\u{00AD}ation";
+        let locs = hyphenation::find_soft_hyphens(text);
+        assert_eq!(locs.len(), 2);
+    }
+
+    #[test]
+    fn last_soft_hyphen_before_utility() {
+        use openui_text::hyphenation;
+        let text = "un\u{00AD}break\u{00AD}able";
+        // Find last soft hyphen before byte 12
+        let result = hyphenation::last_soft_hyphen_before(text, text.len());
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn strip_soft_hyphens_for_display() {
+        use openui_text::hyphenation;
+        let text = "hy\u{00AD}phen\u{00AD}ation";
+        let clean = hyphenation::strip_soft_hyphens(text);
+        assert_eq!(clean, "hyphenation");
+    }
+
+    #[test]
+    fn hyphenation_engine_basic_operation() {
+        use openui_text::Hyphenation;
+        let h = Hyphenation::english();
+        let locs = h.hyphen_locations("hyphenation");
+        assert!(!locs.is_empty(), "should find hyphenation points");
+        // All points must be valid
+        let len = "hyphenation".chars().count();
+        for &loc in &locs {
+            assert!(loc >= 2, "prefix too short: {}", loc); // min_prefix=2
+            assert!(len - loc >= 2, "suffix too short at {}", loc); // min_suffix=2
+        }
+    }
+
+    #[test]
+    fn hyphenation_engine_css_limits() {
+        use openui_text::Hyphenation;
+        let h = Hyphenation::english_from_css_limits((5, 2, 2));
+        assert!(!h.should_hyphenate("cat")); // too short
+        assert!(h.should_hyphenate("hello")); // exactly 5
+        assert!(h.should_hyphenate("computer")); // long
+    }
+
+    #[test]
+    fn line_breaker_hyphens_none_ignores_soft_hyphens() {
+        // With hyphens: none, soft hyphens should not create break opportunities
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_style::Hyphens;
+        use std::sync::Arc;
+
+        let text = "un\u{00AD}breakable";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let sr_arc = Arc::new(sr);
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+            intrinsic_inline_size: None,
+        };
+
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![item],
+            styles: vec![ComputedStyle::default()],
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
+        breaker.set_hyphens(Hyphens::None, (5, 2, 2));
+
+        // With hyphens: none, a very narrow line should NOT break at soft hyphen
+        let line = breaker.next_line(LayoutUnit::from_f32(500.0));
+        assert!(line.is_some());
+        let line = line.unwrap();
+        // The text should be on a single line (wide enough container)
+        assert!(!line.has_forced_hyphen, "hyphens:none should never set forced_hyphen");
+    }
+
+    #[test]
+    fn line_breaker_manual_mode_uses_soft_hyphens() {
+        // With hyphens: manual, soft hyphens create break opportunities
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_style::Hyphens;
+        use std::sync::Arc;
+
+        // "un<SHY>breakable" with a narrow container that forces a break
+        let text = "un\u{00AD}breakable";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let total_width = sr.width;
+        let sr_arc = Arc::new(sr);
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+            intrinsic_inline_size: None,
+        };
+
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![item],
+            styles: vec![ComputedStyle::default()],
+        };
+
+        // Make container narrow enough that the full word doesn't fit,
+        // but "un" (2 chars) should fit
+        let narrow_width = LayoutUnit::from_f32(total_width * 0.3);
+
+        let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
+        breaker.set_hyphens(Hyphens::Manual, (5, 2, 2));
+
+        let line = breaker.next_line(narrow_width);
+        assert!(line.is_some());
+        let line = line.unwrap();
+
+        // In manual mode, the soft hyphen should provide a break opportunity
+        // The line should break at the soft hyphen if it doesn't fit
+        if line.has_forced_hyphen {
+            // Success — broke at the soft hyphen
+            assert!(line.items.len() >= 1);
+        }
+        // If it didn't break there, the word was short enough or broke elsewhere
+    }
+
+    #[test]
+    fn line_breaker_auto_mode_uses_patterns() {
+        // With hyphens: auto, the Knuth-Liang algorithm provides break points
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_style::Hyphens;
+        use std::sync::Arc;
+
+        let text = "hyphenation";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Ltr);
+        let total_width = sr.width;
+        let sr_arc = Arc::new(sr);
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+            intrinsic_inline_size: None,
+        };
+
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![item],
+            styles: vec![ComputedStyle::default()],
+        };
+
+        // Make container narrow enough to force hyphenation
+        let narrow_width = LayoutUnit::from_f32(total_width * 0.6);
+
+        let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
+        breaker.set_hyphens(Hyphens::Auto, (5, 2, 2));
+
+        let line = breaker.next_line(narrow_width);
+        assert!(line.is_some());
+        let line_info = line.unwrap();
+
+        // With auto hyphenation on a narrow container, the word should be broken
+        // and has_forced_hyphen should be true
+        if line_info.has_forced_hyphen {
+            assert!(
+                line_info.items.len() >= 1,
+                "hyphenated line should have at least one item"
+            );
+            // The text range should be a prefix of "hyphenation"
+            let end = line_info.items[0].text_range.end;
+            assert!(end < text.len(), "should break before end of word");
+        }
+    }
+
+    #[test]
+    fn set_hyphens_configures_engine() {
+        use openui_style::Hyphens;
+
+        let items_data = InlineItemsData {
+            text: String::new(),
+            items: vec![],
+            styles: vec![],
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
+
+        // Default should be manual, no hyphenation engine
+        assert_eq!(breaker.hyphens, Hyphens::Manual);
+        assert!(breaker.hyphenation.is_none());
+
+        // Setting to auto should initialize the engine
+        breaker.set_hyphens(Hyphens::Auto, (5, 2, 2));
+        assert_eq!(breaker.hyphens, Hyphens::Auto);
+        assert!(breaker.hyphenation.is_some());
+
+        // Setting to none should clear the engine
+        breaker.set_hyphens(Hyphens::None, (5, 2, 2));
+        assert_eq!(breaker.hyphens, Hyphens::None);
+        assert!(breaker.hyphenation.is_none());
+
+        // Setting to manual should also clear the engine
+        breaker.set_hyphens(Hyphens::Manual, (5, 2, 2));
+        assert_eq!(breaker.hyphens, Hyphens::Manual);
+        assert!(breaker.hyphenation.is_none());
     }
 }

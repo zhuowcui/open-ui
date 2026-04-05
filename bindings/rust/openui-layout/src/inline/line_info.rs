@@ -49,6 +49,13 @@ pub struct LineInfo {
     /// For `pre-wrap` trailing spaces conditionally or unconditionally hang,
     /// tracked here. For `break-spaces` nothing hangs (spaces cause breaks).
     pub hang_width: LayoutUnit,
+
+    /// Whether this line ends with a hyphen inserted by the hyphenation engine.
+    ///
+    /// When `true`, a visible hyphen character (U+002D '-') must be appended
+    /// at the end of the line during painting. This happens when a word is
+    /// broken at a soft hyphen or automatic hyphenation point.
+    pub has_forced_hyphen: bool,
 }
 
 impl LineInfo {
@@ -64,6 +71,7 @@ impl LineInfo {
             has_ellipsis: false,
             ellipsis_at_start: false,
             hang_width: LayoutUnit::zero(),
+            has_forced_hyphen: false,
         }
     }
 
