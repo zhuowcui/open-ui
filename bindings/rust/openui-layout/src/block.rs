@@ -107,9 +107,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let mut child_fragments: Vec<Fragment> = Vec::new();
     let mut intrinsic_block_size = content_edge;
 
-    // Check for inline formatting context: if any child is inline-level or
-    // a text node, dispatch to the inline layout algorithm (CSS 2.2 §9.2.1).
-    if crate::inline::algorithm::has_inline_children(doc, node_id) {
+    // Classify children: detect whether we have only inline, only block,
+    // or mixed content (CSS 2.2 §9.2.1.1 — anonymous block boxes).
+    let has_inline = crate::inline::algorithm::has_inline_children(doc, node_id);
+    let has_block = has_block_children(doc, node_id);
+
+    if has_inline && !has_block {
+        // ── Pure inline formatting context ───────────────────────────
         let inline_space = ConstraintSpace::for_block_child(
             child_available_inline,
             space.available_block_size,
@@ -120,8 +124,6 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         let inline_fragment = crate::inline::algorithm::inline_layout(
             doc, node_id, &inline_space,
         );
-        // The inline_layout returns line boxes as children.
-        // Merge them into our fragment, advancing block_offset by the content height.
         for line_frag in inline_fragment.children {
             let line_height = line_frag.size.height;
             let mut positioned_line = line_frag;
@@ -135,159 +137,92 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             child_fragments.push(positioned_line);
         }
         block_offset = intrinsic_block_size;
+    } else if has_inline && has_block {
+        // ── Mixed content: create anonymous block boxes (CSS 2.2 §9.2.1.1) ─
+        // Collect contiguous runs of inline children into anonymous wrappers,
+        // interleaved with real block-level children.
+        let children_ids: Vec<NodeId> = doc.children(node_id).collect();
+        let mut i = 0;
+        while i < children_ids.len() {
+            let child_id = children_ids[i];
+            let child_style = &doc.node(child_id).style;
+
+            if child_style.is_out_of_flow() || child_style.display == Display::None {
+                i += 1;
+                continue;
+            }
+
+            if is_inline_level_child(doc, child_id) {
+                // Gather contiguous run of inline children.
+                let run_start = i;
+                while i < children_ids.len()
+                    && is_inline_level_child(doc, children_ids[i])
+                {
+                    i += 1;
+                }
+                let inline_run = &children_ids[run_start..i];
+
+                // Lay out this anonymous inline wrapper.
+                let inline_space = ConstraintSpace::for_block_child(
+                    child_available_inline,
+                    space.available_block_size,
+                    child_available_inline,
+                    space.percentage_resolution_block_size,
+                    false,
+                );
+                let anon_fragment = crate::inline::algorithm::inline_layout_for_children(
+                    doc, node_id, inline_run, &inline_space,
+                );
+                for line_frag in anon_fragment.children {
+                    let line_height = line_frag.size.height;
+                    let mut positioned_line = line_frag;
+                    positioned_line.offset = PhysicalOffset::new(
+                        border.left + padding.left + positioned_line.offset.left,
+                        block_offset + positioned_line.offset.top,
+                    );
+                    intrinsic_block_size = intrinsic_block_size.max_of(
+                        positioned_line.offset.top + line_height,
+                    );
+                    child_fragments.push(positioned_line);
+                }
+                block_offset = intrinsic_block_size;
+            } else {
+                // Block-level child — lay out normally.
+                layout_block_child(
+                    doc, child_id, space,
+                    child_available_inline, child_percentage_block_size,
+                    &border, &padding, content_edge,
+                    &mut block_offset, &mut margin_strut,
+                    &mut intrinsic_block_size, &mut child_fragments,
+                );
+                i += 1;
+            }
+        }
     } else {
+        // ── Pure block formatting context ────────────────────────────
 
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
 
         // Skip out-of-flow children (absolute, fixed) — they don't participate
         // in block flow. Floats are also skipped for SP9.
-        // Skip inline-level elements — inline formatting context is SP11.
         if child_style.is_out_of_flow() || child_style.display == Display::None {
             continue;
         }
         if child_style.display.is_inline_level() {
-            // Inline-level elements (inline, inline-block, inline-flex,
-            // inline-grid) require an inline formatting context (SP11).
-            // Skip for now to avoid laying them out as blocks.
             continue;
         }
 
-        // ── Calculate child margins ──────────────────────────────────
-        // Blink: CalculateMargins() (line 3329)
-        // Per CSS 2.1 §10.3.3, percentage margins resolve against the
-        // child's containing block width (parent's content-box width).
-        let child_margin = resolve_margins(child_style, child_available_inline);
-
-        // ── Margin collapsing ────────────────────────────────────────
-        // Blink: ComputeChildData / ComputeInflowPosition
-        //
-        // Append child's margin-top to the current margin strut.
-        // The strut tracks the largest positive and most-negative margins
-        // and collapses them per CSS 2.1 §8.3.1.
-        margin_strut.append(child_margin.top);
-
-        // Resolve the margin strut in these cases:
-        // 1. First child in a new BFC — border/padding prevents collapse-through
-        // 2. First child when parent has top border or padding (CSS 2.1 §8.3.1:
-        //    "The top margin of an in-flow block-level element collapses with
-        //    its first in-flow block-level child's top margin if the element
-        //    has no top border, no top padding...")
-        // 3. Between siblings — collapse previous bottom + current top
-        if child_fragments.is_empty() {
-            if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
-                block_offset += margin_strut.sum();
-                margin_strut = MarginStrut::new();
-            }
-        } else {
-            // Between siblings: resolve the collapsed margin between
-            // previous sibling's margin-bottom and this child's margin-top.
-            block_offset += margin_strut.sum();
-            margin_strut = MarginStrut::new();
-        }
-
-        // ── Create child constraint space ────────────────────────────
-        // Blink: CreateConstraintSpaceForChild() (line 3408)
-        //
-        // Per CSS 2.1 §10.3.3, for block-level non-replaced elements in
-        // normal flow, width:auto fills: containing_block_width - margins
-        // - border - padding. We subtract non-auto fixed margins from the
-        // available inline size so that resolve_inline_size auto-fills correctly.
-        let child_non_auto_margin_inline = {
-            let ml = if child_style.margin_left.is_auto() {
-                LayoutUnit::zero()
-            } else {
-                child_margin.left
-            };
-            let mr = if child_style.margin_right.is_auto() {
-                LayoutUnit::zero()
-            } else {
-                child_margin.right
-            };
-            ml + mr
-        };
-        let child_constrained_inline =
-            (child_available_inline - child_non_auto_margin_inline).clamp_negative_to_zero();
-
-        let child_is_new_fc = child_style.creates_new_formatting_context();
-        let child_space = ConstraintSpace::for_block_child(
-            child_constrained_inline,
-            space.available_block_size,
-            child_available_inline,     // percentage resolution uses full content box
-            child_percentage_block_size,
-            child_is_new_fc,
+        layout_block_child(
+            doc, child_id, space,
+            child_available_inline, child_percentage_block_size,
+            &border, &padding, content_edge,
+            &mut block_offset, &mut margin_strut,
+            &mut intrinsic_block_size, &mut child_fragments,
         );
-
-        // ── Layout child ─────────────────────────────────────────────
-        let mut child_fragment = if child_style.display == Display::Block
-            || child_style.display == Display::FlowRoot
-            || child_style.display == Display::ListItem
-        {
-            block_layout(doc, child_id, &child_space)
-        } else {
-            // For non-block display types in block flow (inline-block, etc.),
-            // treat as block for now. Flex/Grid/Inline will be added later.
-            block_layout(doc, child_id, &child_space)
-        };
-
-        // ── Auto margin resolution (horizontal centering) ───────────
-        // Blink: CalculateMargins + auto margin resolution
-        //
-        // If both margin-left and margin-right are auto, center the child.
-        // If only one is auto, it absorbs the remaining space.
-        let child_border_box_inline = child_fragment.size.width;
-        let remaining_space = child_available_inline - child_border_box_inline;
-
-        let resolved_margin_left;
-        let resolved_margin_right;
-
-        if child_style.margin_left.is_auto() && child_style.margin_right.is_auto() {
-            // Center: split remaining space equally.
-            // Per CSS 2.1 §10.3.3: if overconstrained, auto margins → 0.
-            if remaining_space > LayoutUnit::zero() {
-                let half = remaining_space / 2;
-                resolved_margin_left = half;
-                resolved_margin_right = remaining_space - half;
-            } else {
-                resolved_margin_left = LayoutUnit::zero();
-                resolved_margin_right = LayoutUnit::zero();
-            }
-        } else if child_style.margin_left.is_auto() {
-            resolved_margin_right = child_margin.right;
-            resolved_margin_left = remaining_space - resolved_margin_right;
-        } else if child_style.margin_right.is_auto() {
-            resolved_margin_left = child_margin.left;
-            resolved_margin_right = remaining_space - resolved_margin_left;
-        } else {
-            resolved_margin_left = child_margin.left;
-            resolved_margin_right = child_margin.right;
-        }
-
-        // ── Position child ───────────────────────────────────────────
-        // Blink: ComputeInflowPosition() (line 2881)
-        child_fragment.offset = PhysicalOffset::new(
-            border.left + padding.left + resolved_margin_left,
-            block_offset,
-        );
-        child_fragment.margin = BoxStrut::new(
-            child_margin.top,
-            resolved_margin_right,
-            child_margin.bottom,
-            resolved_margin_left,
-        );
-
-        // Advance block offset past the child
-        block_offset += child_fragment.size.height;
-
-        // Start new margin strut with child's bottom margin
-        margin_strut = MarginStrut::new();
-        margin_strut.append(child_margin.bottom);
-
-        intrinsic_block_size = block_offset;
-        child_fragments.push(child_fragment);
     }
 
-    } // end else (block children)
+    } // end block children
 
     // ── Step 4: Finish layout (FinishLayout, line 1165) ──────────────
     // Resolve the trailing margin strut if margins can't collapse through
@@ -328,6 +263,147 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     };
 
     fragment
+}
+
+// ── Helper: detect block-level children ──────────────────────────────
+
+/// Check if a node has any block-level children (CSS 2.2 §9.2.1.1).
+fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
+    for child_id in doc.children(node_id) {
+        let child = doc.node(child_id);
+        if child.style.is_out_of_flow() || child.style.display == Display::None {
+            continue;
+        }
+        if child.tag == openui_dom::ElementTag::Text {
+            continue;
+        }
+        if child.style.display.is_block_level() {
+            return true;
+        }
+    }
+    false
+}
+
+/// Check if a child is inline-level (text node or inline display).
+fn is_inline_level_child(doc: &Document, child_id: NodeId) -> bool {
+    let child = doc.node(child_id);
+    if child.style.is_out_of_flow() || child.style.display == Display::None {
+        return false;
+    }
+    child.tag == openui_dom::ElementTag::Text || child.style.display.is_inline_level()
+}
+
+// ── Helper: layout a single block child ──────────────────────────────
+
+/// Layout a single block-level child in normal flow.
+///
+/// Extracted from the block child loop to be reusable by both the pure-block
+/// and the mixed-content (anonymous block box) paths.
+#[allow(clippy::too_many_arguments)]
+fn layout_block_child(
+    doc: &Document,
+    child_id: NodeId,
+    space: &ConstraintSpace,
+    child_available_inline: LayoutUnit,
+    child_percentage_block_size: LayoutUnit,
+    border: &BoxStrut,
+    padding: &BoxStrut,
+    content_edge: LayoutUnit,
+    block_offset: &mut LayoutUnit,
+    margin_strut: &mut MarginStrut,
+    intrinsic_block_size: &mut LayoutUnit,
+    child_fragments: &mut Vec<Fragment>,
+) {
+    let child_style = &doc.node(child_id).style;
+
+    if child_style.is_out_of_flow() || child_style.display == Display::None {
+        return;
+    }
+
+    let child_margin = resolve_margins(child_style, child_available_inline);
+    margin_strut.append(child_margin.top);
+
+    if child_fragments.is_empty() {
+        if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+            *block_offset += margin_strut.sum();
+            *margin_strut = MarginStrut::new();
+        }
+    } else {
+        *block_offset += margin_strut.sum();
+        *margin_strut = MarginStrut::new();
+    }
+
+    let child_non_auto_margin_inline = {
+        let ml = if child_style.margin_left.is_auto() {
+            LayoutUnit::zero()
+        } else {
+            child_margin.left
+        };
+        let mr = if child_style.margin_right.is_auto() {
+            LayoutUnit::zero()
+        } else {
+            child_margin.right
+        };
+        ml + mr
+    };
+    let child_constrained_inline =
+        (child_available_inline - child_non_auto_margin_inline).clamp_negative_to_zero();
+
+    let child_is_new_fc = child_style.creates_new_formatting_context();
+    let child_space = ConstraintSpace::for_block_child(
+        child_constrained_inline,
+        space.available_block_size,
+        child_available_inline,
+        child_percentage_block_size,
+        child_is_new_fc,
+    );
+
+    let mut child_fragment = block_layout(doc, child_id, &child_space);
+
+    let child_border_box_inline = child_fragment.size.width;
+    let remaining_space = child_available_inline - child_border_box_inline;
+
+    let resolved_margin_left;
+    let resolved_margin_right;
+
+    if child_style.margin_left.is_auto() && child_style.margin_right.is_auto() {
+        if remaining_space > LayoutUnit::zero() {
+            let half = remaining_space / 2;
+            resolved_margin_left = half;
+            resolved_margin_right = remaining_space - half;
+        } else {
+            resolved_margin_left = LayoutUnit::zero();
+            resolved_margin_right = LayoutUnit::zero();
+        }
+    } else if child_style.margin_left.is_auto() {
+        resolved_margin_right = child_margin.right;
+        resolved_margin_left = remaining_space - resolved_margin_right;
+    } else if child_style.margin_right.is_auto() {
+        resolved_margin_left = child_margin.left;
+        resolved_margin_right = remaining_space - resolved_margin_left;
+    } else {
+        resolved_margin_left = child_margin.left;
+        resolved_margin_right = child_margin.right;
+    }
+
+    child_fragment.offset = PhysicalOffset::new(
+        border.left + padding.left + resolved_margin_left,
+        *block_offset,
+    );
+    child_fragment.margin = BoxStrut::new(
+        child_margin.top,
+        resolved_margin_right,
+        child_margin.bottom,
+        resolved_margin_left,
+    );
+
+    *block_offset += child_fragment.size.height;
+
+    *margin_strut = MarginStrut::new();
+    margin_strut.append(child_margin.bottom);
+
+    *intrinsic_block_size = *block_offset;
+    child_fragments.push(child_fragment);
 }
 
 // ── Helper: resolve border widths from style ─────────────────────────
@@ -1125,5 +1201,139 @@ mod tests {
 
         // child height = 50% of 200 = 100
         assert_eq!(child_frag.size.height.to_i32(), 100);
+    }
+
+    // ── Issue 1: Double border+padding subtraction ───────────────────
+
+    #[test]
+    fn padding_does_not_double_subtract_in_inline_layout() {
+        // A div with 20px padding on each side and 200px width should
+        // have 160px content box. Text that fits in 160px should NOT
+        // wrap (i.e., only one line box). Before the fix, border+padding
+        // was subtracted twice, making only 120px available.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let div = doc.create_node(ElementTag::Div);
+        doc.node_mut(div).style.display = Display::Block;
+        doc.node_mut(div).style.width = Length::px(200.0);
+        doc.node_mut(div).style.padding_left = Length::px(20.0);
+        doc.node_mut(div).style.padding_right = Length::px(20.0);
+        doc.append_child(vp, div);
+
+        // Create text that fits in 160px but not 120px.
+        // We use a short word to ensure it fits in the content box.
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("Hi".to_string());
+        doc.append_child(div, text);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let div_frag = &fragment.children[0];
+
+        // The div should be 200px wide (content-box sizing default: 200 + 20 + 20 = 240)
+        assert_eq!(div_frag.size.width.to_i32(), 240);
+
+        // Should have line boxes as children (from inline layout)
+        assert!(
+            !div_frag.children.is_empty(),
+            "Div with text should produce line boxes"
+        );
+        // Single short text should produce exactly one line
+        assert_eq!(
+            div_frag.children.len(),
+            1,
+            "Short text in 160px content box should fit on one line"
+        );
+    }
+
+    // ── Issue 3: Mixed content anonymous block boxes ─────────────────
+
+    #[test]
+    fn mixed_content_preserves_block_children() {
+        // Mixed content: text + block div + text should produce fragments
+        // for all three pieces (anonymous inline wrappers + block child).
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        // First inline child: text
+        let text1 = doc.create_node(ElementTag::Text);
+        doc.node_mut(text1).text = Some("Before".to_string());
+        doc.append_child(container, text1);
+
+        // Block child
+        let block_child = doc.create_node(ElementTag::Div);
+        doc.node_mut(block_child).style.display = Display::Block;
+        doc.node_mut(block_child).style.height = Length::px(30.0);
+        doc.append_child(container, block_child);
+
+        // Second inline child: text
+        let text2 = doc.create_node(ElementTag::Text);
+        doc.node_mut(text2).text = Some("After".to_string());
+        doc.append_child(container, text2);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let container_frag = &fragment.children[0];
+
+        // Should have at least 3 children:
+        // 1. Anonymous inline wrapper (line box for "Before")
+        // 2. Block child (30px height div)
+        // 3. Anonymous inline wrapper (line box for "After")
+        assert!(
+            container_frag.children.len() >= 3,
+            "Mixed content should produce at least 3 child fragments, got {}",
+            container_frag.children.len(),
+        );
+
+        // The block child should have 30px height and be present
+        let has_30px_child = container_frag.children.iter().any(|f| f.size.height.to_i32() == 30);
+        assert!(
+            has_30px_child,
+            "Block child with height 30px should be present in fragment tree"
+        );
+    }
+
+    // ── Issue 4: Span with display:inline-block is atomic inline ─────
+
+    #[test]
+    fn span_inline_block_is_atomic_inline() {
+        // A <span> with display: inline-block should be treated as an
+        // atomic inline, not flattened as a regular inline container.
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let span = doc.create_node(ElementTag::Span);
+        doc.node_mut(span).style.display = Display::InlineBlock;
+        doc.node_mut(span).style.width = Length::px(50.0);
+        doc.node_mut(span).style.height = Length::px(20.0);
+        doc.append_child(container, span);
+
+        let space = ConstraintSpace::for_root(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+        );
+        let fragment = block_layout(&doc, vp, &space);
+        let container_frag = &fragment.children[0];
+
+        // Should produce line boxes (inline formatting context)
+        assert!(
+            !container_frag.children.is_empty(),
+            "Container with inline-block span should produce line boxes"
+        );
     }
 }

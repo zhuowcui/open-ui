@@ -34,6 +34,9 @@ pub struct LineInfo {
 
     /// Whether this line has been truncated with an ellipsis.
     pub has_ellipsis: bool,
+
+    /// Whether the ellipsis should appear at the start (left) of the line (RTL).
+    pub ellipsis_at_start: bool,
 }
 
 impl LineInfo {
@@ -47,6 +50,7 @@ impl LineInfo {
             is_last_line: false,
             text_align: TextAlign::Start,
             has_ellipsis: false,
+            ellipsis_at_start: false,
         }
     }
 

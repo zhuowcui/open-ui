@@ -11,7 +11,7 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, TextTransform, WhiteSpace};
+use openui_style::{ComputedStyle, Direction, Display, TextTransform, WhiteSpace};
 use openui_text::{
     apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
 };
@@ -195,6 +195,26 @@ impl<'a> InlineItemsBuilder<'a> {
         }
     }
 
+    /// Collect inline items from a specific set of child node IDs.
+    ///
+    /// Used by anonymous block box wrapping (CSS 2.2 §9.2.1.1) when only
+    /// a subset of children should participate in the inline formatting context.
+    pub fn collect_for_children(
+        doc: &Document,
+        _block_node_id: NodeId,
+        children: &[NodeId],
+    ) -> InlineItemsData {
+        let mut builder = InlineItemsBuilder::new(doc);
+        for &child_id in children {
+            builder.collect_single_child(child_id);
+        }
+        InlineItemsData {
+            text: builder.text,
+            items: builder.items,
+            styles: builder.styles,
+        }
+    }
+
     /// Get or insert a style, returning its index.
     fn intern_style(&mut self, style: &ComputedStyle) -> usize {
         // Simple linear scan — inline item counts are small.
@@ -207,32 +227,43 @@ impl<'a> InlineItemsBuilder<'a> {
     /// Walk children of a node and collect inline items.
     fn collect_children(&mut self, parent_id: NodeId) {
         for child_id in self.doc.children(parent_id).collect::<Vec<_>>() {
-            let node = self.doc.node(child_id);
-            match node.tag {
-                ElementTag::Text => {
-                    if let Some(ref text) = node.text {
-                        let style = node.style.clone();
-                        self.append_text(child_id, text, &style);
-                    }
-                }
-                ElementTag::Span => {
+            self.collect_single_child(child_id);
+        }
+    }
+
+    /// Process a single child node into inline items.
+    fn collect_single_child(&mut self, child_id: NodeId) {
+        let node = self.doc.node(child_id);
+        match node.tag {
+            ElementTag::Text => {
+                if let Some(ref text) = node.text {
                     let style = node.style.clone();
+                    self.append_text(child_id, text, &style);
+                }
+            }
+            ElementTag::Span => {
+                let display = node.style.display;
+                let style = node.style.clone();
+                if display == Display::InlineBlock
+                    || display == Display::InlineFlex
+                    || display == Display::InlineGrid
+                {
+                    self.append_atomic_inline(child_id, &style);
+                } else {
                     self.enter_inline(child_id, &style);
                     self.collect_children(child_id);
                     self.exit_inline(child_id, &style);
                 }
-                ElementTag::Div => {
-                    // Check if this is inline-level
-                    let display = node.style.display;
-                    if display.is_inline_level() {
-                        let style = node.style.clone();
-                        self.append_atomic_inline(child_id, &style);
-                    }
-                    // Block-in-inline: not handled in this wave
+            }
+            ElementTag::Div => {
+                let display = node.style.display;
+                if display.is_inline_level() {
+                    let style = node.style.clone();
+                    self.append_atomic_inline(child_id, &style);
                 }
-                ElementTag::Viewport => {
-                    // Should not appear as a child in inline context
-                }
+            }
+            ElementTag::Viewport => {
+                // Should not appear as a child in inline context
             }
         }
     }

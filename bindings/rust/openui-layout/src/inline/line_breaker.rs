@@ -617,8 +617,14 @@ pub fn find_break_opportunities(
             text.char_indices().map(|(i, _)| i).skip(1).collect()
         }
         WordBreak::KeepAll => {
-            // Only break at spaces — keep words together including CJK
-            find_space_breaks(text)
+            // Start from normal UAX#14 breaks, but suppress CJK-specific
+            // break opportunities (breaks between two CJK characters).
+            // Non-CJK breaks (hyphens, after-punctuation, etc.) are kept.
+            let all_breaks = find_uax14_breaks(text);
+            all_breaks
+                .into_iter()
+                .filter(|&pos| !is_cjk_break(text, pos))
+                .collect()
         }
     }
 }
@@ -644,7 +650,8 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
     breaks
 }
 
-/// Find break opportunities only at spaces (for `word-break: keep-all`).
+/// Find break opportunities only at spaces (used internally for tests).
+#[allow(dead_code)]
 fn find_space_breaks(text: &str) -> Vec<usize> {
     let mut breaks = Vec::new();
     let chars: Vec<(usize, char)> = text.char_indices().collect();
@@ -656,6 +663,57 @@ fn find_space_breaks(text: &str) -> Vec<usize> {
         }
     }
     breaks
+}
+
+/// Check if a break opportunity at `byte_pos` is a CJK-specific break
+/// (i.e., both the character before and after the break are CJK).
+///
+/// CSS Text Level 3: `word-break: keep-all` suppresses only soft wrap
+/// opportunities between CJK characters; non-CJK breaks are preserved.
+fn is_cjk_break(text: &str, byte_pos: usize) -> bool {
+    let before = text[..byte_pos].chars().next_back();
+    let after = text[byte_pos..].chars().next();
+    match (before, after) {
+        (Some(b), Some(a)) => is_cjk_character(b) && is_cjk_character(a),
+        _ => false,
+    }
+}
+
+/// Check if a character belongs to a CJK script block.
+fn is_cjk_character(ch: char) -> bool {
+    let c = ch as u32;
+    // CJK Unified Ideographs
+    (0x4E00..=0x9FFF).contains(&c)
+    // CJK Extension A
+    || (0x3400..=0x4DBF).contains(&c)
+    // CJK Extension B
+    || (0x20000..=0x2A6DF).contains(&c)
+    // CJK Extension C-G
+    || (0x2A700..=0x2CEAF).contains(&c)
+    // CJK Compatibility Ideographs
+    || (0xF900..=0xFAFF).contains(&c)
+    // Hangul Syllables
+    || (0xAC00..=0xD7AF).contains(&c)
+    // Hangul Jamo
+    || (0x1100..=0x11FF).contains(&c)
+    // Hangul Compatibility Jamo
+    || (0x3130..=0x318F).contains(&c)
+    // Hiragana
+    || (0x3040..=0x309F).contains(&c)
+    // Katakana
+    || (0x30A0..=0x30FF).contains(&c)
+    // Katakana Phonetic Extensions
+    || (0x31F0..=0x31FF).contains(&c)
+    // CJK Radicals Supplement
+    || (0x2E80..=0x2EFF).contains(&c)
+    // Kangxi Radicals
+    || (0x2F00..=0x2FDF).contains(&c)
+    // CJK Symbols and Punctuation
+    || (0x3000..=0x303F).contains(&c)
+    // Bopomofo
+    || (0x3100..=0x312F).contains(&c)
+    // Yi Syllables
+    || (0xA000..=0xA48F).contains(&c)
 }
 
 /// Check if text contains forced newlines that should be treated as line breaks.
@@ -974,5 +1032,64 @@ mod tests {
             line.used_width, expected_width,
             "used_width should subtract width of 1 trailing space"
         );
+    }
+
+    // ── Issue 6: keep-all allows hyphen breaks in Latin text ─────────
+
+    #[test]
+    fn keep_all_allows_hyphen_breaks() {
+        // word-break: keep-all should allow breaks after hyphens in Latin text.
+        // Only CJK soft wrap opportunities should be suppressed.
+        let breaks = find_break_opportunities("well-known", WordBreak::KeepAll, OverflowWrap::Normal);
+        assert!(
+            breaks.contains(&5),
+            "keep-all should allow break after hyphen in Latin text, got: {:?}",
+            breaks,
+        );
+    }
+
+    #[test]
+    fn keep_all_suppresses_cjk_breaks() {
+        // keep-all should suppress breaks between CJK characters.
+        // "漢字" = two CJK ideographs (U+6F22, U+5B57)
+        let normal_breaks = find_break_opportunities("漢字", WordBreak::Normal, OverflowWrap::Normal);
+        let keepall_breaks = find_break_opportunities("漢字", WordBreak::KeepAll, OverflowWrap::Normal);
+
+        // Normal should allow a break between the two CJK characters.
+        // KeepAll should suppress it.
+        assert!(
+            keepall_breaks.len() < normal_breaks.len() || keepall_breaks.is_empty(),
+            "keep-all should suppress CJK break opportunities: normal={:?}, keepall={:?}",
+            normal_breaks,
+            keepall_breaks,
+        );
+    }
+
+    #[test]
+    fn keep_all_allows_space_breaks() {
+        // keep-all should still allow breaks at spaces.
+        let breaks = find_break_opportunities("hello world", WordBreak::KeepAll, OverflowWrap::Normal);
+        assert!(
+            breaks.contains(&6),
+            "keep-all should allow break after space, got: {:?}",
+            breaks,
+        );
+    }
+
+    #[test]
+    fn is_cjk_character_detection() {
+        // CJK Unified Ideographs
+        assert!(is_cjk_character('漢')); // U+6F22
+        assert!(is_cjk_character('字')); // U+5B57
+        // Hiragana
+        assert!(is_cjk_character('あ')); // U+3042
+        // Katakana
+        assert!(is_cjk_character('ア')); // U+30A2
+        // Hangul
+        assert!(is_cjk_character('한')); // U+D55C
+        // Latin should NOT be CJK
+        assert!(!is_cjk_character('A'));
+        assert!(!is_cjk_character('-'));
+        assert!(!is_cjk_character(' '));
     }
 }
