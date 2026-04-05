@@ -5,9 +5,10 @@
 //! needed to select and configure a typeface.
 
 use openui_style::{
-    FontFamilyList, FontOpticalSizing, FontSmoothing, FontStretch, FontStyleEnum, FontSynthesis,
-    FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantLigatures,
-    FontVariantNumeric, FontVariantPosition, FontWeight, TextRendering, FontFeature, FontVariation,
+    FontFamilyList, FontOpticalSizing, FontOrientation, FontSmoothing, FontStretch, FontStyleEnum,
+    FontSynthesis, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian,
+    FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontWeight, TextRendering,
+    FontFeature, FontVariation,
 };
 
 /// Complete description of desired font properties, derived from CSS.
@@ -60,6 +61,12 @@ pub struct FontDescription {
     pub font_synthesis_style: FontSynthesis,
     /// Optical sizing mode (CSS `font-optical-sizing`).
     pub font_optical_sizing: FontOpticalSizing,
+    /// Resolved font orientation for vertical text layout.
+    ///
+    /// Derived from `writing-mode` + `text-orientation`. Controls whether
+    /// glyphs are rendered upright, rotated, or in mixed mode. Defaults to
+    /// `Horizontal` (standard left-to-right flow).
+    pub orientation: FontOrientation,
 }
 
 impl FontDescription {
@@ -88,6 +95,7 @@ impl FontDescription {
             font_synthesis_weight: FontSynthesis::Auto,
             font_synthesis_style: FontSynthesis::Auto,
             font_optical_sizing: FontOpticalSizing::Auto,
+            orientation: FontOrientation::Horizontal,
         }
     }
 

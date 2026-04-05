@@ -137,5 +137,11 @@ pub fn style_to_font_description(style: &ComputedStyle) -> openui_text::FontDesc
         font_synthesis_weight: style.font_synthesis_weight,
         font_synthesis_style: style.font_synthesis_style,
         font_optical_sizing: style.font_optical_sizing,
+        variant_ligatures: style.font_variant_ligatures,
+        variant_numeric: style.font_variant_numeric,
+        variant_east_asian: style.font_variant_east_asian,
+        variant_position: style.font_variant_position,
+        variant_alternates: style.font_variant_alternates,
+        orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
     }
 }

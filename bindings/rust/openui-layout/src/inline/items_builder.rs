@@ -387,6 +387,7 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
         font_synthesis_weight: style.font_synthesis_weight,
         font_synthesis_style: style.font_synthesis_style,
         font_optical_sizing: style.font_optical_sizing,
+        orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
     }
 }
 

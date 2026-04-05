@@ -3,6 +3,8 @@
 //! Source: out/Release/gen/third_party/blink/renderer/core/style/computed_style_base_constants.h
 //! and core/style/computed_style_constants.h
 
+use openui_geometry::WritingDirectionMode;
+
 /// CSS `display` property.
 /// Blink stores this in 6 bits (35 values). We implement the commonly used subset.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -256,6 +258,30 @@ impl Direction {
 
 impl Default for Direction {
     fn default() -> Self { Self::INITIAL }
+}
+
+impl Direction {
+    /// Create a `WritingDirectionMode` combining this direction with a writing mode.
+    ///
+    /// This bridges the style enums to the geometry converter without
+    /// creating a circular dependency.
+    #[inline]
+    pub fn writing_direction(self, wm: WritingMode) -> WritingDirectionMode {
+        WritingDirectionMode::new(
+            wm.is_horizontal(),
+            wm.is_flipped_blocks(),
+            wm.is_flipped_lines(),
+            self == Direction::Rtl,
+        )
+    }
+}
+
+impl WritingMode {
+    /// Create a `WritingDirectionMode` combining this writing mode with a direction.
+    #[inline]
+    pub fn to_writing_direction(self, dir: Direction) -> WritingDirectionMode {
+        dir.writing_direction(self)
+    }
 }
 
 /// CSS `visibility` property (inherited).
@@ -1135,4 +1161,69 @@ impl TextCombineUpright {
 
 impl Default for TextCombineUpright {
     fn default() -> Self { Self::INITIAL }
+}
+
+// ── Font Orientation (from WritingMode + TextOrientation) ───────────────
+
+/// Resolved font orientation — determines how glyphs are laid out in the
+/// inline direction.
+///
+/// Derived from the combination of `writing-mode` and `text-orientation`.
+/// Blink: `FontOrientation` in `platform/fonts/font_orientation.h`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FontOrientation {
+    /// Horizontal layout — standard for `writing-mode: horizontal-tb`.
+    Horizontal = 0,
+    /// All glyphs rotated 90° clockwise — `text-orientation: sideways` or
+    /// `sideways-rl` / `sideways-lr` writing modes.
+    VerticalRotated = 1,
+    /// CJK glyphs upright, other scripts rotated — `text-orientation: mixed`
+    /// (the default for vertical writing modes).
+    VerticalMixed = 2,
+    /// All glyphs upright — `text-orientation: upright`.
+    VerticalUpright = 3,
+}
+
+impl FontOrientation {
+    /// True when the font uses vertical metrics (upright or mixed modes
+    /// for characters that are upright).
+    #[inline]
+    pub fn is_vertical(self) -> bool {
+        !matches!(self, Self::Horizontal)
+    }
+
+    /// True when all glyphs are rotated (horizontal or sideways).
+    /// HarfBuzz should shape with `HB_DIRECTION_LTR` and the canvas
+    /// rotation handles the vertical appearance.
+    #[inline]
+    pub fn uses_horizontal_shaping(self) -> bool {
+        matches!(self, Self::Horizontal | Self::VerticalRotated)
+    }
+
+    /// True when at least some glyphs use vertical metrics.
+    #[inline]
+    pub fn uses_vertical_metrics(self) -> bool {
+        matches!(self, Self::VerticalMixed | Self::VerticalUpright)
+    }
+}
+
+impl Default for FontOrientation {
+    fn default() -> Self { Self::Horizontal }
+}
+
+/// Derive the font orientation from CSS `writing-mode` and `text-orientation`.
+///
+/// Blink: `ComputedStyleUtils::ResolvedFontOrientation` and
+/// `FontOrientation` constructor logic in `font_description.h`.
+pub fn font_orientation(writing_mode: WritingMode, text_orientation: TextOrientation) -> FontOrientation {
+    if writing_mode.is_horizontal() {
+        FontOrientation::Horizontal
+    } else {
+        match text_orientation {
+            TextOrientation::Mixed => FontOrientation::VerticalMixed,
+            TextOrientation::Upright => FontOrientation::VerticalUpright,
+            TextOrientation::Sideways => FontOrientation::VerticalRotated,
+        }
+    }
 }

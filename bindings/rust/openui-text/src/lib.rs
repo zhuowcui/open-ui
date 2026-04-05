@@ -14,12 +14,15 @@
 //! - Text transform (uppercase, lowercase, capitalize, full-width)
 
 pub mod bidi;
+pub mod char_orientation;
 pub mod emphasis;
 pub mod font;
+pub mod hyphenation;
 pub mod shaping;
 pub mod transform;
 
 pub use bidi::{BidiParagraph, BidiRun};
+pub use char_orientation::is_upright_in_mixed_vertical;
 pub use emphasis::{
     ResolvedEmphasisMark, default_mark_for_writing_mode, default_position_for_writing_mode,
     resolve_emphasis_mark, should_draw_emphasis_mark,
@@ -34,4 +37,9 @@ pub use font::features::collect_font_features;
 pub use shaping::{
     RunSegment, RunSegmenter, ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection,
     TextShaper,
+};
+
+pub use hyphenation::{
+    Hyphenation, SOFT_HYPHEN, find_soft_hyphens, is_soft_hyphen, last_soft_hyphen_before,
+    strip_soft_hyphens,
 };
