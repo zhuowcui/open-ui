@@ -9,8 +9,8 @@ use openui_style::TextTransform;
 
 #[test]
 fn int_line_spacing_sum_of_rounds_blink_example() {
-    // Blink: round(10.4)=10, round(4.4)=4, round(0.3)=0 → 14
-    // Old code: round(10.4 + 4.4 + 0.3) = round(15.1) = 15
+    // Blink: lroundf(ascent) + lroundf(descent) + lroundf(line_gap) — simple_font_data.cc:175
+    // round(10.4) + round(4.4) + round(0.3) = 10.0 + 4.0 + 0.0 = 14.0
     let m = FontMetrics {
         ascent: 10.4,
         descent: 4.4,
@@ -22,8 +22,7 @@ fn int_line_spacing_sum_of_rounds_blink_example() {
 
 #[test]
 fn int_line_spacing_sum_of_rounds_half_values() {
-    // round(10.5)=11, round(4.5)=5, round(0.5)=1 → 17
-    // Old: round(15.5) = 16
+    // Blink: round(10.5) + round(4.5) + round(0.5) = 11.0 + 5.0 + 1.0 = 17.0
     let m = FontMetrics {
         ascent: 10.5,
         descent: 4.5,

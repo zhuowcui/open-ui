@@ -78,10 +78,10 @@ impl FontMetrics {
         self.descent.round()
     }
 
-    /// Rounded line spacing: sum of individually rounded metrics.
+    /// Rounded line spacing matching Blink's behavior.
     ///
-    /// Blink rounds each metric first, then sums:
-    /// `SkScalarRoundToInt(ascent) + SkScalarRoundToInt(descent) + SkScalarRoundToInt(leading)`.
+    /// Blink: lroundf(ascent) + lroundf(descent) + lroundf(line_gap) — simple_font_data.cc:175
+    /// Each metric is rounded individually, then summed.
     #[inline]
     pub fn int_line_spacing(&self) -> f32 {
         self.int_ascent() + self.int_descent() + self.line_gap.round()

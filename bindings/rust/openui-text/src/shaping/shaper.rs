@@ -644,18 +644,86 @@ impl TextShaper {
                 break; // This segment is handled.
             }
 
-            // Platform fallback: ask the OS for a font covering the first
-            // missing character. Blink: FontCache::PlatformFallbackFontForCharacter.
+            // Platform fallback: ask the OS for fonts covering missing characters.
+            // Blink: FontCache::PlatformFallbackFontForCharacter.
+            //
+            // Unlike the font-family fallback above (which tries the first
+            // missing char), platform fallback iterates: after shaping with
+            // a fallback font, any remaining .notdef glyphs trigger another
+            // round of fallback with a different font, until all characters
+            // are covered or no more fonts are available.
             if !segment_handled {
-                let first_missing = chars[*seg_char_start];
                 let desc = font.description();
-                let platform_data = {
-                    let mut cache = crate::font::cache::GLOBAL_FONT_CACHE
-                        .lock()
-                        .unwrap_or_else(|p| p.into_inner());
-                    cache.platform_fallback_for_character(first_missing, desc)
-                };
-                if let Some(fb_data) = platform_data {
+                let mut remaining_start = *seg_char_start;
+                let mut tried_codepoints: Vec<char> = Vec::new();
+
+                while remaining_start < *seg_char_end {
+                    // Find the first character in the remaining range that
+                    // still has a .notdef glyph (glyph ID 0) in the result.
+                    let first_missing_char = {
+                        let mut found = None;
+                        for ci in remaining_start..*seg_char_end {
+                            // Check if this character's glyph is .notdef in current result.
+                            let is_notdef = result.runs.iter().any(|r| {
+                                let run_end = r.start_index + r.num_characters;
+                                if ci >= r.start_index && ci < run_end {
+                                    let local = ci - r.start_index;
+                                    if r.num_glyphs == r.num_characters {
+                                        // For RTL runs with cluster data, glyphs are
+                                        // in visual order — find the glyph via cluster
+                                        // mapping rather than using direct index.
+                                        if !r.clusters.is_empty() {
+                                            (0..r.num_glyphs)
+                                                .find(|&gi| r.clusters[gi] == local)
+                                                .map(|gi| r.glyphs[gi])
+                                                .unwrap_or(0) == 0
+                                        } else {
+                                            r.glyphs.get(local).copied() == Some(0)
+                                        }
+                                    } else if !r.clusters.is_empty() {
+                                        r.clusters.iter().enumerate().any(|(gi, &c)| {
+                                            c == local && r.glyphs.get(gi).copied() == Some(0)
+                                        })
+                                    } else {
+                                        false
+                                    }
+                                } else {
+                                    false
+                                }
+                            });
+                            if is_notdef {
+                                found = Some((ci, chars[ci]));
+                                break;
+                            }
+                        }
+                        found
+                    };
+
+                    let (missing_idx, missing_char) = match first_missing_char {
+                        Some(v) => v,
+                        None => break, // All characters covered.
+                    };
+
+                    // Avoid infinite loops: if we already tried this codepoint,
+                    // skip it and continue searching for other missing chars.
+                    if tried_codepoints.contains(&missing_char) {
+                        remaining_start = missing_idx + 1;
+                        continue;
+                    }
+                    tried_codepoints.push(missing_char);
+
+                    let platform_data = {
+                        let mut cache = crate::font::cache::GLOBAL_FONT_CACHE
+                            .lock()
+                            .unwrap_or_else(|p| p.into_inner());
+                        cache.platform_fallback_for_character(missing_char, desc)
+                    };
+
+                    let fb_data = match platform_data {
+                        Some(d) => d,
+                        None => break, // No more platform fonts available.
+                    };
+
                     let fb_sk_font = fb_data.sk_font();
                     let fb_data_clone = Arc::clone(&fb_data);
                     let segment_text_owned = segment_text.to_string();
@@ -671,21 +739,29 @@ impl TextShaper {
                         );
                         fb_collector.into_shape_result(&segment_text_owned)
                     }));
+
                     if let Ok(fb_result) = fb_result {
                         let has_real_glyphs = fb_result
                             .runs
                             .iter()
                             .any(|r| r.glyphs.iter().any(|&g| g != 0));
                         if has_real_glyphs && !fb_result.runs.is_empty() {
-                            Self::splice_fallback_runs(
+                            // Only splice sub-ranges where the fallback has non-.notdef
+                            // glyphs AND the current result still has .notdef. This
+                            // prevents overwriting characters already resolved by a
+                            // previous fallback font.
+                            Self::selective_splice_fallback_runs(
                                 result,
                                 *seg_char_start,
                                 *seg_char_end,
-                                fb_result,
+                                &fb_result,
                                 Arc::clone(&fb_data),
                             );
                         }
                     }
+
+                    // Advance past this character to continue searching.
+                    remaining_start = missing_idx + 1;
                 }
             }
         }
@@ -796,6 +872,176 @@ impl TextShaper {
         // Sort runs by start_index.
         new_runs.sort_by_key(|r| r.start_index);
         result.runs = new_runs;
+    }
+
+    /// Selectively splice fallback runs: only replace character ranges where
+    /// the current result has .notdef AND the fallback has valid glyphs.
+    /// This prevents a later fallback font from overwriting characters already
+    /// resolved by an earlier fallback.
+    fn selective_splice_fallback_runs(
+        result: &mut ShapeResult,
+        seg_char_start: usize,
+        seg_char_end: usize,
+        fb_result: &ShapeResult,
+        fb_font_data: Arc<FontPlatformData>,
+    ) {
+        // Determine which characters in [seg_char_start..seg_char_end] are
+        // currently .notdef in the result.
+        let mut is_notdef_current = vec![false; seg_char_end - seg_char_start];
+        for ci in seg_char_start..seg_char_end {
+            let local_seg = ci - seg_char_start;
+            for r in result.runs.iter() {
+                let run_end = r.start_index + r.num_characters;
+                if ci >= r.start_index && ci < run_end {
+                    let local = ci - r.start_index;
+                    let glyph_is_notdef = if r.num_glyphs == r.num_characters {
+                        if !r.clusters.is_empty() {
+                            (0..r.num_glyphs)
+                                .find(|&gi| Self::char_in_cluster_span(&r.clusters, gi, r.num_characters, local))
+                                .map(|gi| r.glyphs[gi])
+                                .unwrap_or(0) == 0
+                        } else {
+                            r.glyphs.get(local).copied() == Some(0)
+                        }
+                    } else if !r.clusters.is_empty() {
+                        !r.clusters.iter().enumerate().any(|(gi, &_c)| {
+                            Self::char_in_cluster_span(&r.clusters, gi, r.num_characters, local)
+                                && r.glyphs.get(gi).copied().unwrap_or(0) != 0
+                        })
+                    } else {
+                        false
+                    };
+                    if glyph_is_notdef {
+                        is_notdef_current[local_seg] = true;
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Determine which characters the fallback has valid (non-.notdef) glyphs for.
+        let mut fb_has_glyph = vec![false; seg_char_end - seg_char_start];
+        for r in fb_result.runs.iter() {
+            let fb_run_abs_start = seg_char_start + r.start_index;
+            for ci_local in 0..r.num_characters {
+                let abs_ci = fb_run_abs_start + ci_local;
+                if abs_ci >= seg_char_end {
+                    break;
+                }
+                let seg_local = abs_ci - seg_char_start;
+                let glyph_ok = if r.num_glyphs == r.num_characters {
+                    if !r.clusters.is_empty() {
+                        (0..r.num_glyphs)
+                            .find(|&gi| Self::char_in_cluster_span(&r.clusters, gi, r.num_characters, ci_local))
+                            .map(|gi| r.glyphs[gi] != 0)
+                            .unwrap_or(false)
+                    } else {
+                        r.glyphs.get(ci_local).copied().unwrap_or(0) != 0
+                    }
+                } else if !r.clusters.is_empty() {
+                    r.clusters.iter().enumerate().any(|(gi, &_c)| {
+                        Self::char_in_cluster_span(&r.clusters, gi, r.num_characters, ci_local)
+                            && r.glyphs.get(gi).copied().unwrap_or(0) != 0
+                    })
+                } else {
+                    false
+                };
+                if glyph_ok {
+                    fb_has_glyph[seg_local] = true;
+                }
+            }
+        }
+
+        // Find contiguous sub-ranges where both conditions hold.
+        let mut i = 0;
+        while i < is_notdef_current.len() {
+            if is_notdef_current[i] && fb_has_glyph[i] {
+                let start = i;
+                while i < is_notdef_current.len() && is_notdef_current[i] && fb_has_glyph[i] {
+                    i += 1;
+                }
+                let sub_start = seg_char_start + start;
+                let sub_end = seg_char_start + i;
+                // Build a sub-result from the fallback covering [sub_start..sub_end].
+                let sub_fb = Self::extract_sub_result(fb_result, seg_char_start, sub_start, sub_end);
+                Self::splice_fallback_runs(
+                    result,
+                    sub_start,
+                    sub_end,
+                    sub_fb,
+                    Arc::clone(&fb_font_data),
+                );
+            } else {
+                i += 1;
+            }
+        }
+    }
+
+    /// Check if character `local` falls within the cluster span of glyph `gi`.
+    /// A glyph at cluster `c` covers characters [c, next_distinct_cluster),
+    /// where next_distinct_cluster is the smallest value > c in the cluster
+    /// array, or `num_characters` if none exists.
+    fn char_in_cluster_span(clusters: &[usize], gi: usize, num_characters: usize, local: usize) -> bool {
+        let base = clusters[gi];
+        if local < base {
+            return false;
+        }
+        let mut end = num_characters;
+        for &c in clusters.iter() {
+            if c > base && c < end {
+                end = c;
+            }
+        }
+        local < end
+    }
+
+    /// Extract a sub-ShapeResult from `fb_result` covering character range
+    /// [sub_start..sub_end] (absolute indices). `fb_base` is the absolute
+    /// start index the fb_result's runs are offset from.
+    fn extract_sub_result(
+        fb_result: &ShapeResult,
+        fb_base: usize,
+        sub_start: usize,
+        sub_end: usize,
+    ) -> ShapeResult {
+        let mut runs = Vec::new();
+        for r in &fb_result.runs {
+            let abs_run_start = fb_base + r.start_index;
+            let abs_run_end = abs_run_start + r.num_characters;
+            // Check overlap with [sub_start..sub_end].
+            if abs_run_end <= sub_start || abs_run_start >= sub_end {
+                continue;
+            }
+            let overlap_start = sub_start.max(abs_run_start);
+            let overlap_end = sub_end.min(abs_run_end);
+            let local_start = overlap_start - abs_run_start;
+            let local_end = overlap_end - abs_run_start;
+            let (gs, ge) = ShapeResult::glyph_range_for_char_range(r, local_start, local_end);
+            if gs < ge {
+                let new_start_index = overlap_start - sub_start;
+                runs.push(ShapeResultRun {
+                    font_data: Arc::clone(&r.font_data),
+                    glyphs: r.glyphs[gs..ge].to_vec(),
+                    advances: r.advances[gs..ge].to_vec(),
+                    offsets: r.offsets[gs..ge].to_vec(),
+                    clusters: r.clusters[gs..ge]
+                        .iter()
+                        .map(|c| c.saturating_sub(local_start))
+                        .collect(),
+                    start_index: new_start_index,
+                    num_characters: overlap_end - overlap_start,
+                    num_glyphs: ge - gs,
+                    direction: r.direction,
+                });
+            }
+        }
+        ShapeResult {
+            runs,
+            width: 0.0,
+            num_characters: sub_end - sub_start,
+            direction: fb_result.direction,
+            character_data: Vec::new(),
+        }
     }
 
     /// Rebuild width and character_data from the current runs.
@@ -938,8 +1184,15 @@ impl TextShaper {
 
             if run.num_glyphs == run_chars {
                 // 1:1 mapping — apply per glyph directly.
+                // For RTL runs, glyphs are in visual (reversed) order so glyph i
+                // does NOT correspond to character run_start + i. Use cluster data
+                // when available to get the correct logical character index.
                 for i in 0..run.num_glyphs {
-                    let char_idx = run_start + i;
+                    let char_idx = if !run.clusters.is_empty() {
+                        run_start + run.clusters[i] as usize
+                    } else {
+                        run_start + i
+                    };
                     if char_idx < num_chars {
                         run.advances[i] += extra_advance_per_char[char_idx];
                         total_extra += extra_advance_per_char[char_idx];
@@ -1014,6 +1267,16 @@ impl TextShaper {
             if char_idx >= run_start && char_idx < run_end {
                 let local_idx = char_idx - run_start;
                 if run.num_glyphs == run.num_characters {
+                    // For RTL runs, glyphs are in visual order so glyph
+                    // local_idx may map to a different character. Use cluster
+                    // data when available to find the correct glyph.
+                    if !run.clusters.is_empty() {
+                        for gi in 0..run.num_glyphs {
+                            if run.clusters[gi] == local_idx {
+                                return run.advances[gi];
+                            }
+                        }
+                    }
                     return run.advances[local_idx];
                 } else {
                     // Non-1:1 mapping: use cluster data for precise advance.

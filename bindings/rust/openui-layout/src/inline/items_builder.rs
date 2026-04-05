@@ -713,7 +713,8 @@ impl<'a> InlineItemsBuilder<'a> {
 
     /// Recursive helper: returns (accumulated_width, has_content).
     fn compute_intrinsic_inline_size_recursive(&self, node_id: NodeId) -> (f32, bool) {
-        let mut total_width = 0.0f32;
+        let mut max_width = 0.0f32;
+        let mut current_inline_row = 0.0f32;
         let mut has_content = false;
 
         let shaper = TextShaper::new();
@@ -738,14 +739,38 @@ impl<'a> InlineItemsBuilder<'a> {
                 ElementTag::Text => {
                     if let Some(ref text) = child.text {
                         if !text.is_empty() {
-                            // Issue 5: Apply the same text preprocessing as real layout.
                             let processed = preprocess_text_for_shaping(text, &child.style);
                             if !processed.is_empty() {
                                 has_content = true;
                                 let font_desc = style_to_font_description(&child.style);
                                 let font = Font::new(font_desc);
-                                let sr = shaper.shape(&processed, &font, TextDirection::Ltr);
-                                total_width += sr.width();
+
+                                // For white-space modes that preserve newlines,
+                                // split on \n so each line is measured separately.
+                                let preserves_nl = matches!(
+                                    child.style.white_space,
+                                    WhiteSpace::Pre
+                                        | WhiteSpace::PreWrap
+                                        | WhiteSpace::BreakSpaces
+                                        | WhiteSpace::PreLine
+                                );
+                                if preserves_nl && processed.contains('\n') {
+                                    let lines: Vec<&str> = processed.split('\n').collect();
+                                    for (i, line) in lines.iter().enumerate() {
+                                        if !line.is_empty() {
+                                            let sr = shaper.shape(line, &font, TextDirection::Ltr);
+                                            current_inline_row += sr.width();
+                                        }
+                                        // Flush at newline boundary (except after the last segment)
+                                        if i < lines.len() - 1 {
+                                            max_width = max_width.max(current_inline_row);
+                                            current_inline_row = 0.0;
+                                        }
+                                    }
+                                } else {
+                                    let sr = shaper.shape(&processed, &font, TextDirection::Ltr);
+                                    current_inline_row += sr.width();
+                                }
                             }
                         }
                     }
@@ -768,31 +793,58 @@ impl<'a> InlineItemsBuilder<'a> {
                         .to_f32();
                     let child_bp = bp_left + bp_right;
 
-                    // Use explicit width if available.
-                    if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
+                    // Non-zero border+padding is itself content even if the
+                    // descendant has no text or children.
+                    if child_bp > 0.0 {
                         has_content = true;
-                        total_width += child_style.width.value() + child_bp;
-                    } else {
-                        // Recurse into child to find nested text/content.
-                        let (child_width, child_has_content) =
-                            self.compute_intrinsic_inline_size_recursive(child_id);
-                        if child_has_content {
+                    }
+
+                    if child_style.display.is_block_level() {
+                        // Flush current inline row before block child.
+                        max_width = max_width.max(current_inline_row);
+                        current_inline_row = 0.0;
+
+                        // Block-level children stack vertically → take max width.
+                        let child_total = if child_style.width.length_type()
+                            == openui_geometry::LengthType::Fixed
+                        {
                             has_content = true;
-                            // Block-level children stack vertically → take max width.
-                            // Inline-level children flow horizontally → sum widths.
-                            let child_total = child_width + child_bp;
-                            if child_style.display == Display::Block {
-                                total_width = total_width.max(child_total);
-                            } else {
-                                total_width += child_total;
+                            child_style.width.value() + child_bp
+                        } else {
+                            let (child_width, child_has_content) =
+                                self.compute_intrinsic_inline_size_recursive(child_id);
+                            if child_has_content {
+                                has_content = true;
                             }
+                            child_width + child_bp
+                        };
+                        max_width = max_width.max(child_total);
+                    } else {
+                        // Inline-level children flow horizontally → sum widths.
+                        if child_style.width.length_type()
+                            == openui_geometry::LengthType::Fixed
+                        {
+                            has_content = true;
+                            current_inline_row += child_style.width.value() + child_bp;
+                        } else {
+                            let (child_width, child_has_content) =
+                                self.compute_intrinsic_inline_size_recursive(child_id);
+                            if child_has_content {
+                                has_content = true;
+                            }
+                            // Always add border+padding; add child_width only if child has content.
+                            let contrib = if child_has_content { child_width + child_bp } else { child_bp };
+                            current_inline_row += contrib;
                         }
                     }
                 }
             }
         }
 
-        (total_width, has_content)
+        // Flush final inline row.
+        max_width = max_width.max(current_inline_row);
+
+        (max_width, has_content)
     }
 
     /// Handle a forced line break.
@@ -1400,6 +1452,456 @@ mod tests {
         assert_eq!(
             size_collapsed, size_single_space,
             "collapsed 'a     b' should have same width as 'a b'"
+        );
+    }
+
+    // ── SP11 Round 27 Issue 5: block-level descendants use max (not sum) ──
+
+    #[test]
+    fn intrinsic_size_flex_children_use_max_not_sum() {
+        // Two Flex children (100px, 200px) should take max=200, not sum=300.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let child1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child1).style.display = Display::Flex;
+        doc.node_mut(child1).style.width = openui_geometry::Length::px(100.0);
+        doc.append_child(container, child1);
+
+        let child2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child2).style.display = Display::Flex;
+        doc.node_mut(child2).style.width = openui_geometry::Length::px(200.0);
+        doc.append_child(container, child2);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some(), "Should have intrinsic size");
+        let width = size.unwrap();
+        assert!(
+            (width - 200.0).abs() < 0.01,
+            "Flex block-level children should use max width: expected ~200.0, got {}",
+            width
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_grid_children_use_max_not_sum() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let child1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child1).style.display = Display::Grid;
+        doc.node_mut(child1).style.width = openui_geometry::Length::px(150.0);
+        doc.append_child(container, child1);
+
+        let child2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child2).style.display = Display::Grid;
+        doc.node_mut(child2).style.width = openui_geometry::Length::px(250.0);
+        doc.append_child(container, child2);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some());
+        let width = size.unwrap();
+        assert!(
+            (width - 250.0).abs() < 0.01,
+            "Grid block-level children should use max width: expected ~250.0, got {}",
+            width
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_flow_root_children_use_max() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let child1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child1).style.display = Display::FlowRoot;
+        doc.node_mut(child1).style.width = openui_geometry::Length::px(80.0);
+        doc.append_child(container, child1);
+
+        let child2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child2).style.display = Display::FlowRoot;
+        doc.node_mut(child2).style.width = openui_geometry::Length::px(120.0);
+        doc.append_child(container, child2);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some());
+        let width = size.unwrap();
+        assert!(
+            (width - 120.0).abs() < 0.01,
+            "FlowRoot block-level children should use max: expected ~120.0, got {}",
+            width
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_inline_block_children_sum() {
+        // Inline-level (InlineBlock) children flow horizontally → sum widths.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let child1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child1).style.display = Display::InlineBlock;
+        doc.node_mut(child1).style.width = openui_geometry::Length::px(100.0);
+        doc.append_child(container, child1);
+
+        let child2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(child2).style.display = Display::InlineBlock;
+        doc.node_mut(child2).style.width = openui_geometry::Length::px(200.0);
+        doc.append_child(container, child2);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some());
+        let width = size.unwrap();
+        assert!(
+            (width - 300.0).abs() < 0.01,
+            "InlineBlock children should sum widths: expected ~300.0, got {}",
+            width
+        );
+    }
+
+    // ── Issue 4 (R28): Intrinsic sizing overcounts inline content around block ──
+
+    #[test]
+    fn intrinsic_size_inline_around_block_uses_max_not_sum() {
+        // inline(50px) + block(100px) + inline(50px)
+        // Should be max(50, 100, 50) = 100, NOT 50+100+50 = 200.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let inline1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline1).style.display = Display::InlineBlock;
+        doc.node_mut(inline1).style.width = openui_geometry::Length::px(50.0);
+        doc.append_child(container, inline1);
+
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.width = openui_geometry::Length::px(100.0);
+        doc.append_child(container, block);
+
+        let inline2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline2).style.display = Display::InlineBlock;
+        doc.node_mut(inline2).style.width = openui_geometry::Length::px(50.0);
+        doc.append_child(container, inline2);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some());
+        let width = size.unwrap();
+        assert!(
+            (width - 100.0).abs() < 0.01,
+            "inline(50)+block(100)+inline(50) should be max(50,100,50)=100, got {}",
+            width
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_inline_row_flushed_before_block() {
+        // inline(80px) + inline(70px) + block(60px) + inline(30px)
+        // Inline row 1: 80+70=150, block: 60, inline row 2: 30
+        // max(150, 60, 30) = 150
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let inline1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline1).style.display = Display::InlineBlock;
+        doc.node_mut(inline1).style.width = openui_geometry::Length::px(80.0);
+        doc.append_child(container, inline1);
+
+        let inline2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline2).style.display = Display::InlineBlock;
+        doc.node_mut(inline2).style.width = openui_geometry::Length::px(70.0);
+        doc.append_child(container, inline2);
+
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.width = openui_geometry::Length::px(60.0);
+        doc.append_child(container, block);
+
+        let inline3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline3).style.display = Display::InlineBlock;
+        doc.node_mut(inline3).style.width = openui_geometry::Length::px(30.0);
+        doc.append_child(container, inline3);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some());
+        let width = size.unwrap();
+        assert!(
+            (width - 150.0).abs() < 0.01,
+            "inline(80)+inline(70)+block(60)+inline(30) should be max(150,60,30)=150, got {}",
+            width
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_block_wider_than_inline_rows() {
+        // inline(30px) + block(200px) + inline(40px)
+        // max(30, 200, 40) = 200
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let inline1 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline1).style.display = Display::InlineBlock;
+        doc.node_mut(inline1).style.width = openui_geometry::Length::px(30.0);
+        doc.append_child(container, inline1);
+
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.width = openui_geometry::Length::px(200.0);
+        doc.append_child(container, block);
+
+        let inline2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(inline2).style.display = Display::InlineBlock;
+        doc.node_mut(inline2).style.width = openui_geometry::Length::px(40.0);
+        doc.append_child(container, inline2);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some());
+        let width = size.unwrap();
+        assert!(
+            (width - 200.0).abs() < 0.01,
+            "inline(30)+block(200)+inline(40) should be max(30,200,40)=200, got {}",
+            width
+        );
+    }
+
+    // ── SP11 Round 29 Issue 4: intrinsic sizing splits on preserved newlines ──
+
+    #[test]
+    fn intrinsic_size_pre_splits_on_newlines() {
+        // With white-space: pre, "AAA\nB" should split into two lines.
+        // The intrinsic width should be max(width("AAA"), width("B")), not width("AAA\nB").
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("AAA\nB".to_string());
+        doc.node_mut(text).style.white_space = WhiteSpace::Pre;
+        doc.append_child(container, text);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+        assert!(size.is_some(), "Pre text with newlines should have content");
+
+        // Also measure "AAA" as a single line.
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("AAA".to_string());
+        doc2.node_mut(text2).style.white_space = WhiteSpace::Pre;
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_aaa = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size.unwrap(),
+            size_aaa.unwrap(),
+            "Pre text 'AAA\\nB' intrinsic width should equal width of 'AAA' (widest line)"
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_preline_splits_on_newlines() {
+        // pre-line preserves newlines but collapses spaces.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("AAAA\nBB".to_string());
+        doc.node_mut(text).style.white_space = WhiteSpace::PreLine;
+        doc.append_child(container, text);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        // Measure just "AAAA" for comparison.
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("AAAA".to_string());
+        doc2.node_mut(text2).style.white_space = WhiteSpace::PreLine;
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_aaaa = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size.unwrap(),
+            size_aaaa.unwrap(),
+            "pre-line 'AAAA\\nBB' should split → max(width('AAAA'), width('BB')) = width('AAAA')"
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_normal_does_not_split_on_newlines() {
+        // white-space: normal collapses newlines to spaces — no split.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\nB".to_string());
+        doc.node_mut(text).style.white_space = WhiteSpace::Normal;
+        doc.append_child(container, text);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        // Also measure "A B" (collapsed form).
+        let mut doc2 = Document::new();
+        let vp2 = doc2.root();
+        let container2 = doc2.create_node(ElementTag::Div);
+        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.append_child(vp2, container2);
+
+        let text2 = doc2.create_node(ElementTag::Text);
+        doc2.node_mut(text2).text = Some("A B".to_string());
+        doc2.node_mut(text2).style.white_space = WhiteSpace::Normal;
+        doc2.append_child(container2, text2);
+
+        let builder2 = InlineItemsBuilder::new(&doc2);
+        let size_collapsed = builder2.compute_intrinsic_inline_size(container2);
+
+        assert_eq!(
+            size.unwrap(),
+            size_collapsed.unwrap(),
+            "Normal mode 'A\\nB' should collapse to 'A B', not split lines"
+        );
+    }
+
+    // ── SP11 Round 29 Issue 5: empty descendants with border/padding ──────
+
+    #[test]
+    fn intrinsic_size_empty_span_with_border_counted() {
+        // An empty inline span with border should contribute to intrinsic width.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let empty_span = doc.create_node(ElementTag::Span);
+        doc.node_mut(empty_span).style.display = Display::Inline;
+        doc.node_mut(empty_span).style.border_left_width = 5;
+        doc.node_mut(empty_span).style.border_left_style = openui_style::BorderStyle::Solid;
+        doc.node_mut(empty_span).style.border_right_width = 5;
+        doc.node_mut(empty_span).style.border_right_style = openui_style::BorderStyle::Solid;
+        doc.append_child(container, empty_span);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        assert!(
+            size.is_some(),
+            "Empty span with border should be treated as having content"
+        );
+        assert!(
+            size.unwrap() >= 10.0,
+            "Width should include border: expected >= 10.0, got {}",
+            size.unwrap()
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_empty_span_with_padding_counted() {
+        // An empty inline span with padding should contribute to intrinsic width.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let empty_span = doc.create_node(ElementTag::Span);
+        doc.node_mut(empty_span).style.display = Display::Inline;
+        doc.node_mut(empty_span).style.padding_left = openui_geometry::Length::px(8.0);
+        doc.node_mut(empty_span).style.padding_right = openui_geometry::Length::px(8.0);
+        doc.append_child(container, empty_span);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        assert!(
+            size.is_some(),
+            "Empty span with padding should be treated as having content"
+        );
+        assert!(
+            size.unwrap() >= 16.0,
+            "Width should include padding: expected >= 16.0, got {}",
+            size.unwrap()
+        );
+    }
+
+    #[test]
+    fn intrinsic_size_empty_block_with_border_counted() {
+        // An empty block-level child with border should contribute to intrinsic width.
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let empty_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(empty_block).style.display = Display::Block;
+        doc.node_mut(empty_block).style.border_left_width = 10;
+        doc.node_mut(empty_block).style.border_left_style = openui_style::BorderStyle::Solid;
+        doc.node_mut(empty_block).style.border_right_width = 10;
+        doc.node_mut(empty_block).style.border_right_style = openui_style::BorderStyle::Solid;
+        doc.append_child(container, empty_block);
+
+        let builder = InlineItemsBuilder::new(&doc);
+        let size = builder.compute_intrinsic_inline_size(container);
+
+        assert!(
+            size.is_some(),
+            "Empty block with border should be treated as having content"
+        );
+        assert!(
+            size.unwrap() >= 20.0,
+            "Width should include block borders: expected >= 20.0, got {}",
+            size.unwrap()
         );
     }
 }

@@ -49,8 +49,8 @@ fn int_line_spacing_rounds_sum() {
         line_gap: 2.1,
         ..FontMetrics::zero()
     };
-    // Blink rounds each component individually:
-    // round(10.3) + round(3.3) + round(2.1) = 10 + 3 + 2 = 15.0
+    // Blink: lroundf(ascent) + lroundf(descent) + lroundf(line_gap)
+    // round(10.3) + round(3.3) + round(2.1) = 10.0 + 3.0 + 2.0 = 15.0
     assert_eq!(m.int_line_spacing(), 15.0);
 }
 
