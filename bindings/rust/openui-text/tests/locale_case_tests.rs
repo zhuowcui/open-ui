@@ -355,6 +355,42 @@ fn el_upper_greek_extended_omega_oxia_ypogegrammeni() {
     );
 }
 
+#[test]
+fn el_upper_decomposed_ypogegrammeni_to_iota() {
+    // α + ypogegrammeni (U+0345) → ΑΙ — subscript iota becomes capital Ι
+    assert_eq!(
+        apply_text_transform("\u{03B1}\u{0345}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}\u{0399}"
+    );
+}
+
+#[test]
+fn el_upper_decomposed_dialytika_tonos() {
+    // ι + U+0344 (dialytika tonos) → Ι + diaeresis — keep diaeresis, strip tonos
+    assert_eq!(
+        apply_text_transform("\u{03B9}\u{0344}", TextTransform::Uppercase, Some("el")),
+        "\u{0399}\u{0308}"
+    );
+}
+
+#[test]
+fn el_upper_precomposed_uppercase_tonos() {
+    // Ά (U+0386, already uppercase with tonos) → Α — strip tonos
+    assert_eq!(
+        apply_text_transform("\u{0386}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}"
+    );
+}
+
+#[test]
+fn el_upper_precomposed_uppercase_eta_tonos() {
+    // Ή (U+0389, already uppercase with tonos) → Η — strip tonos
+    assert_eq!(
+        apply_text_transform("\u{0389}", TextTransform::Uppercase, Some("el")),
+        "\u{0397}"
+    );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Greek sigma — context-dependent σ vs ς (default Unicode rules)
 // Rust's str::to_lowercase() handles this per Unicode Default Case Conversion.

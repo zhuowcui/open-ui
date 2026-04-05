@@ -164,11 +164,15 @@ fn greek_to_upper(text: &str) -> String {
             '\u{0390}' => { result.push('\u{03AA}'); prev_base_greek = true; } // ΐ → Ϊ
             '\u{03B0}' => { result.push('\u{03AB}'); prev_base_greek = true; } // ΰ → Ϋ
             // Combining accents: strip after Greek base letter.
-            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0344}' | '\u{0313}' | '\u{0314}' if prev_base_greek => {
-                // Drop combining tonos / grave / tilde / perispomeni / dialytika-tonos / smooth/rough breathing.
+            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0313}' | '\u{0314}' if prev_base_greek => {
+                // Drop combining tonos / grave / tilde / perispomeni / smooth/rough breathing.
             }
-            // Iota subscript (ypogegrammeni): drop in Greek uppercase context.
-            '\u{0345}' if prev_base_greek => {}
+            // U+0344 (dialytika tonos): decompose — keep diaeresis, strip tonos.
+            '\u{0344}' if prev_base_greek => {
+                result.push('\u{0308}');
+            }
+            // Iota subscript (ypogegrammeni): convert to capital Ι in uppercase context.
+            '\u{0345}' if prev_base_greek => { result.push('\u{0399}'); }
             // Greek Extended block (U+1F00–U+1FFF): uppercase and strip
             // combining accent marks to match CLDR el-Upper behavior.
             // Preserve diaeresis (U+0308) which indicates vowel distinction.
@@ -202,6 +206,15 @@ fn greek_to_upper(text: &str) -> String {
             _ => {
                 prev_base_greek = is_greek_base(ch);
                 for c in ch.to_uppercase() {
+                    let cp = c as u32;
+                    // Strip precomposed tonos from already-uppercase Greek vowels
+                    // (Ά Έ Ή Ί Ό Ύ Ώ) that pass through this branch unchanged.
+                    if prev_base_greek {
+                        if let Some(base) = strip_precomposed_tonos(cp) {
+                            result.push(base);
+                            continue;
+                        }
+                    }
                     result.push(c);
                 }
             }

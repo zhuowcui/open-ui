@@ -865,13 +865,27 @@ fn create_line_box(
         .map(|(_, w, _)| *w)
         .unwrap_or(LayoutUnit::zero());
 
+    // Pre-compute ellipsis width so alignment accounts for it.
+    let ellipsis_extra_width = if line_info.has_ellipsis {
+        let block_font_desc = style_to_font_description(block_style);
+        let ellipsis_font = Font::new(block_font_desc);
+        let shaper = TextShaper::new();
+        let sr = shaper.shape("\u{2026}", &ellipsis_font, openui_text::TextDirection::Ltr);
+        LayoutUnit::from_f32(sr.width)
+    } else {
+        LayoutUnit::zero()
+    };
+
+    // Total extra width from appended glyphs (hyphen or ellipsis, never both).
+    let appended_extra_width = hyphen_extra_width + ellipsis_extra_width;
+
     // === STEP 3: Horizontal positioning (text-align) ===
     // Use the effective available width (after text-indent) for alignment
     // so that text-align: right with text-indent doesn't overflow.
     let align_available = available_width - text_indent;
     let text_align_offset = compute_text_align_offset(
         line_info,
-        align_available - hyphen_extra_width,
+        align_available - appended_extra_width,
         block_style.direction,
         block_style.text_align_last,
     );
@@ -891,7 +905,7 @@ fn create_line_box(
     };
 
     if should_justify && text_justify != TextJustify::None {
-        let remaining = align_available - hyphen_extra_width - line_info.used_width;
+        let remaining = align_available - appended_extra_width - line_info.used_width;
         if remaining > LayoutUnit::zero() {
             match text_justify {
                 TextJustify::InterCharacter => {
@@ -1322,7 +1336,10 @@ fn create_line_box(
                 Arc::new(ellipsis_sr),
                 ellipsis_text.to_string(),
             );
-            ellipsis_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), ellipsis_top);
+            ellipsis_fragment.offset = PhysicalOffset::new(
+                text_align_offset + text_indent,
+                ellipsis_top,
+            );
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             children.insert(0, ellipsis_fragment);
