@@ -135,7 +135,7 @@ impl FontPlatformData {
     /// Convert CSS `font-stretch` percentage to Skia's width scale (1–9).
     /// Mapping based on CSS Fonts spec § 3.3.
     fn stretch_to_sk_width(stretch: f32) -> i32 {
-        match stretch as i32 {
+        match stretch.round() as i32 {
             ..=62 => 1,      // UltraCondensed (50%)
             63..=74 => 2,    // ExtraCondensed (62.5%)
             75..=86 => 3,    // Condensed (75%)
@@ -155,5 +155,46 @@ impl std::fmt::Debug for FontPlatformData {
             .field("size", &self.size)
             .field("metrics", &self.metrics)
             .finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stretch_62_5_maps_to_extra_condensed() {
+        // 62.5% is the CSS keyword value for extra-condensed (Skia width 2).
+        // Before the fix, `62.5 as i32` truncated to 62 → UltraCondensed (1).
+        assert_eq!(
+            FontPlatformData::stretch_to_sk_width(62.5),
+            2,
+            "62.5% should map to ExtraCondensed (2), not UltraCondensed (1)"
+        );
+    }
+
+    #[test]
+    fn stretch_keyword_values_map_correctly() {
+        assert_eq!(FontPlatformData::stretch_to_sk_width(50.0), 1);   // UltraCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(62.5), 2);   // ExtraCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(75.0), 3);   // Condensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4);   // SemiCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(100.0), 5);  // Normal
+        assert_eq!(FontPlatformData::stretch_to_sk_width(112.5), 6);  // SemiExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(125.0), 7);  // Expanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(150.0), 8);  // ExtraExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(200.0), 9);  // UltraExpanded
+    }
+
+    #[test]
+    fn stretch_boundary_values_round_correctly() {
+        // 62.4 rounds to 62 → UltraCondensed (1)
+        assert_eq!(FontPlatformData::stretch_to_sk_width(62.4), 1);
+        // 62.5 rounds to 63 → ExtraCondensed (2)
+        assert_eq!(FontPlatformData::stretch_to_sk_width(62.5), 2);
+        // 87.4 rounds to 87 → SemiCondensed (4)
+        assert_eq!(FontPlatformData::stretch_to_sk_width(87.4), 4);
+        // 87.5 rounds to 88 → SemiCondensed (4)
+        assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4);
     }
 }

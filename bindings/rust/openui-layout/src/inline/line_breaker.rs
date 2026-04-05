@@ -17,6 +17,7 @@ use openui_style::{ComputedStyle, OverflowWrap, TextAlign, WhiteSpace, WordBreak
 use super::items::{CollapseType, InlineItem, InlineItemResult, InlineItemType};
 use super::items_builder::InlineItemsData;
 use super::line_info::LineInfo;
+use crate::length_resolver::resolve_margin_or_padding;
 
 /// The line breaker — iterates over inline items producing lines.
 ///
@@ -90,25 +91,37 @@ impl<'a> LineBreaker<'a> {
                     self.handle_text(self.current_item, &mut line, &mut state);
                 }
                 InlineItemType::OpenTag => {
+                    let style = &self.items_data.styles[item.style_index];
+                    let pct_base = line.available_width;
+                    let mbp = resolve_margin_or_padding(&style.margin_left, pct_base)
+                        + LayoutUnit::from_i32(style.effective_border_left())
+                        + resolve_margin_or_padding(&style.padding_left, pct_base);
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
                         text_range: item.text_range.clone(),
-                        inline_size: LayoutUnit::zero(),
+                        inline_size: mbp,
                         shape_result: None,
                         has_forced_break: false,
                         item_type: InlineItemType::OpenTag,
                     });
+                    line.used_width = line.used_width + mbp;
                     self.current_item += 1;
                 }
                 InlineItemType::CloseTag => {
+                    let style = &self.items_data.styles[item.style_index];
+                    let pct_base = line.available_width;
+                    let mbp = resolve_margin_or_padding(&style.padding_right, pct_base)
+                        + LayoutUnit::from_i32(style.effective_border_right())
+                        + resolve_margin_or_padding(&style.margin_right, pct_base);
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
                         text_range: item.text_range.clone(),
-                        inline_size: LayoutUnit::zero(),
+                        inline_size: mbp,
                         shape_result: None,
                         has_forced_break: false,
                         item_type: InlineItemType::CloseTag,
                     });
+                    line.used_width = line.used_width + mbp;
                     self.current_item += 1;
                 }
                 InlineItemType::Control => {
@@ -393,11 +406,18 @@ impl<'a> LineBreaker<'a> {
                             self.force_text_on_line(
                                 item_index, seg_start, seg_end, seg_width, line,
                             );
-                            // After forcing, advance to the newline
-                            self.current_text_offset = break_byte;
-                            // Don't increment current_item — there's still
-                            // the newline and possibly more text
-                            self.current_item -= 1; // force_text_on_line increments
+                            // Also consume the newline character so the next
+                            // call doesn't see it at offset 0 and emit an
+                            // extra blank forced-break line.
+                            line.has_forced_break = true;
+                            let after_nl = break_byte + 1;
+                            if after_nl >= text_end {
+                                // force_text_on_line already advanced
+                                // current_item and reset offset — correct.
+                            } else {
+                                self.current_text_offset = after_nl;
+                                self.current_item -= 1; // undo force_text_on_line's increment
+                            }
                         }
                         *state = LineState::Done;
                         return;

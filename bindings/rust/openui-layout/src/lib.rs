@@ -4,7 +4,7 @@
 
 mod constraint_space;
 mod fragment;
-mod length_resolver;
+pub(crate) mod length_resolver;
 pub mod block;
 pub mod flex;
 pub mod inline;

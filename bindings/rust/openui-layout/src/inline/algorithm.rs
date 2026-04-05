@@ -647,9 +647,12 @@ fn create_line_box(
     let baseline = LayoutUnit::from_f32_ceil(line_ascent);
 
     // === STEP 3: Horizontal positioning (text-align) ===
+    // Use the effective available width (after text-indent) for alignment
+    // so that text-align: right with text-indent doesn't overflow.
+    let align_available = available_width - text_indent;
     let text_align_offset = compute_text_align_offset(
         line_info,
-        available_width,
+        align_available,
         block_style.direction,
     );
 
@@ -660,7 +663,7 @@ fn create_line_box(
         && !line_info.is_last_line
         && !line_info.has_forced_break;
     if should_justify {
-        let remaining = available_width - line_info.used_width;
+        let remaining = align_available - line_info.used_width;
         if remaining > LayoutUnit::zero() {
             let space_count = count_expansion_opportunities(line_info, items_data);
             if space_count > 0 {

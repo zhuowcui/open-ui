@@ -28,6 +28,14 @@ pub enum DecorationPhase {
     AfterText,
 }
 
+/// Which specific decoration line is being drawn (affects double-line direction).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DecorationLineKind {
+    Underline,
+    Overline,
+    LineThrough,
+}
+
 /// Paint text decorations (underline, overline, line-through) for a text fragment.
 ///
 /// Mirrors Blink's `TextDecorationPainter::Paint()`.
@@ -82,14 +90,14 @@ pub fn paint_text_decorations(
             // which is a positive value below the baseline.
             if decoration_line.has_underline() {
                 let y = baseline_y + metrics.underline_offset;
-                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::Underline);
             }
 
             // ── Overline ─────────────────────────────────────────────────────
             // Blink: overline positioned at -ascent from baseline (top of em box).
             if decoration_line.has_overline() {
                 let y = baseline_y - metrics.ascent;
-                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::Overline);
             }
         }
         DecorationPhase::AfterText => {
@@ -97,7 +105,7 @@ pub fn paint_text_decorations(
             // Blink: strikeout_position is positive above baseline.
             if decoration_line.has_line_through() {
                 let y = baseline_y - metrics.strikeout_position;
-                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness);
+                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::LineThrough);
             }
         }
     }
@@ -137,13 +145,14 @@ fn draw_decoration_line(
     width: f32,
     decoration_style: &TextDecorationStyle,
     thickness: f32,
+    kind: DecorationLineKind,
 ) {
     match decoration_style {
         TextDecorationStyle::Solid => {
             draw_solid_line(canvas, paint, x, y, width, thickness);
         }
         TextDecorationStyle::Double => {
-            draw_double_line(canvas, paint, x, y, width, thickness);
+            draw_double_line(canvas, paint, x, y, width, thickness, kind);
         }
         TextDecorationStyle::Dotted => {
             draw_dotted_line(canvas, paint, x, y, width, thickness);
@@ -172,19 +181,40 @@ fn draw_solid_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, t
 ///
 /// Blink: `TextDecorationInfo::PaintDoubleDecorationLine()`.
 /// The gap between lines equals the line thickness × 1.5 (matching Gecko).
-fn draw_double_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32) {
+/// The second line direction depends on the decoration kind:
+/// - Underline: second line below (away from text)
+/// - Overline: second line above (away from text)
+/// - Line-through: pair centered on the nominal line position
+fn draw_double_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32, kind: DecorationLineKind) {
     let gap = thickness * 1.5;
     let half_t = thickness / 2.0;
     let mut fill_paint = paint.clone();
     fill_paint.set_style(PaintStyle::Fill);
 
-    // First line
-    let rect1 = Rect::from_xywh(x, y - half_t, width, thickness);
-    canvas.draw_rect(rect1, &fill_paint);
-
-    // Second line below
-    let rect2 = Rect::from_xywh(x, y - half_t + thickness + gap, width, thickness);
-    canvas.draw_rect(rect2, &fill_paint);
+    match kind {
+        DecorationLineKind::Underline => {
+            let rect1 = Rect::from_xywh(x, y - half_t, width, thickness);
+            canvas.draw_rect(rect1, &fill_paint);
+            let rect2 = Rect::from_xywh(x, y - half_t + thickness + gap, width, thickness);
+            canvas.draw_rect(rect2, &fill_paint);
+        }
+        DecorationLineKind::Overline => {
+            let rect1 = Rect::from_xywh(x, y - half_t, width, thickness);
+            canvas.draw_rect(rect1, &fill_paint);
+            // Second line above (away from text)
+            let rect2 = Rect::from_xywh(x, y - half_t - thickness - gap, width, thickness);
+            canvas.draw_rect(rect2, &fill_paint);
+        }
+        DecorationLineKind::LineThrough => {
+            // Center both lines around the nominal position
+            let total = thickness + gap + thickness;
+            let top = y - total / 2.0;
+            let rect1 = Rect::from_xywh(x, top, width, thickness);
+            canvas.draw_rect(rect1, &fill_paint);
+            let rect2 = Rect::from_xywh(x, top + thickness + gap, width, thickness);
+            canvas.draw_rect(rect2, &fill_paint);
+        }
+    }
 }
 
 /// Dotted decoration: a series of circular dots.

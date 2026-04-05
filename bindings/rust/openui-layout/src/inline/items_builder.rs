@@ -302,6 +302,22 @@ impl<'a> InlineItemsBuilder<'a> {
             return;
         }
 
+        // CSS Text Level 3 §4.1.1 Phase I Rule 4: collapse cross-node
+        // adjacent collapsible spaces. If the buffer already ends with a
+        // space and the new processed text starts with a collapsible space,
+        // strip the leading space to avoid a double-space.
+        let processed = if is_collapsible_ws_mode(style.white_space)
+            && self.text.ends_with(' ')
+            && processed.starts_with(' ')
+        {
+            processed[1..].to_string()
+        } else {
+            processed
+        };
+        if processed.is_empty() {
+            return;
+        }
+
         let style_index = self.intern_style(style);
         let start = self.text.len();
         self.text.push_str(&processed);
@@ -431,6 +447,11 @@ impl<'a> InlineItemsBuilder<'a> {
 // ── White-space processing (CSS Text Module Level 3 §4) ─────────────────
 
 /// Process text according to the CSS `white-space` property.
+/// Returns true if the white-space mode collapses adjacent spaces.
+fn is_collapsible_ws_mode(ws: WhiteSpace) -> bool {
+    matches!(ws, WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine)
+}
+
 ///
 /// Implements CSS Text Level 3 §4.1 (The White Space Processing Rules):
 /// - normal/nowrap: collapse whitespace runs to single space
