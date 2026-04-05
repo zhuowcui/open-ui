@@ -188,7 +188,7 @@ fn bidi_visual_reorder_even_levels_no_reversal() {
 #[test]
 fn capitalize_1st_no_spurious_cap() {
     assert_eq!(
-        apply_text_transform("1st", TextTransform::Capitalize),
+        apply_text_transform("1st", TextTransform::Capitalize, None),
         "1st",
     );
 }
@@ -197,7 +197,7 @@ fn capitalize_1st_no_spurious_cap() {
 fn capitalize_digit_then_space_then_word() {
     // "1st place" → "1st Place" (space is a word boundary)
     assert_eq!(
-        apply_text_transform("1st place", TextTransform::Capitalize),
+        apply_text_transform("1st place", TextTransform::Capitalize, None),
         "1st Place",
     );
 }
@@ -205,7 +205,7 @@ fn capitalize_digit_then_space_then_word() {
 #[test]
 fn capitalize_leading_digits_in_word() {
     assert_eq!(
-        apply_text_transform("3d model", TextTransform::Capitalize),
+        apply_text_transform("3d model", TextTransform::Capitalize, None),
         "3d Model",
     );
 }
@@ -216,12 +216,12 @@ fn capitalize_leading_digits_in_word() {
 fn capitalize_eszett_to_ss() {
     // ß should titlecase to Ss, not SS.
     assert_eq!(
-        apply_text_transform("straße", TextTransform::Capitalize),
+        apply_text_transform("straße", TextTransform::Capitalize, None),
         "Straße", // Only first letter of the word is capitalized
     );
     // When ß is the first letter:
     assert_eq!(
-        apply_text_transform("ßtraße", TextTransform::Capitalize),
+        apply_text_transform("ßtraße", TextTransform::Capitalize, None),
         "Sstraße",
     );
 }
@@ -230,7 +230,7 @@ fn capitalize_eszett_to_ss() {
 fn capitalize_titlecase_digraph_identity() {
     // Already-titlecase forms ǲ/ǅ/ǈ/ǋ should map to themselves.
     assert_eq!(
-        apply_text_transform("\u{01F2}bc", TextTransform::Capitalize),
+        apply_text_transform("\u{01F2}bc", TextTransform::Capitalize, None),
         "\u{01F2}bc",
     );
 }
@@ -239,7 +239,7 @@ fn capitalize_titlecase_digraph_identity() {
 fn capitalize_armenian_ligature() {
     // և (U+0587) should titlecase to Եւ.
     assert_eq!(
-        apply_text_transform("\u{0587}", TextTransform::Capitalize),
+        apply_text_transform("\u{0587}", TextTransform::Capitalize, None),
         "\u{0535}\u{0582}",
     );
 }

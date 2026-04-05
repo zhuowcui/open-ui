@@ -166,48 +166,48 @@ fn rtl_justification_exclude_two_trailing() {
 #[test]
 fn capitalize_ligature_ff() {
     // U+FB00 ﬀ should titlecase to "Ff", not "FF"
-    let result = openui_text::apply_text_transform("\u{FB00}oo", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB00}oo", TextTransform::Capitalize, None);
     assert_eq!(result, "Ffoo");
 }
 
 #[test]
 fn capitalize_ligature_fi() {
-    let result = openui_text::apply_text_transform("\u{FB01}nd", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB01}nd", TextTransform::Capitalize, None);
     assert_eq!(result, "Find");
 }
 
 #[test]
 fn capitalize_ligature_fl() {
-    let result = openui_text::apply_text_transform("\u{FB02}ow", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB02}ow", TextTransform::Capitalize, None);
     assert_eq!(result, "Flow");
 }
 
 #[test]
 fn capitalize_ligature_ffi() {
-    let result = openui_text::apply_text_transform("\u{FB03}ce", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB03}ce", TextTransform::Capitalize, None);
     assert_eq!(result, "Ffice");
 }
 
 #[test]
 fn capitalize_ligature_ffl() {
-    let result = openui_text::apply_text_transform("\u{FB04}at", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB04}at", TextTransform::Capitalize, None);
     assert_eq!(result, "Fflat");
 }
 
 #[test]
 fn capitalize_ligature_long_st() {
-    let result = openui_text::apply_text_transform("\u{FB05}ar", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB05}ar", TextTransform::Capitalize, None);
     assert_eq!(result, "Star");
 }
 
 #[test]
 fn capitalize_ligature_st() {
-    let result = openui_text::apply_text_transform("\u{FB06}ep", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{FB06}ep", TextTransform::Capitalize, None);
     assert_eq!(result, "Step");
 }
 
 #[test]
 fn capitalize_dutch_ij_digraph() {
-    let result = openui_text::apply_text_transform("\u{0133}ssel", TextTransform::Capitalize);
+    let result = openui_text::apply_text_transform("\u{0133}ssel", TextTransform::Capitalize, None);
     assert_eq!(result, "\u{0132}ssel");
 }

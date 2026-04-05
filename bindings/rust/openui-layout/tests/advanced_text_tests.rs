@@ -12,78 +12,78 @@ use openui_style::TextTransform;
 
 #[test]
 fn transform_uppercase_simple() {
-    assert_eq!(apply_text_transform("hello", TextTransform::Uppercase), "HELLO");
+    assert_eq!(apply_text_transform("hello", TextTransform::Uppercase, None), "HELLO");
 }
 
 #[test]
 fn transform_uppercase_already_upper() {
-    assert_eq!(apply_text_transform("HELLO", TextTransform::Uppercase), "HELLO");
+    assert_eq!(apply_text_transform("HELLO", TextTransform::Uppercase, None), "HELLO");
 }
 
 #[test]
 fn transform_uppercase_mixed() {
-    assert_eq!(apply_text_transform("Hello World", TextTransform::Uppercase), "HELLO WORLD");
+    assert_eq!(apply_text_transform("Hello World", TextTransform::Uppercase, None), "HELLO WORLD");
 }
 
 #[test]
 fn transform_lowercase_simple() {
-    assert_eq!(apply_text_transform("HELLO", TextTransform::Lowercase), "hello");
+    assert_eq!(apply_text_transform("HELLO", TextTransform::Lowercase, None), "hello");
 }
 
 #[test]
 fn transform_lowercase_already_lower() {
-    assert_eq!(apply_text_transform("hello", TextTransform::Lowercase), "hello");
+    assert_eq!(apply_text_transform("hello", TextTransform::Lowercase, None), "hello");
 }
 
 #[test]
 fn transform_capitalize_simple() {
-    assert_eq!(apply_text_transform("hello world", TextTransform::Capitalize), "Hello World");
+    assert_eq!(apply_text_transform("hello world", TextTransform::Capitalize, None), "Hello World");
 }
 
 #[test]
 fn transform_capitalize_after_hyphen() {
-    assert_eq!(apply_text_transform("well-known", TextTransform::Capitalize), "Well-Known");
+    assert_eq!(apply_text_transform("well-known", TextTransform::Capitalize, None), "Well-Known");
 }
 
 #[test]
 fn transform_capitalize_already_capitalized() {
-    assert_eq!(apply_text_transform("Hello World", TextTransform::Capitalize), "Hello World");
+    assert_eq!(apply_text_transform("Hello World", TextTransform::Capitalize, None), "Hello World");
 }
 
 #[test]
 fn transform_capitalize_single_word() {
-    assert_eq!(apply_text_transform("hello", TextTransform::Capitalize), "Hello");
+    assert_eq!(apply_text_transform("hello", TextTransform::Capitalize, None), "Hello");
 }
 
 #[test]
 fn transform_unicode_uppercase_cafe() {
-    assert_eq!(apply_text_transform("café", TextTransform::Uppercase), "CAFÉ");
+    assert_eq!(apply_text_transform("café", TextTransform::Uppercase, None), "CAFÉ");
 }
 
 #[test]
 fn transform_unicode_uppercase_german_sharp_s() {
     // ß uppercases to SS in Unicode
-    assert_eq!(apply_text_transform("straße", TextTransform::Uppercase), "STRASSE");
+    assert_eq!(apply_text_transform("straße", TextTransform::Uppercase, None), "STRASSE");
 }
 
 #[test]
 fn transform_full_width_ascii() {
-    assert_eq!(apply_text_transform("ABC", TextTransform::FullWidth), "ＡＢＣ");
+    assert_eq!(apply_text_transform("ABC", TextTransform::FullWidth, None), "ＡＢＣ");
 }
 
 #[test]
 fn transform_full_width_digits() {
-    assert_eq!(apply_text_transform("123", TextTransform::FullWidth), "１２３");
+    assert_eq!(apply_text_transform("123", TextTransform::FullWidth, None), "１２３");
 }
 
 #[test]
 fn transform_full_width_space() {
-    assert_eq!(apply_text_transform("A B", TextTransform::FullWidth), "Ａ\u{3000}Ｂ");
+    assert_eq!(apply_text_transform("A B", TextTransform::FullWidth, None), "Ａ\u{3000}Ｂ");
 }
 
 #[test]
 fn transform_none_unchanged() {
-    assert_eq!(apply_text_transform("Hello World", TextTransform::None), "Hello World");
+    assert_eq!(apply_text_transform("Hello World", TextTransform::None, None), "Hello World");
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -92,31 +92,31 @@ fn transform_none_unchanged() {
 
 #[test]
 fn transform_empty_string() {
-    assert_eq!(apply_text_transform("", TextTransform::Uppercase), "");
-    assert_eq!(apply_text_transform("", TextTransform::Lowercase), "");
-    assert_eq!(apply_text_transform("", TextTransform::Capitalize), "");
+    assert_eq!(apply_text_transform("", TextTransform::Uppercase, None), "");
+    assert_eq!(apply_text_transform("", TextTransform::Lowercase, None), "");
+    assert_eq!(apply_text_transform("", TextTransform::Capitalize, None), "");
 }
 
 #[test]
 fn transform_capitalize_leading_spaces() {
-    assert_eq!(apply_text_transform("  hello", TextTransform::Capitalize), "  Hello");
+    assert_eq!(apply_text_transform("  hello", TextTransform::Capitalize, None), "  Hello");
 }
 
 #[test]
 fn transform_capitalize_multiple_spaces() {
-    assert_eq!(apply_text_transform("hello   world", TextTransform::Capitalize), "Hello   World");
+    assert_eq!(apply_text_transform("hello   world", TextTransform::Capitalize, None), "Hello   World");
 }
 
 #[test]
 fn transform_full_width_non_ascii_passthrough() {
     // Non-ASCII characters outside the mapped range pass through unchanged
-    assert_eq!(apply_text_transform("こんにちは", TextTransform::FullWidth), "こんにちは");
+    assert_eq!(apply_text_transform("こんにちは", TextTransform::FullWidth, None), "こんにちは");
 }
 
 #[test]
 fn transform_capitalize_after_apostrophe() {
     // CSS Text §2.1: apostrophe is NOT a word boundary, so "it's" stays as one word.
-    assert_eq!(apply_text_transform("it's a test", TextTransform::Capitalize), "It's A Test");
+    assert_eq!(apply_text_transform("it's a test", TextTransform::Capitalize, None), "It's A Test");
 }
 
 // ═══════════════════════════════════════════════════════════════════════

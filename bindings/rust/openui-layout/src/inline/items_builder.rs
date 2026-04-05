@@ -372,6 +372,11 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
         stretch: style.font_stretch,
         style: style.font_style,
         variant_caps: style.font_variant_caps,
+        variant_ligatures: style.font_variant_ligatures,
+        variant_numeric: style.font_variant_numeric,
+        variant_east_asian: style.font_variant_east_asian,
+        variant_position: style.font_variant_position,
+        variant_alternates: style.font_variant_alternates,
         letter_spacing: style.letter_spacing,
         word_spacing: style.word_spacing,
         locale: style.locale.clone(),
@@ -524,7 +529,7 @@ impl<'a> InlineItemsBuilder<'a> {
 
         // Apply text-transform before white-space processing (matches Blink order).
         let transformed = if style.text_transform != TextTransform::None {
-            apply_text_transform(text, style.text_transform)
+            apply_text_transform(text, style.text_transform, style.locale.as_deref())
         } else {
             text.to_string()
         };
@@ -889,7 +894,7 @@ pub fn preprocess_text_for_shaping(text: &str, style: &ComputedStyle) -> String 
 
     // Step 1: text-transform
     let transformed = if style.text_transform != TextTransform::None {
-        apply_text_transform(text, style.text_transform)
+        apply_text_transform(text, style.text_transform, style.locale.as_deref())
     } else {
         text.to_string()
     };
