@@ -10,10 +10,54 @@ use skia_safe::{
     shaper::{run_handler, RunHandler as SkRunHandler},
     GlyphId, Point, Shaper, Vector,
 };
+use unicode_script::{Script, UnicodeScript};
 
 use crate::font::{Font, FontPlatformData};
 
 use super::shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
+
+/// Whether a Unicode script requires complex shaping (joining, reordering,
+/// or contextual forms) that makes cluster-boundary breaks unsafe.
+///
+/// For these scripts, breaking at a HarfBuzz cluster boundary can change glyph
+/// forms (e.g., Arabic initial/medial/final forms, Indic conjuncts). Only
+/// word/space boundaries are safe break points within a shaping run.
+fn is_complex_script(ch: char) -> bool {
+    let script = ch.script();
+    matches!(
+        script,
+        // Arabic-derived joining scripts
+        Script::Arabic
+            | Script::Syriac
+            | Script::Thaana
+            | Script::Mandaic
+            | Script::Nko
+            // Hebrew has contextual final forms
+            | Script::Hebrew
+            // Indic scripts with reordering and conjunct formation
+            | Script::Devanagari
+            | Script::Bengali
+            | Script::Gurmukhi
+            | Script::Gujarati
+            | Script::Oriya
+            | Script::Tamil
+            | Script::Telugu
+            | Script::Kannada
+            | Script::Malayalam
+            | Script::Sinhala
+            // Southeast Asian scripts with contextual shaping
+            | Script::Thai
+            | Script::Lao
+            | Script::Tibetan
+            | Script::Myanmar
+            | Script::Khmer
+            // Other complex scripts
+            | Script::Javanese
+            | Script::Balinese
+            | Script::Sundanese
+            | Script::Lepcha
+    )
+}
 
 /// Collects shaping output from Skia's SkShaper callbacks.
 ///
@@ -279,12 +323,16 @@ impl ShapeCollector {
     /// Determine safe-to-break points.
     ///
     /// A character position is safe to break before if reshaping the text
-    /// from that point onward would produce the same glyphs. For fully
-    /// accurate complex-script reshaping (e.g., Arabic initial/medial/final
-    /// forms), HarfBuzz's `HB_GLYPH_FLAG_UNSAFE_TO_BREAK` flag would be
-    /// needed, which is not exposed through SkShaper. This implementation
-    /// uses whitespace boundaries and cluster boundaries as a reasonable
-    /// approximation that works well for Latin, CJK, and most other scripts.
+    /// from that point onward would produce the same glyphs.
+    ///
+    /// Since SkShaper doesn't expose HarfBuzz's `HB_GLYPH_FLAG_UNSAFE_TO_BREAK`,
+    /// we use a conservative, script-aware heuristic:
+    /// - Always safe: start of text, whitespace, positions adjacent to whitespace.
+    /// - Simple scripts (Latin, CJK, etc.): safe at cluster boundaries.
+    /// - Complex scripts (Arabic, Indic, Thai, etc.): cluster boundaries are
+    ///   NOT safe because reshaping would change glyph forms (joining,
+    ///   reordering, contextual substitutions). Only word/space boundaries
+    ///   are considered safe.
     fn compute_safe_breaks(runs: &[CollectedRun], chars: &[char], byte_to_char: &[usize]) -> Vec<bool> {
         let mut safe = vec![false; chars.len()];
         if safe.is_empty() {
@@ -303,8 +351,8 @@ impl ShapeCollector {
             }
         }
 
-        // Also safe at cluster boundaries within runs — where the cluster
-        // value changes, glyphs can generally be reshaped independently.
+        // Safe at cluster boundaries within runs — but only for simple
+        // scripts where cluster boundaries don't affect glyph forms.
         for run in runs {
             if run.clusters.len() > 1 {
                 for i in 1..run.clusters.len() {
@@ -312,7 +360,7 @@ impl ShapeCollector {
                         let byte_off = run.clusters[i] as usize;
                         if byte_off < byte_to_char.len() {
                             let char_idx = byte_to_char[byte_off];
-                            if char_idx < chars.len() {
+                            if char_idx < chars.len() && !is_complex_script(chars[char_idx]) {
                                 safe[char_idx] = true;
                             }
                         }
@@ -757,6 +805,8 @@ impl TextShaper {
         }
 
         // Recompute safe-to-break flags from run cluster boundaries.
+        // Use the same script-aware logic as compute_safe_breaks: for
+        // complex scripts, cluster boundaries are NOT safe.
         let chars: Vec<char> = text.chars().collect();
         let mut safe_to_break = vec![false; num_characters];
         if num_characters > 0 {
@@ -771,13 +821,15 @@ impl TextShaper {
                     }
                 }
             }
-            // Safe at cluster boundaries within runs.
+            // Safe at cluster boundaries — only for simple scripts.
             for run in &result.runs {
                 if run.clusters.len() > 1 {
                     for i in 1..run.clusters.len() {
                         if run.clusters[i] != run.clusters[i - 1] {
                             let char_idx = run.start_index + run.clusters[i];
-                            if char_idx < num_characters {
+                            if char_idx < num_characters
+                                && !is_complex_script(chars[char_idx])
+                            {
                                 safe_to_break[char_idx] = true;
                             }
                         }
@@ -831,9 +883,6 @@ impl TextShaper {
         }
 
         // Distribute the extra advance to glyph runs.
-        // For ligature or decomposition runs (non-1:1 glyph/character mapping),
-        // accumulate spacing for ALL characters in the run rather than mapping
-        // glyphs individually.
         let mut total_extra = 0.0f32;
         for run in &mut result.runs {
             let run_start = run.start_index;
@@ -849,17 +898,43 @@ impl TextShaper {
                     }
                 }
             } else {
-                // Ligature or decomposition — accumulate ALL character spacing
-                // and add to the last glyph of the run so the total advance is
-                // correct.
-                let mut run_extra = 0.0f32;
-                for ci in run_start..run_start + run_chars {
-                    if ci < num_chars {
-                        run_extra += extra_advance_per_char[ci];
+                // Non-1:1 mapping (ligature or decomposition).
+                // Distribute spacing to each glyph based on the characters
+                // it covers, determined by cluster boundaries. This avoids
+                // piling all spacing on the last glyph, which would create
+                // a visually uneven gap after the final glyph.
+                let mut per_glyph_extra = vec![0.0f32; run.num_glyphs];
+
+                // Sort glyph indices by ascending cluster value so we can
+                // determine each glyph's character range regardless of
+                // text direction (LTR clusters ascend, RTL descend).
+                let mut glyph_by_cluster: Vec<(usize, usize)> = run
+                    .clusters
+                    .iter()
+                    .enumerate()
+                    .map(|(gi, &c)| (c, gi))
+                    .collect();
+                glyph_by_cluster.sort_by_key(|(c, _)| *c);
+
+                for (idx, &(cluster, gi)) in glyph_by_cluster.iter().enumerate() {
+                    let next_cluster = if idx + 1 < glyph_by_cluster.len() {
+                        glyph_by_cluster[idx + 1].0
+                    } else {
+                        run_chars
+                    };
+                    // Accumulate extra advance for all characters this glyph covers.
+                    for ci_local in cluster..next_cluster {
+                        let ci = run_start + ci_local;
+                        if ci < num_chars {
+                            per_glyph_extra[gi] += extra_advance_per_char[ci];
+                        }
                     }
                 }
-                if run.num_glyphs > 0 {
-                    run.advances[run.num_glyphs - 1] += run_extra;
+
+                let mut run_extra = 0.0f32;
+                for gi in 0..run.num_glyphs {
+                    run.advances[gi] += per_glyph_extra[gi];
+                    run_extra += per_glyph_extra[gi];
                 }
                 total_extra += run_extra;
             }
@@ -1027,5 +1102,180 @@ mod tests {
                 i
             );
         }
+    }
+
+    // ── SP11 Round 18 Issue 1: Arabic positions marked unsafe within joining sequences ──
+
+    #[test]
+    fn arabic_joining_sequence_marked_unsafe() {
+        // Arabic text: "مرحبا" (marhaba — 5 Arabic characters).
+        // Within a joining sequence, every position (except start and
+        // whitespace boundaries) should be marked unsafe to break before,
+        // because reshaping would change glyph forms (initial/medial/final).
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let text = "مرحبا";
+        let result = shaper.shape(text, &font, TextDirection::Rtl);
+
+        assert_eq!(result.character_data.len(), text.chars().count());
+        // Position 0 is always safe.
+        assert!(
+            result.character_data[0].safe_to_break_before,
+            "Start of text should always be safe"
+        );
+        // Interior Arabic characters should NOT be safe to break before,
+        // since they participate in joining and reshaping would change forms.
+        for i in 1..result.character_data.len() {
+            assert!(
+                !result.character_data[i].safe_to_break_before,
+                "Arabic char at index {} should not be safe_to_break_before",
+                i
+            );
+        }
+    }
+
+    #[test]
+    fn arabic_with_space_has_safe_break_at_word_boundary() {
+        // Arabic words separated by space: "مرحبا عالم"
+        // The space and position after it should be safe to break.
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let text = "مرحبا عالم";
+        let result = shaper.shape(text, &font, TextDirection::Rtl);
+        let chars: Vec<char> = text.chars().collect();
+
+        // Find the space character index.
+        let space_idx = chars.iter().position(|&c| c == ' ').expect("should have space");
+        assert!(
+            result.character_data[space_idx].safe_to_break_before,
+            "Space should be safe_to_break_before"
+        );
+        if space_idx + 1 < chars.len() {
+            assert!(
+                result.character_data[space_idx + 1].safe_to_break_before,
+                "Position after space should be safe_to_break_before"
+            );
+        }
+    }
+
+    #[test]
+    fn latin_cluster_boundaries_remain_safe() {
+        // Latin text should still have safe-to-break at cluster boundaries,
+        // ensuring the complex-script guard doesn't affect simple scripts.
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let result = shaper.shape("abcdef", &font, TextDirection::Ltr);
+
+        assert_eq!(result.character_data.len(), 6);
+        // For basic Latin with 1:1 clusters, all positions should be safe.
+        for (i, cd) in result.character_data.iter().enumerate() {
+            assert!(
+                cd.safe_to_break_before,
+                "Latin char at index {} should be safe_to_break_before",
+                i
+            );
+        }
+    }
+
+    // ── SP11 Round 18 Issue 3: letter-spacing distributes across ligature glyphs ──
+
+    #[test]
+    fn letter_spacing_distributes_across_ligature_run() {
+        // Construct a ShapeResult with a non-1:1 run (simulating a ligature)
+        // and verify that apply_spacing distributes evenly per-cluster
+        // instead of piling everything on the last glyph.
+        use std::sync::Arc;
+        use crate::font::FontPlatformData;
+
+        let font = Font::new(FontDescription::default());
+        let font_data = font.primary_font().unwrap().clone();
+
+        // Simulate "office": 6 chars, 4 glyphs (o, ffi-ligature, c, e).
+        // Clusters: glyph 0→char 0, glyph 1→char 1 (covers 1-3), glyph 2→char 4, glyph 3→char 5.
+        let mut result = ShapeResult {
+            runs: vec![ShapeResultRun {
+                font_data: Arc::clone(&font_data),
+                glyphs: vec![100, 200, 300, 400],
+                advances: vec![10.0, 20.0, 10.0, 10.0],
+                offsets: vec![(0.0, 0.0); 4],
+                clusters: vec![0, 1, 4, 5],
+                start_index: 0,
+                num_characters: 6,
+                num_glyphs: 4,
+                direction: TextDirection::Ltr,
+            }],
+            width: 50.0,
+            num_characters: 6,
+            direction: TextDirection::Ltr,
+            character_data: (0..6)
+                .map(|i| ShapeResultCharacterData {
+                    x_position: i as f32 * 8.33,
+                    is_cluster_base: true,
+                    safe_to_break_before: true,
+                })
+                .collect(),
+        };
+
+        let mut desc = FontDescription::default();
+        desc.letter_spacing = 5.0;
+        let spaced_font = Font::new(desc);
+
+        TextShaper::apply_spacing(&mut result, &spaced_font, "office");
+
+        // Glyph 0 (cluster 0, covers char 0): should get 1 × 5.0 = 5.0
+        let eps = 0.01;
+        assert!(
+            (result.runs[0].advances[0] - 15.0).abs() < eps,
+            "glyph 0 advance: expected 15.0, got {}",
+            result.runs[0].advances[0]
+        );
+        // Glyph 1 (cluster 1, covers chars 1-3): should get 3 × 5.0 = 15.0
+        assert!(
+            (result.runs[0].advances[1] - 35.0).abs() < eps,
+            "glyph 1 (ligature) advance: expected 35.0, got {}",
+            result.runs[0].advances[1]
+        );
+        // Glyph 2 (cluster 4, covers char 4): should get 1 × 5.0 = 5.0
+        assert!(
+            (result.runs[0].advances[2] - 15.0).abs() < eps,
+            "glyph 2 advance: expected 15.0, got {}",
+            result.runs[0].advances[2]
+        );
+        // Glyph 3 (cluster 5, covers char 5): should get 1 × 5.0 = 5.0
+        assert!(
+            (result.runs[0].advances[3] - 15.0).abs() < eps,
+            "glyph 3 advance: expected 15.0, got {}",
+            result.runs[0].advances[3]
+        );
+        // Total extra = 6 × 5.0 = 30.0
+        assert!(
+            (result.width - 80.0).abs() < eps,
+            "total width: expected 80.0, got {}",
+            result.width
+        );
+    }
+
+    #[test]
+    fn word_spacing_only_applies_to_space_chars() {
+        // Verify word-spacing is applied only at U+0020, not at every character.
+        let shaper = TextShaper::new();
+        let mut desc = FontDescription::default();
+        desc.word_spacing = 10.0;
+        desc.letter_spacing = 0.0;
+        let font = Font::new(desc);
+
+        let text = "a b";
+        let result = shaper.shape(text, &font, TextDirection::Ltr);
+
+        // Only the space character should have extra width.
+        // Character 0 ('a') and 2 ('b') should not have word_spacing.
+        let a_width = result.character_data[1].x_position - result.character_data[0].x_position;
+        let space_width = result.character_data[2].x_position - result.character_data[1].x_position;
+        assert!(
+            space_width > a_width,
+            "Space should be wider than 'a' due to word-spacing: space={}, a={}",
+            space_width,
+            a_width
+        );
     }
 }

@@ -607,22 +607,41 @@ impl<'a> LineBreaker<'a> {
                 }
             }
 
-            // If no safe-to-break position was found, fall back to the nearest
-            // grapheme boundary regardless of safe-to-break.
+            // If no safe-to-break position was found, determine whether the
+            // text contains complex-script regions by checking whether any
+            // grapheme boundary in the range is marked unsafe-to-break.
             if best_byte.is_none() {
-                for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
-                    let break_byte = text_start + byte_offset;
-                    let break_char = byte_to_char_offset(&self.items_data.text, break_byte);
-                    let local_start = char_start - item_char_start;
-                    let local_end = break_char - item_char_start;
-                    let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
-                    if width <= remaining {
-                        best_byte = Some(break_byte);
-                        best_width = width;
-                    } else {
-                        break;
+                let has_unsafe_positions =
+                    text_slice.grapheme_indices(true).skip(1).any(|(byte_offset, _)| {
+                        let break_byte = text_start + byte_offset;
+                        let break_char =
+                            byte_to_char_offset(&self.items_data.text, break_byte);
+                        let local_break = break_char - item_char_start;
+                        !sr.safe_to_break_before(local_break)
+                    });
+
+                if !has_unsafe_positions {
+                    // Simple script (all positions are safe): fall back to
+                    // any grapheme boundary that fits.
+                    for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
+                        let break_byte = text_start + byte_offset;
+                        let break_char =
+                            byte_to_char_offset(&self.items_data.text, break_byte);
+                        let local_start = char_start - item_char_start;
+                        let local_end = break_char - item_char_start;
+                        let width =
+                            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                        if width <= remaining {
+                            best_byte = Some(break_byte);
+                            best_width = width;
+                        } else {
+                            break;
+                        }
                     }
                 }
+                // Complex script: best_byte stays None — we fall through to
+                // the overflow path below, which forces the first safe cluster
+                // onto the line rather than breaking mid-joining-sequence.
             }
 
             if let Some(brk) = best_byte {
@@ -638,29 +657,45 @@ impl<'a> LineBreaker<'a> {
                 self.current_text_offset = brk;
                 *state = LineState::Done;
             } else {
-                // Can't even fit one character
+                // Can't fit any safe break.
                 if !line.has_content() {
-                    // Force at least one grapheme cluster on the line.
-                    let first_grapheme_end = text_slice
+                    // Force text up to the first safe-to-break position to
+                    // prevent breaking inside complex-script joining
+                    // sequences. If no safe position exists at all within
+                    // the text range, force the entire range — the whole
+                    // word is one indivisible cluster. This may overflow the
+                    // line, matching Blink's behavior of preferring overflow
+                    // over incorrect shaping.
+                    let force_end = text_slice
                         .grapheme_indices(true)
-                        .nth(1)
-                        .map(|(i, _)| text_start + i)
+                        .skip(1)
+                        .find_map(|(byte_offset, _)| {
+                            let break_byte = text_start + byte_offset;
+                            let break_char =
+                                byte_to_char_offset(&self.items_data.text, break_byte);
+                            let local_break = break_char - item_char_start;
+                            if sr.safe_to_break_before(local_break) {
+                                Some(break_byte)
+                            } else {
+                                None
+                            }
+                        })
                         .unwrap_or(text_end);
-                    let width = self.measure_text_range(item_index, text_start, first_grapheme_end);
+                    let width = self.measure_text_range(item_index, text_start, force_end);
                     line.items.push(InlineItemResult {
                         item_index,
-                        text_range: text_start..first_grapheme_end,
+                        text_range: text_start..force_end,
                         inline_size: width,
                         shape_result: item.shape_result.clone(),
                         has_forced_break: false,
                         item_type: InlineItemType::Text,
                     });
                     line.used_width = line.used_width + width;
-                    if first_grapheme_end >= text_end {
+                    if force_end >= text_end {
                         self.current_item += 1;
                         self.current_text_offset = 0;
                     } else {
-                        self.current_text_offset = first_grapheme_end;
+                        self.current_text_offset = force_end;
                     }
                 }
                 *state = LineState::Done;
@@ -1753,6 +1788,73 @@ mod tests {
             line.items[0].text_range.end, 5,
             "Normal mode at_item_end should trim text_range to 'hello' (5 bytes), got {}",
             line.items[0].text_range.end,
+        );
+    }
+
+    // ── SP11 Round 18 Issue 2: complex script character break prefers overflow ──
+
+    #[test]
+    fn character_break_complex_script_does_not_split_joining_sequence() {
+        // When overflow-wrap: break-word applies to Arabic text and the line is
+        // too narrow, the breaker should force the entire joining cluster onto
+        // the line (overflow) rather than splitting mid-sequence, which would
+        // produce incorrect glyph forms.
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use std::sync::Arc;
+
+        let text = "مرحبا"; // 5 Arabic chars, single joining sequence
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let sr = shaper.shape(text, &font, TextDirection::Rtl);
+        let sr_arc = Arc::new(sr);
+
+        let item = InlineItem {
+            item_type: InlineItemType::Text,
+            text_range: 0..text.len(),
+            node_id: NodeId::NONE,
+            shape_result: Some(sr_arc.clone()),
+            style_index: 0,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 1,
+        };
+
+        let mut style = ComputedStyle::default();
+        style.overflow_wrap = OverflowWrap::BreakWord;
+
+        let items_data = super::super::items_builder::InlineItemsData {
+            text: text.to_string(),
+            items: vec![item],
+            styles: vec![style],
+        };
+
+        // Available width is very narrow — much less than the word width.
+        // The breaker should NOT split the Arabic text at an unsafe position.
+        let narrow = LayoutUnit::from_f32(5.0);
+        let mut breaker = LineBreaker::new(&items_data, narrow);
+        let line = breaker.next_line(narrow);
+        assert!(line.is_some(), "should produce at least one line");
+        let line = line.unwrap();
+
+        // The line should contain the ENTIRE Arabic word (overflow) rather
+        // than a fragment that would have invalid shaping.
+        assert!(
+            !line.items.is_empty(),
+            "line should have at least one item"
+        );
+        let item_result = &line.items[0];
+        // The text_range should cover the entire word — since there are no
+        // safe break points inside the joining sequence, the breaker must
+        // force the whole cluster.
+        assert_eq!(
+            item_result.text_range.start, 0,
+            "should start at beginning of text"
+        );
+        assert_eq!(
+            item_result.text_range.end,
+            text.len(),
+            "should include entire Arabic word (overflow) instead of splitting joining sequence"
         );
     }
 }
