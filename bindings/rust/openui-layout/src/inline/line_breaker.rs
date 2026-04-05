@@ -1313,17 +1313,16 @@ fn apply_strict_line_break(text: &str, breaks: Vec<usize>) -> Vec<usize> {
 /// mode does not provide. The base UAX#14 breaks are preserved; additional
 /// breaks are inserted at character boundaries preceding loose-extra characters.
 fn apply_loose_line_break(text: &str, mut breaks: Vec<usize>) -> Vec<usize> {
-    // Scan for positions before loose-break-before characters that are not
-    // already in the break set.
-    let mut extra: Vec<usize> = Vec::new();
+    use std::collections::HashSet;
+    let break_set: HashSet<usize> = breaks.iter().copied().collect();
+
     for (byte_pos, ch) in text.char_indices() {
         if byte_pos > 0 && is_cjk_loose_break_before(ch) {
-            if !breaks.contains(&byte_pos) {
-                extra.push(byte_pos);
+            if !break_set.contains(&byte_pos) {
+                breaks.push(byte_pos);
             }
         }
     }
-    breaks.extend(extra);
     breaks.sort_unstable();
     breaks.dedup();
     breaks
