@@ -99,9 +99,15 @@ impl<'a> LineBreaker<'a> {
                 InlineItemType::OpenTag => {
                     let style = &self.items_data.styles[item.style_index];
                     let pct_base = self.containing_block_width;
-                    let mbp = resolve_margin_or_padding(&style.margin_left, pct_base)
-                        + LayoutUnit::from_i32(style.effective_border_left())
-                        + resolve_margin_or_padding(&style.padding_left, pct_base);
+                    let mbp = if style.direction == openui_style::Direction::Rtl {
+                        resolve_margin_or_padding(&style.margin_right, pct_base)
+                            + LayoutUnit::from_i32(style.effective_border_right())
+                            + resolve_margin_or_padding(&style.padding_right, pct_base)
+                    } else {
+                        resolve_margin_or_padding(&style.margin_left, pct_base)
+                            + LayoutUnit::from_i32(style.effective_border_left())
+                            + resolve_margin_or_padding(&style.padding_left, pct_base)
+                    };
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
                         text_range: item.text_range.clone(),
@@ -116,9 +122,15 @@ impl<'a> LineBreaker<'a> {
                 InlineItemType::CloseTag => {
                     let style = &self.items_data.styles[item.style_index];
                     let pct_base = self.containing_block_width;
-                    let mbp = resolve_margin_or_padding(&style.padding_right, pct_base)
-                        + LayoutUnit::from_i32(style.effective_border_right())
-                        + resolve_margin_or_padding(&style.margin_right, pct_base);
+                    let mbp = if style.direction == openui_style::Direction::Rtl {
+                        resolve_margin_or_padding(&style.padding_left, pct_base)
+                            + LayoutUnit::from_i32(style.effective_border_left())
+                            + resolve_margin_or_padding(&style.margin_left, pct_base)
+                    } else {
+                        resolve_margin_or_padding(&style.padding_right, pct_base)
+                            + LayoutUnit::from_i32(style.effective_border_right())
+                            + resolve_margin_or_padding(&style.margin_right, pct_base)
+                    };
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
                         text_range: item.text_range.clone(),

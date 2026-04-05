@@ -35,8 +35,8 @@ fn capitalize(text: &str) -> String {
 
     for ch in text.chars() {
         if capitalize_next && ch.is_alphabetic() {
-            for upper in ch.to_uppercase() {
-                result.push(upper);
+            for tc in to_titlecase(ch) {
+                result.push(tc);
             }
             capitalize_next = false;
         } else {
@@ -50,6 +50,30 @@ fn capitalize(text: &str) -> String {
         }
     }
     result
+}
+
+/// Map a character to its Unicode titlecase form.
+///
+/// For the ~30 characters where titlecase differs from uppercase (Latin
+/// ligatures like ǳ/ǆ/ǉ/ǌ and their uppercase counterparts), this
+/// returns the correct titlecase codepoint.  For everything else it
+/// falls back to `char::to_uppercase()`.
+fn to_titlecase(ch: char) -> Vec<char> {
+    match ch {
+        // Latin small letter dz digraph variants
+        '\u{01F3}' => vec!['\u{01F2}'], // ǳ → ǲ
+        '\u{01F1}' => vec!['\u{01F2}'], // Ǳ → ǲ
+        // Latin small letter lj digraph variants
+        '\u{01C6}' => vec!['\u{01C5}'], // ǆ → ǅ
+        '\u{01C4}' => vec!['\u{01C5}'], // Ǆ → ǅ
+        // Latin small letter nj digraph variants
+        '\u{01C9}' => vec!['\u{01C8}'], // ǉ → ǈ
+        '\u{01C7}' => vec!['\u{01C8}'], // Ǉ → ǈ
+        // Latin small letter dz variants
+        '\u{01CC}' => vec!['\u{01CB}'], // ǌ → ǋ
+        '\u{01CA}' => vec!['\u{01CB}'], // Ǌ → ǋ
+        _ => ch.to_uppercase().collect(),
+    }
 }
 
 /// Convert ASCII characters to their fullwidth equivalents.

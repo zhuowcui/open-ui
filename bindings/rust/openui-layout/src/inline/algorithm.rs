@@ -171,15 +171,15 @@ fn count_expansion_opportunities(line_info: &LineInfo, items_data: &InlineItemsD
             count += text.chars().filter(|c| *c == ' ').count();
         }
     }
-    // Exclude trailing space: the last text item's trailing space was already
-    // stripped from width and should not be an expansion opportunity.
+    // Exclude trailing spaces: the last text item's trailing spaces were already
+    // stripped from width and should not be expansion opportunities.
+    // In pre-wrap mode there can be multiple trailing spaces.
     if count > 0 {
         for item_result in line_info.items.iter().rev() {
             if item_result.item_type == InlineItemType::Text {
                 let text = &items_data.text[item_result.text_range.clone()];
-                if text.ends_with(' ') {
-                    count -= 1;
-                }
+                let trailing_spaces = text.chars().rev().take_while(|c| *c == ' ').count();
+                count = count.saturating_sub(trailing_spaces);
                 break;
             }
             if item_result.item_type != InlineItemType::CloseTag
@@ -194,20 +194,38 @@ fn count_expansion_opportunities(line_info: &LineInfo, items_data: &InlineItemsD
 
 // ── Inline start/end resolution for open/close tag items ─────────────────
 
-/// Resolve inline-start contribution of an OpenTag item (margin-left + border-left + padding-left).
+/// Resolve inline-start MBP contribution of an OpenTag item.
+///
+/// In LTR, inline-start is the left side; in RTL, inline-start is the right side.
 fn resolve_inline_start(style: &ComputedStyle, percentage_base: LayoutUnit) -> LayoutUnit {
-    let margin = resolve_margin_or_padding(&style.margin_left, percentage_base);
-    let border = LayoutUnit::from_i32(style.effective_border_left());
-    let padding = resolve_margin_or_padding(&style.padding_left, percentage_base);
-    margin + border + padding
+    if style.direction == Direction::Rtl {
+        let margin = resolve_margin_or_padding(&style.margin_right, percentage_base);
+        let border = LayoutUnit::from_i32(style.effective_border_right());
+        let padding = resolve_margin_or_padding(&style.padding_right, percentage_base);
+        margin + border + padding
+    } else {
+        let margin = resolve_margin_or_padding(&style.margin_left, percentage_base);
+        let border = LayoutUnit::from_i32(style.effective_border_left());
+        let padding = resolve_margin_or_padding(&style.padding_left, percentage_base);
+        margin + border + padding
+    }
 }
 
-/// Resolve inline-end contribution of a CloseTag item (padding-right + border-right + margin-right).
+/// Resolve inline-end MBP contribution of a CloseTag item.
+///
+/// In LTR, inline-end is the right side; in RTL, inline-end is the left side.
 fn resolve_inline_end(style: &ComputedStyle, percentage_base: LayoutUnit) -> LayoutUnit {
-    let padding = resolve_margin_or_padding(&style.padding_right, percentage_base);
-    let border = LayoutUnit::from_i32(style.effective_border_right());
-    let margin = resolve_margin_or_padding(&style.margin_right, percentage_base);
-    padding + border + margin
+    if style.direction == Direction::Rtl {
+        let padding = resolve_margin_or_padding(&style.padding_left, percentage_base);
+        let border = LayoutUnit::from_i32(style.effective_border_left());
+        let margin = resolve_margin_or_padding(&style.margin_left, percentage_base);
+        padding + border + margin
+    } else {
+        let padding = resolve_margin_or_padding(&style.padding_right, percentage_base);
+        let border = LayoutUnit::from_i32(style.effective_border_right());
+        let margin = resolve_margin_or_padding(&style.margin_right, percentage_base);
+        padding + border + margin
+    }
 }
 
 // ── Main entry point ─────────────────────────────────────────────────────
@@ -779,7 +797,24 @@ fn create_line_box(
                 let mut justified_shape: Option<Arc<ShapeResult>> = None;
                 if should_justify && justification_per_space > 0.0 {
                     let text = &items_data.text[item_result.text_range.clone()];
-                    let space_count = text.chars().filter(|c| *c == ' ').count();
+                    // In pre-wrap mode, the last text item's trailing spaces
+                    // hang and must not receive justification expansion.
+                    let is_last_text = line_info.items[(_i + 1)..]
+                        .iter()
+                        .all(|ir| ir.item_type != InlineItemType::Text);
+                    let style_for_item = &items_data.styles[item.style_index];
+                    let space_count = if is_last_text
+                        && matches!(
+                            style_for_item.white_space,
+                            openui_style::WhiteSpace::PreWrap | openui_style::WhiteSpace::BreakSpaces
+                        )
+                    {
+                        let total = text.chars().filter(|c| *c == ' ').count();
+                        let trailing = text.chars().rev().take_while(|c| *c == ' ').count();
+                        total - trailing
+                    } else {
+                        text.chars().filter(|c| *c == ' ').count()
+                    };
                     if space_count > 0 {
                         let extra = justification_per_space * space_count as f32;
                         justification_accumulator += extra;

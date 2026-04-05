@@ -256,3 +256,61 @@ fn lowercase_german_eszett_unchanged() {
         "ß"
     );
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── SP11 ROUND 19 ISSUE 3: CAPITALIZE USES TITLECASE, NOT UPPERCASE ─
+// ═══════════════════════════════════════════════════════════════════════
+
+#[test]
+fn capitalize_titlecase_dz_digraph() {
+    // ǳ (U+01F3) should titlecase to ǲ (U+01F2), NOT uppercase Ǳ (U+01F1).
+    assert_eq!(
+        apply_text_transform("\u{01F3}abc", TextTransform::Capitalize),
+        "\u{01F2}abc"
+    );
+}
+
+#[test]
+fn capitalize_titlecase_lj_digraph() {
+    // ǆ (U+01C6) should titlecase to ǅ (U+01C5).
+    assert_eq!(
+        apply_text_transform("\u{01C6}abc", TextTransform::Capitalize),
+        "\u{01C5}abc"
+    );
+}
+
+#[test]
+fn capitalize_titlecase_nj_digraph() {
+    // ǉ (U+01C9) should titlecase to ǈ (U+01C8).
+    assert_eq!(
+        apply_text_transform("\u{01C9}abc", TextTransform::Capitalize),
+        "\u{01C8}abc"
+    );
+}
+
+#[test]
+fn capitalize_titlecase_dz_with_caron() {
+    // ǌ (U+01CC) should titlecase to ǋ (U+01CB).
+    assert_eq!(
+        apply_text_transform("\u{01CC}abc", TextTransform::Capitalize),
+        "\u{01CB}abc"
+    );
+}
+
+#[test]
+fn capitalize_titlecase_uppercase_dz_to_titlecase() {
+    // Even Ǳ (U+01F1, uppercase) at word start should become ǲ (U+01F2, titlecase).
+    assert_eq!(
+        apply_text_transform("\u{01F1}abc", TextTransform::Capitalize),
+        "\u{01F2}abc"
+    );
+}
+
+#[test]
+fn capitalize_normal_char_unaffected_by_titlecase() {
+    // Normal ASCII chars: titlecase == uppercase. No regression.
+    assert_eq!(
+        apply_text_transform("hello world", TextTransform::Capitalize),
+        "Hello World"
+    );
+}
