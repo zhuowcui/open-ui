@@ -108,6 +108,7 @@ fn double_overline_second_line_is_above_first() {
         &style,
         &metrics,
         decoration_painter::DecorationPhase::BeforeText,
+        None,
     );
 
     let overline_y = (baseline_y - metrics.ascent) as i32; // 48
@@ -150,6 +151,7 @@ fn double_underline_second_line_is_below_first() {
         &style,
         &metrics,
         decoration_painter::DecorationPhase::BeforeText,
+        None,
     );
 
     let underline_y = (baseline_y + metrics.underline_offset) as i32; // 42

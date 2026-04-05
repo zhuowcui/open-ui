@@ -44,6 +44,7 @@ fn before_text_phase_paints_underline() {
     paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
         DecorationPhase::BeforeText,
+        None,
     );
 
     assert!(
@@ -63,6 +64,7 @@ fn after_text_phase_paints_line_through() {
     paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
         DecorationPhase::AfterText,
+        None,
     );
 
     assert!(
@@ -82,6 +84,7 @@ fn before_text_phase_does_not_paint_line_through() {
     paint_text_decorations(
         surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
         DecorationPhase::BeforeText,
+        None,
     );
 
     assert!(

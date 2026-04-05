@@ -153,6 +153,9 @@ fn paint_text_fragment(
 
     let origin = (x, baseline_y);
 
+    // Text content for CJK detection in skip-ink Auto mode.
+    let text_content = fragment.text_content.as_deref();
+
     // 1. Text shadows
     crate::text_painter::paint_text_shadows(canvas, shape_result, origin, style);
 
@@ -160,6 +163,7 @@ fn paint_text_fragment(
     crate::decoration_painter::paint_text_decorations(
         canvas, shape_result, origin, style, &metrics,
         crate::decoration_painter::DecorationPhase::BeforeText,
+        text_content,
     );
 
     // 3. Text glyphs
@@ -169,6 +173,7 @@ fn paint_text_fragment(
     crate::decoration_painter::paint_text_decorations(
         canvas, shape_result, origin, style, &metrics,
         crate::decoration_painter::DecorationPhase::AfterText,
+        text_content,
     );
 }
 

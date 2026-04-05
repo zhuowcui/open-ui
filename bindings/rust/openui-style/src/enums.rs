@@ -898,6 +898,27 @@ impl WritingMode {
     pub fn is_vertical(self) -> bool {
         !self.is_horizontal()
     }
+
+    /// Whether block direction goes right-to-left (vertical-rl, sideways-rl).
+    ///
+    /// Blink: `IsFlippedBlocksWritingMode()` in `writing_mode_utils.h`.
+    /// Used during offset conversion — in vertical-rl the block-start edge
+    /// is the physical *right* edge, so converting a logical block-offset
+    /// to a physical left requires subtracting from the container width.
+    #[inline]
+    pub fn is_flipped_blocks(self) -> bool {
+        matches!(self, Self::VerticalRl | Self::SidewaysRl)
+    }
+
+    /// Whether inline direction is bottom-to-top (sideways-lr).
+    ///
+    /// Blink: `IsFlippedLinesWritingMode()` in `writing_mode_utils.h`.
+    /// sideways-lr is the only mode where the inline direction runs from
+    /// bottom to top rather than top to bottom.
+    #[inline]
+    pub fn is_flipped_lines(self) -> bool {
+        matches!(self, Self::SidewaysLr)
+    }
 }
 
 impl Default for WritingMode {

@@ -6,11 +6,20 @@
 //! Decoration lines are positioned relative to the text baseline using
 //! font metrics. Each decoration style (solid, double, dotted, dashed, wavy)
 //! uses specific Skia draw calls matching Blink's implementation.
+//!
+//! ## Skip-ink
+//!
+//! The `text-decoration-skip-ink` property controls whether decoration lines
+//! skip over glyph ink (Blink: `ApplyDecorationOverrideForSkipInk`).
+//! Intercepts are computed via Skia's `TextBlob::get_intercepts()`, which
+//! returns x-ranges where glyph outlines cross the decoration stripe. Gaps
+//! are added with a horizontal padding of 1px and a vertical dilation of
+//! `min(thickness, 13px)`.
 
 use skia_safe::{Canvas, ColorSpace, Paint, PaintStyle, Path, PathEffect, Point, Rect};
 
 use openui_style::ComputedStyle;
-use openui_style::{TextDecorationStyle, TextDecorationThickness};
+use openui_style::{TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness};
 use openui_text::font::FontMetrics;
 use openui_text::shaping::ShapeResult;
 
@@ -45,10 +54,12 @@ pub enum DecorationLineKind {
 ///
 /// # Arguments
 /// * `canvas` — Skia raster canvas
-/// * `shape_result` — For measuring text advance width
+/// * `shape_result` — For measuring text advance width and computing intercepts
 /// * `origin` — (x, baseline_y) in device pixels
 /// * `style` — Computed style with decoration properties
 /// * `metrics` — Font metrics for decoration positioning
+/// * `phase` — Whether painting underline/overline or line-through
+/// * `text_content` — Original text for CJK detection in Auto skip-ink mode
 pub fn paint_text_decorations(
     canvas: &Canvas,
     shape_result: &ShapeResult,
@@ -56,6 +67,7 @@ pub fn paint_text_decorations(
     style: &ComputedStyle,
     metrics: &FontMetrics,
     phase: DecorationPhase,
+    text_content: Option<&str>,
 ) {
     let decoration_line = style.text_decoration_line;
     if decoration_line.is_none() {
@@ -84,6 +96,8 @@ pub fn paint_text_decorations(
     paint.set_anti_alias(true);
     paint.set_color4f(to_sk_color4f(&resolved_color), None::<&ColorSpace>);
 
+    let skip_ink = style.text_decoration_skip_ink;
+
     match phase {
         DecorationPhase::BeforeText => {
             // ── Underline ────────────────────────────────────────────────────
@@ -100,25 +114,272 @@ pub fn paint_text_decorations(
                     0.0
                 };
                 let y = baseline_y + metrics.underline_offset + css_offset;
-                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::Underline);
+                draw_decoration_line_with_skip_ink(
+                    canvas, &paint, shape_result, origin, x, y, width,
+                    &style.text_decoration_style, thickness,
+                    DecorationLineKind::Underline, skip_ink, text_content,
+                );
             }
 
             // ── Overline ─────────────────────────────────────────────────────
             // Blink: overline positioned at -ascent from baseline (top of em box).
             if decoration_line.has_overline() {
                 let y = baseline_y - metrics.ascent;
-                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::Overline);
+                draw_decoration_line_with_skip_ink(
+                    canvas, &paint, shape_result, origin, x, y, width,
+                    &style.text_decoration_style, thickness,
+                    DecorationLineKind::Overline, skip_ink, text_content,
+                );
             }
         }
         DecorationPhase::AfterText => {
             // ── Line-through ─────────────────────────────────────────────────
             // Blink: strikeout_position is positive above baseline.
+            // Per CSS spec, skip-ink does NOT apply to line-through.
             if decoration_line.has_line_through() {
                 let y = baseline_y - metrics.strikeout_position;
                 draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::LineThrough);
             }
         }
     }
+}
+
+// ── Skip-ink constants ────────────────────────────────────────────────────
+//
+// These constants match Blink's implementation in
+// `core/paint/text_decoration_painter.cc` and Firefox's rendering engine.
+
+/// Horizontal padding added on each side of a glyph ink intercept gap.
+/// Blink: hardcoded 1.0px in `ApplyDecorationOverrideForSkipInk`.
+const SKIP_INK_HORIZONTAL_PADDING: f32 = 1.0;
+
+/// Maximum vertical dilation applied to the decoration stripe when querying
+/// intercepts. Caps at 13px to avoid excessive gap detection on thick lines.
+/// Blink: `ClampDilationAdjustment` in `text_decoration_painter.cc` caps at 13.
+/// Firefox uses the same 13px cap.
+const SKIP_INK_MAX_DILATION: f32 = 13.0;
+
+/// Draw a decoration line with optional skip-ink gap detection.
+///
+/// For underline and overline, when skip-ink is enabled (Auto or All), this
+/// queries Skia's `TextBlob::get_intercepts()` to detect glyph ink regions
+/// that cross the decoration stripe, then draws segmented lines around them.
+///
+/// Blink: `TextDecorationPainter::PaintDecorationUnderOrOverLine()` calls
+/// `ApplyDecorationOverrideForSkipInk()` which uses clip-out rectangles.
+/// We achieve the equivalent effect by splitting the line into segments.
+fn draw_decoration_line_with_skip_ink(
+    canvas: &Canvas,
+    paint: &Paint,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    x: f32,
+    y: f32,
+    width: f32,
+    decoration_style: &TextDecorationStyle,
+    thickness: f32,
+    kind: DecorationLineKind,
+    skip_ink: TextDecorationSkipInk,
+    text_content: Option<&str>,
+) {
+    if skip_ink == TextDecorationSkipInk::None {
+        draw_decoration_line(canvas, paint, x, y, width, decoration_style, thickness, kind);
+        return;
+    }
+
+    let intercepts = compute_skip_ink_intercepts(
+        shape_result, origin, y, thickness, skip_ink, text_content,
+    );
+
+    if intercepts.is_empty() {
+        draw_decoration_line(canvas, paint, x, y, width, decoration_style, thickness, kind);
+        return;
+    }
+
+    // Draw line segments between gaps.
+    // Each gap is defined by an intercept pair with horizontal padding.
+    let end_x = x + width;
+    let mut current_x = x;
+
+    for &(ink_start, ink_end) in &intercepts {
+        let gap_start = ink_start - SKIP_INK_HORIZONTAL_PADDING;
+        let gap_end = ink_end + SKIP_INK_HORIZONTAL_PADDING;
+
+        // Draw segment before this gap (if there's positive width).
+        if current_x < gap_start {
+            let seg_width = gap_start - current_x;
+            draw_decoration_line(canvas, paint, current_x, y, seg_width, decoration_style, thickness, kind);
+        }
+
+        current_x = gap_end;
+    }
+
+    // Draw final segment after last gap.
+    if current_x < end_x {
+        let seg_width = end_x - current_x;
+        draw_decoration_line(canvas, paint, current_x, y, seg_width, decoration_style, thickness, kind);
+    }
+}
+
+/// Compute glyph ink intercepts for skip-ink decoration.
+///
+/// Returns pairs of `(start_x, end_x)` positions (in device pixels, relative
+/// to the canvas) where glyph ink intersects the decoration stripe.
+///
+/// Blink: `TextDecorationPainter::ApplyDecorationOverrideForSkipInk()` calls
+/// `SkTextBlob::getIntercepts()` with dilated bounds.
+///
+/// The decoration stripe is vertically dilated by `min(thickness, 13px)` on
+/// each side to ensure intercepts are detected even for thin lines near glyph
+/// edges. The 13px cap prevents excessive gap detection on very thick lines.
+pub(crate) fn compute_skip_ink_intercepts(
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    decoration_y: f32,
+    thickness: f32,
+    skip_ink: TextDecorationSkipInk,
+    text_content: Option<&str>,
+) -> Vec<(f32, f32)> {
+    if skip_ink == TextDecorationSkipInk::None {
+        return Vec::new();
+    }
+
+    let text_blob = match shape_result.to_text_blob() {
+        Some(blob) => blob,
+        None => return Vec::new(),
+    };
+
+    // Compute the dilated decoration stripe bounds.
+    // Blink: dilation = ClampDilationAdjustment(thickness) = min(thickness, 13)
+    let dilation = thickness.min(SKIP_INK_MAX_DILATION);
+    let stripe_top = decoration_y - thickness / 2.0 - dilation;
+    let stripe_bottom = decoration_y + thickness / 2.0 + dilation;
+
+    // TextBlob::get_intercepts() expects bounds relative to the blob's origin.
+    // Our decoration coordinates are in canvas space; the blob is drawn at
+    // `origin`, so we need to subtract origin.1 to get blob-local Y bounds.
+    let local_top = stripe_top - origin.1;
+    let local_bottom = stripe_bottom - origin.1;
+
+    let raw_intercepts = text_blob.get_intercepts([local_top, local_bottom], None);
+
+    if raw_intercepts.is_empty() {
+        return Vec::new();
+    }
+
+    // Intercepts come as pairs: [start0, end0, start1, end1, ...].
+    // Each pair is in the blob's coordinate system (relative to blob origin.x = 0).
+    // We offset them by origin.0 to get canvas-space x-coordinates.
+    let origin_x = origin.0;
+    let mut pairs: Vec<(f32, f32)> = raw_intercepts
+        .chunks_exact(2)
+        .map(|chunk| (chunk[0] + origin_x, chunk[1] + origin_x))
+        .collect();
+
+    // Sort by start position for proper merging and CJK filtering.
+    pairs.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+
+    // In Auto mode, filter out intercepts that correspond to CJK characters.
+    if skip_ink == TextDecorationSkipInk::Auto {
+        if let Some(text) = text_content {
+            pairs = filter_non_cjk_intercepts(&pairs, shape_result, origin_x, text);
+        }
+    }
+
+    // Merge overlapping or adjacent intercepts.
+    merge_intercepts(&mut pairs);
+
+    pairs
+}
+
+/// Filter intercepts to exclude those covering CJK characters.
+///
+/// In Auto mode, CJK ideographs and related scripts are excluded from
+/// skip-ink because their complex strokes create excessive gaps that harm
+/// readability. This matches Blink's `ShouldSkipForTextDecorationSkipInk()`
+/// which checks `Character::IsCJKIdeographOrSymbol()`.
+fn filter_non_cjk_intercepts(
+    intercepts: &[(f32, f32)],
+    shape_result: &ShapeResult,
+    origin_x: f32,
+    text: &str,
+) -> Vec<(f32, f32)> {
+    let chars: Vec<char> = text.chars().collect();
+    if chars.is_empty() {
+        return intercepts.to_vec();
+    }
+
+    intercepts
+        .iter()
+        .filter(|&&(start_x, end_x)| {
+            // Find which character(s) this intercept overlaps with.
+            // Use the character_data x_positions from the shape result.
+            let mid_x = (start_x + end_x) / 2.0 - origin_x;
+            let char_idx = shape_result.offset_for_x_position(mid_x);
+            let ch = chars.get(char_idx).copied().unwrap_or('\0');
+            // Keep this intercept only if the character is NOT CJK.
+            !is_cjk_character(ch)
+        })
+        .copied()
+        .collect()
+}
+
+/// Merge overlapping or adjacent intercept pairs into minimal non-overlapping set.
+///
+/// Input must be sorted by start position. After merging, adjacent gaps
+/// within 0.5px are also coalesced to avoid rendering tiny line fragments.
+fn merge_intercepts(pairs: &mut Vec<(f32, f32)>) {
+    if pairs.len() <= 1 {
+        return;
+    }
+
+    let mut merged: Vec<(f32, f32)> = Vec::with_capacity(pairs.len());
+    merged.push(pairs[0]);
+
+    for &(start, end) in &pairs[1..] {
+        let last = merged.last_mut().unwrap();
+        // Merge if overlapping or within 0.5px (avoids sub-pixel slivers).
+        if start <= last.1 + 0.5 {
+            last.1 = last.1.max(end);
+        } else {
+            merged.push((start, end));
+        }
+    }
+
+    *pairs = merged;
+}
+
+/// Returns true if the character is CJK and should be excluded from
+/// skip-ink in Auto mode.
+///
+/// CJK ideographs have dense, complex strokes — skipping them creates
+/// excessive gaps that harm readability. This matches Blink's
+/// `Character::IsCJKIdeographOrSymbol()` in `platform/text/character.cc`.
+///
+/// Ranges include:
+/// - CJK Unified Ideographs and Extensions A–F
+/// - CJK Compatibility Ideographs
+/// - Hiragana, Katakana, Katakana Phonetic Extensions
+/// - Hangul Syllables
+/// - CJK Symbols and Punctuation
+pub(crate) fn is_cjk_character(ch: char) -> bool {
+    let cp = ch as u32;
+    matches!(cp,
+        0x3000..=0x303F |     // CJK Symbols and Punctuation
+        0x3040..=0x309F |     // Hiragana
+        0x30A0..=0x30FF |     // Katakana
+        0x31F0..=0x31FF |     // Katakana Phonetic Extensions
+        0x3400..=0x4DBF |     // CJK Unified Ideographs Extension A
+        0x4E00..=0x9FFF |     // CJK Unified Ideographs
+        0xAC00..=0xD7AF |     // Hangul Syllables
+        0xF900..=0xFAFF |     // CJK Compatibility Ideographs
+        0x20000..=0x2A6DF |   // CJK Extension B
+        0x2A700..=0x2B73F |   // CJK Extension C
+        0x2B740..=0x2B81F |   // CJK Extension D
+        0x2B820..=0x2CEAF |   // CJK Extension E
+        0x2CEB0..=0x2EBEF |   // CJK Extension F
+        0x2F800..=0x2FA1F     // CJK Compatibility Ideographs Supplement
+    )
 }
 
 /// Resolve the decoration thickness from the computed style and font metrics.

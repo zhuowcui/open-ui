@@ -46,6 +46,7 @@ fn r30_from_font_ignores_strikeout_thickness() {
         &style,
         &metrics,
         DecorationPhase::AfterText,
+        None,
     );
 }
 
@@ -78,9 +79,11 @@ fn r30_underline_and_linethrough_share_thickness() {
 
     paint_text_decorations(
         canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::BeforeText,
+        None,
     );
     paint_text_decorations(
         canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::AfterText,
+        None,
     );
 }
 
@@ -110,6 +113,7 @@ fn r30_auto_thickness_14px_not_rounded() {
 
     paint_text_decorations(
         canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::BeforeText,
+        None,
     );
 }
 
@@ -137,5 +141,6 @@ fn r30_auto_thickness_16px_not_rounded() {
 
     paint_text_decorations(
         canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::BeforeText,
+        None,
     );
 }

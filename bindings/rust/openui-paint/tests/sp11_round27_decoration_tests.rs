@@ -94,6 +94,7 @@ fn paint_decorations_with_distinct_thicknesses_no_panic() {
         &style,
         &metrics,
         DecorationPhase::BeforeText,
+        None,
     );
     paint_text_decorations(
         surface.canvas(),
@@ -102,5 +103,6 @@ fn paint_decorations_with_distinct_thicknesses_no_panic() {
         &style,
         &metrics,
         DecorationPhase::AfterText,
+        None,
     );
 }
