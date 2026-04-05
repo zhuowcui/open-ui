@@ -454,9 +454,11 @@ fn create_line_box(
                         });
                     }
                     VerticalAlign::Middle => {
-                        let half = item_height / 2.0;
-                        line_ascent = line_ascent.max(half);
-                        line_descent = line_descent.max(half);
+                        let x_height = block_metrics.x_height;
+                        let above_baseline = item_height / 2.0 + x_height / 2.0;
+                        let below_baseline = (item_height / 2.0 - x_height / 2.0).max(0.0);
+                        line_ascent = line_ascent.max(above_baseline);
+                        line_descent = line_descent.max(below_baseline);
                     }
                     VerticalAlign::Length(px) => {
                         // Shift from baseline by px (negative = down).
@@ -466,7 +468,18 @@ fn create_line_box(
                         line_descent = line_descent.max(shifted_descent);
                     }
                     VerticalAlign::Percentage(pct) => {
-                        let element_line_height = item_height;
+                        // Compute element's own line-height for percentage basis
+                        let element_line_height = match style.line_height {
+                            LineHeight::Normal => {
+                                let font_desc = style_to_font_description(style);
+                                let font = Font::new(font_desc);
+                                let metrics = font.font_metrics().copied().unwrap_or_default();
+                                metrics.line_spacing
+                            }
+                            LineHeight::Number(n) => style.font_size * n,
+                            LineHeight::Length(px) => px,
+                            LineHeight::Percentage(p) => style.font_size * p / 100.0,
+                        };
                         let shift = element_line_height * pct / 100.0;
                         let shifted_ascent = item_height + shift.max(0.0);
                         let shifted_descent = (-shift).max(0.0);
@@ -725,8 +738,18 @@ fn create_line_box(
                         baseline - item_height - shift
                     }
                     VerticalAlign::Percentage(pct) => {
-                        // Percentage of the element's own line-height.
-                        let element_line_height = item_height.to_f32();
+                        // Percentage of the element's own line-height (CSS 2.2 §10.8.1).
+                        let element_line_height = match style.line_height {
+                            LineHeight::Normal => {
+                                let font_desc = style_to_font_description(style);
+                                let font = Font::new(font_desc);
+                                let metrics = font.font_metrics().copied().unwrap_or_default();
+                                metrics.line_spacing
+                            }
+                            LineHeight::Number(n) => style.font_size * n,
+                            LineHeight::Length(px) => px,
+                            LineHeight::Percentage(p) => style.font_size * p / 100.0,
+                        };
                         let shift = LayoutUnit::from_f32(element_line_height * pct / 100.0);
                         baseline - item_height - shift
                     }

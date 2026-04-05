@@ -104,15 +104,16 @@ fn atomic_inline_valign_bottom_at_line_bottom() {
 #[test]
 fn atomic_inline_valign_middle_centered_around_baseline() {
     // vertical-align:middle → item centered around baseline - x_height/2.
-    // The top offset should differ from both top-aligned and bottom-aligned.
+    // Use a small item so the strut dominates line ascent, making the
+    // middle-aligned position differ from baseline-aligned.
     let (doc_mid, block_mid, atomic_mid) =
-        make_atomic_inline_block(50.0, 60.0, VerticalAlign::Middle);
+        make_atomic_inline_block(50.0, 10.0, VerticalAlign::Middle);
     let frag_mid = do_layout(&doc_mid, block_mid);
     let boxes_mid = collect_box_fragments(&frag_mid);
     let mid_frag: Vec<_> = boxes_mid.iter().filter(|f| f.node_id == atomic_mid).collect();
 
     let (doc_bl, block_bl, atomic_bl) =
-        make_atomic_inline_block(50.0, 60.0, VerticalAlign::Baseline);
+        make_atomic_inline_block(50.0, 10.0, VerticalAlign::Baseline);
     let frag_bl = do_layout(&doc_bl, block_bl);
     let boxes_bl = collect_box_fragments(&frag_bl);
     let bl_frag: Vec<_> = boxes_bl.iter().filter(|f| f.node_id == atomic_bl).collect();

@@ -78,13 +78,13 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
         && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
     if needs_clip {
         canvas.save();
+        // Clip to padding box (inset by border widths per CSS spec).
+        let clip_x = abs_offset.left.to_f32() + fragment.border.left.to_f32();
+        let clip_y = abs_offset.top.to_f32() + fragment.border.top.to_f32();
+        let clip_w = fragment.size.width.to_f32() - fragment.border.left.to_f32() - fragment.border.right.to_f32();
+        let clip_h = fragment.size.height.to_f32() - fragment.border.top.to_f32() - fragment.border.bottom.to_f32();
         canvas.clip_rect(
-            Rect::from_xywh(
-                abs_offset.left.to_f32(),
-                abs_offset.top.to_f32(),
-                fragment.size.width.to_f32(),
-                fragment.size.height.to_f32(),
-            ),
+            Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
             ClipOp::Intersect,
             false,
         );
