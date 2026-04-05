@@ -2049,15 +2049,19 @@ mod unicode_edge_cases {
     }
 
     #[test]
-    fn mixed_latin_cjk() {
-        // Test mixed scripts lay out correctly (pure Latin to avoid Skia shaper bug with CJK)
+    fn multi_item_layout() {
+        // Test that multiple separate text items produce correct combined layout
         let frag = layout_text(
-            &["Hello world mixed"],
+            &["Hello ", "world ", "test"],
             800,
         );
-        assert!(count_line_boxes(&frag) >= 1, "mixed text should produce output");
+        assert!(count_line_boxes(&frag) >= 1, "multi-item text should produce output");
         assert!(frag.size.height > LayoutUnit::zero());
     }
+
+    // NOTE: Mixed Latin+CJK text in a single run triggers a Skia shaper assertion
+    // (skia-safe 0.82.0, shaper.rs:444). CJK-only runs work correctly. This is a
+    // known upstream bug tracked separately.
 
     #[test]
     fn emoji() {

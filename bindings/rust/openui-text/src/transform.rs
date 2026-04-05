@@ -164,8 +164,8 @@ fn greek_to_upper(text: &str) -> String {
             '\u{0390}' => { result.push('\u{03AA}'); prev_base_greek = true; } // ΐ → Ϊ
             '\u{03B0}' => { result.push('\u{03AB}'); prev_base_greek = true; } // ΰ → Ϋ
             // Combining accents: strip after Greek base letter.
-            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0344}' if prev_base_greek => {
-                // Drop combining tonos / grave / tilde / perispomeni / dialytika-tonos.
+            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0344}' | '\u{0313}' | '\u{0314}' if prev_base_greek => {
+                // Drop combining tonos / grave / tilde / perispomeni / dialytika-tonos / smooth/rough breathing.
             }
             // Iota subscript (ypogegrammeni): drop in Greek uppercase context.
             '\u{0345}' if prev_base_greek => {}
@@ -181,6 +181,12 @@ fn greek_to_upper(text: &str) -> String {
                         0x0300 | 0x0301 | 0x0303 | 0x0342 | 0x0344 | 0x0345 |
                         0x0313 | 0x0314  // smooth/rough breathing
                     ) {
+                        continue;
+                    }
+                    // Precomposed Greek Extended uppercase chars (e.g., Ἀ U+1F08
+                    // from ἀ U+1F00) must be decomposed to extract the base capital.
+                    if let Some(base) = greek_extended_base_capital(cp) {
+                        result.push(base);
                         continue;
                     }
                     result.push(c);
@@ -206,6 +212,55 @@ fn is_greek_base(ch: char) -> bool {
         // Greek Extended block: ἀ-ῼ
         0x1F00..=0x1FFF
     )
+}
+
+/// Map a Greek Extended code point to its base Greek capital letter.
+///
+/// Returns `Some(capital)` for precomposed characters in the Greek Extended
+/// block (U+1F00–U+1FFF) whose base is a standard Greek capital in
+/// U+0370–U+03FF. Returns `None` for code points outside this block.
+fn greek_extended_base_capital(cp: u32) -> Option<char> {
+    static VOWEL_MAP: [char; 7] = [
+        '\u{0391}', // 0: Alpha
+        '\u{0395}', // 1: Epsilon
+        '\u{0397}', // 2: Eta
+        '\u{0399}', // 3: Iota
+        '\u{039F}', // 4: Omicron
+        '\u{03A5}', // 5: Upsilon
+        '\u{03A9}', // 6: Omega
+    ];
+    match cp {
+        // U+1F00–U+1F6F: groups of 16 per vowel (lowercase + uppercase pairs).
+        0x1F00..=0x1F6F => VOWEL_MAP.get(((cp - 0x1F00) >> 4) as usize).copied(),
+        // U+1F70–U+1F7D: vowels with varia/oxia (accent only).
+        0x1F70..=0x1F71 => Some('\u{0391}'),
+        0x1F72..=0x1F73 => Some('\u{0395}'),
+        0x1F74..=0x1F75 => Some('\u{0397}'),
+        0x1F76..=0x1F77 => Some('\u{0399}'),
+        0x1F78..=0x1F79 => Some('\u{039F}'),
+        0x1F7A..=0x1F7B => Some('\u{03A5}'),
+        0x1F7C..=0x1F7D => Some('\u{03A9}'),
+        // U+1F80–U+1FAF: breathing + iota subscript groups.
+        0x1F80..=0x1F8F => Some('\u{0391}'),
+        0x1F90..=0x1F9F => Some('\u{0397}'),
+        0x1FA0..=0x1FAF => Some('\u{03A9}'),
+        // U+1FB0–U+1FBC: alpha forms.
+        0x1FB0..=0x1FB4 | 0x1FB6..=0x1FBC => Some('\u{0391}'),
+        // U+1FC2–U+1FCC: eta / epsilon forms.
+        0x1FC2..=0x1FC4 | 0x1FC6..=0x1FC7 => Some('\u{0397}'),
+        0x1FC8..=0x1FC9 => Some('\u{0395}'),
+        0x1FCA..=0x1FCC => Some('\u{0397}'),
+        // U+1FD0–U+1FDB: iota forms.
+        0x1FD0..=0x1FD3 | 0x1FD6..=0x1FDB => Some('\u{0399}'),
+        // U+1FE0–U+1FEC: upsilon / rho forms.
+        0x1FE0..=0x1FE3 | 0x1FE6..=0x1FEB => Some('\u{03A5}'),
+        0x1FE4..=0x1FE5 | 0x1FEC => Some('\u{03A1}'),
+        // U+1FF2–U+1FFC: omega / omicron forms.
+        0x1FF2..=0x1FF4 | 0x1FF6..=0x1FF7 => Some('\u{03A9}'),
+        0x1FF8..=0x1FF9 => Some('\u{039F}'),
+        0x1FFA..=0x1FFC => Some('\u{03A9}'),
+        _ => None,
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

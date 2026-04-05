@@ -845,13 +845,33 @@ fn create_line_box(
     let line_height = LayoutUnit::from_f32_ceil(line_ascent + line_descent);
     let baseline = LayoutUnit::from_f32_ceil(line_ascent);
 
+    // Pre-shape hyphen to include its width in alignment calculations.
+    let hyphen_shape_data = if line_info.has_forced_hyphen && !line_info.has_ellipsis {
+        let last_style = line_info.items.last()
+            .map(|r| &items_data.styles[items_data.items[r.item_index].style_index])
+            .unwrap_or(block_style);
+        let hyphen_font_desc = style_to_font_description(last_style);
+        let hyphen_font = Font::new(hyphen_font_desc);
+        let shaper = TextShaper::new();
+        let hyphen_text = "-";
+        let hyphen_sr = shaper.shape(hyphen_text, &hyphen_font, openui_text::TextDirection::Ltr);
+        let hyphen_width = LayoutUnit::from_f32(hyphen_sr.width);
+        Some((Arc::new(hyphen_sr), hyphen_width, last_style.clone()))
+    } else {
+        None
+    };
+
+    let hyphen_extra_width = hyphen_shape_data.as_ref()
+        .map(|(_, w, _)| *w)
+        .unwrap_or(LayoutUnit::zero());
+
     // === STEP 3: Horizontal positioning (text-align) ===
     // Use the effective available width (after text-indent) for alignment
     // so that text-align: right with text-indent doesn't overflow.
     let align_available = available_width - text_indent;
     let text_align_offset = compute_text_align_offset(
         line_info,
-        align_available,
+        align_available - hyphen_extra_width,
         block_style.direction,
         block_style.text_align_last,
     );
@@ -1228,21 +1248,12 @@ fn create_line_box(
     }
 
     // === STEP 4b: Append visible hyphen if line was broken at a soft hyphen ===
-    if line_info.has_forced_hyphen {
-        let last_style = line_info.items.last()
-            .map(|r| &items_data.styles[items_data.items[r.item_index].style_index])
-            .unwrap_or(block_style);
-        let hyphen_font_desc = style_to_font_description(last_style);
-        let hyphen_font = Font::new(hyphen_font_desc);
-        let shaper = TextShaper::new();
-        let hyphen_text = "-";
-        let hyphen_sr = shaper.shape(
-            hyphen_text,
-            &hyphen_font,
-            openui_text::TextDirection::Ltr,
-        );
-        let hyphen_width = LayoutUnit::from_f32(hyphen_sr.width);
-        let hyphen_metrics = hyphen_font.font_metrics().copied().unwrap_or_default();
+    if let Some((ref hyphen_sr, hyphen_width, ref hyphen_style)) = hyphen_shape_data {
+        let hyphen_metrics = {
+            let hyphen_font_desc = style_to_font_description(hyphen_style);
+            let hyphen_font = Font::new(hyphen_font_desc);
+            hyphen_font.font_metrics().copied().unwrap_or_default()
+        };
         let hyphen_height = LayoutUnit::from_f32_ceil(
             hyphen_metrics.ascent + hyphen_metrics.descent,
         );
@@ -1251,14 +1262,27 @@ fn create_line_box(
         let mut hyphen_fragment = Fragment::new_text(
             NodeId::NONE,
             PhysicalSize::new(hyphen_width, hyphen_height),
-            Arc::new(hyphen_sr),
-            hyphen_text.to_string(),
+            Arc::clone(hyphen_sr),
+            "-".to_string(),
         );
-        hyphen_fragment.offset = PhysicalOffset::new(inline_offset, hyphen_top);
-        hyphen_fragment.inherited_style = Some(last_style.clone());
+        hyphen_fragment.inherited_style = Some(hyphen_style.clone());
         hyphen_fragment.baseline_offset = (baseline - hyphen_top).to_f32();
-        children.push(hyphen_fragment);
-        inline_offset = inline_offset + hyphen_width;
+
+        if block_style.direction == Direction::Rtl {
+            // RTL: place hyphen at visual start (left edge), shift content right.
+            for child in &mut children {
+                child.offset = PhysicalOffset::new(
+                    child.offset.left + hyphen_width,
+                    child.offset.top,
+                );
+            }
+            hyphen_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), hyphen_top);
+            children.insert(0, hyphen_fragment);
+        } else {
+            hyphen_fragment.offset = PhysicalOffset::new(inline_offset, hyphen_top);
+            children.push(hyphen_fragment);
+            inline_offset = inline_offset + hyphen_width;
+        }
     }
 
     // === STEP 5: Paint ellipsis if text-overflow: ellipsis is active ===
@@ -1419,6 +1443,7 @@ fn apply_text_overflow_ellipsis(
         line_info.items.clear();
         line_info.used_width = LayoutUnit::zero();
         line_info.has_ellipsis = true;
+        line_info.has_forced_hyphen = false;
         if is_rtl {
             line_info.ellipsis_at_start = true;
         }
@@ -1589,6 +1614,7 @@ fn apply_text_overflow_ellipsis(
     }
 
     line_info.has_ellipsis = true;
+    line_info.has_forced_hyphen = false;
     line_info.ellipsis_at_start = is_rtl;
 }
 

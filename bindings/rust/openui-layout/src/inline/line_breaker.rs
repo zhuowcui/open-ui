@@ -18,10 +18,11 @@
 use openui_geometry::{LayoutUnit, LengthType};
 use openui_style::{BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
 use openui_text::hyphenation::{self, Hyphenation};
+use openui_text::{Font, TextShaper};
 use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemResult, InlineItemType};
-use super::items_builder::InlineItemsData;
+use super::items_builder::{style_to_font_description, InlineItemsData};
 use super::line_info::LineInfo;
 use crate::length_resolver::resolve_margin_or_padding;
 
@@ -293,9 +294,14 @@ impl<'a> LineBreaker<'a> {
         let mut best_width = LayoutUnit::zero();
         let mut best_is_hyphen = false;
 
-        // Approximate hyphen glyph width (~0.3em) for soft-hyphen break fitting.
-        // A visible hyphen is inserted at soft-hyphen breaks, consuming line space.
-        let hyphen_advance = LayoutUnit::from_f32(style.font_size * 0.3);
+        // Shape the actual hyphen to get exact advance width.
+        let hyphen_advance = {
+            let shaper = TextShaper::new();
+            let font_desc = style_to_font_description(style);
+            let font = Font::new(font_desc);
+            let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
+            LayoutUnit::from_f32(sr.width)
+        };
 
         if let Some(ref sr) = item.shape_result {
             let item_char_start = self.char_map.get(item.text_range.start);
@@ -431,10 +437,15 @@ impl<'a> LineBreaker<'a> {
 
         // Try each hyphenation point (from last to first) to find the best
         // one that fits within the remaining width.
-        // Hyphenation breaks always insert a visible hyphen glyph — account
-        // for its advance width (~0.3em) when checking fit.
+        // Shape the actual hyphen to get exact advance width.
         let style = &self.items_data.styles[item.style_index];
-        let hyphen_advance = LayoutUnit::from_f32(style.font_size * 0.3);
+        let hyphen_advance = {
+            let shaper = TextShaper::new();
+            let font_desc = style_to_font_description(style);
+            let font = Font::new(font_desc);
+            let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
+            LayoutUnit::from_f32(sr.width)
+        };
 
         if let Some(ref sr) = item.shape_result {
             let item_char_start =

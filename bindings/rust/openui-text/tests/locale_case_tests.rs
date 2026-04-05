@@ -247,6 +247,87 @@ fn el_upper_combining_acute_after_greek() {
     );
 }
 
+#[test]
+fn el_upper_greek_extended_alpha_smooth_breathing() {
+    // ἀ (U+1F00) → Α — smooth breathing stripped
+    assert_eq!(
+        apply_text_transform("\u{1F00}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_alpha_rough_breathing() {
+    // ἁ (U+1F01) → Α — rough breathing stripped
+    assert_eq!(
+        apply_text_transform("\u{1F01}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_alpha_with_grave() {
+    // ἂ (U+1F02) → Α — smooth breathing + grave stripped
+    assert_eq!(
+        apply_text_transform("\u{1F02}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_iota_dialytika_varia() {
+    // ῒ (U+1FD2) → Ϊ — dialytika kept, grave stripped
+    assert_eq!(
+        apply_text_transform("\u{1FD2}", TextTransform::Uppercase, Some("el")),
+        "\u{0399}\u{0308}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_iota_dialytika_oxia() {
+    // ΐ (U+1FD3) → Ϊ — dialytika kept, acute stripped
+    assert_eq!(
+        apply_text_transform("\u{1FD3}", TextTransform::Uppercase, Some("el")),
+        "\u{0399}\u{0308}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_upsilon_dialytika_varia() {
+    // ῢ (U+1FE2) → Ϋ — dialytika kept, grave stripped
+    assert_eq!(
+        apply_text_transform("\u{1FE2}", TextTransform::Uppercase, Some("el")),
+        "\u{03A5}\u{0308}"
+    );
+}
+
+#[test]
+fn el_upper_greek_extended_upsilon_dialytika_oxia() {
+    // ΰ (U+1FE3) → Ϋ — dialytika kept, acute stripped
+    assert_eq!(
+        apply_text_transform("\u{1FE3}", TextTransform::Uppercase, Some("el")),
+        "\u{03A5}\u{0308}"
+    );
+}
+
+#[test]
+fn el_upper_decomposed_alpha_breathing() {
+    // α + combining smooth breathing (U+0313) → Α
+    assert_eq!(
+        apply_text_transform("\u{03B1}\u{0313}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}"
+    );
+}
+
+#[test]
+fn el_upper_decomposed_alpha_rough_breathing() {
+    // α + combining rough breathing (U+0314) → Α
+    assert_eq!(
+        apply_text_transform("\u{03B1}\u{0314}", TextTransform::Uppercase, Some("el")),
+        "\u{0391}"
+    );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Greek sigma — context-dependent σ vs ς (default Unicode rules)
 // Rust's str::to_lowercase() handles this per Unicode Default Case Conversion.
