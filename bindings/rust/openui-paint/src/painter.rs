@@ -29,10 +29,11 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     let abs_offset = offset + fragment.offset;
 
     // Text fragments with NodeId::NONE (e.g., ellipsis "…") need to be painted
-    // even though they have no DOM node. Use a default style (black text).
+    // even though they have no DOM node. Use inherited style if available.
     if fragment.kind == FragmentKind::Text && fragment.node_id.is_none() {
         let default_style = ComputedStyle::default();
-        paint_text_fragment(canvas, fragment, &default_style, abs_offset);
+        let style = fragment.inherited_style.as_ref().unwrap_or(&default_style);
+        paint_text_fragment(canvas, fragment, style, abs_offset);
         return;
     }
 

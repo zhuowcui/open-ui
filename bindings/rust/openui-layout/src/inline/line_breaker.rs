@@ -516,7 +516,6 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) 
                 let item = &items[item_idx];
                 // Check the actual text on this line, not the full item's collapse type.
                 if let Some(ref sr) = item.shape_result {
-                    let item_char_start = item.text_range.start;
                     // Compute character offsets for the line portion.
                     let line_text_start = item_result.text_range.start;
                     let line_text_end = item_result.text_range.end;
@@ -536,8 +535,9 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) 
                             let line_text = &text[item_result.text_range.clone()];
                             if let Some(last_ch) = line_text.chars().next_back() {
                                 if last_ch == ' ' || last_ch == '\t' {
-                                    let end_chars = count_chars_in_bytes(item_char_start, line_text_end);
-                                    let local_end = end_chars;
+                                    let item_text = &text[item.text_range.clone()];
+                                    let offset_in_item = line_text_end - item.text_range.start;
+                                    let local_end = item_text[..offset_in_item].chars().count();
                                     if local_end > 0 && local_end <= sr.num_characters {
                                         let last_char_width = sr.width_for_range(local_end - 1, local_end);
                                         line.used_width = line.used_width - LayoutUnit::from_f32(last_char_width);
@@ -556,20 +556,6 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str) 
             break;
         }
     }
-}
-
-/// Count the number of characters in a byte range.
-///
-/// This is an approximation for ASCII text (1 byte = 1 char) and handles
-/// multi-byte UTF-8 correctly. Since this function doesn't have access to
-/// the actual text, it uses the byte delta as a conservative estimate. The
-/// caller should ensure that offsets are on character boundaries.
-#[inline]
-fn count_chars_in_bytes(base_byte: usize, target_byte: usize) -> usize {
-    // This returns byte count which equals char count for ASCII.
-    // For multi-byte, it's an over-estimate, but strip_trailing_spaces
-    // only uses it for mid-item splits where this is acceptable.
-    target_byte.saturating_sub(base_byte)
 }
 
 // ── Break opportunity detection ─────────────────────────────────────────

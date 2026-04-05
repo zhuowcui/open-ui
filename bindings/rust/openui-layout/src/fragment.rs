@@ -7,6 +7,7 @@
 
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize, BoxStrut};
 use openui_dom::NodeId;
+use openui_style::ComputedStyle;
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -61,6 +62,10 @@ pub struct Fragment {
 
     /// Text content for text fragments (the original string that was shaped).
     pub text_content: Option<String>,
+
+    /// Inherited style for anonymous fragments (e.g., ellipsis "…") that have
+    /// no DOM node. Used by the painter to render with the correct color/font.
+    pub inherited_style: Option<ComputedStyle>,
 }
 
 impl Fragment {
@@ -77,6 +82,7 @@ impl Fragment {
             children: Vec::new(),
             shape_result: None,
             text_content: None,
+            inherited_style: None,
         }
     }
 
@@ -101,6 +107,7 @@ impl Fragment {
             children: Vec::new(),
             shape_result: Some(shape_result),
             text_content: Some(text_content),
+            inherited_style: None,
         }
     }
 

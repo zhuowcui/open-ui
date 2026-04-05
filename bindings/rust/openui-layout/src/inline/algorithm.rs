@@ -416,15 +416,45 @@ fn create_line_box(
                 }
             }
             InlineItemType::AtomicInline => {
-                // Atomic inline contributes its margin box height.
-                // Baseline-aligned with its margin box.
+                // Atomic inline contributes its actual height to line metrics.
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
-                let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
-                let metrics = font.font_metrics().copied().unwrap_or_default();
-                line_ascent = line_ascent.max(metrics.ascent);
-                line_descent = line_descent.max(metrics.descent);
+
+                let item_height = match style.height.length_type() {
+                    openui_geometry::LengthType::Fixed => style.height.value(),
+                    _ => {
+                        let font_desc = style_to_font_description(style);
+                        let font = Font::new(font_desc);
+                        let metrics = font.font_metrics().copied().unwrap_or_default();
+                        metrics.ascent + metrics.descent
+                    }
+                };
+
+                match style.vertical_align {
+                    VerticalAlign::Top => {
+                        deferred_items.push(DeferredItem {
+                            item_ascent: item_height,
+                            item_descent: 0.0,
+                            is_top: true,
+                        });
+                    }
+                    VerticalAlign::Bottom => {
+                        deferred_items.push(DeferredItem {
+                            item_ascent: item_height,
+                            item_descent: 0.0,
+                            is_top: false,
+                        });
+                    }
+                    VerticalAlign::Middle => {
+                        let half = item_height / 2.0;
+                        line_ascent = line_ascent.max(half);
+                        line_descent = line_descent.max(half);
+                    }
+                    _ => {
+                        // Baseline-aligned: bottom sits on baseline, full height above.
+                        line_ascent = line_ascent.max(item_height);
+                    }
+                }
             }
             // OpenTag/CloseTag: inline element boundaries do not directly
             // contribute to line height (their content items do).
@@ -668,6 +698,7 @@ fn create_line_box(
             ellipsis_text.to_string(),
         );
         ellipsis_fragment.offset = PhysicalOffset::new(inline_offset, ellipsis_top);
+        ellipsis_fragment.inherited_style = Some(block_style.clone());
         children.push(ellipsis_fragment);
     }
 

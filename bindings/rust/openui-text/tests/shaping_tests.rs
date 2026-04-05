@@ -966,3 +966,49 @@ fn safe_break_at_whitespace() {
     assert!(result.safe_to_break_before(1), "Space position should be safe");
     assert!(result.safe_to_break_before(2), "Position after space should be safe");
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// SP11 Round 3: OOB safety for width_for_range / sub_range after clamping
+// ═══════════════════════════════════════════════════════════════════════
+
+#[test]
+fn width_for_range_oob_both_past_end() {
+    // width_for_range(10, 11) on a 10-char result must not panic.
+    let result = shape_text("0123456789"); // 10 chars
+    assert_eq!(result.num_characters, 10);
+    let w = result.width_for_range(10, 11);
+    assert_eq!(w, 0.0, "Both indices past end should return 0");
+}
+
+#[test]
+fn width_for_range_zero_zero_returns_zero() {
+    let result = shape_text("Hello");
+    let w = result.width_for_range(0, 0);
+    assert_eq!(w, 0.0, "Empty range should return 0");
+}
+
+#[test]
+fn width_for_range_start_equals_end_after_clamp() {
+    // Both start and end clamp to num_characters, resulting in start == end.
+    let result = shape_text("abc"); // 3 chars
+    let w = result.width_for_range(5, 8);
+    assert_eq!(w, 0.0, "Range fully past end should return 0");
+}
+
+#[test]
+fn sub_range_oob_past_end() {
+    // sub_range(15, 20) on a 10-char result must not panic.
+    let result = shape_text("0123456789");
+    assert_eq!(result.num_characters, 10);
+    let sub = result.sub_range(15, 20);
+    assert_eq!(sub.num_characters, 0, "OOB sub_range should be empty");
+    assert_eq!(sub.width(), 0.0);
+}
+
+#[test]
+fn sub_range_start_at_boundary_end_past() {
+    // sub_range(10, 15) on a 10-char result: start clamps to 10, end clamps to 10.
+    let result = shape_text("0123456789");
+    let sub = result.sub_range(10, 15);
+    assert_eq!(sub.num_characters, 0);
+}

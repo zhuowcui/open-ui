@@ -832,6 +832,7 @@ fn paint_text_fragment_no_shape_result() {
         children: Vec::new(),
         shape_result: None,
         text_content: None,
+        inherited_style: None,
     };
 
     let mut surface = make_surface(200, 100);

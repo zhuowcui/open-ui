@@ -174,6 +174,9 @@ impl ShapeResult {
         }
         let start = start.min(self.num_characters);
         let end = end.min(self.num_characters);
+        if start >= end {
+            return 0.0;
+        }
         let start_x = if start == 0 {
             0.0
         } else {
@@ -196,6 +199,9 @@ impl ShapeResult {
         }
         let start = start.min(self.num_characters);
         let end = end.min(self.num_characters);
+        if start >= end {
+            return ShapeResult::empty(self.direction);
+        }
         let sub_width = self.width_for_range(start, end);
         let start_x = if start > 0 {
             self.character_data[start].x_position
