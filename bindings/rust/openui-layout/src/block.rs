@@ -331,7 +331,7 @@ fn layout_block_child(
     }
 
     let child_margin = resolve_margins(child_style, child_available_inline);
-    margin_strut.append(child_margin.top);
+    margin_strut.append_normal(child_margin.top);
 
     if child_fragments.is_empty() {
         if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
@@ -410,7 +410,7 @@ fn layout_block_child(
     *block_offset += child_fragment.size.height;
 
     *margin_strut = MarginStrut::new();
-    margin_strut.append(child_margin.bottom);
+    margin_strut.append_normal(child_margin.bottom);
 
     *intrinsic_block_size = *block_offset;
     child_fragments.push(child_fragment);

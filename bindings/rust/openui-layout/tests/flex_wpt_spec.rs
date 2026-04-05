@@ -100,18 +100,13 @@ fn lay(doc: &Document, container: NodeId, w: i32, h: i32) -> Fragment {
 
 /// Layout with definite width but indefinite (auto) height constraint.
 fn lay_auto_height(doc: &Document, container: NodeId, w: i32) -> Fragment {
-    let space = ConstraintSpace {
-        available_inline_size: LayoutUnit::from_i32(w),
-        available_block_size: LayoutUnit::from_i32(-1), // indefinite
-        percentage_resolution_inline_size: LayoutUnit::from_i32(w),
-        percentage_resolution_block_size: LayoutUnit::from_i32(-1),
-        is_new_formatting_context: true,
-        is_fixed_inline_size: false,
-        is_fixed_block_size: false,
-        stretch_inline_size: false,
-        stretch_block_size: false,
-        is_initial_block_size_indefinite: false,
-    };
+    let space = ConstraintSpace::for_block_child(
+        LayoutUnit::from_i32(w),
+        LayoutUnit::from_i32(-1), // indefinite
+        LayoutUnit::from_i32(w),
+        LayoutUnit::from_i32(-1),
+        true,
+    );
     flex_layout(doc, container, &space)
 }
 

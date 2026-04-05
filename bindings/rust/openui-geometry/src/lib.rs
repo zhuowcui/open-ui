@@ -17,6 +17,7 @@ mod box_strut;
 mod margin_strut;
 mod min_max_sizes;
 mod writing_mode;
+mod bfc_offset;
 
 pub use layout_unit::{LayoutUnit, INDEFINITE_SIZE};
 pub use length::{Length, LengthType};
@@ -30,3 +31,4 @@ pub use box_strut::BoxStrut;
 pub use margin_strut::MarginStrut;
 pub use min_max_sizes::MinMaxSizes;
 pub use writing_mode::{WritingDirectionMode, WritingModeConverter};
+pub use bfc_offset::{BfcOffset, BfcDelta, BfcRect};
