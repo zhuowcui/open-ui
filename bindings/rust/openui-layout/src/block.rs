@@ -84,18 +84,28 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Per CSS 2.1 §10.5, percentage heights on children resolve against the
     // containing block's *specified* height (if definite), not auto-computed.
     // If the parent's height is auto, percentage heights are indefinite.
+    // CSS 2.1 §10.5: If the parent's height depends on its children (auto)
+    // or is a percentage against an indefinite containing block, children's
+    // percentage heights compute to auto.
     let child_percentage_block_size = if !style.height.is_auto() {
-        let raw = resolve_length(
-            &style.height,
-            space.percentage_resolution_block_size,
-            LayoutUnit::zero(), // auto fallback (shouldn't reach here)
-            LayoutUnit::zero(), // none fallback
-        );
-        // Convert to content-box size
-        if style.box_sizing == BoxSizing::BorderBox {
-            (raw - border_padding_block).clamp_negative_to_zero()
+        // A percentage height against an indefinite basis is itself indefinite.
+        if style.height.is_percent()
+            && space.percentage_resolution_block_size.is_indefinite()
+        {
+            openui_geometry::INDEFINITE_SIZE
         } else {
-            raw
+            let raw = resolve_length(
+                &style.height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::zero(), // auto fallback (shouldn't reach here)
+                LayoutUnit::zero(), // none fallback
+            );
+            // Convert to content-box size
+            if style.box_sizing == BoxSizing::BorderBox {
+                (raw - border_padding_block).clamp_negative_to_zero()
+            } else {
+                raw
+            }
         }
     } else {
         // Auto height → per CSS 2.2 §10.5, percentage heights on children
@@ -316,6 +326,26 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 }
                 let inline_run = &children_ids[run_start..i];
 
+                // Anonymous inline wrapper is non-self-collapsing (has content),
+                // so it breaks the margin collapsing chain per CSS 2.1 §8.3.1.
+                // Resolve any pending margin strut before positioning.
+                if !start_margin_resolved {
+                    if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+                        block_offset += margin_strut.sum();
+                        margin_strut = MarginStrut::new();
+                        start_margin_resolved = true;
+                    } else {
+                        // No FC/border/padding: propagate accumulated strut as
+                        // the parent's start margin, then reset for this inline run.
+                        saved_start_strut = Some(margin_strut);
+                        margin_strut = MarginStrut::new();
+                        start_margin_resolved = true;
+                    }
+                } else if !margin_strut.is_empty() {
+                    block_offset += margin_strut.sum();
+                    margin_strut = MarginStrut::new();
+                }
+
                 // Lay out this anonymous inline wrapper.
                 let inline_space = ConstraintSpace::for_block_child(
                     child_available_inline,
@@ -343,14 +373,23 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             } else {
                 // Block-level child.
 
-                // Handle clear property.
+                // Handle clear property — CSS 2.1 §8.3.1 / §9.5.2.
+                // Compute hypothetical position (with margin collapsing) first,
+                // then determine clearance as additional distance needed.
+                // Clearance also inhibits margin collapsing.
                 if child_style.clear != Clear::None {
-                    let clearance = exclusion_space_mixed.clearance_offset(
+                    let child_top_margin = resolve_margins(child_style, child_available_inline).top;
+                    let mut hyp_strut = margin_strut;
+                    hyp_strut.append_normal(child_top_margin);
+                    let hypothetical = block_offset + hyp_strut.sum();
+                    let clearance_target = exclusion_space_mixed.clearance_offset(
                         clear_type_from_style(child_style.clear),
-                    );
-                    let clearance_in_parent = clearance + content_edge;
-                    if clearance_in_parent > block_offset {
-                        block_offset = clearance_in_parent;
+                    ) + content_edge;
+                    if clearance_target > hypothetical {
+                        // Clearance needed — resolve strut, add clearance.
+                        block_offset = clearance_target;
+                        margin_strut = MarginStrut::new();
+                        start_margin_resolved = true;
                         intrinsic_block_size = block_offset;
                     }
                 }
@@ -452,14 +491,22 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             continue;
         }
 
-        // Handle clear property — move block offset below cleared floats.
+        // Handle clear property — CSS 2.1 §8.3.1 / §9.5.2.
+        // Compute hypothetical position (with margin collapsing) first,
+        // then determine clearance as additional distance needed.
+        // Clearance inhibits margin collapsing.
         if child_style.clear != Clear::None {
-            let clearance = exclusion_space.clearance_offset(
+            let child_top_margin = resolve_margins(child_style, child_available_inline).top;
+            let mut hyp_strut = margin_strut;
+            hyp_strut.append_normal(child_top_margin);
+            let hypothetical = block_offset + hyp_strut.sum();
+            let clearance_target = exclusion_space.clearance_offset(
                 clear_type_from_style(child_style.clear),
-            );
-            let clearance_in_parent = clearance + content_edge;
-            if clearance_in_parent > block_offset {
-                block_offset = clearance_in_parent;
+            ) + content_edge;
+            if clearance_target > hypothetical {
+                block_offset = clearance_target;
+                margin_strut = MarginStrut::new();
+                start_margin_resolved = true;
                 intrinsic_block_size = block_offset;
             }
         }
@@ -608,11 +655,18 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // If the start margin wasn't resolved (first child's margin collapsed through
     // with no border/padding/new-FC separating), propagate it so the parent can
     // merge it with the parent's own margins.
-    if !start_margin_resolved {
-        // Use the saved strut from before the trailing margin reset. This
-        // contains the first child's accumulated top margin chain, not the
-        // trailing bottom margin that would be in the current margin_strut.
-        fragment.start_margin_strut = saved_start_strut.unwrap_or(margin_strut);
+    // CSS 2.1 §8.3.1: Propagate unresolved margin struts for parent collapsing.
+    // If the parent has no border/padding/FC and the start margin collapsed
+    // through children, propagate it so the parent can merge with its own margins.
+    if let Some(saved) = saved_start_strut {
+        // The saved strut is the accumulated margin chain from self-collapsing
+        // first children + the first non-self-collapsing child's top margin.
+        // This must be propagated unless the parent resolved it via FC/bp.
+        if !space.is_new_formatting_context && content_edge == LayoutUnit::zero() {
+            fragment.start_margin_strut = saved;
+        }
+    } else if !start_margin_resolved {
+        fragment.start_margin_strut = margin_strut;
     }
     fragment.end_margin_strut = final_end_margin_strut;
 
@@ -733,7 +787,19 @@ fn handle_float(
     }
 
     // BFC coordinates: (0, 0) = content area start of the container.
-    let content_block_offset = *block_offset - content_edge;
+    let mut content_block_offset = *block_offset - content_edge;
+
+    // CSS 2.1 §9.5.2: The `clear` property applies to floating elements too.
+    // A float with clear:left/right/both is moved below prior floats.
+    if child_style.clear != Clear::None {
+        let clearance = exclusion_space.clearance_offset(
+            clear_type_from_style(child_style.clear),
+        );
+        if clearance > content_block_offset {
+            content_block_offset = clearance;
+        }
+    }
+
     let unpositioned = UnpositionedFloat {
         node_id: child_id,
         available_size: child_available_inline,
@@ -870,8 +936,16 @@ fn layout_block_child(
             resolved_margin_left = half;
             resolved_margin_right = remaining_space - half;
         } else {
-            resolved_margin_left = LayoutUnit::zero();
-            resolved_margin_right = LayoutUnit::zero();
+            // CSS 2.1 §10.3.3: auto→0, then apply over-constrained rule.
+            // In RTL, margin-left absorbs the negative remainder (overflow left);
+            // in LTR, margin-right absorbs it (overflow right).
+            if child_style.direction == Direction::Rtl {
+                resolved_margin_left = remaining_space;
+                resolved_margin_right = LayoutUnit::zero();
+            } else {
+                resolved_margin_left = LayoutUnit::zero();
+                resolved_margin_right = remaining_space;
+            }
         }
     } else if child_style.margin_left.is_auto() {
         resolved_margin_right = child_margin.right;
@@ -970,6 +1044,13 @@ fn layout_block_child(
         // collapsing ends here. Start a new strut with the bottom margin.
         // Also mark start margin as resolved — this child's content breaks
         // the adjoining margin chain.
+        //
+        // CSS 2.1 §8.3.1: If the parent has no border/padding/FC, the
+        // accumulated strut (from self-collapsing predecessors + this child's
+        // top margin) must be saved for parent-first-child collapsing.
+        if !*start_margin_resolved {
+            *saved_start_strut = Some(*margin_strut);
+        }
         *start_margin_resolved = true;
         *margin_strut = MarginStrut::new();
         margin_strut.append_normal(child_margin.bottom);

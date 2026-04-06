@@ -91,8 +91,11 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
 
-        // Skip out-of-flow and display:none children.
-        if child_style.display == openui_style::Display::None || child_style.is_out_of_flow() {
+        // Skip absolutely positioned and display:none children.
+        // CSS Sizing 3 §4.1: floated children DO contribute to intrinsic sizes.
+        if child_style.display == openui_style::Display::None
+            || child_style.position.is_absolutely_positioned()
+        {
             continue;
         }
 
