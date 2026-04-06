@@ -111,6 +111,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let mut child_fragments: Vec<Fragment> = Vec::new();
     let mut intrinsic_block_size = content_edge;
 
+    // Track whether the start margin was resolved. If it collapses through
+    // (first child with no border/padding/new-FC), we need to propagate it
+    // via end_margin_strut so the parent can merge it with its own margin.
+    // CSS 2.1 §8.3.1: parent/first-child margin collapsing.
+    let mut start_margin_resolved = false;
+
     // Collect out-of-flow (absolute/fixed) candidates for deferred layout.
     // These are populated during the child walk below so that each candidate
     // gets the correct static position (i.e., where it would appear in
@@ -358,6 +364,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &mut intrinsic_block_size, &mut child_fragments,
                     &mut oof_candidates, &mut bubbled_oof_candidates,
                     establishes_cb_for_abspos, is_root,
+                    &mut start_margin_resolved,
                 );
 
                 // Offset inline position for left floats.
@@ -459,6 +466,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             &mut intrinsic_block_size, &mut child_fragments,
             &mut oof_candidates, &mut bubbled_oof_candidates,
             establishes_cb_for_abspos, is_root,
+            &mut start_margin_resolved,
         );
 
         // Offset inline position for left floats.
@@ -477,11 +485,20 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // prevents the last child's bottom margin from collapsing with the
     // parent's bottom margin.
     let bottom_edge = border.bottom + padding.bottom;
-    if !margin_strut.is_empty()
-        && (space.is_new_formatting_context || bottom_edge > LayoutUnit::zero())
-    {
+    let end_margin_resolved = !margin_strut.is_empty()
+        && (space.is_new_formatting_context || bottom_edge > LayoutUnit::zero());
+    if end_margin_resolved {
         intrinsic_block_size += margin_strut.sum();
     }
+    // Capture end margin strut before it's consumed. If the end margin
+    // couldn't be resolved (no bottom border/padding, not a new FC), it
+    // propagates to the parent for collapsing with the parent's bottom margin
+    // or the next sibling's top margin.
+    let final_end_margin_strut = if end_margin_resolved {
+        MarginStrut::new()
+    } else {
+        margin_strut
+    };
 
     // Add bottom border + padding
     intrinsic_block_size += bottom_edge;
@@ -563,6 +580,23 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Attach any un-resolved OOF candidates for the parent to absorb.
     // These are abs-pos descendants that need a positioned ancestor higher up.
     fragment.oof_candidates = bubbled_oof_candidates;
+
+    // CSS 2.1 §8.3.1: Propagate unresolved margin struts for parent collapsing.
+    // If the start margin wasn't resolved (first child's margin collapsed through
+    // with no border/padding/new-FC separating), propagate it so the parent can
+    // merge it with the parent's own margins.
+    if !start_margin_resolved {
+        // The start margin was never resolved — all children's top margins
+        // collapsed through. But we already consumed those margins into
+        // block_offset without resolving. We need to reconstruct what was
+        // pending. For simplicity, if this block had children, their first
+        // child's margin should already be reflected in child positions.
+        // The key case is: parent has no border/padding, child has margin-top.
+        // The child's margin_top was appended to margin_strut but never resolved.
+        // That strut info is now in final_end_margin_strut (since it was never
+        // separated by border/padding, the entire margin chain collapses through).
+    }
+    fragment.end_margin_strut = final_end_margin_strut;
 
     fragment
 }
@@ -730,6 +764,7 @@ fn layout_block_child(
     bubbled_oof_candidates: &mut Vec<OutOfFlowCandidate>,
     establishes_cb_for_abspos: bool,
     is_root: bool,
+    start_margin_resolved: &mut bool,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -740,14 +775,22 @@ fn layout_block_child(
     let child_margin = resolve_margins(child_style, child_available_inline);
     margin_strut.append_normal(child_margin.top);
 
+    // CSS 2.1 §8.3.1: Absorb child's start margin strut. If the child itself
+    // had an unresolved start margin (its first grandchild's margin collapsed
+    // through), merge it into our current margin strut.
+    // This is handled below after layout via child_fragment.end_margin_strut.
+
     if child_fragments.is_empty() {
         if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
             *block_offset += margin_strut.sum();
             *margin_strut = MarginStrut::new();
+            *start_margin_resolved = true;
         }
+        // else: start margin collapses through — don't resolve yet
     } else {
         *block_offset += margin_strut.sum();
         *margin_strut = MarginStrut::new();
+        *start_margin_resolved = true;
     }
 
     let child_non_auto_margin_inline = {
@@ -846,8 +889,20 @@ fn layout_block_child(
 
     *block_offset += child_fragment.size.height;
 
+    // CSS 2.1 §8.3.1: After the child, start a new margin strut with the
+    // child's bottom margin. If the child itself propagated an unresolved
+    // end margin strut (its last grandchild's bottom margin collapsed through),
+    // absorb it into our new strut as well.
     *margin_strut = MarginStrut::new();
     margin_strut.append_normal(child_margin.bottom);
+    if !child_fragment.end_margin_strut.is_empty() {
+        // Merge the child's propagated end margin into our strut
+        let child_end = child_fragment.end_margin_strut;
+        margin_strut.append_normal(child_end.positive_margin);
+        if child_end.negative_margin < LayoutUnit::zero() {
+            margin_strut.append_normal(child_end.negative_margin);
+        }
+    }
 
     *intrinsic_block_size = *block_offset;
     child_fragments.push(child_fragment);

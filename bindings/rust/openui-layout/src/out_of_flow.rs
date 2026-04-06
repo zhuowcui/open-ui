@@ -91,37 +91,73 @@ fn layout_out_of_flow_child(
         .clamp_negative_to_zero();
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
-    let (resolved_left, resolved_width, resolved_margin_left, resolved_margin_right) =
+    let (mut resolved_left, resolved_width_raw, resolved_margin_left, resolved_margin_right) =
         resolve_horizontal(style, cb_width, static_left, &border, &padding,
                           shrink_to_fit_min, shrink_to_fit_max);
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
-    let (resolved_top, resolved_height, resolved_margin_top, resolved_margin_bottom) =
+    let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
         resolve_vertical(style, cb_width, cb_height, static_top, &border, &padding);
+
+    // CSS 2.1 §10.4 / §10.7: Apply min/max constraints to the resolved size.
+    // The constraint equation (§10.3.7/§10.6.4) gives a tentative width/height.
+    // If that tentative value violates min/max, re-resolve with the clamped value.
+    let resolved_width = apply_min_max_inline(style, cb_width, resolved_width_raw,
+                                              &border, &padding);
+    let resolved_height = apply_min_max_block(style, cb_height, resolved_height_raw,
+                                              &border, &padding);
+
+    // CSS 2.1 §10.4: When min/max changes the width, re-solve §10.3.7 with
+    // the clamped width treated as specified. The equation becomes over-constrained:
+    // LTR → ignore right (left stays), RTL → ignore left (recompute left).
+    if resolved_width != resolved_width_raw && !style.left.is_auto() && !style.right.is_auto() {
+        if style.direction == Direction::Rtl {
+            let zero = LayoutUnit::zero();
+            let right_val = resolve_length(&style.right, cb_width, zero, zero);
+            resolved_left = cb_width - right_val - resolved_margin_right - resolved_width - resolved_margin_left;
+        }
+        // LTR: left is already correct (anchored to left)
+    }
+    // Same for vertical: when min/max changes height, over-constrained → ignore bottom.
+    // top is already correct (anchored to top), so no re-solve needed.
+
+    // Detect whether dimensions were fully determined by the constraint equation
+    // (both opposing insets specified with auto width/height).
+    let width_resolved_from_constraints = style.width.is_auto()
+        && !style.left.is_auto() && !style.right.is_auto();
+    let height_resolved_from_constraints = style.height.is_auto()
+        && !style.top.is_auto() && !style.bottom.is_auto();
 
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();
     let content_height = (resolved_height - border_padding_v).clamp_negative_to_zero();
 
-    // Create constraint space and lay out the child
+    // CSS 2.1 §10.5: When the containing block's height is determined by the
+    // constraint equation (top + bottom specified), it IS definite for percentage
+    // resolution in descendants — even though style.height is auto.
+    let child_percentage_block_size = if height_resolved_from_constraints {
+        content_height
+    } else if !style.height.is_auto() {
+        content_height
+    } else {
+        openui_geometry::INDEFINITE_SIZE
+    };
+
+    // Create constraint space and lay out the child.
+    // When the height is determined by constraints, signal it as fixed so that
+    // descendants can resolve percentage heights against it.
     let child_space = ConstraintSpace::for_block_child(
         content_width,
         content_height,
         content_width,
-        content_height,
+        child_percentage_block_size,
         true, // Abs-pos elements establish new formatting contexts
     );
 
     let mut child_fragment = block_layout(doc, candidate.node_id, &child_space);
 
     // For auto-width or auto-height, use the actual laid-out size
-    // UNLESS the dimension was fully resolved from the constraint equation
-    // (i.e., left+right or top+bottom were both specified).
-    let width_resolved_from_constraints = style.width.is_auto()
-        && !style.left.is_auto() && !style.right.is_auto();
-    let height_resolved_from_constraints = style.height.is_auto()
-        && !style.top.is_auto() && !style.bottom.is_auto();
-
+    // UNLESS the dimension was fully resolved from the constraint equation.
     let final_width = if style.width.is_auto() && !width_resolved_from_constraints {
         child_fragment.size.width
     } else {
@@ -294,12 +330,22 @@ fn resolve_horizontal(
     let mr = if margin_right_auto { zero } else { margin_right_val };
 
     if width_auto && left_auto && right_auto {
-        // ── All three auto: use static position for left, shrink-to-fit for width
-        let left = static_left;
-        let available = (cb_width - left - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
-        let border_box_width = width + border_padding_h;
-        return (left + ml, border_box_width, ml, mr);
+        // ── All three auto: use static position, shrink-to-fit for width
+        // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
+        if style.direction == Direction::Rtl {
+            let right = static_left; // static position on the right side in RTL
+            let available = (cb_width - right - ml - mr - border_padding_h).clamp_negative_to_zero();
+            let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
+            let border_box_width = width + border_padding_h;
+            let left = cb_width - right - mr - border_box_width - ml;
+            return (left + ml, border_box_width, ml, mr);
+        } else {
+            let left = static_left;
+            let available = (cb_width - left - ml - mr - border_padding_h).clamp_negative_to_zero();
+            let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
+            let border_box_width = width + border_padding_h;
+            return (left + ml, border_box_width, ml, mr);
+        }
     }
 
     if width_auto && left_auto {
@@ -323,10 +369,16 @@ fn resolve_horizontal(
 
     if left_auto && right_auto {
         // left and right auto, width specified
-        // Use static position for left
+        // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
         let border_box_width = border_box_from_specified;
-        let left = static_left;
-        return (left + ml, border_box_width, ml, mr);
+        if style.direction == Direction::Rtl {
+            let right = static_left;
+            let left = cb_width - right - mr - border_box_width - ml;
+            return (left + ml, border_box_width, ml, mr);
+        } else {
+            let left = static_left;
+            return (left + ml, border_box_width, ml, mr);
+        }
     }
 
     if left_auto {
@@ -490,6 +542,93 @@ fn resolve_vertical(
 
     // Fallback
     (static_top, zero, zero, zero)
+}
+
+/// Apply min-width / max-width constraints to a resolved border-box width.
+///
+/// CSS 2.1 §10.4: If the tentative used width is greater than max-width, the
+/// rules are applied again with max-width as the computed width. If the
+/// resulting width is less than min-width, the rules are applied again with
+/// min-width as the computed width.
+fn apply_min_max_inline(
+    style: &ComputedStyle,
+    cb_width: LayoutUnit,
+    border_box_width: LayoutUnit,
+    border: &BoxStrut,
+    padding: &BoxStrut,
+) -> LayoutUnit {
+    let zero = LayoutUnit::zero();
+    let border_padding_h = border.left + border.right + padding.left + padding.right;
+
+    let min_raw = if style.min_width.is_auto() {
+        zero
+    } else {
+        resolve_length(&style.min_width, cb_width, zero, zero)
+    };
+    let min_bb = if min_raw > zero {
+        if style.box_sizing == BoxSizing::ContentBox {
+            min_raw + border_padding_h
+        } else {
+            min_raw.max_of(border_padding_h)
+        }
+    } else {
+        zero
+    };
+
+    let max_raw = resolve_length(
+        &style.max_width, cb_width, LayoutUnit::max(), LayoutUnit::max(),
+    );
+    let max_bb = if max_raw == LayoutUnit::max() {
+        max_raw
+    } else if style.box_sizing == BoxSizing::ContentBox {
+        max_raw + border_padding_h
+    } else {
+        max_raw.max_of(border_padding_h)
+    };
+
+    border_box_width.clamp(min_bb, max_bb)
+}
+
+/// Apply min-height / max-height constraints to a resolved border-box height.
+///
+/// CSS 2.1 §10.7: Same logic as §10.4 but for the block axis.
+fn apply_min_max_block(
+    style: &ComputedStyle,
+    cb_height: LayoutUnit,
+    border_box_height: LayoutUnit,
+    border: &BoxStrut,
+    padding: &BoxStrut,
+) -> LayoutUnit {
+    let zero = LayoutUnit::zero();
+    let border_padding_v = border.top + border.bottom + padding.top + padding.bottom;
+
+    let min_raw = if style.min_height.is_auto() {
+        zero
+    } else {
+        resolve_length(&style.min_height, cb_height, zero, zero)
+    };
+    let min_bb = if min_raw > zero {
+        if style.box_sizing == BoxSizing::ContentBox {
+            min_raw + border_padding_v
+        } else {
+            min_raw.max_of(border_padding_v)
+        }
+    } else {
+        zero
+    };
+
+    let max_raw = resolve_length(
+        &style.max_height, cb_height, LayoutUnit::max(), LayoutUnit::max(),
+    );
+    let max_bb = if max_raw == LayoutUnit::max() {
+        max_raw
+    } else if style.box_sizing == BoxSizing::ContentBox {
+        max_raw + border_padding_v
+    } else {
+        max_raw.max_of(border_padding_v)
+    };
+
+    border_box_height.clamp(min_bb, max_bb)
 }
 
 /// Compute shrink-to-fit width for auto-width elements.

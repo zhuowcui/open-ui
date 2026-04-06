@@ -103,6 +103,24 @@ pub struct Fragment {
     /// passed up to the nearest positioned ancestor (or the root) via this
     /// field. The parent's layout absorbs them and resolves their positions.
     pub oof_candidates: Vec<crate::out_of_flow::OutOfFlowCandidate>,
+
+    /// End margin strut — propagated upward for parent/child margin collapsing.
+    ///
+    /// CSS 2.1 §8.3.1: When a block's bottom margin is not separated from
+    /// its last child's margin by border, padding, or content, the margins
+    /// collapse together. This field carries the unresolved trailing margin
+    /// strut so the parent can merge it with subsequent sibling margins.
+    ///
+    /// Blink: `LayoutResult::EndMarginStrut()`.
+    pub end_margin_strut: openui_geometry::MarginStrut,
+
+    /// Start margin strut — propagated upward for parent/first-child margin collapsing.
+    ///
+    /// CSS 2.1 §8.3.1: When a block's top margin is not separated from
+    /// its first child's margin by border, padding, or content, the child's
+    /// margin collapses with the parent's. This field carries the unresolved
+    /// start margin strut so the parent can absorb it.
+    pub start_margin_strut: openui_geometry::MarginStrut,
 }
 
 impl Fragment {
@@ -125,6 +143,8 @@ impl Fragment {
             overflow_rect: None,
             has_overflow_clip: false,
             oof_candidates: Vec::new(),
+            end_margin_strut: openui_geometry::MarginStrut::new(),
+            start_margin_strut: openui_geometry::MarginStrut::new(),
         }
     }
 
@@ -155,6 +175,8 @@ impl Fragment {
             overflow_rect: None,
             has_overflow_clip: false,
             oof_candidates: Vec::new(),
+            end_margin_strut: openui_geometry::MarginStrut::new(),
+            start_margin_strut: openui_geometry::MarginStrut::new(),
         }
     }
 

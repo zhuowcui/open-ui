@@ -863,6 +863,8 @@ fn paint_text_fragment_no_shape_result() {
         overflow_rect: None,
         has_overflow_clip: false,
         oof_candidates: Vec::new(),
+        end_margin_strut: openui_geometry::MarginStrut::new(),
+        start_margin_strut: openui_geometry::MarginStrut::new(),
     };
 
     let mut surface = make_surface(200, 100);
@@ -1115,6 +1117,8 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         overflow_rect: None,
         has_overflow_clip: false,
         oof_candidates: Vec::new(),
+        end_margin_strut: openui_geometry::MarginStrut::new(),
+        start_margin_strut: openui_geometry::MarginStrut::new(),
     };
 
     let mut surface = make_surface(200, 100);
