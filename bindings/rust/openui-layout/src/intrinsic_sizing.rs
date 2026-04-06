@@ -147,6 +147,45 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         max_content_block = max_content_block.max_of(float_block_max);
     }
 
+    // CSS 2.1 §10.6.3 / CSS Sizing 3 §5: Inline content contributes to
+    // the block-size by running inline layout at the given width and
+    // measuring the resulting height. Individual inline items report zero
+    // block-size; the container must compute it from line layout.
+    //
+    // Blink: BlockNode::ComputeMinMaxSizes → runs inline layout to
+    // determine block-size contribution from inline formatting contexts.
+    let has_inline_children = crate::inline::algorithm::has_inline_children(doc, node_id);
+    let has_block_children = crate::block::has_block_children(doc, node_id);
+
+    if has_inline_children && !has_block_children {
+        let content_inline_min = min_inline;
+        let content_inline_max = max_inline;
+
+        // Run inline layout at min-content width to get the block-size when
+        // text wraps as tightly as possible.
+        let min_space = crate::ConstraintSpace::for_block_child(
+            content_inline_min,
+            LayoutUnit::max(),
+            content_inline_min,
+            LayoutUnit::zero(),
+            false,
+        );
+        let min_frag = crate::inline::algorithm::inline_layout(doc, node_id, &min_space);
+        min_content_block = min_content_block + min_frag.size.height;
+
+        // Run inline layout at max-content width to get the block-size when
+        // text is laid out as wide as possible (single line if fits).
+        let max_space = crate::ConstraintSpace::for_block_child(
+            content_inline_max,
+            LayoutUnit::max(),
+            content_inline_max,
+            LayoutUnit::zero(),
+            false,
+        );
+        let max_frag = crate::inline::algorithm::inline_layout(doc, node_id, &max_space);
+        max_content_block = max_content_block + max_frag.size.height;
+    }
+
     // Add container border + padding.
     IntrinsicSizes {
         min_content_inline_size: min_inline + bp_inline,
@@ -170,11 +209,16 @@ fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> Int
     let margin_block = margin.block_sum();
 
     // For text nodes and inline-level elements, use inline intrinsic sizing.
+    // Block-size contribution requires running inline layout at the given
+    // width to determine how many lines wrap.
     let child_intrinsic = if child_tag == ElementTag::Text || is_inline_level(child_style) {
         let inline_sizes = compute_intrinsic_inline_sizes(doc, child_id);
         IntrinsicSizes {
             min_content_inline_size: inline_sizes.min,
             max_content_inline_size: inline_sizes.max,
+            // Block-size is zero for individual inline items at this level;
+            // the container's block-size is computed from inline layout
+            // in compute_intrinsic_block_sizes.
             min_content_block_size: LayoutUnit::zero(),
             max_content_block_size: LayoutUnit::zero(),
         }

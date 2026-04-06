@@ -908,7 +908,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
 /// Check if a node has any block-level children (CSS 2.2 §9.2.1.1).
 /// Floated children are treated as block-level for content classification.
-fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
+pub fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
     for child_id in doc.children(node_id) {
         let child = doc.node(child_id);
         if child.style.position.is_absolutely_positioned() || child.style.display == Display::None {
