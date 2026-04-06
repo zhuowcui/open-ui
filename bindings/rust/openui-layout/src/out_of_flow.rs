@@ -207,15 +207,7 @@ fn layout_out_of_flow_child(
 
     // Recompute left when width changed after layout (e.g., shrink-to-fit).
     // If left:auto and right:specified, left depends on the final width.
-    let final_left = if final_width != resolved_width && style.left.is_auto() && !style.right.is_auto() {
-        let zero = LayoutUnit::zero();
-        let right_val = resolve_length(&style.right, cb_width, zero, zero);
-        let ml = resolved_margin_left;
-        let mr = resolved_margin_right;
-        cb_width - right_val - mr - final_width - ml
-    } else {
-        resolved_left
-    };
+    let final_left = resolved_left;
 
     // Recompute top when height was auto-sized (content-determined) and the
     // vertical constraint equation has a top:auto + bottom:specified pattern.
@@ -371,10 +363,11 @@ fn resolve_horizontal(
         // ── All three auto: use static position, shrink-to-fit for width
         // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
         if style.direction == Direction::Rtl {
-            // Convert left-based static position to a right inset:
-            // static_right = cb_width - static_left (distance from right edge
-            // of CB to the hypothetical left margin edge).
-            let right = cb_width - static_left;
+            // CSS 2.1 §10.3.7: In RTL, use the static position for 'right'.
+            // For a block-level placeholder in RTL normal flow, the right
+            // margin edge is at the containing block's right padding edge,
+            // so static_right = 0.
+            let right = LayoutUnit::zero();
             let available = (cb_width - right - ml - mr - border_padding_h).clamp_negative_to_zero();
             let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
             let border_box_width = width + border_padding_h;
@@ -413,7 +406,9 @@ fn resolve_horizontal(
         // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
         let border_box_width = border_box_from_specified;
         if style.direction == Direction::Rtl {
-            let right = cb_width - static_left;
+            // Block-level static position in RTL: right margin edge at CB's
+            // right padding edge → static_right = 0.
+            let right = LayoutUnit::zero();
             let left = cb_width - right - mr - border_box_width - ml;
             return (left + ml, border_box_width, ml, mr);
         } else {
@@ -749,7 +744,7 @@ fn resolve_horizontal_with_known_width(
     if left_auto && right_auto {
         // Use static position for left (LTR) or right (RTL)
         if style.direction == Direction::Rtl {
-            let right = cb_width - static_left;
+            let right = LayoutUnit::zero();
             let left = cb_width - right - mr - border_box_width - ml;
             return (left + ml, border_box_width, ml, mr);
         } else {

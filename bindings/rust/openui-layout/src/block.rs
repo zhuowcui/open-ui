@@ -386,11 +386,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         clear_type_from_style(child_style.clear),
                     ) + content_edge;
                     if clearance_target > hypothetical {
-                        // Clearance needed — resolve strut, add clearance.
-                        block_offset = clearance_target;
+                        // Clearance positions the border edge at clearance_target.
+                        // layout_block_child will re-append child_top_margin and
+                        // resolve it, so compensate by subtracting it here.
+                        block_offset = clearance_target - child_top_margin;
                         margin_strut = MarginStrut::new();
                         start_margin_resolved = true;
-                        intrinsic_block_size = block_offset;
+                        intrinsic_block_size = clearance_target;
                     }
                 }
 
@@ -504,10 +506,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 clear_type_from_style(child_style.clear),
             ) + content_edge;
             if clearance_target > hypothetical {
-                block_offset = clearance_target;
+                // Clearance positions the border edge at clearance_target.
+                // layout_block_child will re-append child_top_margin and
+                // resolve it, so compensate by subtracting it here.
+                block_offset = clearance_target - child_top_margin;
                 margin_strut = MarginStrut::new();
                 start_margin_resolved = true;
-                intrinsic_block_size = block_offset;
+                intrinsic_block_size = clearance_target;
             }
         }
 
@@ -865,16 +870,28 @@ fn layout_block_child(
     // Use `start_margin_resolved` rather than `child_fragments.is_empty()` so
     // that self-collapsing first children (which push to child_fragments but
     // don't separate margins) keep the chain open.
+    //
+    // When start_margin_resolved is true, we tentatively resolve the strut
+    // but save state for rollback if the child turns out self-collapsing.
+    // Per CSS 2.1 §8.3.1, a self-collapsing block's top and bottom margins
+    // are adjoining with the preceding sibling's bottom margin — they form
+    // one collapsing group.
+    let pre_resolve_strut = *margin_strut;
+    let pre_resolve_offset = *block_offset;
+    let mut strut_resolved_this_child = false;
+
     if !*start_margin_resolved {
         if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
             *block_offset += margin_strut.sum();
             *margin_strut = MarginStrut::new();
             *start_margin_resolved = true;
+            strut_resolved_this_child = true;
         }
         // else: start margin still collapses through — don't resolve yet
     } else {
         *block_offset += margin_strut.sum();
         *margin_strut = MarginStrut::new();
+        strut_resolved_this_child = true;
     }
 
     let child_non_auto_margin_inline = {
@@ -1031,6 +1048,14 @@ fn layout_block_child(
         // collapse together. The collapsed result adjoins the next sibling's
         // top margin. Don't reset the strut — append the bottom margin to
         // the existing strut so both top and bottom are preserved.
+        //
+        // If we tentatively resolved the strut above, roll back: the
+        // self-collapsing child means the preceding bottom margin is
+        // still adjoining (they form one collapsing group).
+        if strut_resolved_this_child {
+            *block_offset = pre_resolve_offset;
+            *margin_strut = pre_resolve_strut;
+        }
         margin_strut.append_normal(child_margin.bottom);
         if !child_fragment.end_margin_strut.is_empty() {
             let child_end = child_fragment.end_margin_strut;

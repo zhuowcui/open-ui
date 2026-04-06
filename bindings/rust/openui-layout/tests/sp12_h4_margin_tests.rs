@@ -933,11 +933,14 @@ fn empty_block_with_horizontal_padding_still_collapses() {
 
 #[test]
 fn empty_block_integration_between_content() {
-    // Two content blocks with an empty block between them.
+    // Two content blocks with a self-collapsing block between them.
     // A(h=30,mb=10) Empty(mt=5,mb=5) B(h=30,mt=15)
-    // Empty block is positioned as a separate sibling (h=0):
-    //   A-Empty gap = max(10,5) = 10. Empty at y=40.
-    //   Empty-B gap = max(5,15) = 15. B at y=40+0+15 = 55.
+    //
+    // CSS 2.1 §8.3.1: The empty block is self-collapsing, so its top and
+    // bottom margins are adjoining. By transitivity, all four margins
+    // (A-mb=10, Empty-mt=5, Empty-mb=5, B-mt=15) collapse together.
+    // Collapsed margin = max(10, 5, 5, 15) = 15.
+    // B at y = 30 + 15 = 45.
     let mut builder = BlockTestBuilder::new(400, 600);
     builder.add_child().height(30.0).margin(0, 0, 10, 0).done();
     builder.add_child().margin(5, 0, 5, 0).done(); // empty: no height
@@ -945,7 +948,7 @@ fn empty_block_integration_between_content() {
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
-    result.assert_child_position(2, 0, 55);
+    result.assert_child_position(2, 0, 45);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1518,11 +1521,14 @@ fn discard_margins_flag() {
 fn complex_integration_mixed_children() {
     // Container with:
     //   A(h=40, mt=10, mb=20)
-    //   B(h=0) — empty, mt=5, mb=5
+    //   B(h=0) — self-collapsing, mt=5, mb=5
     //   C(h=40, mt=15, mb=0)
+    //
+    // CSS 2.1 §8.3.1: B is self-collapsing, so its top and bottom margins
+    // are adjoining. By transitivity, A-mb=20, B-mt=5, B-mb=5, C-mt=15
+    // all collapse together. Collapsed margin = max(20, 5, 5, 15) = 20.
     // A's mt=10 collapses with container → A at y=0.
-    // A-B gap = max(20,5)=20. B at y=40+20=60.
-    // B-C gap = max(5,15)=15. C at y=60+0+15=75.
+    // C at y = 40 + 20 = 60.
     let mut builder = BlockTestBuilder::new(400, 600);
     builder
         .add_child()
@@ -1538,7 +1544,7 @@ fn complex_integration_mixed_children() {
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
-    result.assert_child_position(2, 0, 75);
+    result.assert_child_position(2, 0, 60);
 }
 
 #[test]
