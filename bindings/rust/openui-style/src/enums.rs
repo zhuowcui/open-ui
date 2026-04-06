@@ -1512,3 +1512,105 @@ impl BoxDecorationBreak {
 impl Default for BoxDecorationBreak {
     fn default() -> Self { Self::INITIAL }
 }
+
+// ── Text Wrap (CSS Text Module Level 4) ─────────────────────────────────
+
+/// CSS `text-wrap` property.
+///
+/// Controls how text is wrapped within a block container. `wrap` uses the
+/// standard greedy algorithm, `balance` produces lines of approximately
+/// equal width, and `pretty` uses paragraph-level optimization to reduce
+/// orphans and improve overall quality.
+///
+/// Blink: `TextWrap` in `computed_style_base_constants.h`.
+///
+/// CSS Text Level 4 §3.4:
+/// <https://drafts.csswg.org/css-text-4/#text-wrap>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TextWrap {
+    /// Standard greedy line breaking (default).
+    Wrap = 0,
+    /// No wrapping — overflow is allowed.
+    Nowrap = 1,
+    /// Balance line widths across the paragraph.
+    Balance = 2,
+    /// Paragraph-level optimization (Knuth-Plass style) — minimize orphans.
+    Pretty = 3,
+    /// Stable wrapping — same as wrap but avoids rebalancing when content changes.
+    Stable = 4,
+}
+
+impl TextWrap {
+    pub const INITIAL: Self = Self::Wrap;
+
+    /// Whether this mode enables paragraph-level scoring.
+    #[inline]
+    pub fn uses_scoring(self) -> bool {
+        matches!(self, Self::Balance | Self::Pretty)
+    }
+
+    /// Whether wrapping is disabled.
+    #[inline]
+    pub fn is_nowrap(self) -> bool {
+        matches!(self, Self::Nowrap)
+    }
+}
+
+impl Default for TextWrap {
+    fn default() -> Self { Self::INITIAL }
+}
+
+// ── Initial Letter (CSS Inline Level 3 §5) ──────────────────────────────
+
+/// CSS `initial-letter` property — drop caps and raised caps.
+///
+/// Specifies styling for the first letter of a block container so it can
+/// span multiple lines (drop-cap) or be raised above the baseline.
+///
+/// Blink: `InitialLetter` in `computed_style.h`.
+///
+/// CSS Inline Level 3 §5:
+/// <https://drafts.csswg.org/css-inline-3/#sizing-drop-caps>
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct InitialLetter {
+    /// Number of lines the initial letter should span (the size).
+    /// E.g., `initial-letter: 3` means the letter is sized to span 3 lines.
+    pub size: f32,
+    /// Number of lines the initial letter sinks below the first line.
+    /// If `None`, defaults to `size` (a full drop-cap). A value of 1
+    /// means a raised cap (the letter sits on the first baseline).
+    pub sink: Option<f32>,
+}
+
+impl InitialLetter {
+    /// Compute the effective sink value (defaults to size for drop caps).
+    #[inline]
+    pub fn effective_sink(&self) -> f32 {
+        self.sink.unwrap_or(self.size)
+    }
+
+    /// True if this is a raised cap (sink == 1, letter sits on baseline).
+    #[inline]
+    pub fn is_raised(&self) -> bool {
+        self.effective_sink() <= 1.0
+    }
+
+    /// Compute the height of the initial letter based on line height.
+    #[inline]
+    pub fn compute_height(&self, line_height: f32) -> f32 {
+        self.size * line_height
+    }
+
+    /// Compute the block-start offset (how far the letter sinks).
+    /// Returns 0 for raised caps, otherwise (sink - 1) * line_height.
+    #[inline]
+    pub fn compute_sink_offset(&self, line_height: f32) -> f32 {
+        let s = self.effective_sink();
+        if s <= 1.0 {
+            0.0
+        } else {
+            (s - 1.0) * line_height
+        }
+    }
+}
