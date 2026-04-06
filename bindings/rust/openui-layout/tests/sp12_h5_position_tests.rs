@@ -201,17 +201,18 @@ fn rel_left_wins_over_right_ltr() {
 #[test]
 fn rel_right_wins_over_left_rtl() {
     // CSS 2.1: in RTL, right wins over left.
+    // CSS 2.1 §10.3.3: over-constrained → margin-left adjusted for RTL,
+    // so the 200px child is right-aligned in an 800px container.
+    // Normal flow x = 600, then relative right:40 → x = 600 − 40 = 560.
     let mut b = BlockTestBuilder::new(800, 600)
         .with_container_style(|s| { s.direction = Direction::Rtl; });
     b.add_child().width(200.0).height(100.0).position_relative()
         .with_style(|s| { s.direction = Direction::Rtl; })
         .inset(0, 40, 0, 60).done();
     let r = b.build();
-    // RTL: right=40 wins. Visual x = normal - 40.
     let child = r.child(0);
     let x = child.offset.left.to_i32();
-    // In RTL right wins, so offset = -right = -40 from normal flow.
-    assert_eq!(x, -40);
+    assert_eq!(x, 560);
 }
 
 #[test]

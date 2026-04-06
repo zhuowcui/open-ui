@@ -15,7 +15,7 @@
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
 use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
-use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position};
+use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
@@ -247,6 +247,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
             // Handle floated children.
             if child_style.float != Float::None {
+                // CSS 2.1: Floats force BFC offset resolution. Any pending
+                // margin strut must be resolved before positioning the float.
+                if !start_margin_resolved {
+                    block_offset += margin_strut.sum();
+                    margin_strut = MarginStrut::new();
+                    start_margin_resolved = true;
+                }
                 handle_float(
                     doc, child_id, space,
                     child_available_inline, child_percentage_block_size,
@@ -427,6 +434,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // Handle floated children — they are positioned in the exclusion
         // space and do not advance the block offset.
         if child_style.float != Float::None {
+            // CSS 2.1: Floats force BFC offset resolution.
+            if !start_margin_resolved {
+                block_offset += margin_strut.sum();
+                margin_strut = MarginStrut::new();
+                start_margin_resolved = true;
+            }
             handle_float(
                 doc, child_id, space,
                 child_available_inline, child_percentage_block_size,
@@ -527,11 +540,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // block height is the actual padding-box height (not just the available
     // block size from the parent constraint).
     if !oof_candidates.is_empty() {
-        // Update containing block height to use this block's resolved
-        // padding-box height (CSS 2.1 §10.1).
+        // Update containing block to use this block's resolved dimensions.
+        // CSS 2.1 §10.1: The containing block for abspos descendants is
+        // the padding box of the nearest positioned ancestor.
         let cb_height = resolved_block_size - border.top - border.bottom;
+        let cb_width = child_available_inline + padding.left + padding.right;
         for c in &mut oof_candidates {
-            c.containing_block_size.height = cb_height;
+            c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
+            c.containing_block_border = border.clone();
         }
         let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(
             doc,
@@ -778,20 +794,21 @@ fn layout_block_child(
     let child_margin = resolve_margins(child_style, child_available_inline);
     margin_strut.append_normal(child_margin.top);
 
-    if child_fragments.is_empty() {
+    // CSS 2.1 §8.3.1: Determine whether to resolve (consume) the accumulated
+    // margin strut or keep it adjoining for parent-first-child collapsing.
+    // Use `start_margin_resolved` rather than `child_fragments.is_empty()` so
+    // that self-collapsing first children (which push to child_fragments but
+    // don't separate margins) keep the chain open.
+    if !*start_margin_resolved {
         if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
             *block_offset += margin_strut.sum();
             *margin_strut = MarginStrut::new();
             *start_margin_resolved = true;
-        } else {
-            // CSS 2.1 §8.3.1: Start margin collapses through — save the
-            // accumulated strut. It will be propagated via start_margin_strut
-            // if it's never resolved during this block's layout.
         }
+        // else: start margin still collapses through — don't resolve yet
     } else {
         *block_offset += margin_strut.sum();
         *margin_strut = MarginStrut::new();
-        *start_margin_resolved = true;
     }
 
     let child_non_auto_margin_inline = {
@@ -834,24 +851,12 @@ fn layout_block_child(
         }
     }
 
-    // Absorb any out-of-flow candidates bubbled up from the child.
-    // If this parent establishes a containing block, add them to our
-    // local OOF list. Otherwise, bubble them up further.
-    if !child_fragment.oof_candidates.is_empty() {
-        let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
-        for c in child_oof {
-            let captures = if c.style.position == Position::Fixed {
-                is_root
-            } else {
-                establishes_cb_for_abspos
-            };
-            if captures {
-                oof_candidates.push(c);
-            } else {
-                bubbled_oof_candidates.push(c);
-            }
-        }
-    }
+    // Take OOF candidates from the child for processing after offset is known.
+    let child_oof = if !child_fragment.oof_candidates.is_empty() {
+        std::mem::take(&mut child_fragment.oof_candidates)
+    } else {
+        Vec::new()
+    };
 
     let child_border_box_inline = child_fragment.size.width;
     let remaining_space = child_available_inline - child_border_box_inline;
@@ -875,8 +880,17 @@ fn layout_block_child(
         resolved_margin_left = child_margin.left;
         resolved_margin_right = remaining_space - resolved_margin_left;
     } else {
-        resolved_margin_left = child_margin.left;
-        resolved_margin_right = child_margin.right;
+        // CSS 2.1 §10.3.3: Both margins specified. If the total
+        // (width + margin-left + margin-right) exceeds the containing block,
+        // the end margin (margin-right in LTR, margin-left in RTL) is
+        // recomputed to satisfy the equation.
+        if child_style.direction == Direction::Rtl {
+            resolved_margin_right = child_margin.right;
+            resolved_margin_left = remaining_space - resolved_margin_right;
+        } else {
+            resolved_margin_left = child_margin.left;
+            resolved_margin_right = remaining_space - resolved_margin_left;
+        }
     }
 
     child_fragment.offset = PhysicalOffset::new(
@@ -900,6 +914,27 @@ fn layout_block_child(
         child_margin.bottom,
         resolved_margin_left,
     );
+
+    // Absorb OOF candidates now that the child's offset is known.
+    // Translate each candidate's static_position from the child's coordinate
+    // space into this parent's coordinate space using the child's offset.
+    if !child_oof.is_empty() {
+        let child_offset = child_fragment.offset;
+        for mut c in child_oof {
+            c.static_position.left = c.static_position.left + child_offset.left;
+            c.static_position.top = c.static_position.top + child_offset.top;
+            let captures = if c.style.position == Position::Fixed {
+                is_root
+            } else {
+                establishes_cb_for_abspos
+            };
+            if captures {
+                oof_candidates.push(c);
+            } else {
+                bubbled_oof_candidates.push(c);
+            }
+        }
+    }
 
     *block_offset += child_fragment.size.height;
 
@@ -933,6 +968,9 @@ fn layout_block_child(
     } else {
         // Non-self-collapsing child: the child occupies space, so margin
         // collapsing ends here. Start a new strut with the bottom margin.
+        // Also mark start margin as resolved — this child's content breaks
+        // the adjoining margin chain.
+        *start_margin_resolved = true;
         *margin_strut = MarginStrut::new();
         margin_strut.append_normal(child_margin.bottom);
         if !child_fragment.end_margin_strut.is_empty() {

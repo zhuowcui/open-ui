@@ -461,13 +461,17 @@ fn apply_aspect_ratio_inverse(
 fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
     if style.width.length_type() == openui_geometry::LengthType::Fixed {
         let raw = LayoutUnit::from_f32(style.width.value());
+        let bp_val = {
+            let b = resolve_border(style);
+            let p = resolve_padding(style, LayoutUnit::zero());
+            b.left + b.right + p.left + p.right
+        };
         if style.box_sizing == BoxSizing::BorderBox {
-            raw
+            // Floor at border+padding — border-box width can't be less than bp
+            raw.max_of(bp_val)
         } else {
             // content-box → border-box: add border + padding
-            let bp = resolve_border(style);
-            let pad = resolve_padding(style, LayoutUnit::zero());
-            raw + bp.left + bp.right + pad.left + pad.right
+            raw + bp_val
         }
     } else {
         intrinsic
@@ -479,12 +483,15 @@ fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> L
 fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
     if style.height.length_type() == openui_geometry::LengthType::Fixed {
         let raw = LayoutUnit::from_f32(style.height.value());
+        let bp_val = {
+            let b = resolve_border(style);
+            let p = resolve_padding(style, LayoutUnit::zero());
+            b.top + b.bottom + p.top + p.bottom
+        };
         if style.box_sizing == BoxSizing::BorderBox {
-            raw
+            raw.max_of(bp_val)
         } else {
-            let bp = resolve_border(style);
-            let pad = resolve_padding(style, LayoutUnit::zero());
-            raw + bp.top + bp.bottom + pad.top + pad.bottom
+            raw + bp_val
         }
     } else {
         intrinsic
@@ -511,16 +518,31 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
         LayoutUnit::max(), // none = unconstrained
     );
 
-    // Convert to border-box units to match the size being clamped.
-    let bp = if style.box_sizing == BoxSizing::ContentBox {
+    // Compute border+padding for conversion and floor.
+    let bp_val = {
         let b = resolve_border(style);
         let p = resolve_padding(style, zero);
         b.left + b.right + p.left + p.right
+    };
+
+    // Convert to border-box units to match the size being clamped.
+    // For content-box: add bp. For border-box: floor at bp.
+    let min_bb = if min_raw > zero {
+        if style.box_sizing == BoxSizing::ContentBox {
+            min_raw + bp_val
+        } else {
+            min_raw.max_of(bp_val)
+        }
     } else {
         zero
     };
-    let min_bb = if min_raw > zero { min_raw + bp } else { zero };
-    let max_bb = if max_raw == LayoutUnit::max() { max_raw } else { max_raw + bp };
+    let max_bb = if max_raw == LayoutUnit::max() {
+        max_raw
+    } else if style.box_sizing == BoxSizing::ContentBox {
+        max_raw + bp_val
+    } else {
+        max_raw.max_of(bp_val)
+    };
 
     size.clamp(min_bb, max_bb)
 }
@@ -540,15 +562,28 @@ fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
         LayoutUnit::max(),
     );
 
-    let bp = if style.box_sizing == BoxSizing::ContentBox {
+    let bp_val = {
         let b = resolve_border(style);
         let p = resolve_padding(style, zero);
         b.top + b.bottom + p.top + p.bottom
+    };
+
+    let min_bb = if min_raw > zero {
+        if style.box_sizing == BoxSizing::ContentBox {
+            min_raw + bp_val
+        } else {
+            min_raw.max_of(bp_val)
+        }
     } else {
         zero
     };
-    let min_bb = if min_raw > zero { min_raw + bp } else { zero };
-    let max_bb = if max_raw == LayoutUnit::max() { max_raw } else { max_raw + bp };
+    let max_bb = if max_raw == LayoutUnit::max() {
+        max_raw
+    } else if style.box_sizing == BoxSizing::ContentBox {
+        max_raw + bp_val
+    } else {
+        max_raw.max_of(bp_val)
+    };
 
     size.clamp(min_bb, max_bb)
 }
