@@ -612,6 +612,7 @@ fn linebreaker_anywhere_breaks_every_char() {
             intrinsic_inline_size: None,
         }],
         styles: vec![style],
+    oof_children: Vec::new(),
     };
 
     // Width to fit ~2 characters
@@ -658,6 +659,7 @@ fn linebreaker_strict_prevents_break_before_chouon() {
             intrinsic_inline_size: None,
         }],
         styles: vec![style],
+    oof_children: Vec::new(),
     };
 
     // Narrow width — less than the full text but more than one character

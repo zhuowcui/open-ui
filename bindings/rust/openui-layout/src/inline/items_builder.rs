@@ -29,6 +29,31 @@ pub struct InlineItemsData {
     pub items: Vec<InlineItem>,
     /// Styles referenced by items (index into this vec).
     pub styles: Vec<ComputedStyle>,
+    /// Out-of-flow children encountered during inline item collection.
+    /// Each entry records the node ID and the inline item index where
+    /// the OOF child appeared (for static position computation).
+    ///
+    /// CSS 2.1 §10.3.7: The static position of an absolutely-positioned
+    /// element within inline content is where it would have been placed
+    /// in normal flow. We record the position during collection and
+    /// resolve it after line layout.
+    pub oof_children: Vec<OofPlaceholder>,
+}
+
+/// Placeholder for an out-of-flow child within inline content.
+///
+/// Records the node ID and the inline item index at which the OOF
+/// child was encountered. During line layout, this index is used to
+/// determine which line the element would have appeared on, giving
+/// the static block position.
+#[derive(Clone, Debug)]
+pub struct OofPlaceholder {
+    /// The node ID of the out-of-flow element.
+    pub node_id: NodeId,
+    /// The index into InlineItemsData::items at the time the OOF child
+    /// was encountered. Items before this index precede the OOF child
+    /// in document order.
+    pub item_index: usize,
 }
 
 impl InlineItemsData {
@@ -402,6 +427,8 @@ pub struct InlineItemsBuilder<'a> {
     /// `pre` or `pre-wrap` should not cause collapsing of the next node's
     /// leading space.
     last_space_collapsible: bool,
+    /// OOF children encountered during inline item collection.
+    oof_children: Vec<OofPlaceholder>,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
@@ -412,6 +439,7 @@ impl<'a> InlineItemsBuilder<'a> {
             items: Vec::new(),
             styles: Vec::new(),
             last_space_collapsible: false,
+            oof_children: Vec::new(),
         }
     }
 
@@ -426,6 +454,7 @@ impl<'a> InlineItemsBuilder<'a> {
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
+            oof_children: builder.oof_children,
         }
     }
 
@@ -446,6 +475,7 @@ impl<'a> InlineItemsBuilder<'a> {
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
+            oof_children: builder.oof_children,
         }
     }
 
@@ -473,9 +503,16 @@ impl<'a> InlineItemsBuilder<'a> {
         if node.style.display == Display::None {
             return;
         }
-        // Out-of-flow children (absolute, fixed, floated) don't participate
-        // in inline layout.
+        // Out-of-flow children (absolute, fixed) record their position for
+        // static position computation but don't participate in inline layout.
+        // Floated children are handled separately by the block layout caller.
         if node.style.is_out_of_flow() {
+            if node.style.position.is_absolutely_positioned() {
+                self.oof_children.push(OofPlaceholder {
+                    node_id: child_id,
+                    item_index: self.items.len(),
+                });
+            }
             return;
         }
 

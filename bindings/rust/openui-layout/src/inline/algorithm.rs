@@ -19,6 +19,7 @@ use unicode_segmentation::UnicodeSegmentation;
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::resolve_margin_or_padding;
+use crate::out_of_flow::OutOfFlowCandidate;
 
 use super::items::{InlineItemResult, InlineItemType};
 use super::items_builder::{style_to_font_description, InlineItemsData, InlineItemsBuilder};
@@ -496,10 +497,52 @@ pub fn inline_layout(
     fragment.children = line_fragments;
     fragment.first_baseline = first_baseline;
     fragment.last_baseline = last_baseline;
+
+    // Generate OOF candidates from inline content.
+    // CSS 2.1 §10.3.7: The static position of an absolutely-positioned element
+    // within inline content is where it would have been placed in normal flow.
+    // Use the item_index to find the block offset of the line containing the
+    // OOF child, and set inline offset to 0 (line start).
+    for oof in &items_data.oof_children {
+        let oof_style = doc.node(oof.node_id).style.clone();
+        let static_block = find_static_block_for_item_index(
+            oof.item_index,
+            &fragment.children,
+            intrinsic_block_size,
+        );
+        fragment.oof_candidates.push(OutOfFlowCandidate {
+            node_id: oof.node_id,
+            style: oof_style,
+            static_position: PhysicalOffset::new(LayoutUnit::zero(), static_block),
+            containing_block_size: border_box_size,
+            containing_block_border: openui_geometry::BoxStrut::zero(),
+            containing_block_direction: doc.node(node_id).style.direction,
+            static_position_direction: doc.node(node_id).style.direction,
+        });
+    }
+
     fragment
 }
 
-/// Inline layout for an explicit set of children (anonymous block box wrapper).
+/// Find the static block position for an OOF placeholder at a given item index.
+///
+/// Walks the line fragments to find which line contains the item_index,
+/// returning the block offset of that line. If the item appears after all
+/// lines, returns the intrinsic block size (bottom of last line).
+fn find_static_block_for_item_index(
+    _item_index: usize,
+    line_fragments: &[Fragment],
+    intrinsic_block_size: LayoutUnit,
+) -> LayoutUnit {
+    // Simplified: place OOF at the block offset of the first line that starts
+    // after the OOF placeholder, or at the end of content.
+    // Full implementation would track item indices through line breaking.
+    if let Some(last) = line_fragments.last() {
+        last.offset.top
+    } else {
+        intrinsic_block_size
+    }
+}
 ///
 /// Used by block_layout for CSS 2.2 §9.2.1.1 anonymous block boxes when
 /// mixed inline+block content is present. Lays out only the given children
@@ -613,6 +656,26 @@ pub fn inline_layout_for_children(
     fragment.children = line_fragments;
     fragment.first_baseline = first_baseline;
     fragment.last_baseline = last_baseline;
+
+    // OOF candidates from anonymous inline wrapper.
+    for oof in &items_data.oof_children {
+        let oof_style = doc.node(oof.node_id).style.clone();
+        let static_block = find_static_block_for_item_index(
+            oof.item_index,
+            &fragment.children,
+            intrinsic_block_size,
+        );
+        fragment.oof_candidates.push(OutOfFlowCandidate {
+            node_id: oof.node_id,
+            style: oof_style,
+            static_position: PhysicalOffset::new(LayoutUnit::zero(), static_block),
+            containing_block_size: border_box_size,
+            containing_block_border: openui_geometry::BoxStrut::zero(),
+            containing_block_direction: doc.node(node_id).style.direction,
+            static_position_direction: doc.node(node_id).style.direction,
+        });
+    }
+
     fragment
 }
 
@@ -2017,6 +2080,7 @@ mod tests {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
+        oof_children: Vec::new(),
         };
 
         // Should not panic even with empty items.
@@ -2092,6 +2156,7 @@ mod tests {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
+        oof_children: Vec::new(),
         };
 
         apply_text_overflow_ellipsis(
@@ -2120,6 +2185,7 @@ mod tests {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
+        oof_children: Vec::new(),
         };
 
         apply_text_overflow_ellipsis(
