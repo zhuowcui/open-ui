@@ -2494,9 +2494,9 @@ fn ec_min_height_greater_than_max_height() {
         .max_height(100.0)
         .done();
     let r = b.build();
-    // max-height constrains to 100, then min-height raises to 200
-    // Implementation resolves to max-height = 100 (max takes precedence)
-    r.assert_child_size(0, 400, 100);
+    // CSS 2.1 §10.7: when min-height > max-height, max-height is treated as min-height
+    // So effective max = 200, height = clamp(50, 200, 200) = 200
+    r.assert_child_size(0, 400, 200);
 }
 
 #[test]
@@ -2509,8 +2509,9 @@ fn ec_min_width_greater_than_max_width() {
         .max_width(200.0)
         .done();
     let r = b.build();
-    // max-width clamps to 200 (implementation resolves max first)
-    r.assert_child_size(0, 200, 50);
+    // CSS 2.1 §10.4: when min-width > max-width, max-width is treated as min-width
+    // So effective max = 300, width = clamp(50, 300, 300) = 300
+    r.assert_child_size(0, 300, 50);
 }
 
 #[test]

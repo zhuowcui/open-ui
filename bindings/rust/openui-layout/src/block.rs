@@ -180,6 +180,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     containing_block_size,
                     containing_block_border: border.clone(),
                     containing_block_direction: style.direction,
+                    static_position_direction: style.direction,
                 };
                 let captures = if child_style.position == Position::Fixed {
                     is_root
@@ -248,6 +249,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     containing_block_size,
                     containing_block_border: border.clone(),
                     containing_block_direction: style.direction,
+                    static_position_direction: style.direction,
                 };
                 let captures = if child_style.position == Position::Fixed {
                     is_root
@@ -313,6 +315,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                             containing_block_size,
                             containing_block_border: border.clone(),
                             containing_block_direction: style.direction,
+                    static_position_direction: style.direction,
                         };
                         let captures = if cs.position == Position::Fixed {
                             is_root
@@ -471,6 +474,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 containing_block_size,
                 containing_block_border: border.clone(),
                 containing_block_direction: style.direction,
+                    static_position_direction: style.direction,
             };
             let captures = if child_style.position == Position::Fixed {
                 is_root
@@ -1125,10 +1129,13 @@ fn layout_block_child(
 
     // CSS 2.1 §8.3.1: Determine if this child is self-collapsing (zero height,
     // no border/padding separating its top and bottom margins).
+    // A box that establishes a new formatting context is never self-collapsing
+    // even if it has zero height — its margins remain separate per §8.3.1.
     let child_bp_block = resolve_border(child_style).block_sum()
         + resolve_padding(child_style, child_available_inline).block_sum();
     let child_is_self_collapsing = child_fragment.size.height == LayoutUnit::zero()
-        && child_bp_block == LayoutUnit::zero();
+        && child_bp_block == LayoutUnit::zero()
+        && !child_is_new_fc;
 
     // CSS 2.1 §8.3.1: Save the start margin strut before the trailing reset
     // overwrites it. This captures the first child's (and nested first

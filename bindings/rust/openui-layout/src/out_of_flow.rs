@@ -40,6 +40,12 @@ pub struct OutOfFlowCandidate {
     /// (not the element's own direction) for auto-margin / over-constrained
     /// resolution.
     pub containing_block_direction: Direction,
+    /// The direction of the static-position containing block (the element's
+    /// direct parent in normal flow). CSS 2.1 §10.3.7 uses this (not the
+    /// actual CB's direction) to decide whether to use the static-left or
+    /// static-right position when left/right/width are all auto. This field
+    /// is set at candidate creation time and never overwritten during bubbling.
+    pub static_position_direction: Direction,
 }
 
 /// Layout all out-of-flow candidates and return positioned fragments.
@@ -96,9 +102,10 @@ fn layout_out_of_flow_child(
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
     let cb_direction = candidate.containing_block_direction;
+    let sp_direction = candidate.static_position_direction;
     let (resolved_left, resolved_width_raw, resolved_margin_left, resolved_margin_right) =
         resolve_horizontal(style, cb_width, static_left, &border, &padding,
-                          shrink_to_fit_min, shrink_to_fit_max, cb_direction);
+                          shrink_to_fit_min, shrink_to_fit_max, cb_direction, sp_direction);
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
@@ -121,7 +128,7 @@ fn layout_out_of_flow_child(
     let (resolved_left, resolved_margin_left, resolved_margin_right) =
         if resolved_width != resolved_width_raw {
             let (l, _w, ml, mr) = resolve_horizontal_with_known_width(
-                style, cb_width, static_left, &border, &padding, resolved_width, cb_direction,
+                style, cb_width, static_left, &border, &padding, resolved_width, cb_direction, sp_direction,
             );
             (l, ml, mr)
         } else {
@@ -280,6 +287,7 @@ fn resolve_horizontal(
     shrink_to_fit_min: LayoutUnit,
     shrink_to_fit_max: LayoutUnit,
     cb_direction: Direction,
+    sp_direction: Direction,
 ) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
     let zero = LayoutUnit::zero();
 
@@ -373,8 +381,9 @@ fn resolve_horizontal(
 
     if width_auto && left_auto && right_auto {
         // ── All three auto: use static position, shrink-to-fit for width
-        // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
-        if cb_direction == Direction::Rtl {
+        // CSS 2.1 §10.3.7: Use static-position CB direction (not actual CB).
+        // In LTR use static position for left; in RTL for right.
+        if sp_direction == Direction::Rtl {
             // For a block-level placeholder in RTL normal flow, the right
             // margin edge is at the containing block's right padding edge,
             // so static_right = 0.
@@ -414,9 +423,10 @@ fn resolve_horizontal(
 
     if left_auto && right_auto {
         // left and right auto, width specified
-        // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
+        // CSS 2.1 §10.3.7: Use static-position CB direction (not actual CB).
+        // In LTR use static position for left; in RTL for right.
         let border_box_width = border_box_from_specified;
-        if cb_direction == Direction::Rtl {
+        if sp_direction == Direction::Rtl {
             // Block-level static position in RTL: right margin edge at CB's
             // right padding edge → static_right = 0.
             let right = LayoutUnit::zero();
@@ -694,6 +704,7 @@ fn resolve_horizontal_with_known_width(
     _padding: &BoxStrut,
     border_box_width: LayoutUnit,
     cb_direction: Direction,
+    sp_direction: Direction,
 ) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
     let zero = LayoutUnit::zero();
 
@@ -754,8 +765,8 @@ fn resolve_horizontal_with_known_width(
     let mr = if margin_right_auto { zero } else { margin_right_val };
 
     if left_auto && right_auto {
-        // Use static position for left (LTR) or right (RTL)
-        if cb_direction == Direction::Rtl {
+        // Use static-position CB direction for static position choice
+        if sp_direction == Direction::Rtl {
             let right = LayoutUnit::zero();
             let left = cb_width - right - mr - border_box_width - ml;
             return (left + ml, border_box_width, ml, mr);
@@ -905,7 +916,7 @@ mod tests {
         let stf_min = LayoutUnit::from_i32(800);
         let stf_max = LayoutUnit::from_i32(800);
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max, Direction::Ltr,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max, Direction::Ltr, Direction::Ltr,
         );
     }
 
@@ -922,7 +933,7 @@ mod tests {
         let stf_min = LayoutUnit::from_i32(800);
         let stf_max = LayoutUnit::from_i32(800);
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max, Direction::Ltr,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max, Direction::Ltr, Direction::Ltr,
         );
         assert_eq!(ml.to_i32(), 300);
         assert_eq!(mr.to_i32(), 300);

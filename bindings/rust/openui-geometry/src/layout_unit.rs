@@ -266,9 +266,11 @@ impl LayoutUnit {
     }
 
     /// Clamp between min and max.
+    /// CSS 2.1 §10.4/§10.7: when min > max, max is treated as min.
     #[inline]
     pub fn clamp(self, min: Self, max: Self) -> Self {
-        self.max_of(min).min_of(max)
+        let effective_max = max.max_of(min);
+        self.max_of(min).min_of(effective_max)
     }
 
     /// Blink's `kIndefiniteSize` is `LayoutUnit(-1)` = raw -64.

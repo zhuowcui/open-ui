@@ -791,10 +791,10 @@ fn min_w_gt_max_w_all_clamp_to_min() {
 #[test]
 fn min_w_gt_max_w_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
-    // In layout, max-width=200 clamps first, then min can't override
+    // CSS 2.1 §10.4: min-width > max-width → max-width treated as min-width value
     b.add_child().width(250.0).min_width(400.0).max_width(200.0).height(50.0).done();
     let r = b.build();
-    r.assert_child_size(0, 200, 50);
+    r.assert_child_size(0, 400, 50);
 }
 
 // ── 3.4  min-width: 0 (default) ─────────────────────────────────────────
@@ -1137,9 +1137,10 @@ fn min_h_gt_max_h_all_clamp() {
 #[test]
 fn min_h_gt_max_h_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
+    // CSS 2.1 §10.7: min-height > max-height → max-height treated as min-height value
     b.add_child().width(200.0).height(250.0).min_height(400.0).max_height(200.0).done();
     let r = b.build();
-    r.assert_child_size(0, 200, 200);
+    r.assert_child_size(0, 200, 400);
 }
 
 // ── 4.4  Percentage min/max height ───────────────────────────────────────
@@ -3981,17 +3982,19 @@ fn layout_max_h_clamps_tall() {
 #[test]
 fn layout_min_w_gt_max_w() {
     let mut b = BlockTestBuilder::new(800, 600);
+    // CSS 2.1 §10.4: min-width > max-width → max-width treated as min-width value
     b.add_child().width(250.0).min_width(300.0).max_width(150.0).height(30.0).done();
     let r = b.build();
-    assert_layout!(r, child(0) size (150, 30));
+    assert_layout!(r, child(0) size (300, 30));
 }
 
 #[test]
 fn layout_min_h_gt_max_h() {
     let mut b = BlockTestBuilder::new(800, 600);
+    // CSS 2.1 §10.7: min-height > max-height → max-height treated as min-height value
     b.add_child().width(100.0).height(250.0).min_height(300.0).max_height(150.0).done();
     let r = b.build();
-    assert_layout!(r, child(0) size (100, 150));
+    assert_layout!(r, child(0) size (100, 300));
 }
 
 #[test]

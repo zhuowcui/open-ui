@@ -331,8 +331,8 @@ fn c1_14_min_and_max_range_on_same_item() {
 
 #[test]
 fn c1_15_min_greater_than_max_min_wins() {
-    // When min-width > max-width, this implementation uses max-width.
-    // min-width:200, max-width:100 → item = 100 (max applies)
+    // CSS 2.1 §10.4: When min-width > max-width, max-width is treated as min-width.
+    // min-width:200, max-width:100 → effective max=200, item = 200 (min wins)
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
     let a = add_auto_child(&mut doc, c);
@@ -342,7 +342,7 @@ fn c1_15_min_greater_than_max_min_wins() {
         s.max_width = Length::px(100.0);
     }
     let frag = lay(&doc, c, 400, 100);
-    assert_eq!(frag.children[0].width(), lu(100));
+    assert_eq!(frag.children[0].width(), lu(200));
 }
 
 // ═══════════════════════════════════════════════════════════════════════

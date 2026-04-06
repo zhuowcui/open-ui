@@ -87,12 +87,13 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     let mut min_inline = LayoutUnit::zero();
     let mut max_inline = LayoutUnit::zero();
     let mut content_block = LayoutUnit::zero();
+    let mut float_block_max = LayoutUnit::zero();
+    let is_bfc = style.creates_new_formatting_context();
 
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
 
         // Skip absolutely positioned and display:none children.
-        // CSS Sizing 3 §4.1: floated children DO contribute to intrinsic sizes.
         if child_style.display == openui_style::Display::None
             || child_style.position.is_absolutely_positioned()
         {
@@ -101,14 +102,22 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 
         let child_sizes = compute_child_intrinsic_contribution(doc, child_id);
 
-        // Block container: each child contribution is independent.
-        // Min-content inline = max of all children's min-content.
+        // CSS Sizing 3 §4.1: floated children contribute to intrinsic inline sizes.
         min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
-        // Max-content inline = max of all children's max-content.
         max_inline = max_inline.max_of(child_sizes.max_content_inline_size);
 
-        // Block size: sum of children's max-content block contributions.
-        content_block = content_block + child_sizes.max_content_block_size;
+        // CSS 2.1 §10.6.3/§10.6.7: floats only contribute to block size for
+        // BFC roots. Non-BFC containers don't expand for float descendants.
+        if child_style.float != openui_style::Float::None {
+            float_block_max = float_block_max.max_of(child_sizes.max_content_block_size);
+        } else {
+            content_block = content_block + child_sizes.max_content_block_size;
+        }
+    }
+
+    // BFC roots include float bottom margin edge in auto height (§10.6.7).
+    if is_bfc {
+        content_block = content_block.max_of(float_block_max);
     }
 
     // Add container border + padding.
@@ -289,7 +298,15 @@ fn collapse_adjacent_margins(
     node_id: NodeId,
     raw_sum: LayoutUnit,
 ) -> LayoutUnit {
-    let children: Vec<NodeId> = doc.children(node_id).collect();
+    // Only consider in-flow children (skip display:none and absolutely positioned).
+    let children: Vec<NodeId> = doc.children(node_id)
+        .filter(|&id| {
+            let s = &doc.node(id).style;
+            s.display != openui_style::Display::None
+                && !s.position.is_absolutely_positioned()
+                && s.float == openui_style::Float::None
+        })
+        .collect();
     if children.len() < 2 {
         return raw_sum;
     }
