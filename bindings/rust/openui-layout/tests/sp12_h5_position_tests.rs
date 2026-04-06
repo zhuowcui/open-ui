@@ -436,8 +436,8 @@ fn rel_float_left_with_relative() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(200.0).height(100.0).float_left().position_relative().inset(10, 0, 0, 10).done();
     let r = b.build();
-    // Floats with position:relative — relative offsets not applied by this engine.
-    r.assert_child_position(0, 0, 0);
+    // CSS 2.1 §9.4.3: relative offsets apply to floats too.
+    r.assert_child_position(0, 10, 10);
 }
 
 #[test]
@@ -445,8 +445,8 @@ fn rel_float_right_with_relative() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(200.0).height(100.0).float_right().position_relative().inset(5, 0, 0, 5).done();
     let r = b.build();
-    // Floats with position:relative — relative offsets not applied.
-    r.assert_child_position(0, 600, 0);
+    // CSS 2.1 §9.4.3: relative offsets apply to floats too.
+    r.assert_child_position(0, 605, 5);
 }
 
 #[test]
@@ -3423,8 +3423,8 @@ fn interaction_float_and_relative() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(200.0).height(100.0).float_left().position_relative().inset(10, 0, 0, 10).done();
     let r = b.build();
-    // Floats with relative — offsets not applied in this engine.
-    r.assert_child_position(0, 0, 0);
+    // CSS 2.1 §9.4.3: relative offsets apply to floats.
+    r.assert_child_position(0, 10, 10);
 }
 
 #[test]
@@ -5557,8 +5557,8 @@ fn edge_rel_float_right() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(200.0).height(100.0).float_right().position_relative().inset(5, 0, 0, 5).done();
     let r = b.build();
-    // Float right: x=600. Relative offsets not applied to floats.
-    r.assert_child_position(0, 600, 0);
+    // CSS 2.1 §9.4.3: relative offsets apply to floats.
+    r.assert_child_position(0, 605, 5);
 }
 
 #[test]

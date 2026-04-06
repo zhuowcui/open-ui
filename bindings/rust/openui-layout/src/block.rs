@@ -601,11 +601,40 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
             c.containing_block_border = border.clone();
         }
-        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(
-            doc,
-            &oof_candidates,
-        );
-        child_fragments.extend(oof_fragments);
+
+        // Iteratively process OOF candidates. Each pass may produce nested OOF
+        // candidates (e.g., fixed inside abs) that this block captures. This
+        // matches Blink's OutOfFlowLayoutPart multi-pass approach.
+        let mut pending = oof_candidates;
+        while !pending.is_empty() {
+            let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(
+                doc,
+                &pending,
+            );
+            pending = Vec::new();
+            for mut frag in oof_fragments {
+                // Collect nested OOF candidates from the just-laid-out fragment
+                // and translate their static positions into parent coordinates.
+                let nested = std::mem::take(&mut frag.oof_candidates);
+                for mut c in nested {
+                    c.static_position.left = c.static_position.left + frag.offset.left;
+                    c.static_position.top = c.static_position.top + frag.offset.top;
+                    let captures = if c.style.position == Position::Fixed {
+                        is_root
+                    } else {
+                        establishes_cb_for_abspos
+                    };
+                    if captures {
+                        c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
+                        c.containing_block_border = border.clone();
+                        pending.push(c);
+                    } else {
+                        bubbled_oof_candidates.push(c);
+                    }
+                }
+                child_fragments.push(frag);
+            }
+        }
     }
 
     let border_box_size = PhysicalSize::new(border_box_inline, resolved_block_size);
@@ -774,22 +803,9 @@ fn handle_float(
     );
     let mut child_fragment = block_layout(doc, child_id, &child_space);
 
-    // Absorb any bubbled OOF candidates from the float's descendants.
-    if !child_fragment.oof_candidates.is_empty() {
-        let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
-        for c in child_oof {
-            let captures = if c.style.position == Position::Fixed {
-                is_root
-            } else {
-                establishes_cb_for_abspos
-            };
-            if captures {
-                oof_candidates.push(c);
-            } else {
-                bubbled_oof_candidates.push(c);
-            }
-        }
-    }
+    // Take OOF candidates from the float's descendants for post-positioning
+    // translation (same pattern as the normal block path at lines 1009-1027).
+    let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
 
     // BFC coordinates: (0, 0) = content area start of the container.
     let mut content_block_offset = *block_offset - content_edge;
@@ -824,7 +840,36 @@ fn handle_float(
         positioned.bfc_offset.line_offset + border.left + padding.left,
         positioned.bfc_offset.block_offset + content_edge,
     );
+
+    // Apply relative positioning offsets (CSS 2.1 §9.4.3).
+    crate::relative::apply_relative_offset(
+        &mut fragment,
+        child_style,
+        child_available_inline,
+        space.available_block_size,
+    );
+
     fragment.margin = child_margin;
+
+    // Translate OOF candidates' static_position into parent coordinates
+    // using the float's final offset (matching the normal block path).
+    if !child_oof.is_empty() {
+        let child_offset = fragment.offset;
+        for mut c in child_oof {
+            c.static_position.left = c.static_position.left + child_offset.left;
+            c.static_position.top = c.static_position.top + child_offset.top;
+            let captures = if c.style.position == Position::Fixed {
+                is_root
+            } else {
+                establishes_cb_for_abspos
+            };
+            if captures {
+                oof_candidates.push(c);
+            } else {
+                bubbled_oof_candidates.push(c);
+            }
+        }
+    }
 
     child_fragments.push(fragment);
 }

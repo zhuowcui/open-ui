@@ -156,27 +156,30 @@ fn layout_out_of_flow_child(
     };
 
     // Create constraint space and lay out the child.
+    // Pass border-box resolved_width/resolved_height as available sizes —
+    // block_layout subtracts its own border+padding to get the content area.
+    // percentage_resolution stays content-box per CSS 2.1 §10.
     // When the height is determined by constraints (top+bottom specified, height auto),
     // signal it as fixed so descendants can resolve percentage heights against it.
     // Similarly, when height is explicitly specified, it's a fixed block size.
+    let fixed_block = height_resolved_from_constraints || !style.height.is_auto();
+    let available_block = if fixed_block { resolved_height } else { content_height };
     let mut child_space = ConstraintSpace::for_block_child(
-        content_width,
-        content_height,
+        resolved_width,
+        available_block,
         content_width,
         child_percentage_block_size,
         true, // Abs-pos elements establish new formatting contexts
     );
-    if height_resolved_from_constraints || !style.height.is_auto() {
+    child_space.is_fixed_inline_size = true; // Width pre-determined by constraint equation
+    if fixed_block {
         child_space.is_fixed_block_size = true;
     }
 
     let mut child_fragment = block_layout(doc, candidate.node_id, &child_space);
 
-    // CSS 2.1 §10.3.7: The width is always determined before child layout —
-    // either from the constraint equation (both insets specified), from the
-    // explicit style.width, or from shrink-to-fit. The child's block_layout
-    // auto-fills the content-box (resolved_width - bp), so its fragment width
-    // would be missing bp. Use the pre-computed border-box resolved_width.
+    // CSS 2.1 §10.3.7: The width is always pre-determined by the constraint
+    // equation before child layout, so the fragment width = resolved border-box.
     let final_width = resolved_width;
 
     // CSS 2.1 §10.7: For auto-height content-sized abspos, the content height
@@ -219,9 +222,11 @@ fn layout_out_of_flow_child(
         if style.top.is_auto() && !style.bottom.is_auto() {
             let zero = LayoutUnit::zero();
             let bottom_val = resolve_length(&style.bottom, cb_height, zero, zero);
-            let mt = resolved_margin_top;
             let mb = resolved_margin_bottom;
-            cb_height - bottom_val - mb - final_height - mt
+            // CSS 2.1 §10.6.4: top + mt + height + mb + bottom = cb_height
+            // Solving: top = cb_height - bottom - mb - height - mt
+            // Border-edge position = top + mt = cb_height - bottom - mb - height
+            cb_height - bottom_val - mb - final_height
         } else {
             resolved_top
         }
