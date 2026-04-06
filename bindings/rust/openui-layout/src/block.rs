@@ -136,6 +136,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // coordinates) so BFC roots can extend their auto height to include floats.
     let mut max_float_bottom = LayoutUnit::zero();
 
+    // CSS 2.1 §8.3.1: Self-collapsing blocks are positioned at the final
+    // collapsed margin boundary, but that boundary is unknown until the next
+    // non-self-collapsing sibling resolves the strut. Track their indices
+    // in child_fragments so we can reposition them when the boundary is known.
+    let mut pending_self_collapsing: Vec<usize> = Vec::new();
+
     // Collect out-of-flow (absolute/fixed) candidates for deferred layout.
     // These are populated during the child walk below so that each candidate
     // gets the correct static position (i.e., where it would appear in
@@ -434,6 +440,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &mut start_margin_resolved,
                     &mut saved_start_strut,
                     style.direction,
+                    &mut pending_self_collapsing,
                 );
 
                 // Offset inline position for left floats.
@@ -561,6 +568,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             &mut start_margin_resolved,
             &mut saved_start_strut,
             style.direction,
+            &mut pending_self_collapsing,
         );
 
         // Offset inline position for left floats.
@@ -575,12 +583,20 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
     // ── Step 4: Finish layout (FinishLayout, line 1165) ──────────────
     // Resolve the trailing margin strut if margins can't collapse through
-    // the bottom edge. Per CSS 2.1 §8.3.1, bottom border or padding
-    // prevents the last child's bottom margin from collapsing with the
-    // parent's bottom margin.
+    // the bottom edge. Per CSS 2.1 §8.3.1, the last child's bottom margin
+    // collapses with the parent's bottom margin ONLY if:
+    //   - parent has 'auto' computed height
+    //   - no bottom padding or border separates them
+    //   - parent doesn't establish a new BFC
+    // When any of these conditions fails, the margin strut is consumed.
     let bottom_edge = border.bottom + padding.bottom;
+    let has_non_auto_height = !style.height.is_auto()
+        || space.is_fixed_block_size
+        || space.stretch_block_size;
     let end_margin_resolved = !margin_strut.is_empty()
-        && (space.is_new_formatting_context || bottom_edge > LayoutUnit::zero());
+        && (space.is_new_formatting_context
+            || bottom_edge > LayoutUnit::zero()
+            || has_non_auto_height);
     if end_margin_resolved {
         intrinsic_block_size += margin_strut.sum();
     }
@@ -946,6 +962,7 @@ fn layout_block_child(
     start_margin_resolved: &mut bool,
     saved_start_strut: &mut Option<MarginStrut>,
     containing_block_direction: Direction,
+    pending_self_collapsing: &mut Vec<usize>,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -1023,12 +1040,22 @@ fn layout_block_child(
             *margin_strut = MarginStrut::new();
             *start_margin_resolved = true;
             strut_resolved_this_child = true;
+            // Reposition pending self-collapsing children to resolved boundary
+            for &idx in pending_self_collapsing.iter() {
+                child_fragments[idx].offset.top = *block_offset;
+            }
+            pending_self_collapsing.clear();
         }
         // else: start margin still collapses through — don't resolve yet
     } else {
         *block_offset += margin_strut.sum();
         *margin_strut = MarginStrut::new();
         strut_resolved_this_child = true;
+        // Reposition pending self-collapsing children to resolved boundary
+        for &idx in pending_self_collapsing.iter() {
+            child_fragments[idx].offset.top = *block_offset;
+        }
+        pending_self_collapsing.clear();
     }
 
     // Take OOF candidates from the child for processing after offset is known.
@@ -1127,15 +1154,23 @@ fn layout_block_child(
 
     *block_offset += child_fragment.size.height;
 
-    // CSS 2.1 §8.3.1: Determine if this child is self-collapsing (zero height,
-    // no border/padding separating its top and bottom margins).
-    // A box that establishes a new formatting context is never self-collapsing
-    // even if it has zero height — its margins remain separate per §8.3.1.
+    // CSS 2.1 §8.3.1: Determine if this child is self-collapsing.
+    // A box is self-collapsing if:
+    //   - zero computed height (or auto resolving to zero)
+    //   - no top/bottom border or padding
+    //   - does not establish a new BFC
+    //   - does not contain any line boxes
+    //   - all in-flow children's margins collapse (recursively self-collapsing)
+    // We check the fragment for in-flow content: if it produced any child
+    // fragments, it has line boxes or in-flow block children and is NOT
+    // self-collapsing (even if those all have zero height).
     let child_bp_block = resolve_border(child_style).block_sum()
         + resolve_padding(child_style, child_available_inline).block_sum();
+    let child_has_in_flow_content = !child_fragment.children.is_empty();
     let child_is_self_collapsing = child_fragment.size.height == LayoutUnit::zero()
         && child_bp_block == LayoutUnit::zero()
-        && !child_is_new_fc;
+        && !child_is_new_fc
+        && !child_has_in_flow_content;
 
     // CSS 2.1 §8.3.1: Save the start margin strut before the trailing reset
     // overwrites it. This captures the first child's (and nested first
@@ -1165,6 +1200,11 @@ fn layout_block_child(
                 margin_strut.append_normal(child_end.negative_margin);
             }
         }
+        // Record index for deferred repositioning. The self-collapsing block's
+        // final position is the next collapsed margin boundary, which we only
+        // know when a non-self-collapsing sibling resolves the strut.
+        let idx = child_fragments.len(); // index after push below
+        pending_self_collapsing.push(idx);
     } else {
         // Non-self-collapsing child: the child occupies space, so margin
         // collapsing ends here. Start a new strut with the bottom margin.

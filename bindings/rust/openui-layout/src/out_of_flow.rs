@@ -203,6 +203,26 @@ fn layout_out_of_flow_child(
         resolved_height
     };
 
+    // CSS 2.1 §10.7: When auto-height was clamped by min/max, the clamped
+    // height becomes the definite height for percentage-height descendants.
+    // Re-layout with the definite block size so children can resolve against it.
+    if style.height.is_auto() && !height_resolved_from_constraints {
+        let unclamped = child_fragment.size.height;
+        if final_height != unclamped {
+            let clamped_content = (final_height - border_padding_v).clamp_negative_to_zero();
+            let mut relayout_space = ConstraintSpace::for_block_child(
+                resolved_width,
+                final_height,
+                content_width,
+                clamped_content,
+                true,
+            );
+            relayout_space.is_fixed_inline_size = true;
+            relayout_space.is_fixed_block_size = true;
+            child_fragment = block_layout(doc, candidate.node_id, &relayout_space);
+        }
+    }
+
     // When the auto-height was clamped by min/max, re-solve the vertical
     // constraint equation to correctly recompute auto margins and insets.
     let (resolved_top, resolved_margin_top, resolved_margin_bottom) =
