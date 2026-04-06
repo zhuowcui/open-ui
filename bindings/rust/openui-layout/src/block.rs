@@ -594,12 +594,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         || space.is_fixed_block_size
         || space.stretch_block_size;
     // CSS 2.1 §8.3.1: min-height > 0 prevents parent/last-child collapse.
+    // Use percentage_resolution_block_size (not available_block_size) because
+    // percentage min-height resolves against the containing block's height,
+    // which may be indefinite even when available block size is definite.
     let has_min_height = !style.min_height.is_auto()
         && !style.min_height.is_none()
         && match style.min_height.length_type() {
             openui_geometry::LengthType::Fixed => style.min_height.value() > 0.0,
             openui_geometry::LengthType::Percent => {
-                !space.available_block_size.is_indefinite()
+                !space.percentage_resolution_block_size.is_indefinite()
                     && style.min_height.value() > 0.0
             }
             _ => false,
