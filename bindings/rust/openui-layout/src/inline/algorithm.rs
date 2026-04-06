@@ -24,6 +24,7 @@ use super::items::{InlineItemResult, InlineItemType};
 use super::items_builder::{style_to_font_description, InlineItemsData, InlineItemsBuilder};
 use super::line_breaker::{byte_to_char_offset, LineBreaker};
 use super::line_info::LineInfo;
+use super::line_width::compute_line_availability;
 
 // ── Line height metrics (CSS 2.2 §10.8.1 half-leading model) ────────────
 
@@ -409,16 +410,35 @@ pub fn inline_layout(
     // Step 4: Layout each line.
     // Line offsets are relative to the content box (0-based). The caller
     // (block_layout) adds border+padding offsets when positioning.
+    //
+    // CSS 2.1 §9.5.1: Line boxes flow alongside floats. Each line's
+    // available width may differ depending on float exclusion areas at
+    // that line's block offset. We query the ExclusionSpace per-line.
     let mut line_fragments: Vec<Fragment> = Vec::new();
     let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
 
+    // Dereference the exclusion space once for the entire line loop.
+    let exclusion_ref = space.exclusion_space.as_deref();
+    // BFC block offset of this inline content's start within the exclusion space.
+    let bfc_block_start = space.bfc_offset.block_offset;
+
     while !line_breaker.is_finished() {
+        // Query float exclusions at this line's block offset.
+        // The exclusion space uses content-edge-relative coordinates; add the
+        // BFC start offset so we query at the correct absolute position.
+        let line_avail = compute_line_availability(
+            exclusion_ref,
+            bfc_block_start + block_offset,
+            available_inline_size,
+            LayoutUnit::zero(),
+        );
+
         // Apply text-indent: reduce available width on first line only.
         let line_available = if is_first_line && text_indent != LayoutUnit::zero() {
-            (available_inline_size - text_indent).clamp_negative_to_zero()
+            (line_avail.available_inline_size - text_indent).clamp_negative_to_zero()
         } else {
-            available_inline_size
+            line_avail.available_inline_size
         };
 
         if let Some(mut line_info) = line_breaker.next_line(line_available) {
@@ -436,7 +456,7 @@ pub fn inline_layout(
                 doc,
                 &items_data,
                 &line_info,
-                available_inline_size,
+                line_avail.available_inline_size,
                 block_offset,
                 style,
                 &block_metrics,
@@ -444,8 +464,16 @@ pub fn inline_layout(
                 if is_first_line { text_indent } else { LayoutUnit::zero() },
                 space.percentage_resolution_block_size,
             );
-            block_offset = block_offset + line_fragment.size.height;
-            line_fragments.push(line_fragment);
+
+            // Offset the line box inline-start when floats intrude from the left.
+            let mut positioned_line = line_fragment;
+            if line_avail.inline_start > LayoutUnit::zero() {
+                positioned_line.offset.left =
+                    positioned_line.offset.left + line_avail.inline_start;
+            }
+
+            block_offset = block_offset + positioned_line.size.height;
+            line_fragments.push(positioned_line);
             is_first_line = false;
         }
     }
@@ -508,11 +536,24 @@ pub fn inline_layout_for_children(
     let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
 
+    // Dereference the exclusion space once for the entire line loop.
+    let exclusion_ref = space.exclusion_space.as_deref();
+    // BFC block offset of this anonymous wrapper's start within the exclusion space.
+    let bfc_block_start = space.bfc_offset.block_offset;
+
     while !line_breaker.is_finished() {
+        // Query float exclusions at this line's block offset.
+        let line_avail = compute_line_availability(
+            exclusion_ref,
+            bfc_block_start + block_offset,
+            available_inline_size,
+            LayoutUnit::zero(),
+        );
+
         let line_available = if is_first_line && text_indent != LayoutUnit::zero() {
-            (available_inline_size - text_indent).clamp_negative_to_zero()
+            (line_avail.available_inline_size - text_indent).clamp_negative_to_zero()
         } else {
-            available_inline_size
+            line_avail.available_inline_size
         };
 
         if let Some(mut line_info) = line_breaker.next_line(line_available) {
@@ -528,7 +569,7 @@ pub fn inline_layout_for_children(
                 doc,
                 &items_data,
                 &line_info,
-                available_inline_size,
+                line_avail.available_inline_size,
                 block_offset,
                 style,
                 &block_metrics,
@@ -536,8 +577,16 @@ pub fn inline_layout_for_children(
                 if is_first_line { text_indent } else { LayoutUnit::zero() },
                 space.percentage_resolution_block_size,
             );
-            block_offset = block_offset + line_fragment.size.height;
-            line_fragments.push(line_fragment);
+
+            // Offset the line box inline-start when floats intrude from the left.
+            let mut positioned_line = line_fragment;
+            if line_avail.inline_start > LayoutUnit::zero() {
+                positioned_line.offset.left =
+                    positioned_line.offset.left + line_avail.inline_start;
+            }
+
+            block_offset = block_offset + positioned_line.size.height;
+            line_fragments.push(positioned_line);
             is_first_line = false;
         }
     }

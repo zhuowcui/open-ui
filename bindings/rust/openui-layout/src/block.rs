@@ -178,11 +178,16 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
     if has_inline && !has_block {
         // ── Pure inline formatting context ───────────────────────────
-        // Collect OOF candidates from inline children (they appear at the
-        // start of the formatting context, so static_position = content_edge).
+        // Handle float and OOF children first (leading floats), then lay out
+        // inline content with float-aware per-line available width.
+        let mut exclusion_space_inline = ExclusionSpace::new();
+
         for child_id in doc.children(node_id) {
             let child_style = &doc.node(child_id).style;
-            if child_style.position.is_absolutely_positioned() && child_style.display != Display::None {
+            if child_style.display == Display::None {
+                continue;
+            }
+            if child_style.position.is_absolutely_positioned() {
                 let candidate = OutOfFlowCandidate {
                     node_id: child_id,
                     style: child_style.clone(),
@@ -205,15 +210,37 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 } else {
                     bubbled_oof_candidates.push(candidate);
                 }
+                continue;
+            }
+            // CSS 2.1 §9.5: Float children are positioned as leading floats
+            // before inline content begins. Their exclusion areas affect
+            // per-line available width via the exclusion space.
+            if child_style.float != Float::None {
+                handle_float(
+                    doc, child_id, space,
+                    child_available_inline, child_percentage_block_size,
+                    &border, &padding, content_edge,
+                    &block_offset, &mut exclusion_space_inline,
+                    &mut child_fragments,
+                    &mut oof_candidates, &mut bubbled_oof_candidates,
+                    establishes_cb_for_abspos, is_root,
+                    &mut max_float_bottom,
+                );
             }
         }
-        let inline_space = ConstraintSpace::for_block_child(
+
+        // Build constraint space with exclusion data for per-line float avoidance.
+        let mut inline_space = ConstraintSpace::for_block_child(
             child_available_inline,
             space.available_block_size,
             child_available_inline,
             child_percentage_block_size,
             false,
         );
+        if exclusion_space_inline.has_floats() {
+            inline_space.exclusion_space =
+                Some(std::sync::Arc::new(exclusion_space_inline));
+        }
         let inline_fragment = crate::inline::algorithm::inline_layout(
             doc, node_id, &inline_space,
         );
@@ -374,13 +401,28 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 }
 
                 // Lay out this anonymous inline wrapper.
-                let inline_space = ConstraintSpace::for_block_child(
+                // Pass the exclusion space so inline layout can do per-line
+                // float avoidance (CSS 2.1 §9.5.1).
+                let mut inline_space = ConstraintSpace::for_block_child(
                     child_available_inline,
                     space.available_block_size,
                     child_available_inline,
                     child_percentage_block_size,
                     false,
                 );
+                if exclusion_space_mixed.has_floats() {
+                    // The exclusion space uses content-edge-relative coordinates.
+                    // Inline layout's block_offset starts at 0, but the anonymous
+                    // wrapper begins at `block_offset - content_edge` within the
+                    // content area. Set the bfc_offset so inline layout queries
+                    // at the correct position in the exclusion space.
+                    inline_space.exclusion_space =
+                        Some(std::sync::Arc::new(exclusion_space_mixed.clone()));
+                    inline_space.bfc_offset = BfcOffset::new(
+                        LayoutUnit::zero(),
+                        block_offset - content_edge,
+                    );
+                }
                 let anon_fragment = crate::inline::algorithm::inline_layout_for_children(
                     doc, node_id, inline_run, &inline_space,
                 );
