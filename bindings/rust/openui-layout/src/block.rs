@@ -123,7 +123,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         || node_id == doc.root(); // Root is always the initial containing block
     let mut oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     let mut bubbled_oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
-    let containing_block_size = PhysicalSize::new(child_available_inline, space.available_block_size);
+    // Per CSS 2.1 §10.1, the containing block for absolute positioning is the
+    // padding edge of the positioned ancestor. We use content_width + padding
+    // (i.e. padding-box width). For height, we use the available block size.
+    let containing_block_size = PhysicalSize::new(
+        child_available_inline + padding.left + padding.right,
+        space.available_block_size,
+    );
 
     // Classify children: detect whether we have only inline, only block,
     // or mixed content (CSS 2.2 §9.2.1.1 — anonymous block boxes).

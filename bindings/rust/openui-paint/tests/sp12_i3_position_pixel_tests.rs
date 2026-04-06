@@ -873,8 +873,8 @@ fn abs_with_right_bottom_offsets() {
     doc.node_mut(div).style.right = Length::px(0.0);
     doc.node_mut(div).style.bottom = Length::px(0.0);
     let mut s = render(&doc);
-    // CB = (760, 600); left = 760-0-100 = 660; top = 600-0-50 = 550
-    assert_pixel_color(&mut s, 665, 555, RED, "abs right:0 bottom:0");
+    // CB = (800, 600); left = 800-0-100 = 700; top = 600-0-50 = 550
+    assert_pixel_color(&mut s, 705, 555, RED, "abs right:0 bottom:0");
 }
 
 #[test]
@@ -985,8 +985,8 @@ fn abs_right_offset() {
     doc.node_mut(div).style.top = Length::px(10.0);
     doc.node_mut(div).style.right = Length::px(10.0);
     let mut s = render(&doc);
-    // left = CB_width - right - width = 760 - 10 - 100 = 650
-    assert_pixel_color(&mut s, 655, 15, BLUE, "abs right:10 offset");
+    // left = CB_width - right - width = 800 - 10 - 100 = 690
+    assert_pixel_color(&mut s, 695, 15, BLUE, "abs right:10 offset");
 }
 
 #[test]
@@ -1009,8 +1009,8 @@ fn abs_right_30_bottom_30() {
     doc.node_mut(div).style.right = Length::px(30.0);
     doc.node_mut(div).style.bottom = Length::px(30.0);
     let mut s = render(&doc);
-    // left = 760-30-80 = 650; top = 600-30-40 = 530
-    assert_pixel_color(&mut s, 655, 535, RED, "abs right:30 bottom:30");
+    // left = 800-30-80 = 690; top = 600-30-40 = 530
+    assert_pixel_color(&mut s, 695, 535, RED, "abs right:30 bottom:30");
 }
 
 #[test]
@@ -1452,9 +1452,9 @@ fn abs_only_right_set() {
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
     doc.node_mut(div).style.right = Length::px(50.0);
     let mut s = render(&doc);
-    // right:50, left:auto, width:80 → left = 760 - 50 - 80 = 630
+    // right:50, left:auto, width:80 → left = 800 - 50 - 80 = 670
     // top:auto → static_top = PAD
-    assert_pixel_color(&mut s, 635, PAD + 5, RED, "abs only right:50");
+    assert_pixel_color(&mut s, 675, PAD + 5, RED, "abs only right:50");
 }
 
 #[test]
@@ -1592,8 +1592,8 @@ fn fixed_with_right_bottom_offsets() {
     doc.node_mut(div).style.right = Length::px(0.0);
     doc.node_mut(div).style.bottom = Length::px(0.0);
     let mut s = render(&doc);
-    // Same as absolute: left=660, top=550
-    assert_pixel_color(&mut s, 665, 555, RED, "fixed right:0 bottom:0");
+    // Same as absolute: left=700, top=550
+    assert_pixel_color(&mut s, 705, 555, RED, "fixed right:0 bottom:0");
 }
 
 #[test]
@@ -1640,8 +1640,8 @@ fn fixed_right_20_top_20() {
     doc.node_mut(div).style.top = Length::px(20.0);
     doc.node_mut(div).style.right = Length::px(20.0);
     let mut s = render(&doc);
-    // left = 760 - 20 - 80 = 660; top = 20
-    assert_pixel_color(&mut s, 665, 25, BLUE, "fixed right:20 top:20");
+    // left = 800 - 20 - 80 = 700; top = 20
+    assert_pixel_color(&mut s, 705, 25, BLUE, "fixed right:20 top:20");
 }
 
 #[test]
@@ -2068,10 +2068,10 @@ fn abs_four_corners_of_surface() {
     doc.node_mut(br).style.bottom = Length::px(0.0);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 5, 5, RED, "top-left corner block");
-    assert_pixel_color(&mut s, 740, 5, GREEN, "top-right corner block");
+    assert_pixel_color(&mut s, 780, 5, GREEN, "top-right corner block");
     // bottom blocks at y = 600 - 30 = 570
     assert_pixel_color(&mut s, 5, 575, BLUE, "bottom-left corner block");
-    assert_pixel_color(&mut s, 740, 575, YELLOW, "bottom-right corner block");
+    assert_pixel_color(&mut s, 780, 575, YELLOW, "bottom-right corner block");
 }
 
 #[test]
@@ -2137,8 +2137,8 @@ fn fixed_right_bottom_corner() {
     doc.node_mut(div).style.right = Length::px(0.0);
     doc.node_mut(div).style.bottom = Length::px(0.0);
     let mut s = render(&doc);
-    // left = 760-0-40=720; top = 600-0-20=580
-    assert_pixel_color(&mut s, 725, 585, RED, "fixed at right-bottom corner");
+    // left = 800-0-40=760; top = 600-0-20=580
+    assert_pixel_color(&mut s, 765, 585, RED, "fixed at right-bottom corner");
 }
 
 #[test]

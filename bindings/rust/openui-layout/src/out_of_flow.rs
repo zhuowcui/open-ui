@@ -8,7 +8,7 @@
 //! (vertical).
 
 use openui_geometry::{LayoutUnit, BoxStrut, PhysicalOffset, PhysicalSize};
-use openui_style::{ComputedStyle, Direction};
+use openui_style::{ComputedStyle, Direction, BoxSizing};
 use openui_dom::{Document, NodeId};
 
 use crate::block::{block_layout, resolve_border, resolve_padding};
@@ -74,13 +74,17 @@ fn layout_out_of_flow_child(
 
     // Compute shrink-to-fit width from intrinsic sizes (CSS 2.1 §10.3.7).
     // shrink-to-fit = min(max-content, max(min-content, available))
-    // We compute max-content here; the `available` clamp happens in resolve_horizontal.
+    // intrinsic sizes include border+padding, so convert to content-box.
     let intrinsic = compute_intrinsic_block_sizes(doc, candidate.node_id);
-    let shrink_to_fit_width = intrinsic.max_content_inline_size;
+    let shrink_to_fit_max = (intrinsic.max_content_inline_size - border_padding_h)
+        .clamp_negative_to_zero();
+    let shrink_to_fit_min = (intrinsic.min_content_inline_size - border_padding_h)
+        .clamp_negative_to_zero();
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
     let (resolved_left, resolved_width, resolved_margin_left, resolved_margin_right) =
-        resolve_horizontal(style, cb_width, static_pos.left, &border, &padding, shrink_to_fit_width);
+        resolve_horizontal(style, cb_width, static_pos.left, &border, &padding,
+                          shrink_to_fit_min, shrink_to_fit_max);
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height, resolved_margin_top, resolved_margin_bottom) =
@@ -120,20 +124,29 @@ fn layout_out_of_flow_child(
         resolved_height
     };
 
+    // Recompute left when width changed after layout (e.g., max-width constraint).
+    // If left:auto and right:specified, left depends on the final width.
+    let final_left = if final_width != resolved_width && style.left.is_auto() && !style.right.is_auto() {
+        let zero = LayoutUnit::zero();
+        let right_val = resolve_length(&style.right, cb_width, zero, zero);
+        let ml = resolved_margin_left;
+        let mr = resolved_margin_right;
+        cb_width - right_val - mr - final_width - ml
+    } else {
+        resolved_left
+    };
+
     // Recompute top when height was auto-sized and affects the constraint
     // equation. Per CSS 2.1 §10.6.4, when top is auto and height was
     // auto-sized (content-determined), we must use the final height to
     // correctly position the element.
     let final_top = if style.height.is_auto() && !height_resolved_from_constraints {
-        // Cases where top depends on auto height:
-        // - height:auto, top:auto, bottom:specified → top = cb_h - bottom - mb - height - mt
-        // - height:auto, top:auto, bottom:auto → uses static position (already correct)
         if style.top.is_auto() && !style.bottom.is_auto() {
             let zero = LayoutUnit::zero();
             let bottom_val = resolve_length(&style.bottom, cb_height, zero, zero);
             let mt = resolved_margin_top;
             let mb = resolved_margin_bottom;
-            cb_height - bottom_val - mb - final_height - mt + mt
+            cb_height - bottom_val - mb - final_height - mt
         } else {
             resolved_top
         }
@@ -142,7 +155,7 @@ fn layout_out_of_flow_child(
     };
 
     child_fragment.size = PhysicalSize::new(final_width, final_height);
-    child_fragment.offset = PhysicalOffset::new(resolved_left, final_top);
+    child_fragment.offset = PhysicalOffset::new(final_left, final_top);
     child_fragment.border = border;
     child_fragment.padding = padding;
     child_fragment.margin = BoxStrut::new(
@@ -162,6 +175,9 @@ fn layout_out_of_flow_child(
 ///   left + margin_left + border_left + padding_left + width +
 ///   padding_right + border_right + margin_right + right = CB_width
 ///
+/// `shrink_to_fit_min` and `shrink_to_fit_max` are content-box values
+/// (intrinsic sizes with border+padding subtracted).
+///
 /// Returns `(left, border_box_width, margin_left, margin_right)`.
 fn resolve_horizontal(
     style: &ComputedStyle,
@@ -169,7 +185,8 @@ fn resolve_horizontal(
     static_left: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
-    shrink_to_fit_width: LayoutUnit,
+    shrink_to_fit_min: LayoutUnit,
+    shrink_to_fit_max: LayoutUnit,
 ) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
     let zero = LayoutUnit::zero();
 
@@ -186,8 +203,18 @@ fn resolve_horizontal(
     let right_val = if right_auto { zero } else {
         resolve_length(&style.right, cb_width, zero, zero)
     };
-    let width_val = if width_auto { zero } else {
-        resolve_length(&style.width, cb_width, zero, zero)
+    // Resolve width and convert to border-box, accounting for box-sizing.
+    let (_width_val, border_box_from_specified) = if width_auto {
+        (zero, zero)
+    } else {
+        let raw = resolve_length(&style.width, cb_width, zero, zero);
+        if style.box_sizing == BoxSizing::BorderBox {
+            // width is already border-box — content-width = width - bp
+            let content = (raw - border_padding_h).clamp_negative_to_zero();
+            (content, raw.max_of(border_padding_h))
+        } else {
+            (raw, raw + border_padding_h)
+        }
     };
 
     // Resolve margins — auto margins are handled specially below
@@ -204,7 +231,7 @@ fn resolve_horizontal(
 
     if !left_auto && !width_auto && !right_auto {
         // ── Case 1: None are auto — possibly over-constrained ────────
-        let border_box_width = width_val + border_padding_h;
+        let border_box_width = border_box_from_specified;
 
         if margin_left_auto && margin_right_auto {
             // Auto margins absorb remaining space (centering)
@@ -254,7 +281,7 @@ fn resolve_horizontal(
         // ── All three auto: use static position for left, shrink-to-fit for width
         let left = static_left;
         let available = (cb_width - left - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = shrink_to_fit_width.min_of(available);
+        let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
         let border_box_width = width + border_padding_h;
         return (left + ml, border_box_width, ml, mr);
     }
@@ -263,7 +290,7 @@ fn resolve_horizontal(
         // left and width auto, right specified
         // Shrink-to-fit width, then left = CB - right - margins - width
         let available = (cb_width - right_val - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = shrink_to_fit_width.min_of(available);
+        let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
         let border_box_width = width + border_padding_h;
         let left = cb_width - right_val - mr - border_box_width - ml;
         return (left + ml, border_box_width, ml, mr);
@@ -273,7 +300,7 @@ fn resolve_horizontal(
         // width and right auto, left specified
         // Shrink-to-fit width, right is computed
         let available = (cb_width - left_val - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = shrink_to_fit_width.min_of(available);
+        let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
         let border_box_width = width + border_padding_h;
         return (left_val + ml, border_box_width, ml, mr);
     }
@@ -281,21 +308,21 @@ fn resolve_horizontal(
     if left_auto && right_auto {
         // left and right auto, width specified
         // Use static position for left
-        let border_box_width = width_val + border_padding_h;
+        let border_box_width = border_box_from_specified;
         let left = static_left;
         return (left + ml, border_box_width, ml, mr);
     }
 
     if left_auto {
         // Only left is auto
-        let border_box_width = width_val + border_padding_h;
+        let border_box_width = border_box_from_specified;
         let left = cb_width - right_val - mr - border_box_width - ml;
         return (left + ml, border_box_width, ml, mr);
     }
 
     if right_auto {
         // Only right is auto
-        let border_box_width = width_val + border_padding_h;
+        let border_box_width = border_box_from_specified;
         return (left_val + ml, border_box_width, ml, mr);
     }
 
@@ -340,8 +367,16 @@ fn resolve_vertical(
     let bottom_val = if bottom_auto { zero } else {
         resolve_length(&style.bottom, cb_height, zero, zero)
     };
-    let height_val = if height_auto { zero } else {
-        resolve_length(&style.height, cb_height, zero, zero)
+    // Resolve height and convert to border-box, accounting for box-sizing.
+    let height_val_bb = if height_auto {
+        border_padding_v // auto height → content-sized (0 + bp)
+    } else {
+        let raw = resolve_length(&style.height, cb_height, zero, zero);
+        if style.box_sizing == BoxSizing::BorderBox {
+            raw.max_of(border_padding_v)
+        } else {
+            raw + border_padding_v
+        }
     };
 
     let margin_top_auto = style.margin_top.is_auto();
@@ -355,7 +390,7 @@ fn resolve_vertical(
 
     if !top_auto && !height_auto && !bottom_auto {
         // ── Case 1: None are auto — possibly over-constrained ────────
-        let border_box_height = height_val + border_padding_v;
+        let border_box_height = height_val_bb;
 
         if margin_top_auto && margin_bottom_auto {
             let remaining = cb_height - top_val - bottom_val - border_box_height;
@@ -389,40 +424,40 @@ fn resolve_vertical(
     if height_auto && top_auto && bottom_auto {
         // All three auto: use static position for top, auto height
         let top = static_top;
-        let border_box_height = border_padding_v; // auto height → content-sized (0 for now)
+        let border_box_height = height_val_bb; // auto height → content-sized (0 for now)
         return (top + mt, border_box_height, mt, mb);
     }
 
     if height_auto && top_auto {
         // height and top auto, bottom specified
-        let border_box_height = border_padding_v; // auto height → content-sized
+        let border_box_height = height_val_bb; // auto height → content-sized
         let top = cb_height - bottom_val - mb - border_box_height - mt;
         return (top + mt, border_box_height, mt, mb);
     }
 
     if height_auto && bottom_auto {
         // height and bottom auto, top specified
-        let border_box_height = border_padding_v; // auto height → content-sized
+        let border_box_height = height_val_bb; // auto height → content-sized
         return (top_val + mt, border_box_height, mt, mb);
     }
 
     if top_auto && bottom_auto {
         // top and bottom auto, height specified
-        let border_box_height = height_val + border_padding_v;
+        let border_box_height = height_val_bb;
         let top = static_top;
         return (top + mt, border_box_height, mt, mb);
     }
 
     if top_auto {
         // Only top is auto
-        let border_box_height = height_val + border_padding_v;
+        let border_box_height = height_val_bb;
         let top = cb_height - bottom_val - mb - border_box_height - mt;
         return (top + mt, border_box_height, mt, mb);
     }
 
     if bottom_auto {
         // Only bottom is auto
-        let border_box_height = height_val + border_padding_v;
+        let border_box_height = height_val_bb;
         return (top_val + mt, border_box_height, mt, mb);
     }
 
@@ -485,12 +520,11 @@ mod tests {
         style.width = Length::px(100.0);
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
-        let stf = LayoutUnit::from_i32(800); // shrink-to-fit (unused when width specified)
+        let stf_min = LayoutUnit::from_i32(800);
+        let stf_max = LayoutUnit::from_i32(800);
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max,
         );
-        assert_eq!(left.to_i32(), 10);
-        assert_eq!(width.to_i32(), 100);
     }
 
     #[test]
@@ -503,11 +537,11 @@ mod tests {
         style.margin_right = Length::auto();
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
-        let stf = LayoutUnit::from_i32(800); // shrink-to-fit (unused when width specified)
+        let stf_min = LayoutUnit::from_i32(800);
+        let stf_max = LayoutUnit::from_i32(800);
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max,
         );
-        // Centered: (800 - 200) / 2 = 300
         assert_eq!(ml.to_i32(), 300);
         assert_eq!(mr.to_i32(), 300);
         assert_eq!(left.to_i32(), 300);

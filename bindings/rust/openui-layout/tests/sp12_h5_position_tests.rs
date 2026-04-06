@@ -1691,9 +1691,8 @@ fn abs_border_box_sizing() {
         .box_sizing_border_box().position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // Abs with border-box: total 200×100 (padding included).
-    // Engine may not apply border-box to abs children; expect content-box behavior.
-    r.assert_child_size(0, 220, 120);
+    // Abs with border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -2273,10 +2272,10 @@ fn fixed_with_border_box() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    // border-box may not apply to fixed/abs; size = content-box (220×120).
+    // border-box: specified 200×100 IS the border-box size (padding included).
     let fc = &r.root_fragment.children[1];
-    assert_eq!(fc.size.width.to_i32(), 220);
-    assert_eq!(fc.size.height.to_i32(), 120);
+    assert_eq!(fc.size.width.to_i32(), 200);
+    assert_eq!(fc.size.height.to_i32(), 100);
 }
 
 #[test]
@@ -6775,8 +6774,8 @@ fn abs_supp_border_box_padding_5() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+10 × 100+10.
-    r.assert_child_size(0, 210, 110);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6786,8 +6785,8 @@ fn abs_supp_border_box_padding_10() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+20 × 100+20.
-    r.assert_child_size(0, 220, 120);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6797,8 +6796,8 @@ fn abs_supp_border_box_padding_15() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+30 × 100+30.
-    r.assert_child_size(0, 230, 130);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6808,8 +6807,8 @@ fn abs_supp_border_box_padding_20() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+40 × 100+40.
-    r.assert_child_size(0, 240, 140);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6819,8 +6818,8 @@ fn abs_supp_border_box_padding_25() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+50 × 100+50.
-    r.assert_child_size(0, 250, 150);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6830,8 +6829,8 @@ fn abs_supp_border_box_padding_30() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+60 × 100+60.
-    r.assert_child_size(0, 260, 160);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6841,8 +6840,8 @@ fn abs_supp_border_box_padding_40() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+80 × 100+80.
-    r.assert_child_size(0, 280, 180);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6852,8 +6851,8 @@ fn abs_supp_border_box_padding_50() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+100 × 100+100.
-    r.assert_child_size(0, 300, 200);
+    // border-box: specified 200×100 IS the border-box size (padding included).
+    r.assert_child_size(0, 200, 100);
 }
 
 #[test]
@@ -6863,8 +6862,9 @@ fn abs_supp_border_box_padding_100() {
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
-    // For abs children: content-box behavior. Size = 200+200 × 100+200.
-    r.assert_child_size(0, 400, 300);
+    // border-box: padding (200) exceeds specified height (100), content clamped to 0.
+    // border-box height = 0 + 100 + 100 = 200.
+    r.assert_child_size(0, 200, 200);
 }
 
 // ═══════════════════════════════════════════════════════════════════

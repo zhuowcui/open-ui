@@ -19,6 +19,11 @@ use openui_dom::{Document, ElementTag, NodeId};
 use crate::block::{resolve_border, resolve_padding, resolve_margins};
 use crate::length_resolver::resolve_length;
 
+/// Check if a style represents an inline-level element.
+fn is_inline_level(style: &ComputedStyle) -> bool {
+    style.display.is_inline_level()
+}
+
 // ── Result struct ────────────────────────────────────────────────────────
 
 /// Intrinsic sizes for an element in both axes.
@@ -114,16 +119,29 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 /// Compute the intrinsic size contribution of a single child.
 ///
 /// This accounts for the child's own intrinsic sizes plus its margin box.
+/// For inline-level children (text, inline), uses inline intrinsic sizing.
 fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> IntrinsicSizes {
     let child_style = &doc.node(child_id).style;
+    let child_tag = doc.node(child_id).tag;
 
     // Resolve child margins (percentages resolve to zero for intrinsic sizing).
     let margin = resolve_margins(child_style, LayoutUnit::zero());
     let margin_inline = margin.inline_sum();
     let margin_block = margin.block_sum();
 
-    // Get the child's own intrinsic sizes (recursive for block children).
-    let child_intrinsic = compute_intrinsic_block_sizes(doc, child_id);
+    // For text nodes and inline-level elements, use inline intrinsic sizing.
+    let child_intrinsic = if child_tag == ElementTag::Text || is_inline_level(child_style) {
+        let inline_sizes = compute_intrinsic_inline_sizes(doc, child_id);
+        IntrinsicSizes {
+            min_content_inline_size: inline_sizes.min,
+            max_content_inline_size: inline_sizes.max,
+            min_content_block_size: LayoutUnit::zero(),
+            max_content_block_size: LayoutUnit::zero(),
+        }
+    } else {
+        // Block-level children: recursive block intrinsic sizing.
+        compute_intrinsic_block_sizes(doc, child_id)
+    };
 
     // Apply explicit width if set (CSS Sizing 3 §5.1 — definite sizes override).
     let min_inline = apply_size_override_inline(child_style, child_intrinsic.min_content_inline_size);
