@@ -235,43 +235,208 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             }
         }
 
-        // Build constraint space with exclusion data for per-line float avoidance.
-        let mut inline_space = ConstraintSpace::for_block_child(
-            child_available_inline,
-            space.available_block_size,
-            child_available_inline,
-            child_percentage_block_size,
-            false,
-        );
-        if exclusion_space_inline.has_floats() {
-            inline_space.exclusion_space =
-                Some(std::sync::Arc::new(exclusion_space_inline));
-        }
-        let inline_fragment = crate::inline::algorithm::inline_layout(
-            doc, node_id, &inline_space,
-        );
+        // Pre-collect inline items to detect block-in-inline (CSS 2.2 §9.2.1.1).
+        let mut items_data = crate::inline::items_builder::InlineItemsBuilder::collect(doc, node_id);
 
-        // Capture baselines from inline layout, adjusted to border-box coordinates.
-        if let Some(fb) = inline_fragment.first_baseline {
-            first_baseline_result = Some(content_edge + fb);
-        }
-        if let Some(lb) = inline_fragment.last_baseline {
-            last_baseline_result = Some(content_edge + lb);
-        }
+        if !items_data.block_in_inline.is_empty() {
+            // ── Block-in-inline: split IFC around block-level elements ──
+            // CSS 2.2 §9.2.1.1: When block elements appear inside inline
+            // content (e.g. <span>text<div>block</div>text</span>), we split
+            // the inline items into segments separated by block elements and
+            // lay out each segment as an anonymous inline wrapper, with the
+            // block elements laid out between them.
+            let base_direction = if style.direction == Direction::Rtl {
+                openui_text::TextDirection::Rtl
+            } else {
+                openui_text::TextDirection::Ltr
+            };
+            items_data.apply_bidi(base_direction);
+            items_data.shape_text();
 
-        for line_frag in inline_fragment.children {
-            let line_height = line_frag.size.height;
-            let mut positioned_line = line_frag;
-            positioned_line.offset = PhysicalOffset::new(
-                border.left + padding.left + positioned_line.offset.left,
-                content_edge + positioned_line.offset.top,
+            let mut current_block_offset = content_edge;
+
+            let block_in_inline_sorted = {
+                let mut v = items_data.block_in_inline.clone();
+                v.sort_by_key(|b| b.item_index);
+                v
+            };
+
+            let mut segment_start_item = 0usize;
+            let mut is_first_segment = true;
+            for bi_info in &block_in_inline_sorted {
+                let segment_end_item = bi_info.item_index;
+
+                // Lay out inline items [segment_start..segment_end) as an
+                // anonymous inline segment (if non-empty text content exists).
+                if segment_end_item > segment_start_item {
+                    let has_content = items_data.items[segment_start_item..segment_end_item]
+                        .iter()
+                        .any(|item| {
+                            use crate::inline::items::InlineItemType;
+                            matches!(item.item_type, InlineItemType::Text | InlineItemType::AtomicInline)
+                        });
+                    if has_content {
+                        let mut seg_space = ConstraintSpace::for_block_child(
+                            child_available_inline,
+                            space.available_block_size,
+                            child_available_inline,
+                            child_percentage_block_size,
+                            false,
+                        );
+                        if exclusion_space_inline.has_floats() {
+                            seg_space.exclusion_space =
+                                Some(std::sync::Arc::new(exclusion_space_inline.clone()));
+                        }
+                        let seg_frag = crate::inline::algorithm::inline_layout_from_items(
+                            doc, node_id, &seg_space, &items_data,
+                            segment_start_item, segment_end_item,
+                        );
+
+                        if is_first_segment {
+                            if let Some(fb) = seg_frag.first_baseline {
+                                first_baseline_result = Some(current_block_offset + fb);
+                            }
+                        }
+                        if let Some(lb) = seg_frag.last_baseline {
+                            last_baseline_result = Some(current_block_offset + lb);
+                        }
+
+                        for line_frag in seg_frag.children {
+                            let line_height = line_frag.size.height;
+                            let orig_top = line_frag.offset.top;
+                            let mut positioned_line = line_frag;
+                            positioned_line.offset = PhysicalOffset::new(
+                                border.left + padding.left + positioned_line.offset.left,
+                                current_block_offset + orig_top,
+                            );
+                            current_block_offset = (current_block_offset + orig_top + line_height)
+                                .max_of(current_block_offset);
+                            child_fragments.push(positioned_line);
+                        }
+                    }
+                }
+                is_first_segment = false;
+
+                // Lay out the block-level element.
+                let block_child_id = bi_info.node_id;
+                let block_child_style = &doc.node(block_child_id).style;
+                let block_child_space = ConstraintSpace::for_block_child(
+                    child_available_inline,
+                    space.available_block_size,
+                    child_available_inline,
+                    child_percentage_block_size,
+                    false,
+                );
+                let block_child_frag = block_layout(doc, block_child_id, &block_child_space);
+
+                let bm_top = resolve_margin_or_padding(
+                    &block_child_style.margin_top, child_available_inline);
+                let bm_bottom = resolve_margin_or_padding(
+                    &block_child_style.margin_bottom, child_available_inline);
+
+                current_block_offset = current_block_offset + bm_top;
+                let mut positioned_block = block_child_frag;
+                positioned_block.offset = PhysicalOffset::new(
+                    border.left + padding.left,
+                    current_block_offset,
+                );
+                current_block_offset = current_block_offset + positioned_block.size.height + bm_bottom;
+                child_fragments.push(positioned_block);
+
+                segment_start_item = segment_end_item + 1;
+            }
+
+            // Lay out remaining inline items after the last block-in-inline.
+            if segment_start_item < items_data.items.len() {
+                let has_content = items_data.items[segment_start_item..]
+                    .iter()
+                    .any(|item| {
+                        use crate::inline::items::InlineItemType;
+                        matches!(item.item_type, InlineItemType::Text | InlineItemType::AtomicInline)
+                    });
+                if has_content {
+                    let mut seg_space = ConstraintSpace::for_block_child(
+                        child_available_inline,
+                        space.available_block_size,
+                        child_available_inline,
+                        child_percentage_block_size,
+                        false,
+                    );
+                    if exclusion_space_inline.has_floats() {
+                        seg_space.exclusion_space =
+                            Some(std::sync::Arc::new(exclusion_space_inline.clone()));
+                    }
+                    let seg_frag = crate::inline::algorithm::inline_layout_from_items(
+                        doc, node_id, &seg_space, &items_data,
+                        segment_start_item, items_data.items.len(),
+                    );
+
+                    if let Some(lb) = seg_frag.last_baseline {
+                        last_baseline_result = Some(current_block_offset + lb);
+                    }
+                    if first_baseline_result.is_none() {
+                        if let Some(fb) = seg_frag.first_baseline {
+                            first_baseline_result = Some(current_block_offset + fb);
+                        }
+                    }
+
+                    for line_frag in seg_frag.children {
+                        let line_height = line_frag.size.height;
+                        let orig_top = line_frag.offset.top;
+                        let mut positioned_line = line_frag;
+                        positioned_line.offset = PhysicalOffset::new(
+                            border.left + padding.left + positioned_line.offset.left,
+                            current_block_offset + orig_top,
+                        );
+                        current_block_offset = (current_block_offset + orig_top + line_height)
+                            .max_of(current_block_offset);
+                        child_fragments.push(positioned_line);
+                    }
+                }
+            }
+
+            intrinsic_block_size = current_block_offset;
+            block_offset = intrinsic_block_size;
+        } else {
+            // No block-in-inline: standard inline layout path.
+            // Build constraint space with exclusion data for per-line float avoidance.
+            let mut inline_space = ConstraintSpace::for_block_child(
+                child_available_inline,
+                space.available_block_size,
+                child_available_inline,
+                child_percentage_block_size,
+                false,
             );
-            intrinsic_block_size = intrinsic_block_size.max_of(
-                positioned_line.offset.top + line_height,
+            if exclusion_space_inline.has_floats() {
+                inline_space.exclusion_space =
+                    Some(std::sync::Arc::new(exclusion_space_inline));
+            }
+            let inline_fragment = crate::inline::algorithm::inline_layout(
+                doc, node_id, &inline_space,
             );
-            child_fragments.push(positioned_line);
+
+            // Capture baselines from inline layout, adjusted to border-box coordinates.
+            if let Some(fb) = inline_fragment.first_baseline {
+                first_baseline_result = Some(content_edge + fb);
+            }
+            if let Some(lb) = inline_fragment.last_baseline {
+                last_baseline_result = Some(content_edge + lb);
+            }
+
+            for line_frag in inline_fragment.children {
+                let line_height = line_frag.size.height;
+                let mut positioned_line = line_frag;
+                positioned_line.offset = PhysicalOffset::new(
+                    border.left + padding.left + positioned_line.offset.left,
+                    content_edge + positioned_line.offset.top,
+                );
+                intrinsic_block_size = intrinsic_block_size.max_of(
+                    positioned_line.offset.top + line_height,
+                );
+                child_fragments.push(positioned_line);
+            }
+            block_offset = intrinsic_block_size;
         }
-        block_offset = intrinsic_block_size;
     } else if has_inline && has_block {
         // ── Mixed content: create anonymous block boxes (CSS 2.2 §9.2.1.1) ─
         // Collect contiguous runs of inline children into anonymous wrappers,

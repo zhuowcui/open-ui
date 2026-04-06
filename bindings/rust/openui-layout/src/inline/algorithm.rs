@@ -387,32 +387,62 @@ pub fn inline_layout(
     node_id: NodeId,
     space: &ConstraintSpace,
 ) -> Fragment {
-    let style = &doc.node(node_id).style;
-
-    // The caller (block_layout) already resolves border+padding for this
-    // container and subtracts it to produce the content-box width in
-    // space.available_inline_size. We do NOT re-resolve border+padding here
-    // because the percentage_resolution_inline_size is now this block's
-    // content-box width (correct for descendants), which would give wrong
-    // results for the container's own percentage padding.
-    let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
-
-    // Step 1: Collect inline items from DOM children.
     let mut items_data = InlineItemsBuilder::collect(doc, node_id);
-
-    // Step 1b: Apply bidi analysis.
+    let style = &doc.node(node_id).style;
     let base_direction = if style.direction == Direction::Rtl {
         openui_text::TextDirection::Rtl
     } else {
         openui_text::TextDirection::Ltr
     };
     items_data.apply_bidi(base_direction);
-
-    // Step 2: Shape all text items.
     items_data.shape_text();
+    inline_layout_from_items(doc, node_id, space, &items_data, 0, items_data.items.len())
+}
 
-    // Step 3: Create line breaker.
-    let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
+/// Perform inline layout using pre-collected items over a specific item range.
+///
+/// Lays out items in `[item_start..item_end)` from the given `InlineItemsData`.
+/// BlockInInline items within the range are skipped (they should have been
+/// handled by the caller via block-in-inline splitting).
+///
+/// Used by block_layout's block-in-inline path (CSS 2.2 §9.2.1.1) to lay
+/// out inline segments between block-level interruptions.
+pub fn inline_layout_from_items(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+    items_data: &InlineItemsData,
+    item_start: usize,
+    item_end: usize,
+) -> Fragment {
+    let style = &doc.node(node_id).style;
+
+    let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
+
+    // Build a sub-view of items for the requested range.
+    // If processing a subset, create a filtered InlineItemsData with only
+    // the items in [item_start..item_end). The line breaker and layout
+    // functions work on item indices relative to the data's items array.
+    let working_items_data = if item_start == 0 && item_end == items_data.items.len() {
+        items_data.clone()
+    } else {
+        // Create a filtered copy with only the items in the requested range.
+        let mut filtered = items_data.clone();
+        filtered.items = items_data.items[item_start..item_end].to_vec();
+        // Re-index item indices for OOF children within this range.
+        filtered.oof_children = items_data.oof_children.iter()
+            .filter(|o| o.item_index >= item_start && o.item_index < item_end)
+            .map(|o| super::items_builder::OofPlaceholder {
+                node_id: o.node_id,
+                item_index: o.item_index - item_start,
+            })
+            .collect();
+        filtered.block_in_inline = Vec::new(); // already handled by caller
+        filtered
+    };
+
+    // Create line breaker from the (possibly filtered) items.
+    let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
     line_breaker.set_text_align(style.text_align);
 
     // Step 3b: Resolve text-indent for the first line.
@@ -472,18 +502,18 @@ pub fn inline_layout(
 
         if let Some(mut line_info) = line_breaker.next_line(line_available) {
             // Step 4b: BiDi reorder items on this line for visual display.
-            bidi_reorder_line(&mut line_info.items, &items_data);
+            bidi_reorder_line(&mut line_info.items, &working_items_data);
 
             // Apply text-overflow: ellipsis if configured on the block style.
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
                 && style.overflow_x == openui_style::Overflow::Hidden
             {
-                apply_text_overflow_ellipsis(&mut line_info, line_available, &items_data, style);
+                apply_text_overflow_ellipsis(&mut line_info, line_available, &working_items_data, style);
             }
 
             let line_fragment = create_line_box(
                 doc,
-                &items_data,
+                &working_items_data,
                 &line_info,
                 line_avail.available_inline_size,
                 block_offset,
@@ -500,10 +530,10 @@ pub fn inline_layout(
             // inline boxes remain open at line end.
             let mut current_open = boxes_open_at_line_start.clone();
             for item_result in &line_info.items {
-                let item = &items_data.items[item_result.item_index];
+                let item = &working_items_data.items[item_result.item_index];
                 match item_result.item_type {
                     InlineItemType::OpenTag => {
-                        let s = &items_data.styles[item.style_index];
+                        let s = &working_items_data.styles[item.style_index];
                         current_open.push(InlineBoxState {
                             style_index: item.style_index,
                             node_id: item.node_id,
@@ -2222,6 +2252,7 @@ mod tests {
             items: Vec::new(),
             styles: Vec::new(),
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Should not panic even with empty items.
@@ -2298,6 +2329,7 @@ mod tests {
             items: Vec::new(),
             styles: Vec::new(),
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         apply_text_overflow_ellipsis(
@@ -2327,6 +2359,7 @@ mod tests {
             items: Vec::new(),
             styles: Vec::new(),
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         apply_text_overflow_ellipsis(

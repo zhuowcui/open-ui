@@ -38,6 +38,28 @@ pub struct InlineItemsData {
     /// in normal flow. We record the position during collection and
     /// resolve it after line layout.
     pub oof_children: Vec<OofPlaceholder>,
+    /// Block-level elements found inside inline content (block-in-inline).
+    ///
+    /// CSS 2.2 §9.2.1.1: When a block-level element appears inside inline
+    /// content, the inline formatting context must be split into anonymous
+    /// block boxes around the block element. Each entry records the item
+    /// index where the interruption occurs and the block element's node ID.
+    pub block_in_inline: Vec<BlockInInlineInfo>,
+}
+
+/// Information about a block-level element found inside inline content.
+///
+/// CSS 2.2 §9.2.1.1: A block-level box inside an inline formatting context
+/// causes the inline content to be split into anonymous block boxes.
+///
+/// Blink: Handled by `InlineLayoutAlgorithm` detecting `BlockInInline` items
+/// and creating continuation fragments.
+#[derive(Clone, Debug)]
+pub struct BlockInInlineInfo {
+    /// Index into InlineItemsData::items where the block element appears.
+    pub item_index: usize,
+    /// The node ID of the block-level element.
+    pub node_id: NodeId,
 }
 
 /// Placeholder for an out-of-flow child within inline content.
@@ -429,6 +451,8 @@ pub struct InlineItemsBuilder<'a> {
     last_space_collapsible: bool,
     /// OOF children encountered during inline item collection.
     oof_children: Vec<OofPlaceholder>,
+    /// Block-in-inline interruptions found during collection.
+    block_in_inline: Vec<BlockInInlineInfo>,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
@@ -440,6 +464,7 @@ impl<'a> InlineItemsBuilder<'a> {
             styles: Vec::new(),
             last_space_collapsible: false,
             oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         }
     }
 
@@ -455,6 +480,7 @@ impl<'a> InlineItemsBuilder<'a> {
             items: builder.items,
             styles: builder.styles,
             oof_children: builder.oof_children,
+            block_in_inline: builder.block_in_inline,
         }
     }
 
@@ -476,6 +502,7 @@ impl<'a> InlineItemsBuilder<'a> {
             items: builder.items,
             styles: builder.styles,
             oof_children: builder.oof_children,
+            block_in_inline: builder.block_in_inline,
         }
     }
 
@@ -531,6 +558,30 @@ impl<'a> InlineItemsBuilder<'a> {
                     || display == Display::InlineGrid
                 {
                     self.append_atomic_inline(child_id, &style);
+                } else if display == Display::Block
+                    || display == Display::Flex
+                    || display == Display::Grid
+                    || display == Display::FlowRoot
+                    || display == Display::Table
+                {
+                    // Block-level span inside inline content (block-in-inline).
+                    let style_index = self.intern_style(&style);
+                    let item_index = self.items.len();
+                    self.block_in_inline.push(BlockInInlineInfo {
+                        item_index,
+                        node_id: child_id,
+                    });
+                    self.items.push(InlineItem {
+                        item_type: InlineItemType::BlockInInline,
+                        text_range: 0..0,
+                        node_id: child_id,
+                        shape_result: None,
+                        style_index,
+                        end_collapse_type: CollapseType::NotCollapsible,
+                        is_end_collapsible_newline: false,
+                        bidi_level: 0,
+                        intrinsic_inline_size: None,
+                    });
                 } else {
                     self.enter_inline(child_id, &style);
                     self.collect_children(child_id);
@@ -551,6 +602,28 @@ impl<'a> InlineItemsBuilder<'a> {
                 {
                     let style = node.style.clone();
                     self.append_atomic_inline(child_id, &style);
+                } else {
+                    // Block-level element inside inline content (CSS 2.2 §9.2.1.1).
+                    // Record a BlockInInline item so the layout algorithm can split
+                    // the inline formatting context around this block.
+                    let style = node.style.clone();
+                    let style_index = self.intern_style(&style);
+                    let item_index = self.items.len();
+                    self.block_in_inline.push(BlockInInlineInfo {
+                        item_index,
+                        node_id: child_id,
+                    });
+                    self.items.push(InlineItem {
+                        item_type: InlineItemType::BlockInInline,
+                        text_range: 0..0,
+                        node_id: child_id,
+                        shape_result: None,
+                        style_index,
+                        end_collapse_type: CollapseType::NotCollapsible,
+                        is_end_collapsible_newline: false,
+                        bidi_level: 0,
+                        intrinsic_inline_size: None,
+                    });
                 }
             }
             ElementTag::Viewport => {

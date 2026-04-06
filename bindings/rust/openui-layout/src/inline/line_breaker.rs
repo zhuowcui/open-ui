@@ -1933,6 +1933,7 @@ mod tests {
             }],
             styles: vec![style],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Use a very narrow width — narrower than "hello world" but
@@ -2112,6 +2113,7 @@ mod tests {
             }],
             styles: vec![style],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Very narrow width — should only fit ~5 characters.
@@ -2328,6 +2330,7 @@ mod tests {
             items: vec![item],
             styles: vec![style],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Available width is very narrow — much less than the word width.
@@ -2903,6 +2906,7 @@ mod tests {
             items: vec![item],
             styles: vec![ComputedStyle::default()],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
@@ -2949,6 +2953,7 @@ mod tests {
             items: vec![item],
             styles: vec![ComputedStyle::default()],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Make container narrow enough that the full word doesn't fit,
@@ -3003,6 +3008,7 @@ mod tests {
             items: vec![item],
             styles: vec![ComputedStyle::default()],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Make container narrow enough to force hyphenation
@@ -3037,6 +3043,7 @@ mod tests {
             items: vec![],
             styles: vec![],
         oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
