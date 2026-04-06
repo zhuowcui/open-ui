@@ -869,6 +869,7 @@ fn paint_text_fragment_no_shape_result() {
         last_baseline: None,
         is_first_for_node: true,
         is_last_for_node: true,
+        break_token: None,
     };
 
     let mut surface = make_surface(200, 100);
@@ -1127,6 +1128,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         last_baseline: None,
         is_first_for_node: true,
         is_last_for_node: true,
+        break_token: None,
     };
 
     let mut surface = make_surface(200, 100);
