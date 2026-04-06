@@ -15,7 +15,7 @@
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
 use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
-use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear};
+use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
@@ -116,11 +116,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // gets the correct static position (i.e., where it would appear in
     // normal flow after preceding in-flow siblings).
     //
-    // Per CSS 2.1, a positioned element (relative/absolute/fixed/sticky)
-    // establishes a containing block for its abs-pos descendants. If this
-    // node is NOT positioned, OOF candidates are bubbled up to the parent.
-    let establishes_containing_block = style.position.is_positioned()
-        || node_id == doc.root(); // Root is always the initial containing block
+    // Per CSS 2.1 §10.1:
+    // - Absolute-pos: containing block = nearest positioned ancestor
+    // - Fixed-pos: containing block = initial containing block (viewport/root)
+    // A positioned element establishes a CB for absolute descendants.
+    // Only the root captures fixed-pos descendants.
+    let is_root = node_id == doc.root();
+    let establishes_cb_for_abspos = style.position.is_positioned() || is_root;
     let mut oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     let mut bubbled_oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     // Per CSS 2.1 §10.1, the containing block for absolute positioning is the
@@ -151,8 +153,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         block_offset,
                     ),
                     containing_block_size,
+                    containing_block_border: border.clone(),
                 };
-                if establishes_containing_block {
+                let captures = if child_style.position == Position::Fixed {
+                    is_root
+                } else {
+                    establishes_cb_for_abspos
+                };
+                if captures {
                     oof_candidates.push(candidate);
                 } else {
                     bubbled_oof_candidates.push(candidate);
@@ -210,8 +218,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         block_offset,
                     ),
                     containing_block_size,
+                    containing_block_border: border.clone(),
                 };
-                if establishes_containing_block {
+                let captures = if child_style.position == Position::Fixed {
+                    is_root
+                } else {
+                    establishes_cb_for_abspos
+                };
+                if captures {
                     oof_candidates.push(candidate);
                 } else {
                     bubbled_oof_candidates.push(candidate);
@@ -229,7 +243,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &block_offset, &mut exclusion_space_mixed,
                     &mut child_fragments,
                     &mut oof_candidates, &mut bubbled_oof_candidates,
-                    establishes_containing_block,
+                    establishes_cb_for_abspos, is_root,
                 );
                 i += 1;
                 continue;
@@ -259,8 +273,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                                 block_offset,
                             ),
                             containing_block_size,
+                            containing_block_border: border.clone(),
                         };
-                        if establishes_containing_block {
+                        let captures = if cs.position == Position::Fixed {
+                            is_root
+                        } else {
+                            establishes_cb_for_abspos
+                        };
+                        if captures {
                             oof_candidates.push(candidate);
                         } else {
                             bubbled_oof_candidates.push(candidate);
@@ -337,7 +357,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &mut block_offset, &mut margin_strut,
                     &mut intrinsic_block_size, &mut child_fragments,
                     &mut oof_candidates, &mut bubbled_oof_candidates,
-                    establishes_containing_block,
+                    establishes_cb_for_abspos, is_root,
                 );
 
                 // Offset inline position for left floats.
@@ -373,8 +393,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     block_offset,
                 ),
                 containing_block_size,
+                containing_block_border: border.clone(),
             };
-            if establishes_containing_block {
+            let captures = if child_style.position == Position::Fixed {
+                is_root
+            } else {
+                establishes_cb_for_abspos
+            };
+            if captures {
                 oof_candidates.push(candidate);
             } else {
                 bubbled_oof_candidates.push(candidate);
@@ -395,7 +421,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 &block_offset, &mut exclusion_space,
                 &mut child_fragments,
                 &mut oof_candidates, &mut bubbled_oof_candidates,
-                establishes_containing_block,
+                establishes_cb_for_abspos, is_root,
             );
             continue;
         }
@@ -432,7 +458,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             &mut block_offset, &mut margin_strut,
             &mut intrinsic_block_size, &mut child_fragments,
             &mut oof_candidates, &mut bubbled_oof_candidates,
-            establishes_containing_block,
+            establishes_cb_for_abspos, is_root,
         );
 
         // Offset inline position for left floats.
@@ -444,17 +470,6 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     }
 
     } // end block children
-
-    // ── Out-of-flow layout ───────────────────────────────────────────
-    // Layout absolutely and fixed positioned children that were collected
-    // earlier. These are positioned relative to this containing block.
-    if !oof_candidates.is_empty() {
-        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(
-            doc,
-            &oof_candidates,
-        );
-        child_fragments.extend(oof_fragments);
-    }
 
     // ── Step 4: Finish layout (FinishLayout, line 1165) ──────────────
     // Resolve the trailing margin strut if margins can't collapse through
@@ -481,6 +496,25 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         border_padding_block,
         is_viewport,
     );
+
+    // ── Out-of-flow layout ───────────────────────────────────────────
+    // Layout absolutely and fixed positioned children that were collected
+    // earlier. Must happen AFTER height resolution so that the containing
+    // block height is the actual padding-box height (not just the available
+    // block size from the parent constraint).
+    if !oof_candidates.is_empty() {
+        // Update containing block height to use this block's resolved
+        // padding-box height (CSS 2.1 §10.1).
+        let cb_height = resolved_block_size - border.top - border.bottom;
+        for c in &mut oof_candidates {
+            c.containing_block_size.height = cb_height;
+        }
+        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(
+            doc,
+            &oof_candidates,
+        );
+        child_fragments.extend(oof_fragments);
+    }
 
     let border_box_size = PhysicalSize::new(border_box_inline, resolved_block_size);
 
@@ -599,7 +633,8 @@ fn handle_float(
     child_fragments: &mut Vec<Fragment>,
     oof_candidates: &mut Vec<OutOfFlowCandidate>,
     bubbled_oof_candidates: &mut Vec<OutOfFlowCandidate>,
-    establishes_containing_block: bool,
+    establishes_cb_for_abspos: bool,
+    is_root: bool,
 ) {
     let child_style = &doc.node(child_id).style;
     let child_margin = resolve_margins(child_style, child_available_inline);
@@ -631,10 +666,17 @@ fn handle_float(
     // Absorb any bubbled OOF candidates from the float's descendants.
     if !child_fragment.oof_candidates.is_empty() {
         let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
-        if establishes_containing_block {
-            oof_candidates.extend(child_oof);
-        } else {
-            bubbled_oof_candidates.extend(child_oof);
+        for c in child_oof {
+            let captures = if c.style.position == Position::Fixed {
+                is_root
+            } else {
+                establishes_cb_for_abspos
+            };
+            if captures {
+                oof_candidates.push(c);
+            } else {
+                bubbled_oof_candidates.push(c);
+            }
         }
     }
 
@@ -686,7 +728,8 @@ fn layout_block_child(
     child_fragments: &mut Vec<Fragment>,
     oof_candidates: &mut Vec<OutOfFlowCandidate>,
     bubbled_oof_candidates: &mut Vec<OutOfFlowCandidate>,
-    establishes_containing_block: bool,
+    establishes_cb_for_abspos: bool,
+    is_root: bool,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -739,10 +782,17 @@ fn layout_block_child(
     // local OOF list. Otherwise, bubble them up further.
     if !child_fragment.oof_candidates.is_empty() {
         let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
-        if establishes_containing_block {
-            oof_candidates.extend(child_oof);
-        } else {
-            bubbled_oof_candidates.extend(child_oof);
+        for c in child_oof {
+            let captures = if c.style.position == Position::Fixed {
+                is_root
+            } else {
+                establishes_cb_for_abspos
+            };
+            if captures {
+                oof_candidates.push(c);
+            } else {
+                bubbled_oof_candidates.push(c);
+            }
         }
     }
 

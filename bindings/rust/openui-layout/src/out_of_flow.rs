@@ -32,6 +32,10 @@ pub struct OutOfFlowCandidate {
     pub static_position: PhysicalOffset,
     /// The size of the containing block (for resolving percentages and insets).
     pub containing_block_size: PhysicalSize,
+    /// The border of the containing block. Used to convert from padding-edge
+    /// coordinates (where abs-pos insets are measured) to the parent's
+    /// border-box coordinates (where fragment offsets are stored).
+    pub containing_block_border: BoxStrut,
 }
 
 /// Layout all out-of-flow candidates and return positioned fragments.
@@ -64,7 +68,12 @@ fn layout_out_of_flow_child(
     let style = &candidate.style;
     let cb_width = candidate.containing_block_size.width;
     let cb_height = candidate.containing_block_size.height;
-    let static_pos = &candidate.static_position;
+    let cb_border = &candidate.containing_block_border;
+
+    // Static position is in parent border-box coordinates. Convert to
+    // padding-edge coordinates for the constraint equations.
+    let static_left = candidate.static_position.left - cb_border.left;
+    let static_top = candidate.static_position.top - cb_border.top;
 
     let border = resolve_border(style);
     let padding = resolve_padding(style, cb_width);
@@ -83,12 +92,12 @@ fn layout_out_of_flow_child(
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
     let (resolved_left, resolved_width, resolved_margin_left, resolved_margin_right) =
-        resolve_horizontal(style, cb_width, static_pos.left, &border, &padding,
+        resolve_horizontal(style, cb_width, static_left, &border, &padding,
                           shrink_to_fit_min, shrink_to_fit_max);
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height, resolved_margin_top, resolved_margin_bottom) =
-        resolve_vertical(style, cb_height, static_pos.top, &border, &padding);
+        resolve_vertical(style, cb_width, cb_height, static_top, &border, &padding);
 
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();
@@ -155,7 +164,14 @@ fn layout_out_of_flow_child(
     };
 
     child_fragment.size = PhysicalSize::new(final_width, final_height);
-    child_fragment.offset = PhysicalOffset::new(final_left, final_top);
+    // CSS 2.1 §10.3.7/§10.6.4: insets are measured from the containing block's
+    // padding edge. Fragment offsets are in the parent's border-box coordinates.
+    // Add the containing block's border to convert from padding-edge to border-box.
+    let cb_border = &candidate.containing_block_border;
+    child_fragment.offset = PhysicalOffset::new(
+        final_left + cb_border.left,
+        final_top + cb_border.top,
+    );
     child_fragment.border = border;
     child_fragment.padding = padding;
     child_fragment.margin = BoxStrut::new(
@@ -348,6 +364,7 @@ fn resolve_horizontal(
 /// Returns `(top, border_box_height, margin_top, margin_bottom)`.
 fn resolve_vertical(
     style: &ComputedStyle,
+    cb_width: LayoutUnit,
     cb_height: LayoutUnit,
     static_top: LayoutUnit,
     border: &BoxStrut,
@@ -379,13 +396,15 @@ fn resolve_vertical(
         }
     };
 
+    // CSS 2.1 §8.3: Percentage margins resolve against containing block WIDTH,
+    // even for vertical margins. This is true for all four margins.
     let margin_top_auto = style.margin_top.is_auto();
     let margin_bottom_auto = style.margin_bottom.is_auto();
     let margin_top_val = if margin_top_auto { zero } else {
-        resolve_margin_or_padding(&style.margin_top, cb_height)
+        resolve_margin_or_padding(&style.margin_top, cb_width)
     };
     let margin_bottom_val = if margin_bottom_auto { zero } else {
-        resolve_margin_or_padding(&style.margin_bottom, cb_height)
+        resolve_margin_or_padding(&style.margin_bottom, cb_width)
     };
 
     if !top_auto && !height_auto && !bottom_auto {
@@ -557,7 +576,7 @@ mod tests {
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
         let (top, height, mt, mb) = resolve_vertical(
-            &style, LayoutUnit::from_i32(600), LayoutUnit::zero(), &border, &padding,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::from_i32(600), LayoutUnit::zero(), &border, &padding,
         );
         assert_eq!(top.to_i32(), 50);
         assert_eq!(height.to_i32(), 200);
@@ -572,7 +591,7 @@ mod tests {
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
         let (top, height, _, _) = resolve_vertical(
-            &style, LayoutUnit::from_i32(600), LayoutUnit::zero(), &border, &padding,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::from_i32(600), LayoutUnit::zero(), &border, &padding,
         );
         assert_eq!(top.to_i32(), 10);
         // height = 600 - 10 - 20 = 570

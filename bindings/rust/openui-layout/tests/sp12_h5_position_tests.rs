@@ -1161,8 +1161,8 @@ fn abs_container_border_affects_position() {
         });
     b.add_child().width(100.0).height(50.0).position_absolute().inset(5, 0, 0, 5).done();
     let r = b.build();
-    // Abs offset relative to padding box: (5, 5).
-    r.assert_child_position(0, 5, 5);
+    // Abs offset in parent border-box coordinates: left=5+15=20, top=5+10=15.
+    r.assert_child_position(0, 20, 15);
 }
 
 #[test]
@@ -3396,12 +3396,15 @@ fn interaction_all_position_types() {
     b.add_child().width(800.0).height(50.0).done();
     let r = b.build();
     // Flow children: 0 (static y=0), 1 (relative y=55), 2 (static y=100).
-    // OOF children: 3 (abs), 4 (fixed).
+    // OOF child: 3 (abs). Fixed child bubbles to root.
     r.assert_child_position(0, 0, 0);
     r.assert_child_position(1, 5, 55);
     r.assert_child_position(2, 0, 100);
     r.assert_child_position(3, 300, 300);
-    r.assert_child_position(4, 500, 500);
+    // Fixed child is now on the root fragment (bubbled to viewport).
+    let fixed = &r.root_fragment.children[1];
+    assert_eq!(fixed.offset.left.to_i32(), 500, "fixed child left");
+    assert_eq!(fixed.offset.top.to_i32(), 500, "fixed child top");
 }
 
 #[test]
@@ -4227,8 +4230,8 @@ fn edge_abs_container_border_and_padding() {
         });
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
-    // Abs positioned relative to padding box. Offset is (0, 0).
-    r.assert_child_position(0, 0, 0);
+    // Abs offset in parent border-box coordinates: left=0+10=10, top=0+10=10.
+    r.assert_child_position(0, 10, 10);
 }
 
 #[test]
