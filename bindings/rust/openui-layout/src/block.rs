@@ -87,7 +87,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // CSS 2.1 §10.5: If the parent's height depends on its children (auto)
     // or is a percentage against an indefinite containing block, children's
     // percentage heights compute to auto.
-    let child_percentage_block_size = if !style.height.is_auto() {
+    // Exception: if the constraint space imposes a fixed block size (e.g.,
+    // viewport/ICB, or flex/grid definite cross-size), children can resolve
+    // percentage heights against that definite size.
+    let child_percentage_block_size = if space.is_fixed_block_size || space.stretch_block_size {
+        // Definite block size from external constraint — use it directly.
+        // Content-box: subtract border+padding.
+        (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+    } else if !style.height.is_auto() {
         // A percentage height against an indefinite basis is itself indefinite.
         if style.height.is_percent()
             && space.percentage_resolution_block_size.is_indefinite()
@@ -412,7 +419,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         block_offset = clearance_target - child_top_margin;
                         margin_strut = MarginStrut::new();
                         start_margin_resolved = true;
-                        intrinsic_block_size = clearance_target;
+                        intrinsic_block_size = intrinsic_block_size.max_of(clearance_target);
                     }
                 }
 
@@ -429,6 +436,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     (LayoutUnit::zero(), child_available_inline)
                 };
 
+                let oof_count_before = oof_candidates.len();
+                let bubbled_count_before = bubbled_oof_candidates.len();
+
                 layout_block_child(
                     doc, child_id, space,
                     adjusted_available, child_percentage_block_size,
@@ -444,9 +454,17 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 );
 
                 // Offset inline position for left floats.
+                // Also shift OOF static positions that were computed
+                // using the pre-shift child offset.
                 if float_inline_offset > LayoutUnit::zero() {
                     if let Some(last) = child_fragments.last_mut() {
                         last.offset.left = last.offset.left + float_inline_offset;
+                    }
+                    for c in &mut oof_candidates[oof_count_before..] {
+                        c.static_position.left = c.static_position.left + float_inline_offset;
+                    }
+                    for c in &mut bubbled_oof_candidates[bubbled_count_before..] {
+                        c.static_position.left = c.static_position.left + float_inline_offset;
                     }
                 }
 
@@ -540,7 +558,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 block_offset = clearance_target - child_top_margin;
                 margin_strut = MarginStrut::new();
                 start_margin_resolved = true;
-                intrinsic_block_size = clearance_target;
+                intrinsic_block_size = intrinsic_block_size.max_of(clearance_target);
             }
         }
 
@@ -557,6 +575,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             (LayoutUnit::zero(), child_available_inline)
         };
 
+        let oof_count_before = oof_candidates.len();
+        let bubbled_count_before = bubbled_oof_candidates.len();
+
         layout_block_child(
             doc, child_id, space,
             adjusted_available, child_percentage_block_size,
@@ -572,9 +593,16 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         );
 
         // Offset inline position for left floats.
+        // Also shift OOF static positions computed with pre-shift offset.
         if float_inline_offset > LayoutUnit::zero() {
             if let Some(last) = child_fragments.last_mut() {
                 last.offset.left = last.offset.left + float_inline_offset;
+            }
+            for c in &mut oof_candidates[oof_count_before..] {
+                c.static_position.left = c.static_position.left + float_inline_offset;
+            }
+            for c in &mut bubbled_oof_candidates[bubbled_count_before..] {
+                c.static_position.left = c.static_position.left + float_inline_offset;
             }
         }
     }
