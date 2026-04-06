@@ -14,6 +14,7 @@
 
 use openui_geometry::{LayoutUnit, MinMaxSizes};
 use openui_style::ComputedStyle;
+use openui_style::BoxSizing;
 use openui_dom::{Document, ElementTag, NodeId};
 
 use crate::block::{resolve_border, resolve_padding, resolve_margins};
@@ -450,18 +451,41 @@ fn apply_aspect_ratio_inverse(
 
 /// If the element has an explicit fixed width, use it (content-box);
 /// otherwise return the intrinsic size.
+/// If the element has an explicit fixed width, use it (as border-box);
+/// otherwise return the intrinsic value (already border-box).
+///
+/// The returned value must be border-box because the intrinsic sizes from
+/// `compute_intrinsic_block_sizes` include border+padding. Converting the
+/// explicit width to border-box ensures consistent units throughout the
+/// intrinsic sizing pipeline.
 fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
     if style.width.length_type() == openui_geometry::LengthType::Fixed {
-        LayoutUnit::from_f32(style.width.value())
+        let raw = LayoutUnit::from_f32(style.width.value());
+        if style.box_sizing == BoxSizing::BorderBox {
+            raw
+        } else {
+            // content-box → border-box: add border + padding
+            let bp = resolve_border(style);
+            let pad = resolve_padding(style, LayoutUnit::zero());
+            raw + bp.left + bp.right + pad.left + pad.right
+        }
     } else {
         intrinsic
     }
 }
 
-/// If the element has an explicit fixed height, use it; otherwise return intrinsic.
+/// If the element has an explicit fixed height, use it (as border-box);
+/// otherwise return the intrinsic value (already border-box).
 fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
     if style.height.length_type() == openui_geometry::LengthType::Fixed {
-        LayoutUnit::from_f32(style.height.value())
+        let raw = LayoutUnit::from_f32(style.height.value());
+        if style.box_sizing == BoxSizing::BorderBox {
+            raw
+        } else {
+            let bp = resolve_border(style);
+            let pad = resolve_padding(style, LayoutUnit::zero());
+            raw + bp.top + bp.bottom + pad.top + pad.bottom
+        }
     } else {
         intrinsic
     }

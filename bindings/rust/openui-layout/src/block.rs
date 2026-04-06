@@ -586,15 +586,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // with no border/padding/new-FC separating), propagate it so the parent can
     // merge it with the parent's own margins.
     if !start_margin_resolved {
-        // The start margin was never resolved — all children's top margins
-        // collapsed through. But we already consumed those margins into
-        // block_offset without resolving. We need to reconstruct what was
-        // pending. For simplicity, if this block had children, their first
-        // child's margin should already be reflected in child positions.
-        // The key case is: parent has no border/padding, child has margin-top.
-        // The child's margin_top was appended to margin_strut but never resolved.
-        // That strut info is now in final_end_margin_strut (since it was never
-        // separated by border/padding, the entire margin chain collapses through).
+        // The start margin was never resolved — the entire margin chain from
+        // the first child (and its nested first children) collapses through
+        // this block. Propagate the current margin_strut as start_margin_strut
+        // so the parent's layout_block_child can absorb it.
+        fragment.start_margin_strut = margin_strut;
     }
     fragment.end_margin_strut = final_end_margin_strut;
 
@@ -775,18 +771,16 @@ fn layout_block_child(
     let child_margin = resolve_margins(child_style, child_available_inline);
     margin_strut.append_normal(child_margin.top);
 
-    // CSS 2.1 §8.3.1: Absorb child's start margin strut. If the child itself
-    // had an unresolved start margin (its first grandchild's margin collapsed
-    // through), merge it into our current margin strut.
-    // This is handled below after layout via child_fragment.end_margin_strut.
-
     if child_fragments.is_empty() {
         if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
             *block_offset += margin_strut.sum();
             *margin_strut = MarginStrut::new();
             *start_margin_resolved = true;
+        } else {
+            // CSS 2.1 §8.3.1: Start margin collapses through — save the
+            // accumulated strut. It will be propagated via start_margin_strut
+            // if it's never resolved during this block's layout.
         }
-        // else: start margin collapses through — don't resolve yet
     } else {
         *block_offset += margin_strut.sum();
         *margin_strut = MarginStrut::new();
@@ -819,6 +813,19 @@ fn layout_block_child(
     );
 
     let mut child_fragment = block_layout(doc, child_id, &child_space);
+
+    // CSS 2.1 §8.3.1: Absorb child's propagated start margin strut.
+    // If the child itself had an unresolved start margin (its first
+    // grandchild's margin collapsed through with no border/padding
+    // separating), merge it into our current margin strut. This
+    // enables margin collapse to propagate through nested wrapper divs.
+    if !child_fragment.start_margin_strut.is_empty() && !*start_margin_resolved {
+        let child_start = child_fragment.start_margin_strut;
+        margin_strut.append_normal(child_start.positive_margin);
+        if child_start.negative_margin < LayoutUnit::zero() {
+            margin_strut.append_normal(child_start.negative_margin);
+        }
+    }
 
     // Absorb any out-of-flow candidates bubbled up from the child.
     // If this parent establishes a containing block, add them to our

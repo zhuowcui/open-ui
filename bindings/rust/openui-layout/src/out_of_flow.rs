@@ -91,7 +91,7 @@ fn layout_out_of_flow_child(
         .clamp_negative_to_zero();
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
-    let (mut resolved_left, resolved_width_raw, resolved_margin_left, resolved_margin_right) =
+    let (resolved_left, resolved_width_raw, resolved_margin_left, resolved_margin_right) =
         resolve_horizontal(style, cb_width, static_left, &border, &padding,
                           shrink_to_fit_min, shrink_to_fit_max);
 
@@ -101,25 +101,39 @@ fn layout_out_of_flow_child(
 
     // CSS 2.1 §10.4 / §10.7: Apply min/max constraints to the resolved size.
     // The constraint equation (§10.3.7/§10.6.4) gives a tentative width/height.
-    // If that tentative value violates min/max, re-resolve with the clamped value.
+    // If that tentative value violates min/max, re-resolve the full constraint
+    // equation with the clamped value treated as specified (not auto).
     let resolved_width = apply_min_max_inline(style, cb_width, resolved_width_raw,
                                               &border, &padding);
     let resolved_height = apply_min_max_block(style, cb_height, resolved_height_raw,
                                               &border, &padding);
 
     // CSS 2.1 §10.4: When min/max changes the width, re-solve §10.3.7 with
-    // the clamped width treated as specified. The equation becomes over-constrained:
-    // LTR → ignore right (left stays), RTL → ignore left (recompute left).
-    if resolved_width != resolved_width_raw && !style.left.is_auto() && !style.right.is_auto() {
-        if style.direction == Direction::Rtl {
-            let zero = LayoutUnit::zero();
-            let right_val = resolve_length(&style.right, cb_width, zero, zero);
-            resolved_left = cb_width - right_val - resolved_margin_right - resolved_width - resolved_margin_left;
-        }
-        // LTR: left is already correct (anchored to left)
-    }
-    // Same for vertical: when min/max changes height, over-constrained → ignore bottom.
-    // top is already correct (anchored to top), so no re-solve needed.
+    // the clamped width treated as the specified width. This is needed to
+    // recompute auto margins (e.g., margin:auto centering with max-width)
+    // and auto insets. For the re-solve, shrink_to_fit values are irrelevant
+    // since width is now a known quantity.
+    let (resolved_left, resolved_margin_left, resolved_margin_right) =
+        if resolved_width != resolved_width_raw {
+            let (l, _w, ml, mr) = resolve_horizontal_with_known_width(
+                style, cb_width, static_left, &border, &padding, resolved_width,
+            );
+            (l, ml, mr)
+        } else {
+            (resolved_left, resolved_margin_left, resolved_margin_right)
+        };
+
+    // CSS 2.1 §10.7: When min/max changes the height, re-solve §10.6.4 with
+    // the clamped height treated as the specified height.
+    let (resolved_top, resolved_margin_top, resolved_margin_bottom) =
+        if resolved_height != resolved_height_raw {
+            let (t, _h, mt, mb) = resolve_vertical_with_known_height(
+                style, cb_width, cb_height, static_top, &border, &padding, resolved_height,
+            );
+            (t, mt, mb)
+        } else {
+            (resolved_top, resolved_margin_top, resolved_margin_bottom)
+        };
 
     // Detect whether dimensions were fully determined by the constraint equation
     // (both opposing insets specified with auto width/height).
@@ -144,15 +158,19 @@ fn layout_out_of_flow_child(
     };
 
     // Create constraint space and lay out the child.
-    // When the height is determined by constraints, signal it as fixed so that
-    // descendants can resolve percentage heights against it.
-    let child_space = ConstraintSpace::for_block_child(
+    // When the height is determined by constraints (top+bottom specified, height auto),
+    // signal it as fixed so descendants can resolve percentage heights against it.
+    // Similarly, when height is explicitly specified, it's a fixed block size.
+    let mut child_space = ConstraintSpace::for_block_child(
         content_width,
         content_height,
         content_width,
         child_percentage_block_size,
         true, // Abs-pos elements establish new formatting contexts
     );
+    if height_resolved_from_constraints || !style.height.is_auto() {
+        child_space.is_fixed_block_size = true;
+    }
 
     let mut child_fragment = block_layout(doc, candidate.node_id, &child_space);
 
@@ -163,13 +181,34 @@ fn layout_out_of_flow_child(
     } else {
         resolved_width
     };
+
+    // CSS 2.1 §10.7: For auto-height content-sized abspos, the content height
+    // must still be clamped by min-height / max-height constraints.
     let final_height = if style.height.is_auto() && !height_resolved_from_constraints {
-        child_fragment.size.height
+        let content_height = child_fragment.size.height;
+        apply_min_max_block(style, cb_height, content_height, &border, &padding)
     } else {
         resolved_height
     };
 
-    // Recompute left when width changed after layout (e.g., max-width constraint).
+    // When the auto-height was clamped by min/max, re-solve the vertical
+    // constraint equation to correctly recompute auto margins and insets.
+    let (resolved_top, resolved_margin_top, resolved_margin_bottom) =
+        if style.height.is_auto() && !height_resolved_from_constraints {
+            let unclamped = child_fragment.size.height;
+            if final_height != unclamped {
+                let (t, _h, mt, mb) = resolve_vertical_with_known_height(
+                    style, cb_width, cb_height, static_top, &border, &padding, final_height,
+                );
+                (t, mt, mb)
+            } else {
+                (resolved_top, resolved_margin_top, resolved_margin_bottom)
+            }
+        } else {
+            (resolved_top, resolved_margin_top, resolved_margin_bottom)
+        };
+
+    // Recompute left when width changed after layout (e.g., shrink-to-fit).
     // If left:auto and right:specified, left depends on the final width.
     let final_left = if final_width != resolved_width && style.left.is_auto() && !style.right.is_auto() {
         let zero = LayoutUnit::zero();
@@ -181,11 +220,13 @@ fn layout_out_of_flow_child(
         resolved_left
     };
 
-    // Recompute top when height was auto-sized and affects the constraint
-    // equation. Per CSS 2.1 §10.6.4, when top is auto and height was
-    // auto-sized (content-determined), we must use the final height to
-    // correctly position the element.
-    let final_top = if style.height.is_auto() && !height_resolved_from_constraints {
+    // Recompute top when height was auto-sized (content-determined) and the
+    // vertical constraint equation has a top:auto + bottom:specified pattern.
+    // Note: if min/max clamped the auto-height, resolved_top was already
+    // re-solved above via resolve_vertical_with_known_height.
+    let final_top = if style.height.is_auto() && !height_resolved_from_constraints
+        && final_height == child_fragment.size.height  // was NOT clamped by min/max
+    {
         if style.top.is_auto() && !style.bottom.is_auto() {
             let zero = LayoutUnit::zero();
             let bottom_val = resolve_length(&style.bottom, cb_height, zero, zero);
@@ -631,7 +672,183 @@ fn apply_min_max_block(
     border_box_height.clamp(min_bb, max_bb)
 }
 
-/// Compute shrink-to-fit width for auto-width elements.
+/// Re-solve the horizontal constraint equation with a known border-box width.
+///
+/// CSS 2.1 §10.4: When min/max constrains the width, re-run §10.3.7 treating
+/// the clamped width as the specified width. This properly recomputes auto
+/// margins (e.g., centering via `margin: auto` with `max-width`) and auto
+/// insets (e.g., `left: auto` + `right: 50px`).
+///
+/// Returns `(left, border_box_width, margin_left, margin_right)`.
+fn resolve_horizontal_with_known_width(
+    style: &ComputedStyle,
+    cb_width: LayoutUnit,
+    static_left: LayoutUnit,
+    _border: &BoxStrut,
+    _padding: &BoxStrut,
+    border_box_width: LayoutUnit,
+) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
+    let zero = LayoutUnit::zero();
+
+    let left_auto = style.left.is_auto();
+    let right_auto = style.right.is_auto();
+
+    let left_val = if left_auto { zero } else {
+        resolve_length(&style.left, cb_width, zero, zero)
+    };
+    let right_val = if right_auto { zero } else {
+        resolve_length(&style.right, cb_width, zero, zero)
+    };
+
+    let margin_left_auto = style.margin_left.is_auto();
+    let margin_right_auto = style.margin_right.is_auto();
+    let margin_left_val = if margin_left_auto { zero } else {
+        resolve_margin_or_padding(&style.margin_left, cb_width)
+    };
+    let margin_right_val = if margin_right_auto { zero } else {
+        resolve_margin_or_padding(&style.margin_right, cb_width)
+    };
+
+    // Width is now known (clamped), so the equation has at most two unknowns.
+    // Re-solve with width treated as specified.
+    if !left_auto && !right_auto {
+        // Both insets specified — Case 1: auto margins absorb space
+        if margin_left_auto && margin_right_auto {
+            let remaining = cb_width - left_val - right_val - border_box_width;
+            if remaining >= zero {
+                let half = remaining / 2;
+                return (left_val + half, border_box_width, half, remaining - half);
+            } else {
+                if style.direction == Direction::Rtl {
+                    return (left_val + remaining, border_box_width, remaining, zero);
+                } else {
+                    return (left_val, border_box_width, zero, remaining);
+                }
+            }
+        }
+        if margin_left_auto {
+            let ml = cb_width - left_val - right_val - border_box_width - margin_right_val;
+            return (left_val + ml, border_box_width, ml, margin_right_val);
+        }
+        if margin_right_auto {
+            let mr = cb_width - left_val - right_val - border_box_width - margin_left_val;
+            return (left_val + margin_left_val, border_box_width, margin_left_val, mr);
+        }
+        // Over-constrained: ignore right in LTR, ignore left in RTL
+        if style.direction == Direction::Rtl {
+            let new_left = cb_width - right_val - margin_left_val - border_box_width - margin_right_val;
+            return (new_left + margin_left_val, border_box_width, margin_left_val, margin_right_val);
+        } else {
+            return (left_val + margin_left_val, border_box_width, margin_left_val, margin_right_val);
+        }
+    }
+
+    let ml = if margin_left_auto { zero } else { margin_left_val };
+    let mr = if margin_right_auto { zero } else { margin_right_val };
+
+    if left_auto && right_auto {
+        // Use static position for left (LTR) or right (RTL)
+        if style.direction == Direction::Rtl {
+            let right = static_left;
+            let left = cb_width - right - mr - border_box_width - ml;
+            return (left + ml, border_box_width, ml, mr);
+        } else {
+            let left = static_left;
+            return (left + ml, border_box_width, ml, mr);
+        }
+    }
+
+    if left_auto {
+        let left = cb_width - right_val - mr - border_box_width - ml;
+        return (left + ml, border_box_width, ml, mr);
+    }
+
+    if right_auto {
+        return (left_val + ml, border_box_width, ml, mr);
+    }
+
+    (static_left, border_box_width, zero, zero)
+}
+
+/// Re-solve the vertical constraint equation with a known border-box height.
+///
+/// CSS 2.1 §10.7: When min/max constrains the height, re-run §10.6.4 treating
+/// the clamped height as the specified height.
+///
+/// Returns `(top, border_box_height, margin_top, margin_bottom)`.
+fn resolve_vertical_with_known_height(
+    style: &ComputedStyle,
+    cb_width: LayoutUnit,
+    cb_height: LayoutUnit,
+    static_top: LayoutUnit,
+    _border: &BoxStrut,
+    _padding: &BoxStrut,
+    border_box_height: LayoutUnit,
+) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
+    let zero = LayoutUnit::zero();
+
+    let top_auto = style.top.is_auto();
+    let bottom_auto = style.bottom.is_auto();
+
+    let top_val = if top_auto { zero } else {
+        resolve_length(&style.top, cb_height, zero, zero)
+    };
+    let bottom_val = if bottom_auto { zero } else {
+        resolve_length(&style.bottom, cb_height, zero, zero)
+    };
+
+    // CSS 2.1 §8.3: Percentage margins resolve against CB WIDTH
+    let margin_top_auto = style.margin_top.is_auto();
+    let margin_bottom_auto = style.margin_bottom.is_auto();
+    let margin_top_val = if margin_top_auto { zero } else {
+        resolve_margin_or_padding(&style.margin_top, cb_width)
+    };
+    let margin_bottom_val = if margin_bottom_auto { zero } else {
+        resolve_margin_or_padding(&style.margin_bottom, cb_width)
+    };
+
+    if !top_auto && !bottom_auto {
+        // Both insets specified — auto margins absorb space
+        if margin_top_auto && margin_bottom_auto {
+            let remaining = cb_height - top_val - bottom_val - border_box_height;
+            if remaining >= zero {
+                let half = remaining / 2;
+                return (top_val + half, border_box_height, half, remaining - half);
+            } else {
+                return (top_val, border_box_height, zero, remaining);
+            }
+        }
+        if margin_top_auto {
+            let mt = cb_height - top_val - bottom_val - border_box_height - margin_bottom_val;
+            return (top_val + mt, border_box_height, mt, margin_bottom_val);
+        }
+        if margin_bottom_auto {
+            let mb = cb_height - top_val - bottom_val - border_box_height - margin_top_val;
+            return (top_val + margin_top_val, border_box_height, margin_top_val, mb);
+        }
+        // Over-constrained: ignore bottom
+        return (top_val + margin_top_val, border_box_height, margin_top_val, margin_bottom_val);
+    }
+
+    let mt = if margin_top_auto { zero } else { margin_top_val };
+    let mb = if margin_bottom_auto { zero } else { margin_bottom_val };
+
+    if top_auto && bottom_auto {
+        let top = static_top;
+        return (top + mt, border_box_height, mt, mb);
+    }
+
+    if top_auto {
+        let top = cb_height - bottom_val - mb - border_box_height - mt;
+        return (top + mt, border_box_height, mt, mb);
+    }
+
+    if bottom_auto {
+        return (top_val + mt, border_box_height, mt, mb);
+    }
+
+    (static_top, border_box_height, zero, zero)
+}
 ///
 /// CSS 2.1 §10.3.5/7: shrink-to-fit = min(preferred, max(minimum, available))
 /// where preferred = max-content width, minimum = min-content width.
