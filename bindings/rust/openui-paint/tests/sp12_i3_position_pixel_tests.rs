@@ -1417,9 +1417,10 @@ fn abs_auto_offsets_with_preceding_inflow() {
     add_colored_block(&mut doc, vp, 100.0, 60.0, Color::BLUE);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
     let mut s = render(&doc);
-    // Static position: all OOF collected before layout, block_offset = content_edge = PAD
-    // So abs goes to (PAD, PAD), overlapping the blue block
-    assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "abs auto offsets overlaps inflow");
+    // Static position: OOF collected during child walk, after blue block (60px).
+    // block_offset = PAD + 60 = 80, so abs goes to (PAD, PAD + 60).
+    assert_pixel_color(&mut s, PAD + 5, PAD + 5, BLUE, "blue inflow block still at top");
+    assert_pixel_color(&mut s, PAD + 5, PAD + 60 + 5, RED, "abs auto offsets below inflow");
 }
 
 #[test]

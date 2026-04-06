@@ -112,29 +112,18 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let mut intrinsic_block_size = content_edge;
 
     // Collect out-of-flow (absolute/fixed) candidates for deferred layout.
+    // These are populated during the child walk below so that each candidate
+    // gets the correct static position (i.e., where it would appear in
+    // normal flow after preceding in-flow siblings).
+    //
+    // Per CSS 2.1, a positioned element (relative/absolute/fixed/sticky)
+    // establishes a containing block for its abs-pos descendants. If this
+    // node is NOT positioned, OOF candidates are bubbled up to the parent.
+    let establishes_containing_block = style.position.is_positioned()
+        || node_id == doc.root(); // Root is always the initial containing block
     let mut oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
-
-    // Scan all children for absolutely/fixed positioned elements.
-    // These are skipped in the normal-flow layout below but need to be
-    // laid out after the in-flow pass completes.
+    let mut bubbled_oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     let containing_block_size = PhysicalSize::new(child_available_inline, space.available_block_size);
-    for child_id in doc.children(node_id) {
-        let child_style = &doc.node(child_id).style;
-        if child_style.position.is_absolutely_positioned() && child_style.display != Display::None {
-            oof_candidates.push(OutOfFlowCandidate {
-                node_id: child_id,
-                style: child_style.clone(),
-                // Static position = current block offset (top of content area initially).
-                // This is a simplified heuristic — the true static position depends on
-                // where the child would appear in normal flow.
-                static_position: PhysicalOffset::new(
-                    border.left + padding.left,
-                    block_offset,
-                ),
-                containing_block_size,
-            });
-        }
-    }
 
     // Classify children: detect whether we have only inline, only block,
     // or mixed content (CSS 2.2 §9.2.1.1 — anonymous block boxes).
@@ -143,6 +132,27 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
     if has_inline && !has_block {
         // ── Pure inline formatting context ───────────────────────────
+        // Collect OOF candidates from inline children (they appear at the
+        // start of the formatting context, so static_position = content_edge).
+        for child_id in doc.children(node_id) {
+            let child_style = &doc.node(child_id).style;
+            if child_style.position.is_absolutely_positioned() && child_style.display != Display::None {
+                let candidate = OutOfFlowCandidate {
+                    node_id: child_id,
+                    style: child_style.clone(),
+                    static_position: PhysicalOffset::new(
+                        border.left + padding.left,
+                        block_offset,
+                    ),
+                    containing_block_size,
+                };
+                if establishes_containing_block {
+                    oof_candidates.push(candidate);
+                } else {
+                    bubbled_oof_candidates.push(candidate);
+                }
+            }
+        }
         let inline_space = ConstraintSpace::for_block_child(
             child_available_inline,
             space.available_block_size,
@@ -178,8 +188,28 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             let child_id = children_ids[i];
             let child_style = &doc.node(child_id).style;
 
-            // Skip absolutely positioned and display:none children.
-            if child_style.position.is_absolutely_positioned() || child_style.display == Display::None {
+            // Skip display:none children.
+            if child_style.display == Display::None {
+                i += 1;
+                continue;
+            }
+
+            // Collect absolutely positioned children with correct static position.
+            if child_style.position.is_absolutely_positioned() {
+                let candidate = OutOfFlowCandidate {
+                    node_id: child_id,
+                    style: child_style.clone(),
+                    static_position: PhysicalOffset::new(
+                        border.left + padding.left,
+                        block_offset,
+                    ),
+                    containing_block_size,
+                };
+                if establishes_containing_block {
+                    oof_candidates.push(candidate);
+                } else {
+                    bubbled_oof_candidates.push(candidate);
+                }
                 i += 1;
                 continue;
             }
@@ -192,6 +222,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &border, &padding, content_edge,
                     &block_offset, &mut exclusion_space_mixed,
                     &mut child_fragments,
+                    &mut oof_candidates, &mut bubbled_oof_candidates,
+                    establishes_containing_block,
                 );
                 i += 1;
                 continue;
@@ -201,11 +233,32 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 // Gather contiguous run of inline children.
                 // display:none and abs-pos children are transparent to
                 // inline run gathering. Floats break the run.
+                // Abs-pos children encountered here are collected as OOF
+                // candidates with the current block_offset as static position.
                 let run_start = i;
                 while i < children_ids.len() {
                     let cid = children_ids[i];
                     let cs = &doc.node(cid).style;
-                    if cs.display == Display::None || cs.position.is_absolutely_positioned() {
+                    if cs.display == Display::None {
+                        i += 1;
+                        continue;
+                    }
+                    if cs.position.is_absolutely_positioned() {
+                        // Collect the OOF candidate with current block offset
+                        let candidate = OutOfFlowCandidate {
+                            node_id: cid,
+                            style: cs.clone(),
+                            static_position: PhysicalOffset::new(
+                                border.left + padding.left,
+                                block_offset,
+                            ),
+                            containing_block_size,
+                        };
+                        if establishes_containing_block {
+                            oof_candidates.push(candidate);
+                        } else {
+                            bubbled_oof_candidates.push(candidate);
+                        }
                         i += 1;
                         continue;
                     }
@@ -277,6 +330,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &border, &padding, content_edge,
                     &mut block_offset, &mut margin_strut,
                     &mut intrinsic_block_size, &mut child_fragments,
+                    &mut oof_candidates, &mut bubbled_oof_candidates,
+                    establishes_containing_block,
                 );
 
                 // Offset inline position for left floats.
@@ -296,8 +351,28 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
 
-        // Skip absolutely positioned and display:none children.
-        if child_style.position.is_absolutely_positioned() || child_style.display == Display::None {
+        // Skip display:none children.
+        if child_style.display == Display::None {
+            continue;
+        }
+
+        // Collect absolutely positioned children with correct static position
+        // (where they would appear in normal flow after preceding siblings).
+        if child_style.position.is_absolutely_positioned() {
+            let candidate = OutOfFlowCandidate {
+                node_id: child_id,
+                style: child_style.clone(),
+                static_position: PhysicalOffset::new(
+                    border.left + padding.left,
+                    block_offset,
+                ),
+                containing_block_size,
+            };
+            if establishes_containing_block {
+                oof_candidates.push(candidate);
+            } else {
+                bubbled_oof_candidates.push(candidate);
+            }
             continue;
         }
         if child_style.display.is_inline_level() {
@@ -313,6 +388,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 &border, &padding, content_edge,
                 &block_offset, &mut exclusion_space,
                 &mut child_fragments,
+                &mut oof_candidates, &mut bubbled_oof_candidates,
+                establishes_containing_block,
             );
             continue;
         }
@@ -348,6 +425,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             &border, &padding, content_edge,
             &mut block_offset, &mut margin_strut,
             &mut intrinsic_block_size, &mut child_fragments,
+            &mut oof_candidates, &mut bubbled_oof_candidates,
+            establishes_containing_block,
         );
 
         // Offset inline position for left floats.
@@ -441,6 +520,10 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     fragment.has_overflow_clip = style.overflow_x != Overflow::Visible
         || style.overflow_y != Overflow::Visible;
 
+    // Attach any un-resolved OOF candidates for the parent to absorb.
+    // These are abs-pos descendants that need a positioned ancestor higher up.
+    fragment.oof_candidates = bubbled_oof_candidates;
+
     fragment
 }
 
@@ -508,21 +591,46 @@ fn handle_float(
     block_offset: &LayoutUnit,
     exclusion_space: &mut ExclusionSpace,
     child_fragments: &mut Vec<Fragment>,
+    oof_candidates: &mut Vec<OutOfFlowCandidate>,
+    bubbled_oof_candidates: &mut Vec<OutOfFlowCandidate>,
+    establishes_containing_block: bool,
 ) {
     let child_style = &doc.node(child_id).style;
     let child_margin = resolve_margins(child_style, child_available_inline);
     let is_left = child_style.float == Float::Left;
 
+    // CSS 2.1 §10.3.5: Floats with auto width use shrink-to-fit sizing.
+    // Compute shrink-to-fit width first, then use it as the available
+    // inline size for the child layout.
+    let float_inline_size = if child_style.width.is_auto() {
+        let stf = crate::out_of_flow::compute_shrink_to_fit_width(
+            doc, child_id, child_available_inline,
+        );
+        stf
+    } else {
+        child_available_inline
+    };
+
     // Layout the float child to determine its size.
     // Floats always establish a new formatting context.
     let child_space = ConstraintSpace::for_block_child(
-        child_available_inline,
+        float_inline_size,
         space.available_block_size,
         child_available_inline,
         child_percentage_block_size,
         true,
     );
-    let child_fragment = block_layout(doc, child_id, &child_space);
+    let mut child_fragment = block_layout(doc, child_id, &child_space);
+
+    // Absorb any bubbled OOF candidates from the float's descendants.
+    if !child_fragment.oof_candidates.is_empty() {
+        let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
+        if establishes_containing_block {
+            oof_candidates.extend(child_oof);
+        } else {
+            bubbled_oof_candidates.extend(child_oof);
+        }
+    }
 
     // BFC coordinates: (0, 0) = content area start of the container.
     let content_block_offset = *block_offset - content_edge;
@@ -570,6 +678,9 @@ fn layout_block_child(
     margin_strut: &mut MarginStrut,
     intrinsic_block_size: &mut LayoutUnit,
     child_fragments: &mut Vec<Fragment>,
+    oof_candidates: &mut Vec<OutOfFlowCandidate>,
+    bubbled_oof_candidates: &mut Vec<OutOfFlowCandidate>,
+    establishes_containing_block: bool,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -616,6 +727,18 @@ fn layout_block_child(
     );
 
     let mut child_fragment = block_layout(doc, child_id, &child_space);
+
+    // Absorb any out-of-flow candidates bubbled up from the child.
+    // If this parent establishes a containing block, add them to our
+    // local OOF list. Otherwise, bubble them up further.
+    if !child_fragment.oof_candidates.is_empty() {
+        let child_oof = std::mem::take(&mut child_fragment.oof_candidates);
+        if establishes_containing_block {
+            oof_candidates.extend(child_oof);
+        } else {
+            bubbled_oof_candidates.extend(child_oof);
+        }
+    }
 
     let child_border_box_inline = child_fragment.size.width;
     let remaining_space = child_available_inline - child_border_box_inline;
@@ -1703,11 +1826,21 @@ mod tests {
         let fragment = block_layout(&doc, vp, &space);
         let container_frag = &fragment.children[0];
 
-        // 1 inline wrapper (single IFC) + 1 block child + 1 OOF child = 3
+        // The container is position:static, so the abs-pos child is NOT laid
+        // out here — it bubbles up to the nearest positioned ancestor (root).
+        // Container children: 1 inline wrapper (single IFC) + 1 block child = 2
         assert_eq!(
-            container_frag.children.len(), 3,
-            "Out-of-flow child should not split inline run; expected 3 fragments (inline + block + OOF), got {}",
+            container_frag.children.len(), 2,
+            "OOF child should bubble up from static container; expected 2 fragments (inline + block), got {}",
             container_frag.children.len(),
+        );
+
+        // The viewport root (which is the initial containing block) should
+        // have the container + the bubbled-up OOF child = 2 children
+        assert_eq!(
+            fragment.children.len(), 2,
+            "Root should have container + bubbled OOF; expected 2, got {}",
+            fragment.children.len(),
         );
     }
 

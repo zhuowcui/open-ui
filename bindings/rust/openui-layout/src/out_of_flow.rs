@@ -14,6 +14,7 @@ use openui_dom::{Document, NodeId};
 use crate::block::{block_layout, resolve_border, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::Fragment;
+use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
 /// A candidate for out-of-flow layout, collected during the in-flow pass.
@@ -71,9 +72,15 @@ fn layout_out_of_flow_child(
     let border_padding_h = border.left + border.right + padding.left + padding.right;
     let border_padding_v = border.top + border.bottom + padding.top + padding.bottom;
 
+    // Compute shrink-to-fit width from intrinsic sizes (CSS 2.1 §10.3.7).
+    // shrink-to-fit = min(max-content, max(min-content, available))
+    // We compute max-content here; the `available` clamp happens in resolve_horizontal.
+    let intrinsic = compute_intrinsic_block_sizes(doc, candidate.node_id);
+    let shrink_to_fit_width = intrinsic.max_content_inline_size;
+
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
     let (resolved_left, resolved_width, resolved_margin_left, resolved_margin_right) =
-        resolve_horizontal(style, cb_width, static_pos.left, &border, &padding);
+        resolve_horizontal(style, cb_width, static_pos.left, &border, &padding, shrink_to_fit_width);
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height, resolved_margin_top, resolved_margin_bottom) =
@@ -113,8 +120,29 @@ fn layout_out_of_flow_child(
         resolved_height
     };
 
+    // Recompute top when height was auto-sized and affects the constraint
+    // equation. Per CSS 2.1 §10.6.4, when top is auto and height was
+    // auto-sized (content-determined), we must use the final height to
+    // correctly position the element.
+    let final_top = if style.height.is_auto() && !height_resolved_from_constraints {
+        // Cases where top depends on auto height:
+        // - height:auto, top:auto, bottom:specified → top = cb_h - bottom - mb - height - mt
+        // - height:auto, top:auto, bottom:auto → uses static position (already correct)
+        if style.top.is_auto() && !style.bottom.is_auto() {
+            let zero = LayoutUnit::zero();
+            let bottom_val = resolve_length(&style.bottom, cb_height, zero, zero);
+            let mt = resolved_margin_top;
+            let mb = resolved_margin_bottom;
+            cb_height - bottom_val - mb - final_height - mt + mt
+        } else {
+            resolved_top
+        }
+    } else {
+        resolved_top
+    };
+
     child_fragment.size = PhysicalSize::new(final_width, final_height);
-    child_fragment.offset = PhysicalOffset::new(resolved_left, resolved_top);
+    child_fragment.offset = PhysicalOffset::new(resolved_left, final_top);
     child_fragment.border = border;
     child_fragment.padding = padding;
     child_fragment.margin = BoxStrut::new(
@@ -141,6 +169,7 @@ fn resolve_horizontal(
     static_left: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
+    shrink_to_fit_width: LayoutUnit,
 ) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
     let zero = LayoutUnit::zero();
 
@@ -184,13 +213,13 @@ fn resolve_horizontal(
                 let half = remaining / 2;
                 return (left_val + half, border_box_width, half, remaining - half);
             } else {
-                // Negative available: in LTR, margin-left=0, margin-right absorbs
+                // Negative available space: per CSS 2.1 §10.3.7,
+                // LTR → margin-left=0, margin-right absorbs the deficit.
+                // RTL → margin-right=0, margin-left absorbs the deficit.
                 if style.direction == Direction::Rtl {
-                    let mr = remaining;
-                    return (left_val, border_box_width, zero, mr);
+                    return (left_val + remaining, border_box_width, remaining, zero);
                 } else {
-                    let mr = remaining;
-                    return (left_val, border_box_width, zero, mr);
+                    return (left_val, border_box_width, zero, remaining);
                 }
             }
         }
@@ -225,7 +254,7 @@ fn resolve_horizontal(
         // ── All three auto: use static position for left, shrink-to-fit for width
         let left = static_left;
         let available = (cb_width - left - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = compute_shrink_to_fit_width(available);
+        let width = shrink_to_fit_width.min_of(available);
         let border_box_width = width + border_padding_h;
         return (left + ml, border_box_width, ml, mr);
     }
@@ -234,7 +263,7 @@ fn resolve_horizontal(
         // left and width auto, right specified
         // Shrink-to-fit width, then left = CB - right - margins - width
         let available = (cb_width - right_val - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = compute_shrink_to_fit_width(available);
+        let width = shrink_to_fit_width.min_of(available);
         let border_box_width = width + border_padding_h;
         let left = cb_width - right_val - mr - border_box_width - ml;
         return (left + ml, border_box_width, ml, mr);
@@ -244,7 +273,7 @@ fn resolve_horizontal(
         // width and right auto, left specified
         // Shrink-to-fit width, right is computed
         let available = (cb_width - left_val - ml - mr - border_padding_h).clamp_negative_to_zero();
-        let width = compute_shrink_to_fit_width(available);
+        let width = shrink_to_fit_width.min_of(available);
         let border_box_width = width + border_padding_h;
         return (left_val + ml, border_box_width, ml, mr);
     }
@@ -409,17 +438,22 @@ fn resolve_vertical(
     (static_top, zero, zero, zero)
 }
 
-/// Compute shrink-to-fit width for auto-width absolute elements.
+/// Compute shrink-to-fit width for auto-width elements.
 ///
-/// CSS 2.1 §10.3.7: When width is auto, use shrink-to-fit:
-///   result = min(preferred_width, max(minimum_width, available_width))
+/// CSS 2.1 §10.3.5/7: shrink-to-fit = min(preferred, max(minimum, available))
+/// where preferred = max-content width, minimum = min-content width.
 ///
-/// Since we don't have intrinsic size computation yet, we use the available
-/// width as both preferred and minimum (the element fills available space).
-pub fn compute_shrink_to_fit_width(available: LayoutUnit) -> LayoutUnit {
-    // In a full implementation, preferred = max-content width,
-    // minimum = min-content width. For now, use available as the result.
-    available.clamp_negative_to_zero()
+/// For float layout, call this with the child's intrinsic sizes and available width.
+pub fn compute_shrink_to_fit_width(
+    doc: &Document,
+    node_id: NodeId,
+    available: LayoutUnit,
+) -> LayoutUnit {
+    let intrinsic = compute_intrinsic_block_sizes(doc, node_id);
+    let preferred = intrinsic.max_content_inline_size;
+    let minimum = intrinsic.min_content_inline_size;
+    // shrink-to-fit = min(preferred, max(minimum, available))
+    preferred.min_of(minimum.max_of(available)).clamp_negative_to_zero()
 }
 
 #[cfg(test)]
@@ -451,8 +485,9 @@ mod tests {
         style.width = Length::px(100.0);
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
+        let stf = LayoutUnit::from_i32(800); // shrink-to-fit (unused when width specified)
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf,
         );
         assert_eq!(left.to_i32(), 10);
         assert_eq!(width.to_i32(), 100);
@@ -468,8 +503,9 @@ mod tests {
         style.margin_right = Length::auto();
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
+        let stf = LayoutUnit::from_i32(800); // shrink-to-fit (unused when width specified)
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf,
         );
         // Centered: (800 - 200) / 2 = 300
         assert_eq!(ml.to_i32(), 300);
@@ -510,14 +546,20 @@ mod tests {
     }
 
     #[test]
-    fn shrink_to_fit_positive() {
-        let result = compute_shrink_to_fit_width(LayoutUnit::from_i32(300));
-        assert_eq!(result.to_i32(), 300);
+    fn shrink_to_fit_empty_doc() {
+        // An empty document node has zero intrinsic size, so shrink-to-fit = 0
+        let doc = Document::new();
+        let root = doc.root();
+        let result = compute_shrink_to_fit_width(&doc, root, LayoutUnit::from_i32(300));
+        // Result is min(max_content=0, max(min_content=0, 300)) = 0
+        assert_eq!(result.to_i32(), 0);
     }
 
     #[test]
-    fn shrink_to_fit_negative_clamped() {
-        let result = compute_shrink_to_fit_width(LayoutUnit::from_i32(-10));
+    fn shrink_to_fit_negative_available_clamped() {
+        let doc = Document::new();
+        let root = doc.root();
+        let result = compute_shrink_to_fit_width(&doc, root, LayoutUnit::from_i32(-10));
         assert_eq!(result.to_i32(), 0);
     }
 }

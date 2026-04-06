@@ -862,6 +862,7 @@ fn paint_text_fragment_no_shape_result() {
         text_combine: None,
         overflow_rect: None,
         has_overflow_clip: false,
+        oof_candidates: Vec::new(),
     };
 
     let mut surface = make_surface(200, 100);
@@ -1113,6 +1114,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         text_combine: None,
         overflow_rect: None,
         has_overflow_clip: false,
+        oof_candidates: Vec::new(),
     };
 
     let mut surface = make_surface(200, 100);

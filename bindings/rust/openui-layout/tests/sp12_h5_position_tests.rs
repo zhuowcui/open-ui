@@ -41,6 +41,13 @@ fn viewport() -> PhysicalRect {
     prect(0, 0, 800, 600)
 }
 
+/// Create a builder with container position:relative — needed for abs-pos tests.
+fn abs_builder(w: i32, h: i32) -> BlockTestBuilder {
+    let mut b = BlockTestBuilder::new(w, h);
+    b = b.with_container_style(|s| s.position = Position::Relative);
+    b
+}
+
 fn large_cb() -> PhysicalRect {
     prect(0, 0, 800, 2000)
 }
@@ -917,7 +924,7 @@ fn rel_offset_larger_than_container() {
 
 #[test]
 fn abs_basic_top_left_builder() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(50, 0, 0, 100).done();
     let r = b.build();
     r.assert_child_position(0, 100, 50);
@@ -926,7 +933,7 @@ fn abs_basic_top_left_builder() {
 
 #[test]
 fn abs_basic_right_bottom_builder() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.top = Length::auto(); s.bottom = Length::px(30.0); s.left = Length::auto(); s.right = Length::px(50.0); })
         .done();
@@ -937,7 +944,7 @@ fn abs_basic_right_bottom_builder() {
 
 #[test]
 fn abs_top_left_zero() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -946,7 +953,7 @@ fn abs_top_left_zero() {
 #[test]
 fn abs_all_corners() {
     // Test absolute positioning in all four corners.
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     // Top-left.
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     // Top-right.
@@ -970,7 +977,7 @@ fn abs_all_corners() {
 
 #[test]
 fn abs_auto_width_fills_between_left_right() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().height(100.0).position_absolute().inset(0, 50, 0, 50).done();
     let r = b.build();
     // width auto: 800 - 50 - 50 = 700.
@@ -980,7 +987,7 @@ fn abs_auto_width_fills_between_left_right() {
 
 #[test]
 fn abs_auto_height_fills_between_top_bottom() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).position_absolute().inset(20, 0, 30, 0).done();
     let r = b.build();
     // height auto: 600 - 20 - 30 = 550.
@@ -990,7 +997,7 @@ fn abs_auto_height_fills_between_top_bottom() {
 
 #[test]
 fn abs_auto_width_and_height() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().position_absolute().inset(10, 20, 30, 40).done();
     let r = b.build();
     // width: 800-40-20=740, height: 600-10-30=560.
@@ -1000,7 +1007,7 @@ fn abs_auto_width_and_height() {
 
 #[test]
 fn abs_horizontal_centering_auto_margins() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0).margin_auto_horizontal().done();
     let r = b.build();
@@ -1010,7 +1017,7 @@ fn abs_horizontal_centering_auto_margins() {
 
 #[test]
 fn abs_vertical_centering_auto_margins() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(200.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -1022,7 +1029,7 @@ fn abs_vertical_centering_auto_margins() {
 
 #[test]
 fn abs_both_axis_centering() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(200.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
@@ -1036,7 +1043,7 @@ fn abs_both_axis_centering() {
 #[test]
 fn abs_overconstrained_ltr_left_wins() {
     // Over-constrained: left + width + right > CB width. LTR → left wins.
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(700.0).height(50.0).position_absolute().inset(0, 50, 0, 100).done();
     let r = b.build();
     // left=100 wins. right ignored.
@@ -1046,7 +1053,7 @@ fn abs_overconstrained_ltr_left_wins() {
 
 #[test]
 fn abs_overconstrained_rtl_right_wins() {
-    let mut b = BlockTestBuilder::new(800, 600)
+    let mut b = abs_builder(800, 600)
         .with_container_style(|s| { s.direction = Direction::Rtl; });
     b.add_child().width(700.0).height(50.0).position_absolute()
         .with_style(|s| { s.direction = Direction::Rtl; })
@@ -1061,7 +1068,7 @@ fn abs_overconstrained_rtl_right_wins() {
 #[test]
 fn abs_overconstrained_vertical() {
     // Over-constrained vertically: top + height + bottom > CB height. top wins.
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(500.0).position_absolute().inset(50, 0, 100, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 50);
@@ -1070,7 +1077,7 @@ fn abs_overconstrained_vertical() {
 
 #[test]
 fn abs_percentage_top_left() {
-    let mut b = BlockTestBuilder::new(1000, 800);
+    let mut b = abs_builder(1000, 800);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| {
             s.top = Length::percent(10.0); s.left = Length::percent(5.0);
@@ -1083,7 +1090,7 @@ fn abs_percentage_top_left() {
 
 #[test]
 fn abs_percentage_right_bottom() {
-    let mut b = BlockTestBuilder::new(1000, 800);
+    let mut b = abs_builder(1000, 800);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| {
             s.right = Length::percent(10.0); s.bottom = Length::percent(5.0);
@@ -1097,7 +1104,7 @@ fn abs_percentage_right_bottom() {
 
 #[test]
 fn abs_percentage_width_height() {
-    let mut b = BlockTestBuilder::new(1000, 800);
+    let mut b = abs_builder(1000, 800);
     b.add_child().position_absolute()
         .with_style(|s| {
             s.top = Length::px(0.0); s.left = Length::px(0.0);
@@ -1111,7 +1118,7 @@ fn abs_percentage_width_height() {
 
 #[test]
 fn abs_does_not_affect_flow_siblings() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).done();
     b.add_child().width(150.0).height(80.0).position_absolute().inset(10, 0, 0, 10).done();
     b.add_child().width(200.0).height(100.0).done();
@@ -1124,7 +1131,7 @@ fn abs_does_not_affect_flow_siblings() {
 
 #[test]
 fn abs_removed_from_flow() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(0, 0, 0, 0).done();
     b.add_child().width(200.0).height(50.0).done();
     let r = b.build();
@@ -1134,7 +1141,7 @@ fn abs_removed_from_flow() {
 
 #[test]
 fn abs_container_padding_affects_position() {
-    let mut b = BlockTestBuilder::new(800, 600)
+    let mut b = abs_builder(800, 600)
         .with_container_style(|s| {
             s.padding_top = Length::px(20.0);
             s.padding_left = Length::px(30.0);
@@ -1147,7 +1154,7 @@ fn abs_container_padding_affects_position() {
 
 #[test]
 fn abs_container_border_affects_position() {
-    let mut b = BlockTestBuilder::new(800, 600)
+    let mut b = abs_builder(800, 600)
         .with_container_style(|s| {
             s.border_top_width = 10; s.border_top_style = BorderStyle::Solid;
             s.border_left_width = 15; s.border_left_style = BorderStyle::Solid;
@@ -1160,7 +1167,7 @@ fn abs_container_border_affects_position() {
 
 #[test]
 fn abs_min_width_applied() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().height(100.0).min_width(300.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     // auto width fills 800, min_width 300 is satisfied.
@@ -1170,7 +1177,7 @@ fn abs_min_width_applied() {
 
 #[test]
 fn abs_max_width_applied() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().height(100.0).max_width(200.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     let child = r.child(0);
@@ -1180,7 +1187,7 @@ fn abs_max_width_applied() {
 
 #[test]
 fn abs_min_height_applied() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).min_height(100.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     let child = r.child(0);
@@ -1189,7 +1196,7 @@ fn abs_min_height_applied() {
 
 #[test]
 fn abs_max_height_applied() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).max_height(100.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     let child = r.child(0);
@@ -1198,7 +1205,7 @@ fn abs_max_height_applied() {
 
 #[test]
 fn abs_multiple_children_overlap() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(0, 0, 0, 0).done();
     b.add_child().width(200.0).height(100.0).position_absolute().inset(50, 0, 0, 50).done();
     b.add_child().width(200.0).height(100.0).position_absolute().inset(100, 0, 0, 100).done();
@@ -1212,6 +1219,7 @@ fn abs_multiple_children_overlap() {
 fn abs_dom_top_left_width_height() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.top = Length::px(50.0);
     doc.node_mut(abs).style.left = Length::px(100.0);
@@ -1230,6 +1238,7 @@ fn abs_dom_top_left_width_height() {
 fn abs_dom_right_bottom() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.right = Length::px(50.0);
     doc.node_mut(abs).style.bottom = Length::px(30.0);
@@ -1246,6 +1255,7 @@ fn abs_dom_right_bottom() {
 fn abs_dom_auto_width_left_right() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.left = Length::px(50.0);
     doc.node_mut(abs).style.right = Length::px(50.0);
@@ -1261,6 +1271,7 @@ fn abs_dom_auto_width_left_right() {
 fn abs_dom_auto_height_top_bottom() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.top = Length::px(20.0);
     doc.node_mut(abs).style.bottom = Length::px(30.0);
@@ -1276,6 +1287,7 @@ fn abs_dom_auto_height_top_bottom() {
 fn abs_dom_centering_auto_margins() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.left = Length::px(0.0);
     doc.node_mut(abs).style.right = Length::px(0.0);
@@ -1293,6 +1305,7 @@ fn abs_dom_centering_auto_margins() {
 fn abs_dom_vertical_centering() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.top = Length::px(0.0);
     doc.node_mut(abs).style.bottom = Length::px(0.0);
@@ -1310,6 +1323,7 @@ fn abs_dom_vertical_centering() {
 fn abs_dom_overconstrained_ltr() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.left = Length::px(100.0);
     doc.node_mut(abs).style.right = Length::px(100.0);
@@ -1326,6 +1340,7 @@ fn abs_dom_overconstrained_ltr() {
 fn abs_dom_overconstrained_rtl() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.direction = Direction::Rtl;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.left = Length::px(100.0);
@@ -1345,6 +1360,7 @@ fn abs_dom_overconstrained_rtl() {
 fn abs_dom_percentage_values() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 1000, 800);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.top = Length::percent(10.0);
     doc.node_mut(abs).style.left = Length::percent(5.0);
@@ -1363,6 +1379,7 @@ fn abs_dom_percentage_values() {
 fn abs_dom_static_position_fallback() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.width = Length::px(100.0);
     doc.node_mut(abs).style.height = Length::px(50.0);
@@ -1377,7 +1394,7 @@ fn abs_dom_static_position_fallback() {
 
 #[test]
 fn abs_top_10_left_10() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(10, 0, 0, 10).done();
     let r = b.build();
     r.assert_child_position(0, 10, 10);
@@ -1385,7 +1402,7 @@ fn abs_top_10_left_10() {
 
 #[test]
 fn abs_top_20_left_30() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(20, 0, 0, 30).done();
     let r = b.build();
     r.assert_child_position(0, 30, 20);
@@ -1393,7 +1410,7 @@ fn abs_top_20_left_30() {
 
 #[test]
 fn abs_top_50_left_50() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(50, 0, 0, 50).done();
     let r = b.build();
     r.assert_child_position(0, 50, 50);
@@ -1401,7 +1418,7 @@ fn abs_top_50_left_50() {
 
 #[test]
 fn abs_top_100_left_200() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(100, 0, 0, 200).done();
     let r = b.build();
     r.assert_child_position(0, 200, 100);
@@ -1409,7 +1426,7 @@ fn abs_top_100_left_200() {
 
 #[test]
 fn abs_top_0_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -1417,7 +1434,7 @@ fn abs_top_0_left_0() {
 
 #[test]
 fn abs_top_5_left_15() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(5, 0, 0, 15).done();
     let r = b.build();
     r.assert_child_position(0, 15, 5);
@@ -1425,7 +1442,7 @@ fn abs_top_5_left_15() {
 
 #[test]
 fn abs_top_15_left_5() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(15, 0, 0, 5).done();
     let r = b.build();
     r.assert_child_position(0, 5, 15);
@@ -1433,7 +1450,7 @@ fn abs_top_15_left_5() {
 
 #[test]
 fn abs_top_25_left_75() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(25, 0, 0, 75).done();
     let r = b.build();
     r.assert_child_position(0, 75, 25);
@@ -1441,7 +1458,7 @@ fn abs_top_25_left_75() {
 
 #[test]
 fn abs_top_75_left_25() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(75, 0, 0, 25).done();
     let r = b.build();
     r.assert_child_position(0, 25, 75);
@@ -1449,7 +1466,7 @@ fn abs_top_75_left_25() {
 
 #[test]
 fn abs_top_100_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(100, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 100);
@@ -1457,7 +1474,7 @@ fn abs_top_100_left_0() {
 
 #[test]
 fn abs_top_0_left_100() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 100).done();
     let r = b.build();
     r.assert_child_position(0, 100, 0);
@@ -1465,7 +1482,7 @@ fn abs_top_0_left_100() {
 
 #[test]
 fn abs_top_150_left_150() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(150, 0, 0, 150).done();
     let r = b.build();
     r.assert_child_position(0, 150, 150);
@@ -1473,7 +1490,7 @@ fn abs_top_150_left_150() {
 
 #[test]
 fn abs_top_200_left_100() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(200, 0, 0, 100).done();
     let r = b.build();
     r.assert_child_position(0, 100, 200);
@@ -1481,7 +1498,7 @@ fn abs_top_200_left_100() {
 
 #[test]
 fn abs_top_300_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(300, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 300);
@@ -1489,7 +1506,7 @@ fn abs_top_300_left_0() {
 
 #[test]
 fn abs_top_0_left_300() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 300).done();
     let r = b.build();
     r.assert_child_position(0, 300, 0);
@@ -1497,7 +1514,7 @@ fn abs_top_0_left_300() {
 
 #[test]
 fn abs_top_10_left_790() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(10, 0, 0, 790).done();
     let r = b.build();
     r.assert_child_position(0, 790, 10);
@@ -1505,7 +1522,7 @@ fn abs_top_10_left_790() {
 
 #[test]
 fn abs_top_590_left_10() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(590, 0, 0, 10).done();
     let r = b.build();
     r.assert_child_position(0, 10, 590);
@@ -1513,7 +1530,7 @@ fn abs_top_590_left_10() {
 
 #[test]
 fn abs_top_1_left_1() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(1, 0, 0, 1).done();
     let r = b.build();
     r.assert_child_position(0, 1, 1);
@@ -1521,7 +1538,7 @@ fn abs_top_1_left_1() {
 
 #[test]
 fn abs_top_299_left_499() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(299, 0, 0, 499).done();
     let r = b.build();
     r.assert_child_position(0, 499, 299);
@@ -1529,7 +1546,7 @@ fn abs_top_299_left_499() {
 
 #[test]
 fn abs_top_400_left_400() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(400, 0, 0, 400).done();
     let r = b.build();
     r.assert_child_position(0, 400, 400);
@@ -1537,7 +1554,7 @@ fn abs_top_400_left_400() {
 
 #[test]
 fn abs_container_100x100_center() {
-    let mut b = BlockTestBuilder::new(100, 100);
+    let mut b = abs_builder(100, 100);
     b.add_child().width(50.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1548,7 +1565,7 @@ fn abs_container_100x100_center() {
 
 #[test]
 fn abs_container_200x200_center() {
-    let mut b = BlockTestBuilder::new(200, 200);
+    let mut b = abs_builder(200, 200);
     b.add_child().width(100.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1559,7 +1576,7 @@ fn abs_container_200x200_center() {
 
 #[test]
 fn abs_container_400x300_center() {
-    let mut b = BlockTestBuilder::new(400, 300);
+    let mut b = abs_builder(400, 300);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1570,7 +1587,7 @@ fn abs_container_400x300_center() {
 
 #[test]
 fn abs_container_1000x1000_center() {
-    let mut b = BlockTestBuilder::new(1000, 1000);
+    let mut b = abs_builder(1000, 1000);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1581,7 +1598,7 @@ fn abs_container_1000x1000_center() {
 
 #[test]
 fn abs_container_1920x1080_center() {
-    let mut b = BlockTestBuilder::new(1920, 1080);
+    let mut b = abs_builder(1920, 1080);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1592,7 +1609,7 @@ fn abs_container_1920x1080_center() {
 
 #[test]
 fn abs_container_320x480_center() {
-    let mut b = BlockTestBuilder::new(320, 480);
+    let mut b = abs_builder(320, 480);
     b.add_child().width(160.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1603,7 +1620,7 @@ fn abs_container_320x480_center() {
 
 #[test]
 fn abs_container_640x480_center() {
-    let mut b = BlockTestBuilder::new(640, 480);
+    let mut b = abs_builder(640, 480);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1614,7 +1631,7 @@ fn abs_container_640x480_center() {
 
 #[test]
 fn abs_container_1024x768_center() {
-    let mut b = BlockTestBuilder::new(1024, 768);
+    let mut b = abs_builder(1024, 768);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1625,7 +1642,7 @@ fn abs_container_1024x768_center() {
 
 #[test]
 fn abs_container_500x500_center() {
-    let mut b = BlockTestBuilder::new(500, 500);
+    let mut b = abs_builder(500, 500);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1636,7 +1653,7 @@ fn abs_container_500x500_center() {
 
 #[test]
 fn abs_container_1600x900_center() {
-    let mut b = BlockTestBuilder::new(1600, 900);
+    let mut b = abs_builder(1600, 900);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -1647,7 +1664,7 @@ fn abs_container_1600x900_center() {
 
 #[test]
 fn abs_with_explicit_margins() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0).margin(10, 20, 30, 40).done();
     let r = b.build();
@@ -1659,7 +1676,7 @@ fn abs_with_explicit_margins() {
 #[test]
 fn abs_margin_absorbs_extra_space_ltr() {
     // When overconstrained with auto margins, auto becomes 0, left wins (LTR).
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(600.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0).margin_auto_horizontal().done();
     let r = b.build();
@@ -1669,7 +1686,7 @@ fn abs_margin_absorbs_extra_space_ltr() {
 
 #[test]
 fn abs_border_box_sizing() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(10, 10, 10, 10)
         .box_sizing_border_box().position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -1681,7 +1698,7 @@ fn abs_border_box_sizing() {
 
 #[test]
 fn abs_inside_relative_parent() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(400.0).height(300.0).position_relative().inset(10, 0, 0, 10)
         .add_child().width(100.0).height(50.0)
             .with_style(|s| {
@@ -1698,7 +1715,7 @@ fn abs_inside_relative_parent() {
 
 #[test]
 fn abs_overflow_hidden_container() {
-    let mut b = BlockTestBuilder::new(400, 300)
+    let mut b = abs_builder(400, 300)
         .with_container_style(|s| { s.overflow_x = Overflow::Hidden; s.overflow_y = Overflow::Hidden; });
     b.add_child().width(200.0).height(100.0).position_absolute().inset(10, 0, 0, 10).done();
     let r = b.build();
@@ -1707,7 +1724,7 @@ fn abs_overflow_hidden_container() {
 
 #[test]
 fn abs_multiple_abs_and_flow_children() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(100.0).done();
     b.add_child().width(200.0).height(50.0).position_absolute().inset(200, 0, 0, 200).done();
     b.add_child().width(800.0).height(100.0).done();
@@ -1720,7 +1737,7 @@ fn abs_multiple_abs_and_flow_children() {
 
 #[test]
 fn abs_zero_width_container() {
-    let mut b = BlockTestBuilder::new(0, 600);
+    let mut b = abs_builder(0, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -1729,7 +1746,7 @@ fn abs_zero_width_container() {
 
 #[test]
 fn abs_zero_height_container() {
-    let mut b = BlockTestBuilder::new(800, 0);
+    let mut b = abs_builder(800, 0);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -1747,8 +1764,11 @@ fn fixed_basic_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(20.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 20, 10);
-    r.assert_child_size(0, 300, 200);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 20);
+    assert_eq!(fc.offset.top.to_i32(), 10);
+    assert_eq!(fc.size.width.to_i32(), 300);
+    assert_eq!(fc.size.height.to_i32(), 200);
 }
 
 #[test]
@@ -1758,7 +1778,9 @@ fn fixed_right_bottom() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(50.0); s.bottom = Length::px(30.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 550, 470);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 550);
+    assert_eq!(fc.offset.top.to_i32(), 470);
 }
 
 #[test]
@@ -1768,7 +1790,9 @@ fn fixed_top_left_zero() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -1778,8 +1802,11 @@ fn fixed_auto_width_from_left_right() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(100.0); s.right = Length::px(100.0); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 100, 0);
-    r.assert_child_size(0, 600, 100);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 100);
+    assert_eq!(fc.offset.top.to_i32(), 0);
+    assert_eq!(fc.size.width.to_i32(), 600);
+    assert_eq!(fc.size.height.to_i32(), 100);
 }
 
 #[test]
@@ -1789,8 +1816,11 @@ fn fixed_auto_height_from_top_bottom() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(50.0); s.bottom = Length::px(50.0); s.left = Length::px(0.0); s.right = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 50);
-    r.assert_child_size(0, 200, 500);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 50);
+    assert_eq!(fc.size.width.to_i32(), 200);
+    assert_eq!(fc.size.height.to_i32(), 500);
 }
 
 #[test]
@@ -1805,7 +1835,9 @@ fn fixed_centering_auto_margins() {
             s.margin_top = Length::auto(); s.margin_bottom = Length::auto();
         }).done();
     let r = b.build();
-    r.assert_child_position(0, 300, 250);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 300);
+    assert_eq!(fc.offset.top.to_i32(), 250);
 }
 
 #[test]
@@ -1819,7 +1851,9 @@ fn fixed_horizontal_centering() {
             s.margin_left = Length::auto(); s.margin_right = Length::auto();
         }).done();
     let r = b.build();
-    r.assert_child_position(0, 300, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 300);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -1832,8 +1866,11 @@ fn fixed_overconstrained_ltr() {
             s.top = Length::px(0.0); s.bottom = Length::auto();
         }).done();
     let r = b.build();
-    r.assert_child_position(0, 100, 0);
-    r.assert_child_size(0, 700, 50);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 100);
+    assert_eq!(fc.offset.top.to_i32(), 0);
+    assert_eq!(fc.size.width.to_i32(), 700);
+    assert_eq!(fc.size.height.to_i32(), 50);
 }
 
 #[test]
@@ -1847,7 +1884,7 @@ fn fixed_overconstrained_rtl() {
             s.top = Length::px(0.0); s.bottom = Length::auto();
         }).done();
     let r = b.build();
-    let child = r.child(0);
+    let child = &r.root_fragment.children[1];
     // RTL: right=100 wins. left = 800-100-700 = 0.
     assert_eq!(child.offset.left.to_i32(), 0);
 }
@@ -1864,7 +1901,9 @@ fn fixed_does_not_affect_flow() {
     // Flow children at indices 0,1. Fixed child at index 2 (end).
     r.assert_child_position(0, 0, 0);
     r.assert_child_position(1, 0, 100);
-    r.assert_child_position(2, 200, 200);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 200);
+    assert_eq!(fc.offset.top.to_i32(), 200);
 }
 
 #[test]
@@ -1877,7 +1916,9 @@ fn fixed_percentage_insets() {
             s.right = Length::auto(); s.bottom = Length::auto();
         }).done();
     let r = b.build();
-    r.assert_child_position(0, 50, 80);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 50);
+    assert_eq!(fc.offset.top.to_i32(), 80);
 }
 
 #[test]
@@ -1891,7 +1932,9 @@ fn fixed_percentage_size() {
             s.width = Length::percent(50.0); s.height = Length::percent(25.0);
         }).done();
     let r = b.build();
-    r.assert_child_size(0, 500, 200);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.size.width.to_i32(), 500);
+    assert_eq!(fc.size.height.to_i32(), 200);
 }
 
 #[test]
@@ -1905,7 +1948,7 @@ fn fixed_dom_basic() {
     doc.node_mut(fixed).style.height = Length::px(200.0);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
-    let fixed_frag = &frag.children[0].children[0];
+    let fixed_frag = &frag.children[1];
     assert_eq!(fixed_frag.offset.left.to_i32(), 20);
     assert_eq!(fixed_frag.offset.top.to_i32(), 10);
     assert_eq!(fixed_frag.size.width.to_i32(), 300);
@@ -1923,7 +1966,7 @@ fn fixed_dom_right_bottom_corner() {
     doc.node_mut(fixed).style.height = Length::px(50.0);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
-    let fixed_frag = &frag.children[0].children[0];
+    let fixed_frag = &frag.children[1];
     assert_eq!(fixed_frag.offset.left.to_i32(), 700);
     assert_eq!(fixed_frag.offset.top.to_i32(), 550);
 }
@@ -1939,7 +1982,7 @@ fn fixed_dom_auto_width_fills() {
     doc.node_mut(fixed).style.height = Length::px(100.0);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
-    let fixed_frag = &frag.children[0].children[0];
+    let fixed_frag = &frag.children[1];
     assert_eq!(fixed_frag.offset.left.to_i32(), 50);
     assert_eq!(fixed_frag.size.width.to_i32(), 700);
 }
@@ -1961,7 +2004,7 @@ fn fixed_dom_centering() {
     doc.node_mut(fixed).style.margin_bottom = Length::auto();
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
-    let fixed_frag = &frag.children[0].children[0];
+    let fixed_frag = &frag.children[1];
     assert_eq!(fixed_frag.offset.left.to_i32(), 300);
     assert_eq!(fixed_frag.offset.top.to_i32(), 200);
 }
@@ -1973,7 +2016,9 @@ fn fixed_top_0_left_0() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -1983,7 +2028,9 @@ fn fixed_top_10_left_10() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -1993,7 +2040,9 @@ fn fixed_top_20_left_30() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(20.0); s.left = Length::px(30.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 30, 20);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 30);
+    assert_eq!(fc.offset.top.to_i32(), 20);
 }
 
 #[test]
@@ -2003,7 +2052,9 @@ fn fixed_top_50_left_50() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(50.0); s.left = Length::px(50.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 50, 50);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 50);
+    assert_eq!(fc.offset.top.to_i32(), 50);
 }
 
 #[test]
@@ -2013,7 +2064,9 @@ fn fixed_top_100_left_100() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(100.0); s.left = Length::px(100.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 100, 100);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 100);
+    assert_eq!(fc.offset.top.to_i32(), 100);
 }
 
 #[test]
@@ -2023,7 +2076,9 @@ fn fixed_top_0_left_50() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(50.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 50, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 50);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -2033,7 +2088,9 @@ fn fixed_top_50_left_0() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(50.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 50);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 50);
 }
 
 #[test]
@@ -2043,7 +2100,9 @@ fn fixed_top_200_left_300() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(200.0); s.left = Length::px(300.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 300, 200);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 300);
+    assert_eq!(fc.offset.top.to_i32(), 200);
 }
 
 #[test]
@@ -2053,7 +2112,9 @@ fn fixed_top_0_left_700() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(700.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 700, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 700);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -2063,7 +2124,9 @@ fn fixed_top_550_left_0() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(550.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 550);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 550);
 }
 
 #[test]
@@ -2073,7 +2136,9 @@ fn fixed_top_1_left_1() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(1.0); s.left = Length::px(1.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 1, 1);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 1);
+    assert_eq!(fc.offset.top.to_i32(), 1);
 }
 
 #[test]
@@ -2083,7 +2148,9 @@ fn fixed_top_5_left_15() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(5.0); s.left = Length::px(15.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 15, 5);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 15);
+    assert_eq!(fc.offset.top.to_i32(), 5);
 }
 
 #[test]
@@ -2093,7 +2160,9 @@ fn fixed_top_15_left_5() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(15.0); s.left = Length::px(5.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 5, 15);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 5);
+    assert_eq!(fc.offset.top.to_i32(), 15);
 }
 
 #[test]
@@ -2103,7 +2172,9 @@ fn fixed_top_300_left_300() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(300.0); s.left = Length::px(300.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 300, 300);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 300);
+    assert_eq!(fc.offset.top.to_i32(), 300);
 }
 
 #[test]
@@ -2113,7 +2184,9 @@ fn fixed_top_100_left_500() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(100.0); s.left = Length::px(500.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 500, 100);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 500);
+    assert_eq!(fc.offset.top.to_i32(), 100);
 }
 
 #[test]
@@ -2123,7 +2196,9 @@ fn fixed_top_250_left_250() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(250.0); s.left = Length::px(250.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 250, 250);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 250);
+    assert_eq!(fc.offset.top.to_i32(), 250);
 }
 
 #[test]
@@ -2133,7 +2208,9 @@ fn fixed_top_400_left_200() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(400.0); s.left = Length::px(200.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 200, 400);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 200);
+    assert_eq!(fc.offset.top.to_i32(), 400);
 }
 
 #[test]
@@ -2143,7 +2220,9 @@ fn fixed_top_10_left_400() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(400.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 400, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 400);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -2153,7 +2232,9 @@ fn fixed_top_500_left_100() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(500.0); s.left = Length::px(100.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 100, 500);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 100);
+    assert_eq!(fc.offset.top.to_i32(), 500);
 }
 
 #[test]
@@ -2163,7 +2244,9 @@ fn fixed_top_99_left_99() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(99.0); s.left = Length::px(99.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 99, 99);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 99);
+    assert_eq!(fc.offset.top.to_i32(), 99);
 }
 
 #[test]
@@ -2178,7 +2261,9 @@ fn fixed_with_container_padding() {
         .done();
     let r = b.build();
     // Fixed child offset is relative to padding box: (0, 0).
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -2189,7 +2274,9 @@ fn fixed_with_border_box() {
         .done();
     let r = b.build();
     // border-box may not apply to fixed/abs; size = content-box (220×120).
-    r.assert_child_size(0, 220, 120);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.size.width.to_i32(), 220);
+    assert_eq!(fc.size.height.to_i32(), 120);
 }
 
 #[test]
@@ -2199,7 +2286,9 @@ fn fixed_with_explicit_margins() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 40, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 40);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -2212,8 +2301,12 @@ fn fixed_multiple_fixed_children() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(100.0); s.left = Length::px(100.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
-    r.assert_child_position(1, 100, 100);
+    let fc0 = &r.root_fragment.children[1];
+    assert_eq!(fc0.offset.left.to_i32(), 0);
+    assert_eq!(fc0.offset.top.to_i32(), 0);
+    let fc1 = &r.root_fragment.children[2];
+    assert_eq!(fc1.offset.left.to_i32(), 100);
+    assert_eq!(fc1.offset.top.to_i32(), 100);
 }
 
 #[test]
@@ -2223,8 +2316,11 @@ fn fixed_full_viewport() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::px(0.0); s.bottom = Length::px(0.0); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
-    r.assert_child_size(0, 800, 600);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
+    assert_eq!(fc.size.width.to_i32(), 800);
+    assert_eq!(fc.size.height.to_i32(), 600);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3143,7 +3239,7 @@ fn interaction_z_index_set_on_relative() {
 
 #[test]
 fn interaction_z_index_set_on_absolute() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.z_index = Some(5); })
         .inset(10, 0, 0, 10).done();
@@ -3161,7 +3257,9 @@ fn interaction_z_index_set_on_fixed() {
             s.right = Length::auto(); s.bottom = Length::auto();
         }).done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -3176,7 +3274,7 @@ fn interaction_z_index_auto() {
 
 #[test]
 fn interaction_multiple_z_index_no_layout_effect() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.z_index = Some(1); }).inset(0, 0, 0, 0).done();
     b.add_child().width(200.0).height(100.0).position_absolute()
@@ -3192,7 +3290,7 @@ fn interaction_multiple_z_index_no_layout_effect() {
 
 #[test]
 fn interaction_abs_does_not_affect_siblings_flow() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(100.0).done();
     b.add_child().width(200.0).height(50.0).position_absolute().inset(300, 0, 0, 300).done();
     b.add_child().width(800.0).height(100.0).done();
@@ -3215,7 +3313,9 @@ fn interaction_fixed_does_not_affect_siblings_flow() {
     // Flow children at indices 0,1 (y=0, y=100). Fixed child at index 2.
     r.assert_child_position(0, 0, 0);
     r.assert_child_position(1, 0, 100);
-    r.assert_child_position(2, 300, 300);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 300);
+    assert_eq!(fc.offset.top.to_i32(), 300);
 }
 
 #[test]
@@ -3233,7 +3333,7 @@ fn interaction_relative_preserves_flow_for_siblings() {
 
 #[test]
 fn interaction_abs_inside_abs_parent() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(400.0).height(300.0).position_absolute().inset(50, 0, 0, 50)
         .add_child().width(100.0).height(50.0)
             .with_style(|s| {
@@ -3249,7 +3349,7 @@ fn interaction_abs_inside_abs_parent() {
 
 #[test]
 fn interaction_abs_inside_relative_parent() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(400.0).height(300.0).position_relative().inset(20, 0, 0, 20)
         .add_child().width(100.0).height(50.0)
             .with_style(|s| {
@@ -3266,7 +3366,7 @@ fn interaction_abs_inside_relative_parent() {
 
 #[test]
 fn interaction_mixed_flow_relative_absolute() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(200.0).height(50.0).position_relative().inset(10, 0, 0, 10).done();
     b.add_child().width(100.0).height(50.0).position_absolute().inset(200, 0, 0, 200).done();
@@ -3282,7 +3382,7 @@ fn interaction_mixed_flow_relative_absolute() {
 
 #[test]
 fn interaction_all_position_types() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     // Static.
     b.add_child().width(800.0).height(50.0).done();
     // Relative.
@@ -3307,7 +3407,7 @@ fn interaction_all_position_types() {
 
 #[test]
 fn interaction_float_and_abs_independent() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).float_left().done();
     b.add_child().width(100.0).height(50.0).position_absolute().inset(50, 0, 0, 50).done();
     let r = b.build();
@@ -3326,7 +3426,7 @@ fn interaction_float_and_relative() {
 
 #[test]
 fn interaction_container_height_ignores_abs_children() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(1000.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     // Container height stays at 600 despite abs child being 1000.
@@ -3345,7 +3445,7 @@ fn interaction_container_height_ignores_fixed_children() {
 
 #[test]
 fn interaction_count_abs_children() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     for _ in 0..5 {
         b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     }
@@ -3355,7 +3455,7 @@ fn interaction_count_abs_children() {
 
 #[test]
 fn interaction_count_mixed_children() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     b.add_child().width(800.0).height(50.0).done();
@@ -3368,6 +3468,7 @@ fn interaction_count_mixed_children() {
 fn interaction_dom_abs_with_flow_sibling() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     // Flow child.
     let c1 = doc.create_node(ElementTag::Div);
     doc.node_mut(c1).style.display = Display::Block;
@@ -3401,6 +3502,7 @@ fn interaction_dom_abs_with_flow_sibling() {
 fn interaction_dom_relative_then_abs() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     // Relative child.
     let rel = doc.create_node(ElementTag::Div);
     doc.node_mut(rel).style.display = Display::Block;
@@ -3431,7 +3533,7 @@ fn interaction_dom_relative_then_abs() {
 
 #[test]
 fn interaction_abs_own_padding() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(10, 10, 10, 10)
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -3442,7 +3544,7 @@ fn interaction_abs_own_padding() {
 
 #[test]
 fn interaction_abs_own_border() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).border(5, 5, 5, 5)
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -3452,7 +3554,7 @@ fn interaction_abs_own_border() {
 
 #[test]
 fn interaction_negative_z_index() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.z_index = Some(-1); })
         .inset(10, 0, 0, 10).done();
@@ -3473,7 +3575,7 @@ fn interaction_relative_z_index_stacking_context() {
 
 #[test]
 fn interaction_abs_in_overflow_hidden() {
-    let mut b = BlockTestBuilder::new(400, 300)
+    let mut b = abs_builder(400, 300)
         .with_container_style(|s| { s.overflow_x = Overflow::Hidden; s.overflow_y = Overflow::Hidden; });
     b.add_child().width(200.0).height(100.0).position_absolute().inset(250, 0, 0, 350).done();
     let r = b.build();
@@ -3483,7 +3585,7 @@ fn interaction_abs_in_overflow_hidden() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(10, 0, 0, 10).done();
     let r = b.build();
@@ -3493,7 +3595,7 @@ fn interaction_mixed_flow_abs_combo_0() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_1() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(30, 0, 0, 25).done();
@@ -3507,7 +3609,7 @@ fn interaction_mixed_flow_abs_combo_1() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_2() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(800.0).height(60.0).done();
@@ -3521,7 +3623,7 @@ fn interaction_mixed_flow_abs_combo_2() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_3() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(70, 0, 0, 55).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(100, 0, 0, 80).done();
@@ -3533,7 +3635,7 @@ fn interaction_mixed_flow_abs_combo_3() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_4() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(90, 0, 0, 70).done();
@@ -3545,7 +3647,7 @@ fn interaction_mixed_flow_abs_combo_4() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_5() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(800.0).height(60.0).done();
@@ -3561,7 +3663,7 @@ fn interaction_mixed_flow_abs_combo_5() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_6() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(130, 0, 0, 100).done();
     let r = b.build();
@@ -3571,7 +3673,7 @@ fn interaction_mixed_flow_abs_combo_6() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_7() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(150, 0, 0, 115).done();
@@ -3585,7 +3687,7 @@ fn interaction_mixed_flow_abs_combo_7() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_8() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(800.0).height(60.0).done();
@@ -3599,7 +3701,7 @@ fn interaction_mixed_flow_abs_combo_8() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_9() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(190, 0, 0, 145).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(220, 0, 0, 170).done();
@@ -3611,7 +3713,7 @@ fn interaction_mixed_flow_abs_combo_9() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_10() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(210, 0, 0, 160).done();
@@ -3623,7 +3725,7 @@ fn interaction_mixed_flow_abs_combo_10() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_11() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(800.0).height(60.0).done();
@@ -3639,7 +3741,7 @@ fn interaction_mixed_flow_abs_combo_11() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_12() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(250, 0, 0, 190).done();
     let r = b.build();
@@ -3649,7 +3751,7 @@ fn interaction_mixed_flow_abs_combo_12() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_13() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(270, 0, 0, 205).done();
@@ -3663,7 +3765,7 @@ fn interaction_mixed_flow_abs_combo_13() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_14() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(800.0).height(60.0).done();
@@ -3677,7 +3779,7 @@ fn interaction_mixed_flow_abs_combo_14() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_15() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(310, 0, 0, 235).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(340, 0, 0, 260).done();
@@ -3689,7 +3791,7 @@ fn interaction_mixed_flow_abs_combo_15() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_16() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(330, 0, 0, 250).done();
@@ -3701,7 +3803,7 @@ fn interaction_mixed_flow_abs_combo_16() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_17() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(800.0).height(60.0).done();
@@ -3717,7 +3819,7 @@ fn interaction_mixed_flow_abs_combo_17() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_18() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(370, 0, 0, 280).done();
     let r = b.build();
@@ -3727,7 +3829,7 @@ fn interaction_mixed_flow_abs_combo_18() {
 
 #[test]
 fn interaction_mixed_flow_abs_combo_19() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(40.0).done();
     b.add_child().width(800.0).height(50.0).done();
     b.add_child().width(50.0).height(30.0).position_absolute().inset(390, 0, 0, 295).done();
@@ -3741,7 +3843,7 @@ fn interaction_mixed_flow_abs_combo_19() {
 
 #[test]
 fn interaction_abs_container_width() {
-    let mut b = BlockTestBuilder::new(500, 400);
+    let mut b = abs_builder(500, 400);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_container_width(500);
@@ -3751,7 +3853,7 @@ fn interaction_abs_container_width() {
 #[test]
 fn interaction_abs_overrides_relative_like_behavior() {
     // If position is absolute, relative offsets don't apply—abs positioning takes over.
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(50, 0, 0, 50).done();
     let r = b.build();
     r.assert_child_position(0, 50, 50);
@@ -3759,7 +3861,7 @@ fn interaction_abs_overrides_relative_like_behavior() {
 
 #[test]
 fn interaction_multiple_abs_same_position() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     for _ in 0..3 {
         b.add_child().width(100.0).height(50.0).position_absolute().inset(10, 0, 0, 10).done();
     }
@@ -3775,7 +3877,7 @@ fn interaction_multiple_abs_same_position() {
 
 #[test]
 fn edge_zero_size_container_absolute() {
-    let mut b = BlockTestBuilder::new(0, 0);
+    let mut b = abs_builder(0, 0);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -3797,12 +3899,14 @@ fn edge_zero_size_container_fixed() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(5.0); s.left = Length::px(5.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 5, 5);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 5);
+    assert_eq!(fc.offset.top.to_i32(), 5);
 }
 
 #[test]
 fn edge_zero_size_child_absolute() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(0.0).height(0.0).position_absolute().inset(100, 0, 0, 100).done();
     let r = b.build();
     r.assert_child_position(0, 100, 100);
@@ -3820,7 +3924,7 @@ fn edge_zero_size_child_relative() {
 
 #[test]
 fn edge_large_offset_absolute() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.top = Length::px(10000.0); s.left = Length::px(10000.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -3840,7 +3944,7 @@ fn edge_large_offset_relative() {
 
 #[test]
 fn edge_large_negative_offset() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.top = Length::px(-5000.0); s.left = Length::px(-5000.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -3850,7 +3954,7 @@ fn edge_large_negative_offset() {
 
 #[test]
 fn edge_large_container() {
-    let mut b = BlockTestBuilder::new(10000, 10000);
+    let mut b = abs_builder(10000, 10000);
     b.add_child().width(200.0).height(100.0).position_absolute().inset(5000, 0, 0, 5000).done();
     let r = b.build();
     r.assert_child_position(0, 5000, 5000);
@@ -3858,7 +3962,7 @@ fn edge_large_container() {
 
 #[test]
 fn edge_1x1_container_absolute() {
-    let mut b = BlockTestBuilder::new(1, 1);
+    let mut b = abs_builder(1, 1);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -3866,7 +3970,7 @@ fn edge_1x1_container_absolute() {
 
 #[test]
 fn edge_abs_child_larger_than_container() {
-    let mut b = BlockTestBuilder::new(100, 100);
+    let mut b = abs_builder(100, 100);
     b.add_child().width(500.0).height(500.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
@@ -3876,7 +3980,7 @@ fn edge_abs_child_larger_than_container() {
 #[test]
 fn edge_abs_left_right_exceed_container() {
     // left=500 + right=500 > 100 container. Auto width = max(0, 100-500-500) = 0? or negative.
-    let mut b = BlockTestBuilder::new(100, 100);
+    let mut b = abs_builder(100, 100);
     b.add_child().height(50.0).position_absolute()
         .with_style(|s| { s.left = Length::px(500.0); s.right = Length::px(500.0); s.top = Length::px(0.0); s.bottom = Length::auto(); })
         .done();
@@ -3908,7 +4012,7 @@ fn edge_relative_auto_height() {
 
 #[test]
 fn edge_abs_all_auto() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute().done();
     let r = b.build();
     // All insets auto → static position fallback → (0,0).
@@ -3917,7 +4021,7 @@ fn edge_abs_all_auto() {
 
 #[test]
 fn edge_abs_only_top() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.top = Length::px(50.0); })
         .done();
@@ -3927,7 +4031,7 @@ fn edge_abs_only_top() {
 
 #[test]
 fn edge_abs_only_left() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.left = Length::px(50.0); })
         .done();
@@ -3938,7 +4042,7 @@ fn edge_abs_only_left() {
 
 #[test]
 fn edge_abs_only_right() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.right = Length::px(50.0); })
         .done();
@@ -3950,7 +4054,7 @@ fn edge_abs_only_right() {
 
 #[test]
 fn edge_abs_only_bottom() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .with_style(|s| { s.bottom = Length::px(50.0); })
         .done();
@@ -4056,7 +4160,7 @@ fn edge_sticky_cb_smaller_than_element() {
 
 #[test]
 fn edge_abs_100_percent_width() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().position_absolute()
         .with_style(|s| {
             s.top = Length::px(0.0); s.left = Length::px(0.0);
@@ -4069,7 +4173,7 @@ fn edge_abs_100_percent_width() {
 
 #[test]
 fn edge_abs_0_percent_width() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().position_absolute()
         .with_style(|s| {
             s.top = Length::px(0.0); s.left = Length::px(0.0);
@@ -4103,7 +4207,7 @@ fn edge_rel_100_percent_top() {
 
 #[test]
 fn edge_abs_border_box_fills() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().padding(20, 20, 20, 20).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -4113,7 +4217,7 @@ fn edge_abs_border_box_fills() {
 
 #[test]
 fn edge_abs_container_border_and_padding() {
-    let mut b = BlockTestBuilder::new(800, 600)
+    let mut b = abs_builder(800, 600)
         .with_container_style(|s| {
             s.border_top_width = 10; s.border_top_style = BorderStyle::Solid;
             s.border_left_width = 10; s.border_left_style = BorderStyle::Solid;
@@ -4130,7 +4234,7 @@ fn edge_abs_container_border_and_padding() {
 
 #[test]
 fn edge_abs_top_0_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4140,7 +4244,7 @@ fn edge_abs_top_0_left_0() {
 
 #[test]
 fn edge_abs_top_5_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(5.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4150,7 +4254,7 @@ fn edge_abs_top_5_left_0() {
 
 #[test]
 fn edge_abs_top_10_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(10.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4160,7 +4264,7 @@ fn edge_abs_top_10_left_0() {
 
 #[test]
 fn edge_abs_top_15_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(15.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4170,7 +4274,7 @@ fn edge_abs_top_15_left_0() {
 
 #[test]
 fn edge_abs_top_20_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(20.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4180,7 +4284,7 @@ fn edge_abs_top_20_left_0() {
 
 #[test]
 fn edge_abs_top_25_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(25.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4190,7 +4294,7 @@ fn edge_abs_top_25_left_0() {
 
 #[test]
 fn edge_abs_top_30_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(30.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4200,7 +4304,7 @@ fn edge_abs_top_30_left_0() {
 
 #[test]
 fn edge_abs_top_35_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(35.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4210,7 +4314,7 @@ fn edge_abs_top_35_left_0() {
 
 #[test]
 fn edge_abs_top_40_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(40.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4220,7 +4324,7 @@ fn edge_abs_top_40_left_0() {
 
 #[test]
 fn edge_abs_top_45_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(45.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4230,7 +4334,7 @@ fn edge_abs_top_45_left_0() {
 
 #[test]
 fn edge_abs_top_50_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(50.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4240,7 +4344,7 @@ fn edge_abs_top_50_left_0() {
 
 #[test]
 fn edge_abs_top_55_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(55.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4250,7 +4354,7 @@ fn edge_abs_top_55_left_0() {
 
 #[test]
 fn edge_abs_top_60_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(60.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4260,7 +4364,7 @@ fn edge_abs_top_60_left_0() {
 
 #[test]
 fn edge_abs_top_65_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(65.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4270,7 +4374,7 @@ fn edge_abs_top_65_left_0() {
 
 #[test]
 fn edge_abs_top_70_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(70.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4280,7 +4384,7 @@ fn edge_abs_top_70_left_0() {
 
 #[test]
 fn edge_abs_top_75_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(75.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4290,7 +4394,7 @@ fn edge_abs_top_75_left_0() {
 
 #[test]
 fn edge_abs_top_80_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(80.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4300,7 +4404,7 @@ fn edge_abs_top_80_left_0() {
 
 #[test]
 fn edge_abs_top_85_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(85.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4310,7 +4414,7 @@ fn edge_abs_top_85_left_0() {
 
 #[test]
 fn edge_abs_top_90_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(90.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4320,7 +4424,7 @@ fn edge_abs_top_90_left_0() {
 
 #[test]
 fn edge_abs_top_95_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(95.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4330,7 +4434,7 @@ fn edge_abs_top_95_left_0() {
 
 #[test]
 fn edge_abs_top_100_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(100.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4340,7 +4444,7 @@ fn edge_abs_top_100_left_0() {
 
 #[test]
 fn edge_abs_top_105_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(105.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4350,7 +4454,7 @@ fn edge_abs_top_105_left_0() {
 
 #[test]
 fn edge_abs_top_110_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(110.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4360,7 +4464,7 @@ fn edge_abs_top_110_left_0() {
 
 #[test]
 fn edge_abs_top_115_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(115.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4370,7 +4474,7 @@ fn edge_abs_top_115_left_0() {
 
 #[test]
 fn edge_abs_top_120_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(120.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4380,7 +4484,7 @@ fn edge_abs_top_120_left_0() {
 
 #[test]
 fn edge_abs_top_125_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(125.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4390,7 +4494,7 @@ fn edge_abs_top_125_left_0() {
 
 #[test]
 fn edge_abs_top_130_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(130.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4400,7 +4504,7 @@ fn edge_abs_top_130_left_0() {
 
 #[test]
 fn edge_abs_top_135_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(135.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4410,7 +4514,7 @@ fn edge_abs_top_135_left_0() {
 
 #[test]
 fn edge_abs_top_140_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(140.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4420,7 +4524,7 @@ fn edge_abs_top_140_left_0() {
 
 #[test]
 fn edge_abs_top_145_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(145.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4430,7 +4534,7 @@ fn edge_abs_top_145_left_0() {
 
 #[test]
 fn edge_abs_top_150_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(150.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4440,7 +4544,7 @@ fn edge_abs_top_150_left_0() {
 
 #[test]
 fn edge_abs_top_155_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(155.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4450,7 +4554,7 @@ fn edge_abs_top_155_left_0() {
 
 #[test]
 fn edge_abs_top_160_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(160.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4460,7 +4564,7 @@ fn edge_abs_top_160_left_0() {
 
 #[test]
 fn edge_abs_top_165_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(165.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4470,7 +4574,7 @@ fn edge_abs_top_165_left_0() {
 
 #[test]
 fn edge_abs_top_170_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(170.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4480,7 +4584,7 @@ fn edge_abs_top_170_left_0() {
 
 #[test]
 fn edge_abs_top_175_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(175.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4490,7 +4594,7 @@ fn edge_abs_top_175_left_0() {
 
 #[test]
 fn edge_abs_top_180_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(180.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4500,7 +4604,7 @@ fn edge_abs_top_180_left_0() {
 
 #[test]
 fn edge_abs_top_185_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(185.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4510,7 +4614,7 @@ fn edge_abs_top_185_left_0() {
 
 #[test]
 fn edge_abs_top_190_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(190.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4520,7 +4624,7 @@ fn edge_abs_top_190_left_0() {
 
 #[test]
 fn edge_abs_top_195_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(195.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4530,7 +4634,7 @@ fn edge_abs_top_195_left_0() {
 
 #[test]
 fn edge_abs_top_200_left_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(30.0).position_absolute()
         .with_style(|s| { s.top = Length::px(200.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -4750,7 +4854,7 @@ fn edge_rel_top_100_only() {
 
 #[test]
 fn edge_abs_right_0_bottom_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(0.0); s.bottom = Length::px(0.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4760,7 +4864,7 @@ fn edge_abs_right_0_bottom_0() {
 
 #[test]
 fn edge_abs_right_10_bottom_10() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4770,7 +4874,7 @@ fn edge_abs_right_10_bottom_10() {
 
 #[test]
 fn edge_abs_right_20_bottom_20() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(20.0); s.bottom = Length::px(20.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4780,7 +4884,7 @@ fn edge_abs_right_20_bottom_20() {
 
 #[test]
 fn edge_abs_right_30_bottom_30() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(30.0); s.bottom = Length::px(30.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4790,7 +4894,7 @@ fn edge_abs_right_30_bottom_30() {
 
 #[test]
 fn edge_abs_right_40_bottom_40() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(40.0); s.bottom = Length::px(40.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4800,7 +4904,7 @@ fn edge_abs_right_40_bottom_40() {
 
 #[test]
 fn edge_abs_right_50_bottom_50() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(50.0); s.bottom = Length::px(50.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4810,7 +4914,7 @@ fn edge_abs_right_50_bottom_50() {
 
 #[test]
 fn edge_abs_right_60_bottom_60() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(60.0); s.bottom = Length::px(60.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4820,7 +4924,7 @@ fn edge_abs_right_60_bottom_60() {
 
 #[test]
 fn edge_abs_right_70_bottom_70() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(70.0); s.bottom = Length::px(70.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4830,7 +4934,7 @@ fn edge_abs_right_70_bottom_70() {
 
 #[test]
 fn edge_abs_right_80_bottom_80() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(80.0); s.bottom = Length::px(80.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4840,7 +4944,7 @@ fn edge_abs_right_80_bottom_80() {
 
 #[test]
 fn edge_abs_right_90_bottom_90() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(90.0); s.bottom = Length::px(90.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4850,7 +4954,7 @@ fn edge_abs_right_90_bottom_90() {
 
 #[test]
 fn edge_abs_right_100_bottom_100() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(100.0); s.bottom = Length::px(100.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4860,7 +4964,7 @@ fn edge_abs_right_100_bottom_100() {
 
 #[test]
 fn edge_abs_right_110_bottom_110() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(110.0); s.bottom = Length::px(110.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4870,7 +4974,7 @@ fn edge_abs_right_110_bottom_110() {
 
 #[test]
 fn edge_abs_right_120_bottom_120() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(120.0); s.bottom = Length::px(120.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4880,7 +4984,7 @@ fn edge_abs_right_120_bottom_120() {
 
 #[test]
 fn edge_abs_right_130_bottom_130() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(130.0); s.bottom = Length::px(130.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4890,7 +4994,7 @@ fn edge_abs_right_130_bottom_130() {
 
 #[test]
 fn edge_abs_right_140_bottom_140() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(140.0); s.bottom = Length::px(140.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4900,7 +5004,7 @@ fn edge_abs_right_140_bottom_140() {
 
 #[test]
 fn edge_abs_right_150_bottom_150() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(150.0); s.bottom = Length::px(150.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4910,7 +5014,7 @@ fn edge_abs_right_150_bottom_150() {
 
 #[test]
 fn edge_abs_right_160_bottom_160() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(160.0); s.bottom = Length::px(160.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4920,7 +5024,7 @@ fn edge_abs_right_160_bottom_160() {
 
 #[test]
 fn edge_abs_right_170_bottom_170() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(170.0); s.bottom = Length::px(170.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4930,7 +5034,7 @@ fn edge_abs_right_170_bottom_170() {
 
 #[test]
 fn edge_abs_right_180_bottom_180() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(180.0); s.bottom = Length::px(180.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4940,7 +5044,7 @@ fn edge_abs_right_180_bottom_180() {
 
 #[test]
 fn edge_abs_right_190_bottom_190() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(190.0); s.bottom = Length::px(190.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4950,7 +5054,7 @@ fn edge_abs_right_190_bottom_190() {
 
 #[test]
 fn edge_abs_right_200_bottom_200() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .with_style(|s| { s.right = Length::px(200.0); s.bottom = Length::px(200.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
@@ -4965,7 +5069,9 @@ fn edge_fixed_pos_0_0_container_800x600() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -4975,7 +5081,9 @@ fn edge_fixed_pos_10_10_container_800x600() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -4985,7 +5093,9 @@ fn edge_fixed_pos_0_0_container_1920x1080() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -4995,7 +5105,9 @@ fn edge_fixed_pos_100_100_container_400x300() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(100.0); s.left = Length::px(100.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 100, 100);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 100);
+    assert_eq!(fc.offset.top.to_i32(), 100);
 }
 
 #[test]
@@ -5005,7 +5117,9 @@ fn edge_fixed_pos_50_750_container_800x600() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(50.0); s.left = Length::px(750.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 750, 50);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 750);
+    assert_eq!(fc.offset.top.to_i32(), 50);
 }
 
 #[test]
@@ -5015,7 +5129,9 @@ fn edge_fixed_pos_550_0_container_800x600() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(550.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 550);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 550);
 }
 
 #[test]
@@ -5025,7 +5141,9 @@ fn edge_fixed_pos_0_0_container_320x480() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -5035,7 +5153,9 @@ fn edge_fixed_pos_0_0_container_1024x768() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -5045,7 +5165,9 @@ fn edge_fixed_pos_200_300_container_1000x800() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(200.0); s.left = Length::px(300.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 300, 200);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 300);
+    assert_eq!(fc.offset.top.to_i32(), 200);
 }
 
 #[test]
@@ -5055,7 +5177,9 @@ fn edge_fixed_pos_0_500_container_500x500() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(500.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 500, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 500);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -5110,7 +5234,7 @@ fn edge_sticky_viewport_320x480() {
 
 #[test]
 fn edge_abs_center_100x100_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5121,7 +5245,7 @@ fn edge_abs_center_100x100_in_800x600() {
 
 #[test]
 fn edge_abs_center_200x200_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(200.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5132,7 +5256,7 @@ fn edge_abs_center_200x200_in_800x600() {
 
 #[test]
 fn edge_abs_center_400x300_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(400.0).height(300.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5143,7 +5267,7 @@ fn edge_abs_center_400x300_in_800x600() {
 
 #[test]
 fn edge_abs_center_600x400_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(600.0).height(400.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5154,7 +5278,7 @@ fn edge_abs_center_600x400_in_800x600() {
 
 #[test]
 fn edge_abs_center_50x50_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5165,7 +5289,7 @@ fn edge_abs_center_50x50_in_800x600() {
 
 #[test]
 fn edge_abs_center_10x10_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(10.0).height(10.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5176,7 +5300,7 @@ fn edge_abs_center_10x10_in_800x600() {
 
 #[test]
 fn edge_abs_center_790x590_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(790.0).height(590.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5187,7 +5311,7 @@ fn edge_abs_center_790x590_in_800x600() {
 
 #[test]
 fn edge_abs_center_1x1_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(2.0).height(2.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5198,7 +5322,7 @@ fn edge_abs_center_1x1_in_800x600() {
 
 #[test]
 fn edge_abs_center_399x299_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(400.0).height(300.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5209,7 +5333,7 @@ fn edge_abs_center_399x299_in_800x600() {
 
 #[test]
 fn edge_abs_center_500x500_in_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(500.0).height(500.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5222,6 +5346,7 @@ fn edge_abs_center_500x500_in_800x600() {
 fn edge_dom_abs_no_insets_no_size() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     let _abs = setup_abs_child(&mut doc, container);
     // All defaults: no insets, no size → static position, zero size.
     let space = root_space(800, 600);
@@ -5235,6 +5360,7 @@ fn edge_dom_abs_no_insets_no_size() {
 fn edge_dom_abs_zero_size_container() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 0, 0);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.top = Length::px(10.0);
     doc.node_mut(abs).style.left = Length::px(10.0);
@@ -5251,6 +5377,7 @@ fn edge_dom_abs_zero_size_container() {
 fn edge_dom_abs_percentage_zero_container() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 0, 0);
+    doc.node_mut(container).style.position = Position::Relative;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.top = Length::percent(50.0);
     doc.node_mut(abs).style.left = Length::percent(50.0);
@@ -5268,6 +5395,7 @@ fn edge_dom_abs_percentage_zero_container() {
 fn edge_dom_many_abs_children() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     for i in 0..10 {
         let abs = setup_abs_child(&mut doc, container);
         doc.node_mut(abs).style.top = Length::px((i * 50) as f32);
@@ -5289,6 +5417,7 @@ fn edge_dom_many_abs_children() {
 fn edge_dom_nested_abs_three_levels() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     // Level 1: relative.
     let lvl1 = doc.create_node(ElementTag::Div);
     doc.node_mut(lvl1).style.display = Display::Block;
@@ -5384,7 +5513,7 @@ fn edge_sticky_apply_all_insets() {
 
 #[test]
 fn edge_abs_overflow_scroll_container() {
-    let mut b = BlockTestBuilder::new(400, 300)
+    let mut b = abs_builder(400, 300)
         .with_container_style(|s| { s.overflow_x = Overflow::Auto; s.overflow_y = Overflow::Auto; });
     b.add_child().width(200.0).height(100.0).position_absolute().inset(10, 0, 0, 10).done();
     let r = b.build();
@@ -5393,7 +5522,7 @@ fn edge_abs_overflow_scroll_container() {
 
 #[test]
 fn edge_five_flow_one_abs_one_rel() {
-    let mut b = BlockTestBuilder::new(800, 1000);
+    let mut b = abs_builder(800, 1000);
     b.add_child().width(800.0).height(100.0).done();
     b.add_child().width(800.0).height(100.0).done();
     b.add_child().width(200.0).height(50.0).position_absolute().inset(500, 0, 0, 500).done();
@@ -5413,7 +5542,7 @@ fn edge_five_flow_one_abs_one_rel() {
 
 #[test]
 fn edge_abs_child_count_zero_flow() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     b.add_child().width(100.0).height(50.0).position_absolute().inset(50, 0, 0, 50).done();
     let r = b.build();
@@ -5431,7 +5560,7 @@ fn edge_rel_float_right() {
 
 #[test]
 fn edge_abs_width_auto_only_top_left() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().height(100.0).position_absolute()
         .with_style(|s| { s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
@@ -5444,7 +5573,7 @@ fn edge_abs_width_auto_only_top_left() {
 
 #[test]
 fn edge_static_between_abs() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute().inset(0, 0, 0, 0).done();
     b.add_child().width(800.0).height(80.0).done();
     b.add_child().width(100.0).height(50.0).position_absolute().inset(100, 0, 0, 100).done();
@@ -5559,7 +5688,7 @@ fn rel_supp_two_children_h30_70_offset_5() {
 
 #[test]
 fn abs_supp_hcenter_cw_100() {
-    let mut b = BlockTestBuilder::new(100, 600);
+    let mut b = abs_builder(100, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5570,7 +5699,7 @@ fn abs_supp_hcenter_cw_100() {
 
 #[test]
 fn abs_supp_hcenter_cw_200() {
-    let mut b = BlockTestBuilder::new(200, 600);
+    let mut b = abs_builder(200, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5581,7 +5710,7 @@ fn abs_supp_hcenter_cw_200() {
 
 #[test]
 fn abs_supp_hcenter_cw_300() {
-    let mut b = BlockTestBuilder::new(300, 600);
+    let mut b = abs_builder(300, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5592,7 +5721,7 @@ fn abs_supp_hcenter_cw_300() {
 
 #[test]
 fn abs_supp_hcenter_cw_400() {
-    let mut b = BlockTestBuilder::new(400, 600);
+    let mut b = abs_builder(400, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5603,7 +5732,7 @@ fn abs_supp_hcenter_cw_400() {
 
 #[test]
 fn abs_supp_hcenter_cw_500() {
-    let mut b = BlockTestBuilder::new(500, 600);
+    let mut b = abs_builder(500, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5614,7 +5743,7 @@ fn abs_supp_hcenter_cw_500() {
 
 #[test]
 fn abs_supp_hcenter_cw_600() {
-    let mut b = BlockTestBuilder::new(600, 600);
+    let mut b = abs_builder(600, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5625,7 +5754,7 @@ fn abs_supp_hcenter_cw_600() {
 
 #[test]
 fn abs_supp_hcenter_cw_700() {
-    let mut b = BlockTestBuilder::new(700, 600);
+    let mut b = abs_builder(700, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5636,7 +5765,7 @@ fn abs_supp_hcenter_cw_700() {
 
 #[test]
 fn abs_supp_hcenter_cw_900() {
-    let mut b = BlockTestBuilder::new(900, 600);
+    let mut b = abs_builder(900, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5647,7 +5776,7 @@ fn abs_supp_hcenter_cw_900() {
 
 #[test]
 fn abs_supp_hcenter_cw_1000() {
-    let mut b = BlockTestBuilder::new(1000, 600);
+    let mut b = abs_builder(1000, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5658,7 +5787,7 @@ fn abs_supp_hcenter_cw_1000() {
 
 #[test]
 fn abs_supp_hcenter_cw_1200() {
-    let mut b = BlockTestBuilder::new(1200, 600);
+    let mut b = abs_builder(1200, 600);
     b.add_child().width(80.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_left = Length::auto(); s.margin_right = Length::auto(); })
@@ -5669,7 +5798,7 @@ fn abs_supp_hcenter_cw_1200() {
 
 #[test]
 fn abs_supp_vcenter_ch_100() {
-    let mut b = BlockTestBuilder::new(800, 100);
+    let mut b = abs_builder(800, 100);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5680,7 +5809,7 @@ fn abs_supp_vcenter_ch_100() {
 
 #[test]
 fn abs_supp_vcenter_ch_200() {
-    let mut b = BlockTestBuilder::new(800, 200);
+    let mut b = abs_builder(800, 200);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5691,7 +5820,7 @@ fn abs_supp_vcenter_ch_200() {
 
 #[test]
 fn abs_supp_vcenter_ch_300() {
-    let mut b = BlockTestBuilder::new(800, 300);
+    let mut b = abs_builder(800, 300);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5702,7 +5831,7 @@ fn abs_supp_vcenter_ch_300() {
 
 #[test]
 fn abs_supp_vcenter_ch_400() {
-    let mut b = BlockTestBuilder::new(800, 400);
+    let mut b = abs_builder(800, 400);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5713,7 +5842,7 @@ fn abs_supp_vcenter_ch_400() {
 
 #[test]
 fn abs_supp_vcenter_ch_500() {
-    let mut b = BlockTestBuilder::new(800, 500);
+    let mut b = abs_builder(800, 500);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5724,7 +5853,7 @@ fn abs_supp_vcenter_ch_500() {
 
 #[test]
 fn abs_supp_vcenter_ch_700() {
-    let mut b = BlockTestBuilder::new(800, 700);
+    let mut b = abs_builder(800, 700);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5735,7 +5864,7 @@ fn abs_supp_vcenter_ch_700() {
 
 #[test]
 fn abs_supp_vcenter_ch_800() {
-    let mut b = BlockTestBuilder::new(800, 800);
+    let mut b = abs_builder(800, 800);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5746,7 +5875,7 @@ fn abs_supp_vcenter_ch_800() {
 
 #[test]
 fn abs_supp_vcenter_ch_900() {
-    let mut b = BlockTestBuilder::new(800, 900);
+    let mut b = abs_builder(800, 900);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5757,7 +5886,7 @@ fn abs_supp_vcenter_ch_900() {
 
 #[test]
 fn abs_supp_vcenter_ch_1000() {
-    let mut b = BlockTestBuilder::new(800, 1000);
+    let mut b = abs_builder(800, 1000);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5768,7 +5897,7 @@ fn abs_supp_vcenter_ch_1000() {
 
 #[test]
 fn abs_supp_vcenter_ch_1200() {
-    let mut b = BlockTestBuilder::new(800, 1200);
+    let mut b = abs_builder(800, 1200);
     b.add_child().width(50.0).height(60.0).position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| { s.margin_top = Length::auto(); s.margin_bottom = Length::auto(); })
@@ -5784,7 +5913,9 @@ fn fixed_supp_viewport_320x480_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5794,7 +5925,9 @@ fn fixed_supp_viewport_640x480_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5804,7 +5937,9 @@ fn fixed_supp_viewport_1024x768_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5814,7 +5949,9 @@ fn fixed_supp_viewport_1280x720_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5824,7 +5961,9 @@ fn fixed_supp_viewport_1920x1080_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5834,7 +5973,9 @@ fn fixed_supp_viewport_2560x1440_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5844,7 +5985,9 @@ fn fixed_supp_viewport_375x667_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5854,7 +5997,9 @@ fn fixed_supp_viewport_414x896_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5864,7 +6009,9 @@ fn fixed_supp_viewport_768x1024_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5874,7 +6021,9 @@ fn fixed_supp_viewport_1366x768_top_left() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(10.0); s.left = Length::px(10.0); s.right = Length::auto(); s.bottom = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 10, 10);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 10);
+    assert_eq!(fc.offset.top.to_i32(), 10);
 }
 
 #[test]
@@ -5884,7 +6033,9 @@ fn fixed_supp_viewport_320x480_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 210, 420);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 210);
+    assert_eq!(fc.offset.top.to_i32(), 420);
 }
 
 #[test]
@@ -5894,7 +6045,9 @@ fn fixed_supp_viewport_640x480_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 530, 420);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 530);
+    assert_eq!(fc.offset.top.to_i32(), 420);
 }
 
 #[test]
@@ -5904,7 +6057,9 @@ fn fixed_supp_viewport_1024x768_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 914, 708);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 914);
+    assert_eq!(fc.offset.top.to_i32(), 708);
 }
 
 #[test]
@@ -5914,7 +6069,9 @@ fn fixed_supp_viewport_1280x720_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 1170, 660);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 1170);
+    assert_eq!(fc.offset.top.to_i32(), 660);
 }
 
 #[test]
@@ -5924,7 +6081,9 @@ fn fixed_supp_viewport_1920x1080_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 1810, 1020);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 1810);
+    assert_eq!(fc.offset.top.to_i32(), 1020);
 }
 
 #[test]
@@ -5934,7 +6093,9 @@ fn fixed_supp_viewport_2560x1440_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 2450, 1380);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 2450);
+    assert_eq!(fc.offset.top.to_i32(), 1380);
 }
 
 #[test]
@@ -5944,7 +6105,9 @@ fn fixed_supp_viewport_375x667_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 265, 607);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 265);
+    assert_eq!(fc.offset.top.to_i32(), 607);
 }
 
 #[test]
@@ -5954,7 +6117,9 @@ fn fixed_supp_viewport_414x896_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 304, 836);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 304);
+    assert_eq!(fc.offset.top.to_i32(), 836);
 }
 
 #[test]
@@ -5964,7 +6129,9 @@ fn fixed_supp_viewport_768x1024_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 658, 964);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 658);
+    assert_eq!(fc.offset.top.to_i32(), 964);
 }
 
 #[test]
@@ -5974,7 +6141,9 @@ fn fixed_supp_viewport_1366x768_bottom_right() {
         .with_style(|s| { s.position = Position::Fixed; s.right = Length::px(10.0); s.bottom = Length::px(10.0); s.top = Length::auto(); s.left = Length::auto(); })
         .done();
     let r = b.build();
-    r.assert_child_position(0, 1256, 708);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.offset.left.to_i32(), 1256);
+    assert_eq!(fc.offset.top.to_i32(), 708);
 }
 
 #[test]
@@ -6389,7 +6558,7 @@ fn rel_supp_left_offset_50() {
 
 #[test]
 fn abs_supp_with_margin_0_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(0, 0, 0, 0)
@@ -6402,7 +6571,7 @@ fn abs_supp_with_margin_0_center() {
 
 #[test]
 fn abs_supp_with_margin_10_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(10, 0, 0, 0)
@@ -6415,7 +6584,7 @@ fn abs_supp_with_margin_10_center() {
 
 #[test]
 fn abs_supp_with_margin_20_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(20, 0, 0, 0)
@@ -6428,7 +6597,7 @@ fn abs_supp_with_margin_20_center() {
 
 #[test]
 fn abs_supp_with_margin_50_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(50, 0, 0, 0)
@@ -6441,7 +6610,7 @@ fn abs_supp_with_margin_50_center() {
 
 #[test]
 fn abs_supp_with_margin_100_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(100, 0, 0, 0)
@@ -6454,7 +6623,7 @@ fn abs_supp_with_margin_100_center() {
 
 #[test]
 fn abs_supp_with_margin_150_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(150, 0, 0, 0)
@@ -6467,7 +6636,7 @@ fn abs_supp_with_margin_150_center() {
 
 #[test]
 fn abs_supp_with_margin_200_center() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0)
         .margin(200, 0, 0, 0)
@@ -6482,6 +6651,7 @@ fn abs_supp_with_margin_200_center() {
 fn edge_supp_dom_rtl_abs_left_only() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.direction = Direction::Rtl;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.direction = Direction::Rtl;
@@ -6499,6 +6669,7 @@ fn edge_supp_dom_rtl_abs_left_only() {
 fn edge_supp_dom_rtl_abs_right_only() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.direction = Direction::Rtl;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.direction = Direction::Rtl;
@@ -6516,6 +6687,7 @@ fn edge_supp_dom_rtl_abs_right_only() {
 fn edge_supp_dom_rtl_abs_both_sides() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.direction = Direction::Rtl;
     let abs = setup_abs_child(&mut doc, container);
     doc.node_mut(abs).style.direction = Direction::Rtl;
@@ -6587,7 +6759,7 @@ fn sticky_supp_constraint_rect_top_100_pct() {
 
 #[test]
 fn abs_supp_border_box_padding_0() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(0, 0, 0, 0).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6598,7 +6770,7 @@ fn abs_supp_border_box_padding_0() {
 
 #[test]
 fn abs_supp_border_box_padding_5() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(5, 5, 5, 5).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6609,7 +6781,7 @@ fn abs_supp_border_box_padding_5() {
 
 #[test]
 fn abs_supp_border_box_padding_10() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(10, 10, 10, 10).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6620,7 +6792,7 @@ fn abs_supp_border_box_padding_10() {
 
 #[test]
 fn abs_supp_border_box_padding_15() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(15, 15, 15, 15).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6631,7 +6803,7 @@ fn abs_supp_border_box_padding_15() {
 
 #[test]
 fn abs_supp_border_box_padding_20() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(20, 20, 20, 20).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6642,7 +6814,7 @@ fn abs_supp_border_box_padding_20() {
 
 #[test]
 fn abs_supp_border_box_padding_25() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(25, 25, 25, 25).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6653,7 +6825,7 @@ fn abs_supp_border_box_padding_25() {
 
 #[test]
 fn abs_supp_border_box_padding_30() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(30, 30, 30, 30).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6664,7 +6836,7 @@ fn abs_supp_border_box_padding_30() {
 
 #[test]
 fn abs_supp_border_box_padding_40() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(40, 40, 40, 40).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6675,7 +6847,7 @@ fn abs_supp_border_box_padding_40() {
 
 #[test]
 fn abs_supp_border_box_padding_50() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(50, 50, 50, 50).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6686,7 +6858,7 @@ fn abs_supp_border_box_padding_50() {
 
 #[test]
 fn abs_supp_border_box_padding_100() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(100.0).padding(100, 100, 100, 100).box_sizing_border_box()
         .position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6881,7 +7053,7 @@ fn rel_extra_neg_top_400() {
 
 #[test]
 fn abs_extra_size_10x10() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(10.0).height(10.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6891,7 +7063,7 @@ fn abs_extra_size_10x10() {
 
 #[test]
 fn abs_extra_size_50x100() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(50.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6901,7 +7073,7 @@ fn abs_extra_size_50x100() {
 
 #[test]
 fn abs_extra_size_100x50() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(50.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6911,7 +7083,7 @@ fn abs_extra_size_100x50() {
 
 #[test]
 fn abs_extra_size_200x300() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(200.0).height(300.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6921,7 +7093,7 @@ fn abs_extra_size_200x300() {
 
 #[test]
 fn abs_extra_size_300x200() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(300.0).height(200.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6931,7 +7103,7 @@ fn abs_extra_size_300x200() {
 
 #[test]
 fn abs_extra_size_400x400() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(400.0).height(400.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6941,7 +7113,7 @@ fn abs_extra_size_400x400() {
 
 #[test]
 fn abs_extra_size_500x100() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(500.0).height(100.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6951,7 +7123,7 @@ fn abs_extra_size_500x100() {
 
 #[test]
 fn abs_extra_size_100x500() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(100.0).height(500.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6961,7 +7133,7 @@ fn abs_extra_size_100x500() {
 
 #[test]
 fn abs_extra_size_800x600() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(800.0).height(600.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -6971,7 +7143,7 @@ fn abs_extra_size_800x600() {
 
 #[test]
 fn abs_extra_size_1x1() {
-    let mut b = BlockTestBuilder::new(800, 600);
+    let mut b = abs_builder(800, 600);
     b.add_child().width(1.0).height(1.0).position_absolute()
         .inset(0, 0, 0, 0).done();
     let r = b.build();
@@ -7066,8 +7238,11 @@ fn fixed_extra_full_coverage() {
         .with_style(|s| { s.position = Position::Fixed; s.top = Length::px(0.0); s.left = Length::px(0.0); s.right = Length::px(0.0); s.bottom = Length::px(0.0); })
         .done();
     let r = b.build();
-    r.assert_child_size(0, 1920, 1080);
-    r.assert_child_position(0, 0, 0);
+    let fc = &r.root_fragment.children[1];
+    assert_eq!(fc.size.width.to_i32(), 1920);
+    assert_eq!(fc.size.height.to_i32(), 1080);
+    assert_eq!(fc.offset.left.to_i32(), 0);
+    assert_eq!(fc.offset.top.to_i32(), 0);
 }
 
 #[test]
@@ -7082,7 +7257,7 @@ fn rel_extra_container_height_with_multiple() {
 
 #[test]
 fn abs_extra_container_width_preserved() {
-    let mut b = BlockTestBuilder::new(500, 400);
+    let mut b = abs_builder(500, 400);
     b.add_child().width(1000.0).height(1000.0).position_absolute().inset(0, 0, 0, 0).done();
     let r = b.build();
     r.assert_container_width(500);

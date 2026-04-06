@@ -31,6 +31,7 @@ fn abs_top_left() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -62,6 +63,7 @@ fn abs_right_bottom() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -94,6 +96,7 @@ fn abs_centering_auto_margins() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -125,6 +128,7 @@ fn abs_vertical_centering_auto_margins() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -156,6 +160,7 @@ fn abs_overconstrained_ltr() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -186,6 +191,7 @@ fn abs_overconstrained_rtl() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.node_mut(container).style.direction = Direction::Rtl;
@@ -219,6 +225,7 @@ fn abs_auto_width() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -248,6 +255,7 @@ fn abs_auto_height() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -276,6 +284,7 @@ fn abs_percentage_values() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(1000.0);
     doc.node_mut(container).style.height = Length::px(800.0);
     doc.append_child(vp, container);
@@ -321,10 +330,13 @@ fn fixed_positioning_basic() {
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
-    let container_frag = &fragment.children[0];
-    let fixed_frag = &container_frag.children[0];
 
-    // Fixed is treated like absolute relative to containing block
+    // Fixed positioning uses viewport as containing block, not the parent.
+    // The fixed child bubbles up to the root fragment.
+    let container_frag = &fragment.children[0];
+    assert_eq!(container_frag.children.len(), 0);
+
+    let fixed_frag = &fragment.children[1];
     assert_eq!(fixed_frag.offset.left.to_i32(), 20);
     assert_eq!(fixed_frag.offset.top.to_i32(), 10);
     assert_eq!(fixed_frag.size.width.to_i32(), 300);
@@ -340,6 +352,7 @@ fn abs_static_position_fallback() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -368,6 +381,7 @@ fn abs_all_sides_specified() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -402,6 +416,7 @@ fn abs_negative_offsets() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -481,6 +496,7 @@ fn abs_mixed_with_normal_flow() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -537,6 +553,7 @@ fn abs_auto_left_with_right_width() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -566,6 +583,7 @@ fn abs_auto_top_with_bottom_height() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -595,6 +613,7 @@ fn abs_display_none_excluded() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -623,6 +642,7 @@ fn abs_with_border_padding() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);
@@ -662,6 +682,7 @@ fn abs_auto_margin_left_absorbs() {
 
     let container = doc.create_node(ElementTag::Div);
     doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
     doc.node_mut(container).style.width = Length::px(800.0);
     doc.node_mut(container).style.height = Length::px(600.0);
     doc.append_child(vp, container);

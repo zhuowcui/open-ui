@@ -183,13 +183,14 @@ pub fn compute_intrinsic_inline_sizes(doc: &Document, node_id: NodeId) -> MinMax
     }
 }
 
-/// Approximate text intrinsic sizes.
+/// Compute text intrinsic sizes.
 ///
-/// min-content = widest word (assumes ~8px per character).
+/// min-content = widest word (based on character count × average char width).
 /// max-content = full text width.
 ///
-/// This is a simplified approximation since we don't have access to font
-/// metrics here. Real text shaping is handled by the inline layout module.
+/// Uses `chars().count()` for correct Unicode handling (multi-byte characters).
+/// The average character width is an approximation; real text shaping is handled
+/// by the inline layout module when content is actually rendered.
 fn compute_text_intrinsic_sizes(text: &str) -> MinMaxSizes {
     const APPROX_CHAR_WIDTH: f32 = 8.0;
 
@@ -198,12 +199,12 @@ fn compute_text_intrinsic_sizes(text: &str) -> MinMaxSizes {
     }
 
     // Max-content: entire text on one line.
-    let max_content = LayoutUnit::from_f32(text.len() as f32 * APPROX_CHAR_WIDTH);
+    let max_content = LayoutUnit::from_f32(text.chars().count() as f32 * APPROX_CHAR_WIDTH);
 
     // Min-content: widest single word.
     let min_content = text
         .split_whitespace()
-        .map(|word| LayoutUnit::from_f32(word.len() as f32 * APPROX_CHAR_WIDTH))
+        .map(|word| LayoutUnit::from_f32(word.chars().count() as f32 * APPROX_CHAR_WIDTH))
         .fold(LayoutUnit::zero(), |acc, w| acc.max_of(w));
 
     MinMaxSizes::new(min_content, max_content)

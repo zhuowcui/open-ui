@@ -95,6 +95,14 @@ pub struct Fragment {
     /// `visible`. The paint system uses this flag to apply a clip rect before
     /// painting children.
     pub has_overflow_clip: bool,
+
+    /// Out-of-flow candidates that couldn't be resolved at this level.
+    ///
+    /// When a `position: static` element encounters absolutely-positioned
+    /// children, it cannot be their containing block. These candidates are
+    /// passed up to the nearest positioned ancestor (or the root) via this
+    /// field. The parent's layout absorbs them and resolves their positions.
+    pub oof_candidates: Vec<crate::out_of_flow::OutOfFlowCandidate>,
 }
 
 impl Fragment {
@@ -116,6 +124,7 @@ impl Fragment {
             text_combine: None,
             overflow_rect: None,
             has_overflow_clip: false,
+            oof_candidates: Vec::new(),
         }
     }
 
@@ -145,6 +154,7 @@ impl Fragment {
             text_combine: None,
             overflow_rect: None,
             has_overflow_clip: false,
+            oof_candidates: Vec::new(),
         }
     }
 
