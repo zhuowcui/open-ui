@@ -36,6 +36,10 @@ pub struct OutOfFlowCandidate {
     /// coordinates (where abs-pos insets are measured) to the parent's
     /// border-box coordinates (where fragment offsets are stored).
     pub containing_block_border: BoxStrut,
+    /// The direction of the containing block. CSS 2.1 §10.3.7 requires this
+    /// (not the element's own direction) for auto-margin / over-constrained
+    /// resolution.
+    pub containing_block_direction: Direction,
 }
 
 /// Layout all out-of-flow candidates and return positioned fragments.
@@ -91,9 +95,10 @@ fn layout_out_of_flow_child(
         .clamp_negative_to_zero();
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
+    let cb_direction = candidate.containing_block_direction;
     let (resolved_left, resolved_width_raw, resolved_margin_left, resolved_margin_right) =
         resolve_horizontal(style, cb_width, static_left, &border, &padding,
-                          shrink_to_fit_min, shrink_to_fit_max);
+                          shrink_to_fit_min, shrink_to_fit_max, cb_direction);
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
@@ -116,7 +121,7 @@ fn layout_out_of_flow_child(
     let (resolved_left, resolved_margin_left, resolved_margin_right) =
         if resolved_width != resolved_width_raw {
             let (l, _w, ml, mr) = resolve_horizontal_with_known_width(
-                style, cb_width, static_left, &border, &padding, resolved_width,
+                style, cb_width, static_left, &border, &padding, resolved_width, cb_direction,
             );
             (l, ml, mr)
         } else {
@@ -274,6 +279,7 @@ fn resolve_horizontal(
     padding: &BoxStrut,
     shrink_to_fit_min: LayoutUnit,
     shrink_to_fit_max: LayoutUnit,
+    cb_direction: Direction,
 ) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
     let zero = LayoutUnit::zero();
 
@@ -328,9 +334,10 @@ fn resolve_horizontal(
                 return (left_val + half, border_box_width, half, remaining - half);
             } else {
                 // Negative available space: per CSS 2.1 §10.3.7,
+                // Use containing block's direction (not element's).
                 // LTR → margin-left=0, margin-right absorbs the deficit.
                 // RTL → margin-right=0, margin-left absorbs the deficit.
-                if style.direction == Direction::Rtl {
+                if cb_direction == Direction::Rtl {
                     return (left_val + remaining, border_box_width, remaining, zero);
                 } else {
                     return (left_val, border_box_width, zero, remaining);
@@ -349,8 +356,8 @@ fn resolve_horizontal(
         }
 
         // Over-constrained: all specified including margins
-        // LTR: ignore right. RTL: ignore left.
-        if style.direction == Direction::Rtl {
+        // Use containing block's direction: LTR ignores right, RTL ignores left.
+        if cb_direction == Direction::Rtl {
             // Ignore left, recompute it
             let new_left = cb_width - right_val - margin_left_val - border_box_width - margin_right_val;
             return (new_left + margin_left_val, border_box_width, margin_left_val, margin_right_val);
@@ -367,8 +374,7 @@ fn resolve_horizontal(
     if width_auto && left_auto && right_auto {
         // ── All three auto: use static position, shrink-to-fit for width
         // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
-        if style.direction == Direction::Rtl {
-            // CSS 2.1 §10.3.7: In RTL, use the static position for 'right'.
+        if cb_direction == Direction::Rtl {
             // For a block-level placeholder in RTL normal flow, the right
             // margin edge is at the containing block's right padding edge,
             // so static_right = 0.
@@ -410,7 +416,7 @@ fn resolve_horizontal(
         // left and right auto, width specified
         // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
         let border_box_width = border_box_from_specified;
-        if style.direction == Direction::Rtl {
+        if cb_direction == Direction::Rtl {
             // Block-level static position in RTL: right margin edge at CB's
             // right padding edge → static_right = 0.
             let right = LayoutUnit::zero();
@@ -687,6 +693,7 @@ fn resolve_horizontal_with_known_width(
     _border: &BoxStrut,
     _padding: &BoxStrut,
     border_box_width: LayoutUnit,
+    cb_direction: Direction,
 ) -> (LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit) {
     let zero = LayoutUnit::zero();
 
@@ -719,7 +726,7 @@ fn resolve_horizontal_with_known_width(
                 let half = remaining / 2;
                 return (left_val + half, border_box_width, half, remaining - half);
             } else {
-                if style.direction == Direction::Rtl {
+                if cb_direction == Direction::Rtl {
                     return (left_val + remaining, border_box_width, remaining, zero);
                 } else {
                     return (left_val, border_box_width, zero, remaining);
@@ -735,7 +742,7 @@ fn resolve_horizontal_with_known_width(
             return (left_val + margin_left_val, border_box_width, margin_left_val, mr);
         }
         // Over-constrained: ignore right in LTR, ignore left in RTL
-        if style.direction == Direction::Rtl {
+        if cb_direction == Direction::Rtl {
             let new_left = cb_width - right_val - margin_left_val - border_box_width - margin_right_val;
             return (new_left + margin_left_val, border_box_width, margin_left_val, margin_right_val);
         } else {
@@ -748,7 +755,7 @@ fn resolve_horizontal_with_known_width(
 
     if left_auto && right_auto {
         // Use static position for left (LTR) or right (RTL)
-        if style.direction == Direction::Rtl {
+        if cb_direction == Direction::Rtl {
             let right = LayoutUnit::zero();
             let left = cb_width - right - mr - border_box_width - ml;
             return (left + ml, border_box_width, ml, mr);
@@ -898,7 +905,7 @@ mod tests {
         let stf_min = LayoutUnit::from_i32(800);
         let stf_max = LayoutUnit::from_i32(800);
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max, Direction::Ltr,
         );
     }
 
@@ -915,7 +922,7 @@ mod tests {
         let stf_min = LayoutUnit::from_i32(800);
         let stf_max = LayoutUnit::from_i32(800);
         let (left, width, ml, mr) = resolve_horizontal(
-            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max,
+            &style, LayoutUnit::from_i32(800), LayoutUnit::zero(), &border, &padding, stf_min, stf_max, Direction::Ltr,
         );
         assert_eq!(ml.to_i32(), 300);
         assert_eq!(mr.to_i32(), 300);

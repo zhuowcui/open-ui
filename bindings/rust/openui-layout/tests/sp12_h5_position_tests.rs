@@ -1875,6 +1875,8 @@ fn fixed_overconstrained_ltr() {
 
 #[test]
 fn fixed_overconstrained_rtl() {
+    // Fixed element CB is the viewport (LTR by default), not the container.
+    // LTR overconstrained: left wins, right is adjusted.
     let mut b = BlockTestBuilder::new(800, 600)
         .with_container_style(|s| { s.direction = Direction::Rtl; });
     b.add_child().width(700.0).height(50.0)
@@ -1885,8 +1887,8 @@ fn fixed_overconstrained_rtl() {
         }).done();
     let r = b.build();
     let child = &r.root_fragment.children[1];
-    // RTL: right=100 wins. left = 800-100-700 = 0.
-    assert_eq!(child.offset.left.to_i32(), 0);
+    // LTR viewport: left=100 wins. right adjusted.
+    assert_eq!(child.offset.left.to_i32(), 100);
 }
 
 #[test]

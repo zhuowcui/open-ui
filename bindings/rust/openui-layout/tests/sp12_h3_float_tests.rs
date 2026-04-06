@@ -998,20 +998,20 @@ fn bfc_between_left_and_right_float() {
 
 #[test]
 fn bfc_self_clearing_overflow_hidden() {
-    // overflow:hidden does NOT contain internal floats in this engine
+    // CSS 2.1 §10.6.7: BFC roots (overflow:hidden) include floats in auto height.
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().overflow_hidden()
         .add_child().width(200.0).height(100.0).float_left().done()
         .done();
     let r = b.build();
     let c = r.child(0);
-    // Only floats inside → height is 0
-    assert_eq!(c.size.height.to_i32(), 0);
+    assert_eq!(c.size.height.to_i32(), 100);
 }
 
 #[test]
 fn bfc_nested_float_in_overflow_hidden() {
-    // overflow:hidden does NOT contain internal floats; height = in-flow children only
+    // CSS 2.1 §10.6.7: BFC roots include floats in auto height.
+    // Height = max(in-flow child 50, float 80) = 80
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(400.0).overflow_hidden()
         .add_child().width(100.0).height(80.0).float_left().done()
@@ -1019,8 +1019,7 @@ fn bfc_nested_float_in_overflow_hidden() {
         .done();
     let r = b.build();
     let c = r.child(0);
-    // Height comes from in-flow child (50), not float (80)
-    assert_eq!(c.size.height.to_i32(), 50);
+    assert_eq!(c.size.height.to_i32(), 80);
 }
 
 #[test]
@@ -1087,7 +1086,8 @@ fn bfc_multiple_floats_then_bfc_element() {
 
 #[test]
 fn bfc_overflow_hidden_clears_internal_floats() {
-    // overflow:hidden does NOT contain internal floats; height = in-flow children only
+    // CSS 2.1 §10.6.7: BFC roots include floats in auto height.
+    // Height = max(in-flow child 50, float 200) = 200
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().overflow_hidden()
         .add_child().width(150.0).height(200.0).float_left().done()
@@ -1095,8 +1095,7 @@ fn bfc_overflow_hidden_clears_internal_floats() {
         .done();
     let r = b.build();
     let c = r.child(0);
-    // Height comes from in-flow child (50), not float (200)
-    assert_eq!(c.size.height.to_i32(), 50);
+    assert_eq!(c.size.height.to_i32(), 200);
 }
 
 #[test]
@@ -1861,16 +1860,17 @@ fn margin_block_after_cleared_float_no_collapse() {
 
 #[test]
 fn margin_float_inside_bfc_no_collapse_with_outer() {
-    // overflow:hidden with only float child has height=0, so margin collapses through
+    // CSS 2.1 §10.6.7: BFC root (overflow:hidden) includes float in auto height.
+    // Container height = float height = 50.
+    // Parent-child margin collapse: child's margin-top=20 collapses with parent
+    // (no border/padding separating), so child offset.top=0, parent gets the margin.
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().overflow_hidden().margin(20, 0, 0, 0)
         .add_child().width(200.0).height(50.0).float_left().done()
         .done();
     let r = b.build();
     let c = r.child(0);
-    // Height is 0 (no in-flow children, no BFC float containment)
-    assert_eq!(c.size.height.to_i32(), 0);
-    // Empty block with margin-top collapses through to parent
+    assert_eq!(c.size.height.to_i32(), 50);
     assert_eq!(c.offset.top.to_i32(), 0);
 }
 
@@ -2037,7 +2037,8 @@ fn combo_float_with_clear_then_overflow_hidden() {
 
 #[test]
 fn combo_overflow_hidden_container_contains_float() {
-    // overflow:hidden does NOT contain floats; height = in-flow children only
+    // CSS 2.1 §10.6.7: BFC roots include floats in auto height.
+    // Height = max(in-flow child 50, float 150) = 150
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().overflow_hidden()
         .add_child().width(300.0).height(150.0).float_left().done()
@@ -2045,8 +2046,7 @@ fn combo_overflow_hidden_container_contains_float() {
         .done();
     let r = b.build();
     let c = r.child(0);
-    // Height from in-flow child (50), not float (150)
-    assert_eq!(c.size.height.to_i32(), 50);
+    assert_eq!(c.size.height.to_i32(), 150);
 }
 
 #[test]
@@ -2245,7 +2245,8 @@ fn combo_float_with_clear_self_left() {
 
 #[test]
 fn combo_nested_overflow_hidden_with_float() {
-    // overflow:hidden does NOT contain floats; height = in-flow children only
+    // CSS 2.1 §10.6.7: BFC roots include floats in auto height.
+    // Height = max(in-flow child 50, float 100) = 100
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(400.0).overflow_hidden()
         .add_child().width(200.0).height(100.0).float_left().done()
@@ -2253,7 +2254,7 @@ fn combo_nested_overflow_hidden_with_float() {
         .done();
     let r = b.build();
     let c = r.child(0);
-    assert_eq!(c.size.height.to_i32(), 50);
+    assert_eq!(c.size.height.to_i32(), 100);
 }
 
 #[test]
@@ -2795,7 +2796,8 @@ fn bfc2_overflow_auto_with_float() {
 
 #[test]
 fn bfc2_overflow_hidden_contains_multiple_floats() {
-    // overflow:hidden does NOT contain floats; height = 0 when only floats
+    // CSS 2.1 §10.6.7: BFC roots include floats in auto height.
+    // Height = max(float_left 50, float_right 80) = 80
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().overflow_hidden()
         .add_child().width(100.0).height(50.0).float_left().done()
@@ -2803,7 +2805,7 @@ fn bfc2_overflow_hidden_contains_multiple_floats() {
         .done();
     let r = b.build();
     let c = r.child(0);
-    assert_eq!(c.size.height.to_i32(), 0);
+    assert_eq!(c.size.height.to_i32(), 80);
 }
 
 #[test]

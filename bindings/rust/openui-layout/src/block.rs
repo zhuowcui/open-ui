@@ -132,6 +132,10 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // strut captures that chain for start_margin_strut propagation.
     let mut saved_start_strut: Option<MarginStrut> = None;
 
+    // CSS 2.1 §10.6.7: Track the maximum float bottom margin edge (in BFC
+    // coordinates) so BFC roots can extend their auto height to include floats.
+    let mut max_float_bottom = LayoutUnit::zero();
+
     // Collect out-of-flow (absolute/fixed) candidates for deferred layout.
     // These are populated during the child walk below so that each candidate
     // gets the correct static position (i.e., where it would appear in
@@ -175,6 +179,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     ),
                     containing_block_size,
                     containing_block_border: border.clone(),
+                    containing_block_direction: style.direction,
                 };
                 let captures = if child_style.position == Position::Fixed {
                     is_root
@@ -230,16 +235,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             }
 
             // Collect absolutely positioned children with correct static position.
+            // CSS 2.1 §10.6.4: Include pending margin_strut in block-axis
+            // static position for the hypothetical normal-flow position.
             if child_style.position.is_absolutely_positioned() {
                 let candidate = OutOfFlowCandidate {
                     node_id: child_id,
                     style: child_style.clone(),
                     static_position: PhysicalOffset::new(
                         border.left + padding.left,
-                        block_offset,
+                        block_offset + margin_strut.sum(),
                     ),
                     containing_block_size,
                     containing_block_border: border.clone(),
+                    containing_block_direction: style.direction,
                 };
                 let captures = if child_style.position == Position::Fixed {
                     is_root
@@ -272,6 +280,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &mut child_fragments,
                     &mut oof_candidates, &mut bubbled_oof_candidates,
                     establishes_cb_for_abspos, is_root,
+                    &mut max_float_bottom,
                 );
                 i += 1;
                 continue;
@@ -292,16 +301,18 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         continue;
                     }
                     if cs.position.is_absolutely_positioned() {
-                        // Collect the OOF candidate with current block offset
+                        // CSS 2.1 §10.6.4: Include pending margin_strut in
+                        // block-axis static position.
                         let candidate = OutOfFlowCandidate {
                             node_id: cid,
                             style: cs.clone(),
                             static_position: PhysicalOffset::new(
                                 border.left + padding.left,
-                                block_offset,
+                                block_offset + margin_strut.sum(),
                             ),
                             containing_block_size,
                             containing_block_border: border.clone(),
+                            containing_block_direction: style.direction,
                         };
                         let captures = if cs.position == Position::Fixed {
                             is_root
@@ -419,6 +430,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     establishes_cb_for_abspos, is_root,
                     &mut start_margin_resolved,
                     &mut saved_start_strut,
+                    style.direction,
                 );
 
                 // Offset inline position for left floats.
@@ -445,16 +457,20 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
         // Collect absolutely positioned children with correct static position
         // (where they would appear in normal flow after preceding siblings).
+        // CSS 2.1 §10.6.4: Include pending margin_strut in block-axis static
+        // position — the hypothetical normal-flow position includes the
+        // unresolved inter-sibling margin gap.
         if child_style.position.is_absolutely_positioned() {
             let candidate = OutOfFlowCandidate {
                 node_id: child_id,
                 style: child_style.clone(),
                 static_position: PhysicalOffset::new(
                     border.left + padding.left,
-                    block_offset,
+                    block_offset + margin_strut.sum(),
                 ),
                 containing_block_size,
                 containing_block_border: border.clone(),
+                containing_block_direction: style.direction,
             };
             let captures = if child_style.position == Position::Fixed {
                 is_root
@@ -489,6 +505,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 &mut child_fragments,
                 &mut oof_candidates, &mut bubbled_oof_candidates,
                 establishes_cb_for_abspos, is_root,
+                &mut max_float_bottom,
             );
             continue;
         }
@@ -539,6 +556,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             establishes_cb_for_abspos, is_root,
             &mut start_margin_resolved,
             &mut saved_start_strut,
+            style.direction,
         );
 
         // Offset inline position for left floats.
@@ -575,6 +593,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Add bottom border + padding
     intrinsic_block_size += bottom_edge;
 
+    // CSS 2.1 §10.6.7: If this element establishes a BFC, its auto height
+    // must include any floating descendants whose bottom margin edge extends
+    // below the element's bottom content edge.
+    if space.is_new_formatting_context && max_float_bottom > LayoutUnit::zero() {
+        let float_bottom_border_box = max_float_bottom + content_edge + bottom_edge;
+        intrinsic_block_size = intrinsic_block_size.max_of(float_bottom_border_box);
+    }
+
     // ── Step 5: Resolve height ───────────────────────────────────────
     // Blink: ComputeBlockSizeForFragment (length_utils.h:314)
     let is_viewport = doc.node(node_id).tag == openui_dom::ElementTag::Viewport;
@@ -600,6 +626,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         for c in &mut oof_candidates {
             c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
             c.containing_block_border = border.clone();
+            c.containing_block_direction = style.direction;
         }
 
         // Iteratively process OOF candidates. Each pass may produce nested OOF
@@ -627,6 +654,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     if captures {
                         c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
                         c.containing_block_border = border.clone();
+                        c.containing_block_direction = style.direction;
                         pending.push(c);
                     } else {
                         bubbled_oof_candidates.push(c);
@@ -775,19 +803,25 @@ fn handle_float(
     bubbled_oof_candidates: &mut Vec<OutOfFlowCandidate>,
     establishes_cb_for_abspos: bool,
     is_root: bool,
+    max_float_bottom: &mut LayoutUnit,
 ) {
     let child_style = &doc.node(child_id).style;
     let child_margin = resolve_margins(child_style, child_available_inline);
     let is_left = child_style.float == Float::Left;
 
     // CSS 2.1 §10.3.5: Floats with auto width use shrink-to-fit sizing.
-    // Compute shrink-to-fit width first, then use it as the available
-    // inline size for the child layout.
+    // The available width for shrink-to-fit is the containing block width
+    // minus the float's own non-auto horizontal margins.
     let float_inline_size = if child_style.width.is_auto() {
-        let stf = crate::out_of_flow::compute_shrink_to_fit_width(
-            doc, child_id, child_available_inline,
-        );
-        stf
+        let margin_inline = {
+            let ml = if child_style.margin_left.is_auto() { LayoutUnit::zero() } else { child_margin.left };
+            let mr = if child_style.margin_right.is_auto() { LayoutUnit::zero() } else { child_margin.right };
+            ml + mr
+        };
+        let stf_available = (child_available_inline - margin_inline).clamp_negative_to_zero();
+        crate::out_of_flow::compute_shrink_to_fit_width(
+            doc, child_id, stf_available,
+        )
     } else {
         child_available_inline
     };
@@ -833,6 +867,13 @@ fn handle_float(
 
     let (positioned, exclusion) = position_float(&unpositioned, exclusion_space);
     exclusion_space.add(exclusion);
+
+    // CSS 2.1 §10.6.7: Track float bottom margin edge (BFC coordinates)
+    // for auto-height BFC roots that must include float descendants.
+    let float_bottom_bfc = positioned.bfc_offset.block_offset
+        + child_fragment.size.height
+        + child_margin.bottom;
+    *max_float_bottom = (*max_float_bottom).max_of(float_bottom_bfc);
 
     // Convert BFC coordinates back to parent border-box coordinates.
     let mut fragment = child_fragment;
@@ -900,6 +941,7 @@ fn layout_block_child(
     is_root: bool,
     start_margin_resolved: &mut bool,
     saved_start_strut: &mut Option<MarginStrut>,
+    containing_block_direction: Direction,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -910,34 +952,13 @@ fn layout_block_child(
     let child_margin = resolve_margins(child_style, child_available_inline);
     margin_strut.append_normal(child_margin.top);
 
-    // CSS 2.1 §8.3.1: Determine whether to resolve (consume) the accumulated
-    // margin strut or keep it adjoining for parent-first-child collapsing.
-    // Use `start_margin_resolved` rather than `child_fragments.is_empty()` so
-    // that self-collapsing first children (which push to child_fragments but
-    // don't separate margins) keep the chain open.
-    //
-    // When start_margin_resolved is true, we tentatively resolve the strut
-    // but save state for rollback if the child turns out self-collapsing.
-    // Per CSS 2.1 §8.3.1, a self-collapsing block's top and bottom margins
-    // are adjoining with the preceding sibling's bottom margin — they form
-    // one collapsing group.
-    let pre_resolve_strut = *margin_strut;
-    let pre_resolve_offset = *block_offset;
-    let mut strut_resolved_this_child = false;
-
-    if !*start_margin_resolved {
-        if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
-            *block_offset += margin_strut.sum();
-            *margin_strut = MarginStrut::new();
-            *start_margin_resolved = true;
-            strut_resolved_this_child = true;
-        }
-        // else: start margin still collapses through — don't resolve yet
-    } else {
-        *block_offset += margin_strut.sum();
-        *margin_strut = MarginStrut::new();
-        strut_resolved_this_child = true;
-    }
+    // ── Layout child BEFORE resolving the margin strut ───────────────
+    // CSS 2.1 §8.3.1: A child with no border/padding propagates its first
+    // descendant's margin through start_margin_strut. That propagated margin
+    // must participate in the parent's margin collapsing group. We must
+    // layout the child first to learn about any propagated margins, absorb
+    // them into the strut, and THEN resolve. The child's constraint space
+    // doesn't depend on block_offset, so this reordering is safe.
 
     let child_non_auto_margin_inline = {
         let ml = if child_style.margin_left.is_auto() {
@@ -971,12 +992,39 @@ fn layout_block_child(
     // grandchild's margin collapsed through with no border/padding
     // separating), merge it into our current margin strut. This
     // enables margin collapse to propagate through nested wrapper divs.
-    if !child_fragment.start_margin_strut.is_empty() && !*start_margin_resolved {
+    // Absorbed unconditionally — propagated margins participate in the
+    // collapsing group regardless of whether this is the first child or
+    // a subsequent sibling.
+    if !child_fragment.start_margin_strut.is_empty() {
         let child_start = child_fragment.start_margin_strut;
         margin_strut.append_normal(child_start.positive_margin);
         if child_start.negative_margin < LayoutUnit::zero() {
             margin_strut.append_normal(child_start.negative_margin);
         }
+    }
+
+    // ── NOW resolve the margin strut ─────────────────────────────────
+    // When start_margin_resolved is true, we tentatively resolve the strut
+    // but save state for rollback if the child turns out self-collapsing.
+    // Per CSS 2.1 §8.3.1, a self-collapsing block's top and bottom margins
+    // are adjoining with the preceding sibling's bottom margin — they form
+    // one collapsing group.
+    let pre_resolve_strut = *margin_strut;
+    let pre_resolve_offset = *block_offset;
+    let mut strut_resolved_this_child = false;
+
+    if !*start_margin_resolved {
+        if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+            *block_offset += margin_strut.sum();
+            *margin_strut = MarginStrut::new();
+            *start_margin_resolved = true;
+            strut_resolved_this_child = true;
+        }
+        // else: start margin still collapses through — don't resolve yet
+    } else {
+        *block_offset += margin_strut.sum();
+        *margin_strut = MarginStrut::new();
+        strut_resolved_this_child = true;
     }
 
     // Take OOF candidates from the child for processing after offset is known.
@@ -999,9 +1047,10 @@ fn layout_block_child(
             resolved_margin_right = remaining_space - half;
         } else {
             // CSS 2.1 §10.3.3: auto→0, then apply over-constrained rule.
+            // Use the CONTAINING BLOCK's direction per spec (not child's).
             // In RTL, margin-left absorbs the negative remainder (overflow left);
             // in LTR, margin-right absorbs it (overflow right).
-            if child_style.direction == Direction::Rtl {
+            if containing_block_direction == Direction::Rtl {
                 resolved_margin_left = remaining_space;
                 resolved_margin_right = LayoutUnit::zero();
             } else {
@@ -1019,8 +1068,8 @@ fn layout_block_child(
         // CSS 2.1 §10.3.3: Both margins specified. If the total
         // (width + margin-left + margin-right) exceeds the containing block,
         // the end margin (margin-right in LTR, margin-left in RTL) is
-        // recomputed to satisfy the equation.
-        if child_style.direction == Direction::Rtl {
+        // recomputed to satisfy the equation. Uses containing block direction.
+        if containing_block_direction == Direction::Rtl {
             resolved_margin_right = child_margin.right;
             resolved_margin_left = remaining_space - resolved_margin_right;
         } else {
@@ -1133,7 +1182,7 @@ fn layout_block_child(
         }
     }
 
-    *intrinsic_block_size = *block_offset;
+    *intrinsic_block_size = (*intrinsic_block_size).max_of(*block_offset);
     child_fragments.push(child_fragment);
 }
 

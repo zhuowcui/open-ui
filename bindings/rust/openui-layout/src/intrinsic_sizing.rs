@@ -510,13 +510,19 @@ fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> La
 fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
     let zero = LayoutUnit::zero();
 
+    // Percentage min/max resolve against the containing block's inline size.
+    // In intrinsic sizing there is no containing block, so use INDEFINITE_SIZE
+    // to trigger the auto fallback in resolve_length (CSS Sizing 3 §5.1:
+    // percentage sizes against indefinite bases are treated as auto).
+    let indefinite = openui_geometry::INDEFINITE_SIZE;
+
     let min_raw = resolve_length(
-        &style.min_width, zero,
+        &style.min_width, indefinite,
         zero, // auto min-width = 0
         zero,
     );
     let max_raw = resolve_length(
-        &style.max_width, zero,
+        &style.max_width, indefinite,
         LayoutUnit::max(), // auto = unconstrained
         LayoutUnit::max(), // none = unconstrained
     );
@@ -554,13 +560,17 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
 fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
     let zero = LayoutUnit::zero();
 
+    // Same as apply_min_max_inline: use INDEFINITE_SIZE for percentage base
+    // so percentage min/max-height resolves to auto values (CSS Sizing 3 §5.1).
+    let indefinite = openui_geometry::INDEFINITE_SIZE;
+
     let min_raw = resolve_length(
-        &style.min_height, zero,
+        &style.min_height, indefinite,
         zero,
         zero,
     );
     let max_raw = resolve_length(
-        &style.max_height, zero,
+        &style.max_height, indefinite,
         LayoutUnit::max(),
         LayoutUnit::max(),
     );
