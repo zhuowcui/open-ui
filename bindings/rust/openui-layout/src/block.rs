@@ -116,6 +116,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // via end_margin_strut so the parent can merge it with its own margin.
     // CSS 2.1 §8.3.1: parent/first-child margin collapsing.
     let mut start_margin_resolved = false;
+    // Holds the margin strut as it was before the first child's trailing reset.
+    // CSS 2.1 §8.3.1: when the parent has no border/padding/FC, the first
+    // child's top margin collapses with the parent's top margin. This saved
+    // strut captures that chain for start_margin_strut propagation.
+    let mut saved_start_strut: Option<MarginStrut> = None;
 
     // Collect out-of-flow (absolute/fixed) candidates for deferred layout.
     // These are populated during the child walk below so that each candidate
@@ -365,6 +370,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &mut oof_candidates, &mut bubbled_oof_candidates,
                     establishes_cb_for_abspos, is_root,
                     &mut start_margin_resolved,
+                    &mut saved_start_strut,
                 );
 
                 // Offset inline position for left floats.
@@ -467,6 +473,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             &mut oof_candidates, &mut bubbled_oof_candidates,
             establishes_cb_for_abspos, is_root,
             &mut start_margin_resolved,
+            &mut saved_start_strut,
         );
 
         // Offset inline position for left floats.
@@ -586,11 +593,10 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // with no border/padding/new-FC separating), propagate it so the parent can
     // merge it with the parent's own margins.
     if !start_margin_resolved {
-        // The start margin was never resolved — the entire margin chain from
-        // the first child (and its nested first children) collapses through
-        // this block. Propagate the current margin_strut as start_margin_strut
-        // so the parent's layout_block_child can absorb it.
-        fragment.start_margin_strut = margin_strut;
+        // Use the saved strut from before the trailing margin reset. This
+        // contains the first child's accumulated top margin chain, not the
+        // trailing bottom margin that would be in the current margin_strut.
+        fragment.start_margin_strut = saved_start_strut.unwrap_or(margin_strut);
     }
     fragment.end_margin_strut = final_end_margin_strut;
 
@@ -761,6 +767,7 @@ fn layout_block_child(
     establishes_cb_for_abspos: bool,
     is_root: bool,
     start_margin_resolved: &mut bool,
+    saved_start_strut: &mut Option<MarginStrut>,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -896,18 +903,44 @@ fn layout_block_child(
 
     *block_offset += child_fragment.size.height;
 
-    // CSS 2.1 §8.3.1: After the child, start a new margin strut with the
-    // child's bottom margin. If the child itself propagated an unresolved
-    // end margin strut (its last grandchild's bottom margin collapsed through),
-    // absorb it into our new strut as well.
-    *margin_strut = MarginStrut::new();
-    margin_strut.append_normal(child_margin.bottom);
-    if !child_fragment.end_margin_strut.is_empty() {
-        // Merge the child's propagated end margin into our strut
-        let child_end = child_fragment.end_margin_strut;
-        margin_strut.append_normal(child_end.positive_margin);
-        if child_end.negative_margin < LayoutUnit::zero() {
-            margin_strut.append_normal(child_end.negative_margin);
+    // CSS 2.1 §8.3.1: Determine if this child is self-collapsing (zero height,
+    // no border/padding separating its top and bottom margins).
+    let child_bp_block = resolve_border(child_style).block_sum()
+        + resolve_padding(child_style, child_available_inline).block_sum();
+    let child_is_self_collapsing = child_fragment.size.height == LayoutUnit::zero()
+        && child_bp_block == LayoutUnit::zero();
+
+    // CSS 2.1 §8.3.1: Save the start margin strut before the trailing reset
+    // overwrites it. This captures the first child's (and nested first
+    // children's) accumulated top margin chain for parent-first-child collapsing.
+    if !*start_margin_resolved && saved_start_strut.is_none() {
+        *saved_start_strut = Some(*margin_strut);
+    }
+
+    if child_is_self_collapsing {
+        // CSS 2.1 §8.3.1: A self-collapsing block's top and bottom margins
+        // collapse together. The collapsed result adjoins the next sibling's
+        // top margin. Don't reset the strut — append the bottom margin to
+        // the existing strut so both top and bottom are preserved.
+        margin_strut.append_normal(child_margin.bottom);
+        if !child_fragment.end_margin_strut.is_empty() {
+            let child_end = child_fragment.end_margin_strut;
+            margin_strut.append_normal(child_end.positive_margin);
+            if child_end.negative_margin < LayoutUnit::zero() {
+                margin_strut.append_normal(child_end.negative_margin);
+            }
+        }
+    } else {
+        // Non-self-collapsing child: the child occupies space, so margin
+        // collapsing ends here. Start a new strut with the bottom margin.
+        *margin_strut = MarginStrut::new();
+        margin_strut.append_normal(child_margin.bottom);
+        if !child_fragment.end_margin_strut.is_empty() {
+            let child_end = child_fragment.end_margin_strut;
+            margin_strut.append_normal(child_end.positive_margin);
+            if child_end.negative_margin < LayoutUnit::zero() {
+                margin_strut.append_normal(child_end.negative_margin);
+            }
         }
     }
 

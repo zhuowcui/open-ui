@@ -491,38 +491,66 @@ fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> La
     }
 }
 
-/// Clamp a resolved inline size by min-width / max-width.
+/// Clamp a resolved border-box inline size by min-width / max-width.
+///
+/// The `size` parameter is in border-box units (from `apply_size_override_inline`
+/// or from `compute_intrinsic_block_sizes` which includes border+padding).
+/// Min/max values must be converted to border-box before clamping when
+/// box-sizing is content-box.
 fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
-    let min = resolve_length(
-        &style.min_width,
-        LayoutUnit::zero(),
-        LayoutUnit::zero(), // auto min-width = 0
-        LayoutUnit::zero(),
+    let zero = LayoutUnit::zero();
+
+    let min_raw = resolve_length(
+        &style.min_width, zero,
+        zero, // auto min-width = 0
+        zero,
     );
-    let max = resolve_length(
-        &style.max_width,
-        LayoutUnit::zero(),
+    let max_raw = resolve_length(
+        &style.max_width, zero,
         LayoutUnit::max(), // auto = unconstrained
         LayoutUnit::max(), // none = unconstrained
     );
-    size.clamp(min, max)
+
+    // Convert to border-box units to match the size being clamped.
+    let bp = if style.box_sizing == BoxSizing::ContentBox {
+        let b = resolve_border(style);
+        let p = resolve_padding(style, zero);
+        b.left + b.right + p.left + p.right
+    } else {
+        zero
+    };
+    let min_bb = if min_raw > zero { min_raw + bp } else { zero };
+    let max_bb = if max_raw == LayoutUnit::max() { max_raw } else { max_raw + bp };
+
+    size.clamp(min_bb, max_bb)
 }
 
-/// Clamp a resolved block size by min-height / max-height.
+/// Clamp a resolved border-box block size by min-height / max-height.
 fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
-    let min = resolve_length(
-        &style.min_height,
-        LayoutUnit::zero(),
-        LayoutUnit::zero(),
-        LayoutUnit::zero(),
+    let zero = LayoutUnit::zero();
+
+    let min_raw = resolve_length(
+        &style.min_height, zero,
+        zero,
+        zero,
     );
-    let max = resolve_length(
-        &style.max_height,
-        LayoutUnit::zero(),
+    let max_raw = resolve_length(
+        &style.max_height, zero,
         LayoutUnit::max(),
         LayoutUnit::max(),
     );
-    size.clamp(min, max)
+
+    let bp = if style.box_sizing == BoxSizing::ContentBox {
+        let b = resolve_border(style);
+        let p = resolve_padding(style, zero);
+        b.top + b.bottom + p.top + p.bottom
+    } else {
+        zero
+    };
+    let min_bb = if min_raw > zero { min_raw + bp } else { zero };
+    let max_bb = if max_raw == LayoutUnit::max() { max_raw } else { max_raw + bp };
+
+    size.clamp(min_bb, max_bb)
 }
 
 #[cfg(test)]

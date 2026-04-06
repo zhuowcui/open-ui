@@ -135,10 +135,8 @@ fn layout_out_of_flow_child(
             (resolved_top, resolved_margin_top, resolved_margin_bottom)
         };
 
-    // Detect whether dimensions were fully determined by the constraint equation
-    // (both opposing insets specified with auto width/height).
-    let width_resolved_from_constraints = style.width.is_auto()
-        && !style.left.is_auto() && !style.right.is_auto();
+    // Detect whether height was fully determined by the constraint equation
+    // (both opposing insets specified with auto height).
     let height_resolved_from_constraints = style.height.is_auto()
         && !style.top.is_auto() && !style.bottom.is_auto();
 
@@ -174,13 +172,12 @@ fn layout_out_of_flow_child(
 
     let mut child_fragment = block_layout(doc, candidate.node_id, &child_space);
 
-    // For auto-width or auto-height, use the actual laid-out size
-    // UNLESS the dimension was fully resolved from the constraint equation.
-    let final_width = if style.width.is_auto() && !width_resolved_from_constraints {
-        child_fragment.size.width
-    } else {
-        resolved_width
-    };
+    // CSS 2.1 §10.3.7: The width is always determined before child layout —
+    // either from the constraint equation (both insets specified), from the
+    // explicit style.width, or from shrink-to-fit. The child's block_layout
+    // auto-fills the content-box (resolved_width - bp), so its fragment width
+    // would be missing bp. Use the pre-computed border-box resolved_width.
+    let final_width = resolved_width;
 
     // CSS 2.1 §10.7: For auto-height content-sized abspos, the content height
     // must still be clamped by min-height / max-height constraints.
@@ -374,7 +371,10 @@ fn resolve_horizontal(
         // ── All three auto: use static position, shrink-to-fit for width
         // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
         if style.direction == Direction::Rtl {
-            let right = static_left; // static position on the right side in RTL
+            // Convert left-based static position to a right inset:
+            // static_right = cb_width - static_left (distance from right edge
+            // of CB to the hypothetical left margin edge).
+            let right = cb_width - static_left;
             let available = (cb_width - right - ml - mr - border_padding_h).clamp_negative_to_zero();
             let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
             let border_box_width = width + border_padding_h;
@@ -413,7 +413,7 @@ fn resolve_horizontal(
         // CSS 2.1 §10.3.7: In LTR use static position for left; in RTL for right.
         let border_box_width = border_box_from_specified;
         if style.direction == Direction::Rtl {
-            let right = static_left;
+            let right = cb_width - static_left;
             let left = cb_width - right - mr - border_box_width - ml;
             return (left + ml, border_box_width, ml, mr);
         } else {
@@ -749,7 +749,7 @@ fn resolve_horizontal_with_known_width(
     if left_auto && right_auto {
         // Use static position for left (LTR) or right (RTL)
         if style.direction == Direction::Rtl {
-            let right = static_left;
+            let right = cb_width - static_left;
             let left = cb_width - right - mr - border_box_width - ml;
             return (left + ml, border_box_width, ml, mr);
         } else {
