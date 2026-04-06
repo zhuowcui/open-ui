@@ -141,6 +141,26 @@ pub struct Fragment {
     ///
     /// Blink: `PhysicalBoxFragment::LastBaseline()`.
     pub last_baseline: Option<LayoutUnit>,
+
+    /// Whether this fragment is the first fragment in an inline box
+    /// continuation (should render inline-start border/padding/margin).
+    ///
+    /// When an inline element (e.g. `<span>`) spans multiple lines, only
+    /// the first fragment gets inline-start MBP (or all fragments when
+    /// `box-decoration-break: clone`).
+    ///
+    /// Blink: `PhysicalBoxFragment::IsFirstForNode()`.
+    pub is_first_for_node: bool,
+
+    /// Whether this fragment is the last fragment in an inline box
+    /// continuation (should render inline-end border/padding/margin).
+    ///
+    /// When an inline element spans multiple lines, only the last fragment
+    /// gets inline-end MBP (or all fragments when
+    /// `box-decoration-break: clone`).
+    ///
+    /// Blink: `PhysicalBoxFragment::IsLastForNode()`.
+    pub is_last_for_node: bool,
 }
 
 impl Fragment {
@@ -167,6 +187,8 @@ impl Fragment {
             start_margin_strut: openui_geometry::MarginStrut::new(),
             first_baseline: None,
             last_baseline: None,
+            is_first_for_node: true,
+            is_last_for_node: true,
         }
     }
 
@@ -201,6 +223,8 @@ impl Fragment {
             start_margin_strut: openui_geometry::MarginStrut::new(),
             first_baseline: None,
             last_baseline: None,
+            is_first_for_node: true,
+            is_last_for_node: true,
         }
     }
 

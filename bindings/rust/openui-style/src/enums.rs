@@ -1483,3 +1483,32 @@ impl ColumnSpan {
 impl Default for ColumnSpan {
     fn default() -> Self { Self::INITIAL }
 }
+
+// ── Box Decoration Break (CSS Fragmentation Module Level 3) ───────────
+
+/// CSS `box-decoration-break` property.
+///
+/// Controls whether an inline element's decorations (border, padding,
+/// background) are sliced at break points or cloned for each fragment.
+///
+/// Blink: `EBoxDecorationBreak` in `computed_style_base_constants.h`.
+///
+/// CSS Fragmentation Level 3 §4.4:
+/// <https://www.w3.org/TR/css-break-3/#break-decoration>
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum BoxDecorationBreak {
+    /// Decorations are sliced at breaks: only the first fragment gets
+    /// inline-start MBP and only the last fragment gets inline-end MBP.
+    Slice = 0,
+    /// Decorations are cloned: every fragment gets full MBP on both sides.
+    Clone = 1,
+}
+
+impl BoxDecorationBreak {
+    pub const INITIAL: Self = Self::Slice;
+}
+
+impl Default for BoxDecorationBreak {
+    fn default() -> Self { Self::INITIAL }
+}

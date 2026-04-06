@@ -451,6 +451,13 @@ pub struct ComputedStyle {
     /// Controls whether breaks are allowed inside this box.
     pub break_inside: BreakInside,
 
+    /// CSS `box-decoration-break`. Initial: `slice`.
+    /// Controls whether inline decorations (border, padding, background)
+    /// are sliced or cloned at fragment boundaries.
+    ///
+    /// Blink: `BoxDecorationBreak()` in `ComputedStyle`.
+    pub box_decoration_break: BoxDecorationBreak,
+
     // ── Multi-column Layout (CSS Multicol Level 1) ──────────────────
 
     /// CSS `column-count`. `None` = `auto` (no explicit count).
@@ -657,6 +664,7 @@ impl ComputedStyle {
             break_before: BreakValue::INITIAL,     // auto
             break_after: BreakValue::INITIAL,      // auto
             break_inside: BreakInside::INITIAL,    // auto
+            box_decoration_break: BoxDecorationBreak::INITIAL, // slice
 
             // Multi-column layout
             column_count: None,                        // auto

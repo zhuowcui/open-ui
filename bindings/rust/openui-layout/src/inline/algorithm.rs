@@ -11,7 +11,7 @@
 
 use openui_dom::{Document, NodeId};
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
-use openui_style::{ComputedStyle, Direction, Display, LineHeight, TextAlign, TextAlignLast, TextJustify, VerticalAlign};
+use openui_style::{BoxDecorationBreak, ComputedStyle, Direction, Display, LineHeight, TextAlign, TextAlignLast, TextJustify, VerticalAlign};
 use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
 use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
@@ -26,6 +26,29 @@ use super::items_builder::{style_to_font_description, InlineItemsData, InlineIte
 use super::line_breaker::{byte_to_char_offset, LineBreaker};
 use super::line_info::LineInfo;
 use super::line_width::compute_line_availability;
+
+// ── Inline box state tracking (CSS Fragmentation §4.4) ──────────────────
+
+/// Tracks an open inline box for line-splitting state.
+///
+/// When an inline element (e.g. `<span>`) spans multiple lines, its
+/// border/padding/margin must be split across fragments:
+/// - First fragment: gets inline-start MBP
+/// - Last fragment: gets inline-end MBP
+/// - Middle fragments: no inline MBP
+///
+/// With `box-decoration-break: clone`, every fragment gets full MBP.
+///
+/// Blink: `InlineBoxState` in `inline_box_state.cc`.
+#[derive(Debug, Clone)]
+pub struct InlineBoxState {
+    /// Index into the styles array for this inline element.
+    pub style_index: usize,
+    /// DOM node of the inline element.
+    pub node_id: NodeId,
+    /// `box-decoration-break` mode from the element's style.
+    pub box_decoration_break: BoxDecorationBreak,
+}
 
 // ── Line height metrics (CSS 2.2 §10.8.1 half-leading model) ────────────
 
@@ -419,6 +442,11 @@ pub fn inline_layout(
     let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
 
+    // Track which inline boxes (by style_index) are open at the start of
+    // each line. Carried forward across lines for inline box decoration
+    // splitting (CSS Fragmentation §4.4).
+    let mut boxes_open_at_line_start: Vec<InlineBoxState> = Vec::new();
+
     // Dereference the exclusion space once for the entire line loop.
     let exclusion_ref = space.exclusion_space.as_deref();
     // BFC block offset of this inline content's start within the exclusion space.
@@ -464,7 +492,31 @@ pub fn inline_layout(
                 space.percentage_resolution_inline_size,
                 if is_first_line { text_indent } else { LayoutUnit::zero() },
                 space.percentage_resolution_block_size,
+                &boxes_open_at_line_start,
             );
+
+            // Update open inline box state for the next line:
+            // replay OpenTag/CloseTag items on this line to determine which
+            // inline boxes remain open at line end.
+            let mut current_open = boxes_open_at_line_start.clone();
+            for item_result in &line_info.items {
+                let item = &items_data.items[item_result.item_index];
+                match item_result.item_type {
+                    InlineItemType::OpenTag => {
+                        let s = &items_data.styles[item.style_index];
+                        current_open.push(InlineBoxState {
+                            style_index: item.style_index,
+                            node_id: item.node_id,
+                            box_decoration_break: s.box_decoration_break,
+                        });
+                    }
+                    InlineItemType::CloseTag => {
+                        current_open.pop();
+                    }
+                    _ => {}
+                }
+            }
+            boxes_open_at_line_start = current_open;
 
             // Offset the line box inline-start when floats intrude from the left.
             let mut positioned_line = line_fragment;
@@ -589,6 +641,9 @@ pub fn inline_layout_for_children(
     let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
 
+    // Track which inline boxes are open at the start of each line.
+    let mut boxes_open_at_line_start: Vec<InlineBoxState> = Vec::new();
+
     // Dereference the exclusion space once for the entire line loop.
     let exclusion_ref = space.exclusion_space.as_deref();
     // BFC block offset of this anonymous wrapper's start within the exclusion space.
@@ -629,7 +684,29 @@ pub fn inline_layout_for_children(
                 space.percentage_resolution_inline_size,
                 if is_first_line { text_indent } else { LayoutUnit::zero() },
                 space.percentage_resolution_block_size,
+                &boxes_open_at_line_start,
             );
+
+            // Update open inline box state for the next line.
+            let mut current_open = boxes_open_at_line_start.clone();
+            for item_result in &line_info.items {
+                let item = &items_data.items[item_result.item_index];
+                match item_result.item_type {
+                    InlineItemType::OpenTag => {
+                        let s = &items_data.styles[item.style_index];
+                        current_open.push(InlineBoxState {
+                            style_index: item.style_index,
+                            node_id: item.node_id,
+                            box_decoration_break: s.box_decoration_break,
+                        });
+                    }
+                    InlineItemType::CloseTag => {
+                        current_open.pop();
+                    }
+                    _ => {}
+                }
+            }
+            boxes_open_at_line_start = current_open;
 
             // Offset the line box inline-start when floats intrude from the left.
             let mut positioned_line = line_fragment;
@@ -699,6 +776,7 @@ fn create_line_box(
     percentage_base: LayoutUnit,
     text_indent: LayoutUnit,
     percentage_block_base: LayoutUnit,
+    boxes_open_at_line_start: &[InlineBoxState],
 ) -> Fragment {
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(
@@ -1078,6 +1156,48 @@ fn create_line_box(
     // Reset the inline metrics stack for the positioning pass.
     inline_metrics_stack.clear();
 
+    // --- Inline box decoration tracking (CSS Fragmentation §4.4) ---
+    // Build a set of style indices for boxes open at line start, for quick lookup.
+    let boxes_open_at_start_set: Vec<usize> = boxes_open_at_line_start
+        .iter()
+        .map(|b| b.style_index)
+        .collect();
+
+    // For `box-decoration-break: clone`, boxes that were already open at line
+    // start need their inline-start MBP added at the beginning of this line.
+    for open_box in boxes_open_at_line_start {
+        if open_box.box_decoration_break == BoxDecorationBreak::Clone {
+            let style = &items_data.styles[open_box.style_index];
+            inline_offset = inline_offset + resolve_inline_start(style, percentage_base);
+        }
+    }
+
+    // Pre-scan to determine which boxes don't close on this line (needed for
+    // clone mode inline-end MBP and for is_last_for_node metadata).
+    let mut scan_stack: Vec<usize> = boxes_open_at_start_set.clone();
+    for item_result in &line_info.items {
+        match item_result.item_type {
+            InlineItemType::OpenTag => {
+                let item = &items_data.items[item_result.item_index];
+                scan_stack.push(item.style_index);
+            }
+            InlineItemType::CloseTag => {
+                scan_stack.pop();
+            }
+            _ => {}
+        }
+    }
+    // scan_stack now contains style indices of boxes still open at line end.
+    let boxes_open_at_line_end: Vec<usize> = scan_stack;
+
+    // Track the current inline box stack during positioning for
+    // is_first_for_node / is_last_for_node metadata on text fragments.
+    // Each entry: (style_index, is_first_fragment_on_this_line)
+    let mut inline_box_stack: Vec<(usize, bool)> = boxes_open_at_start_set
+        .iter()
+        .map(|&si| (si, false)) // boxes from previous line are NOT first
+        .collect();
+
     for (step4_idx, item_result) in line_info.items.iter().enumerate() {
         let item = &items_data.items[item_result.item_index];
         match item_result.item_type {
@@ -1256,6 +1376,15 @@ fn create_line_box(
                 // otherwise use the sub-range shape result for this line portion.
                 text_fragment.shape_result = justified_shape.or(line_shape_result);
 
+                // Set inline box decoration metadata for the paint system.
+                // If this text is inside an inline box (span), indicate whether
+                // it's on the first/last line of that box.
+                if let Some(&(style_idx, is_first)) = inline_box_stack.last() {
+                    text_fragment.is_first_for_node = is_first;
+                    text_fragment.is_last_for_node =
+                        !boxes_open_at_line_end.contains(&style_idx);
+                }
+
                 children.push(text_fragment);
                 inline_offset = inline_offset + item_width;
             }
@@ -1267,11 +1396,14 @@ fn create_line_box(
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
                 inline_metrics_stack.push(metrics);
+                // Track that this box opened on this line (is_first = true).
+                inline_box_stack.push((item.style_index, true));
             }
             InlineItemType::CloseTag => {
                 let style = &items_data.styles[item.style_index];
                 inline_offset = inline_offset + resolve_inline_end(style, percentage_base);
                 inline_metrics_stack.pop();
+                inline_box_stack.pop();
             }
             InlineItemType::Control => {
                 // <br> — no visual contribution, line break already handled.
@@ -1386,6 +1518,15 @@ fn create_line_box(
                 children.push(atomic_fragment);
                 inline_offset = inline_offset + item_result.inline_size;
             }
+        }
+    }
+
+    // For `box-decoration-break: clone`, boxes still open at line end need
+    // their inline-end MBP added after all items have been positioned.
+    for &style_idx in &boxes_open_at_line_end {
+        let style = &items_data.styles[style_idx];
+        if style.box_decoration_break == BoxDecorationBreak::Clone {
+            inline_offset = inline_offset + resolve_inline_end(style, percentage_base);
         }
     }
 

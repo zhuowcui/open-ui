@@ -867,6 +867,8 @@ fn paint_text_fragment_no_shape_result() {
         start_margin_strut: openui_geometry::MarginStrut::new(),
         first_baseline: None,
         last_baseline: None,
+        is_first_for_node: true,
+        is_last_for_node: true,
     };
 
     let mut surface = make_surface(200, 100);
@@ -1123,6 +1125,8 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         start_margin_strut: openui_geometry::MarginStrut::new(),
         first_baseline: None,
         last_baseline: None,
+        is_first_for_node: true,
+        is_last_for_node: true,
     };
 
     let mut surface = make_surface(200, 100);
