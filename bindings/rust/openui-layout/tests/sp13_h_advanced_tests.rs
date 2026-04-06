@@ -209,10 +209,12 @@ fn h2_first_letter_split() {
 #[test]
 fn h2_first_letter_metrics() {
     let m = FirstLetterMetrics::from_font_size(48.0);
-    assert!((m.height - 48.0).abs() < 0.01, "Height should be font_size");
-    assert!(m.ascent > 0.0);
-    assert!(m.descent > 0.0);
-    assert!(m.width > 0.0);
+    // Real font metrics: height = ascent + descent, proportional to font size
+    assert!((m.height - (m.ascent + m.descent)).abs() < 0.01, "Height = ascent + descent");
+    assert!(m.ascent > 0.0, "ascent positive");
+    assert!(m.descent > 0.0, "descent positive");
+    assert!(m.width > 0.0, "width positive");
+    assert!(m.height > 30.0 && m.height < 80.0, "height in reasonable range for 48px: {}", m.height);
 }
 
 #[test]

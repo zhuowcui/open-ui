@@ -97,7 +97,7 @@ fn left_float_shifts_text_right() {
     // have their left offset shifted right by the float width (100px).
     // Lines below the float should start at the container's left edge.
     let line_children: Vec<&Fragment> = children.iter()
-        .filter(|c| c.kind == openui_layout::FragmentKind::Box && c.size.width < lu(400.0) || c.offset.left > lu(0.0))
+        .filter(|c| c.kind == openui_layout::FragmentKind::Box && (c.size.width < lu(400.0) || c.offset.left > lu(0.0)))
         .collect();
 
     // There should be at least one line box.

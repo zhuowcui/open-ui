@@ -22,6 +22,8 @@
 
 use openui_geometry::LayoutUnit;
 use openui_style::{ComputedStyle, InitialLetter};
+use openui_text::Font;
+use crate::inline::items_builder::style_to_font_description;
 
 /// Computed layout metrics for an initial letter.
 ///
@@ -79,9 +81,13 @@ pub fn compute_initial_letter_layout(
     // → computed_font_size = font_size * size
     let computed_font_size = font_size * size;
 
-    // Approximate letter width based on font size (average character width
-    // is roughly 0.6× the font size for most Latin fonts).
-    let letter_width = computed_font_size * 0.6;
+    // Query real font metrics at the computed size to derive the letter width.
+    let mut letter_style = ComputedStyle::default();
+    letter_style.font_size = computed_font_size;
+    let font_desc = style_to_font_description(&letter_style);
+    let font = Font::new(font_desc);
+    let metrics = font.font_metrics().copied().unwrap_or_default();
+    let letter_width = metrics.zero_width.max(metrics.cap_height * 0.7);
 
     // Block offset: how far the top of the letter is from the content edge.
     // For a drop cap (sink == size), the top aligns with the first line's top → 0.

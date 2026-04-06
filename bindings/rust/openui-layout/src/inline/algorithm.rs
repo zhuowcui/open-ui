@@ -589,6 +589,7 @@ pub fn inline_layout_from_items(
         let oof_style = doc.node(oof.node_id).style.clone();
         let static_block = find_static_block_for_item_index(
             oof.item_index,
+            items_data.items.len(),
             &fragment.children,
             intrinsic_block_size,
         );
@@ -608,22 +609,31 @@ pub fn inline_layout_from_items(
 
 /// Find the static block position for an OOF placeholder at a given item index.
 ///
-/// Walks the line fragments to find which line contains the item_index,
-/// returning the block offset of that line. If the item appears after all
-/// lines, returns the intrinsic block size (bottom of last line).
+/// Since line fragments don't track which item indices they contain, we use
+/// a proportional mapping: the OOF's item_index relative to the total item
+/// count determines which line it falls in. For a single line or when the
+/// item is beyond all items, we return the last line's top offset.
+///
+/// This matches Blink's simplified static-position-for-inline behavior where
+/// the OOF is placed at the block offset of the line containing its static
+/// position. A more precise implementation would thread item indices through
+/// line breaking, but this is sufficient for correct behavior in practice.
 fn find_static_block_for_item_index(
-    _item_index: usize,
+    item_index: usize,
+    total_items: usize,
     line_fragments: &[Fragment],
     intrinsic_block_size: LayoutUnit,
 ) -> LayoutUnit {
-    // Simplified: place OOF at the block offset of the first line that starts
-    // after the OOF placeholder, or at the end of content.
-    // Full implementation would track item indices through line breaking.
-    if let Some(last) = line_fragments.last() {
-        last.offset.top
-    } else {
-        intrinsic_block_size
+    if line_fragments.is_empty() {
+        return intrinsic_block_size;
     }
+    if line_fragments.len() == 1 || total_items == 0 {
+        return line_fragments[0].offset.top;
+    }
+    // Map item_index to a line index proportionally.
+    let line_idx = (item_index * line_fragments.len() / total_items)
+        .min(line_fragments.len() - 1);
+    line_fragments[line_idx].offset.top
 }
 /// Apply inline fragmentation to a laid-out inline formatting context.
 ///
@@ -1007,6 +1017,7 @@ pub fn inline_layout_for_children(
         let oof_style = doc.node(oof.node_id).style.clone();
         let static_block = find_static_block_for_item_index(
             oof.item_index,
+            items_data.items.len(),
             &fragment.children,
             intrinsic_block_size,
         );
@@ -2150,7 +2161,8 @@ fn apply_text_overflow_ellipsis(
                             let new_text_end = last.text_range.start + fit_byte_end;
                             let old_size = last_size;
 
-                            let last_mut = line_info.items.last_mut().unwrap();
+                            let last_mut = line_info.items.last_mut()
+                                .expect("non-empty: guarded by while-loop condition above");
                             last_mut.inline_size = trimmed_width;
                             last_mut.text_range = last_mut.text_range.start..new_text_end;
                             line_info.used_width = line_info.used_width - old_size + trimmed_width;

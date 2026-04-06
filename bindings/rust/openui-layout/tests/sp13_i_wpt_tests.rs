@@ -34,10 +34,10 @@ use openui_layout::inline::initial_letter::{
 };
 use openui_layout::inline::score_line_breaker::{
     balance_score, candidates_from_word_widths, requires_scoring, score_line_break,
-    BreakCandidate, FitnessClass, ScoreLineBreaker, ScoreParams,
+    BreakCandidate, FitnessClass,
 };
 use openui_layout::fragmentation::{BreakToken, InlineBreakToken};
-use openui_layout::intrinsic_sizing::{compute_intrinsic_block_sizes, IntrinsicSizes};
+use openui_layout::intrinsic_sizing::compute_intrinsic_block_sizes;
 use openui_layout::ConstraintSpace;
 use openui_layout::Fragment;
 use openui_style::{
@@ -1556,7 +1556,7 @@ fn wpt_first_letter_cjk() {
 #[test]
 fn wpt_first_letter_metrics() {
     let m = FirstLetterMetrics::from_font_size(36.0);
-    assert!((m.height - 36.0).abs() < 0.01);
+    assert!((m.height - (m.ascent + m.descent)).abs() < 0.01, "height = ascent + descent");
     assert!(m.ascent > 0.0);
     assert!(m.width > 0.0);
 }

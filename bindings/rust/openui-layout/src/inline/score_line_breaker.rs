@@ -47,11 +47,9 @@ const MAX_ITEMS_FOR_SCORING: usize = 500;
 const HYPHEN_PENALTY: f64 = 50.0;
 
 /// Penalty for consecutive hyphenated lines.
-#[allow(dead_code)]
 const CONSECUTIVE_HYPHEN_PENALTY: f64 = 3000.0;
 
 /// Penalty for a very short last line (orphan avoidance).
-#[allow(dead_code)]
 const ORPHAN_PENALTY: f64 = 5000.0;
 
 /// Minimum ratio of last-line width to available width before orphan penalty kicks in.
@@ -274,6 +272,22 @@ impl ScoreLineBreaker {
                     // Hyphen penalties
                     if candidate.is_hyphen {
                         demerits += HYPHEN_PENALTY;
+                        // Consecutive hyphenated lines incur additional penalty.
+                        if a.candidate_index > 0 && b > 0 {
+                            if let Some(prev_cand) = candidates.get(a.candidate_index) {
+                                if prev_cand.is_hyphen {
+                                    demerits += CONSECUTIVE_HYPHEN_PENALTY;
+                                }
+                            }
+                        }
+                    }
+
+                    // Orphan penalty: penalize very short last line.
+                    if candidate.is_forced && line_width > 0.0 {
+                        let fill_ratio = content_width / line_width;
+                        if fill_ratio < ORPHAN_WIDTH_RATIO {
+                            demerits += ORPHAN_PENALTY;
+                        }
                     }
 
                     let total = a.total_demerits + demerits;
@@ -309,8 +323,9 @@ impl ScoreLineBreaker {
 
         // Find the active node with minimum total demerits
         let best = active.iter().min_by(|a, b| {
-            a.total_demerits.partial_cmp(&b.total_demerits).unwrap()
-        }).unwrap();
+            a.total_demerits.partial_cmp(&b.total_demerits)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        }).expect("active list is non-empty after paragraph processing");
 
         let mut path = Vec::new();
         let mut current = best.clone();

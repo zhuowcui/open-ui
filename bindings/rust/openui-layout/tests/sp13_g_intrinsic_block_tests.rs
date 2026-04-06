@@ -9,7 +9,7 @@
 
 use openui_dom::{Document, ElementTag};
 use openui_geometry::LayoutUnit;
-use openui_layout::intrinsic_sizing::{compute_intrinsic_block_sizes, IntrinsicSizes};
+use openui_layout::intrinsic_sizing::compute_intrinsic_block_sizes;
 
 fn lu(v: f32) -> LayoutUnit {
     LayoutUnit::from_f32(v)

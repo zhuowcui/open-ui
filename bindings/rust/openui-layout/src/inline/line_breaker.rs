@@ -1187,8 +1187,8 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
     breaks
 }
 
-/// Find break opportunities only at spaces (used internally for tests).
-#[allow(dead_code)]
+/// Find break opportunities only at spaces (used by tests).
+#[cfg(test)]
 fn find_space_breaks(text: &str) -> Vec<usize> {
     let mut breaks = Vec::new();
     let chars: Vec<(usize, char)> = text.char_indices().collect();
@@ -1208,6 +1208,9 @@ fn find_space_breaks(text: &str) -> Vec<usize> {
 /// CSS Text Level 3: `word-break: keep-all` suppresses only soft wrap
 /// opportunities between CJK characters; non-CJK breaks are preserved.
 fn is_cjk_break(text: &str, byte_pos: usize) -> bool {
+    if !text.is_char_boundary(byte_pos) {
+        return false;
+    }
     let before = text[..byte_pos].chars().next_back();
     let after = text[byte_pos..].chars().next();
     match (before, after) {
@@ -1539,7 +1542,13 @@ impl ByteToCharMap {
     /// O(1) lookup.
     #[inline]
     pub fn get(&self, byte_offset: usize) -> usize {
-        self.map[byte_offset]
+        debug_assert!(
+            byte_offset < self.map.len(),
+            "ByteToCharMap::get: byte_offset {} out of bounds (len {})",
+            byte_offset,
+            self.map.len(),
+        );
+        self.map[byte_offset.min(self.map.len() - 1)]
     }
 }
 

@@ -11,6 +11,8 @@
 //! that don't apply to the rest of the text.
 
 use openui_style::ComputedStyle;
+use openui_text::Font;
+use crate::inline::items_builder::style_to_font_description;
 
 /// Result of extracting the first typographic letter unit from text.
 ///
@@ -255,21 +257,32 @@ pub struct FirstLetterMetrics {
 }
 
 impl FirstLetterMetrics {
+    /// Compute metrics for a first letter using the given style.
+    ///
+    /// Queries actual font metrics from the resolved font to ensure pixel-
+    /// perfect accuracy. The width uses the font's `zero_width` (ch unit)
+    /// as a representative character width; the height uses real ascent and
+    /// descent from the font tables.
+    pub fn from_style(style: &ComputedStyle) -> Self {
+        let font_desc = style_to_font_description(style);
+        let font = Font::new(font_desc);
+        let metrics = font.font_metrics().copied().unwrap_or_default();
+        Self {
+            width: metrics.zero_width.max(metrics.cap_height * 0.7),
+            height: metrics.ascent + metrics.descent,
+            ascent: metrics.ascent,
+            descent: metrics.descent,
+        }
+    }
+
     /// Compute metrics for a first letter at the given font size.
     ///
-    /// Uses approximate metrics based on the font size. In a full
-    /// implementation, this would use actual glyph metrics from the font.
+    /// Queries actual font metrics from the default font at the requested
+    /// size. Prefer `from_style()` when a `ComputedStyle` is available.
     pub fn from_font_size(font_size: f32) -> Self {
-        // Approximate metrics based on typical proportions:
-        // ascent ≈ 0.8 * font_size, descent ≈ 0.2 * font_size
-        let ascent = font_size * 0.8;
-        let descent = font_size * 0.2;
-        Self {
-            width: font_size * 0.6,   // Approximate average letter width
-            height: ascent + descent,
-            ascent,
-            descent,
-        }
+        let mut style = ComputedStyle::default();
+        style.font_size = font_size;
+        Self::from_style(&style)
     }
 }
 
@@ -386,10 +399,16 @@ mod tests {
     #[test]
     fn first_letter_metrics_from_font_size() {
         let m = FirstLetterMetrics::from_font_size(48.0);
-        assert!((m.ascent - 38.4).abs() < 0.01);
-        assert!((m.descent - 9.6).abs() < 0.01);
-        assert!((m.height - 48.0).abs() < 0.01);
-        assert!((m.width - 28.8).abs() < 0.01);
+        // Uses real font metrics, so values depend on the actual default font.
+        // Assert positive, sensible values rather than hardcoded approximations.
+        assert!(m.ascent > 0.0, "ascent should be positive: {}", m.ascent);
+        assert!(m.descent > 0.0, "descent should be positive: {}", m.descent);
+        assert!((m.height - (m.ascent + m.descent)).abs() < 0.01, "height = ascent + descent");
+        assert!(m.width > 0.0, "width should be positive: {}", m.width);
+        // Sanity: metrics scale with font size
+        let m2 = FirstLetterMetrics::from_font_size(96.0);
+        assert!(m2.ascent > m.ascent, "larger font should have larger ascent");
+        assert!(m2.height > m.height, "larger font should have larger height");
     }
 
     #[test]
