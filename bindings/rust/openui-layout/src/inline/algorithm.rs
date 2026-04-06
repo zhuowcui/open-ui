@@ -625,6 +625,244 @@ fn find_static_block_for_item_index(
         intrinsic_block_size
     }
 }
+/// Apply inline fragmentation to a laid-out inline formatting context.
+///
+/// Takes a fragment produced by `inline_layout` / `inline_layout_from_items`
+/// and splits it at fragmentainer boundaries. Returns the fragment for the
+/// current fragmentainer, with a break token if content continues.
+///
+/// CSS Break 3 §3: Line boxes are class-B break points — a break can occur
+/// between any two line boxes. Orphans/widows constraints (§4.1) may shift
+/// the break point to satisfy minimum line counts.
+///
+/// Blink: `InlineLayoutAlgorithm::BreakLine()` and `BreakBeforeLine()` in
+/// `inline_layout_algorithm.cc`.
+///
+/// # Parameters
+/// - `fragment`: The fully laid-out inline fragment (all lines).
+/// - `fragmentainer_block_size`: Height of the current fragmentainer.
+/// - `block_offset_in_fragmentainer`: How far into the fragmentainer this
+///   inline content starts.
+/// - `lines_already_consumed`: Number of lines consumed in previous
+///   fragmentainers (from an `InlineBreakToken`).
+/// - `orphans`: CSS `orphans` property value (minimum lines before break).
+/// - `widows`: CSS `widows` property value (minimum lines after break).
+pub fn apply_inline_fragmentation(
+    mut fragment: Fragment,
+    fragmentainer_block_size: LayoutUnit,
+    block_offset_in_fragmentainer: LayoutUnit,
+    lines_already_consumed: usize,
+    orphans: u32,
+    widows: u32,
+) -> Fragment {
+    use crate::fragmentation::{BreakToken, InlineBreakToken};
+
+    let total_lines = fragment.children.len();
+
+    // No lines — nothing to fragment.
+    if total_lines == 0 {
+        return fragment;
+    }
+
+    // No fragmentation context — return as-is.
+    if fragmentainer_block_size <= LayoutUnit::zero() {
+        return fragment;
+    }
+
+    // Available block space in this fragmentainer for inline content.
+    let available_block = fragmentainer_block_size - block_offset_in_fragmentainer;
+    if available_block <= LayoutUnit::zero() {
+        // No space at all — produce empty fragment with break token at line 0.
+        fragment.children.clear();
+        fragment.size.height = LayoutUnit::zero();
+        fragment.first_baseline = None;
+        fragment.last_baseline = None;
+        fragment.break_token = Some(BreakToken::Inline(InlineBreakToken::new(
+            lines_already_consumed,
+            LayoutUnit::zero(),
+        )));
+        return fragment;
+    }
+
+    // Determine how many lines fit in the available block space.
+    // Walk line fragments (children) accumulating their block sizes.
+    let mut lines_that_fit = 0usize;
+    for child in &fragment.children {
+        let line_bottom = child.offset.top + child.size.height;
+        if line_bottom > available_block {
+            break;
+        }
+        lines_that_fit += 1;
+    }
+
+    // All lines fit — no break needed.
+    if lines_that_fit >= total_lines {
+        return fragment;
+    }
+
+    // Apply orphans and widows constraints.
+    // CSS Break 3 §4.1:
+    // - "orphans" = minimum lines that must remain before the break.
+    // - "widows" = minimum lines that must remain after the break.
+    let lines_remaining = total_lines - lines_that_fit;
+    let orphans = orphans as usize;
+    let widows = widows as usize;
+
+    // If orphans constraint is violated (too few lines before break),
+    // reduce lines_that_fit to satisfy it... but we can't go below 0.
+    // Actually orphans says we need AT LEAST `orphans` lines before break.
+    // If lines_that_fit < orphans, that's okay if that's all we have space for;
+    // orphans is a soft constraint that may be violated if there's no room.
+    // But if we have room for more than orphans, we shouldn't reduce.
+    // The key scenario: if we have room for many lines but widows would be
+    // violated, we reduce lines_that_fit so the next fragmentainer gets enough.
+
+    // Widows check: the next fragmentainer needs at least `widows` lines.
+    // If lines_remaining < widows, steal lines from this fragmentainer.
+    let mut adjusted_fit = lines_that_fit;
+    if lines_remaining < widows && adjusted_fit > 0 {
+        let needed = widows - lines_remaining;
+        if adjusted_fit > needed {
+            adjusted_fit -= needed;
+        } else {
+            // Can't satisfy widows without violating orphans to 0.
+            // Keep at least 1 line (or orphans, whichever is smaller).
+            adjusted_fit = adjusted_fit.min(1);
+        }
+    }
+
+    // Orphans check: this fragmentainer needs at least `orphans` lines.
+    // If adjusted_fit < orphans and there are enough total lines, try to
+    // fit at least `orphans` lines (if they physically fit).
+    if adjusted_fit < orphans && lines_that_fit >= orphans {
+        adjusted_fit = orphans;
+    }
+
+    // Ensure we don't exceed what physically fits.
+    adjusted_fit = adjusted_fit.min(lines_that_fit);
+
+    // If adjusted_fit is 0 and there are lines, keep at least 1 line
+    // (last resort — a line box is unbreakable content).
+    if adjusted_fit == 0 && total_lines > 0 {
+        adjusted_fit = 1;
+    }
+
+    // If all lines now fit after adjustment, no break needed.
+    if adjusted_fit >= total_lines {
+        return fragment;
+    }
+
+    // Split: keep first `adjusted_fit` lines, produce break token for rest.
+    let consumed_block_size = if adjusted_fit > 0 {
+        let last_kept = &fragment.children[adjusted_fit - 1];
+        last_kept.offset.top + last_kept.size.height
+    } else {
+        LayoutUnit::zero()
+    };
+
+    fragment.children.truncate(adjusted_fit);
+    fragment.size.height = consumed_block_size;
+
+    // Update baselines for the truncated set.
+    fragment.first_baseline = fragment.children.first()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    fragment.last_baseline = fragment.children.last()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+
+    // Produce break token so the next fragmentainer can resume.
+    let total_consumed = lines_already_consumed + adjusted_fit;
+    fragment.break_token = Some(BreakToken::Inline(InlineBreakToken::new(
+        total_consumed,
+        consumed_block_size,
+    )));
+
+    fragment
+}
+
+/// Resume inline layout from a break token, producing a fragment for the
+/// next fragmentainer.
+///
+/// Takes the full set of line fragments (from a complete inline layout),
+/// skips lines already consumed, re-offsets the remaining lines to start
+/// at block offset 0, and optionally applies fragmentation again if the
+/// remaining lines still don't fit.
+///
+/// # Parameters
+/// - `full_fragment`: The complete inline fragment with ALL lines.
+/// - `break_token`: The inline break token from the previous fragmentainer.
+/// - `fragmentainer_block_size`: Height of the new fragmentainer.
+/// - `orphans`: CSS `orphans` value.
+/// - `widows`: CSS `widows` value.
+pub fn resume_inline_from_break_token(
+    full_fragment: Fragment,
+    break_token: &crate::fragmentation::InlineBreakToken,
+    fragmentainer_block_size: LayoutUnit,
+    orphans: u32,
+    widows: u32,
+) -> Fragment {
+    let lines_to_skip = break_token.lines_consumed;
+    let total_lines = full_fragment.children.len();
+
+    if lines_to_skip >= total_lines {
+        // All lines consumed — return empty fragment.
+        let mut empty = Fragment::new_box(full_fragment.node_id, PhysicalSize::new(
+            full_fragment.size.width,
+            LayoutUnit::zero(),
+        ));
+        empty.first_baseline = None;
+        empty.last_baseline = None;
+        return empty;
+    }
+
+    // Take the remaining lines and re-offset them to start from 0.
+    let remaining_children: Vec<Fragment> = full_fragment.children.into_iter()
+        .skip(lines_to_skip)
+        .collect();
+
+    let first_offset = if let Some(first) = remaining_children.first() {
+        first.offset.top
+    } else {
+        LayoutUnit::zero()
+    };
+
+    let adjusted_children: Vec<Fragment> = remaining_children.into_iter()
+        .map(|mut f| {
+            f.offset.top = f.offset.top - first_offset;
+            f
+        })
+        .collect();
+
+    // Compute the total block size of remaining lines.
+    let total_block = if let Some(last) = adjusted_children.last() {
+        last.offset.top + last.size.height
+    } else {
+        LayoutUnit::zero()
+    };
+
+    let mut resumed_fragment = Fragment::new_box(
+        full_fragment.node_id,
+        PhysicalSize::new(full_fragment.size.width, total_block),
+    );
+    resumed_fragment.children = adjusted_children;
+
+    // Update baselines.
+    resumed_fragment.first_baseline = resumed_fragment.children.first()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    resumed_fragment.last_baseline = resumed_fragment.children.last()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+
+    // Apply fragmentation again if this fragmentainer also can't hold
+    // all remaining lines.
+    apply_inline_fragmentation(
+        resumed_fragment,
+        fragmentainer_block_size,
+        LayoutUnit::zero(),
+        lines_to_skip,
+        orphans,
+        widows,
+    )
+}
+
 ///
 /// Used by block_layout for CSS 2.2 §9.2.1.1 anonymous block boxes when
 /// mixed inline+block content is present. Lays out only the given children

@@ -32,6 +32,7 @@ pub use block::establishes_new_fc;
 pub use relative::apply_relative_offset;
 pub use flex::flex_layout;
 pub use crate::inline::algorithm::inline_layout;
+pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
 pub use ruby::{compute_ruby_layout, max_ruby_overhang, clamp_overhang, RubyInfo, RubyLayout};
 pub use layout_result::{LayoutResult, LayoutStatus, BreakBetween, AdjoiningObjectTypes};
 pub use inflow_position::{PreviousInflowPosition, InflowChildData};
@@ -39,7 +40,7 @@ pub use exclusions::{ExclusionSpace};
 pub use out_of_flow::{OutOfFlowCandidate, layout_out_of_flow_children};
 pub use bfc_resolution::{BfcBlockOffsetState, PendingFloats};
 pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
-pub use fragmentation::{BlockBreakToken, BreakToken, BreakAppeal, FragmentainerSpace};
+pub use fragmentation::{BlockBreakToken, BreakToken, BreakAppeal, FragmentainerSpace, InlineBreakToken};
 pub use sticky::{apply_sticky_offset, StickyPositionData, compute_sticky_offset};
 pub use multicol::{layout_columns, resolve_column_count_and_width};
 pub use css_sizing::{

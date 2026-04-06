@@ -439,6 +439,20 @@ pub struct ComputedStyle {
 
     // ── Fragmentation ───────────────────────────────────────────────
 
+    /// CSS `orphans`. Initial: `2`. Inherited.
+    /// Minimum number of lines in a block container that must be left
+    /// at the bottom of a fragmentainer (before a fragmentation break).
+    ///
+    /// CSS Break 3 §4.1. Blink: `ComputedStyle::Orphans()`.
+    pub orphans: u32,
+
+    /// CSS `widows`. Initial: `2`. Inherited.
+    /// Minimum number of lines in a block container that must be left
+    /// at the top of a fragmentainer (after a fragmentation break).
+    ///
+    /// CSS Break 3 §4.1. Blink: `ComputedStyle::Widows()`.
+    pub widows: u32,
+
     /// CSS `break-before`. Initial: `auto`.
     /// Controls forced/avoided breaks before this box.
     pub break_before: BreakValue,
@@ -487,6 +501,26 @@ pub struct ComputedStyle {
     /// Stores `(width, height)` ratio and an auto flag for
     /// `aspect-ratio: auto 16/9`.
     pub aspect_ratio: Option<AspectRatio>,
+
+    // ── First-Line Pseudo (CSS 2.1 §5.12.1) ─────────────────────────
+
+    /// Alternate style for `::first-line` pseudo-element.
+    /// When `Some`, the first line of the block container uses this
+    /// style for text-related properties (font, color, text-decoration, etc.).
+    /// Blink: `HighlightPseudoStyle(kPseudoIdFirstLine)` in style_adjuster.cc.
+    pub first_line_style: Option<Box<ComputedStyle>>,
+
+    // ── Text Wrap (CSS Text Level 4) ─────────────────────────────────
+
+    /// CSS `text-wrap`. Initial: `wrap`. Inherited.
+    /// Controls paragraph-level line breaking strategy.
+    pub text_wrap: TextWrap,
+
+    // ── Initial Letter (CSS Inline Level 3 §5) ──────────────────────
+
+    /// CSS `initial-letter`. Initial: `None` (normal).
+    /// When `Some`, the first letter is sized/sunk as a drop-cap or raised cap.
+    pub initial_letter: Option<InitialLetter>,
 }
 
 impl ComputedStyle {
@@ -661,6 +695,8 @@ impl ComputedStyle {
             locale: None,
 
             // Fragmentation
+            orphans: 2,                            // CSS initial
+            widows: 2,                             // CSS initial
             break_before: BreakValue::INITIAL,     // auto
             break_after: BreakValue::INITIAL,      // auto
             break_inside: BreakInside::INITIAL,    // auto
@@ -677,6 +713,15 @@ impl ComputedStyle {
 
             // Aspect ratio
             aspect_ratio: None,                        // auto (no specified ratio)
+
+            // First-line pseudo
+            first_line_style: None,                    // no ::first-line
+
+            // Text wrap
+            text_wrap: TextWrap::INITIAL,              // wrap
+
+            // Initial letter
+            initial_letter: None,                      // normal (no drop-cap)
         }
     }
 

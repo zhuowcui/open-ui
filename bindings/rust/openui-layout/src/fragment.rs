@@ -161,6 +161,16 @@ pub struct Fragment {
     ///
     /// Blink: `PhysicalBoxFragment::IsLastForNode()`.
     pub is_last_for_node: bool,
+
+    /// Break token for fragmentation — records where layout was interrupted
+    /// so the next fragmentainer can resume from this point.
+    ///
+    /// `None` means this fragment consumed all content (no fragmentation break).
+    /// `Some(token)` means content was split and the next fragmentainer should
+    /// use this token to resume layout.
+    ///
+    /// Blink: `PhysicalBoxFragment::BreakToken()`.
+    pub break_token: Option<crate::fragmentation::BreakToken>,
 }
 
 impl Fragment {
@@ -189,6 +199,7 @@ impl Fragment {
             last_baseline: None,
             is_first_for_node: true,
             is_last_for_node: true,
+            break_token: None,
         }
     }
 
@@ -225,6 +236,7 @@ impl Fragment {
             last_baseline: None,
             is_first_for_node: true,
             is_last_for_node: true,
+            break_token: None,
         }
     }
 

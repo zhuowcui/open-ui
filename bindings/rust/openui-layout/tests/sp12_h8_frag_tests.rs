@@ -144,7 +144,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     mid.add_child_token(BreakToken::Block(BlockBreakToken::new(0, lu(25))));
     root.add_child_token(BreakToken::Block(mid));
     assert_eq!(root.child_break_tokens.len(), 1);
-    match &root.child_break_tokens[0] { BreakToken::Block(i) => assert_eq!(i.child_break_tokens.len(), 1) }
+    match &root.child_break_tokens[0] { BreakToken::Block(i) => assert_eq!(i.child_break_tokens.len(), 1), _ => unreachable!() }
 }
 #[test] fn basic_frag_zero_consumed() { assert_eq!(BlockBreakToken::new(0, lu(0)).consumed_block_size, lu(0)); }
 #[test] fn basic_frag_five_equal_small() {
@@ -181,7 +181,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 }
 #[test] fn basic_frag_token_debug() { assert!(format!("{:?}", BlockBreakToken::new(1, lu(100))).contains("BlockBreakToken")); }
 #[test] fn basic_frag_enum_block() {
-    match BreakToken::Block(BlockBreakToken::new(0, lu(0))) { BreakToken::Block(b) => assert_eq!(b.child_index, 0) }
+    match BreakToken::Block(BlockBreakToken::new(0, lu(0))) { BreakToken::Block(b) => assert_eq!(b.child_index, 0), _ => unreachable!() }
 }
 #[test] fn basic_frag_large_consumed() { assert_eq!(BlockBreakToken::new(0, lu(100_000)).consumed_block_size, lu(100_000)); }
 #[test] fn basic_frag_large_index() { assert_eq!(BlockBreakToken::new(9999, lu(0)).child_index, 9999); }
@@ -578,7 +578,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     let mut l2 = BlockBreakToken::new(1, lu(200));
     l2.add_child_token(BreakToken::Block(BlockBreakToken::new(0, lu(50))));
     l1.add_child_token(BreakToken::Block(l2));
-    match &l1.child_break_tokens[0] { BreakToken::Block(i) => { assert_eq!(i.child_break_tokens.len(), 1); match &i.child_break_tokens[0] { BreakToken::Block(l) => assert_eq!(l.consumed_block_size, lu(50)) } } }
+    match &l1.child_break_tokens[0] { BreakToken::Block(i) => { assert_eq!(i.child_break_tokens.len(), 1); match &i.child_break_tokens[0] { BreakToken::Block(l) => assert_eq!(l.consumed_block_size, lu(50)), _ => unreachable!() } }, _ => unreachable!() }
 }
 #[test] fn nest_multicol_in_multicol() {
     assert!(layout_columns(&algo(2, 10, ColumnFill::Balance), node(), lu(600), lu(500), &[lu(200); 2]).block_size.raw() > 0);
@@ -597,7 +597,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn nest_preserves_data() {
     let mut p = BlockBreakToken::new(0, lu(0));
     p.add_child_token(BreakToken::Block(BlockBreakToken::break_before(5, lu(999))));
-    match &p.child_break_tokens[0] { BreakToken::Block(i) => { assert!(i.is_break_before); assert_eq!(i.child_index, 5); assert_eq!(i.consumed_block_size, lu(999)); } }
+    match &p.child_break_tokens[0] { BreakToken::Block(i) => { assert!(i.is_break_before); assert_eq!(i.child_index, 5); assert_eq!(i.consumed_block_size, lu(999)); }, _ => unreachable!() }
 }
 #[test] fn nest_frag_in_col() { assert_eq!(find_best_break_point(&[child(150), child(100)], &FragmentainerSpace::new(lu(200))).child_index, 1); }
 #[test] fn nest_4_levels() {
@@ -607,12 +607,12 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     l3.add_child_token(BreakToken::Block(BlockBreakToken::new(0, lu(100))));
     l2.add_child_token(BreakToken::Block(l3));
     l1.add_child_token(BreakToken::Block(l2));
-    match &l1.child_break_tokens[0] { BreakToken::Block(b2) => match &b2.child_break_tokens[0] { BreakToken::Block(b3) => match &b3.child_break_tokens[0] { BreakToken::Block(b4) => { assert_eq!(b4.consumed_block_size, lu(100)); assert!(!b4.has_child_break_tokens()); } } } }
+    match &l1.child_break_tokens[0] { BreakToken::Block(b2) => match &b2.child_break_tokens[0] { BreakToken::Block(b3) => match &b3.child_break_tokens[0] { BreakToken::Block(b4) => { assert_eq!(b4.consumed_block_size, lu(100)); assert!(!b4.has_child_break_tokens()); }, _ => unreachable!() }, _ => unreachable!() }, _ => unreachable!() }
 }
 #[test] fn nest_break_before_nested() {
     let mut p = BlockBreakToken::new(2, lu(200));
     p.add_child_token(BreakToken::Block(BlockBreakToken::break_before(0, lu(0))));
-    match &p.child_break_tokens[0] { BreakToken::Block(i) => assert!(i.is_break_before) }
+    match &p.child_break_tokens[0] { BreakToken::Block(i) => assert!(i.is_break_before), _ => unreachable!() }
 }
 #[test] fn nest_sibling_tokens() {
     let mut p = BlockBreakToken::new(0, lu(500));
@@ -638,7 +638,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn nest_child_lt_parent() {
     let mut p = BlockBreakToken::new(2, lu(500));
     p.add_child_token(BreakToken::Block(BlockBreakToken::new(0, lu(200))));
-    match &p.child_break_tokens[0] { BreakToken::Block(c) => assert!(c.consumed_block_size < p.consumed_block_size) }
+    match &p.child_break_tokens[0] { BreakToken::Block(c) => assert!(c.consumed_block_size < p.consumed_block_size), _ => unreachable!() }
 }
 #[test] fn nest_positioned() { let t = BlockBreakToken::new(0, lu(0)); assert_eq!(t.child_index, 0); assert!(!t.is_break_before); }
 #[test] fn nest_float_in_frag() {
@@ -949,7 +949,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     root.add_child_token(BreakToken::Block(mid));
     let cloned = root.clone();
     assert_eq!(cloned.child_break_tokens.len(), 1);
-    match &cloned.child_break_tokens[0] { BreakToken::Block(i) => assert_eq!(i.child_break_tokens.len(), 1) }
+    match &cloned.child_break_tokens[0] { BreakToken::Block(i) => assert_eq!(i.child_break_tokens.len(), 1), _ => unreachable!() }
 }
 #[test] fn extra_nest_multicol_auto_inner() {
     let inner = algo(2, 5, ColumnFill::Auto);
@@ -960,7 +960,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     let mut p = BlockBreakToken::new(0, lu(1000));
     for i in 0..5 { p.add_child_token(BreakToken::Block(BlockBreakToken::new(i, lu((i+1) as i32 * 50)))); }
     assert_eq!(p.child_break_tokens.len(), 5);
-    match &p.child_break_tokens[4] { BreakToken::Block(b) => assert_eq!(b.consumed_block_size, lu(250)) }
+    match &p.child_break_tokens[4] { BreakToken::Block(b) => assert_eq!(b.consumed_block_size, lu(250)), _ => unreachable!() }
 }
 
 // -- More fragmentainer space --

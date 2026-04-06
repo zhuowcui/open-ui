@@ -81,15 +81,44 @@ impl BlockBreakToken {
     }
 }
 
-/// A break token variant — currently only block-level, but inline break
-/// tokens will be added in future SPs.
+/// Tracks where layout was interrupted in an inline formatting context.
+///
+/// Source: `NGInlineBreakToken` in Blink (`inline_break_token.h`).
+///
+/// When lines in an inline formatting context don't all fit in a
+/// fragmentainer (page/column), layout produces an `InlineBreakToken`
+/// recording the line index at which to resume. The next fragmentainer
+/// uses this token to skip already-laid-out lines.
+#[derive(Debug, Clone)]
+pub struct InlineBreakToken {
+    /// Number of lines that were completed in previous fragmentainers.
+    /// Layout resumes by skipping this many lines in the next fragmentainer.
+    pub lines_consumed: usize,
+
+    /// Block size consumed by the lines already laid out in previous
+    /// fragmentainers. Used for offset calculations when resuming.
+    pub consumed_block_size: LayoutUnit,
+}
+
+impl InlineBreakToken {
+    /// Create a new inline break token.
+    pub fn new(lines_consumed: usize, consumed_block_size: LayoutUnit) -> Self {
+        Self {
+            lines_consumed,
+            consumed_block_size,
+        }
+    }
+}
+
+/// A break token variant — block-level or inline-level.
 ///
 /// Source: `NGBreakToken` hierarchy in Blink.
 #[derive(Debug, Clone)]
 pub enum BreakToken {
     /// Break token from a block-level element.
     Block(BlockBreakToken),
-    // Inline break tokens will be added in future SPs.
+    /// Break token from an inline formatting context.
+    Inline(InlineBreakToken),
 }
 
 // ── Break Appeal ────────────────────────────────────────────────────────

@@ -125,6 +125,7 @@ fn break_token_chaining_parent_and_child() {
             assert_eq!(inner.child_index, 0);
             assert_eq!(inner.consumed_block_size, LayoutUnit::from_i32(100));
         }
+        _ => unreachable!(),
     }
 }
 
