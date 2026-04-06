@@ -20,6 +20,10 @@ use crate::inline::items_builder::style_to_font_description;
 /// remainder, so the items builder can split the text item.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FirstLetterExtraction {
+    /// Byte offset where the first-letter portion starts (inclusive).
+    /// Skips any leading whitespace — the first-letter pseudo-element
+    /// does not include whitespace per CSS 2.1 §5.12.2.
+    pub first_letter_start: usize,
     /// Byte offset where the first-letter portion ends (exclusive).
     /// This includes any leading punctuation + the letter + trailing punctuation.
     pub first_letter_end: usize,
@@ -140,6 +144,8 @@ pub fn extract_first_letter(text: &str) -> Option<FirstLetterExtraction> {
         }
     }
 
+    let first_letter_start = offset;
+
     // Phase 2: Consume leading punctuation
     while let Some(&(idx, ch)) = chars.peek() {
         if is_first_letter_punctuation(ch) {
@@ -186,6 +192,7 @@ pub fn extract_first_letter(text: &str) -> Option<FirstLetterExtraction> {
     }
 
     Some(FirstLetterExtraction {
+        first_letter_start,
         first_letter_end: offset,
         has_letter: true,
     })
@@ -296,10 +303,14 @@ pub fn has_first_letter_content(text: &str) -> bool {
 
 /// Split text into the first-letter portion and the remainder.
 ///
-/// Returns `(first_letter_text, remainder_text)`.
+/// Returns `(first_letter_text, remainder_text)`. Leading whitespace before
+/// the first letter is excluded from the first-letter portion (CSS 2.1 §5.12.2).
 pub fn split_first_letter(text: &str) -> Option<(&str, &str)> {
     let extraction = extract_first_letter(text)?;
-    Some((&text[..extraction.first_letter_end], &text[extraction.first_letter_end..]))
+    Some((
+        &text[extraction.first_letter_start..extraction.first_letter_end],
+        &text[extraction.first_letter_end..],
+    ))
 }
 
 #[cfg(test)]
@@ -337,7 +348,10 @@ mod tests {
     #[test]
     fn leading_whitespace_then_letter() {
         let result = extract_first_letter("  Hello").unwrap();
-        assert_eq!(result.first_letter_end, 3); // "  H"
+        assert_eq!(result.first_letter_start, 2); // skip "  "
+        assert_eq!(result.first_letter_end, 3); // "H" at byte 2..3
+        // The first-letter text is "H", not "  H"
+        assert_eq!(&"  Hello"[result.first_letter_start..result.first_letter_end], "H");
     }
 
     #[test]

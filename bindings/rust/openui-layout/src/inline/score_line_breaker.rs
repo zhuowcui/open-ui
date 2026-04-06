@@ -222,6 +222,9 @@ impl ScoreLineBreaker {
         let mut all_breaks: Vec<ScoredBreak> = Vec::with_capacity(n * 2);
         all_breaks.push(active[0].clone());
 
+        // Map from active index → all_breaks index, for correct backtracking.
+        let mut active_to_all: Vec<usize> = vec![0];
+
         // Process each candidate break point
         for b in 1..n {
             let candidate = &candidates[b];
@@ -233,6 +236,7 @@ impl ScoreLineBreaker {
                 // Try connecting from each active break
                 for a_idx in 0..active.len() {
                     let a = &active[a_idx];
+                    let all_idx = active_to_all[a_idx];
                     let line = a.line;
                     let line_width = self.params.width_for_line(line);
 
@@ -298,20 +302,23 @@ impl ScoreLineBreaker {
                             candidate_index: b,
                             fitness,
                             total_demerits: total,
-                            previous: a_idx as i32,
+                            previous: all_idx as i32,
                             line: line + 1,
                         });
                     }
                 }
 
                 if let Some(sb) = best_break {
+                    let new_all_idx = all_breaks.len();
                     all_breaks.push(sb.clone());
 
                     if candidate.is_forced {
                         // Forced break: clear active set, start fresh
                         active.clear();
+                        active_to_all.clear();
                     }
                     active.push(sb);
+                    active_to_all.push(new_all_idx);
                 }
             }
         }
@@ -393,14 +400,17 @@ impl ScoreLineBreaker {
 
                 // Try shifting break forward
                 if breaks[i] + 1 < candidates.len() {
-                    let original = breaks[i];
-                    breaks[i] += 1;
-                    let new_widths = self.compute_line_widths(candidates, breaks);
-                    let new_var = compute_variance(&new_widths);
-                    if new_var < current_var {
-                        improved = true;
-                    } else {
-                        breaks[i] = original;
+                    let max_idx = if i + 1 < breaks.len() { breaks[i + 1] } else { candidates.len() };
+                    if breaks[i] + 1 < max_idx {
+                        let original = breaks[i];
+                        breaks[i] += 1;
+                        let new_widths = self.compute_line_widths(candidates, breaks);
+                        let new_var = compute_variance(&new_widths);
+                        if new_var < current_var {
+                            improved = true;
+                        } else {
+                            breaks[i] = original;
+                        }
                     }
                 }
 
