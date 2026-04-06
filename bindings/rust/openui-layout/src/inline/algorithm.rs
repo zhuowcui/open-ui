@@ -480,12 +480,22 @@ pub fn inline_layout(
 
     let intrinsic_block_size = block_offset;
 
+    // Compute first and last baselines from line boxes.
+    // CSS Inline 3 §3: The first baseline of a block container with inline
+    // content is the baseline of its first line box. The last baseline is
+    // the baseline of its last line box.
+    // Blink: InlineLayoutAlgorithm::Layout() — first/last_baseline computation.
+    let first_baseline = line_fragments.first().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    let last_baseline = line_fragments.last().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+
     // Build the container fragment.
     let border_box_inline = space.available_inline_size;
     let border_box_size = PhysicalSize::new(border_box_inline, intrinsic_block_size);
 
     let mut fragment = Fragment::new_box(node_id, border_box_size);
     fragment.children = line_fragments;
+    fragment.first_baseline = first_baseline;
+    fragment.last_baseline = last_baseline;
     fragment
 }
 
@@ -592,11 +602,17 @@ pub fn inline_layout_for_children(
     }
 
     let intrinsic_block_size = block_offset;
+
+    let first_baseline = line_fragments.first().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    let last_baseline = line_fragments.last().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+
     let border_box_inline = space.available_inline_size;
     let border_box_size = PhysicalSize::new(border_box_inline, intrinsic_block_size);
 
     let mut fragment = Fragment::new_box(node_id, border_box_size);
     fragment.children = line_fragments;
+    fragment.first_baseline = first_baseline;
+    fragment.last_baseline = last_baseline;
     fragment
 }
 
@@ -1413,6 +1429,7 @@ fn create_line_box(
         line_height,
     ));
     line_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), block_offset);
+    line_fragment.baseline_offset = baseline.to_f32();
     line_fragment.children = children;
     line_fragment
 }

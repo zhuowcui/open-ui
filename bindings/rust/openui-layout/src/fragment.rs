@@ -121,6 +121,26 @@ pub struct Fragment {
     /// margin collapses with the parent's. This field carries the unresolved
     /// start margin strut so the parent can absorb it.
     pub start_margin_strut: openui_geometry::MarginStrut,
+
+    /// First baseline of this fragment, measured from the fragment's top edge.
+    ///
+    /// CSS Inline 3 §3: The first baseline set of a box is the alignment
+    /// baseline from its first line box (if it has inline content) or
+    /// from its first in-flow child's first baseline. Used by flex/grid
+    /// for `align-items: baseline`.
+    ///
+    /// Blink: `PhysicalBoxFragment::FirstBaseline()`.
+    pub first_baseline: Option<LayoutUnit>,
+
+    /// Last baseline of this fragment, measured from the fragment's top edge.
+    ///
+    /// CSS Inline 3 §3: The last baseline set of a box is the alignment
+    /// baseline from its last line box (if it has inline content) or
+    /// from its last in-flow child's last baseline. Used by flex/grid
+    /// for `align-items: last baseline`.
+    ///
+    /// Blink: `PhysicalBoxFragment::LastBaseline()`.
+    pub last_baseline: Option<LayoutUnit>,
 }
 
 impl Fragment {
@@ -145,6 +165,8 @@ impl Fragment {
             oof_candidates: Vec::new(),
             end_margin_strut: openui_geometry::MarginStrut::new(),
             start_margin_strut: openui_geometry::MarginStrut::new(),
+            first_baseline: None,
+            last_baseline: None,
         }
     }
 
@@ -177,6 +199,8 @@ impl Fragment {
             oof_candidates: Vec::new(),
             end_margin_strut: openui_geometry::MarginStrut::new(),
             start_margin_strut: openui_geometry::MarginStrut::new(),
+            first_baseline: None,
+            last_baseline: None,
         }
     }
 

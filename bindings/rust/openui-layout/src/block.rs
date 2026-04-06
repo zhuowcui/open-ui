@@ -176,6 +176,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let has_inline = crate::inline::algorithm::has_inline_children(doc, node_id);
     let has_block = has_block_children(doc, node_id);
 
+    // Track baselines from inline and block children.
+    // CSS Inline 3 §3: first baseline = baseline of first line box or first child
+    // with a baseline; last baseline = baseline of last line box / last child.
+    let mut first_baseline_result: Option<LayoutUnit> = None;
+    let mut last_baseline_result: Option<LayoutUnit> = None;
+
     if has_inline && !has_block {
         // ── Pure inline formatting context ───────────────────────────
         // Handle float and OOF children first (leading floats), then lay out
@@ -244,6 +250,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         let inline_fragment = crate::inline::algorithm::inline_layout(
             doc, node_id, &inline_space,
         );
+
+        // Capture baselines from inline layout, adjusted to border-box coordinates.
+        if let Some(fb) = inline_fragment.first_baseline {
+            first_baseline_result = Some(content_edge + fb);
+        }
+        if let Some(lb) = inline_fragment.last_baseline {
+            last_baseline_result = Some(content_edge + lb);
+        }
+
         for line_frag in inline_fragment.children {
             let line_height = line_frag.size.height;
             let mut positioned_line = line_frag;
@@ -426,6 +441,18 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 let anon_fragment = crate::inline::algorithm::inline_layout_for_children(
                     doc, node_id, inline_run, &inline_space,
                 );
+
+                // Capture baselines from anonymous inline wrapper.
+                if let Some(fb) = anon_fragment.first_baseline {
+                    if first_baseline_result.is_none() {
+                        first_baseline_result = Some(block_offset + fb);
+                    }
+                    last_baseline_result = Some(block_offset + fb);
+                }
+                if let Some(lb) = anon_fragment.last_baseline {
+                    last_baseline_result = Some(block_offset + lb);
+                }
+
                 for line_frag in anon_fragment.children {
                     let line_height = line_frag.size.height;
                     let mut positioned_line = line_frag;
@@ -845,6 +872,34 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         fragment.start_margin_strut = margin_strut;
     }
     fragment.end_margin_strut = final_end_margin_strut;
+
+    // ── Baseline propagation ─────────────────────────────────────────
+    // CSS Inline 3 §3: The first baseline set of a block container is the
+    // first baseline of its first in-flow child that contributes one; the
+    // last baseline is from the last such child.
+    //
+    // Always compute baselines so parent containers (flex, grid, etc.) can
+    // use them. The `needs_first_baseline` flag is checked by parents, not
+    // by the computation itself.
+    //
+    // Blink: BlockLayoutAlgorithm::Layout() — first/last baseline propagation.
+    {
+        // Start with values from inline layout (pure or mixed path).
+        fragment.first_baseline = first_baseline_result;
+        fragment.last_baseline = last_baseline_result;
+
+        // Also scan block children for baselines (handles nested blocks
+        // and block children in mixed content).
+        for child in &fragment.children {
+            if let Some(child_first) = child.first_baseline {
+                if fragment.first_baseline.is_none() {
+                    fragment.first_baseline = Some(child.offset.top + child_first);
+                }
+                fragment.last_baseline = Some(child.offset.top +
+                    child.last_baseline.unwrap_or(child_first));
+            }
+        }
+    }
 
     fragment
 }
