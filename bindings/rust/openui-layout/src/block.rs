@@ -585,7 +585,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Resolve the trailing margin strut if margins can't collapse through
     // the bottom edge. Per CSS 2.1 §8.3.1, the last child's bottom margin
     // collapses with the parent's bottom margin ONLY if:
-    //   - parent has 'auto' computed height
+    //   - parent has 'auto' computed height AND min-height is zero
     //   - no bottom padding or border separates them
     //   - parent doesn't establish a new BFC
     // When any of these conditions fails, the margin strut is consumed.
@@ -593,10 +593,22 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let has_non_auto_height = !style.height.is_auto()
         || space.is_fixed_block_size
         || space.stretch_block_size;
+    // CSS 2.1 §8.3.1: min-height > 0 prevents parent/last-child collapse.
+    let has_min_height = !style.min_height.is_auto()
+        && !style.min_height.is_none()
+        && match style.min_height.length_type() {
+            openui_geometry::LengthType::Fixed => style.min_height.value() > 0.0,
+            openui_geometry::LengthType::Percent => {
+                !space.available_block_size.is_indefinite()
+                    && style.min_height.value() > 0.0
+            }
+            _ => false,
+        };
     let end_margin_resolved = !margin_strut.is_empty()
         && (space.is_new_formatting_context
             || bottom_edge > LayoutUnit::zero()
-            || has_non_auto_height);
+            || has_non_auto_height
+            || has_min_height);
     if end_margin_resolved {
         intrinsic_block_size += margin_strut.sum();
         // Reposition any remaining pending self-collapsing children to the
@@ -1061,6 +1073,11 @@ fn layout_block_child(
         // NOTE: Tentative — deferred flush (see non-self-collapsing branch).
     }
 
+    // Save the margin boundary offset BEFORE height addition. This is the
+    // position where self-collapsing predecessors should be flushed — at the
+    // top border edge of this child, not its bottom.
+    let margin_boundary_offset = *block_offset;
+
     // Take OOF candidates from the child for processing after offset is known.
     let child_oof = if !child_fragment.oof_candidates.is_empty() {
         std::mem::take(&mut child_fragment.oof_candidates)
@@ -1227,9 +1244,11 @@ fn layout_block_child(
         *start_margin_resolved = true;
 
         // The strut resolution is now confirmed (non-self-collapsing child).
-        // Flush pending self-collapsing children to the resolved boundary.
+        // Flush pending self-collapsing children to the margin boundary —
+        // the offset BEFORE this child's height was added (CSS 2.1 §8.3.1:
+        // self-collapsing block's edges coincide at the collapsed boundary).
         for &idx in pending_self_collapsing.iter() {
-            child_fragments[idx].offset.top = *block_offset;
+            child_fragments[idx].offset.top = margin_boundary_offset;
         }
         pending_self_collapsing.clear();
 

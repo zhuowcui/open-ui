@@ -191,15 +191,19 @@ fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> Int
     let min_inline = apply_min_max_inline(child_style, min_inline);
     let max_inline = apply_min_max_inline(child_style, max_inline);
 
-    // Apply explicit height if set.
-    let block_size = apply_size_override_block(child_style, child_intrinsic.max_content_block_size);
-    let block_size = apply_min_max_block(child_style, block_size);
+    // Apply explicit height if set. Compute separately for min-content
+    // and max-content modes: at min-content width, wrapping content may
+    // be taller than at max-content width (CSS Sizing 3 §5).
+    let min_block_size = apply_size_override_block(child_style, child_intrinsic.min_content_block_size);
+    let min_block_size = apply_min_max_block(child_style, min_block_size);
+    let max_block_size = apply_size_override_block(child_style, child_intrinsic.max_content_block_size);
+    let max_block_size = apply_min_max_block(child_style, max_block_size);
 
     IntrinsicSizes {
         min_content_inline_size: min_inline + margin_inline,
         max_content_inline_size: max_inline + margin_inline,
-        min_content_block_size: block_size + margin_block,
-        max_content_block_size: block_size + margin_block,
+        min_content_block_size: min_block_size + margin_block,
+        max_content_block_size: max_block_size + margin_block,
     }
 }
 

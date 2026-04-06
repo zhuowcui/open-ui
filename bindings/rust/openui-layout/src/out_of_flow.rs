@@ -206,9 +206,12 @@ fn layout_out_of_flow_child(
     // CSS 2.1 §10.7: When auto-height was clamped by min/max, the clamped
     // height becomes the definite height for percentage-height descendants.
     // Re-layout with the definite block size so children can resolve against it.
+    // Save the original unclamped height BEFORE relayout, because relayout
+    // will produce a fragment with height == final_height, making the
+    // comparison meaningless afterward.
+    let original_unclamped = child_fragment.size.height;
     if style.height.is_auto() && !height_resolved_from_constraints {
-        let unclamped = child_fragment.size.height;
-        if final_height != unclamped {
+        if final_height != original_unclamped {
             let clamped_content = (final_height - border_padding_v).clamp_negative_to_zero();
             let mut relayout_space = ConstraintSpace::for_block_child(
                 resolved_width,
@@ -227,8 +230,7 @@ fn layout_out_of_flow_child(
     // constraint equation to correctly recompute auto margins and insets.
     let (resolved_top, resolved_margin_top, resolved_margin_bottom) =
         if style.height.is_auto() && !height_resolved_from_constraints {
-            let unclamped = child_fragment.size.height;
-            if final_height != unclamped {
+            if final_height != original_unclamped {
                 let (t, _h, mt, mb) = resolve_vertical_with_known_height(
                     style, cb_width, cb_height, static_top, &border, &padding, final_height,
                 );
