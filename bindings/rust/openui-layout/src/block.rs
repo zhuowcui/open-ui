@@ -599,6 +599,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             || has_non_auto_height);
     if end_margin_resolved {
         intrinsic_block_size += margin_strut.sum();
+        // Reposition any remaining pending self-collapsing children to the
+        // final collapsed margin boundary. This handles the case where the
+        // last child(ren) are self-collapsing and no subsequent non-self-
+        // collapsing sibling triggered the flush.
+        let resolved_offset = block_offset + margin_strut.sum();
+        for &idx in pending_self_collapsing.iter() {
+            child_fragments[idx].offset.top = resolved_offset;
+        }
+        pending_self_collapsing.clear();
     }
     // Capture end margin strut before it's consumed. If the end margin
     // couldn't be resolved (no bottom border/padding, not a new FC), it
@@ -1040,22 +1049,16 @@ fn layout_block_child(
             *margin_strut = MarginStrut::new();
             *start_margin_resolved = true;
             strut_resolved_this_child = true;
-            // Reposition pending self-collapsing children to resolved boundary
-            for &idx in pending_self_collapsing.iter() {
-                child_fragments[idx].offset.top = *block_offset;
-            }
-            pending_self_collapsing.clear();
+            // NOTE: Do NOT flush pending_self_collapsing here — this resolution
+            // is tentative. If the current child is self-collapsing, we'll roll
+            // back. Flush happens later once we confirm non-self-collapsing.
         }
         // else: start margin still collapses through — don't resolve yet
     } else {
         *block_offset += margin_strut.sum();
         *margin_strut = MarginStrut::new();
         strut_resolved_this_child = true;
-        // Reposition pending self-collapsing children to resolved boundary
-        for &idx in pending_self_collapsing.iter() {
-            child_fragments[idx].offset.top = *block_offset;
-        }
-        pending_self_collapsing.clear();
+        // NOTE: Tentative — deferred flush (see non-self-collapsing branch).
     }
 
     // Take OOF candidates from the child for processing after offset is known.
@@ -1159,14 +1162,18 @@ fn layout_block_child(
     //   - zero computed height (or auto resolving to zero)
     //   - no top/bottom border or padding
     //   - does not establish a new BFC
-    //   - does not contain any line boxes
-    //   - all in-flow children's margins collapse (recursively self-collapsing)
-    // We check the fragment for in-flow content: if it produced any child
-    // fragments, it has line boxes or in-flow block children and is NOT
-    // self-collapsing (even if those all have zero height).
+    //   - does not contain any line boxes or in-flow children
+    // Check the DOM tree for in-flow children (not the fragment, which may
+    // include float fragments). Floats/abspos are out-of-flow and don't
+    // prevent self-collapsing per §8.3.1.
     let child_bp_block = resolve_border(child_style).block_sum()
         + resolve_padding(child_style, child_available_inline).block_sum();
-    let child_has_in_flow_content = !child_fragment.children.is_empty();
+    let child_has_in_flow_content = doc.children(child_id).any(|grandchild_id| {
+        let gs = &doc.node(grandchild_id).style;
+        gs.display != Display::None
+            && !gs.position.is_absolutely_positioned()
+            && gs.float == openui_style::Float::None
+    });
     let child_is_self_collapsing = child_fragment.size.height == LayoutUnit::zero()
         && child_bp_block == LayoutUnit::zero()
         && !child_is_new_fc
@@ -1218,6 +1225,14 @@ fn layout_block_child(
             *saved_start_strut = Some(*margin_strut);
         }
         *start_margin_resolved = true;
+
+        // The strut resolution is now confirmed (non-self-collapsing child).
+        // Flush pending self-collapsing children to the resolved boundary.
+        for &idx in pending_self_collapsing.iter() {
+            child_fragments[idx].offset.top = *block_offset;
+        }
+        pending_self_collapsing.clear();
+
         *margin_strut = MarginStrut::new();
         margin_strut.append_normal(child_margin.bottom);
         if !child_fragment.end_margin_strut.is_empty() {

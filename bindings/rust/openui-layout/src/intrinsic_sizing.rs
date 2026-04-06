@@ -85,8 +85,15 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     let bp_block = border.block_sum() + padding.block_sum();
 
     let mut min_inline = LayoutUnit::zero();
-    let mut max_inline = LayoutUnit::zero();
-    let mut content_block = LayoutUnit::zero();
+    // CSS Sizing 3 §4.1: Max-content inline size must accommodate all floats
+    // side-by-side (summed), plus the widest non-float child (maxed).
+    let mut non_float_max_inline = LayoutUnit::zero();
+    let mut float_max_inline_sum = LayoutUnit::zero();
+    // Track min-content and max-content block sizes separately.
+    // CSS Sizing 3 §5: min-content uses each child's min-content contribution,
+    // max-content uses each child's max-content contribution.
+    let mut min_content_block = LayoutUnit::zero();
+    let mut max_content_block = LayoutUnit::zero();
     // CSS Sizing 3 §5: Float block-size contributions differ between modes.
     // In max-content mode (infinite available width), floats sit side-by-side,
     // so the tallest float determines the contribution (max).
@@ -108,31 +115,37 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 
         let child_sizes = compute_child_intrinsic_contribution(doc, child_id);
 
-        // CSS Sizing 3 §4.1: floated children contribute to intrinsic inline sizes.
-        min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
-        max_inline = max_inline.max_of(child_sizes.max_content_inline_size);
-
-        // CSS 2.1 §10.6.3/§10.6.7: floats only contribute to block size for
-        // BFC roots. Non-BFC containers don't expand for float descendants.
         if child_style.float != openui_style::Float::None {
+            // CSS Sizing 3 §4.1: In min-content mode, the widest float
+            // determines the container's min width. In max-content mode,
+            // floats sit side-by-side, so their widths sum.
+            min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
+            float_max_inline_sum = float_max_inline_sum + child_sizes.max_content_inline_size;
+
+            // CSS 2.1 §10.6.3/§10.6.7: floats only contribute to block size
+            // for BFC roots. Min-content: floats stack (sum heights).
+            // Max-content: floats side-by-side (max height).
             float_block_sum = float_block_sum + child_sizes.min_content_block_size;
             float_block_max = float_block_max.max_of(child_sizes.max_content_block_size);
         } else {
-            content_block = content_block + child_sizes.max_content_block_size;
+            // CSS Sizing 3 §4.1: non-float block children contribute via max.
+            min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
+            non_float_max_inline = non_float_max_inline.max_of(child_sizes.max_content_inline_size);
+
+            min_content_block = min_content_block + child_sizes.min_content_block_size;
+            max_content_block = max_content_block + child_sizes.max_content_block_size;
         }
     }
 
+    // Max-content inline: container must be wide enough for all floats
+    // side-by-side OR the widest non-float child, whichever is larger.
+    let max_inline = non_float_max_inline.max_of(float_max_inline_sum);
+
     // BFC roots include float bottom margin edge in auto height (§10.6.7).
-    let min_content_block = if is_bfc {
-        content_block.max_of(float_block_sum)
-    } else {
-        content_block
-    };
-    let max_content_block = if is_bfc {
-        content_block.max_of(float_block_max)
-    } else {
-        content_block
-    };
+    if is_bfc {
+        min_content_block = min_content_block.max_of(float_block_sum);
+        max_content_block = max_content_block.max_of(float_block_max);
+    }
 
     // Add container border + padding.
     IntrinsicSizes {
