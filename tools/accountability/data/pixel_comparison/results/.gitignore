@@ -1,0 +1,3 @@
+# Don't commit PNG result files (large binaries)
+# Only result.json files are tracked
+*.png

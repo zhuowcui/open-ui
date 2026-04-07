@@ -61,14 +61,14 @@ SP13,line_height,half_leading_model,normal,CSS2.2§10.8.1,yes,openui-layout/src/
 SP13,line_height,half_leading_model,number,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Multiplied by element font-size; inherits as number
 SP13,line_height,half_leading_model,length,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Fixed length value; half-leading = (line-height - content-height) / 2
 SP13,line_height,half_leading_model,percentage,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Percentage of element font-size; computed at use time
-SP13,inline_block,layout,basic,CSS2.2§9.2.4,yes,openui-layout/src/inline/line_breaker.rs,yes,yes,not_run,,no,,handle_atomic_inline(); resolve_atomic_inline_width(); sp13_j pixel tests
-SP13,inline_block,layout,with_vertical_align,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,Inline-block baseline alignment; vertical_align in pixel tests
+SP13,inline_block,layout,basic,CSS2.2§9.2.4,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,handle_atomic_inline(); resolve_atomic_inline_width(); sp13_j pixel tests
+SP13,inline_block,layout,with_vertical_align,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Inline-block baseline alignment; vertical_align in pixel tests
 SP13,inline_block,layout,with_overflow,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Inline-block with overflow; text-overflow: ellipsis interaction
-SP13,float_exclusion,inline_context,left_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,yes,not_run,,no,,compute_line_availability(); left_float_shifts_text_right; pixel tested
-SP13,float_exclusion,inline_context,right_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,yes,not_run,,no,,right_float_narrows_from_right; wpt + pixel tests
+SP13,float_exclusion,inline_context,left_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,compute_line_availability(); left_float_shifts_text_right; pixel tested
+SP13,float_exclusion,inline_context,right_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,right_float_narrows_from_right; wpt + pixel tests
 SP13,float_exclusion,inline_context,both_floats,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,both_floats_narrow_from_both_sides; dual exclusion zones
 SP13,float_exclusion,inline_context,per_line_width_reduction,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,Per-line available width recalculation with float intrusion
-SP13,block_in_inline,anonymous_splitting,basic,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,BlockInInline item type; sp13_c + sp13_j tests
+SP13,block_in_inline,anonymous_splitting,basic,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,BlockInInline item type; sp13_c + sp13_j tests
 SP13,block_in_inline,anonymous_splitting,multiple_blocks,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multiple_blocks_in_inline; correct height accumulation
 SP13,block_in_inline,anonymous_splitting,nested_inline_with_block,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Block inside nested inline elements; wpt_nested_inline_with_block_splits
 SP13,block_in_inline,continuation,stacking_order,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,block_in_inline_stacking_order; proper z-order of segments
@@ -183,13 +183,13 @@ SP13,integration,style_defaults,new_fields_stable,CSS-Inline-3,yes,openui-layout
 SP13,integration,layout_with_defaults,new_defaults,CSS-Inline-3,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_layout_with_new_defaults; wpt_integration_layout_with_defaults
 SP13,integration,text_wrap_field,setting,CSS-Text-4§5.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_text_wrap_field_set; wpt_integration_text_wrap_balance_field
 SP13,integration,initial_letter_field,setting,CSS-Inline-3§5,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_initial_letter_field_set; style field roundtrip
-SP13,pixel_rendering,inline_block,single_render,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_single_renders; inline_block_single_position
-SP13,pixel_rendering,inline_block,adjacent_blocks,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_two_side_by_side; inline_block_three_side_by_side
-SP13,pixel_rendering,inline_block,different_sizes,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_different_sizes; various dimensions tested
-SP13,pixel_rendering,inline_block,with_border,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_with_border_renders; border edge pixel tests
-SP13,pixel_rendering,inline_block,with_padding,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_with_padding_renders; padding extends box
-SP13,pixel_rendering,inline_block,with_margin,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_margin_left_offset; inline_block_margin_between_two
-SP13,pixel_rendering,inline_block,backgrounds,CSS-Backgrounds-3§3,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,cyan/magenta/yellow/orange/gray background pixel tests
-SP13,pixel_rendering,inline_block,nesting,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_containing_block_child; inline_block_containing_inline_block
-SP13,pixel_rendering,float_with_inline,exclusion,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,yes,not_run,,no,,float_left_with_inline_block_beside; float_does_not_overlap_inline_block
-SP13,pixel_rendering,block_in_inline,rendering,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,block_in_inline_renders_block; block_in_inline_correct_color
+SP13,pixel_rendering,inline_block,single_render,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_single_renders; inline_block_single_position
+SP13,pixel_rendering,inline_block,adjacent_blocks,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_two_side_by_side; inline_block_three_side_by_side
+SP13,pixel_rendering,inline_block,different_sizes,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_different_sizes; various dimensions tested
+SP13,pixel_rendering,inline_block,with_border,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_with_border_renders; border edge pixel tests
+SP13,pixel_rendering,inline_block,with_padding,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_with_padding_renders; padding extends box
+SP13,pixel_rendering,inline_block,with_margin,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_margin_left_offset; inline_block_margin_between_two
+SP13,pixel_rendering,inline_block,backgrounds,CSS-Backgrounds-3§3,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,cyan/magenta/yellow/orange/gray background pixel tests
+SP13,pixel_rendering,inline_block,nesting,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_block_containing_block_child; inline_block_containing_inline_block
+SP13,pixel_rendering,float_with_inline,exclusion,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,float_left_with_inline_block_beside; float_does_not_overlap_inline_block
+SP13,pixel_rendering,block_in_inline,rendering,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,block_in_inline_renders_block; block_in_inline_correct_color

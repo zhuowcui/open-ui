@@ -15,4 +15,5 @@ members = [
     "examples/counter",
     "examples/todo",
     "examples/dashboard",
+    "pixel-compare",
 ]

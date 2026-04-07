@@ -1,0 +1,18 @@
+[package]
+name = "pixel-compare"
+version = "0.1.0"
+edition = "2021"
+description = "Renders test patterns to PNG for pixel comparison with Chromium"
+
+[[bin]]
+name = "pixel_compare"
+path = "src/main.rs"
+
+[dependencies]
+openui-style = { path = "../openui-style" }
+openui-geometry = { path = "../openui-geometry" }
+openui-layout = { path = "../openui-layout" }
+openui-dom = { path = "../openui-dom" }
+openui-paint = { path = "../openui-paint" }
+openui-text = { path = "../openui-text" }
+skia-safe = "0.82"

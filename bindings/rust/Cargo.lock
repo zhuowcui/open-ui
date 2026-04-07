@@ -383,6 +383,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "pixel-compare"
+version = "0.1.0"
+dependencies = [
+ "openui-dom",
+ "openui-geometry",
+ "openui-layout",
+ "openui-paint",
+ "openui-style",
+ "openui-text",
+ "skia-safe",
+]
+
+[[package]]
 name = "plain"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

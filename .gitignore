@@ -37,3 +37,7 @@ node_modules/
 
 # Pixel comparison diff images (generated, not source)
 tests/pixel_apps/screenshots/diff-*/
+
+# Downloaded Chrome binary for pixel comparison
+chrome/
+.venv/

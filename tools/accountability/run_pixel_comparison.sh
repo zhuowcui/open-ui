@@ -36,9 +36,15 @@ find_chrome() {
         return
     fi
     # Check common locations
+    local repo_root
+    repo_root="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    # Find downloaded Chrome in repo (from @puppeteer/browsers)
+    local downloaded
+    downloaded="$(find "$repo_root/chrome" -name "chrome" -type f 2>/dev/null | head -1)"
     for bin in \
         "$HOME/chromium/src/out/Release/chrome" \
         "$HOME/chromium/src/out/Default/chrome" \
+        "${downloaded:-}" \
         "$(which google-chrome 2>/dev/null || true)" \
         "$(which chromium 2>/dev/null || true)" \
         "$(which chromium-browser 2>/dev/null || true)" \
@@ -64,6 +70,10 @@ chrome_screenshot() {
         return 1
     fi
 
+    # Set LD_LIBRARY_PATH to Chrome's directory for bundled shared libs
+    local chrome_dir
+    chrome_dir="$(dirname "$CHROME")"
+    LD_LIBRARY_PATH="${chrome_dir}:${LD_LIBRARY_PATH:-}" \
     "$CHROME" \
         --headless=new \
         --disable-gpu \

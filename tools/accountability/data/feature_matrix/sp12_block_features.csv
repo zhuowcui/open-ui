@@ -1,6 +1,6 @@
 sp,feature,sub_feature,variant,css_spec_section,implemented,implementation_file,has_unit_test,pixel_compared_with_chromium,pixel_result,pixel_diff_pct,perf_compared_with_chromium,perf_ratio,notes
-SP12,display,outer,none,css-display-3 §2,yes,openui-style/src/enums.rs,yes,no,not_run,,no,not_run,Suppresses layout entirely
-SP12,display,outer,block,css-display-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Primary block layout path
+SP12,display,outer,none,css-display-3 §2,yes,openui-style/src/enums.rs,yes,yes,pass,0.0,no,not_run,Suppresses layout entirely
+SP12,display,outer,block,css-display-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,yes,pass,0.0,no,not_run,Primary block layout path
 SP12,display,outer,inline,css-display-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,not_run,Inline formatting context
 SP12,display,outer,inline-block,css-display-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Atomic inline / BFC
 SP12,display,inner,flex,css-display-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/flex/algorithm.rs,yes,no,not_run,,no,not_run,Full flex algorithm
@@ -10,8 +10,8 @@ SP12,display,inner,inline-grid,css-display-3 §2,no,openui-style/src/enums.rs,no
 SP12,display,outer,flow-root,css-display-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/new_formatting_context.rs,yes,no,not_run,,no,not_run,Creates new BFC
 SP12,display,outer,table,css-display-3 §2,no,openui-style/src/enums.rs,no,no,not_run,,no,not_run,Enum defined; no table layout
 SP12,display,outer,list-item,css-display-3 §2,partial,openui-style/src/enums.rs,no,no,not_run,,no,not_run,Enum defined; marker positioning incomplete
-SP12,position,value,static,css-position-3 §2,yes,openui-style/src/enums.rs,yes,no,not_run,,no,not_run,Default; no offset applied
-SP12,position,value,relative,css-position-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/relative.rs,yes,no,not_run,,no,not_run,Offset from normal-flow position
+SP12,position,value,static,css-position-3 §2,yes,openui-style/src/enums.rs,yes,yes,pass,0.0,no,not_run,Default; no offset applied
+SP12,position,value,relative,css-position-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/relative.rs,yes,yes,pass,0.0,no,not_run,Offset from normal-flow position
 SP12,position,value,absolute,css-position-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/out_of_flow.rs,yes,no,not_run,,no,not_run,Out-of-flow; containing block relative
 SP12,position,value,fixed,css-position-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/out_of_flow.rs,yes,no,not_run,,no,not_run,Out-of-flow; viewport relative
 SP12,position,value,sticky,css-position-3 §2,yes,openui-style/src/enums.rs; openui-layout/src/sticky.rs,yes,no,not_run,,no,not_run,Scroll-aware sticky positioning
@@ -23,7 +23,7 @@ SP12,clear,value,left,css2 §9.5.2,yes,openui-style/src/enums.rs; openui-layout/
 SP12,clear,value,right,css2 §9.5.2,yes,openui-style/src/enums.rs; openui-layout/src/exclusions/exclusion_space.rs,yes,no,not_run,,no,not_run,Clear past right floats
 SP12,clear,value,both,css2 §9.5.2,yes,openui-style/src/enums.rs; openui-layout/src/exclusions/exclusion_space.rs,yes,no,not_run,,no,not_run,Clear past all floats
 SP12,overflow,value,visible,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow visible handling
-SP12,overflow,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow hidden handling
+SP12,overflow,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,yes,pass,0.0,no,not_run,Overflow hidden handling
 SP12,overflow,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow scroll handling
 SP12,overflow,value,auto,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow auto handling
 SP12,overflow,value,clip,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow clip handling
@@ -37,50 +37,50 @@ SP12,overflow-y,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; o
 SP12,overflow-y,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow scroll handling
 SP12,overflow-y,value,auto,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow auto handling
 SP12,overflow-y,value,clip,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Overflow clip handling
-SP12,box-sizing,value,content-box,css-sizing-3 §6,yes,openui-style/src/enums.rs; openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Width/height exclude padding+border
-SP12,box-sizing,value,border-box,css-sizing-3 §6,yes,openui-style/src/enums.rs; openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Width/height include padding+border
-SP12,margin,value,auto,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Horizontal centering via auto margins
-SP12,margin,value,px,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Fixed pixel margin
+SP12,box-sizing,value,content-box,css-sizing-3 §6,yes,openui-style/src/enums.rs; openui-layout/src/length_resolver.rs,yes,yes,fail,0.4275,no,not_run,Width/height exclude padding+border
+SP12,box-sizing,value,border-box,css-sizing-3 §6,yes,openui-style/src/enums.rs; openui-layout/src/length_resolver.rs,yes,yes,fail,0.246667,no,not_run,Width/height include padding+border
+SP12,margin,value,auto,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,yes,pass,0.0,no,not_run,Horizontal centering via auto margins
+SP12,margin,value,px,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,yes,pass,0.0,no,not_run,Fixed pixel margin
 SP12,margin,value,%,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Percentage of containing block width
-SP12,margin,value,negative,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,no,not_run,,no,not_run,Negative margins pull content
+SP12,margin,value,negative,css-box-3 §5,yes,openui-layout/src/length_resolver.rs; openui-layout/src/block.rs,yes,yes,pass,0.0,no,not_run,Negative margins pull content
 SP12,margin,collapsing,collapsing-siblings,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,Adjacent sibling margins collapse
 SP12,margin,collapsing,collapsing-parent-child,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,Parent-child margin collapsing
 SP12,margin,collapsing,collapsing-through-empty,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,Empty block collapses own margins
-SP12,padding,value,px,css-box-3 §6,yes,openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Fixed pixel padding
+SP12,padding,value,px,css-box-3 §6,yes,openui-layout/src/length_resolver.rs,yes,yes,pass,0.0,no,not_run,Fixed pixel padding
 SP12,padding,value,%,css-box-3 §6,yes,openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Percentage of containing block width
 SP12,border-width,value,thin,css-backgrounds-3 §4,yes,openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Border width keyword/value: thin
 SP12,border-width,value,medium,css-backgrounds-3 §4,yes,openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Border width keyword/value: medium
 SP12,border-width,value,thick,css-backgrounds-3 §4,yes,openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Border width keyword/value: thick
-SP12,border-width,value,px,css-backgrounds-3 §4,yes,openui-layout/src/length_resolver.rs,yes,no,not_run,,no,not_run,Border width keyword/value: px
+SP12,border-width,value,px,css-backgrounds-3 §4,yes,openui-layout/src/length_resolver.rs,yes,yes,fail,0.474375,no,not_run,Border width keyword/value: px
 SP12,width,value,auto,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Shrink-to-fit or stretch to containing block
-SP12,width,value,px,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Fixed pixel width
-SP12,width,value,%,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Percentage of containing block width
+SP12,width,value,px,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,yes,pass,0.0,no,not_run,Fixed pixel width
+SP12,width,value,%,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,yes,pass,0.0,no,not_run,Percentage of containing block width
 SP12,width,value,min-content,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Narrowest width without overflow
 SP12,width,value,max-content,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Widest single-line width
 SP12,width,value,fit-content,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Clamp between min-content and max-content
 SP12,height,value,auto,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Determined by content
-SP12,height,value,px,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Fixed pixel height
+SP12,height,value,px,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,yes,pass,0.0,no,not_run,Fixed pixel height
 SP12,height,value,%,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Percentage of containing block height
 SP12,height,value,min-content,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Minimum height to fit content
 SP12,height,value,max-content,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Natural content height
 SP12,height,value,fit-content,css-sizing-3 §5,yes,openui-layout/src/css_sizing.rs; openui-layout/src/intrinsic_sizing.rs,yes,no,not_run,,no,not_run,Clamp between min/max content height
 SP12,min-width,value,none,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,"Initial value (0 for min-*, none for max-*)"
-SP12,min-width,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-width: px
+SP12,min-width,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,yes,pass,0.0,no,not_run,min-width: px
 SP12,min-width,value,%,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-width: %
 SP12,min-width,value,min-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-width: min-content
 SP12,min-width,value,max-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-width: max-content
 SP12,max-width,value,none,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-width: none
-SP12,max-width,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-width: px
+SP12,max-width,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,yes,pass,0.0,no,not_run,max-width: px
 SP12,max-width,value,%,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-width: %
 SP12,max-width,value,min-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-width: min-content
 SP12,max-width,value,max-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-width: max-content
 SP12,min-height,value,none,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,"Initial value (0 for min-*, none for max-*)"
-SP12,min-height,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-height: px
+SP12,min-height,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,yes,pass,0.0,no,not_run,min-height: px
 SP12,min-height,value,%,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-height: %
 SP12,min-height,value,min-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-height: min-content
 SP12,min-height,value,max-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,min-height: max-content
 SP12,max-height,value,none,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-height: none
-SP12,max-height,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-height: px
+SP12,max-height,value,px,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,yes,pass,0.0,no,not_run,max-height: px
 SP12,max-height,value,%,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-height: %
 SP12,max-height,value,min-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-height: min-content
 SP12,max-height,value,max-content,css-sizing-3 §7,yes,openui-layout/src/size_constraints.rs; openui-layout/src/css_sizing.rs,yes,no,not_run,,no,not_run,max-height: max-content
@@ -195,7 +195,7 @@ SP12,formatting-context,bfc-creation,flow-root-triggers-bfc,css-display-3 §3,ye
 SP12,formatting-context,bfc-creation,flex-item-bfc,css-flexbox-1 §4,yes,openui-layout/src/new_formatting_context.rs,yes,no,not_run,,no,not_run,Flex items establish BFC
 SP12,formatting-context,bfc-creation,abspos-triggers-bfc,css-position-3 §3,yes,openui-layout/src/new_formatting_context.rs,yes,no,not_run,,no,not_run,Abspos elements create BFC
 SP12,formatting-context,bfc-resolution,resolve-bfc-offset,css2 §9.4.1,yes,openui-layout/src/bfc_resolution.rs,yes,no,not_run,,no,not_run,Deferred BFC block-offset resolution
-SP12,margin-collapsing,rule,positive-positive,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,Larger positive wins
+SP12,margin-collapsing,rule,positive-positive,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,yes,pass,0.0,no,not_run,Larger positive wins
 SP12,margin-collapsing,rule,negative-negative,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,More negative wins (abs larger)
 SP12,margin-collapsing,rule,positive-negative,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,Sum positive and negative
 SP12,margin-collapsing,rule,clearance-prevents,css2 §8.3.1,yes,openui-layout/src/margin_collapsing.rs,yes,no,not_run,,no,not_run,Clearance blocks collapsing
