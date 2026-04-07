@@ -1,7 +1,7 @@
 {
-  "total": 145,
-  "passed": 47,
-  "failed": 98,
+  "total": 186,
+  "passed": 61,
+  "failed": 125,
   "errors": 0,
   "tests": [
     {
@@ -728,6 +728,211 @@
       "id": "sp13/inline_with_float",
       "status": "fail",
       "mismatch_pct": 0.998125
+    },
+    {
+      "id": "sp12/position_sticky_left",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/position_sticky_right",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/multicol_column_rule",
+      "status": "fail",
+      "mismatch_pct": 12.125
+    },
+    {
+      "id": "sp12/multicol_column_span",
+      "status": "fail",
+      "mismatch_pct": 6.041667
+    },
+    {
+      "id": "sp12/multicol_column_fill_auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/multicol_column_fill_balance",
+      "status": "fail",
+      "mismatch_pct": 9.0625
+    },
+    {
+      "id": "sp12/position_absolute_top_left",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/position_absolute_bottom_right",
+      "status": "fail",
+      "mismatch_pct": 2.708333
+    },
+    {
+      "id": "sp12/position_relative_top_left",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/position_absolute_percent",
+      "status": "fail",
+      "mismatch_pct": 2.333333
+    },
+    {
+      "id": "sp12/overflow_x_hidden",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/overflow_y_hidden",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/overflow_x_scroll",
+      "status": "fail",
+      "mismatch_pct": 0.46875
+    },
+    {
+      "id": "sp12/overflow_y_scroll",
+      "status": "fail",
+      "mismatch_pct": 0.25
+    },
+    {
+      "id": "sp12/flex_align_self_start",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_align_self_end",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_align_self_center",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_align_content_center",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_align_content_space_between",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_order",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_basis_100px",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_shrink_basic",
+      "status": "fail",
+      "mismatch_pct": 0.0125
+    },
+    {
+      "id": "sp12/border_style_dashed",
+      "status": "fail",
+      "mismatch_pct": 0.203333
+    },
+    {
+      "id": "sp12/border_style_dotted",
+      "status": "fail",
+      "mismatch_pct": 0.252083
+    },
+    {
+      "id": "sp12/border_color_per_side",
+      "status": "fail",
+      "mismatch_pct": 0.004167
+    },
+    {
+      "id": "sp12/fragmentation_break_before_column",
+      "status": "fail",
+      "mismatch_pct": 6.041667
+    },
+    {
+      "id": "sp12/fragmentation_break_inside_avoid",
+      "status": "fail",
+      "mismatch_pct": 3.75
+    },
+    {
+      "id": "sp13/first_letter_color",
+      "status": "fail",
+      "mismatch_pct": 0.145625
+    },
+    {
+      "id": "sp13/first_letter_font_size",
+      "status": "fail",
+      "mismatch_pct": 0.180625
+    },
+    {
+      "id": "sp13/first_line_font_weight",
+      "status": "fail",
+      "mismatch_pct": 1.066875
+    },
+    {
+      "id": "sp13/first_line_color",
+      "status": "fail",
+      "mismatch_pct": 1.1575
+    },
+    {
+      "id": "sp13/initial_letter_basic",
+      "status": "fail",
+      "mismatch_pct": 0.678333
+    },
+    {
+      "id": "sp13/ruby_basic",
+      "status": "fail",
+      "mismatch_pct": 0.08125
+    },
+    {
+      "id": "sp13/text_combine_upright",
+      "status": "fail",
+      "mismatch_pct": 0.019167
+    },
+    {
+      "id": "sp13/inline_direction_rtl",
+      "status": "fail",
+      "mismatch_pct": 0.154375
+    },
+    {
+      "id": "sp13/tab_size_4",
+      "status": "fail",
+      "mismatch_pct": 0.215625
+    },
+    {
+      "id": "sp13/text_align_last_center",
+      "status": "fail",
+      "mismatch_pct": 1.1875
+    },
+    {
+      "id": "sp11/text_emphasis_dot",
+      "status": "fail",
+      "mismatch_pct": 0.173125
+    },
+    {
+      "id": "sp11/text_emphasis_circle",
+      "status": "fail",
+      "mismatch_pct": 0.231875
+    },
+    {
+      "id": "sp11/text_emphasis_position_over",
+      "status": "fail",
+      "mismatch_pct": 0.173125
+    },
+    {
+      "id": "sp11/text_emphasis_color_red",
+      "status": "fail",
+      "mismatch_pct": 0.171042
     }
   ]
 }

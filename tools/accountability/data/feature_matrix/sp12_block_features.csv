@@ -28,13 +28,13 @@ SP12,overflow,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; ope
 SP12,overflow,value,auto,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,overflow_auto,yes,fail,0.3125,no,not_run,Overflow auto handling
 SP12,overflow,value,clip,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow clip handling
 SP12,overflow-x,value,visible,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow visible handling
-SP12,overflow-x,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow hidden handling
-SP12,overflow-x,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow scroll handling
+SP12,overflow-x,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,yes,pass,0.0,no,not_run,Overflow hidden handling
+SP12,overflow-x,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,yes,fail,0.46875,no,not_run,Overflow scroll handling
 SP12,overflow-x,value,auto,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow auto handling
 SP12,overflow-x,value,clip,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow clip handling
 SP12,overflow-y,value,visible,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow visible handling
-SP12,overflow-y,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow hidden handling
-SP12,overflow-y,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow scroll handling
+SP12,overflow-y,value,hidden,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,yes,pass,0.0,no,not_run,Overflow hidden handling
+SP12,overflow-y,value,scroll,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,yes,fail,0.25,no,not_run,Overflow scroll handling
 SP12,overflow-y,value,auto,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow auto handling
 SP12,overflow-y,value,clip,css-overflow-3 §3,yes,openui-style/src/enums.rs; openui-layout/src/block.rs,yes,,no,not_run,,no,not_run,Overflow clip handling
 SP12,box-sizing,value,content-box,css-sizing-3 §6,yes,openui-style/src/enums.rs; openui-layout/src/length_resolver.rs,yes,box_sizing_content_box,yes,fail,0.4275,no,not_run,Width/height exclude padding+border
@@ -88,10 +88,10 @@ SP12,aspect-ratio,value,auto,css-sizing-4 §5.1,yes,openui-layout/src/css_sizing
 SP12,aspect-ratio,value,ratio,css-sizing-4 §5.1,yes,openui-layout/src/css_sizing.rs,yes,aspect_ratio_basic,yes,fail,4.166667,no,not_run,width/height ratio (e.g. 16/9)
 SP12,aspect-ratio,value,auto-with-ratio,css-sizing-4 §5.1,yes,openui-layout/src/css_sizing.rs,yes,,no,not_run,,no,not_run,Prefer intrinsic then fall back to ratio
 SP12,top,offset,auto,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property top: auto
-SP12,top,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,sp12/position_absolute_top_left,no,not_run,,no,not_run,Offset property top: px
+SP12,top,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,sp12/position_absolute_top_left,yes,pass,0.0,no,not_run,Offset property top: px
 SP12,top,offset,%,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property top: %
 SP12,right,offset,auto,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property right: auto
-SP12,right,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,sp12/position_absolute_bottom_right,no,not_run,,no,not_run,Offset property right: px
+SP12,right,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,sp12/position_absolute_bottom_right,yes,fail,2.708333,no,not_run,Offset property right: px
 SP12,right,offset,%,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property right: %
 SP12,bottom,offset,auto,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property bottom: auto
 SP12,bottom,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property bottom: px
@@ -242,34 +242,37 @@ SP12,opacity,value,number,css-color-4 §11,yes,openui-paint/src/painter.rs,yes,o
 SP12,visibility,value,hidden,css2 §11.2,yes,openui-style/src/enums.rs,yes,visibility_hidden,yes,pass,0.0,no,not_run,Element hidden but space reserved
 SP12,gap,value,px,css-align-3 §8,yes,openui-layout/src/flex/algorithm.rs,yes,flex_gap,yes,pass,0.0,no,not_run,Gap between flex items
 SP12,display,nesting,nested-blocks,css-display-3 §2,yes,openui-layout/src/block.rs,yes,nested_blocks,yes,pass,0.0,no,not_run,Nested block-level elements
-SP12,border-style,style,dashed,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_style_dashed,,,,no,,
-SP12,border-style,style,dotted,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_style_dotted,,,,no,,
-SP12,border-style,style,double,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
-SP12,border-style,style,groove,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
-SP12,border-style,style,ridge,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
-SP12,border-style,style,inset,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
-SP12,border-style,style,outset,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
-SP12,border-color,per-side,different-colors,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_color_per_side,,,,no,,
-SP12,position,sticky,left,css-position-3,yes,openui-layout/src/sticky.rs,yes,sp12/position_sticky_left,,,,no,,
-SP12,position,sticky,right,css-position-3,yes,openui-layout/src/sticky.rs,yes,sp12/position_sticky_right,,,,no,,
-SP12,column-fill,fill,auto,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_fill_auto,,,,no,,
-SP12,column-fill,fill,balance,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_fill_balance,,,,no,,
-SP12,column-rule-color,color,explicit,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,,,,,no,,
-SP12,top,offset,percent,css-position-3,yes,openui-layout/src/out_of_flow.rs,yes,sp12/position_absolute_percent,,,,no,,
-SP12,overflow-x,axis,hidden,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_x_hidden,,,,no,,
-SP12,overflow-y,axis,hidden,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_y_hidden,,,,no,,
-SP12,overflow-x,axis,scroll,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_x_scroll,,,,no,,
-SP12,overflow-y,axis,scroll,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_y_scroll,,,,no,,
-SP12,align-self,alignment,flex-start,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_start,,,,no,,
-SP12,align-self,alignment,flex-end,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_end,,,,no,,
-SP12,align-self,alignment,center,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_center,,,,no,,
-SP12,align-content,alignment,center,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_content_center,,,,no,,
-SP12,align-content,alignment,space-between,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_content_space_between,,,,no,,
-SP12,order,ordering,reorder,css-flexbox-1,yes,openui-layout/src/flex/algorithm.rs,yes,sp12/flex_order,,,,no,,
-SP12,flex-basis,sizing,100px,css-flexbox-1,yes,openui-layout/src/flex/item.rs,yes,sp12/flex_basis_100px,,,,no,,
-SP12,flex-shrink,sizing,basic,css-flexbox-1,yes,openui-layout/src/flex/item.rs,yes,sp12/flex_shrink_basic,,,,no,,
-SP12,break-before,fragmentation,column,css-break-3,yes,openui-layout/src/fragmentation/mod.rs,yes,sp12/fragmentation_break_before_column,,,,no,,
-SP12,break-inside,fragmentation,avoid,css-break-3,yes,openui-layout/src/fragmentation/mod.rs,yes,sp12/fragmentation_break_inside_avoid,,,,no,,
-SP12,size-constraints,resolution,inline-size,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,,,,no,,
-SP12,size-constraints,resolution,block-size,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,,,,no,,
-SP12,size-constraints,box-sizing,adjustment,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,,,,no,,
+SP12,border-style,style,dashed,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_style_dashed,yes,fail,0.203333,no,,
+SP12,border-style,style,dotted,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_style_dotted,yes,fail,0.252083,no,,
+SP12,border-style,style,double,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,no,not_run,,no,,
+SP12,border-style,style,groove,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,no,not_run,,no,,
+SP12,border-style,style,ridge,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,no,not_run,,no,,
+SP12,border-style,style,inset,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,no,not_run,,no,,
+SP12,border-style,style,outset,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,no,not_run,,no,,
+SP12,border-color,per-side,different-colors,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_color_per_side,yes,fail,0.004167,no,,
+SP12,position,sticky,left,css-position-3,yes,openui-layout/src/sticky.rs,yes,sp12/position_sticky_left,yes,pass,0.0,no,,
+SP12,position,sticky,right,css-position-3,yes,openui-layout/src/sticky.rs,yes,sp12/position_sticky_right,yes,pass,0.0,no,,
+SP12,column-fill,fill,auto,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_fill_auto,yes,pass,0.0,no,,
+SP12,column-fill,fill,balance,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_fill_balance,yes,fail,9.0625,no,,
+SP12,column-rule-color,color,explicit,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,,no,not_run,,no,,
+SP12,top,offset,percent,css-position-3,yes,openui-layout/src/out_of_flow.rs,yes,sp12/position_absolute_percent,yes,fail,2.333333,no,,
+SP12,overflow-x,axis,hidden,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_x_hidden,yes,pass,0.0,no,,
+SP12,overflow-y,axis,hidden,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_y_hidden,yes,pass,0.0,no,,
+SP12,overflow-x,axis,scroll,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_x_scroll,yes,fail,0.46875,no,,
+SP12,overflow-y,axis,scroll,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_y_scroll,yes,fail,0.25,no,,
+SP12,align-self,alignment,flex-start,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_start,yes,pass,0.0,no,,
+SP12,align-self,alignment,flex-end,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_end,yes,pass,0.0,no,,
+SP12,align-self,alignment,center,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_center,yes,pass,0.0,no,,
+SP12,align-content,alignment,center,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_content_center,yes,pass,0.0,no,,
+SP12,align-content,alignment,space-between,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_content_space_between,yes,pass,0.0,no,,
+SP12,order,ordering,reorder,css-flexbox-1,yes,openui-layout/src/flex/algorithm.rs,yes,sp12/flex_order,yes,pass,0.0,no,,
+SP12,flex-basis,sizing,100px,css-flexbox-1,yes,openui-layout/src/flex/item.rs,yes,sp12/flex_basis_100px,yes,pass,0.0,no,,
+SP12,flex-shrink,sizing,basic,css-flexbox-1,yes,openui-layout/src/flex/item.rs,yes,sp12/flex_shrink_basic,yes,fail,0.0125,no,,
+SP12,break-before,fragmentation,column,css-break-3,yes,openui-layout/src/fragmentation/mod.rs,yes,sp12/fragmentation_break_before_column,yes,fail,6.041667,no,,
+SP12,break-inside,fragmentation,avoid,css-break-3,yes,openui-layout/src/fragmentation/mod.rs,yes,sp12/fragmentation_break_inside_avoid,yes,fail,3.75,no,,
+SP12,size-constraints,resolution,inline-size,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,no,not_run,,no,,
+SP12,size-constraints,resolution,block-size,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,no,not_run,,no,,
+SP12,size-constraints,box-sizing,adjustment,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,no,not_run,,no,,
+sp12,column-rule,rule,basic,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_rule,yes,fail,12.125,no,,
+sp12,column-span,span,all,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_span,yes,fail,6.041667,no,,
+sp12,position,relative,top-left-offset,css-position-3,yes,openui-layout/src/relative.rs,yes,sp12/position_relative_top_left,yes,pass,0.0,no,,

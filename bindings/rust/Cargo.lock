@@ -565,6 +565,7 @@ dependencies = [
 name = "openui-paint"
 version = "0.1.0"
 dependencies = [
+ "criterion",
  "openui-dom",
  "openui-geometry",
  "openui-layout",

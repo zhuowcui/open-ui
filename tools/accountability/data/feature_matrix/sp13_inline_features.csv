@@ -45,7 +45,7 @@ SP13,text_align_last,last_line_alignment,start,CSS-Text-3§7.3,yes,openui-layout
 SP13,text_align_last,last_line_alignment,end,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,,no,not_run,,no,,Aligns last line to end edge
 SP13,text_align_last,last_line_alignment,left,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,,no,not_run,,no,,Aligns last line to left regardless of direction
 SP13,text_align_last,last_line_alignment,right,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,,no,not_run,,no,,Aligns last line to right regardless of direction
-SP13,text_align_last,last_line_alignment,center,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,,no,not_run,,no,,Centers last line
+SP13,text_align_last,last_line_alignment,center,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,,yes,fail,1.1875,no,,Centers last line
 SP13,text_align_last,last_line_alignment,justify,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,,no,not_run,,no,,Justifies last line (typically avoided in practice)
 SP13,vertical_align,inline_positioning,baseline,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,vertical_align_baseline,yes,fail,1.402708,no,,Default; compute_baseline_shift() returns 0; tested in sp13_e
 SP13,vertical_align,inline_positioning,sub,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,vertical_align_sub,yes,fail,1.951458,no,,Lowers baseline by subscript offset
@@ -206,13 +206,13 @@ SP13,line_breaking,overflow_wrap,anywhere,CSS-Text-3§5.5.2,yes,openui-layout/sr
 SP13,line_breaking,hyphens,auto,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,line_breaking_hyphens_auto,yes,fail,1.986458,no,,hyphens: auto with English text in narrow container
 SP13,inline_styling,box_decoration_break,clone_multiline,CSS-Break-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,inline_box_multiline,yes,fail,2.872917,no,,box-decoration-break: clone on multi-line inline span
 SP13,float_with_inline,text_wrap,left_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,inline_with_float,yes,fail,0.998125,no,,Inline text wrapping around a left-floated box
-SP13,initial_letter,drop_cap,basic,css-inline-3,yes,openui-layout/src/inline/initial_letter.rs,yes,sp13/initial_letter_basic,,,,no,,
-SP13,text_combine_upright,combine,all,css-writing-modes-4,yes,openui-layout/src/inline/text_combine.rs,yes,sp13/text_combine_upright,,,,no,,
-SP13,inline_direction,bidi,rtl,css-writing-modes-4,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/inline_direction_rtl,,,,no,,
-SP13,tab_size,whitespace,4,css-text-3,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/tab_size_4,,,,no,,
-SP13,text_align_last,alignment,center,css-text-3,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/text_align_last_center,,,,no,,
-SP13,first_letter,pseudo,color,css-pseudo-4,yes,openui-layout/src/inline/first_letter.rs,yes,sp13/first_letter_color,,,,no,,
-SP13,first_letter,pseudo,font-size,css-pseudo-4,yes,openui-layout/src/inline/first_letter.rs,yes,sp13/first_letter_font_size,,,,no,,
-SP13,first_line,pseudo,font-weight,css-pseudo-4,yes,openui-layout/src/inline/first_line.rs,yes,sp13/first_line_font_weight,,,,no,,
-SP13,first_line,pseudo,color,css-pseudo-4,yes,openui-layout/src/inline/first_line.rs,yes,sp13/first_line_color,,,,no,,
-SP13,ruby,annotation,basic,css-ruby-1,yes,openui-layout/src/ruby/layout.rs,yes,sp13/ruby_basic,,,,no,,
+SP13,initial_letter,drop_cap,basic,css-inline-3,yes,openui-layout/src/inline/initial_letter.rs,yes,sp13/initial_letter_basic,yes,fail,0.678333,no,,
+SP13,text_combine_upright,combine,all,css-writing-modes-4,yes,openui-layout/src/inline/text_combine.rs,yes,sp13/text_combine_upright,yes,fail,0.019167,no,,
+SP13,inline_direction,bidi,rtl,css-writing-modes-4,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/inline_direction_rtl,yes,fail,0.154375,no,,
+SP13,tab_size,whitespace,4,css-text-3,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/tab_size_4,yes,fail,0.215625,no,,
+SP13,text_align_last,alignment,center,css-text-3,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/text_align_last_center,yes,fail,1.1875,no,,
+SP13,first_letter,pseudo,color,css-pseudo-4,yes,openui-layout/src/inline/first_letter.rs,yes,sp13/first_letter_color,yes,fail,0.145625,no,,
+SP13,first_letter,pseudo,font-size,css-pseudo-4,yes,openui-layout/src/inline/first_letter.rs,yes,sp13/first_letter_font_size,yes,fail,0.180625,no,,
+SP13,first_line,pseudo,font-weight,css-pseudo-4,yes,openui-layout/src/inline/first_line.rs,yes,sp13/first_line_font_weight,yes,fail,1.066875,no,,
+SP13,first_line,pseudo,color,css-pseudo-4,yes,openui-layout/src/inline/first_line.rs,yes,sp13/first_line_color,yes,fail,1.1575,no,,
+SP13,ruby,annotation,basic,css-ruby-1,yes,openui-layout/src/ruby/layout.rs,yes,sp13/ruby_basic,yes,fail,0.08125,no,,

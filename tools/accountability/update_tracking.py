@@ -80,7 +80,11 @@ def find_result(lookup: dict, sp_prefix: str, row: dict):
     # 1. Explicit pixel_test_id column (authoritative)
     test_id = row.get("pixel_test_id", "").strip()
     if test_id:
-        key = f"{sp_prefix}/{test_id}"
+        # test_id may already include sp prefix (e.g. "sp12/border_style_dashed")
+        if "/" in test_id:
+            key = test_id
+        else:
+            key = f"{sp_prefix}/{test_id}"
         if key in lookup:
             return lookup[key]
 
@@ -215,7 +219,11 @@ def main():
                 for row in csv.DictReader(f):
                     tid = row.get("pixel_test_id", "").strip()
                     if tid:
-                        mapped_ids.add(f"{sp}/{tid}")
+                        # tid may already include sp prefix
+                        if "/" in tid:
+                            mapped_ids.add(tid)
+                        else:
+                            mapped_ids.add(f"{sp}/{tid}")
 
     unmapped = []
     for test_id in results:
