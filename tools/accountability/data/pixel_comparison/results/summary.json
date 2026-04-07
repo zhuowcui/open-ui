@@ -1,0 +1,533 @@
+{
+  "total": 105,
+  "passed": 5,
+  "failed": 100,
+  "errors": 0,
+  "tests": [
+    {
+      "id": "sp12/display_outer_block",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/display_outer_inline",
+      "status": "fail",
+      "mismatch_pct": 0.364167
+    },
+    {
+      "id": "sp12/display_outer_inline_block",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/display_outer_none",
+      "status": "fail",
+      "mismatch_pct": 1.041667
+    },
+    {
+      "id": "sp12/display_inner_flow_root",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/position_static",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/position_relative",
+      "status": "fail",
+      "mismatch_pct": 4.375
+    },
+    {
+      "id": "sp12/position_absolute",
+      "status": "fail",
+      "mismatch_pct": 23.666667
+    },
+    {
+      "id": "sp12/position_fixed",
+      "status": "fail",
+      "mismatch_pct": 6.25
+    },
+    {
+      "id": "sp12/float_left",
+      "status": "fail",
+      "mismatch_pct": 6.25
+    },
+    {
+      "id": "sp12/float_right",
+      "status": "fail",
+      "mismatch_pct": 8.333333
+    },
+    {
+      "id": "sp12/float_none",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/clear_left",
+      "status": "fail",
+      "mismatch_pct": 3.75
+    },
+    {
+      "id": "sp12/clear_right",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/clear_both",
+      "status": "fail",
+      "mismatch_pct": 2.291667
+    },
+    {
+      "id": "sp12/margin_positive",
+      "status": "fail",
+      "mismatch_pct": 3.916667
+    },
+    {
+      "id": "sp12/margin_negative",
+      "status": "fail",
+      "mismatch_pct": 5.416667
+    },
+    {
+      "id": "sp12/margin_auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/margin_collapsing_siblings",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/padding_basic",
+      "status": "fail",
+      "mismatch_pct": 16.583333
+    },
+    {
+      "id": "sp12/border_basic",
+      "status": "fail",
+      "mismatch_pct": 4.549167
+    },
+    {
+      "id": "sp12/box_sizing_content_box",
+      "status": "fail",
+      "mismatch_pct": 2.193125
+    },
+    {
+      "id": "sp12/box_sizing_border_box",
+      "status": "fail",
+      "mismatch_pct": 0.3675
+    },
+    {
+      "id": "sp12/width_fixed_px",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/height_fixed_px",
+      "status": "fail",
+      "mismatch_pct": 8.333333
+    },
+    {
+      "id": "sp12/width_percent",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/min_width",
+      "status": "fail",
+      "mismatch_pct": 2.083333
+    },
+    {
+      "id": "sp12/max_width",
+      "status": "fail",
+      "mismatch_pct": 2.083333
+    },
+    {
+      "id": "sp12/min_height",
+      "status": "fail",
+      "mismatch_pct": 8.333333
+    },
+    {
+      "id": "sp12/max_height",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/overflow_visible",
+      "status": "fail",
+      "mismatch_pct": 8.333333
+    },
+    {
+      "id": "sp12/overflow_hidden",
+      "status": "fail",
+      "mismatch_pct": 1.041667
+    },
+    {
+      "id": "sp12/flex_direction_row",
+      "status": "fail",
+      "mismatch_pct": 6.083333
+    },
+    {
+      "id": "sp12/flex_direction_column",
+      "status": "fail",
+      "mismatch_pct": 10.5
+    },
+    {
+      "id": "sp12/flex_justify_start",
+      "status": "fail",
+      "mismatch_pct": 7.083333
+    },
+    {
+      "id": "sp12/flex_justify_center",
+      "status": "fail",
+      "mismatch_pct": 6.833333
+    },
+    {
+      "id": "sp12/flex_justify_space_between",
+      "status": "fail",
+      "mismatch_pct": 6.083333
+    },
+    {
+      "id": "sp12/flex_align_center",
+      "status": "fail",
+      "mismatch_pct": 15.416667
+    },
+    {
+      "id": "sp12/flex_align_stretch",
+      "status": "fail",
+      "mismatch_pct": 11.666667
+    },
+    {
+      "id": "sp12/flex_wrap_basic",
+      "status": "fail",
+      "mismatch_pct": 3.625
+    },
+    {
+      "id": "sp12/flex_grow_equal",
+      "status": "fail",
+      "mismatch_pct": 3.358333
+    },
+    {
+      "id": "sp12/flex_gap",
+      "status": "fail",
+      "mismatch_pct": 5.291667
+    },
+    {
+      "id": "sp12/z_index_stacking",
+      "status": "fail",
+      "mismatch_pct": 1.208333
+    },
+    {
+      "id": "sp12/opacity_basic",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "sp12/border_radius",
+      "status": "fail",
+      "mismatch_pct": 4.254375
+    },
+    {
+      "id": "sp12/visibility_hidden",
+      "status": "fail",
+      "mismatch_pct": 2.083333
+    },
+    {
+      "id": "sp12/nested_blocks",
+      "status": "fail",
+      "mismatch_pct": 17.875
+    },
+    {
+      "id": "sp11/text_decoration_underline",
+      "status": "fail",
+      "mismatch_pct": 0.572917
+    },
+    {
+      "id": "sp11/text_decoration_overline",
+      "status": "fail",
+      "mismatch_pct": 0.579167
+    },
+    {
+      "id": "sp11/text_decoration_line_through",
+      "status": "fail",
+      "mismatch_pct": 0.53125
+    },
+    {
+      "id": "sp11/text_decoration_combined",
+      "status": "fail",
+      "mismatch_pct": 0.675
+    },
+    {
+      "id": "sp11/font_weight_normal",
+      "status": "fail",
+      "mismatch_pct": 0.504167
+    },
+    {
+      "id": "sp11/font_weight_bold",
+      "status": "fail",
+      "mismatch_pct": 0.648958
+    },
+    {
+      "id": "sp11/font_style_normal",
+      "status": "fail",
+      "mismatch_pct": 0.504167
+    },
+    {
+      "id": "sp11/font_style_italic",
+      "status": "fail",
+      "mismatch_pct": 0.523542
+    },
+    {
+      "id": "sp11/font_size_small",
+      "status": "fail",
+      "mismatch_pct": 0.339375
+    },
+    {
+      "id": "sp11/font_size_medium",
+      "status": "fail",
+      "mismatch_pct": 0.504167
+    },
+    {
+      "id": "sp11/font_size_large",
+      "status": "fail",
+      "mismatch_pct": 0.96625
+    },
+    {
+      "id": "sp11/font_size_xlarge",
+      "status": "fail",
+      "mismatch_pct": 1.48125
+    },
+    {
+      "id": "sp11/text_align_left",
+      "status": "fail",
+      "mismatch_pct": 0.504167
+    },
+    {
+      "id": "sp11/text_align_center",
+      "status": "fail",
+      "mismatch_pct": 0.505208
+    },
+    {
+      "id": "sp11/text_align_right",
+      "status": "fail",
+      "mismatch_pct": 0.508333
+    },
+    {
+      "id": "sp11/text_align_justify",
+      "status": "fail",
+      "mismatch_pct": 1.536875
+    },
+    {
+      "id": "sp11/text_transform_uppercase",
+      "status": "fail",
+      "mismatch_pct": 0.307083
+    },
+    {
+      "id": "sp11/text_transform_lowercase",
+      "status": "fail",
+      "mismatch_pct": 0.224583
+    },
+    {
+      "id": "sp11/text_transform_capitalize",
+      "status": "fail",
+      "mismatch_pct": 0.2375
+    },
+    {
+      "id": "sp11/text_indent_positive",
+      "status": "fail",
+      "mismatch_pct": 1.059167
+    },
+    {
+      "id": "sp11/text_indent_negative",
+      "status": "fail",
+      "mismatch_pct": 0.857083
+    },
+    {
+      "id": "sp11/letter_spacing_positive",
+      "status": "fail",
+      "mismatch_pct": 0.230208
+    },
+    {
+      "id": "sp11/letter_spacing_negative",
+      "status": "fail",
+      "mismatch_pct": 0.222708
+    },
+    {
+      "id": "sp11/word_spacing_positive",
+      "status": "fail",
+      "mismatch_pct": 0.229375
+    },
+    {
+      "id": "sp11/line_height_normal",
+      "status": "fail",
+      "mismatch_pct": 0.779167
+    },
+    {
+      "id": "sp11/line_height_number",
+      "status": "fail",
+      "mismatch_pct": 0.779167
+    },
+    {
+      "id": "sp11/line_height_length",
+      "status": "fail",
+      "mismatch_pct": 0.779167
+    },
+    {
+      "id": "sp11/white_space_normal",
+      "status": "fail",
+      "mismatch_pct": 0.505
+    },
+    {
+      "id": "sp11/white_space_nowrap",
+      "status": "fail",
+      "mismatch_pct": 1.010833
+    },
+    {
+      "id": "sp11/white_space_pre",
+      "status": "fail",
+      "mismatch_pct": 3.166875
+    },
+    {
+      "id": "sp11/white_space_pre_wrap",
+      "status": "fail",
+      "mismatch_pct": 2.375417
+    },
+    {
+      "id": "sp11/white_space_pre_line",
+      "status": "fail",
+      "mismatch_pct": 1.584167
+    },
+    {
+      "id": "sp11/color_red",
+      "status": "fail",
+      "mismatch_pct": 0.209792
+    },
+    {
+      "id": "sp11/color_blue",
+      "status": "fail",
+      "mismatch_pct": 0.216667
+    },
+    {
+      "id": "sp11/color_green",
+      "status": "fail",
+      "mismatch_pct": 0.229375
+    },
+    {
+      "id": "sp11/color_custom",
+      "status": "fail",
+      "mismatch_pct": 0.230417
+    },
+    {
+      "id": "sp11/text_shadow_basic",
+      "status": "fail",
+      "mismatch_pct": 1.077917
+    },
+    {
+      "id": "sp11/text_overflow_ellipsis",
+      "status": "fail",
+      "mismatch_pct": 0.59375
+    },
+    {
+      "id": "sp13/inline_single_span",
+      "status": "fail",
+      "mismatch_pct": 0.134375
+    },
+    {
+      "id": "sp13/inline_multiple_spans",
+      "status": "fail",
+      "mismatch_pct": 0.243333
+    },
+    {
+      "id": "sp13/inline_nested_spans",
+      "status": "fail",
+      "mismatch_pct": 0.28
+    },
+    {
+      "id": "sp13/line_breaking_normal_wrap",
+      "status": "fail",
+      "mismatch_pct": 3.07375
+    },
+    {
+      "id": "sp13/line_breaking_nowrap",
+      "status": "fail",
+      "mismatch_pct": 1.3875
+    },
+    {
+      "id": "sp13/line_breaking_break_word",
+      "status": "fail",
+      "mismatch_pct": 1.71875
+    },
+    {
+      "id": "sp13/vertical_align_baseline",
+      "status": "fail",
+      "mismatch_pct": 9.500417
+    },
+    {
+      "id": "sp13/vertical_align_middle",
+      "status": "fail",
+      "mismatch_pct": 9.500417
+    },
+    {
+      "id": "sp13/vertical_align_top",
+      "status": "fail",
+      "mismatch_pct": 9.500417
+    },
+    {
+      "id": "sp13/vertical_align_bottom",
+      "status": "fail",
+      "mismatch_pct": 9.500417
+    },
+    {
+      "id": "sp13/vertical_align_super",
+      "status": "fail",
+      "mismatch_pct": 9.5
+    },
+    {
+      "id": "sp13/vertical_align_sub",
+      "status": "fail",
+      "mismatch_pct": 9.5
+    },
+    {
+      "id": "sp13/inline_block_basic",
+      "status": "fail",
+      "mismatch_pct": 0.924792
+    },
+    {
+      "id": "sp13/inline_block_vertical_align",
+      "status": "fail",
+      "mismatch_pct": 9.64625
+    },
+    {
+      "id": "sp13/mixed_block_inline",
+      "status": "fail",
+      "mismatch_pct": 5.095417
+    },
+    {
+      "id": "sp13/white_space_collapsing",
+      "status": "fail",
+      "mismatch_pct": 1.461458
+    },
+    {
+      "id": "sp13/white_space_preserving",
+      "status": "fail",
+      "mismatch_pct": 1.850208
+    },
+    {
+      "id": "sp13/inline_background_color",
+      "status": "fail",
+      "mismatch_pct": 0.68375
+    },
+    {
+      "id": "sp13/inline_padding",
+      "status": "fail",
+      "mismatch_pct": 0.887917
+    },
+    {
+      "id": "sp13/inline_border",
+      "status": "fail",
+      "mismatch_pct": 0.406458
+    }
+  ]
+}

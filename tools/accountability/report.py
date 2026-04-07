@@ -35,6 +35,9 @@ CHROMIUM_CSV_AREA = {
     "sp11_css_text_decor_tests.csv": "SP11",
     "sp11_css_writing_modes_tests.csv": "SP11",
     "sp11_css_ruby_tests.csv": "SP11",
+    "sp11_css_color_tests.csv": "SP11",
+    "sp11_blink_text_tests.csv": "SP11",
+    "sp11_blink_writing_mode_tests.csv": "SP11",
     "sp12_css_display_tests.csv": "SP12",
     "sp12_css_box_tests.csv": "SP12",
     "sp12_css_position_tests.csv": "SP12",
@@ -44,9 +47,14 @@ CHROMIUM_CSV_AREA = {
     "sp12_css_sizing_tests.csv": "SP12",
     "sp12_css_break_tests.csv": "SP12",
     "sp12_blink_block_tests.csv": "SP12",
+    "sp12_css_backgrounds_tests.csv": "SP12",
+    "sp12_css_values_tests.csv": "SP12",
+    "sp12_blink_borders_tests.csv": "SP12",
+    "sp12_blink_overflow_tests.csv": "SP12",
     "sp13_css_inline_tests.csv": "SP13",
     "sp13_css_pseudo_tests.csv": "SP13",
     "sp13_blink_inline_tests.csv": "SP13",
+    "sp13_blink_inline_extra_tests.csv": "SP13",
 }
 
 FEATURE_CSV_AREA = {
