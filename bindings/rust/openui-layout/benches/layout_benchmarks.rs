@@ -640,6 +640,262 @@ fn bench_inline_mixed_spans(c: &mut Criterion) {
 }
 
 // ===========================================================================
+// 7. Sizing Benchmarks
+// ===========================================================================
+
+fn bench_sizing_min_content_nested(c: &mut Criterion) {
+    c.bench_function("sizing/min_content_nested", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // 5 levels of nested blocks, each auto-width, to exercise
+                // min-content intrinsic sizing propagation.
+                let mut parent = vp;
+                for _ in 0..5 {
+                    let child = add_block(&mut doc, parent);
+                    doc.node_mut(child).style.padding_top = Length::px(4.0);
+                    doc.node_mut(child).style.padding_right = Length::px(4.0);
+                    doc.node_mut(child).style.padding_bottom = Length::px(4.0);
+                    doc.node_mut(child).style.padding_left = Length::px(4.0);
+                    parent = child;
+                }
+                add_text(&mut doc, parent, "Min-content sizing text inside nested blocks");
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+fn bench_sizing_max_content_text(c: &mut Criterion) {
+    c.bench_function("sizing/max_content_text", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // Auto-width block containing a paragraph — exercises
+                // max-content sizing when the container has no explicit width.
+                let para = add_block(&mut doc, vp);
+                add_text(&mut doc, para,
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
+                     Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.");
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+fn bench_sizing_min_max_constraints(c: &mut Criterion) {
+    c.bench_function("sizing/min_max_constraints", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                let block = add_block(&mut doc, vp);
+                doc.node_mut(block).style.width = Length::percent(50.0);
+                doc.node_mut(block).style.min_width = Length::px(200.0);
+                doc.node_mut(block).style.max_width = Length::px(500.0);
+                doc.node_mut(block).style.height = Length::percent(40.0);
+                doc.node_mut(block).style.min_height = Length::px(100.0);
+                doc.node_mut(block).style.max_height = Length::px(300.0);
+                add_text(&mut doc, block,
+                    "Content inside a block with min-width, max-width, \
+                     min-height, and max-height constraints applied.");
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 8. Multi-Column Benchmarks
+// ===========================================================================
+
+fn bench_multicol_3_columns_20_blocks(c: &mut Criterion) {
+    c.bench_function("multicol/3_columns_20_blocks", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                let multicol = add_block(&mut doc, vp);
+                doc.node_mut(multicol).style.width = Length::px(600.0);
+                doc.node_mut(multicol).style.column_count = Some(3);
+
+                for _ in 0..20 {
+                    let child = add_block(&mut doc, multicol);
+                    doc.node_mut(child).style.height = Length::px(30.0);
+                    doc.node_mut(child).style.margin_bottom = Length::px(8.0);
+                }
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 9. Fragmentation Benchmarks
+// ===========================================================================
+
+fn bench_fragmentation_break_token_chain(c: &mut Criterion) {
+    c.bench_function("fragmentation/break_token_chain", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // 10 blocks with alternating break-before/break-after values
+                // to stress fragmentation break-token chain logic.
+                for i in 0..10 {
+                    let child = add_sized_block(&mut doc, vp, 400.0, 50.0);
+                    if i % 2 == 0 {
+                        doc.node_mut(child).style.break_after = BreakValue::Column;
+                    } else {
+                        doc.node_mut(child).style.break_before = BreakValue::Column;
+                    }
+                }
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 10. Text / Inline Stress Benchmarks
+// ===========================================================================
+
+fn bench_text_inline_long_paragraph(c: &mut Criterion) {
+    c.bench_function("text/inline_long_paragraph", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                let para = add_block(&mut doc, vp);
+                doc.node_mut(para).style.width = Length::px(500.0);
+
+                // ~200 words of lorem ipsum text
+                add_text(&mut doc, para,
+                    "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do \
+                     eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim \
+                     ad minim veniam quis nostrud exercitation ullamco laboris nisi ut \
+                     aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit \
+                     in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur \
+                     sint occaecat cupidatat non proident sunt in culpa qui officia deserunt \
+                     mollit anim id est laborum Sed ut perspiciatis unde omnis iste natus \
+                     error sit voluptatem accusantium doloremque laudantium totam rem aperiam \
+                     eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae \
+                     vitae dicta sunt explicabo Nemo enim ipsam voluptatem quia voluptas sit \
+                     aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos \
+                     qui ratione voluptatem sequi nesciunt Neque porro quisquam est qui dolorem \
+                     ipsum quia dolor sit amet consectetur adipisci velit sed quia non numquam \
+                     eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat \
+                     voluptatem Ut enim ad minima veniam quis nostrum exercitationem ullam \
+                     corporis suscipit laboriosam nisi ut aliquid ex ea commodi consequatur \
+                     Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse \
+                     quam nihil molestiae consequatur vel illum qui dolorem eum fugiat quo \
+                     voluptas nulla pariatur");
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+fn bench_text_inline_mixed_bidi(c: &mut Criterion) {
+    c.bench_function("text/inline_mixed_bidi", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                let para = add_block(&mut doc, vp);
+                doc.node_mut(para).style.width = Length::px(400.0);
+
+                // LTR text
+                let ltr = add_inline(&mut doc, para);
+                add_text(&mut doc, ltr, "English text before ");
+
+                // RTL span
+                let rtl = add_inline(&mut doc, para);
+                doc.node_mut(rtl).style.direction = Direction::Rtl;
+                doc.node_mut(rtl).style.unicode_bidi = UnicodeBidi::Embed;
+                add_text(&mut doc, rtl, "\u{0645}\u{0631}\u{062D}\u{0628}\u{0627} \u{0628}\u{0627}\u{0644}\u{0639}\u{0627}\u{0644}\u{0645}");
+
+                // Back to LTR
+                let ltr2 = add_inline(&mut doc, para);
+                add_text(&mut doc, ltr2, " and English after ");
+
+                // Another RTL span
+                let rtl2 = add_inline(&mut doc, para);
+                doc.node_mut(rtl2).style.direction = Direction::Rtl;
+                doc.node_mut(rtl2).style.unicode_bidi = UnicodeBidi::Embed;
+                add_text(&mut doc, rtl2, "\u{0634}\u{0643}\u{0631}\u{0627}");
+
+                let end = add_inline(&mut doc, para);
+                add_text(&mut doc, end, " end of line.");
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+fn bench_text_inline_line_breaking_stress(c: &mut Criterion) {
+    c.bench_function("text/inline_line_breaking_stress", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // Very narrow container to force many line breaks
+                let para = add_block(&mut doc, vp);
+                doc.node_mut(para).style.width = Length::px(80.0);
+
+                // 50 short words — each 3-6 chars — crammed into 80px
+                let words: Vec<&str> = vec![
+                    "the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog",
+                    "and", "then", "runs", "back", "again", "with", "great", "speed",
+                    "down", "long", "road", "past", "old", "farm", "near", "big",
+                    "red", "barn", "next", "wide", "blue", "lake", "into", "deep",
+                    "dark", "wood", "full", "tall", "pine", "trees", "soft", "green",
+                    "moss", "grew", "upon", "each", "flat", "gray", "rock", "all",
+                    "day", "long",
+                ];
+                add_text(&mut doc, para, &words.join(" "));
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
 // Criterion groups and main
 // ===========================================================================
 
@@ -688,6 +944,30 @@ criterion_group!(
     bench_inline_mixed_spans,
 );
 
+criterion_group!(
+    sizing_benches,
+    bench_sizing_min_content_nested,
+    bench_sizing_max_content_text,
+    bench_sizing_min_max_constraints,
+);
+
+criterion_group!(
+    multicol_benches,
+    bench_multicol_3_columns_20_blocks,
+);
+
+criterion_group!(
+    fragmentation_benches,
+    bench_fragmentation_break_token_chain,
+);
+
+criterion_group!(
+    text_benches,
+    bench_text_inline_long_paragraph,
+    bench_text_inline_mixed_bidi,
+    bench_text_inline_line_breaking_stress,
+);
+
 criterion_main!(
     block_benches,
     float_benches,
@@ -695,4 +975,8 @@ criterion_main!(
     complex_benches,
     flex_benches,
     inline_benches,
+    sizing_benches,
+    multicol_benches,
+    fragmentation_benches,
+    text_benches,
 );

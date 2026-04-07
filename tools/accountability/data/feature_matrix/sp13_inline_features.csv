@@ -196,3 +196,13 @@ SP13,pixel_rendering,block_in_inline,rendering,CSS2.2§9.2.1.1,yes,openui-layout
 SP13,inline_styling,background,color,CSS-Backgrounds-3§3,yes,openui-paint/src/box_painter.rs,yes,inline_background_color,yes,fail,0.809792,no,,Background color on inline elements
 SP13,inline_styling,box_model,padding,CSS-Box-3§6,yes,openui-layout/src/inline/algorithm.rs,yes,inline_padding,yes,fail,0.896458,no,,Padding on inline elements
 SP13,inline_styling,box_model,border,CSS-Backgrounds-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,inline_border,yes,fail,0.463958,no,,Border on inline elements
+SP13,first_letter,pseudo_element,basic_styled,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,first_letter_basic,no,not_run,,no,,First-letter pseudo-element with 2em font-size and color
+SP13,first_line,pseudo_element,basic_styled,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,first_line_basic,no,not_run,,no,,First-line pseudo-element with color and font-weight
+SP13,line_breaking,word_break,break_all,CSS-Text-3§5.5.1,yes,openui-layout/src/inline/line_breaker.rs,yes,word_break_break_all,no,not_run,,no,,word-break: break-all in narrow container
+SP13,line_breaking,overflow_wrap,break_word_narrow,CSS-Text-3§5.5.2,yes,openui-layout/src/inline/line_breaker.rs,yes,overflow_wrap_break_word,no,not_run,,no,,overflow-wrap: break-word in narrow container
+SP13,vertical_align,inline_positioning,text_top,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,vertical_align_text_top,no,not_run,,no,,vertical-align: text-top with mixed sizes
+SP13,vertical_align,inline_positioning,text_bottom,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,vertical_align_text_bottom,no,not_run,,no,,vertical-align: text-bottom with mixed sizes
+SP13,line_breaking,overflow_wrap,anywhere,CSS-Text-3§5.5.2,yes,openui-layout/src/inline/line_breaker.rs,yes,line_breaking_overflow_wrap,no,not_run,,no,,overflow-wrap: anywhere with long URL string
+SP13,line_breaking,hyphens,auto,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,line_breaking_hyphens_auto,no,not_run,,no,,hyphens: auto with English text in narrow container
+SP13,inline_styling,box_decoration_break,clone_multiline,CSS-Break-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,inline_box_multiline,no,not_run,,no,,box-decoration-break: clone on multi-line inline span
+SP13,float_with_inline,text_wrap,left_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,inline_with_float,no,not_run,,no,,Inline text wrapping around a left-floated box
