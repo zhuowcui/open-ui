@@ -66,3 +66,76 @@ SP11,color,value,color_green,css-color-4§4,yes,openui-style/src/color.rs,yes,co
 SP11,color,value,color_custom,css-color-4§4,yes,openui-style/src/color.rs,yes,color_custom,yes,fail,0.598542,no,,"from_rgba8(139,0,139,255)"
 SP11,text-shadow,shadow,text_shadow_basic,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,text_shadow_basic,yes,fail,1.357292,no,,"2px 2px 4px rgba(0,0,0,0.5)"
 SP11,text-overflow,overflow,text_overflow_ellipsis,css-overflow-4§6,yes,openui-style/src/enums.rs,yes,text_overflow_ellipsis,yes,fail,0.791667,no,,TextOverflow::Ellipsis
+SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_solid,yes,not_run,,no,,Solid underline style
+SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_double,yes,not_run,,no,,Double underline style
+SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dotted,yes,not_run,,no,,Dotted underline style
+SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dashed,yes,not_run,,no,,Dashed underline style
+SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_wavy,yes,not_run,,no,,Wavy underline style
+SP11,text-decoration-skip-ink,skip-ink,auto-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_auto,yes,not_run,,no,,Skip-ink auto with descenders
+SP11,text-decoration-skip-ink,skip-ink,none-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_none,yes,not_run,,no,,Skip-ink none — continuous line through glyph ink
+SP11,text-decoration-color,color,explicit-red,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_color_red,yes,not_run,,no,,Blue text with red underline
+SP11,text-decoration-thickness,thickness,3px,css-text-decor-4§3.4,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_thickness_3px,yes,not_run,,no,,Explicit 3px underline thickness
+SP11,text-underline-offset,offset,5px,css-text-decor-4§3.7,yes,openui-paint/src/decoration_painter.rs,yes,text_underline_offset_5px,yes,not_run,,no,,5px underline offset
+SP11,font-family,family,serif,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_family_serif,yes,not_run,,no,,GenericFontFamily::Serif
+SP11,font-family,family,monospace,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_family_monospace,yes,not_run,,no,,GenericFontFamily::Monospace
+SP11,word-spacing,spacing,word_spacing_negative,css-text-3§9,yes,openui-style/src/computed.rs,yes,word_spacing_negative,yes,not_run,,no,,-3px word spacing
+SP11,line-height,height,line_height_percentage,css-inline-3§4,yes,openui-style/src/enums.rs,yes,line_height_percentage,yes,not_run,,no,,LineHeight::Percentage(200.0)
+SP11,text-shadow,shadow,text_shadow_offset,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,text_shadow_offset,yes,not_run,,no,,"3px 3px 0 red — offset only, no blur"
+SP11,bidi,direction-detection,auto,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,BidiParagraph::new auto-detects from first strong character per UAX#9
+SP11,bidi,direction-detection,forced-ltr,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,BidiParagraph::new with Some(TextDirection::Ltr) forces base LTR
+SP11,bidi,direction-detection,forced-rtl,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,BidiParagraph::new with Some(TextDirection::Rtl) forces base RTL
+SP11,bidi,embedding-levels,per-character,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,levels() returns per-character embedding levels; level_at/level_at_byte accessors
+SP11,bidi,visual-reordering,uax9-l2,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,visual_runs() implements UAX#9 L2 reordering from highest to lowest odd level
+SP11,bidi,run-analysis,logical-runs,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,runs() returns contiguous segments sharing same embedding level
+SP11,bidi,mixed-text,ltr-rtl-runs,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,Mixed Latin/Hebrew/Arabic correctly split into LTR and RTL runs
+SP11,bidi,neutral-resolution,numbers-in-rtl,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,Digits get even (LTR) embedding level in RTL context per UAX#9
+SP11,text-shaping,script-segmentation,run-segmenter,css-text-3§2,yes,openui-text/src/shaping/segmenter.rs,yes,,no,not_run,,no,,RunSegmenter groups text by Unicode script; Common/Inherited merge into adjacent runs
+SP11,text-shaping,harfbuzz-shaping,basic-latin,css-fonts-4§7,yes,openui-text/src/shaping/shaper.rs,yes,,no,not_run,,no,,TextShaper::shape() uses HarfBuzz via Skia SkShaper for glyph positioning
+SP11,text-shaping,cluster-safety,safe-to-break,css-text-3§5,yes,openui-text/src/shaping/shape_result.rs,yes,,no,not_run,,no,,safe_to_break_before() flag per character; script-aware for complex scripts
+SP11,text-shaping,cluster-safety,cluster-base,css-text-3§5,yes,openui-text/src/shaping/shape_result.rs,yes,,no,not_run,,no,,is_cluster_base identifies grapheme cluster start; non-base chars in ligatures
+SP11,text-shaping,complex-scripts,arabic-joining,css-text-3§2,yes,openui-text/src/shaping/shaper.rs,yes,,no,not_run,,no,,Arabic joining/contextual forms via HarfBuzz; cluster boundaries marked unsafe
+SP11,text-shaping,complex-scripts,indic-reordering,css-text-3§2,yes,openui-text/src/shaping/shaper.rs,yes,,no,not_run,,no,,Devanagari/Bengali/Tamil/etc reordering via is_complex_script guard
+SP11,text-shaping,kerning,pair-adjustment,css-fonts-4§6,yes,openui-text/src/shaping/shaper.rs,yes,,no,not_run,,no,,HarfBuzz applies kern/GPOS pair adjustments; tested with AV/To pairs
+SP11,text-shaping,ligatures,cluster-mapping,css-fonts-4§6,yes,openui-text/src/shaping/shaper.rs,yes,,no,not_run,,no,,Non-1:1 glyph-to-char mapping via cluster data; spacing distributed per-cluster
+SP11,text-shaping,font-fallback,notdef-reshaping,css-fonts-4§5,yes,openui-text/src/shaping/shaper.rs,yes,,no,not_run,,no,,apply_font_fallback re-shapes .notdef segments with fallback chain fonts
+SP11,text-shaping,justification,word-expansion,css-text-3§7,yes,openui-text/src/shaping/shape_result.rs,yes,,no,not_run,,no,,apply_justification distributes extra width to space glyphs
+SP11,text-shaping,justification,inter-character,css-text-3§7,yes,openui-text/src/shaping/shape_result.rs,yes,,no,not_run,,no,,apply_inter_character_justification distributes extra space between all characters
+SP11,hyphens,mode,none,css-text-3§5.4,yes,openui-text/src/hyphenation/mod.rs,yes,,no,not_run,,no,,Hyphens::None — suppresses all hyphenation including soft hyphens
+SP11,hyphens,mode,manual,css-text-3§5.4,yes,openui-text/src/hyphenation/mod.rs,yes,,no,not_run,,no,,Hyphens::Manual — only soft hyphens (U+00AD) treated as break points
+SP11,hyphens,mode,auto,css-text-3§5.4,yes,openui-text/src/hyphenation/mod.rs,yes,,no,not_run,,no,,Hyphens::Auto — Knuth-Liang pattern-based + soft hyphens
+SP11,hyphens,soft-hyphen,detection,css-text-3§5.4,yes,openui-text/src/hyphenation/mod.rs,yes,,no,not_run,,no,,is_soft_hyphen() + find_soft_hyphens() + last_soft_hyphen_before()
+SP11,hyphens,soft-hyphen,stripping,css-text-3§5.4,yes,openui-text/src/hyphenation/mod.rs,yes,,no,not_run,,no,,strip_soft_hyphens() removes U+00AD from display text
+SP11,hyphens,pattern-matching,knuth-liang-trie,css-text-3§5.4,yes,openui-text/src/hyphenation/trie.rs,yes,,no,not_run,,no,,PatternTrie with insert_pattern/apply_patterns; odd priority = valid break
+SP11,hyphens,pattern-matching,english-patterns,css-text-3§5.4,yes,openui-text/src/hyphenation/patterns.rs,yes,,no,not_run,,no,,EN_US_PATTERNS: 4900+ TeX/AOSP patterns; build_english_trie()
+SP11,hyphenate-limit-chars,limits,min-word-prefix-suffix,css-text-4§7,yes,openui-text/src/hyphenation/mod.rs,yes,,no,not_run,,no,,Hyphenation enforces min_word/min_prefix/min_suffix; english defaults 5/2/2
+SP11,text-emphasis-style,shape,dot,css-text-decor-3§5.1,yes,openui-text/src/emphasis.rs,yes,,no,not_run,,no,,Filled dot (U+2022 •) and open dot (U+25E6 ◦); default for horizontal text
+SP11,text-emphasis-style,shape,circle,css-text-decor-3§5.1,yes,openui-text/src/emphasis.rs,yes,,no,not_run,,no,,Filled circle (U+25CF ●) and open circle (U+25CB ○)
+SP11,text-emphasis-style,shape,double-circle,css-text-decor-3§5.1,yes,openui-text/src/emphasis.rs,yes,,no,not_run,,no,,Filled double circle (U+25C9 ◉) and open double circle (U+25CE ◎)
+SP11,text-emphasis-style,shape,triangle,css-text-decor-3§5.1,yes,openui-text/src/emphasis.rs,yes,,no,not_run,,no,,Filled triangle (U+25B2 ▲) and open triangle (U+25B3 △)
+SP11,text-emphasis-style,shape,sesame,css-text-decor-3§5.1,yes,openui-text/src/emphasis.rs,yes,,no,not_run,,no,,Filled sesame (U+FE45 ﹅) and open sesame (U+FE46 ﹆); default for vertical text
+SP11,text-emphasis-style,shape,custom-string,css-text-decor-3§5.1,yes,openui-text/src/emphasis.rs,yes,,no,not_run,,no,,Arbitrary single character as emphasis mark via string value
+SP11,text-emphasis-color,color,resolve,css-text-decor-3§5.2,yes,openui-paint/src/emphasis_painter.rs,yes,,no,not_run,,no,,resolve_emphasis_color maps currentColor to text color or uses explicit color
+SP11,text-emphasis-position,position,over-under,css-text-decor-3§5.3,yes,openui-paint/src/emphasis_painter.rs,yes,,no,not_run,,no,,compute_emphasis_offset for over (above ascender) and under (below descender)
+SP11,text-emphasis-position,position,right-left,css-text-decor-3§5.3,yes,openui-paint/src/emphasis_painter.rs,yes,,no,not_run,,no,,compute_emphasis_offset for right/left in vertical writing modes
+SP11,text-emphasis,painting,per-grapheme,css-text-decor-3§5.1,yes,openui-paint/src/emphasis_painter.rs,yes,,no,not_run,,no,,paint_emphasis_marks renders at 50% font size centered over each grapheme cluster
+SP11,font-family,resolution,cache-lookup,css-fonts-4§4,yes,openui-text/src/font/cache.rs,yes,,no,not_run,,no,,FontCache singleton maps (family+description) to FontPlatformData
+SP11,font-family,resolution,generic-families,css-fonts-4§4,yes,openui-text/src/font/cache.rs,yes,,no,not_run,,no,,generic_family_name maps serif/sans-serif/monospace/cursive/fantasy/system-ui/etc
+SP11,font-family,resolution,fallback-chain,css-fonts-4§5,yes,openui-text/src/font/fallback.rs,yes,,no,not_run,,no,,FontFallbackList walks family list then falls back to sans-serif
+SP11,font-family,resolution,platform-fallback,css-fonts-4§5,yes,openui-text/src/font/cache.rs,yes,,no,not_run,,no,,platform_fallback_for_character finds font covering specific Unicode code point
+SP11,font-metrics,metrics,vertical,css-inline-3§4,yes,openui-text/src/font/metrics.rs,yes,,no,not_run,,no,,FontMetrics: ascent/descent/line_gap/line_spacing with positive-up convention
+SP11,font-metrics,metrics,reference,css-values-4§5.1,yes,openui-text/src/font/metrics.rs,yes,,no,not_run,,no,,x_height (ex unit) / cap_height (cap unit) / zero_width (ch unit)
+SP11,font-metrics,metrics,decoration,css-text-decor-3§3,yes,openui-text/src/font/metrics.rs,yes,,no,not_run,,no,,underline_offset/underline_thickness/strikeout_position/strikeout_thickness
+SP11,font-platform,loading,typeface-resolution,css-fonts-4§4,yes,openui-text/src/font/platform.rs,yes,,no,not_run,,no,,FontPlatformData wraps Skia typeface with subpixel positioning and slight hinting
+SP11,font-variant-caps,opentype,caps-features,css-fonts-4§3,yes,openui-text/src/font/features.rs,yes,,no,not_run,,no,,small-caps→smcp; all-small-caps→smcp+c2sc; petite-caps→pcap; unicase→unic; titling→titl
+SP11,font-variant-ligatures,opentype,ligature-features,css-fonts-4§3,yes,openui-text/src/font/features.rs,yes,,no,not_run,,no,,common→liga+clig; discretionary→dlig; historical→hlig; contextual→calt
+SP11,font-variant-numeric,opentype,numeric-features,css-fonts-4§3,yes,openui-text/src/font/features.rs,yes,,no,not_run,,no,,lining→lnum; oldstyle→onum; tabular→tnum; fractions→frac/afrc; ordinal→ordn; slashed-zero→zero
+SP11,font-variant-east-asian,opentype,east-asian-features,css-fonts-4§3,yes,openui-text/src/font/features.rs,yes,,no,not_run,,no,,jis78-04→jp78-04; simplified→smpl; traditional→trad; full-width→fwid; ruby→ruby
+SP11,font-feature-settings,opentype,explicit-features,css-fonts-4§6,yes,openui-text/src/font/features.rs,yes,,no,not_run,,no,,Explicit OpenType feature tags appended last to override variant-derived features
+SP11,text-orientation,orientation,mixed,css-writing-modes-4§5.1,yes,openui-text/src/char_orientation.rs,yes,,no,not_run,,no,,is_upright_in_mixed_vertical: CJK/Kana/Hangul upright; Latin/digits/Cyrillic rotated
+SP11,text-orientation,orientation,upright,css-writing-modes-4§5.1,yes,openui-text/src/char_orientation.rs,yes,,no,not_run,,no,,All characters rendered upright in vertical text; resolved via FontOrientation
+SP11,text-orientation,orientation,sideways,css-writing-modes-4§5.1,yes,openui-text/src/char_orientation.rs,yes,,no,not_run,,no,,All characters rotated 90° clockwise in vertical text; resolved via FontOrientation
+SP11,emoji,detection,core-emoji,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_emoji() covers Miscellaneous Symbols/Dingbats/Emoticons/Transport/Supplemental blocks
+SP11,emoji,detection,presentation-selectors,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,VS16 (U+FE0F) emoji presentation and VS15 (U+FE0E) text presentation selectors
+SP11,emoji,detection,zwj-sequences,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_zero_width_joiner() detects ZWJ (U+200D) for emoji family/profession sequences
+SP11,emoji,detection,modifiers-skin-tone,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_emoji_modifier() detects skin tone modifiers U+1F3FB-U+1F3FF
+SP11,emoji,detection,regional-indicators,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_regional_indicator() detects U+1F1E6-U+1F1FF for flag emoji sequences
