@@ -7,19 +7,19 @@ SP11,text-decoration-line,line,underline+overline,css-text-decor-3§3.1,yes,open
 SP11,text-decoration-line,line,underline+line-through,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,,no,not_run,,no,,Bitflag combo 0x05; painted in both phases
 SP11,text-decoration-line,line,overline+line-through,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,,no,not_run,,no,,Bitflag combo 0x06; painted in both phases
 SP11,text-decoration-line,line,underline+overline+line-through,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,text_decoration_combined,yes,fail,0.723542,no,,Bitflag combo 0x07; all three lines
-SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.167292,no,,draw_solid_line: filled Rect centered on line
-SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.186458,no,,draw_double_line: two parallel rects offset by thickness+1
-SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.167292,no,,draw_dotted_line: Skia DashPathEffect with dot spacing
-SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.176458,no,,draw_dashed_line: Skia DashPathEffect with dash intervals
-SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.205833,no,,draw_wavy_line: cubic bezier path segments
+SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_solid,yes,fail,0.167292,no,,draw_solid_line: filled Rect centered on line
+SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_double,yes,fail,0.186458,no,,draw_double_line: two parallel rects offset by thickness+1
+SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_dotted,yes,fail,0.167292,no,,draw_dotted_line: Skia DashPathEffect with dot spacing
+SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_dashed,yes,fail,0.176458,no,,draw_dashed_line: Skia DashPathEffect with dash intervals
+SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_wavy,yes,fail,0.205833,no,,draw_wavy_line: cubic bezier path segments
 SP11,text-decoration-color,color,currentColor,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,StyleColor::CurrentColor resolves via style.color
 SP11,text-decoration-color,color,explicit-color,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,StyleColor::Color(r/g/b/a) used directly
 SP11,text-decoration-color,color,transparent,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,Color with alpha=0 renders transparent line
 SP11,text-decoration-thickness,thickness,auto,css-text-decor-4§3.4,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,font_size / 10.0 max 1px; no rounding
 SP11,text-decoration-thickness,thickness,from-font,css-text-decor-4§3.4,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,Uses metrics.underline_thickness; fallback to auto
 SP11,text-decoration-thickness,thickness,length,css-text-decor-4§3.4,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,roundf(px) max 1px; Blink rounds explicit lengths
-SP11,text-decoration-skip-ink,skip-ink,none,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.167292,no,,No skip — continuous line through glyph ink
-SP11,text-decoration-skip-ink,skip-ink,auto,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,,yes,fail,0.166042,no,,Skip non-CJK glyph ink; filter_non_cjk_intercepts
+SP11,text-decoration-skip-ink,skip-ink,none,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_skip_ink_none,yes,fail,0.167292,no,,No skip — continuous line through glyph ink
+SP11,text-decoration-skip-ink,skip-ink,auto,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_skip_ink_auto,yes,fail,0.166042,no,,Skip non-CJK glyph ink; filter_non_cjk_intercepts
 SP11,text-decoration-skip-ink,skip-ink,all,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,Skip all glyph ink including CJK characters
 SP11,text-decoration-skip-ink,skip-ink,auto-cjk-exclusion,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,CJK chars excluded from intercept detection in Auto
 SP11,text-decoration-skip-ink,skip-ink,intercept-merging,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,,no,not_run,,no,,Adjacent intercepts within 0.5px merged
@@ -66,11 +66,11 @@ SP11,color,value,color_green,css-color-4§4,yes,openui-style/src/color.rs,yes,co
 SP11,color,value,color_custom,css-color-4§4,yes,openui-style/src/color.rs,yes,color_custom,yes,fail,0.598542,no,,"from_rgba8(139,0,139,255)"
 SP11,text-shadow,shadow,text_shadow_basic,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,text_shadow_basic,yes,fail,1.357292,no,,"2px 2px 4px rgba(0,0,0,0.5)"
 SP11,text-overflow,overflow,text_overflow_ellipsis,css-overflow-4§6,yes,openui-style/src/enums.rs,yes,text_overflow_ellipsis,yes,fail,0.791667,no,,TextOverflow::Ellipsis
-SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_solid,yes,fail,0.167292,no,,Solid underline style
-SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_double,yes,fail,0.186458,no,,Double underline style
-SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dotted,yes,fail,0.167292,no,,Dotted underline style
-SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dashed,yes,fail,0.176458,no,,Dashed underline style
-SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_wavy,yes,fail,0.205833,no,,Wavy underline style
+SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_solid,yes,fail,0.167292,no,,Solid underline style
+SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_double,yes,fail,0.186458,no,,Double underline style
+SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_dotted,yes,fail,0.167292,no,,Dotted underline style
+SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_dashed,yes,fail,0.176458,no,,Dashed underline style
+SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,sp11/text_decoration_style_wavy,yes,fail,0.205833,no,,Wavy underline style
 SP11,text-decoration-skip-ink,skip-ink,auto-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_auto,yes,fail,0.166042,no,,Skip-ink auto with descenders
 SP11,text-decoration-skip-ink,skip-ink,none-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_none,yes,fail,0.167292,no,,Skip-ink none — continuous line through glyph ink
 SP11,text-decoration-color,color,explicit-red,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_color_red,yes,fail,0.154375,no,,Blue text with red underline

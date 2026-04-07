@@ -12,7 +12,7 @@ SP13,white_space,inline_processing,pre-wrap,CSS-Text-3§4,yes,openui-layout/src/
 SP13,white_space,inline_processing,pre-line,CSS-Text-3§4,yes,openui-layout/src/inline/items_builder.rs,yes,,no,not_run,,no,,collapse_spaces_preserve_newlines(); collapses spaces keeps newlines
 SP13,white_space,inline_processing,break-spaces,CSS-Text-3§4,yes,openui-layout/src/inline/line_breaker.rs,no,,no,not_run,,no,,WhiteSpace::BreakSpaces variant handled in line_breaker; no dedicated test
 SP13,word_break,inline_behavior,normal,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,yes,,no,not_run,,no,,Default UAX#14 break opportunities; tested via line breaking tests
-SP13,word_break,inline_behavior,break-all,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,no,,yes,fail,1.1875,no,,WordBreak::BreakAll allows break between any characters
+SP13,word_break,inline_behavior,break-all,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,no,sp13/word_break_break_all,yes,fail,1.1875,no,,WordBreak::BreakAll allows break between any characters
 SP13,word_break,inline_behavior,keep-all,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,no,,no,not_run,,no,,WordBreak::KeepAll prevents breaks in CJK; is_cjk_break() gated
 SP13,overflow_wrap,inline_behavior,normal,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,,no,not_run,,no,,Default: no emergency breaking; OverflowWrap::Normal
 SP13,overflow_wrap,inline_behavior,break-word,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,no,line_breaking_break_word,yes,fail,2.015,no,,OverflowWrap::BreakWord enables character-level emergency breaks
@@ -50,8 +50,8 @@ SP13,text_align_last,last_line_alignment,justify,CSS-Text-3§7.3,yes,openui-layo
 SP13,vertical_align,inline_positioning,baseline,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,vertical_align_baseline,yes,fail,1.402708,no,,Default; compute_baseline_shift() returns 0; tested in sp13_e
 SP13,vertical_align,inline_positioning,sub,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,vertical_align_sub,yes,fail,1.951458,no,,Lowers baseline by subscript offset
 SP13,vertical_align,inline_positioning,super,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,vertical_align_super,yes,fail,1.195,no,,Raises baseline by superscript offset
-SP13,vertical_align,inline_positioning,text-top,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,,yes,fail,4.372708,no,,Aligns top of inline with top of parent text area
-SP13,vertical_align,inline_positioning,text-bottom,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,,yes,fail,3.672708,no,,Aligns bottom of inline with bottom of parent text area
+SP13,vertical_align,inline_positioning,text-top,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,sp13/vertical_align_text_top,yes,fail,4.372708,no,,Aligns top of inline with top of parent text area
+SP13,vertical_align,inline_positioning,text-bottom,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,sp13/vertical_align_text_bottom,yes,fail,3.672708,no,,Aligns bottom of inline with bottom of parent text area
 SP13,vertical_align,inline_positioning,middle,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,vertical_align_middle,yes,fail,1.373958,no,,Aligns midpoint of inline box with parent baseline + half x-height
 SP13,vertical_align,inline_positioning,top,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,vertical_align_top,yes,fail,1.154375,no,,Aligns top of inline box with top of line box
 SP13,vertical_align,inline_positioning,bottom,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,vertical_align_bottom,yes,fail,1.223958,no,,Aligns bottom of inline box with bottom of line box
