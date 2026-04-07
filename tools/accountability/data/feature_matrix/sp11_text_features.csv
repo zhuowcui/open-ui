@@ -139,3 +139,7 @@ SP11,emoji,detection,presentation-selectors,css-fonts-4§7,yes,openui-text/src/e
 SP11,emoji,detection,zwj-sequences,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_zero_width_joiner() detects ZWJ (U+200D) for emoji family/profession sequences
 SP11,emoji,detection,modifiers-skin-tone,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_emoji_modifier() detects skin tone modifiers U+1F3FB-U+1F3FF
 SP11,emoji,detection,regional-indicators,css-fonts-4§7,yes,openui-text/src/emoji.rs,yes,,no,not_run,,no,,is_regional_indicator() detects U+1F1E6-U+1F1FF for flag emoji sequences
+SP11,text-emphasis-style,emphasis,dot,css-text-decor-3,yes,openui-paint/src/emphasis_painter.rs,yes,sp11/text_emphasis_dot,,,,no,,
+SP11,text-emphasis-style,emphasis,circle,css-text-decor-3,yes,openui-paint/src/emphasis_painter.rs,yes,sp11/text_emphasis_circle,,,,no,,
+SP11,text-emphasis-position,emphasis,over,css-text-decor-3,yes,openui-paint/src/emphasis_painter.rs,yes,sp11/text_emphasis_position_over,,,,no,,
+SP11,text-emphasis-color,emphasis,red,css-text-decor-3,yes,openui-paint/src/emphasis_painter.rs,yes,sp11/text_emphasis_color_red,,,,no,,

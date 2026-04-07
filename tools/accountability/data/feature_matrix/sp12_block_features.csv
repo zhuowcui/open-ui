@@ -88,10 +88,10 @@ SP12,aspect-ratio,value,auto,css-sizing-4 §5.1,yes,openui-layout/src/css_sizing
 SP12,aspect-ratio,value,ratio,css-sizing-4 §5.1,yes,openui-layout/src/css_sizing.rs,yes,aspect_ratio_basic,yes,fail,4.166667,no,not_run,width/height ratio (e.g. 16/9)
 SP12,aspect-ratio,value,auto-with-ratio,css-sizing-4 §5.1,yes,openui-layout/src/css_sizing.rs,yes,,no,not_run,,no,not_run,Prefer intrinsic then fall back to ratio
 SP12,top,offset,auto,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property top: auto
-SP12,top,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property top: px
+SP12,top,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,sp12/position_absolute_top_left,no,not_run,,no,not_run,Offset property top: px
 SP12,top,offset,%,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property top: %
 SP12,right,offset,auto,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property right: auto
-SP12,right,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property right: px
+SP12,right,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,sp12/position_absolute_bottom_right,no,not_run,,no,not_run,Offset property right: px
 SP12,right,offset,%,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property right: %
 SP12,bottom,offset,auto,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property bottom: auto
 SP12,bottom,offset,px,css-position-3 §3,yes,openui-layout/src/out_of_flow.rs; openui-layout/src/relative.rs,yes,,no,not_run,,no,not_run,Offset property bottom: px
@@ -242,3 +242,34 @@ SP12,opacity,value,number,css-color-4 §11,yes,openui-paint/src/painter.rs,yes,o
 SP12,visibility,value,hidden,css2 §11.2,yes,openui-style/src/enums.rs,yes,visibility_hidden,yes,pass,0.0,no,not_run,Element hidden but space reserved
 SP12,gap,value,px,css-align-3 §8,yes,openui-layout/src/flex/algorithm.rs,yes,flex_gap,yes,pass,0.0,no,not_run,Gap between flex items
 SP12,display,nesting,nested-blocks,css-display-3 §2,yes,openui-layout/src/block.rs,yes,nested_blocks,yes,pass,0.0,no,not_run,Nested block-level elements
+SP12,border-style,style,dashed,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_style_dashed,,,,no,,
+SP12,border-style,style,dotted,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_style_dotted,,,,no,,
+SP12,border-style,style,double,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
+SP12,border-style,style,groove,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
+SP12,border-style,style,ridge,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
+SP12,border-style,style,inset,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
+SP12,border-style,style,outset,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,,,,,no,,
+SP12,border-color,per-side,different-colors,css-backgrounds-3,yes,openui-paint/src/painter.rs,yes,sp12/border_color_per_side,,,,no,,
+SP12,position,sticky,left,css-position-3,yes,openui-layout/src/sticky.rs,yes,sp12/position_sticky_left,,,,no,,
+SP12,position,sticky,right,css-position-3,yes,openui-layout/src/sticky.rs,yes,sp12/position_sticky_right,,,,no,,
+SP12,column-fill,fill,auto,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_fill_auto,,,,no,,
+SP12,column-fill,fill,balance,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,sp12/multicol_column_fill_balance,,,,no,,
+SP12,column-rule-color,color,explicit,css-multicol-1,yes,openui-layout/src/multicol/mod.rs,yes,,,,,no,,
+SP12,top,offset,percent,css-position-3,yes,openui-layout/src/out_of_flow.rs,yes,sp12/position_absolute_percent,,,,no,,
+SP12,overflow-x,axis,hidden,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_x_hidden,,,,no,,
+SP12,overflow-y,axis,hidden,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_y_hidden,,,,no,,
+SP12,overflow-x,axis,scroll,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_x_scroll,,,,no,,
+SP12,overflow-y,axis,scroll,css-overflow-3,yes,openui-layout/src/block.rs,yes,sp12/overflow_y_scroll,,,,no,,
+SP12,align-self,alignment,flex-start,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_start,,,,no,,
+SP12,align-self,alignment,flex-end,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_end,,,,no,,
+SP12,align-self,alignment,center,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_self_center,,,,no,,
+SP12,align-content,alignment,center,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_content_center,,,,no,,
+SP12,align-content,alignment,space-between,css-flexbox-1,yes,openui-layout/src/flex/alignment.rs,yes,sp12/flex_align_content_space_between,,,,no,,
+SP12,order,ordering,reorder,css-flexbox-1,yes,openui-layout/src/flex/algorithm.rs,yes,sp12/flex_order,,,,no,,
+SP12,flex-basis,sizing,100px,css-flexbox-1,yes,openui-layout/src/flex/item.rs,yes,sp12/flex_basis_100px,,,,no,,
+SP12,flex-shrink,sizing,basic,css-flexbox-1,yes,openui-layout/src/flex/item.rs,yes,sp12/flex_shrink_basic,,,,no,,
+SP12,break-before,fragmentation,column,css-break-3,yes,openui-layout/src/fragmentation/mod.rs,yes,sp12/fragmentation_break_before_column,,,,no,,
+SP12,break-inside,fragmentation,avoid,css-break-3,yes,openui-layout/src/fragmentation/mod.rs,yes,sp12/fragmentation_break_inside_avoid,,,,no,,
+SP12,size-constraints,resolution,inline-size,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,,,,no,,
+SP12,size-constraints,resolution,block-size,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,,,,no,,
+SP12,size-constraints,box-sizing,adjustment,css-sizing-3,yes,openui-layout/src/size_constraints.rs,yes,,,,,no,,

@@ -206,3 +206,13 @@ SP13,line_breaking,overflow_wrap,anywhere,CSS-Text-3§5.5.2,yes,openui-layout/sr
 SP13,line_breaking,hyphens,auto,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,line_breaking_hyphens_auto,yes,fail,1.986458,no,,hyphens: auto with English text in narrow container
 SP13,inline_styling,box_decoration_break,clone_multiline,CSS-Break-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,inline_box_multiline,yes,fail,2.872917,no,,box-decoration-break: clone on multi-line inline span
 SP13,float_with_inline,text_wrap,left_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,inline_with_float,yes,fail,0.998125,no,,Inline text wrapping around a left-floated box
+SP13,initial_letter,drop_cap,basic,css-inline-3,yes,openui-layout/src/inline/initial_letter.rs,yes,sp13/initial_letter_basic,,,,no,,
+SP13,text_combine_upright,combine,all,css-writing-modes-4,yes,openui-layout/src/inline/text_combine.rs,yes,sp13/text_combine_upright,,,,no,,
+SP13,inline_direction,bidi,rtl,css-writing-modes-4,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/inline_direction_rtl,,,,no,,
+SP13,tab_size,whitespace,4,css-text-3,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/tab_size_4,,,,no,,
+SP13,text_align_last,alignment,center,css-text-3,yes,openui-layout/src/inline/algorithm.rs,yes,sp13/text_align_last_center,,,,no,,
+SP13,first_letter,pseudo,color,css-pseudo-4,yes,openui-layout/src/inline/first_letter.rs,yes,sp13/first_letter_color,,,,no,,
+SP13,first_letter,pseudo,font-size,css-pseudo-4,yes,openui-layout/src/inline/first_letter.rs,yes,sp13/first_letter_font_size,,,,no,,
+SP13,first_line,pseudo,font-weight,css-pseudo-4,yes,openui-layout/src/inline/first_line.rs,yes,sp13/first_line_font_weight,,,,no,,
+SP13,first_line,pseudo,color,css-pseudo-4,yes,openui-layout/src/inline/first_line.rs,yes,sp13/first_line_color,,,,no,,
+SP13,ruby,annotation,basic,css-ruby-1,yes,openui-layout/src/ruby/layout.rs,yes,sp13/ruby_basic,,,,no,,
