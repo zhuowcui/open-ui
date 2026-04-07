@@ -142,10 +142,10 @@ fn balance_equal_content() {
 
 #[test]
 fn balance_uneven_content() {
-    // Total = 230. 2 columns. Greedy: col1 = 50+80=130, col2 = 60+40=100 → 130
+    // Total = 230. 2 columns. With fragmentation-aware balance: 115.
     let children = vec![lu(50), lu(80), lu(60), lu(40)];
     let h = balance_columns(&children, 2, lu(1000));
-    assert_eq!(h, lu(130));
+    assert_eq!(h, lu(115));
 }
 
 // ── Auto fill: columns use fragmentainer height ─────────────────────────

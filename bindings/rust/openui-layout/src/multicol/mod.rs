@@ -394,20 +394,17 @@ pub fn balance_columns(
 
     let total_raw: i64 = child_block_sizes.iter().map(|s| s.raw() as i64).sum();
 
-    // Find the tallest single child — the column height can never be less.
-    let max_child_raw: i32 = child_block_sizes.iter().map(|s| s.raw()).max().unwrap_or(0);
+    // With fragmentation, children can be split at column boundaries.
+    // The minimum possible column height is ceil(total / count).
+    let min_raw = ((total_raw + column_count as i64 - 1) / column_count as i64) as i32;
 
-    // Initial guess: total / count, but at least as tall as the tallest child.
-    let _initial_guess = ((total_raw / column_count as i64) as i32).max(max_child_raw);
-
-    let mut lo = max_child_raw;
+    let mut lo = min_raw;
     let mut hi = if max_height.raw() > 0 && max_height.raw() < i32::MAX / 2 {
         total_raw.min(max_height.raw() as i64) as i32
     } else {
         total_raw.min(i32::MAX as i64 / 2) as i32
     };
 
-    // Ensure lo <= hi.
     if lo > hi {
         hi = lo;
     }
@@ -430,7 +427,8 @@ pub fn balance_columns(
     LayoutUnit::from_raw(lo)
 }
 
-/// Count how many columns are needed to fit all children at the given height.
+/// Count how many columns are needed to fit all children at the given height,
+/// allowing children to be fragmented (split) at column boundaries.
 fn columns_needed_for_height(child_block_sizes: &[LayoutUnit], height: LayoutUnit) -> u32 {
     if height.raw() <= 0 {
         return u32::MAX;
@@ -439,11 +437,13 @@ fn columns_needed_for_height(child_block_sizes: &[LayoutUnit], height: LayoutUni
     let mut remaining = height;
 
     for &child_size in child_block_sizes {
-        if child_size.raw() > remaining.raw() {
+        let mut left = child_size;
+        while left.raw() > remaining.raw() {
+            left = left - remaining;
             columns += 1;
             remaining = height;
         }
-        remaining = remaining - child_size;
+        remaining = remaining - left;
     }
 
     columns
@@ -550,7 +550,9 @@ mod tests {
             LayoutUnit::from_i32(40),
         ];
         let h = balance_columns(&children, 2, LayoutUnit::from_i32(1000));
-        // Total = 230, 2 cols. Optimal: col1 = 50+80=130, col2 = 60+40=100 → height 130
-        assert_eq!(h, LayoutUnit::from_i32(130));
+        // Total = 230, 2 cols. With fragmentation:
+        // col1 = 50 + 65 (first part of 80) = 115
+        // col2 = 15 (remainder of 80) + 60 + 40 = 115
+        assert_eq!(h, LayoutUnit::from_i32(115));
     }
 }

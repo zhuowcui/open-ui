@@ -16,8 +16,7 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, RRect, ColorSpace, ClipOp, PathEffect, Point};
-use skia_safe::paint::Cap;
+use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, RRect, ColorSpace, ClipOp, Point};
 use openui_geometry::PhysicalOffset;
 use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
 use openui_dom::Document;
@@ -29,7 +28,17 @@ use openui_text::font::FontMetrics;
 /// This is the main entry point — paints the fragment and all its children
 /// recursively, with correct coordinate offsets.
 pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offset: PhysicalOffset) {
-    let abs_offset = offset + fragment.offset;
+    // Keep accumulated offset fractional (sub-pixel precision).
+    // Pixel snapping happens only at the point of drawing (paint_box_decoration_background,
+    // paint_text_fragment, etc.) using Blink's PixelSnappedIntRect approach:
+    //   left = round(abs.x), top = round(abs.y),
+    //   right = round(abs.x + w), bottom = round(abs.y + h)
+    // This ensures adjacent elements at fractional boundaries share the same
+    // snapped edge (e.g. flex items at 133.33px intervals produce no gaps).
+    let abs_offset = PhysicalOffset::new(
+        offset.left + fragment.offset.left,
+        offset.top + fragment.offset.top,
+    );
 
     // Text fragments with NodeId::NONE (e.g., ellipsis "…") need to be painted
     // even though they have no DOM node. Use inherited style if available.
@@ -71,6 +80,9 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
             FragmentKind::Box | FragmentKind::Viewport => {
                 paint_box_decoration_background(canvas, fragment, style, abs_offset);
             }
+            FragmentKind::ColumnRule => {
+                paint_column_rule(canvas, fragment, style, abs_offset);
+            }
         }
     }
 
@@ -108,17 +120,14 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle) -> bool {
 /// Per CSS spec, overflow clips to the **padding box** — the border-box
 /// inset by each side's border width. Returns `(x, y, width, height)`.
 pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
-    let clip_x = offset.left.to_f32() + fragment.border.left.to_f32();
-    let clip_y = offset.top.to_f32() + fragment.border.top.to_f32();
-    let clip_w = (fragment.size.width.to_f32()
-        - fragment.border.left.to_f32()
-        - fragment.border.right.to_f32())
-    .max(0.0);
-    let clip_h = (fragment.size.height.to_f32()
-        - fragment.border.top.to_f32()
-        - fragment.border.bottom.to_f32())
-    .max(0.0);
-    (clip_x, clip_y, clip_w, clip_h)
+    // Pixel-snap the padding box edges independently for crisp clipping.
+    let clip_left = (offset.left + fragment.border.left).round().to_f32();
+    let clip_top = (offset.top + fragment.border.top).round().to_f32();
+    let clip_right = (offset.left + fragment.size.width - fragment.border.right).round().to_f32();
+    let clip_bottom = (offset.top + fragment.size.height - fragment.border.bottom).round().to_f32();
+    let clip_w = (clip_right - clip_left).max(0.0);
+    let clip_h = (clip_bottom - clip_top).max(0.0);
+    (clip_left, clip_top, clip_w, clip_h)
 }
 
 /// Apply overflow clipping, paint children, then restore the canvas.
@@ -294,10 +303,16 @@ fn paint_box_decoration_background(
     style: &ComputedStyle,
     abs_offset: PhysicalOffset,
 ) {
-    let x = abs_offset.left.to_f32();
-    let y = abs_offset.top.to_f32();
-    let w = fragment.size.width.to_f32();
-    let h = fragment.size.height.to_f32();
+    // Pixel-snap all four edges independently (Blink's PixelSnappedIntRect).
+    // Fractional abs_offset flows through from parent so that adjacent elements
+    // at fractional boundaries (e.g. flex items at 133.33px intervals) share
+    // the same snapped pixel edge — no gaps.
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    let w = right - x;
+    let h = bottom - y;
 
     // Skip empty fragments
     if w <= 0.0 || h <= 0.0 {
@@ -317,7 +332,23 @@ fn paint_box_decoration_background(
         let c = &style.background_color;
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
-        canvas.draw_rect(border_box_rect, &paint);
+        if style.has_border_radius() {
+            // Clip background to the rounded border-box rect using unadjusted radii.
+            // CSS Backgrounds §5.3: background is clipped to the border-box rounded rect.
+            let radii = [
+                Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
+                Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
+                Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
+                Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
+            ];
+            let rrect = RRect::new_rect_radii(border_box_rect, &radii);
+            canvas.save();
+            canvas.clip_rrect(rrect, ClipOp::Intersect, true);
+            canvas.draw_rect(border_box_rect, &paint);
+            canvas.restore();
+        } else {
+            canvas.draw_rect(border_box_rect, &paint);
+        }
     }
 
     // ── 2. Borders ───────────────────────────────────────────────────
@@ -402,19 +433,13 @@ fn paint_borders(
         let ix1 = (x + w - br).max(ix0);
         let iy1 = (y + h - bb).max(iy0);
 
+        // Chrome paint order: Top → Bottom → Right → Left (sorted by side priority).
         // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
         if bt > 0.0 {
             paint_border_side_path(canvas, style.border_top_style, &style.border_top_color,
                 inherited_color, bt,
                 &[(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)],
                 BorderSide::Top);
-        }
-        // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
-        if br > 0.0 {
-            paint_border_side_path(canvas, style.border_right_style, &style.border_right_color,
-                inherited_color, br,
-                &[(ox1, oy0), (ox1, oy1), (ix1, iy1), (ix1, iy0)],
-                BorderSide::Right);
         }
         // Bottom border: outer-bottom-right → outer-bottom-left → inner-bottom-left → inner-bottom-right
         if bb > 0.0 {
@@ -423,6 +448,13 @@ fn paint_borders(
                 &[(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)],
                 BorderSide::Bottom);
         }
+        // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
+        if br > 0.0 {
+            paint_border_side_path(canvas, style.border_right_style, &style.border_right_color,
+                inherited_color, br,
+                &[(ox1, oy0), (ox1, oy1), (ix1, iy1), (ix1, iy0)],
+                BorderSide::Right);
+        }
         // Left border: outer-bottom-left → outer-top-left → inner-top-left → inner-bottom-left
         if bl > 0.0 {
             paint_border_side_path(canvas, style.border_left_style, &style.border_left_color,
@@ -430,6 +462,13 @@ fn paint_borders(
                 &[(ox0, oy1), (ox0, oy0), (ix0, iy0), (ix0, iy1)],
                 BorderSide::Left);
         }
+
+        // Fix corner diagonal pixels: Chrome's Skia achieves exact complementary
+        // coverage at shared miter edges (no white bleed-through). Standard SrcOver
+        // compositing leaves ~25% background showing. Fix by overwriting diagonal
+        // pixels with the exact 50% blend of the two adjacent border colors.
+        fix_corner_miter_pixels(canvas, inherited_color, style,
+            ox0, oy0, ox1, oy1, ix0, iy0, ix1, iy1);
     }
 }
 
@@ -441,6 +480,157 @@ pub enum BorderSide {
     Right,
     Bottom,
     Left,
+}
+
+/// Paint a column rule (divider between multicol columns).
+///
+/// Uses the column-rule-color and column-rule-style from the parent style.
+fn paint_column_rule(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    abs_offset: PhysicalOffset,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    let w = right - x;
+    let h = bottom - y;
+
+    if w <= 0.0 || h <= 0.0 {
+        return;
+    }
+
+    let color = match style.column_rule_color {
+        StyleColor::Resolved(c) => c,
+        _ => style.color,
+    };
+
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(true);
+    paint.set_color4f(Color4f::new(color.r, color.g, color.b, color.a), None::<&ColorSpace>);
+
+    let rect = Rect::from_xywh(x, y, w, h);
+    canvas.draw_rect(rect, &paint);
+}
+
+/// Fix corner diagonal pixels where two different-colored solid borders meet.
+///
+/// Chrome's Skia build achieves exact complementary coverage at shared miter
+/// edges, producing a perfect 50% blend with no background bleed-through.
+/// Standard SrcOver compositing with separate draw calls leaves ~25% white.
+/// This function overwrites the diagonal miter pixels with the exact blend.
+fn fix_corner_miter_pixels(
+    canvas: &Canvas,
+    inherited_color: &Color,
+    style: &ComputedStyle,
+    ox0: f32, oy0: f32, ox1: f32, oy1: f32,
+    ix0: f32, iy0: f32, ix1: f32, iy1: f32,
+) {
+    let top_c = style.border_top_color.resolve(inherited_color);
+    let right_c = style.border_right_color.resolve(inherited_color);
+    let bottom_c = style.border_bottom_color.resolve(inherited_color);
+    let left_c = style.border_left_color.resolve(inherited_color);
+
+    let bt = iy0 - oy0;
+    let br = ox1 - ix1;
+    let bb = oy1 - iy1;
+    let bl = ix0 - ox0;
+
+    // Top-left corner: fix only if both adjacent sides are solid with different colors.
+    if top_c != left_c && bt > 0.5 && bl > 0.5
+        && style.border_top_style == BorderStyle::Solid
+        && style.border_left_style == BorderStyle::Solid
+    {
+        draw_miter_blend_pixels(canvas,
+            ox0 as i32, oy0 as i32,
+            ix0 as i32 - 1, iy0 as i32 - 1,
+            &top_c, &left_c);
+    }
+    // Top-right corner
+    if top_c != right_c && bt > 0.5 && br > 0.5
+        && style.border_top_style == BorderStyle::Solid
+        && style.border_right_style == BorderStyle::Solid
+    {
+        draw_miter_blend_pixels(canvas,
+            ox1 as i32 - 1, oy0 as i32,
+            ix1 as i32, iy0 as i32 - 1,
+            &top_c, &right_c);
+    }
+    // Bottom-right corner
+    if bottom_c != right_c && bb > 0.5 && br > 0.5
+        && style.border_bottom_style == BorderStyle::Solid
+        && style.border_right_style == BorderStyle::Solid
+    {
+        draw_miter_blend_pixels(canvas,
+            ox1 as i32 - 1, oy1 as i32 - 1,
+            ix1 as i32, iy1 as i32,
+            &bottom_c, &right_c);
+    }
+    // Bottom-left corner
+    if bottom_c != left_c && bb > 0.5 && bl > 0.5
+        && style.border_bottom_style == BorderStyle::Solid
+        && style.border_left_style == BorderStyle::Solid
+    {
+        draw_miter_blend_pixels(canvas,
+            ox0 as i32, oy1 as i32 - 1,
+            ix0 as i32 - 1, iy1 as i32,
+            &bottom_c, &left_c);
+    }
+}
+
+/// Draw 50% blend pixels along a miter diagonal between two integer pixel coords.
+fn draw_miter_blend_pixels(
+    canvas: &Canvas,
+    x0: i32, y0: i32,
+    x1: i32, y1: i32,
+    color1: &Color, color2: &Color,
+) {
+    // Blend in premultiplied space for correctness with translucent borders.
+    let avg_a = (color1.a + color2.a) / 2.0;
+    let blend = if avg_a > 0.0 {
+        let pm_r = (color1.r * color1.a + color2.r * color2.a) / 2.0;
+        let pm_g = (color1.g * color1.a + color2.g * color2.a) / 2.0;
+        let pm_b = (color1.b * color1.a + color2.b * color2.a) / 2.0;
+        Color4f::new(pm_r / avg_a, pm_g / avg_a, pm_b / avg_a, avg_a)
+    } else {
+        Color4f::new(0.0, 0.0, 0.0, 0.0)
+    };
+
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    paint.set_color4f(blend, None::<&ColorSpace>);
+
+    // Bresenham's line algorithm for integer pixel coordinates.
+    let dx = (x1 - x0).abs();
+    let dy = -(y1 - y0).abs();
+    let sx: i32 = if x0 < x1 { 1 } else { -1 };
+    let sy: i32 = if y0 < y1 { 1 } else { -1 };
+    let mut err = dx + dy;
+    let mut cx = x0;
+    let mut cy = y0;
+
+    loop {
+        canvas.draw_rect(
+            Rect::from_xywh(cx as f32, cy as f32, 1.0, 1.0),
+            &paint,
+        );
+        if cx == x1 && cy == y1 {
+            break;
+        }
+        let e2 = 2 * err;
+        if e2 >= dy {
+            err += dy;
+            cx += sx;
+        }
+        if e2 <= dx {
+            err += dx;
+            cy += sy;
+        }
+    }
 }
 
 /// Paint a single border side using a trapezoid polygon path.
@@ -469,18 +659,30 @@ fn paint_border_side_path(
 
     match border_style {
         BorderStyle::Solid => {
-            let mut path = Path::new();
-            path.move_to(Point::new(points[0].0, points[0].1));
-            path.line_to(Point::new(points[1].0, points[1].1));
-            path.line_to(Point::new(points[2].0, points[2].1));
-            path.line_to(Point::new(points[3].0, points[3].1));
-            path.close();
+            // Chrome clips to the trapezoid polygon, then fills a solid rect.
+            // Using clip AA (not path fill AA) ensures correct corner blending
+            // when adjacent sides have different colors.
+            let min_x = points.iter().map(|p| p.0).fold(f32::INFINITY, f32::min);
+            let min_y = points.iter().map(|p| p.1).fold(f32::INFINITY, f32::min);
+            let max_x = points.iter().map(|p| p.0).fold(f32::NEG_INFINITY, f32::max);
+            let max_y = points.iter().map(|p| p.1).fold(f32::NEG_INFINITY, f32::max);
+            let rect = Rect::from_ltrb(min_x, min_y, max_x, max_y);
+
+            canvas.save();
+            let mut clip_path = Path::new();
+            clip_path.move_to(Point::new(points[0].0, points[0].1));
+            clip_path.line_to(Point::new(points[1].0, points[1].1));
+            clip_path.line_to(Point::new(points[2].0, points[2].1));
+            clip_path.line_to(Point::new(points[3].0, points[3].1));
+            clip_path.close();
+            canvas.clip_path(&clip_path, ClipOp::Intersect, true);
 
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
-            paint.set_anti_alias(true);
+            paint.set_anti_alias(false);
             paint.set_color4f(base_color, None::<&ColorSpace>);
-            canvas.draw_path(&path, &paint);
+            canvas.draw_rect(rect, &paint);
+            canvas.restore();
         }
         _ => {
             // For non-solid styles (dashed, dotted, double, groove, ridge,
@@ -493,6 +695,7 @@ fn paint_border_side_path(
             let rect = Rect::from_ltrb(min_x, min_y, max_x, max_y);
 
             // Clip to the trapezoid so non-solid styles don't bleed outside.
+            // No AA on clip to avoid gray fringe at corners.
             canvas.save();
             let mut clip_path = Path::new();
             clip_path.move_to(Point::new(points[0].0, points[0].1));
@@ -500,7 +703,7 @@ fn paint_border_side_path(
             clip_path.line_to(Point::new(points[2].0, points[2].1));
             clip_path.line_to(Point::new(points[3].0, points[3].1));
             clip_path.close();
-            canvas.clip_path(&clip_path, ClipOp::Intersect, true);
+            canvas.clip_path(&clip_path, ClipOp::Intersect, false);
 
             paint_border_side(canvas, border_style, border_color,
                 inherited_color, width, rect, side);
@@ -549,36 +752,69 @@ fn paint_border_side(
             canvas.draw_rect(rect, &paint);
         }
         BorderStyle::Dashed => {
-            // Dash length = 3 * border-width, gap = border-width.
-            let dash_len = width * 3.0;
-            let gap_len = width;
+            // Chrome: dash = 2*width, gap adjusted to fit evenly
+            // via SelectBestDashGap (styled_stroke_data.cc).
+            let dash_len = width * 2.0;
+            let desired_gap = width;
+            let (p0, p1) = border_side_center_line(&rect, width);
+            let stroke_length = if rect.width() > rect.height() {
+                rect.width()
+            } else {
+                rect.height()
+            };
+            let gap_len = select_best_dash_gap(stroke_length, dash_len, desired_gap);
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Stroke);
             paint.set_stroke_width(width);
             paint.set_anti_alias(true);
             paint.set_color4f(base_color, None::<&ColorSpace>);
-            if let Some(effect) = PathEffect::dash(&[dash_len, gap_len], 0.0) {
+            if let Some(effect) = skia_safe::PathEffect::dash(&[dash_len, gap_len], 0.0) {
                 paint.set_path_effect(effect);
             }
-            // Draw along the center of the border side.
-            let (p0, p1) = border_side_center_line(&rect, width);
             canvas.draw_line(p0, p1, &paint);
         }
         BorderStyle::Dotted => {
-            // Dot = border-width, gap = border-width, with round caps.
-            let dot_len = 0.01; // near-zero dash to produce dots with round caps
-            let gap_len = width * 2.0;
-            let mut paint = Paint::default();
-            paint.set_style(PaintStyle::Stroke);
-            paint.set_stroke_width(width);
-            paint.set_stroke_cap(Cap::Round);
-            paint.set_anti_alias(true);
-            paint.set_color4f(base_color, None::<&ColorSpace>);
-            if let Some(effect) = PathEffect::dash(&[dot_len, gap_len], 0.0) {
-                paint.set_path_effect(effect);
-            }
+            // Chrome: for width <= 3, treated as dashed with explicit
+            // endpoint dots (EnforceDotsAtEndpoints). For width > 3,
+            // uses round-capped zero-length dashes.
+            let is_horizontal = rect.width() > rect.height();
             let (p0, p1) = border_side_center_line(&rect, width);
-            canvas.draw_line(p0, p1, &paint);
+            let stroke_length = if is_horizontal { rect.width() } else { rect.height() };
+            let width_i = width.round() as i32;
+
+            if width_i <= 3 && width_i >= 1 {
+                // Thin dotted: Chrome draws explicit start/end dots and
+                // adjusts line endpoints for uniform appearance.
+                paint_thin_dotted_border(
+                    canvas, &base_color, width, width_i, stroke_length as i32,
+                    p0, p1, is_horizontal,
+                );
+            } else {
+                // Thick dotted: round-capped zero-length dashes.
+                let gap = select_best_dash_gap(stroke_length, width, width);
+                let mut paint = Paint::default();
+                paint.set_style(PaintStyle::Stroke);
+                paint.set_stroke_width(width);
+                paint.set_stroke_cap(skia_safe::paint::Cap::Round);
+                paint.set_anti_alias(true);
+                paint.set_color4f(base_color, None::<&ColorSpace>);
+                let adjusted_p0;
+                let adjusted_p1;
+                if is_horizontal {
+                    adjusted_p0 = Point::new(p0.x + width / 2.0, p0.y);
+                    adjusted_p1 = Point::new(p1.x - width / 2.0, p1.y);
+                } else {
+                    adjusted_p0 = Point::new(p0.x, p0.y + width / 2.0);
+                    adjusted_p1 = Point::new(p1.x, p1.y - width / 2.0);
+                }
+                let epsilon: f32 = 0.01;
+                if let Some(effect) = skia_safe::PathEffect::dash(
+                    &[0.0, gap + width - epsilon], 0.0,
+                ) {
+                    paint.set_path_effect(effect);
+                }
+                canvas.draw_line(adjusted_p0, adjusted_p1, &paint);
+            }
         }
         BorderStyle::Double => {
             // Two lines: outer at full position, inner offset inward.
@@ -637,6 +873,17 @@ fn paint_border_side(
     }
 }
 
+/// Shrink a border rect inward for double-line border painting.
+fn shrink_border_rect(rect: &Rect, _border_width: f32, inset: f32, line_width: f32) -> Rect {
+    if rect.width() > rect.height() {
+        // Horizontal side.
+        Rect::from_xywh(rect.left, rect.top + inset, rect.width(), line_width)
+    } else {
+        // Vertical side.
+        Rect::from_xywh(rect.left + inset, rect.top, line_width, rect.height())
+    }
+}
+
 /// Compute the center line of a border side for stroke-based drawing.
 fn border_side_center_line(rect: &Rect, width: f32) -> (Point, Point) {
     let half = width / 2.0;
@@ -651,15 +898,169 @@ fn border_side_center_line(rect: &Rect, width: f32) -> (Point, Point) {
     }
 }
 
-/// Shrink a border rect inward for double-line border painting.
-fn shrink_border_rect(rect: &Rect, _border_width: f32, inset: f32, line_width: f32) -> Rect {
-    if rect.width() > rect.height() {
-        // Horizontal side.
-        Rect::from_xywh(rect.left, rect.top + inset, rect.width(), line_width)
-    } else {
-        // Vertical side.
-        Rect::from_xywh(rect.left + inset, rect.top, line_width, rect.height())
+/// Chrome's SelectBestDashGap: adjusts gap length so dashes fit evenly
+/// in the given stroke length (styled_stroke_data.cc).
+fn select_best_dash_gap(stroke_length: f32, dash_length: f32, gap_length: f32) -> f32 {
+    let available_length = stroke_length + gap_length; // open path
+    let min_num_dashes = (available_length / (dash_length + gap_length)).floor();
+    let max_num_dashes = min_num_dashes + 1.0;
+    let min_num_gaps = min_num_dashes - 1.0;
+    let max_num_gaps = max_num_dashes - 1.0;
+    if min_num_gaps <= 0.0 {
+        return gap_length;
     }
+    let min_gap = (stroke_length - min_num_dashes * dash_length) / min_num_gaps;
+    let max_gap = if max_num_gaps > 0.0 {
+        (stroke_length - max_num_dashes * dash_length) / max_num_gaps
+    } else {
+        -1.0
+    };
+    if max_gap <= 0.0 || (min_gap - gap_length).abs() < (max_gap - gap_length).abs() {
+        min_gap
+    } else {
+        max_gap
+    }
+}
+
+/// Chrome's EnforceDotsAtEndpoints for thin (width <= 3) dotted borders.
+/// Draws explicit start/end dots and adjusts line endpoints for uniform dots.
+/// Port of box_border_painter.cc EnforceDotsAtEndpoints.
+fn paint_thin_dotted_border(
+    canvas: &Canvas,
+    color: &Color4f,
+    width: f32,
+    width_i: i32,
+    path_length: i32,
+    p0: Point,
+    p1: Point,
+    is_horizontal: bool,
+) {
+    // Chrome uses integer center: y1 + thickness/2 (integer division).
+    // Our p0/p1 use float center (y1 + thickness/2.0). For odd widths,
+    // the integer center is 0.5 less than our float center.
+    // We compute the integer center for dot rects, then add +0.5 for the stroke.
+    let int_center_offset = if width_i % 2 != 0 { -0.5_f32 } else { 0.0 };
+    let (mut lp0, mut lp1) = (p0, p1);
+    if is_horizontal {
+        lp0.y += int_center_offset;
+        lp1.y += int_center_offset;
+    } else {
+        lp0.x += int_center_offset;
+        lp1.x += int_center_offset;
+    }
+
+    let mod_4 = path_length % 4;
+    let mod_6 = path_length % 6;
+    let mut use_start_dot = false;
+    let mut start_dot_growth: i32 = 0;
+    let mut start_line_offset: i32 = 0;
+    let mut use_end_dot = false;
+    let mut end_dot_growth: i32 = 0;
+
+    if (width_i == 1 && path_length % 2 == 0) || (width_i == 3 && mod_6 == 0) {
+        use_start_dot = true;
+        start_dot_growth = 1;
+        start_line_offset = 1;
+    }
+    if (width_i == 2 && (mod_4 == 0 || mod_4 == 1))
+        || (width_i == 3 && (mod_6 == 1 || mod_6 == 2))
+    {
+        use_start_dot = true;
+        start_line_offset = -1;
+    }
+    if (width_i == 2 && mod_4 == 0) || (width_i == 3 && mod_6 == 1) {
+        use_end_dot = true;
+    }
+    if (width_i == 2 && mod_4 == 3) || (width_i == 3 && (mod_6 == 4 || mod_6 == 5)) {
+        use_start_dot = true;
+        start_line_offset = 1;
+    }
+    if width_i == 3 && mod_6 == 5 {
+        use_end_dot = true;
+    } else if width_i == 3 && mod_6 == 0 {
+        use_end_dot = true;
+        end_dot_growth = 1;
+    }
+
+    // Fill paint for explicit dot rects (no AA for crisp squares).
+    let mut fill = Paint::default();
+    fill.set_style(PaintStyle::Fill);
+    fill.set_anti_alias(false);
+    fill.set_color4f(*color, None::<&ColorSpace>);
+
+    let w = width_i;
+
+    if use_start_dot {
+        let start_dot = if is_horizontal {
+            // Chrome: (p1.x(), p1.y() - width/2, p1.x() + width + growth, p1.y() + width - width/2)
+            Rect::from_ltrb(
+                lp0.x,
+                lp0.y - (w / 2) as f32,
+                lp0.x + (w + start_dot_growth) as f32,
+                lp0.y + (w - w / 2) as f32,
+            )
+        } else {
+            Rect::from_ltrb(
+                lp0.x - (w / 2) as f32,
+                lp0.y,
+                lp0.x + (w - w / 2) as f32,
+                lp0.y + (w + start_dot_growth) as f32,
+            )
+        };
+        canvas.draw_rect(start_dot, &fill);
+        if is_horizontal {
+            lp0.x += (2 * w + start_line_offset) as f32;
+        } else {
+            lp0.y += (2 * w + start_line_offset) as f32;
+        }
+    }
+
+    if use_end_dot {
+        let end_dot = if is_horizontal {
+            Rect::from_ltrb(
+                lp1.x - (w + end_dot_growth) as f32,
+                lp1.y - (w / 2) as f32,
+                lp1.x,
+                lp1.y + (w - w / 2) as f32,
+            )
+        } else {
+            Rect::from_ltrb(
+                lp1.x - (w / 2) as f32,
+                lp1.y - (w + end_dot_growth) as f32,
+                lp1.x + (w - w / 2) as f32,
+                lp1.y,
+            )
+        };
+        canvas.draw_rect(end_dot, &fill);
+        if is_horizontal {
+            lp1.x -= (w + end_dot_growth + 1) as f32;
+        } else {
+            lp1.y -= (w + end_dot_growth + 1) as f32;
+        }
+    }
+
+    // Odd widths: add 0.5 to center the stroke (Chrome's DrawLineWithStyle).
+    if width_i % 2 != 0 {
+        if is_horizontal {
+            lp0.y += 0.5;
+            lp1.y += 0.5;
+        } else {
+            lp0.x += 0.5;
+            lp1.x += 0.5;
+        }
+    }
+
+    // Draw the remaining line with dash pattern [width, width].
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Stroke);
+    paint.set_stroke_width(width);
+    paint.set_stroke_cap(skia_safe::paint::Cap::Butt);
+    paint.set_anti_alias(true);
+    paint.set_color4f(*color, None::<&ColorSpace>);
+    if let Some(effect) = skia_safe::PathEffect::dash(&[width, width], 0.0) {
+        paint.set_path_effect(effect);
+    }
+    canvas.draw_line(lp0, lp1, &paint);
 }
 
 /// Paint a 3D-style border (groove or ridge).

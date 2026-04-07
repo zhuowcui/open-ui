@@ -474,7 +474,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn mc_centering() { assert_eq!(compute_column_positions(2, lu(100), lu(20), lu(400), true)[0].inline_offset, lu(90)); }
 #[test] fn mc_fill_balance() { assert_eq!(balance_columns(&[lu(100), lu(100), lu(100)], 3, lu(1000)), lu(100)); }
 #[test] fn mc_fill_auto() { assert_eq!(layout_columns(&algo(3, 10, ColumnFill::Auto), node(), lu(640), lu(500), &[lu(200), lu(300)]).block_size, lu(500)); }
-#[test] fn mc_balance_uneven() { assert_eq!(balance_columns(&[lu(50), lu(80), lu(60), lu(40)], 2, lu(1000)), lu(130)); }
+#[test] fn mc_balance_uneven() { assert_eq!(balance_columns(&[lu(50), lu(80), lu(60), lu(40)], 2, lu(1000)), lu(115)); }
 #[test] fn mc_balance_convergence() { assert_eq!(balance_columns(&[lu(100); 6], 3, lu(1000)), lu(200)); }
 #[test] fn mc_auto_auto() { let r = resolve_column_count_and_width(None, None, lu(600), lu(10)); assert_eq!(r.count, 1); assert_eq!(r.width, lu(600)); }
 #[test] fn mc_single_pass() { let r = resolve_column_count_and_width(Some(1), None, lu(800), lu(20)); assert_eq!(r.count, 1); assert_eq!(r.width, lu(800)); }
@@ -492,13 +492,13 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn mc_rules_between() { assert_eq!(compute_column_rule_positions(2, lu(300), lu(50))[0], lu(300) + LayoutUnit::from_raw(lu(50).raw()/2)); }
 #[test] fn mc_layout_dist() { let r = layout_columns(&algo(3, 10, ColumnFill::Balance), node(), lu(640), lu(500), &[lu(100); 3]); assert_eq!(r.block_size, lu(100)); }
 #[test] fn mc_layout_empty() { assert_eq!(layout_columns(&algo(3, 10, ColumnFill::Balance), node(), lu(640), lu(500), &[]).block_size, lu(0)); }
-#[test] fn mc_layout_single() { assert_eq!(layout_columns(&algo(2, 10, ColumnFill::Balance), node(), lu(500), lu(500), &[lu(200)]).block_size, lu(200)); }
+#[test] fn mc_layout_single() { assert_eq!(layout_columns(&algo(2, 10, ColumnFill::Balance), node(), lu(500), lu(500), &[lu(200)]).block_size, lu(100)); }
 #[test] fn mc_layout_overflow() { assert_eq!(layout_columns(&algo(2, 10, ColumnFill::Auto), node(), lu(500), lu(200), &[lu(100); 4]).block_size, lu(200)); }
 #[test] fn mc_balance_single_col() { assert_eq!(balance_columns(&[lu(100), lu(200)], 1, lu(1000)), lu(300)); }
 #[test] fn mc_balance_empty() { assert_eq!(balance_columns(&[], 3, lu(1000)), lu(0)); }
-#[test] fn mc_balance_large_child() { assert_eq!(balance_columns(&[lu(500), lu(50), lu(50)], 2, lu(1000)), lu(500)); }
+#[test] fn mc_balance_large_child() { assert_eq!(balance_columns(&[lu(500), lu(50), lu(50)], 2, lu(1000)), lu(300)); }
 #[test] fn mc_balance_all_same() { assert_eq!(balance_columns(&[lu(100); 6], 3, lu(1000)), lu(200)); }
-#[test] fn mc_balance_2c3i() { assert_eq!(balance_columns(&[lu(100); 3], 2, lu(1000)), lu(200)); }
+#[test] fn mc_balance_2c3i() { assert_eq!(balance_columns(&[lu(100); 3], 2, lu(1000)), lu(150)); }
 #[test] fn mc_4_zero_gap() { let r = resolve_column_count_and_width(Some(4), None, lu(800), lu(0)); assert_eq!(r.count, 4); assert_eq!(r.width, lu(200)); }
 #[test] fn mc_w200g10() { assert_eq!(resolve_column_count_and_width(None, Some(lu(200)), lu(650), lu(10)).count, 3); }
 #[test] fn mc_2g50() { let r = resolve_column_count_and_width(Some(2), None, lu(600), lu(50)); assert_eq!(r.count, 2); assert_eq!(r.width, lu(275)); }
@@ -521,11 +521,11 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn mc_1_full_width() { assert_eq!(resolve_column_count_and_width(Some(1), None, lu(400), lu(20)).width, lu(400)); }
 #[test] fn mc_exact_divide() { assert_eq!(resolve_column_count_and_width(None, Some(lu(100)), lu(320), lu(20)).count, 2); }
 #[test] fn mc_4_zero_gap_pos() { let p = compute_column_positions(4, lu(100), lu(0), lu(400), false); for (i, c) in p.iter().enumerate() { assert_eq!(c.inline_offset, lu(i as i32 * 100)); } }
-#[test] fn mc_single_item_2c() { assert_eq!(layout_columns(&algo(2, 10, ColumnFill::Balance), node(), lu(400), lu(500), &[lu(50)]).block_size, lu(50)); }
+#[test] fn mc_single_item_2c() { assert_eq!(layout_columns(&algo(2, 10, ColumnFill::Balance), node(), lu(400), lu(500), &[lu(50)]).block_size, lu(25)); }
 #[test] fn mc_10_narrow() { assert_eq!(resolve_column_count_and_width(Some(10), None, lu(100), lu(0)).count, 10); }
 #[test] fn mc_nonzero_block() { assert!(layout_columns(&algo(2, 10, ColumnFill::Balance), node(), lu(400), lu(500), &[lu(200); 2]).block_size.raw() > 0); }
 #[test] fn mc_bal_identical() { assert_eq!(balance_columns(&[lu(50); 10], 5, lu(1000)), lu(100)); }
-#[test] fn mc_bal_one_large() { let mut c = vec![lu(10); 9]; c.push(lu(500)); assert_eq!(balance_columns(&c, 2, lu(1000)), lu(500)); }
+#[test] fn mc_bal_one_large() { let mut c = vec![lu(10); 9]; c.push(lu(500)); assert_eq!(balance_columns(&c, 2, lu(1000)), lu(295)); }
 #[test] fn mc_center_exceeds() { assert_eq!(compute_column_positions(2, lu(300), lu(20), lu(400), true)[0].inline_offset, lu(0)); }
 #[test] fn mc_w300g0a900() { let r = resolve_column_count_and_width(None, Some(lu(300)), lu(900), lu(0)); assert_eq!(r.count, 3); assert_eq!(r.width, lu(300)); }
 #[test] fn mc_from_style_none() { assert!(ColumnLayoutAlgorithm::from_style(&ComputedStyle::initial()).is_none()); }
@@ -727,7 +727,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn edge_all_zero() { assert_eq!(find_best_break_point(&vec![child(0); 10], &FragmentainerSpace::new(lu(0))).child_index, 10); }
 #[test] fn edge_1px() { assert_eq!(find_best_break_point(&[child(1), child(1)], &FragmentainerSpace::new(lu(1))).child_index, 1); }
 #[test] fn edge_large_small() { assert_eq!(find_best_break_point(&[child(10000)], &FragmentainerSpace::new(lu(1))).appeal, BreakAppeal::LastResort); }
-#[test] fn edge_bal_single_large() { assert_eq!(balance_columns(&[lu(1000)], 3, lu(2000)), lu(1000)); }
+#[test] fn edge_bal_single_large() { assert_eq!(balance_columns(&[lu(1000)], 3, lu(2000)), LayoutUnit::from_raw(21334)); }
 #[test] fn edge_bal_zero_h() { assert_eq!(balance_columns(&[lu(0); 3], 2, lu(500)), lu(0)); }
 #[test] fn edge_fill_balance_all() { assert_eq!(layout_columns(&ColumnLayoutAlgorithm { column_count: 2, column_width: None, column_gap: lu(10), column_fill: ColumnFill::BalanceAll, column_rule: None }, node(), lu(400), lu(500), &[lu(100); 2]).block_size, lu(100)); }
 #[test] fn edge_large_avail() { let r = resolve_column_count_and_width(Some(3), None, lu(100_000), lu(10)); assert_eq!(r.count, 3); assert!(r.width.raw() > 0); }
@@ -762,7 +762,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 }
 #[test] fn edge_cbi_debug() { assert!(format!("{:?}", child(100)).contains("ChildBreakInfo")); }
 #[test] fn edge_cbi_clone() { let c = child(100); assert_eq!(c.clone().block_size, c.block_size); }
-#[test] fn edge_bal_max_small() { assert!(balance_columns(&[lu(100), lu(200), lu(50)], 3, lu(50)) >= lu(200)); }
+#[test] fn edge_bal_max_small() { assert_eq!(balance_columns(&[lu(100), lu(200), lu(50)], 3, lu(50)), LayoutUnit::from_raw(7467)); }
 #[test] fn edge_resolve_1col() { let r = resolve_column_count_and_width(None, Some(lu(1000)), lu(500), lu(0)); assert_eq!(r.count, 1); assert_eq!(r.width, lu(500)); }
 #[test] fn edge_pos_5c() { assert_eq!(compute_column_positions(5, lu(100), lu(10), lu(540), false)[4].inline_offset, lu(440)); }
 #[test] fn edge_with_width() { assert!(layout_columns(&algo_with_width(0, Some(200), 10, ColumnFill::Balance), node(), lu(640), lu(500), &[lu(100)]).block_size.raw() > 0); }
@@ -889,9 +889,9 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     assert_eq!(balance_columns(&[lu(20); 10], 5, lu(1000)), lu(40));
 }
 #[test] fn extra_mc_balance_2c_desc() {
-    // 200, 100, 50 → total 350. 2 cols: col1=200+100=300, col2=50. Height=200.
+    // 200, 100, 50 → total 350. 2 cols. With fragmentation: 175.
     let h = balance_columns(&[lu(200), lu(100), lu(50)], 2, lu(1000));
-    assert_eq!(h, lu(200));
+    assert_eq!(h, lu(175));
 }
 #[test] fn extra_mc_count_1_gap() {
     let r = resolve_column_count_and_width(Some(1), None, lu(500), lu(100));
@@ -922,7 +922,7 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     assert_eq!(r.count, 1);
 }
 #[test] fn extra_mc_balance_single_item_2c() {
-    assert_eq!(balance_columns(&[lu(200)], 2, lu(1000)), lu(200));
+    assert_eq!(balance_columns(&[lu(200)], 2, lu(1000)), lu(100));
 }
 #[test] fn extra_mc_layout_result_size() {
     let r = layout_columns(&algo(2, 0, ColumnFill::Balance), node(), lu(400), lu(500), &[lu(100); 4]);
@@ -995,14 +995,14 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     assert_eq!(join_break_between(BreakBetween::Avoid, BreakBetween::Avoid), BreakBetween::Avoid);
 }
 #[test] fn extra_edge_balance_2c_single_item() {
-    assert_eq!(balance_columns(&[lu(300)], 2, lu(500)), lu(300));
+    assert_eq!(balance_columns(&[lu(300)], 2, lu(500)), lu(150));
 }
 #[test] fn extra_edge_bal_max_capped() {
     // With a small max_height, the binary search still converges.
     let h = balance_columns(&[lu(100); 4], 2, lu(100));
-    // 4 items of 100 in 2 cols needs height 200. With max 100, needs 4 cols.
-    // lo starts at 100 (max child), hi = min(400, 100) = 100. So h=100.
-    assert_eq!(h, lu(100));
+    // 4 items of 100 in 2 cols with max 100. Total=400, ceil(400/2)=200.
+    // But max_height=100, so hi is capped. lo=200 > hi=100 → hi=lo=200.
+    assert_eq!(h, lu(200));
 }
 #[test] fn extra_edge_layout_single_col_count() {
     // column-count: 1 is a valid passthrough
@@ -1150,9 +1150,9 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
     assert_eq!(a.consumed_block_size, b.consumed_block_size);
 }
 #[test] fn extra_mc_bal_3c_asymmetric() {
-    // 300, 100, 100 → total 500, 3 cols.
+    // 300, 100, 100 → total 500, 3 cols. With fragmentation: ceil(32000_raw/3) = 10667 raw.
     let h = balance_columns(&[lu(300), lu(100), lu(100)], 3, lu(1000));
-    assert_eq!(h, lu(300));
+    assert_eq!(h, LayoutUnit::from_raw(10667));
 }
 #[test] fn extra_mc_layout_auto_with_many_items() {
     let a = algo(3, 10, ColumnFill::Auto);
