@@ -277,6 +277,67 @@ HTML_TEMPLATES = {
 
     # ── SP13 Float Interaction ─────────────────────────────────────────
     "sp13/inline_with_float": "<div style='width:300px;overflow:hidden;'><div style='float:left;width:80px;height:80px;background-color:rgb(255,200,200);margin-right:10px;'></div><span>Inline text wraps around the floated box. More text to ensure wrapping below the float.</span></div>",
+
+    # ── SP12 Sticky Positioning Extended ──────────────────────────────
+    "sp12/position_sticky_left": "<div style='width:400px;height:300px;background-color:#f0f0f0;'><div style='position:sticky;left:20px;width:50px;height:50px;background-color:#4CAF50;'></div></div>",
+    "sp12/position_sticky_right": "<div style='width:400px;height:300px;background-color:#f0f0f0;'><div style='position:sticky;right:20px;width:50px;height:50px;background-color:#4CAF50;'></div></div>",
+
+    # ── SP12 Multicol Extended ────────────────────────────────────────
+    "sp12/multicol_column_rule": "<div style='column-count:2;column-gap:20px;column-rule:2px solid red;width:400px;background-color:#f0f0f0;'><div style='width:180px;height:50px;background-color:#F44336;'></div><div style='width:180px;height:50px;background-color:#4CAF50;'></div><div style='width:180px;height:50px;background-color:#2196F3;'></div><div style='width:180px;height:50px;background-color:#FF9800;'></div></div>",
+    "sp12/multicol_column_span": "<div style='column-count:2;column-gap:20px;width:400px;background-color:#f0f0f0;'><div style='width:380px;height:20px;background-color:#2196F3;column-span:all;'></div><div style='width:180px;height:50px;background-color:#F44336;'></div><div style='width:180px;height:50px;background-color:#4CAF50;'></div></div>",
+    "sp12/multicol_column_fill_auto": "<div style='column-count:2;column-fill:auto;height:150px;width:400px;background-color:#f0f0f0;'><div style='width:180px;height:50px;background-color:#F44336;'></div><div style='width:180px;height:50px;background-color:#4CAF50;'></div><div style='width:180px;height:50px;background-color:#2196F3;'></div></div>",
+    "sp12/multicol_column_fill_balance": "<div style='column-count:2;column-fill:balance;width:400px;background-color:#f0f0f0;'><div style='width:180px;height:50px;background-color:#F44336;'></div><div style='width:180px;height:50px;background-color:#4CAF50;'></div><div style='width:180px;height:50px;background-color:#2196F3;'></div></div>",
+
+    # ── SP12 Position Offsets ─────────────────────────────────────────
+    "sp12/position_absolute_top_left": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:red;position:absolute;top:10px;left:10px;'></div>",
+    "sp12/position_absolute_bottom_right": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:blue;position:absolute;bottom:10px;right:10px;'></div>",
+    "sp12/position_relative_top_left": "<div style='width:100px;height:100px;background-color:#4CAF50;position:relative;top:10px;left:10px;'></div>",
+    "sp12/position_absolute_percent": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:#9C27B0;position:absolute;top:10%;left:10%;'></div>",
+
+    # ── SP12 Overflow Axis ────────────────────────────────────────────
+    "sp12/overflow_x_hidden": "<div style='width:150px;height:80px;overflow-x:hidden;background-color:rgb(200,200,200);'><div style='width:300px;height:60px;background-color:red;'></div></div>",
+    "sp12/overflow_y_hidden": "<div style='width:150px;height:80px;overflow-y:hidden;background-color:rgb(200,200,200);'><div style='width:130px;height:200px;background-color:blue;'></div></div>",
+    "sp12/overflow_x_scroll": "<div style='width:150px;height:80px;overflow-x:scroll;background-color:rgb(200,200,200);'><div style='width:300px;height:60px;background-color:red;'></div></div>",
+    "sp12/overflow_y_scroll": "<div style='width:150px;height:80px;overflow-y:scroll;background-color:rgb(200,200,200);'><div style='width:130px;height:200px;background-color:blue;'></div></div>",
+
+    # ── SP12 Flex Alignment Extended ──────────────────────────────────
+    "sp12/flex_align_self_start": "<div style='display:flex;width:400px;height:150px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;align-self:flex-start;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_align_self_end": "<div style='display:flex;width:400px;height:150px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;align-self:flex-end;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_align_self_center": "<div style='display:flex;width:400px;height:150px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;align-self:center;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_align_content_center": "<div style='display:flex;flex-wrap:wrap;align-content:center;width:300px;height:200px;background-color:rgb(220,220,220);'><div style='width:100px;height:50px;background-color:red;'></div><div style='width:100px;height:50px;background-color:blue;'></div><div style='width:100px;height:50px;background-color:green;'></div><div style='width:100px;height:50px;background-color:orange;'></div></div>",
+    "sp12/flex_align_content_space_between": "<div style='display:flex;flex-wrap:wrap;align-content:space-between;width:300px;height:200px;background-color:rgb(220,220,220);'><div style='width:100px;height:50px;background-color:red;'></div><div style='width:100px;height:50px;background-color:blue;'></div><div style='width:100px;height:50px;background-color:green;'></div><div style='width:100px;height:50px;background-color:orange;'></div></div>",
+    "sp12/flex_order": "<div style='display:flex;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;order:3;'></div><div style='width:80px;height:60px;background-color:blue;order:2;'></div><div style='width:80px;height:60px;background-color:green;order:1;'></div></div>",
+    "sp12/flex_basis_100px": "<div style='display:flex;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='flex-basis:100px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;'></div></div>",
+    "sp12/flex_shrink_basic": "<div style='display:flex;width:200px;height:80px;background-color:rgb(220,220,220);'><div style='width:150px;height:60px;flex-shrink:1;background-color:red;'></div><div style='width:150px;height:60px;flex-shrink:2;background-color:blue;'></div></div>",
+
+    # ── SP12 Border Variants ──────────────────────────────────────────
+    "sp12/border_style_dashed": "<div style='width:200px;height:100px;background-color:rgb(240,240,240);border:3px dashed black;'></div>",
+    "sp12/border_style_dotted": "<div style='width:200px;height:100px;background-color:rgb(240,240,240);border:3px dotted black;'></div>",
+    "sp12/border_color_per_side": "<div style='width:200px;height:100px;background-color:white;border-width:5px;border-style:solid;border-top-color:red;border-right-color:blue;border-bottom-color:green;border-left-color:orange;'></div>",
+
+    # ── SP12 Fragmentation ────────────────────────────────────────────
+    "sp12/fragmentation_break_before_column": "<div style='column-count:2;column-gap:20px;width:400px;background-color:#f0f0f0;'><div style='width:180px;height:50px;background-color:#F44336;'></div><div style='width:180px;height:50px;background-color:#2196F3;break-before:column;'></div></div>",
+    "sp12/fragmentation_break_inside_avoid": "<div style='column-count:2;column-gap:20px;height:120px;width:400px;background-color:#f0f0f0;'><div style='width:180px;height:50px;background-color:#F44336;break-inside:avoid;'></div><div style='width:180px;height:50px;background-color:#2196F3;break-inside:avoid;'></div></div>",
+
+    # ── SP13 First-Letter / First-Line Extended ───────────────────────
+    "sp13/first_letter_color": "<div><span style='color:red;'>H</span>ello World</div>",
+    "sp13/first_letter_font_size": "<div><span style='font-size:2em;'>H</span>ello World</div>",
+    "sp13/first_line_font_weight": "<div style='width:300px;'><span style='font-weight:bold;'>The first line of text is bold</span> and the remaining text is normal weight for the second line.</div>",
+    "sp13/first_line_color": "<div style='width:300px;'><span style='color:blue;'>The first line of text is blue colored</span> and the remaining text is the default black color for subsequent lines.</div>",
+
+    # ── SP13 Inline Advanced ──────────────────────────────────────────
+    "sp13/initial_letter_basic": "<div><span style='display:inline-block;font-size:3em;float:left;line-height:1;margin-right:4px;'>L</span>orem ipsum dolor sit amet, consectetur adipiscing elit.</div>",
+    "sp13/ruby_basic": "<div style='display:inline-block;font-size:20px;'><div style='display:block;font-size:10px;'>かん</div><div style='display:block;'>漢</div></div><div style='display:inline-block;font-size:20px;'><div style='display:block;font-size:10px;'>じ</div><div style='display:block;'>字</div></div>",
+    "sp13/text_combine_upright": "<div style='text-combine-upright:all;'>年</div>",
+    "sp13/inline_direction_rtl": "<div style='direction:rtl;width:300px;'>Hello World</div>",
+    "sp13/tab_size_4": "<div style='white-space:pre;tab-size:4;'>&#9;Indented with tab</div>",
+    "sp13/text_align_last_center": "<div style='width:300px;text-align-last:center;background-color:rgb(230,230,230);'>Last line centered</div>",
+
+    # ── SP11 Text Emphasis ────────────────────────────────────────────
+    "sp11/text_emphasis_dot": "<div style='margin-bottom:10px;text-emphasis:dot;'>Hello World</div>",
+    "sp11/text_emphasis_circle": "<div style='margin-bottom:10px;text-emphasis:circle;'>Hello World</div>",
+    "sp11/text_emphasis_position_over": "<div style='margin-bottom:10px;text-emphasis:dot;text-emphasis-position:over right;'>Hello World</div>",
+    "sp11/text_emphasis_color_red": "<div style='margin-bottom:10px;text-emphasis:dot;text-emphasis-color:red;'>Hello World</div>",
 }
 
 
