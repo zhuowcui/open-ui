@@ -1,7 +1,7 @@
 {
-  "total": 105,
-  "passed": 39,
-  "failed": 66,
+  "total": 145,
+  "passed": 47,
+  "failed": 98,
   "errors": 0,
   "tests": [
     {
@@ -240,6 +240,81 @@
       "mismatch_pct": 0.0
     },
     {
+      "id": "sp12/position_sticky_top",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/position_sticky_bottom",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/multicol_2_columns",
+      "status": "fail",
+      "mismatch_pct": 12.083333
+    },
+    {
+      "id": "sp12/multicol_column_width",
+      "status": "fail",
+      "mismatch_pct": 11.25
+    },
+    {
+      "id": "sp12/multicol_column_gap",
+      "status": "fail",
+      "mismatch_pct": 11.875
+    },
+    {
+      "id": "sp12/flex_direction_row_reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_direction_column_reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_wrap_reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/flex_justify_space_around",
+      "status": "fail",
+      "mismatch_pct": 0.041667
+    },
+    {
+      "id": "sp12/flex_justify_space_evenly",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/margin_collapsing_parent_child",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/margin_collapsing_through_empty",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "sp12/overflow_scroll",
+      "status": "fail",
+      "mismatch_pct": 0.890625
+    },
+    {
+      "id": "sp12/overflow_auto",
+      "status": "fail",
+      "mismatch_pct": 0.3125
+    },
+    {
+      "id": "sp12/aspect_ratio_basic",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
       "id": "sp11/text_decoration_underline",
       "status": "fail",
       "mismatch_pct": 0.484583
@@ -430,6 +505,81 @@
       "mismatch_pct": 0.791667
     },
     {
+      "id": "sp11/text_decoration_style_solid",
+      "status": "fail",
+      "mismatch_pct": 0.167292
+    },
+    {
+      "id": "sp11/text_decoration_style_double",
+      "status": "fail",
+      "mismatch_pct": 0.186458
+    },
+    {
+      "id": "sp11/text_decoration_style_dotted",
+      "status": "fail",
+      "mismatch_pct": 0.167292
+    },
+    {
+      "id": "sp11/text_decoration_style_dashed",
+      "status": "fail",
+      "mismatch_pct": 0.176458
+    },
+    {
+      "id": "sp11/text_decoration_style_wavy",
+      "status": "fail",
+      "mismatch_pct": 0.205833
+    },
+    {
+      "id": "sp11/text_decoration_skip_ink_auto",
+      "status": "fail",
+      "mismatch_pct": 0.166042
+    },
+    {
+      "id": "sp11/text_decoration_skip_ink_none",
+      "status": "fail",
+      "mismatch_pct": 0.167292
+    },
+    {
+      "id": "sp11/text_decoration_color_red",
+      "status": "fail",
+      "mismatch_pct": 0.154375
+    },
+    {
+      "id": "sp11/text_decoration_thickness_3px",
+      "status": "fail",
+      "mismatch_pct": 0.205625
+    },
+    {
+      "id": "sp11/text_underline_offset_5px",
+      "status": "fail",
+      "mismatch_pct": 0.167292
+    },
+    {
+      "id": "sp11/font_family_serif",
+      "status": "fail",
+      "mismatch_pct": 0.156667
+    },
+    {
+      "id": "sp11/font_family_monospace",
+      "status": "fail",
+      "mismatch_pct": 0.14625
+    },
+    {
+      "id": "sp11/word_spacing_negative",
+      "status": "fail",
+      "mismatch_pct": 0.229375
+    },
+    {
+      "id": "sp11/line_height_percentage",
+      "status": "fail",
+      "mismatch_pct": 8.0
+    },
+    {
+      "id": "sp11/text_shadow_offset",
+      "status": "fail",
+      "mismatch_pct": 0.151875
+    },
+    {
       "id": "sp13/inline_single_span",
       "status": "fail",
       "mismatch_pct": 0.355417
@@ -528,6 +678,56 @@
       "id": "sp13/inline_border",
       "status": "fail",
       "mismatch_pct": 0.463958
+    },
+    {
+      "id": "sp13/first_letter_basic",
+      "status": "fail",
+      "mismatch_pct": 0.324375
+    },
+    {
+      "id": "sp13/first_line_basic",
+      "status": "fail",
+      "mismatch_pct": 1.371875
+    },
+    {
+      "id": "sp13/word_break_break_all",
+      "status": "fail",
+      "mismatch_pct": 1.1875
+    },
+    {
+      "id": "sp13/overflow_wrap_break_word",
+      "status": "fail",
+      "mismatch_pct": 1.1875
+    },
+    {
+      "id": "sp13/vertical_align_text_top",
+      "status": "fail",
+      "mismatch_pct": 4.372708
+    },
+    {
+      "id": "sp13/vertical_align_text_bottom",
+      "status": "fail",
+      "mismatch_pct": 3.672708
+    },
+    {
+      "id": "sp13/line_breaking_overflow_wrap",
+      "status": "fail",
+      "mismatch_pct": 2.375417
+    },
+    {
+      "id": "sp13/line_breaking_hyphens_auto",
+      "status": "fail",
+      "mismatch_pct": 1.986458
+    },
+    {
+      "id": "sp13/inline_box_multiline",
+      "status": "fail",
+      "mismatch_pct": 2.872917
+    },
+    {
+      "id": "sp13/inline_with_float",
+      "status": "fail",
+      "mismatch_pct": 0.998125
     }
   ]
 }
