@@ -41,3 +41,4 @@ tests/pixel_apps/screenshots/diff-*/
 # Downloaded Chrome binary for pixel comparison
 chrome/
 .venv/
+__pycache__/
