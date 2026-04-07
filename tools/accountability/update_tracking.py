@@ -71,24 +71,31 @@ def build_lookup(results: dict) -> dict:
     return lookup
 
 
-def find_result(lookup: dict, sp_prefix: str, feature: str, sub: str, variant: str):
-    """Try multiple key formats to find a matching pixel result."""
-    candidates = []
+def find_result(lookup: dict, sp_prefix: str, row: dict):
+    """Find a matching pixel result, preferring explicit pixel_test_id."""
+    feature = row.get("feature", "").strip()
+    sub = row.get("sub_feature", "").strip()
+    variant = row.get("variant", "").strip()
 
-    # 1. variant as-is (new rows use test_id as variant)
+    # 1. Explicit pixel_test_id column (authoritative)
+    test_id = row.get("pixel_test_id", "").strip()
+    if test_id:
+        key = f"{sp_prefix}/{test_id}"
+        if key in lookup:
+            return lookup[key]
+
+    # 2. Fall back to heuristic normalization
+    candidates = []
     candidates.append(f"{sp_prefix}/{variant}")
     candidates.append(f"{sp_prefix}/{normalize(variant)}")
 
-    # 2. feature_variant (e.g., "text-decoration-line_underline" → "text_decoration_line_underline")
     fv = f"{feature}_{variant}"
     candidates.append(f"{sp_prefix}/{normalize(fv)}")
 
-    # 3. feature_sub_variant
     if sub:
         fsv = f"{feature}_{sub}_{variant}"
         candidates.append(f"{sp_prefix}/{normalize(fsv)}")
 
-    # 4. feature without sub suffix + variant (e.g., "text-decoration" + "underline")
     if sub and feature.endswith(f"-{sub}"):
         stem = feature[: -len(f"-{sub}")]
         sv = f"{stem}_{variant}"
@@ -100,11 +107,14 @@ def find_result(lookup: dict, sp_prefix: str, feature: str, sub: str, variant: s
     return None
 
 
-def update_feature_csv(csv_path: str, lookup: dict, sp_prefix: str):
-    """Update pixel comparison columns in a feature matrix CSV."""
+def update_feature_csv(csv_path: str, lookup: dict, sp_prefix: str) -> int:
+    """Update pixel comparison columns in a feature matrix CSV.
+
+    Returns the number of rows that were matched to pixel results.
+    """
     if not os.path.exists(csv_path):
         print(f"  Skipping {csv_path} — not found", file=sys.stderr)
-        return
+        return 0
 
     rows = []
     updated = 0
@@ -112,11 +122,12 @@ def update_feature_csv(csv_path: str, lookup: dict, sp_prefix: str):
         reader = csv.DictReader(f)
         fieldnames = reader.fieldnames
         for row in reader:
-            feature = row.get("feature", "").strip()
-            variant = row.get("variant", "").strip()
-            sub = row.get("sub_feature", "").strip()
+            # Clear stale pixel data before applying fresh results
+            row["pixel_compared_with_chromium"] = "no"
+            row["pixel_result"] = "not_run"
+            row["pixel_diff_pct"] = ""
 
-            result = find_result(lookup, sp_prefix, feature, sub, variant)
+            result = find_result(lookup, sp_prefix, row)
             if result:
                 row["pixel_compared_with_chromium"] = "yes"
                 status = result.get("status", "error")
@@ -140,6 +151,7 @@ def update_feature_csv(csv_path: str, lookup: dict, sp_prefix: str):
         writer.writerows(rows)
 
     print(f"  {os.path.basename(csv_path)}: {updated} rows updated from pixel results")
+    return updated
 
 
 def main():
@@ -153,18 +165,44 @@ def main():
 
     lookup = build_lookup(results)
 
-    update_feature_csv(
+    total_mapped = 0
+    total_mapped += update_feature_csv(
         os.path.join(args.feature_dir, "sp11_text_features.csv"),
         lookup, "sp11"
     )
-    update_feature_csv(
+    total_mapped += update_feature_csv(
         os.path.join(args.feature_dir, "sp12_block_features.csv"),
         lookup, "sp12"
     )
-    update_feature_csv(
+    total_mapped += update_feature_csv(
         os.path.join(args.feature_dir, "sp13_inline_features.csv"),
         lookup, "sp13"
     )
+
+    # Warn about unmapped test IDs
+    mapped_ids = set()
+    for sp, csv_name in [("sp11", "sp11_text_features.csv"),
+                          ("sp12", "sp12_block_features.csv"),
+                          ("sp13", "sp13_inline_features.csv")]:
+        csv_path = os.path.join(args.feature_dir, csv_name)
+        if os.path.exists(csv_path):
+            with open(csv_path, newline="") as f:
+                for row in csv.DictReader(f):
+                    tid = row.get("pixel_test_id", "").strip()
+                    if tid:
+                        mapped_ids.add(f"{sp}/{tid}")
+
+    unmapped = []
+    for test_id in results:
+        if test_id not in mapped_ids:
+            unmapped.append(test_id)
+
+    if unmapped:
+        print(f"\nWARNING: {len(unmapped)} test ID(s) in results could not be mapped:")
+        for uid in sorted(unmapped):
+            print(f"  - {uid}")
+
+    print(f"\nTotal mapped: {total_mapped}/{len(results)}")
 
 
 if __name__ == "__main__":
