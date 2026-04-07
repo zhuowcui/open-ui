@@ -75,12 +75,43 @@ SUMMARY_JSON = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results", "
 def load_pixel_summary():
     """Load authoritative pixel results from summary.json.
 
+    Validates against the canonical test registry (pixel_compare list).
     Returns a list of test dicts or None if the file is missing.
     """
     if not os.path.isfile(SUMMARY_JSON):
         return None
     with open(SUMMARY_JSON) as f:
-        return json.load(f).get("tests", [])
+        data = json.load(f)
+    tests = data.get("tests", [])
+
+    # Validate against canonical registry if binary is available
+    import subprocess, shutil
+    binary = shutil.which("pixel_compare")
+    if not binary:
+        # Try workspace target dir
+        workspace = os.path.join(SCRIPT_DIR, "..", "..", "bindings", "rust",
+                                 "target", "debug", "pixel_compare")
+        if os.path.isfile(workspace):
+            binary = workspace
+    if binary:
+        try:
+            result = subprocess.run([binary, "list"], capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                canonical = set(result.stdout.strip().splitlines())
+                summary_ids = {t.get("id", "") for t in tests}
+                missing = canonical - summary_ids
+                extra = summary_ids - canonical
+                if missing or extra:
+                    print(f"WARNING: summary.json is stale or tampered!", file=sys.stderr)
+                    if missing:
+                        print(f"  Missing {len(missing)} tests: {', '.join(sorted(missing)[:5])}...", file=sys.stderr)
+                    if extra:
+                        print(f"  Extra {len(extra)} tests: {', '.join(sorted(extra)[:5])}...", file=sys.stderr)
+                    print(f"  Re-run: python3 run_all_pixel_comparisons.py", file=sys.stderr)
+        except (subprocess.TimeoutExpired, OSError):
+            pass  # Binary not available — skip validation
+
+    return tests
 
 
 def load_chromium_csvs():

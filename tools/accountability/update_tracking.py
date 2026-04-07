@@ -163,6 +163,31 @@ def main():
     results = load_pixel_results(args.pixel_results)
     print(f"Loaded {len(results)} pixel comparison results")
 
+    # Validate summary.json against canonical registry if available
+    import subprocess, shutil
+    binary = shutil.which("pixel_compare")
+    if not binary:
+        workspace = os.path.join(os.path.dirname(args.pixel_results), "..", "..", "..",
+                                 "bindings", "rust", "target", "debug", "pixel_compare")
+        if os.path.isfile(workspace):
+            binary = workspace
+    if binary:
+        try:
+            result = subprocess.run([binary, "list"], capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                canonical = set(result.stdout.strip().splitlines())
+                if canonical != set(results.keys()):
+                    missing = canonical - set(results.keys())
+                    extra = set(results.keys()) - canonical
+                    print(f"WARNING: summary.json does not match registry!", file=sys.stderr)
+                    if missing:
+                        print(f"  Missing from summary: {sorted(missing)}", file=sys.stderr)
+                    if extra:
+                        print(f"  Extra in summary: {sorted(extra)}", file=sys.stderr)
+                    print(f"  Re-run: python3 run_all_pixel_comparisons.py", file=sys.stderr)
+        except (subprocess.TimeoutExpired, OSError):
+            pass
+
     lookup = build_lookup(results)
 
     total_mapped = 0
