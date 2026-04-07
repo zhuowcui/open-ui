@@ -35,10 +35,10 @@ SP11,text-transform,transform,none,css-text-3§2,yes,openui-text/src/transform.r
 SP11,text-transform,transform,capitalize,css-text-3§2,yes,openui-text/src/transform.rs,yes,text_transform_capitalize,yes,fail,0.448958,no,,Titlecases first letter of each word
 SP11,text-transform,transform,uppercase,css-text-3§2,yes,openui-text/src/transform.rs,yes,text_transform_uppercase,yes,fail,0.427708,no,,Full Unicode uppercase; locale-aware
 SP11,text-transform,transform,text_transform_lowercase,css-text-3§2,yes,openui-text/src/transform.rs,yes,text_transform_lowercase,yes,fail,0.332917,no,,Full Unicode lowercase
-SP11,font-weight,weight,font_weight_normal,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_weight_normal,yes,fail,0.409167,no,,FontWeight(400)
-SP11,font-weight,weight,font_weight_bold,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_weight_bold,yes,fail,0.482917,no,,FontWeight(700)
-SP11,font-style,style,font_style_normal,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_style_normal,yes,fail,0.302292,no,,FontStyle::Normal
-SP11,font-style,style,font_style_italic,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_style_italic,yes,fail,0.278333,no,,FontStyle::Italic
+SP11,font-weight,weight,font_weight_normal,css-fonts-4§2,yes,openui-style/src/font_types.rs,yes,font_weight_normal,yes,fail,0.409167,no,,FontWeight(400)
+SP11,font-weight,weight,font_weight_bold,css-fonts-4§2,yes,openui-style/src/font_types.rs,yes,font_weight_bold,yes,fail,0.482917,no,,FontWeight(700)
+SP11,font-style,style,font_style_normal,css-fonts-4§2,yes,openui-style/src/font_types.rs,yes,font_style_normal,yes,fail,0.302292,no,,FontStyle::Normal
+SP11,font-style,style,font_style_italic,css-fonts-4§2,yes,openui-style/src/font_types.rs,yes,font_style_italic,yes,fail,0.278333,no,,FontStyle::Italic
 SP11,font-size,size,font_size_small,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,font_size_small,yes,fail,0.202083,no,,12px
 SP11,font-size,size,font_size_medium,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,font_size_medium,yes,fail,0.460417,no,,16px default
 SP11,font-size,size,font_size_large,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,font_size_large,yes,fail,0.578958,no,,24px
@@ -66,21 +66,21 @@ SP11,color,value,color_green,css-color-4§4,yes,openui-style/src/color.rs,yes,co
 SP11,color,value,color_custom,css-color-4§4,yes,openui-style/src/color.rs,yes,color_custom,yes,fail,0.598542,no,,"from_rgba8(139,0,139,255)"
 SP11,text-shadow,shadow,text_shadow_basic,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,text_shadow_basic,yes,fail,1.357292,no,,"2px 2px 4px rgba(0,0,0,0.5)"
 SP11,text-overflow,overflow,text_overflow_ellipsis,css-overflow-4§6,yes,openui-style/src/enums.rs,yes,text_overflow_ellipsis,yes,fail,0.791667,no,,TextOverflow::Ellipsis
-SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_solid,yes,not_run,,no,,Solid underline style
-SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_double,yes,not_run,,no,,Double underline style
-SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dotted,yes,not_run,,no,,Dotted underline style
-SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dashed,yes,not_run,,no,,Dashed underline style
-SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_wavy,yes,not_run,,no,,Wavy underline style
-SP11,text-decoration-skip-ink,skip-ink,auto-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_auto,yes,not_run,,no,,Skip-ink auto with descenders
-SP11,text-decoration-skip-ink,skip-ink,none-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_none,yes,not_run,,no,,Skip-ink none — continuous line through glyph ink
-SP11,text-decoration-color,color,explicit-red,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_color_red,yes,not_run,,no,,Blue text with red underline
-SP11,text-decoration-thickness,thickness,3px,css-text-decor-4§3.4,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_thickness_3px,yes,not_run,,no,,Explicit 3px underline thickness
-SP11,text-underline-offset,offset,5px,css-text-decor-4§3.7,yes,openui-paint/src/decoration_painter.rs,yes,text_underline_offset_5px,yes,not_run,,no,,5px underline offset
-SP11,font-family,family,serif,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_family_serif,yes,not_run,,no,,GenericFontFamily::Serif
-SP11,font-family,family,monospace,css-fonts-4§2,yes,openui-style/src/font.rs,yes,font_family_monospace,yes,not_run,,no,,GenericFontFamily::Monospace
-SP11,word-spacing,spacing,word_spacing_negative,css-text-3§9,yes,openui-style/src/computed.rs,yes,word_spacing_negative,yes,not_run,,no,,-3px word spacing
-SP11,line-height,height,line_height_percentage,css-inline-3§4,yes,openui-style/src/enums.rs,yes,line_height_percentage,yes,not_run,,no,,LineHeight::Percentage(200.0)
-SP11,text-shadow,shadow,text_shadow_offset,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,text_shadow_offset,yes,not_run,,no,,"3px 3px 0 red — offset only, no blur"
+SP11,text-decoration-style,style,solid,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_solid,no,not_run,,no,,Solid underline style
+SP11,text-decoration-style,style,double,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_double,no,not_run,,no,,Double underline style
+SP11,text-decoration-style,style,dotted,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dotted,no,not_run,,no,,Dotted underline style
+SP11,text-decoration-style,style,dashed,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_dashed,no,not_run,,no,,Dashed underline style
+SP11,text-decoration-style,style,wavy,css-text-decor-3§3.2,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_style_wavy,no,not_run,,no,,Wavy underline style
+SP11,text-decoration-skip-ink,skip-ink,auto-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_auto,no,not_run,,no,,Skip-ink auto with descenders
+SP11,text-decoration-skip-ink,skip-ink,none-pixel,css-text-decor-4§3.5,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_skip_ink_none,no,not_run,,no,,Skip-ink none — continuous line through glyph ink
+SP11,text-decoration-color,color,explicit-red,css-text-decor-3§3.3,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_color_red,no,not_run,,no,,Blue text with red underline
+SP11,text-decoration-thickness,thickness,3px,css-text-decor-4§3.4,yes,openui-paint/src/decoration_painter.rs,yes,text_decoration_thickness_3px,no,not_run,,no,,Explicit 3px underline thickness
+SP11,text-underline-offset,offset,5px,css-text-decor-4§3.7,yes,openui-paint/src/decoration_painter.rs,yes,text_underline_offset_5px,no,not_run,,no,,5px underline offset
+SP11,font-family,family,serif,css-fonts-4§2,yes,openui-style/src/font_types.rs,yes,font_family_serif,no,not_run,,no,,GenericFontFamily::Serif
+SP11,font-family,family,monospace,css-fonts-4§2,yes,openui-style/src/font_types.rs,yes,font_family_monospace,no,not_run,,no,,GenericFontFamily::Monospace
+SP11,word-spacing,spacing,word_spacing_negative,css-text-3§9,yes,openui-style/src/computed.rs,yes,word_spacing_negative,no,not_run,,no,,-3px word spacing
+SP11,line-height,height,line_height_percentage,css-inline-3§4,yes,openui-style/src/enums.rs,yes,line_height_percentage,no,not_run,,no,,LineHeight::Percentage(200.0)
+SP11,text-shadow,shadow,text_shadow_offset,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,text_shadow_offset,no,not_run,,no,,"3px 3px 0 red — offset only, no blur"
 SP11,bidi,direction-detection,auto,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,BidiParagraph::new auto-detects from first strong character per UAX#9
 SP11,bidi,direction-detection,forced-ltr,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,BidiParagraph::new with Some(TextDirection::Ltr) forces base LTR
 SP11,bidi,direction-detection,forced-rtl,css-writing-modes-4§4.1,yes,openui-text/src/bidi/paragraph.rs,yes,,no,not_run,,no,,BidiParagraph::new with Some(TextDirection::Rtl) forces base RTL

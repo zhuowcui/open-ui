@@ -258,7 +258,7 @@ HTML_TEMPLATES = {
 
     # ── SP13 First-Letter / First-Line ─────────────────────────────────
     "sp13/first_letter_basic": "<div><span style='font-size:2em;color:#F44336;'>L</span>orem ipsum dolor sit amet</div>",
-    "sp13/first_line_basic": "<div style='width:250px;'><p style='width:250px;'><span style='color:#2196F3;font-weight:bold;'>The first line is styled differently</span> and the remaining text uses the default paragraph style for subsequent lines</p></div>",
+    "sp13/first_line_basic": "<div style='width:250px;'><div style='width:250px;'><span style='color:#2196F3;font-weight:bold;'>The first line is styled differently</span> and the remaining text uses the default paragraph style for subsequent lines</div></div>",
 
     # ── SP13 Word Break ────────────────────────────────────────────────
     "sp13/word_break_break_all": "<div style='width:100px;word-break:break-all;background-color:rgb(230,230,230);'>Supercalifragilisticexpialidocious</div>",
@@ -360,6 +360,14 @@ def main():
         print("\nEvery registered test MUST have a matching HTML template.")
         print("Add missing templates to HTML_TEMPLATES dict.")
         sys.exit(1)
+
+    # Check for orphaned templates (in HTML but not in registry)
+    orphaned = [t for t in HTML_TEMPLATES if t not in all_tests]
+    if orphaned:
+        print(f"\nWARNING: {len(orphaned)} orphaned HTML templates (not in registry):")
+        for t in orphaned:
+            print(f"  - {t}")
+        print("These templates will never be compared. Remove or register them.")
 
     print(f"\nRunning {len(all_tests)} pixel comparisons...\n")
 

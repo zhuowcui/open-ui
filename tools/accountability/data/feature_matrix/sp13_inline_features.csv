@@ -193,7 +193,7 @@ SP13,pixel_rendering,inline_block,backgrounds,CSS-Backgrounds-3§3,yes,openui-la
 SP13,pixel_rendering,inline_block,nesting,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,,no,not_run,,no,,inline_block_containing_block_child; inline_block_containing_inline_block
 SP13,pixel_rendering,float_with_inline,exclusion,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,,no,not_run,,no,,float_left_with_inline_block_beside; float_does_not_overlap_inline_block
 SP13,pixel_rendering,block_in_inline,rendering,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,,no,not_run,,no,,block_in_inline_renders_block; block_in_inline_correct_color
-SP13,inline_styling,background,color,CSS-Backgrounds-3§3,yes,openui-paint/src/box_painter.rs,yes,inline_background_color,yes,fail,0.809792,no,,Background color on inline elements
+SP13,inline_styling,background,color,CSS-Backgrounds-3§3,yes,openui-paint/src/painter.rs,yes,inline_background_color,yes,fail,0.809792,no,,Background color on inline elements
 SP13,inline_styling,box_model,padding,CSS-Box-3§6,yes,openui-layout/src/inline/algorithm.rs,yes,inline_padding,yes,fail,0.896458,no,,Padding on inline elements
 SP13,inline_styling,box_model,border,CSS-Backgrounds-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,inline_border,yes,fail,0.463958,no,,Border on inline elements
 SP13,first_letter,pseudo_element,basic_styled,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,first_letter_basic,no,not_run,,no,,First-letter pseudo-element with 2em font-size and color

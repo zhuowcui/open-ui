@@ -237,8 +237,8 @@ SP12,layout-infra,constraint,available-size,css-sizing-3,yes,openui-layout/src/c
 SP12,layout-infra,constraint,percentage-resolution-size,css-sizing-3,yes,openui-layout/src/constraint_space.rs,yes,,no,not_run,,no,not_run,Size for resolving percentages
 SP12,layout-infra,result,fragment-geometry,css-sizing-3,yes,openui-layout/src/layout_result.rs,yes,,no,not_run,,no,not_run,Output fragment with position and size
 SP12,layout-infra,inflow,block-offset-tracking,css2 §9.4,yes,openui-layout/src/inflow_position.rs,yes,,no,not_run,,no,not_run,Track BFC block offset during layout
-SP12,border-radius,value,px,css-backgrounds-3 §5,yes,openui-paint/src/box_painter.rs,yes,border_radius,yes,fail,0.087708,no,not_run,Rounded corners via border-radius
-SP12,opacity,value,number,css-color-4 §11,yes,openui-paint/src/box_painter.rs,yes,opacity_basic,yes,pass,0.0,no,not_run,Opacity value 0-1
+SP12,border-radius,value,px,css-backgrounds-3 §5,yes,openui-paint/src/painter.rs,yes,border_radius,yes,fail,0.087708,no,not_run,Rounded corners via border-radius
+SP12,opacity,value,number,css-color-4 §11,yes,openui-paint/src/painter.rs,yes,opacity_basic,yes,pass,0.0,no,not_run,Opacity value 0-1
 SP12,visibility,value,hidden,css2 §11.2,yes,openui-style/src/enums.rs,yes,visibility_hidden,yes,pass,0.0,no,not_run,Element hidden but space reserved
 SP12,gap,value,px,css-align-3 §8,yes,openui-layout/src/flex/algorithm.rs,yes,flex_gap,yes,pass,0.0,no,not_run,Gap between flex items
 SP12,display,nesting,nested-blocks,css-display-3 §2,yes,openui-layout/src/block.rs,yes,nested_blocks,yes,pass,0.0,no,not_run,Nested block-level elements
