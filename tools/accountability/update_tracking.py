@@ -17,13 +17,32 @@ import sys
 from pathlib import Path
 
 
+def normalize(s: str) -> str:
+    """Normalize a name: lowercase, replace hyphens/spaces/plus with underscores."""
+    return s.lower().replace("-", "_").replace(" ", "_").replace("+", "_")
+
+
 def load_pixel_results(results_dir: str) -> dict:
-    """Load all result.json files into a dict keyed by test name."""
+    """Load pixel results from summary.json (authoritative) or result.json files."""
     results = {}
     results_path = Path(results_dir)
     if not results_path.exists():
         return results
 
+    # Prefer summary.json (authoritative)
+    summary = results_path / "summary.json"
+    if summary.exists():
+        with open(summary) as f:
+            data = json.load(f)
+        for test in data.get("tests", []):
+            tid = test.get("id", "")
+            results[tid] = {
+                "status": test.get("status", "error"),
+                "mismatch_pct": test.get("mismatch_pct", 0.0),
+            }
+        return results
+
+    # Fallback: scan result.json files
     for sp_dir in results_path.iterdir():
         if not sp_dir.is_dir():
             continue
@@ -34,13 +53,54 @@ def load_pixel_results(results_dir: str) -> dict:
             if json_path.exists():
                 with open(json_path) as f:
                     data = json.load(f)
-                # Key format: sp/test_name (e.g., sp11/text-decoration-line_underline)
                 key = f"{sp_dir.name}/{test_dir.name}"
                 results[key] = data
     return results
 
 
-def update_feature_csv(csv_path: str, results: dict, sp_prefix: str):
+def build_lookup(results: dict) -> dict:
+    """Build a normalized lookup from test IDs to results."""
+    lookup = {}
+    for key, val in results.items():
+        # Key format: "sp12/margin_basic"
+        lookup[key] = val
+        # Also index by just test name (no sp prefix)
+        parts = key.split("/", 1)
+        if len(parts) == 2:
+            lookup[parts[1]] = val
+    return lookup
+
+
+def find_result(lookup: dict, sp_prefix: str, feature: str, sub: str, variant: str):
+    """Try multiple key formats to find a matching pixel result."""
+    candidates = []
+
+    # 1. variant as-is (new rows use test_id as variant)
+    candidates.append(f"{sp_prefix}/{variant}")
+    candidates.append(f"{sp_prefix}/{normalize(variant)}")
+
+    # 2. feature_variant (e.g., "text-decoration-line_underline" → "text_decoration_line_underline")
+    fv = f"{feature}_{variant}"
+    candidates.append(f"{sp_prefix}/{normalize(fv)}")
+
+    # 3. feature_sub_variant
+    if sub:
+        fsv = f"{feature}_{sub}_{variant}"
+        candidates.append(f"{sp_prefix}/{normalize(fsv)}")
+
+    # 4. feature without sub suffix + variant (e.g., "text-decoration" + "underline")
+    if sub and feature.endswith(f"-{sub}"):
+        stem = feature[: -len(f"-{sub}")]
+        sv = f"{stem}_{variant}"
+        candidates.append(f"{sp_prefix}/{normalize(sv)}")
+
+    for c in candidates:
+        if c in lookup:
+            return lookup[c]
+    return None
+
+
+def update_feature_csv(csv_path: str, lookup: dict, sp_prefix: str):
     """Update pixel comparison columns in a feature matrix CSV."""
     if not os.path.exists(csv_path):
         print(f"  Skipping {csv_path} — not found", file=sys.stderr)
@@ -52,22 +112,11 @@ def update_feature_csv(csv_path: str, results: dict, sp_prefix: str):
         reader = csv.DictReader(f)
         fieldnames = reader.fieldnames
         for row in reader:
-            # Build test key from feature + variant
             feature = row.get("feature", "").strip()
             variant = row.get("variant", "").strip()
             sub = row.get("sub_feature", "").strip()
 
-            # Try multiple key formats
-            test_name = f"{feature}_{variant}".replace(" ", "_").replace("+", "_")
-            if sub:
-                test_name_alt = f"{feature}_{sub}_{variant}".replace(" ", "_")
-            else:
-                test_name_alt = test_name
-
-            key = f"{sp_prefix}/{test_name}"
-            key_alt = f"{sp_prefix}/{test_name_alt}"
-
-            result = results.get(key) or results.get(key_alt)
+            result = find_result(lookup, sp_prefix, feature, sub, variant)
             if result:
                 row["pixel_compared_with_chromium"] = "yes"
                 status = result.get("status", "error")
@@ -102,17 +151,19 @@ def main():
     results = load_pixel_results(args.pixel_results)
     print(f"Loaded {len(results)} pixel comparison results")
 
+    lookup = build_lookup(results)
+
     update_feature_csv(
         os.path.join(args.feature_dir, "sp11_text_features.csv"),
-        results, "sp11"
+        lookup, "sp11"
     )
     update_feature_csv(
         os.path.join(args.feature_dir, "sp12_block_features.csv"),
-        results, "sp12"
+        lookup, "sp12"
     )
     update_feature_csv(
         os.path.join(args.feature_dir, "sp13_inline_features.csv"),
-        results, "sp13"
+        lookup, "sp13"
     )
 
 

@@ -73,15 +73,16 @@ def compare_images(path_a: str, path_b: str, diff_path: str, tolerance: int = 2)
             pa = pixels_a[x, y]
             pb = pixels_b[x, y]
 
-            # Compare RGB channels (ignore alpha for now)
+            # Compare RGBA channels (including alpha)
             dr = abs(pa[0] - pb[0])
             dg = abs(pa[1] - pb[1])
             db = abs(pa[2] - pb[2])
+            da = abs(pa[3] - pb[3])
 
-            max_ch = max(dr, dg, db)
+            max_ch = max(dr, dg, db, da)
             max_diff = max(max_diff, max_ch)
-            total_diff += dr + dg + db
-            channel_count += 3
+            total_diff += dr + dg + db + da
+            channel_count += 4
 
             if max_ch > tolerance:
                 mismatched += 1

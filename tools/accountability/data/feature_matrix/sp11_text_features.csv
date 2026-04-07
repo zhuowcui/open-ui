@@ -1,8 +1,8 @@
 sp,feature,sub_feature,variant,css_spec_section,implemented,implementation_file,has_unit_test,pixel_compared_with_chromium,pixel_result,pixel_diff_pct,perf_compared_with_chromium,perf_ratio,notes
 SP11,text-decoration-line,line,none,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,TextDecorationLine::NONE bitflag 0
-SP11,text-decoration-line,line,underline,css-text-decor-3§3.1,yes,openui-paint/src/decoration_painter.rs,yes,no,not_run,,no,,has_underline() bit 1; paint_text_decorations BeforeText phase
-SP11,text-decoration-line,line,overline,css-text-decor-3§3.1,yes,openui-paint/src/decoration_painter.rs,yes,no,not_run,,no,,has_overline() bit 2; positioned at -ascent
-SP11,text-decoration-line,line,line-through,css-text-decor-3§3.1,yes,openui-paint/src/decoration_painter.rs,yes,no,not_run,,no,,has_line_through() bit 4; AfterText phase
+SP11,text-decoration-line,line,underline,css-text-decor-3§3.1,yes,openui-paint/src/decoration_painter.rs,yes,yes,fail,0.484583,no,,has_underline() bit 1; paint_text_decorations BeforeText phase
+SP11,text-decoration-line,line,overline,css-text-decor-3§3.1,yes,openui-paint/src/decoration_painter.rs,yes,yes,fail,0.464375,no,,has_overline() bit 2; positioned at -ascent
+SP11,text-decoration-line,line,line-through,css-text-decor-3§3.1,yes,openui-paint/src/decoration_painter.rs,yes,yes,fail,0.468125,no,,has_line_through() bit 4; AfterText phase
 SP11,text-decoration-line,line,underline+overline,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,Bitflag combo 0x03; both painted in BeforeText phase
 SP11,text-decoration-line,line,underline+line-through,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,Bitflag combo 0x05; painted in both phases
 SP11,text-decoration-line,line,overline+line-through,css-text-decor-3§3.1,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,Bitflag combo 0x06; painted in both phases
@@ -32,36 +32,36 @@ SP11,text-underline-offset,offset,auto,css-text-decor-4§3.7,yes,openui-style/sr
 SP11,text-underline-offset,offset,length-px,css-text-decor-4§3.7,yes,openui-paint/src/decoration_painter.rs,yes,no,not_run,,no,,Fixed px offset added to metrics.underline_offset
 SP11,text-underline-offset,offset,percentage,css-text-decor-4§3.7,yes,openui-paint/src/decoration_painter.rs,yes,no,not_run,,no,,Percentage resolves against 1em (font_size)
 SP11,text-transform,transform,none,css-text-3§2,yes,openui-text/src/transform.rs,yes,no,not_run,,no,,TextTransform::None; no transformation
-SP11,text-transform,transform,capitalize,css-text-3§2,yes,openui-text/src/transform.rs,yes,no,not_run,,no,,Titlecases first letter of each word
-SP11,text-transform,transform,uppercase,css-text-3§2,yes,openui-text/src/transform.rs,yes,no,not_run,,no,,Full Unicode uppercase; locale-aware
-SP11,font-weight,weight,font_weight_normal,css-fonts-4§2,yes,openui-style/src/font.rs,yes,no,not_run,,no,,FontWeight(400)
-SP11,font-weight,weight,font_weight_bold,css-fonts-4§2,yes,openui-style/src/font.rs,yes,no,not_run,,no,,FontWeight(700)
-SP11,font-style,style,font_style_normal,css-fonts-4§2,yes,openui-style/src/font.rs,yes,no,not_run,,no,,FontStyle::Normal
-SP11,font-style,style,font_style_italic,css-fonts-4§2,yes,openui-style/src/font.rs,yes,no,not_run,,no,,FontStyle::Italic
-SP11,font-size,size,font_size_small,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,12px
-SP11,font-size,size,font_size_medium,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,16px default
-SP11,font-size,size,font_size_large,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,24px
-SP11,font-size,size,font_size_xlarge,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,32px
-SP11,text-align,align,text_align_left,css-text-3§7,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,TextAlign::Left
-SP11,text-align,align,text_align_center,css-text-3§7,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,TextAlign::Center
-SP11,text-align,align,text_align_right,css-text-3§7,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,TextAlign::Right
-SP11,text-align,align,text_align_justify,css-text-3§7,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,TextAlign::Justify
-SP11,text-indent,indent,text_indent_positive,css-text-3§8,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,Length::px(40.0)
-SP11,text-indent,indent,text_indent_negative,css-text-3§8,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,Length::px(-20.0)
-SP11,letter-spacing,spacing,letter_spacing_positive,css-text-3§9,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,5px
-SP11,letter-spacing,spacing,letter_spacing_negative,css-text-3§9,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,-1px
-SP11,word-spacing,spacing,word_spacing_positive,css-text-3§9,yes,openui-style/src/computed.rs,yes,no,not_run,,no,,10px
-SP11,line-height,height,line_height_normal,css-inline-3§4,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,LineHeight::Normal
-SP11,line-height,height,line_height_number,css-inline-3§4,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,LineHeight::Number(2.0)
-SP11,line-height,height,line_height_length,css-inline-3§4,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,LineHeight::Length(30px)
-SP11,white-space,mode,white_space_normal,css-text-3§3,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,WhiteSpace::Normal
-SP11,white-space,mode,white_space_nowrap,css-text-3§3,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,WhiteSpace::Nowrap
-SP11,white-space,mode,white_space_pre,css-text-3§3,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,WhiteSpace::Pre
-SP11,white-space,mode,white_space_pre_wrap,css-text-3§3,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,WhiteSpace::PreWrap
-SP11,white-space,mode,white_space_pre_line,css-text-3§3,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,WhiteSpace::PreLine
-SP11,color,value,color_red,css-color-4§4,yes,openui-style/src/color.rs,yes,no,not_run,,no,,Color::RED
-SP11,color,value,color_blue,css-color-4§4,yes,openui-style/src/color.rs,yes,no,not_run,,no,,Color::BLUE
-SP11,color,value,color_green,css-color-4§4,yes,openui-style/src/color.rs,yes,no,not_run,,no,,Color::GREEN
-SP11,color,value,color_custom,css-color-4§4,yes,openui-style/src/color.rs,yes,no,not_run,,no,,"from_rgba8(139,0,139,255)"
-SP11,text-shadow,shadow,text_shadow_basic,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,no,not_run,,no,,"2px 2px 4px rgba(0,0,0,0.5)"
-SP11,text-overflow,overflow,text_overflow_ellipsis,css-overflow-4§6,yes,openui-style/src/enums.rs,yes,no,not_run,,no,,TextOverflow::Ellipsis
+SP11,text-transform,transform,capitalize,css-text-3§2,yes,openui-text/src/transform.rs,yes,yes,fail,0.448958,no,,Titlecases first letter of each word
+SP11,text-transform,transform,uppercase,css-text-3§2,yes,openui-text/src/transform.rs,yes,yes,fail,0.427708,no,,Full Unicode uppercase; locale-aware
+SP11,font-weight,weight,font_weight_normal,css-fonts-4§2,yes,openui-style/src/font.rs,yes,yes,fail,0.409167,no,,FontWeight(400)
+SP11,font-weight,weight,font_weight_bold,css-fonts-4§2,yes,openui-style/src/font.rs,yes,yes,fail,0.482917,no,,FontWeight(700)
+SP11,font-style,style,font_style_normal,css-fonts-4§2,yes,openui-style/src/font.rs,yes,yes,fail,0.302292,no,,FontStyle::Normal
+SP11,font-style,style,font_style_italic,css-fonts-4§2,yes,openui-style/src/font.rs,yes,yes,fail,0.278333,no,,FontStyle::Italic
+SP11,font-size,size,font_size_small,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,yes,fail,0.202083,no,,12px
+SP11,font-size,size,font_size_medium,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,yes,fail,0.460417,no,,16px default
+SP11,font-size,size,font_size_large,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,yes,fail,0.578958,no,,24px
+SP11,font-size,size,font_size_xlarge,css-fonts-4§3,yes,openui-style/src/computed.rs,yes,yes,fail,0.789792,no,,32px
+SP11,text-align,align,text_align_left,css-text-3§7,yes,openui-style/src/enums.rs,yes,yes,fail,1.583333,no,,TextAlign::Left
+SP11,text-align,align,text_align_center,css-text-3§7,yes,openui-style/src/enums.rs,yes,yes,fail,1.583333,no,,TextAlign::Center
+SP11,text-align,align,text_align_right,css-text-3§7,yes,openui-style/src/enums.rs,yes,yes,fail,1.58375,no,,TextAlign::Right
+SP11,text-align,align,text_align_justify,css-text-3§7,yes,openui-style/src/enums.rs,yes,yes,fail,3.563958,no,,TextAlign::Justify
+SP11,text-indent,indent,text_indent_positive,css-text-3§8,yes,openui-style/src/computed.rs,yes,yes,fail,4.750417,no,,Length::px(40.0)
+SP11,text-indent,indent,text_indent_negative,css-text-3§8,yes,openui-style/src/computed.rs,yes,yes,fail,3.91875,no,,Length::px(-20.0)
+SP11,letter-spacing,spacing,letter_spacing_positive,css-text-3§9,yes,openui-style/src/computed.rs,yes,yes,fail,0.684792,no,,5px
+SP11,letter-spacing,spacing,letter_spacing_negative,css-text-3§9,yes,openui-style/src/computed.rs,yes,yes,fail,0.666042,no,,-1px
+SP11,word-spacing,spacing,word_spacing_positive,css-text-3§9,yes,openui-style/src/computed.rs,yes,yes,fail,0.928333,no,,10px
+SP11,line-height,height,line_height_normal,css-inline-3§4,yes,openui-style/src/enums.rs,yes,yes,fail,4.750208,no,,LineHeight::Normal
+SP11,line-height,height,line_height_number,css-inline-3§4,yes,openui-style/src/enums.rs,yes,yes,fail,6.0,no,,LineHeight::Number(2.0)
+SP11,line-height,height,line_height_length,css-inline-3§4,yes,openui-style/src/enums.rs,yes,yes,fail,5.625,no,,LineHeight::Length(30px)
+SP11,white-space,mode,white_space_normal,css-text-3§3,yes,openui-style/src/enums.rs,yes,yes,fail,3.5625,no,,WhiteSpace::Normal
+SP11,white-space,mode,white_space_nowrap,css-text-3§3,yes,openui-style/src/enums.rs,yes,yes,fail,4.09,no,,WhiteSpace::Nowrap
+SP11,white-space,mode,white_space_pre,css-text-3§3,yes,openui-style/src/enums.rs,yes,yes,fail,12.033333,no,,WhiteSpace::Pre
+SP11,white-space,mode,white_space_pre_wrap,css-text-3§3,yes,openui-style/src/enums.rs,yes,yes,fail,5.937708,no,,WhiteSpace::PreWrap
+SP11,white-space,mode,white_space_pre_line,css-text-3§3,yes,openui-style/src/enums.rs,yes,yes,fail,4.75,no,,WhiteSpace::PreLine
+SP11,color,value,color_red,css-color-4§4,yes,openui-style/src/color.rs,yes,yes,fail,0.325208,no,,Color::RED
+SP11,color,value,color_blue,css-color-4§4,yes,openui-style/src/color.rs,yes,yes,fail,0.354167,no,,Color::BLUE
+SP11,color,value,color_green,css-color-4§4,yes,openui-style/src/color.rs,yes,yes,fail,0.383958,no,,Color::GREEN
+SP11,color,value,color_custom,css-color-4§4,yes,openui-style/src/color.rs,yes,yes,fail,0.598542,no,,"from_rgba8(139,0,139,255)"
+SP11,text-shadow,shadow,text_shadow_basic,css-text-decor-3§4,yes,openui-paint/src/text_painter.rs,yes,yes,fail,1.357292,no,,"2px 2px 4px rgba(0,0,0,0.5)"
+SP11,text-overflow,overflow,text_overflow_ellipsis,css-overflow-4§6,yes,openui-style/src/enums.rs,yes,yes,fail,0.791667,no,,TextOverflow::Ellipsis
