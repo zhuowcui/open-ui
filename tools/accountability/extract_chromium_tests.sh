@@ -224,6 +224,12 @@ generate_csv "sp11_css_fonts_tests.csv"        "external/wpt/css/css-fonts"
 generate_csv "sp11_css_text_decor_tests.csv"   "external/wpt/css/css-text-decor"
 generate_csv "sp11_css_writing_modes_tests.csv" "external/wpt/css/css-writing-modes"
 generate_csv "sp11_css_ruby_tests.csv"         "external/wpt/css/css-ruby"
+generate_csv "sp11_css_color_tests.csv"        "external/wpt/css/css-color"
+echo ""
+
+echo "SP11 — Blink Text Tests"
+generate_csv "sp11_blink_text_tests.csv"       "fast/text"
+generate_csv "sp11_blink_writing_mode_tests.csv" "fast/writing-mode"
 echo ""
 
 echo "SP12 — Block Layout"
@@ -235,6 +241,13 @@ generate_csv "sp12_css_multicol_tests.csv"     "external/wpt/css/css-multicol"
 generate_csv "sp12_css_overflow_tests.csv"     "external/wpt/css/css-overflow"
 generate_csv "sp12_css_sizing_tests.csv"       "external/wpt/css/css-sizing"
 generate_csv "sp12_css_break_tests.csv"        "external/wpt/css/css-break"
+generate_csv "sp12_css_backgrounds_tests.csv"  "external/wpt/css/css-backgrounds"
+generate_csv "sp12_css_values_tests.csv"       "external/wpt/css/css-values"
+echo ""
+
+echo "SP12 — Blink Layout Tests (individual)"
+generate_csv "sp12_blink_borders_tests.csv"    "fast/borders"
+generate_csv "sp12_blink_overflow_tests.csv"   "fast/overflow"
 echo ""
 
 echo "SP12 — Blink Layout Tests"
@@ -266,8 +279,9 @@ echo ""
 echo "SP13 — Inline Layout"
 generate_csv "sp13_css_inline_tests.csv"       "external/wpt/css/css-inline"
 generate_csv "sp13_css_pseudo_tests.csv"       "external/wpt/css/css-pseudo"
+generate_csv "sp13_blink_inline_extra_tests.csv" "fast/inline"
 
-# Blink inline tests
+# Blink inline tests (combined fast/inline + fast/text + fast/writing-mode)
 {
     echo "$CSV_HEADER"
 } > "$OUT_DIR/sp13_blink_inline_tests.csv"
@@ -290,6 +304,25 @@ for blink_dir in "fast/inline" "fast/text" "fast/writing-mode"; do
     fi
 done
 echo "  sp13_blink_inline_tests.csv: $blink_inline_count tests"
+echo ""
+
+# Performance tests
+PERF_HEADER="test_file,test_type,our_benchmark,our_result,chromium_baseline_ms,our_time_ms,ratio,notes"
+PERF_DIR="$HOME/chromium/src/third_party/blink/perf_tests/layout"
+
+echo "Performance Tests"
+if [ -d "$PERF_DIR" ]; then
+    echo "$PERF_HEADER" > "$OUT_DIR/perf_layout_tests.csv"
+    perf_count=0
+    while IFS= read -r filepath; do
+        rel_path="${filepath#$HOME/chromium/src/third_party/blink/perf_tests/}"
+        echo "$rel_path,perf,,,,,," >> "$OUT_DIR/perf_layout_tests.csv"
+        perf_count=$((perf_count + 1))
+    done < <(find "$PERF_DIR" -type f \( -name "*.html" -o -name "*.htm" \) | sort)
+    echo "  perf_layout_tests.csv: $perf_count tests"
+else
+    echo "  WARNING: perf_tests/layout not found — skipping"
+fi
 echo ""
 
 # Summary
