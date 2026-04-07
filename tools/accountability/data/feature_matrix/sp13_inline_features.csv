@@ -1,0 +1,195 @@
+sp,feature,sub_feature,variant,css_spec_section,implemented,implementation_file,has_unit_test,pixel_compared_with_chromium,pixel_result,pixel_diff_pct,perf_compared_with_chromium,perf_ratio,notes
+SP13,inline_formatting_context,basic_text,single_text_node,CSS2.2§9.4.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Core IFC entry via inline_layout(); tested across all sp13 suites
+SP13,inline_formatting_context,multiple_inline_spans,sibling_spans,CSS2.2§9.4.2,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,enter_inline/exit_inline track open/close tags; sp13_b tests multi-span lines
+SP13,inline_formatting_context,nested_inlines,deeply_nested,CSS2.2§9.4.2,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,collect_children() recurses; nested_spans_multi_line in sp13_b
+SP13,line_breaking,soft_wrap_opportunities,normal_text,CSS-Text-3§5.1,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,find_break_opportunities() with UAX#14 and space-based breaks
+SP13,line_breaking,forced_breaks,br_and_newline,CSS-Text-3§5.1,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,has_forced_newline(); handle_text_with_newlines() for pre/pre-line
+SP13,line_breaking,emergency_breaks,overflow_character_break,CSS-Text-3§5.1,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,handle_character_break(); force_text_on_line() prevents infinite loops
+SP13,white_space,inline_processing,normal,CSS-Text-3§4,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,collapse_whitespace() collapses runs; default white-space mode
+SP13,white_space,inline_processing,nowrap,CSS-Text-3§4,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,allows_line_wrap() returns false; prevents soft wraps
+SP13,white_space,inline_processing,pre,CSS-Text-3§4,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,Preserves all whitespace and newlines; expand_tabs() handles tabs
+SP13,white_space,inline_processing,pre-wrap,CSS-Text-3§4,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,Preserves whitespace but allows wrapping; hang_width tracked in LineInfo
+SP13,white_space,inline_processing,pre-line,CSS-Text-3§4,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,collapse_spaces_preserve_newlines(); collapses spaces keeps newlines
+SP13,white_space,inline_processing,break-spaces,CSS-Text-3§4,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,WhiteSpace::BreakSpaces variant handled in line_breaker; no dedicated test
+SP13,word_break,inline_behavior,normal,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,Default UAX#14 break opportunities; tested via line breaking tests
+SP13,word_break,inline_behavior,break-all,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,WordBreak::BreakAll allows break between any characters
+SP13,word_break,inline_behavior,keep-all,CSS-Text-3§5.3,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,WordBreak::KeepAll prevents breaks in CJK; is_cjk_break() gated
+SP13,overflow_wrap,inline_behavior,normal,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,Default: no emergency breaking; OverflowWrap::Normal
+SP13,overflow_wrap,inline_behavior,break-word,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,OverflowWrap::BreakWord enables character-level emergency breaks
+SP13,overflow_wrap,inline_behavior,anywhere,CSS-Text-3§5.4,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,OverflowWrap::Anywhere treated as soft wrap opportunity everywhere
+SP13,line_break,cjk_rules,auto,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,LineBreak::Auto uses default CJK strictness heuristics
+SP13,line_break,cjk_rules,loose,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,apply_loose_line_break(); is_cjk_loose_break_before()
+SP13,line_break,cjk_rules,normal,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,LineBreak::Normal uses standard CJK break rules
+SP13,line_break,cjk_rules,strict,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,apply_strict_line_break(); is_cjk_strict_no_break_before()
+SP13,line_break,cjk_rules,anywhere,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,LineBreak::Anywhere allows breaks everywhere including CJK
+SP13,hyphens,hyphenation,none,CSS-Text-3§6,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,Hyphens::None disables all hyphenation including soft hyphens
+SP13,hyphens,hyphenation,manual,CSS-Text-3§6,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,Hyphens::Manual allows breaks at soft hyphens (U+00AD) only
+SP13,hyphens,hyphenation,auto,CSS-Text-3§6,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,try_hyphenation_break() uses Knuth-Liang algorithm; hyphenate-limit-chars
+SP13,text_wrap,line_breaking_mode,wrap,CSS-Text-4§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,Default greedy line breaking; TextWrap::Wrap
+SP13,text_wrap,line_breaking_mode,nowrap,CSS-Text-4§5.4,yes,openui-layout/src/inline/line_breaker.rs,yes,no,not_run,,no,,Prevents wrapping via allows_line_wrap(); same as white-space: nowrap
+SP13,text_wrap,line_breaking_mode,balance,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,Knuth-Plass DP balances line widths; h3_text_wrap_balance + wpt tests
+SP13,text_wrap,line_breaking_mode,pretty,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,Minimizes orphans with penalty 5000; h3_text_wrap_pretty + wpt tests
+SP13,text_wrap,line_breaking_mode,stable,CSS-Text-4§5.4,no,,no,no,not_run,,no,,Not implemented; TextWrap enum lacks Stable variant
+SP13,text_indent,first_line_indent,px,CSS-Text-3§8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,resolve_length() on style.text_indent; applied only on first line
+SP13,text_indent,first_line_indent,percent,CSS-Text-3§8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Percentage resolved against containing block inline size
+SP13,text_indent,first_line_indent,each-line,CSS-Text-3§8.1,no,,no,no,not_run,,no,,Not implemented; only first-line indent supported
+SP13,text_indent,first_line_indent,hanging,CSS-Text-3§8.1,no,,no,no,not_run,,no,,Not implemented; no hanging indent logic found
+SP13,text_align,inline_justification,left,CSS2.2§16.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,compute_text_align_offset(); TextAlign::Left returns zero offset
+SP13,text_align,inline_justification,right,CSS2.2§16.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Offset = available_width - content_width
+SP13,text_align,inline_justification,center,CSS2.2§16.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Offset = (available_width - content_width) / 2
+SP13,text_align,inline_justification,justify,CSS2.2§16.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,count_expansion_opportunities() distributes space; inter-word/inter-character
+SP13,text_align,inline_justification,start,CSS-Text-3§7.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Resolves to left (LTR) or right (RTL) based on direction
+SP13,text_align,inline_justification,end,CSS-Text-3§7.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Resolves to right (LTR) or left (RTL) based on direction
+SP13,text_align_last,last_line_alignment,auto,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,TextAlignLast::Auto falls back to text-align (or start for justify)
+SP13,text_align_last,last_line_alignment,start,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns last line to start edge
+SP13,text_align_last,last_line_alignment,end,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns last line to end edge
+SP13,text_align_last,last_line_alignment,left,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns last line to left regardless of direction
+SP13,text_align_last,last_line_alignment,right,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns last line to right regardless of direction
+SP13,text_align_last,last_line_alignment,center,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Centers last line
+SP13,text_align_last,last_line_alignment,justify,CSS-Text-3§7.3,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Justifies last line (typically avoided in practice)
+SP13,vertical_align,inline_positioning,baseline,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Default; compute_baseline_shift() returns 0; tested in sp13_e
+SP13,vertical_align,inline_positioning,sub,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Lowers baseline by subscript offset
+SP13,vertical_align,inline_positioning,super,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Raises baseline by superscript offset
+SP13,vertical_align,inline_positioning,text-top,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns top of inline with top of parent text area
+SP13,vertical_align,inline_positioning,text-bottom,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns bottom of inline with bottom of parent text area
+SP13,vertical_align,inline_positioning,middle,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns midpoint of inline box with parent baseline + half x-height
+SP13,vertical_align,inline_positioning,top,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns top of inline box with top of line box
+SP13,vertical_align,inline_positioning,bottom,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Aligns bottom of inline box with bottom of line box
+SP13,vertical_align,inline_positioning,length,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Shifts baseline by specified length value
+SP13,vertical_align,inline_positioning,percentage,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,Shifts baseline by percentage of line-height
+SP13,line_height,half_leading_model,normal,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,compute_line_height_metrics(); uses font metrics for normal
+SP13,line_height,half_leading_model,number,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Multiplied by element font-size; inherits as number
+SP13,line_height,half_leading_model,length,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Fixed length value; half-leading = (line-height - content-height) / 2
+SP13,line_height,half_leading_model,percentage,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Percentage of element font-size; computed at use time
+SP13,inline_block,layout,basic,CSS2.2§9.2.4,yes,openui-layout/src/inline/line_breaker.rs,yes,yes,not_run,,no,,handle_atomic_inline(); resolve_atomic_inline_width(); sp13_j pixel tests
+SP13,inline_block,layout,with_vertical_align,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,Inline-block baseline alignment; vertical_align in pixel tests
+SP13,inline_block,layout,with_overflow,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Inline-block with overflow; text-overflow: ellipsis interaction
+SP13,float_exclusion,inline_context,left_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,yes,not_run,,no,,compute_line_availability(); left_float_shifts_text_right; pixel tested
+SP13,float_exclusion,inline_context,right_float,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,yes,not_run,,no,,right_float_narrows_from_right; wpt + pixel tests
+SP13,float_exclusion,inline_context,both_floats,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,both_floats_narrow_from_both_sides; dual exclusion zones
+SP13,float_exclusion,inline_context,per_line_width_reduction,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,no,not_run,,no,,Per-line available width recalculation with float intrusion
+SP13,block_in_inline,anonymous_splitting,basic,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,BlockInInline item type; sp13_c + sp13_j tests
+SP13,block_in_inline,anonymous_splitting,multiple_blocks,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multiple_blocks_in_inline; correct height accumulation
+SP13,block_in_inline,anonymous_splitting,nested_inline_with_block,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Block inside nested inline elements; wpt_nested_inline_with_block_splits
+SP13,block_in_inline,continuation,stacking_order,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,block_in_inline_stacking_order; proper z-order of segments
+SP13,block_in_inline,continuation,with_padding,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,block_in_inline_with_padding; wpt_block_in_inline_with_padding_context
+SP13,out_of_flow,static_position,absolute_in_inline,CSS2.2§10.3.7,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,find_static_block_for_item_index(); oof_in_pure_inline_generates_candidate
+SP13,out_of_flow,static_position,fixed_in_inline,CSS2.2§10.3.7,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,wpt_oof_fixed_in_inline; treated same as absolute for static pos
+SP13,out_of_flow,static_position,multiple_oof,CSS2.2§10.3.7,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multiple_oof_in_inline; wpt_multiple_oof_in_inline_all_placed
+SP13,baseline_propagation,from_inline,single_line,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,single_line_first_and_last_baseline_are_equal; wpt_baseline_single_line_equal
+SP13,baseline_propagation,from_inline,multi_line,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multi_line_first_baseline_before_last; wpt_baseline_multi_line_order
+SP13,baseline_propagation,from_inline,with_container_offset,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,baseline_includes_container_offset; accounts for padding
+SP13,baseline_propagation,from_inline,nested_block_propagation,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,nested_block_propagates_child_baseline; wpt_baseline_nested_propagation
+SP13,baseline_propagation,from_inline,from_inline_layout,CSS2.2§10.8.1,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,inline_layout_sets_baselines_directly; wpt_baseline_from_inline_layout_directly
+SP13,inline_fragmentation,break_tokens,creation_and_resume,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,InlineBreakToken; apply_inline_fragmentation(); resume_inline_from_break_token()
+SP13,inline_fragmentation,break_tokens,split_at_boundary,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,fragmentation_splits_at_boundary; wpt_frag_split_at_exact_boundary
+SP13,inline_fragmentation,orphans,minimum_lines,CSS-Fragmentation-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,orphans_prevents_too_few_lines_before_break; wpt_frag_orphans_minimum
+SP13,inline_fragmentation,widows,steal_lines,CSS-Fragmentation-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,widows_steals_lines_from_current_fragmentainer; wpt_frag_widows_steals_line
+SP13,inline_fragmentation,orphans_widows,conflict_resolution,CSS-Fragmentation-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,orphans_widows_conflict_orphans_wins; orphans take precedence
+SP13,inline_fragmentation,resume,skips_consumed,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,resume_skips_consumed_lines; wpt_frag_resume_skips_consumed
+SP13,inline_fragmentation,resume,offset_rebasing,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,resume_offsets_are_rebased_to_zero; wpt_frag_resume_rebases_offsets
+SP13,inline_fragmentation,multi_fragmentainer,full_simulation,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multi_fragmentainer_simulation; wpt_integration_multi_fragmentainer
+SP13,inline_fragmentation,baselines,preserved_during_fragmentation,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,fragmentation_preserves_baselines; wpt_frag_preserves_baselines
+SP13,inline_fragmentation,zero_fragmentainer,no_break,CSS-Fragmentation-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,no_fragmentation_zero_fragmentainer_size; disables fragmentation
+SP13,intrinsic_block_size,from_inline_content,text_content,CSS-Sizing-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,text_contributes_nonzero_block_size; wpt_intrinsic_text_nonzero
+SP13,intrinsic_block_size,from_inline_content,wrapping_content,CSS-Sizing-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,wrapping_text_min_block_size_greater_than_max; wpt_intrinsic_wrapping_min_ge_max
+SP13,intrinsic_block_size,from_inline_content,single_word,CSS-Sizing-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,single_word_min_equals_max_block_size; wpt_intrinsic_single_word_equal
+SP13,intrinsic_block_size,from_inline_content,with_border_padding,CSS-Sizing-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,block_size_includes_border_padding; wpt_intrinsic_includes_border_padding
+SP13,intrinsic_block_size,from_inline_content,larger_font,CSS-Sizing-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,larger_font_produces_taller_block_size; wpt_intrinsic_larger_font_taller
+SP13,intrinsic_block_size,from_inline_content,empty_block,CSS-Sizing-3§4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,empty_block_zero_block_size; wpt_intrinsic_empty_block_zero
+SP13,first_letter,pseudo_element,basic_extraction,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,extract_first_letter(); h2_first_letter_simple_extraction; wpt_first_letter_simple
+SP13,first_letter,pseudo_element,with_punctuation,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,is_first_letter_punctuation(); h2_first_letter_with_leading_punctuation
+SP13,first_letter,pseudo_element,trailing_punctuation,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,h2_first_letter_with_trailing_punctuation; includes trailing punct
+SP13,first_letter,pseudo_element,multi_codepoint,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,h2_first_letter_multi_codepoint; is_combining_mark() for marks
+SP13,first_letter,pseudo_element,cjk,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,h2_first_letter_cjk; single CJK ideograph as first letter
+SP13,first_letter,pseudo_element,no_letter,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,h2_first_letter_no_letter_returns_none; wpt_first_letter_empty_none
+SP13,first_letter,pseudo_element,split,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,split_first_letter() splits text into letter + remainder
+SP13,first_letter,pseudo_element,metrics,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,FirstLetterMetrics::from_style(); wpt_first_letter_metrics
+SP13,first_letter,pseudo_element,styling_drop_cap,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,FirstLetterStyle::with_drop_cap(); h2_first_letter_style_drop_cap
+SP13,first_letter,pseudo_element,open_bracket,CSS2.2§5.12.2,yes,openui-layout/src/inline/first_letter.rs,yes,no,not_run,,no,,h2_first_letter_with_open_bracket; bracket before letter included
+SP13,first_line,pseudo_element,basic_override,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,apply_first_line_overrides(); h1_first_line_font_size_override
+SP13,first_line,pseudo_element,color_override,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,h1_first_line_color_override; wpt_first_line_color_override
+SP13,first_line,pseudo_element,text_decoration_override,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,h1_first_line_text_decoration_override; wpt_first_line_underline_override
+SP13,first_line,pseudo_element,only_first_line,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,h1_first_line_only_first_line_gets_style; subsequent lines unaffected
+SP13,first_line,pseudo_element,resolve_absent,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,resolve returns None when no ::first-line; wpt_first_line_resolve_none_when_absent
+SP13,first_line,pseudo_element,resolve_present,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,resolve returns Some when present; h1_first_line_resolve_returns_some_when_present
+SP13,first_line,pseudo_element,preserves_base_style,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,build_first_line_style() preserves non-overridden base fields
+SP13,first_line,pseudo_element,property_list,CSS2.2§5.12.1,yes,openui-layout/src/inline/first_line.rs,yes,no,not_run,,no,,h1_first_line_property_list; enumerates applicable properties
+SP13,initial_letter,drop_caps,three_line,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,compute_initial_letter_layout(); h4_drop_cap_3_lines; wpt_drop_cap_3_lines
+SP13,initial_letter,drop_caps,two_line,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,h4_two_line_drop_cap; wpt_drop_cap_2_lines
+SP13,initial_letter,raised_caps,three_line_sink_one,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,h4_raised_cap_3_lines; wpt_raised_cap_3_lines_sink_1; sink < size
+SP13,initial_letter,exclusion,area_computation,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,compute_exclusion_rect(); h4_exclusion_area; wpt_initial_letter_exclusion_rect
+SP13,initial_letter,exclusion,line_detection,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,line_in_exclusion_zone(); h4_line_exclusion_detection
+SP13,initial_letter,exclusion,available_width,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,available_width_with_exclusion(); h4_available_width_with_exclusion
+SP13,initial_letter,validation,property_values,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,validate_initial_letter(); h4_validate_initial_letter
+SP13,initial_letter,style,creation,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,create_initial_letter_style(); h4_create_initial_letter_style
+SP13,initial_letter,style,effective_sink,CSS-Inline-3§5,yes,openui-layout/src/inline/initial_letter.rs,yes,no,not_run,,no,,wpt_initial_letter_effective_sink; effective sink computation
+SP13,text_combine_upright,tate_chu_yoko,none,CSS-Writing-4§9.1,yes,openui-layout/src/inline/text_combine.rs,no,no,not_run,,no,,is_text_combine_active() returns false; no-op in horizontal modes
+SP13,text_combine_upright,tate_chu_yoko,all,CSS-Writing-4§9.1,yes,openui-layout/src/inline/text_combine.rs,no,no,not_run,,no,,compute_text_combine(); compresses horizontal run into 1em cell
+SP13,box_decoration_break,inline_context,slice,CSS-Fragmentation-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,Default; box_decoration_break_default_is_slice; wpt_box_decoration_break_slice_default
+SP13,box_decoration_break,inline_context,clone,CSS-Fragmentation-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,All fragments get full MBP; box_decoration_break_clone_all_fragments_get_mbp
+SP13,ruby_position,annotation_placement,over,CSS-Ruby-1§4,yes,openui-layout/src/ruby/layout.rs,no,no,not_run,,no,,RubyPosition::Over; annotation above base in horizontal mode
+SP13,ruby_position,annotation_placement,under,CSS-Ruby-1§4,yes,openui-layout/src/ruby/layout.rs,no,no,not_run,,no,,RubyPosition::Under; annotation below base in horizontal mode
+SP13,ruby_position,annotation_placement,inter-character,CSS-Ruby-1§4,yes,openui-layout/src/ruby/layout.rs,no,no,not_run,,no,,RubyPosition inter-character variant for vertical annotations
+SP13,ruby_align,annotation_alignment,space-between,CSS-Ruby-1§5,yes,openui-layout/src/ruby/layout.rs,no,no,not_run,,no,,RubyAlign distributed; compute_ruby_layout() handles spacing
+SP13,ruby_align,annotation_alignment,center,CSS-Ruby-1§5,yes,openui-layout/src/ruby/layout.rs,no,no,not_run,,no,,RubyAlign::Center; annotation centered over base
+SP13,ruby_align,annotation_alignment,start,CSS-Ruby-1§5,yes,openui-layout/src/ruby/layout.rs,no,no,not_run,,no,,RubyAlign::Start; annotation aligned to start of base
+SP13,bidi,inline_direction,ltr,CSS-Writing-3§2.1,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,Direction::Ltr default; even bidi levels; tested across suites
+SP13,bidi,inline_direction,rtl,CSS-Writing-3§2.1,yes,openui-layout/src/inline/items_builder.rs,yes,no,not_run,,no,,Direction::Rtl; rtl_span_multi_line; wpt_rtl_inline_direction
+SP13,bidi,inline_direction,mixed,UAX9,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,apply_bidi() splits items spanning multiple bidi levels
+SP13,bidi,unicode_bidi,isolate,CSS-Writing-3§2.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,UnicodeBidi::Isolate → LRI/RLI + PDI control chars
+SP13,bidi,unicode_bidi,override,CSS-Writing-3§2.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,UnicodeBidi::Override → LRO/RLO + PDF control chars
+SP13,bidi,unicode_bidi,isolate-override,CSS-Writing-3§2.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,UnicodeBidi::IsolateOverride → LRI+LRO / RLI+RLO + PDF+PDI
+SP13,bidi,unicode_bidi,plaintext,CSS-Writing-3§2.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,UnicodeBidi::Plaintext → FSI + PDI; paragraph-level isolation
+SP13,bidi,unicode_bidi,embed,CSS-Writing-3§2.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,UnicodeBidi::Embed → LRE/RLE + PDF control chars
+SP13,bidi,visual_reorder,line_reorder,UAX9-L2,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,bidi_reorder_line() reverses runs at each level; Blink InlineLayoutAlgorithm::BidiReorder
+SP13,score_line_breaker,penalties,consecutive_hyphens,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,Penalty 3000 for consecutive hyphens; compute_demerits()
+SP13,score_line_breaker,penalties,orphan_lines,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,Penalty 5000 for orphan lines; text-wrap: pretty
+SP13,score_line_breaker,penalties,fitness_class_transitions,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,FitnessClass transition_penalty(); h3_fitness_class_transitions
+SP13,score_line_breaker,balance,score_computation,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,balance_score(); h3_balance_score_computation; wpt_balance_score tests
+SP13,score_line_breaker,balance,fallback_greedy,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,Max 500 items before greedy fallback; h3_fallback_to_greedy_for_long_paragraphs
+SP13,score_line_breaker,detection,requires_scoring,CSS-Text-4§5.4,yes,openui-layout/src/inline/score_line_breaker.rs,yes,no,not_run,,no,,requires_scoring() true for balance/pretty; h3_requires_scoring_modes
+SP13,text_justify,justification_method,auto,CSS-Text-3§7.4,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,detect_cjk_content() selects inter-word or inter-character
+SP13,text_justify,justification_method,inter-word,CSS-Text-3§7.4,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,count_expansion_opportunities() counts word-spacing gaps
+SP13,text_justify,justification_method,inter-character,CSS-Text-3§7.4,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,count_inter_character_opportunities(); CJK character boundaries
+SP13,text_justify,justification_method,none,CSS-Text-3§7.4,yes,openui-layout/src/inline/algorithm.rs,no,no,not_run,,no,,TextJustify::None disables justification expansion
+SP13,text_overflow,truncation,ellipsis,CSS-Overflow-3§6.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,apply_text_overflow_ellipsis(); shapes U+2026; internal unit tests in algorithm.rs
+SP13,text_overflow,truncation,ellipsis_rtl,CSS-Overflow-3§6.2,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,ellipsis_at_start for RTL; rtl_ellipsis_truncates_from_left internal test
+SP13,tab_size,whitespace,tab_expansion,CSS-Text-3§3,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,expand_tabs() expands tab chars per tab-size property
+SP13,letter_spacing,inline_spacing,applied,CSS-Text-3§8.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,style_to_font_description() passes letter_spacing to HarfBuzz shaping
+SP13,word_spacing,inline_spacing,applied,CSS-Text-3§8.3,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,style_to_font_description() passes word_spacing to HarfBuzz shaping
+SP13,text_transform,inline_processing,none,CSS-Text-3§2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,TextTransform::None; no transformation applied
+SP13,text_transform,inline_processing,uppercase,CSS-Text-3§2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,TextTransform::Uppercase applied before white-space processing
+SP13,text_transform,inline_processing,lowercase,CSS-Text-3§2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,TextTransform::Lowercase applied before white-space processing
+SP13,text_transform,inline_processing,capitalize,CSS-Text-3§2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,TextTransform::Capitalize; first letter of each word uppercased
+SP13,text_transform,inline_processing,full-width,CSS-Text-3§2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,TextTransform::FullWidth; maps to fullwidth Unicode forms
+SP13,text_transform,inline_processing,full-size-kana,CSS-Text-3§2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,TextTransform::FullSizeKana; converts small kana to full-size
+SP13,inline_box_state,mbp_tracking,single_line_full_mbp,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,single_line_span_gets_full_mbp; resolve_inline_start/end()
+SP13,inline_box_state,mbp_tracking,multi_line_first,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multi_line_span_first_line_has_inline_start_mbp
+SP13,inline_box_state,mbp_tracking,multi_line_last,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multi_line_span_last_line_has_inline_end_mbp
+SP13,inline_box_state,mbp_tracking,multi_line_middle,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,multi_line_span_middle_line_no_inline_mbp
+SP13,inline_box_state,mbp_tracking,nested_spans,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,nested_spans_multi_line; multiple nesting levels
+SP13,inline_box_state,mbp_tracking,empty_span,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,empty_span_produces_no_crash; wpt_empty_inline_span_no_crash
+SP13,inline_box_state,mbp_tracking,padding_border_contribution,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,span_with_padding_and_border_contributes_to_inline_size
+SP13,inline_box_state,fragment_metadata,first_and_last_flags,CSS-Fragmentation-3§4.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,fragment_defaults_are_first_and_last; wpt_single_line_span_is_first_and_last
+SP13,soft_hyphen,break_control,u00ad,CSS-Text-3§6,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,Soft hyphen (U+00AD) processed as break opportunity in manual/auto modes
+SP13,hyphenate_limit_chars,break_control,min_chars,CSS-Text-3§6,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,set_hyphens() accepts limit chars; controls min chars before/after hyphen
+SP13,cjk_line_breaking,break_rules,cjk_character_detection,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,is_cjk_character() checks Unicode CJK ranges
+SP13,cjk_line_breaking,break_rules,cjk_break_opportunities,CSS-Text-3§5.2,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,is_cjk_break() allows breaks around CJK ideographs
+SP13,trailing_space,whitespace,strip_collapsible,CSS-Text-3§4.1.3,yes,openui-layout/src/inline/line_breaker.rs,no,no,not_run,,no,,strip_trailing_spaces() per CSS Text §4.1.3
+SP13,trailing_space,whitespace,hang_width,CSS-Text-3§4.2,yes,openui-layout/src/inline/line_info.rs,no,no,not_run,,no,,LineInfo.hang_width tracks trailing space hang for pre-wrap
+SP13,writing_mode,vertical_interaction,font_orientation,CSS-Writing-4§7.2,yes,openui-layout/src/inline/items_builder.rs,no,no,not_run,,no,,font_orientation(writing_mode + text_orientation) for vertical modes
+SP13,integration,style_defaults,new_fields_stable,CSS-Inline-3,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_new_style_fields_default; wpt_integration_style_defaults_stable
+SP13,integration,layout_with_defaults,new_defaults,CSS-Inline-3,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_layout_with_new_defaults; wpt_integration_layout_with_defaults
+SP13,integration,text_wrap_field,setting,CSS-Text-4§5.4,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_text_wrap_field_set; wpt_integration_text_wrap_balance_field
+SP13,integration,initial_letter_field,setting,CSS-Inline-3§5,yes,openui-layout/src/inline/algorithm.rs,yes,no,not_run,,no,,integration_initial_letter_field_set; style field roundtrip
+SP13,pixel_rendering,inline_block,single_render,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_single_renders; inline_block_single_position
+SP13,pixel_rendering,inline_block,adjacent_blocks,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_two_side_by_side; inline_block_three_side_by_side
+SP13,pixel_rendering,inline_block,different_sizes,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_different_sizes; various dimensions tested
+SP13,pixel_rendering,inline_block,with_border,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_with_border_renders; border edge pixel tests
+SP13,pixel_rendering,inline_block,with_padding,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_with_padding_renders; padding extends box
+SP13,pixel_rendering,inline_block,with_margin,CSS2.2§8,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_margin_left_offset; inline_block_margin_between_two
+SP13,pixel_rendering,inline_block,backgrounds,CSS-Backgrounds-3§3,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,cyan/magenta/yellow/orange/gray background pixel tests
+SP13,pixel_rendering,inline_block,nesting,CSS2.2§9.2.4,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,inline_block_containing_block_child; inline_block_containing_inline_block
+SP13,pixel_rendering,float_with_inline,exclusion,CSS2.1§9.5.1,yes,openui-layout/src/inline/line_width.rs,yes,yes,not_run,,no,,float_left_with_inline_block_beside; float_does_not_overlap_inline_block
+SP13,pixel_rendering,block_in_inline,rendering,CSS2.2§9.2.1.1,yes,openui-layout/src/inline/algorithm.rs,yes,yes,not_run,,no,,block_in_inline_renders_block; block_in_inline_correct_color
