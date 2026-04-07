@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# DEPRECATED: Use run_all_pixel_comparisons.py instead.
+# This script has a broken binary API (passes html_file as test_id).
+# The Python pipeline is the authoritative pixel comparison tool.
+echo "DEPRECATED: Use 'python3 tools/accountability/run_all_pixel_comparisons.py' instead." >&2
+exit 1
+#
+# Original script below (kept for reference):
 # run_pixel_comparison.sh — Render HTML in headless Chrome AND our engine,
 # then diff the resulting PNGs pixel-by-pixel.
 #

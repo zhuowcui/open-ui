@@ -276,11 +276,14 @@ def main():
     tests_without_html = [t for t in all_tests if t not in HTML_TEMPLATES]
 
     if tests_without_html:
-        print(f"\nWARNING: {len(tests_without_html)} tests without HTML templates:")
+        print(f"\nERROR: {len(tests_without_html)} tests WITHOUT HTML templates:")
         for t in tests_without_html:
             print(f"  - {t}")
+        print("\nEvery registered test MUST have a matching HTML template.")
+        print("Add missing templates to HTML_TEMPLATES dict.")
+        sys.exit(1)
 
-    print(f"\nRunning {len(tests_with_html)} pixel comparisons...\n")
+    print(f"\nRunning {len(all_tests)} pixel comparisons...\n")
 
     passed = 0
     failed = 0
@@ -337,14 +340,15 @@ def main():
 
         results_summary.append((test_id, status, mismatch))
 
+    total = len(all_tests)
     print(f"\n{'='*60}")
     print(f"PIXEL COMPARISON RESULTS")
     print(f"{'='*60}")
-    print(f"  Total:   {len(tests_with_html)}")
+    print(f"  Total:   {total}")
     print(f"  Passed:  {passed}")
     print(f"  Failed:  {failed}")
     print(f"  Errors:  {errors}")
-    print(f"  Rate:    {passed}/{passed+failed} ({100*passed/(passed+failed) if passed+failed > 0 else 0:.1f}%)")
+    print(f"  Rate:    {passed}/{total} ({100*passed/total if total > 0 else 0:.1f}%)")
 
     if failed > 0:
         print(f"\nFailing tests:")
@@ -362,7 +366,7 @@ def main():
     summary_file = os.path.join(RESULTS_DIR, "summary.json")
     with open(summary_file, "w") as f:
         json.dump({
-            "total": len(tests_with_html),
+            "total": total,
             "passed": passed,
             "failed": failed,
             "errors": errors,

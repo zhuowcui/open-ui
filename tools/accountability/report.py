@@ -266,7 +266,7 @@ def cmd_summary():
                 label = sp_name.upper()
                 print(f"  {label}: {s['pass']:>4} / {s['total']:<4} pass"
                       f"  |  {s['fail']} fail  {s['error']} error")
-            prate = (gp / (gp + gf) * 100) if (gp + gf) > 0 else 0.0
+            prate = (gp / gt * 100) if gt > 0 else 0.0
             print(f"\n  TOTAL: {gp}/{gt} pass ({prate:.1f}%)")
         else:
             # Fall back to feature matrix data
