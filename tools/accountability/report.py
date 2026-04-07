@@ -18,6 +18,7 @@ Usage:
 
 import argparse
 import csv
+import json
 import os
 import sys
 from collections import defaultdict
@@ -54,7 +55,6 @@ CHROMIUM_CSV_AREA = {
     "sp13_css_inline_tests.csv": "SP13",
     "sp13_css_pseudo_tests.csv": "SP13",
     "sp13_blink_inline_tests.csv": "SP13",
-    "sp13_blink_inline_extra_tests.csv": "SP13",
 }
 
 FEATURE_CSV_AREA = {
@@ -237,15 +237,48 @@ def cmd_summary():
         # ── Pixel Comparison ─────────────────────────────────
         print("PIXEL COMPARISON WITH CHROMIUM")
         print("──────────────────────────────")
-        for area in ["SP11", "SP12", "SP13"]:
-            s = feat_stats[area]
-            ppct = (s["pixel_compared"] / s["total"] * 100) if s["total"] > 0 else 0.0
-            print(
-                f"  {area}: {s['pixel_compared']:>4} / {s['total']:<4} compared ({ppct:.1f}%)"
-                f"  |  {s['pixel_pass']} pass  {s['pixel_fail']} fail"
-            )
-        print(f"\n  TOTAL: {grand_pixel_comp} / {grand_feat} compared"
-              f"  |  {grand_pixel_pass} passing")
+
+        # Read authoritative pixel results from summary.json if available
+        summary_json = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results", "summary.json")
+        if os.path.isfile(summary_json):
+            with open(summary_json) as f:
+                pixel_summary = json.load(f)
+            sp_pixel = {"sp11": {"total": 0, "pass": 0, "fail": 0, "error": 0},
+                        "sp12": {"total": 0, "pass": 0, "fail": 0, "error": 0},
+                        "sp13": {"total": 0, "pass": 0, "fail": 0, "error": 0}}
+            for t in pixel_summary.get("tests", []):
+                sp = t["id"].split("/")[0]
+                if sp in sp_pixel:
+                    sp_pixel[sp]["total"] += 1
+                    if t["status"] == "pass":
+                        sp_pixel[sp]["pass"] += 1
+                    elif t["status"] == "error":
+                        sp_pixel[sp]["error"] += 1
+                    else:
+                        sp_pixel[sp]["fail"] += 1
+            gt = sum(s["total"] for s in sp_pixel.values())
+            gp = sum(s["pass"] for s in sp_pixel.values())
+            gf = sum(s["fail"] for s in sp_pixel.values())
+            ge = sum(s["error"] for s in sp_pixel.values())
+            print("  (from summary.json — authoritative)")
+            for sp_name in ["sp11", "sp12", "sp13"]:
+                s = sp_pixel[sp_name]
+                label = sp_name.upper()
+                print(f"  {label}: {s['pass']:>4} / {s['total']:<4} pass"
+                      f"  |  {s['fail']} fail  {s['error']} error")
+            prate = (gp / (gp + gf) * 100) if (gp + gf) > 0 else 0.0
+            print(f"\n  TOTAL: {gp}/{gt} pass ({prate:.1f}%)")
+        else:
+            # Fall back to feature matrix data
+            for area in ["SP11", "SP12", "SP13"]:
+                s = feat_stats[area]
+                ppct = (s["pixel_compared"] / s["total"] * 100) if s["total"] > 0 else 0.0
+                print(
+                    f"  {area}: {s['pixel_compared']:>4} / {s['total']:<4} compared ({ppct:.1f}%)"
+                    f"  |  {s['pixel_pass']} pass  {s['pixel_fail']} fail"
+                )
+            print(f"\n  TOTAL: {grand_pixel_comp} / {grand_feat} compared"
+                  f"  |  {grand_pixel_pass} passing")
         print()
 
         # ── Performance Comparison ───────────────────────────
@@ -254,6 +287,15 @@ def cmd_summary():
         for area in ["SP11", "SP12", "SP13"]:
             s = feat_stats[area]
             print(f"  {area}: {s['perf_compared']:>4} / {s['total']:<4} benchmarked")
+
+        # Check Chromium perf test inventory
+        perf_csv = os.path.join(CHROMIUM_DIR, "perf_layout_tests.csv")
+        if os.path.isfile(perf_csv):
+            with open(perf_csv) as f:
+                perf_rows = list(csv.DictReader(f))
+            perf_total = len(perf_rows)
+            perf_ours = sum(1 for r in perf_rows if r.get("our_benchmark", "").strip())
+            print(f"  Chromium perf tests tracked: {perf_ours}/{perf_total} with our benchmarks")
         print()
 
         # ── Unimplemented Features ───────────────────────────
