@@ -26,166 +26,179 @@ CHROME_DIRS = [
     os.path.join(PROJECT_ROOT, "chrome"),
 ]
 
-BODY_STYLE = "body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; }"
+BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }"
 
-# HTML templates for each test pattern
+# HTML templates for each test pattern.
+# Each template is the inner <body> content.  BODY_STYLE provides the CSS reset
+# (* { margin:0; padding:0; box-sizing:content-box }) and body defaults that
+# mirror base_doc() in pixel-compare/src/main.rs.
+#
+# Rules applied when generating these templates:
+#   - add_block(doc, parent, w, h, color) → <div style='width:Wpx;height:Hpx;background-color:COLOR;'>
+#   - add_text_block(doc, parent, text)   → <div style='margin-bottom:10px;'>TEXT</div>
+#   - ElementTag::Div  → <div>   (display:block by default)
+#   - ElementTag::Span → <span>  (display:inline by default)
+#   - Only use <p>/<pre> if the Rust builder explicitly creates them (none do).
+#   - When the viewport (vp) needs extra styles (e.g. position:relative), a
+#     <style>body{…}</style> override is prepended to the template.
+
 HTML_TEMPLATES = {
     # ── SP12 Display ─────────────────────────────────────────────────
-    "sp12/display_outer_block": "<div style='display:block;width:200px;height:100px;background:red;'></div>",
-    "sp12/display_outer_inline": "<span style='display:inline;background:red;'>Hello World</span>",
-    "sp12/display_outer_inline_block": "<div style='display:inline-block;width:200px;height:100px;background:red;'></div>",
-    "sp12/display_outer_none": "<div style='display:none;width:200px;height:100px;background:red;'></div><div style='width:100px;height:50px;background:blue;'></div>",
-    "sp12/display_inner_flow_root": "<div style='display:flow-root;width:200px;height:100px;background:red;'></div>",
+    "sp12/display_outer_block": "<div style='width:200px;height:100px;background-color:red;'></div>",
+    "sp12/display_outer_inline": "<span style='background-color:rgb(0,128,0);'>Inline element text</span>",
+    "sp12/display_outer_inline_block": "<div style='display:inline-block;width:150px;height:80px;background-color:blue;'></div>",
+    "sp12/display_outer_none": "<div style='display:none;width:200px;height:100px;background-color:red;'></div>",
+    "sp12/display_inner_flow_root": "<div style='display:flow-root;width:200px;height:100px;background-color:teal;'></div>",
 
     # ── SP12 Position ────────────────────────────────────────────────
-    "sp12/position_static": "<div style='position:static;width:200px;height:100px;background:red;'></div>",
-    "sp12/position_relative": "<div style='position:relative;top:30px;left:30px;width:200px;height:100px;background:red;'></div>",
-    "sp12/position_absolute": "<div style='position:relative;width:400px;height:300px;background:#eee;'><div style='position:absolute;top:50px;left:50px;width:200px;height:100px;background:red;'></div></div>",
-    "sp12/position_fixed": "<div style='position:fixed;top:20px;left:20px;width:200px;height:100px;background:red;'></div>",
+    "sp12/position_static": "<div style='width:200px;height:100px;background-color:red;'></div><div style='width:200px;height:100px;background-color:blue;'></div>",
+    "sp12/position_relative": "<div style='width:100px;height:100px;background-color:blue;position:relative;top:20px;left:30px;'></div>",
+    "sp12/position_absolute": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:red;position:absolute;top:50px;left:50px;'></div>",
+    "sp12/position_fixed": "<div style='width:100px;height:100px;background-color:red;position:fixed;top:10px;right:10px;'></div>",
 
     # ── SP12 Float ───────────────────────────────────────────────────
-    "sp12/float_left": "<div style='float:left;width:100px;height:100px;background:red;'></div><div style='width:300px;height:100px;background:blue;'></div>",
-    "sp12/float_right": "<div style='float:right;width:100px;height:100px;background:red;'></div><div style='width:300px;height:100px;background:blue;'></div>",
-    "sp12/float_none": "<div style='float:none;width:200px;height:100px;background:red;'></div>",
-    "sp12/clear_left": "<div style='float:left;width:100px;height:100px;background:red;'></div><div style='clear:left;width:200px;height:100px;background:blue;'></div>",
-    "sp12/clear_right": "<div style='float:right;width:100px;height:100px;background:red;'></div><div style='clear:right;width:200px;height:100px;background:blue;'></div>",
-    "sp12/clear_both": "<div style='float:left;width:100px;height:50px;background:red;'></div><div style='float:right;width:100px;height:50px;background:green;'></div><div style='clear:both;width:200px;height:100px;background:blue;'></div>",
+    "sp12/float_left": "<div style='width:100px;height:100px;background-color:green;float:left;'></div><span>Text wrapping around a left-floated element. The text should flow to the right of the green box.</span>",
+    "sp12/float_right": "<div style='width:100px;height:100px;background-color:green;float:right;'></div><span>Text wrapping around a right-floated element. The text should flow to the left of the green box.</span>",
+    "sp12/float_none": "<div style='width:100px;height:100px;background-color:green;float:none;'></div>",
+    "sp12/clear_left": "<div style='width:100px;height:80px;background-color:red;float:left;'></div><div style='width:200px;height:50px;background-color:blue;clear:left;'></div>",
+    "sp12/clear_right": "<div style='width:100px;height:80px;background-color:red;float:right;'></div><div style='width:200px;height:50px;background-color:blue;clear:right;'></div>",
+    "sp12/clear_both": "<div style='width:100px;height:80px;background-color:red;float:left;'></div><div style='width:100px;height:60px;background-color:green;float:right;'></div><div style='width:200px;height:50px;background-color:blue;clear:both;'></div>",
 
-    # ── SP12 Margin ──────────────────────────────────────────────────
-    "sp12/margin_positive": "<div style='margin:30px;width:200px;height:100px;background:red;'></div>",
-    "sp12/margin_negative": "<div style='width:200px;height:50px;background:blue;'></div><div style='margin-top:-20px;width:200px;height:50px;background:red;'></div>",
-    "sp12/margin_auto": "<div style='margin:0 auto;width:200px;height:100px;background:red;'></div>",
-    "sp12/margin_collapsing_siblings": "<div style='margin-bottom:30px;width:200px;height:50px;background:red;'></div><div style='margin-top:20px;width:200px;height:50px;background:blue;'></div>",
-
-    # ── SP12 Padding/Border/Box ──────────────────────────────────────
-    "sp12/padding_basic": "<div style='padding:20px;width:200px;height:100px;background:red;'></div>",
-    "sp12/border_basic": "<div style='border:3px solid black;width:200px;height:100px;background:red;'></div>",
-    "sp12/box_sizing_content_box": "<div style='box-sizing:content-box;width:200px;height:100px;padding:20px;border:3px solid black;background:red;'></div>",
-    "sp12/box_sizing_border_box": "<div style='box-sizing:border-box;width:200px;height:100px;padding:20px;border:3px solid black;background:red;'></div>",
+    # ── SP12 Box Model ───────────────────────────────────────────────
+    "sp12/margin_positive": "<div style='width:100px;height:100px;background-color:red;margin:20px;'></div><div style='width:100px;height:50px;background-color:blue;'></div>",
+    "sp12/margin_negative": "<div style='width:200px;height:100px;background-color:red;'></div><div style='width:200px;height:100px;background-color:blue;margin-top:-30px;'></div>",
+    "sp12/margin_auto": "<div style='width:200px;height:100px;background-color:red;margin-left:auto;margin-right:auto;'></div>",
+    "sp12/margin_collapsing_siblings": "<div style='width:200px;height:50px;background-color:red;margin-bottom:30px;'></div><div style='width:200px;height:50px;background-color:blue;margin-top:20px;'></div>",
+    "sp12/padding_basic": "<div style='background-color:rgb(200,200,200);padding:20px 30px;'><div style='width:100px;height:60px;background-color:red;'></div></div>",
+    "sp12/border_basic": "<div style='width:150px;height:100px;background-color:rgb(240,240,240);border:3px solid black;'></div>",
+    "sp12/box_sizing_content_box": "<div style='width:200px;height:100px;background-color:red;box-sizing:content-box;padding:10px;border:2px solid black;'></div>",
+    "sp12/box_sizing_border_box": "<div style='width:200px;height:100px;background-color:red;box-sizing:border-box;padding:10px;border:2px solid black;'></div>",
 
     # ── SP12 Sizing ──────────────────────────────────────────────────
-    "sp12/width_fixed_px": "<div style='width:300px;height:100px;background:red;'></div>",
-    "sp12/height_fixed_px": "<div style='width:200px;height:200px;background:red;'></div>",
-    "sp12/width_percent": "<div style='width:50%;height:100px;background:red;'></div>",
-    "sp12/min_width": "<div style='min-width:300px;width:100px;height:100px;background:red;'></div>",
-    "sp12/max_width": "<div style='max-width:100px;width:300px;height:100px;background:red;'></div>",
-    "sp12/min_height": "<div style='width:200px;min-height:200px;height:50px;background:red;'></div>",
-    "sp12/max_height": "<div style='width:200px;max-height:50px;height:200px;background:red;'></div>",
+    "sp12/width_fixed_px": "<div style='width:300px;height:100px;background-color:red;'></div>",
+    "sp12/height_fixed_px": "<div style='width:200px;height:150px;background-color:blue;'></div>",
+    "sp12/width_percent": "<div style='width:50%;height:100px;background-color:red;'></div>",
+    "sp12/min_width": "<div style='width:50px;min-width:200px;height:100px;background-color:red;'></div>",
+    "sp12/max_width": "<div style='width:500px;max-width:200px;height:100px;background-color:red;'></div>",
+    "sp12/min_height": "<div style='width:200px;height:30px;min-height:100px;background-color:blue;'></div>",
+    "sp12/max_height": "<div style='width:200px;height:500px;max-height:100px;background-color:blue;'></div>",
 
     # ── SP12 Overflow ────────────────────────────────────────────────
-    "sp12/overflow_visible": "<div style='width:100px;height:50px;overflow:visible;background:red;'><div style='width:200px;height:100px;background:blue;'></div></div>",
-    "sp12/overflow_hidden": "<div style='width:100px;height:50px;overflow:hidden;background:red;'><div style='width:200px;height:100px;background:blue;'></div></div>",
+    "sp12/overflow_visible": "<div style='width:100px;height:50px;overflow:visible;background-color:rgb(200,200,200);'><div style='width:200px;height:200px;background-color:red;'></div></div>",
+    "sp12/overflow_hidden": "<div style='width:100px;height:50px;overflow:hidden;background-color:rgb(200,200,200);'><div style='width:200px;height:200px;background-color:red;'></div></div>",
 
-    # ── SP12 Flex ────────────────────────────────────────────────────
-    "sp12/flex_direction_row": "<div style='display:flex;flex-direction:row;width:400px;'><div style='width:100px;height:100px;background:red;'></div><div style='width:100px;height:100px;background:blue;'></div><div style='width:100px;height:100px;background:green;'></div></div>",
-    "sp12/flex_direction_column": "<div style='display:flex;flex-direction:column;width:200px;'><div style='height:50px;background:red;'></div><div style='height:50px;background:blue;'></div><div style='height:50px;background:green;'></div></div>",
-    "sp12/flex_justify_start": "<div style='display:flex;justify-content:flex-start;width:400px;height:100px;background:#eee;'><div style='width:80px;height:80px;background:red;'></div><div style='width:80px;height:80px;background:blue;'></div></div>",
-    "sp12/flex_justify_center": "<div style='display:flex;justify-content:center;width:400px;height:100px;background:#eee;'><div style='width:80px;height:80px;background:red;'></div><div style='width:80px;height:80px;background:blue;'></div></div>",
-    "sp12/flex_justify_space_between": "<div style='display:flex;justify-content:space-between;width:400px;height:100px;background:#eee;'><div style='width:80px;height:80px;background:red;'></div><div style='width:80px;height:80px;background:blue;'></div><div style='width:80px;height:80px;background:green;'></div></div>",
-    "sp12/flex_align_center": "<div style='display:flex;align-items:center;width:400px;height:200px;background:#eee;'><div style='width:80px;height:50px;background:red;'></div><div style='width:80px;height:80px;background:blue;'></div></div>",
-    "sp12/flex_align_stretch": "<div style='display:flex;align-items:stretch;width:400px;height:200px;background:#eee;'><div style='width:80px;background:red;'></div><div style='width:80px;background:blue;'></div></div>",
-    "sp12/flex_wrap_basic": "<div style='display:flex;flex-wrap:wrap;width:200px;'><div style='width:100px;height:80px;background:red;'></div><div style='width:100px;height:80px;background:blue;'></div><div style='width:100px;height:80px;background:green;'></div></div>",
-    "sp12/flex_grow_equal": "<div style='display:flex;width:400px;height:100px;'><div style='flex-grow:1;background:red;'></div><div style='flex-grow:1;background:blue;'></div><div style='flex-grow:1;background:green;'></div></div>",
-    "sp12/flex_gap": "<div style='display:flex;gap:10px;width:400px;'><div style='width:100px;height:100px;background:red;'></div><div style='width:100px;height:100px;background:blue;'></div><div style='width:100px;height:100px;background:green;'></div></div>",
+    # ── SP12 Flexbox ─────────────────────────────────────────────────
+    "sp12/flex_direction_row": "<div style='display:flex;flex-direction:row;width:400px;height:100px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_direction_column": "<div style='display:flex;flex-direction:column;width:200px;height:300px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_justify_start": "<div style='display:flex;justify-content:flex-start;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:60px;height:60px;background-color:red;'></div><div style='width:60px;height:60px;background-color:blue;'></div></div>",
+    "sp12/flex_justify_center": "<div style='display:flex;justify-content:center;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:60px;height:60px;background-color:red;'></div><div style='width:60px;height:60px;background-color:blue;'></div></div>",
+    "sp12/flex_justify_space_between": "<div style='display:flex;justify-content:space-between;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:60px;height:60px;background-color:red;'></div><div style='width:60px;height:60px;background-color:blue;'></div><div style='width:60px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_align_center": "<div style='display:flex;align-items:center;width:400px;height:150px;background-color:rgb(220,220,220);'><div style='width:80px;height:40px;background-color:red;'></div><div style='width:80px;height:80px;background-color:blue;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_align_stretch": "<div style='display:flex;align-items:stretch;width:400px;height:150px;background-color:rgb(220,220,220);'><div style='width:80px;background-color:red;'></div><div style='width:80px;background-color:blue;'></div></div>",
+    "sp12/flex_wrap_basic": "<div style='display:flex;flex-wrap:wrap;width:200px;background-color:rgb(220,220,220);'><div style='width:80px;height:50px;background-color:red;'></div><div style='width:80px;height:50px;background-color:blue;'></div><div style='width:80px;height:50px;background-color:green;'></div><div style='width:80px;height:50px;background-color:orange;'></div></div>",
+    "sp12/flex_grow_equal": "<div style='display:flex;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='flex-grow:1;height:60px;background-color:red;'></div><div style='flex-grow:1;height:60px;background-color:blue;'></div><div style='flex-grow:1;height:60px;background-color:green;'></div></div>",
+    "sp12/flex_gap": "<div style='display:flex;column-gap:20px;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
 
-    # ── SP12 Misc ────────────────────────────────────────────────────
-    "sp12/z_index_stacking": "<div style='position:relative;width:300px;height:200px;'><div style='position:absolute;top:0;left:0;width:150px;height:150px;background:red;z-index:1;'></div><div style='position:absolute;top:50px;left:50px;width:150px;height:150px;background:blue;z-index:2;'></div></div>",
-    "sp12/opacity_basic": "<div style='opacity:0.5;width:200px;height:100px;background:red;'></div>",
-    "sp12/border_radius": "<div style='border-radius:20px;width:200px;height:100px;background:red;'></div>",
-    "sp12/visibility_hidden": "<div style='width:200px;height:50px;background:blue;'></div><div style='visibility:hidden;width:200px;height:50px;background:red;'></div><div style='width:200px;height:50px;background:green;'></div>",
-    "sp12/nested_blocks": "<div style='padding:10px;background:#eee;'><div style='padding:10px;background:#ccc;'><div style='width:200px;height:50px;background:red;'></div></div></div>",
+    # ── SP12 Visual / Stacking ───────────────────────────────────────
+    "sp12/z_index_stacking": "<style>body{position:relative;}</style><div style='width:150px;height:150px;background-color:red;position:absolute;top:20px;left:20px;z-index:1;'></div><div style='width:150px;height:150px;background-color:blue;position:absolute;top:60px;left:60px;z-index:2;'></div>",
+    "sp12/opacity_basic": "<div style='width:200px;height:100px;background-color:red;opacity:0.5;'></div><div style='width:200px;height:100px;background-color:blue;'></div>",
+    "sp12/border_radius": "<div style='width:200px;height:200px;background-color:red;border-radius:20px;'></div>",
+    "sp12/visibility_hidden": "<div style='width:200px;height:50px;background-color:red;'></div><div style='width:200px;height:50px;background-color:blue;visibility:hidden;'></div><div style='width:200px;height:50px;background-color:green;'></div>",
+    "sp12/nested_blocks": "<div style='width:300px;padding:10px;background-color:rgb(200,200,200);'><div style='padding:10px;background-color:rgb(150,150,200);'><div style='width:100px;height:60px;background-color:red;'></div><div style='width:100px;height:60px;background-color:blue;'></div></div></div>",
 
     # ── SP11 Text Decoration ─────────────────────────────────────────
-    "sp11/text_decoration_underline": "<p style='text-decoration:underline;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/text_decoration_overline": "<p style='text-decoration:overline;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/text_decoration_line_through": "<p style='text-decoration:line-through;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/text_decoration_combined": "<p style='text-decoration:underline overline line-through;'>The quick brown fox jumps over the lazy dog</p>",
+    "sp11/text_decoration_underline": "<div style='margin-bottom:10px;text-decoration-line:underline;'>This text has an underline decoration</div>",
+    "sp11/text_decoration_overline": "<div style='margin-bottom:10px;text-decoration-line:overline;'>This text has an overline decoration</div>",
+    "sp11/text_decoration_line_through": "<div style='margin-bottom:10px;text-decoration-line:line-through;'>This text has a line-through decoration</div>",
+    "sp11/text_decoration_combined": "<div style='margin-bottom:10px;text-decoration-line:underline overline line-through;'>This text has underline + overline + line-through</div>",
 
-    # ── SP11 Font ────────────────────────────────────────────────────
-    "sp11/font_weight_normal": "<p style='font-weight:normal;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_weight_bold": "<p style='font-weight:bold;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_style_normal": "<p style='font-style:normal;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_style_italic": "<p style='font-style:italic;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_size_small": "<p style='font-size:12px;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_size_medium": "<p style='font-size:16px;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_size_large": "<p style='font-size:24px;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/font_size_xlarge": "<p style='font-size:32px;'>The quick brown fox jumps over the lazy dog</p>",
+    # ── SP11 Font Weight & Style ─────────────────────────────────────
+    "sp11/font_weight_normal": "<div style='margin-bottom:10px;font-weight:normal;'>Normal weight (400) text sample</div>",
+    "sp11/font_weight_bold": "<div style='margin-bottom:10px;font-weight:bold;'>Bold weight (700) text sample</div>",
+    "sp11/font_style_normal": "<div style='margin-bottom:10px;font-style:normal;'>Normal style text sample</div>",
+    "sp11/font_style_italic": "<div style='margin-bottom:10px;font-style:italic;'>Italic style text sample</div>",
+
+    # ── SP11 Font Size ───────────────────────────────────────────────
+    "sp11/font_size_small": "<div style='margin-bottom:10px;font-size:12px;'>Small text at 12px font size</div>",
+    "sp11/font_size_medium": "<div style='margin-bottom:10px;font-size:16px;'>Medium text at 16px font size (default)</div>",
+    "sp11/font_size_large": "<div style='margin-bottom:10px;font-size:24px;'>Large text at 24px font size</div>",
+    "sp11/font_size_xlarge": "<div style='margin-bottom:10px;font-size:32px;'>Extra large text at 32px</div>",
 
     # ── SP11 Text Align ──────────────────────────────────────────────
-    "sp11/text_align_left": "<p style='text-align:left;width:400px;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/text_align_center": "<p style='text-align:center;width:400px;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/text_align_right": "<p style='text-align:right;width:400px;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/text_align_justify": "<p style='text-align:justify;width:300px;'>The quick brown fox jumps over the lazy dog. This sentence needs to be long enough to wrap to at least two lines for justify to take effect.</p>",
+    "sp11/text_align_left": "<div style='margin-bottom:10px;text-align:left;width:400px;background-color:rgb(230,230,230);'>Left-aligned text in a block</div>",
+    "sp11/text_align_center": "<div style='margin-bottom:10px;text-align:center;width:400px;background-color:rgb(230,230,230);'>Center-aligned text in a block</div>",
+    "sp11/text_align_right": "<div style='margin-bottom:10px;text-align:right;width:400px;background-color:rgb(230,230,230);'>Right-aligned text in a block</div>",
+    "sp11/text_align_justify": "<div style='margin-bottom:10px;text-align:justify;width:300px;background-color:rgb(230,230,230);'>Justified text stretches words across the full width of the container block so that both edges are flush.</div>",
 
     # ── SP11 Text Transform ──────────────────────────────────────────
-    "sp11/text_transform_uppercase": "<p style='text-transform:uppercase;'>The quick brown fox</p>",
-    "sp11/text_transform_lowercase": "<p style='text-transform:lowercase;'>The Quick Brown Fox</p>",
-    "sp11/text_transform_capitalize": "<p style='text-transform:capitalize;'>the quick brown fox</p>",
+    "sp11/text_transform_uppercase": "<div style='margin-bottom:10px;text-transform:uppercase;'>this text should be uppercase</div>",
+    "sp11/text_transform_lowercase": "<div style='margin-bottom:10px;text-transform:lowercase;'>THIS TEXT SHOULD BE LOWERCASE</div>",
+    "sp11/text_transform_capitalize": "<div style='margin-bottom:10px;text-transform:capitalize;'>capitalize each word in this sentence</div>",
 
     # ── SP11 Text Indent ─────────────────────────────────────────────
-    "sp11/text_indent_positive": "<p style='text-indent:40px;width:300px;'>The quick brown fox jumps over the lazy dog. This text should be indented on the first line only.</p>",
-    "sp11/text_indent_negative": "<p style='text-indent:-20px;padding-left:40px;width:300px;'>The quick brown fox jumps over the lazy dog. This text has a negative indent.</p>",
+    "sp11/text_indent_positive": "<div style='margin-bottom:10px;text-indent:40px;width:300px;background-color:rgb(230,230,230);'>This paragraph has a positive 40px text-indent on the first line. The second line wraps normally without indent.</div>",
+    "sp11/text_indent_negative": "<div style='margin-bottom:10px;text-indent:-20px;width:300px;padding-left:30px;background-color:rgb(230,230,230);'>This paragraph has a negative -20px text-indent (hanging indent) on the first line.</div>",
 
-    # ── SP11 Letter/Word Spacing ─────────────────────────────────────
-    "sp11/letter_spacing_positive": "<p style='letter-spacing:3px;'>The quick brown fox</p>",
-    "sp11/letter_spacing_negative": "<p style='letter-spacing:-1px;'>The quick brown fox</p>",
-    "sp11/word_spacing_positive": "<p style='word-spacing:10px;'>The quick brown fox</p>",
+    # ── SP11 Letter & Word Spacing ───────────────────────────────────
+    "sp11/letter_spacing_positive": "<div style='margin-bottom:10px;letter-spacing:5px;'>Wide letter spacing</div><div style='margin-bottom:10px;'>Normal letter spacing for comparison</div>",
+    "sp11/letter_spacing_negative": "<div style='margin-bottom:10px;letter-spacing:-1px;'>Tight letter spacing</div><div style='margin-bottom:10px;'>Normal letter spacing for comparison</div>",
+    "sp11/word_spacing_positive": "<div style='margin-bottom:10px;word-spacing:15px;'>Extra space between words in this sentence</div><div style='margin-bottom:10px;'>Normal word spacing for comparison</div>",
 
     # ── SP11 Line Height ─────────────────────────────────────────────
-    "sp11/line_height_normal": "<p style='line-height:normal;width:200px;'>The quick brown fox jumps over the lazy dog. Multiple lines needed.</p>",
-    "sp11/line_height_number": "<p style='line-height:2;width:200px;'>The quick brown fox jumps over the lazy dog. Multiple lines needed.</p>",
-    "sp11/line_height_length": "<p style='line-height:30px;width:200px;'>The quick brown fox jumps over the lazy dog. Multiple lines needed.</p>",
+    "sp11/line_height_normal": "<div style='margin-bottom:10px;line-height:normal;width:300px;background-color:rgb(230,230,230);'>Line height normal. This is a multi-line paragraph to demonstrate the default line spacing between lines of text.</div>",
+    "sp11/line_height_number": "<div style='margin-bottom:10px;line-height:2;width:300px;background-color:rgb(230,230,230);'>Line height 2.0. This is a multi-line paragraph to demonstrate double line spacing between lines of text.</div>",
+    "sp11/line_height_length": "<div style='margin-bottom:10px;line-height:30px;width:300px;background-color:rgb(230,230,230);'>Line height 30px. This is a multi-line paragraph to demonstrate fixed 30px line spacing between lines.</div>",
 
     # ── SP11 White Space ─────────────────────────────────────────────
-    "sp11/white_space_normal": "<p style='white-space:normal;width:200px;'>The   quick   brown   fox\n  jumps over   the lazy dog</p>",
-    "sp11/white_space_nowrap": "<p style='white-space:nowrap;width:200px;background:#eee;'>The quick brown fox jumps over the lazy dog</p>",
-    "sp11/white_space_pre": "<pre style='white-space:pre;width:400px;background:#eee;'>The   quick   brown   fox\n  jumps over   the lazy dog</pre>",
-    "sp11/white_space_pre_wrap": "<p style='white-space:pre-wrap;width:200px;background:#eee;'>The   quick   brown   fox\n  jumps over   the lazy dog</p>",
-    "sp11/white_space_pre_line": "<p style='white-space:pre-line;width:200px;background:#eee;'>The   quick   brown   fox\n  jumps over   the lazy dog</p>",
+    "sp11/white_space_normal": "<div style='margin-bottom:10px;white-space:normal;width:300px;background-color:rgb(230,230,230);'>White space   normal:   multiple    spaces   and\nnewlines   collapse   into   single   spaces.</div>",
+    "sp11/white_space_nowrap": "<div style='margin-bottom:10px;white-space:nowrap;width:200px;background-color:rgb(230,230,230);'>White space nowrap: this long text should not wrap to the next line even if it overflows the container.</div>",
+    "sp11/white_space_pre": "<div style='margin-bottom:10px;white-space:pre;background-color:rgb(230,230,230);'>White space pre:\n  indented line\n  preserves   spaces\n    and newlines</div>",
+    "sp11/white_space_pre_wrap": "<div style='margin-bottom:10px;white-space:pre-wrap;width:300px;background-color:rgb(230,230,230);'>White space pre-wrap:\n  preserves   spaces\n  but also   wraps   long lines when they exceed the container width limit.</div>",
+    "sp11/white_space_pre_line": "<div style='margin-bottom:10px;white-space:pre-line;width:300px;background-color:rgb(230,230,230);'>White space pre-line:\n  collapses   spaces\n  but   preserves\n  newlines and wraps.</div>",
 
     # ── SP11 Color ───────────────────────────────────────────────────
-    "sp11/color_red": "<p style='color:red;'>The quick brown fox</p>",
-    "sp11/color_blue": "<p style='color:blue;'>The quick brown fox</p>",
-    "sp11/color_green": "<p style='color:green;'>The quick brown fox</p>",
-    "sp11/color_custom": "<p style='color:#8B4513;'>The quick brown fox</p>",
+    "sp11/color_red": "<div style='margin-bottom:10px;color:red;'>This text is rendered in red color</div>",
+    "sp11/color_blue": "<div style='margin-bottom:10px;color:blue;'>This text is rendered in blue color</div>",
+    "sp11/color_green": "<div style='margin-bottom:10px;color:green;'>This text is rendered in green color</div>",
+    "sp11/color_custom": "<div style='margin-bottom:10px;color:rgb(139,0,139);'>This text is rendered in custom purple (#8B008B)</div>",
 
-    # ── SP11 Text Shadow / Overflow ──────────────────────────────────
-    "sp11/text_shadow_basic": "<p style='text-shadow:2px 2px 4px rgba(0,0,0,0.5);font-size:24px;'>The quick brown fox</p>",
-    "sp11/text_overflow_ellipsis": "<div style='width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:#eee;'>The quick brown fox jumps over the lazy dog</div>",
+    # ── SP11 Text Shadow & Overflow ──────────────────────────────────
+    "sp11/text_shadow_basic": "<div style='margin-bottom:10px;font-size:24px;text-shadow:2px 2px 4px rgba(0,0,0,0.502);'>Text with a shadow effect</div>",
+    "sp11/text_overflow_ellipsis": "<div style='margin-bottom:10px;width:200px;white-space:nowrap;overflow-x:hidden;text-overflow:ellipsis;background-color:rgb(230,230,230);'>This text overflows its container and should show an ellipsis at the end</div>",
 
-    # ── SP13 Inline Basics ───────────────────────────────────────────
-    "sp13/inline_single_span": "<p>Hello <span style='color:red;'>world</span></p>",
-    "sp13/inline_multiple_spans": "<p><span style='color:red;'>Hello</span> <span style='color:blue;'>beautiful</span> <span style='color:green;'>world</span></p>",
-    "sp13/inline_nested_spans": "<p><span style='color:red;'>Hello <span style='font-weight:bold;color:blue;'>beautiful</span> world</span></p>",
+    # ── SP13 Inline Basic ────────────────────────────────────────────
+    "sp13/inline_single_span": "<span style='color:red;'>A single inline span with red text</span>",
+    "sp13/inline_multiple_spans": "<span style='color:red;'>First span </span><span style='color:blue;'>Second span </span><span style='color:green;'>Third span</span>",
+    "sp13/inline_nested_spans": "<span style='color:blue;'>Outer <span style='color:red;font-weight:bold;'>inner bold red</span></span><span style='color:blue;'> outer again</span>",
 
     # ── SP13 Line Breaking ───────────────────────────────────────────
-    "sp13/line_breaking_normal_wrap": "<p style='width:150px;background:#eee;'>The quick brown fox jumps over the lazy dog and keeps going</p>",
-    "sp13/line_breaking_nowrap": "<p style='white-space:nowrap;width:150px;background:#eee;'>The quick brown fox jumps</p>",
-    "sp13/line_breaking_break_word": "<p style='overflow-wrap:break-word;width:100px;background:#eee;'>Supercalifragilisticexpialidocious</p>",
+    "sp13/line_breaking_normal_wrap": "<div style='width:200px;background-color:rgb(230,230,230);'><span>This is a long line of text that should naturally wrap at word boundaries within the container</span></div>",
+    "sp13/line_breaking_nowrap": "<div style='width:200px;white-space:nowrap;overflow-x:hidden;background-color:rgb(230,230,230);'><span>This text should not wrap and may be clipped by overflow hidden</span></div>",
+    "sp13/line_breaking_break_word": "<div style='width:150px;overflow-wrap:break-word;background-color:rgb(230,230,230);'><span>Supercalifragilisticexpialidocious should break mid-word</span></div>",
 
     # ── SP13 Vertical Align ──────────────────────────────────────────
-    "sp13/vertical_align_baseline": "<p style='font-size:24px;'>Text <span style='font-size:12px;vertical-align:baseline;background:#eee;'>small baseline</span> text</p>",
-    "sp13/vertical_align_middle": "<p style='font-size:24px;'>Text <span style='font-size:12px;vertical-align:middle;background:#eee;'>small middle</span> text</p>",
-    "sp13/vertical_align_top": "<p style='font-size:24px;'>Text <span style='font-size:12px;vertical-align:top;background:#eee;'>small top</span> text</p>",
-    "sp13/vertical_align_bottom": "<p style='font-size:24px;'>Text <span style='font-size:12px;vertical-align:bottom;background:#eee;'>small bottom</span> text</p>",
-    "sp13/vertical_align_super": "<p>Normal text<span style='vertical-align:super;font-size:12px;'>superscript</span> text</p>",
-    "sp13/vertical_align_sub": "<p>Normal text<span style='vertical-align:sub;font-size:12px;'>subscript</span> text</p>",
+    "sp13/vertical_align_baseline": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:baseline;background-color:rgb(255,200,200);'>baseline</span></div>",
+    "sp13/vertical_align_middle": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:middle;background-color:rgb(255,200,200);'>middle</span></div>",
+    "sp13/vertical_align_top": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:top;background-color:rgb(255,200,200);'>top</span></div>",
+    "sp13/vertical_align_bottom": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:bottom;background-color:rgb(255,200,200);'>bottom</span></div>",
+    "sp13/vertical_align_super": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:super;background-color:rgb(255,200,200);'>super</span></div>",
+    "sp13/vertical_align_sub": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:sub;background-color:rgb(255,200,200);'>sub</span></div>",
 
     # ── SP13 Inline Block ────────────────────────────────────────────
-    "sp13/inline_block_basic": "<p>Text <span style='display:inline-block;width:50px;height:50px;background:red;'></span> more text</p>",
-    "sp13/inline_block_vertical_align": "<p style='font-size:24px;'>Text <span style='display:inline-block;width:50px;height:50px;background:red;vertical-align:middle;'></span> middle</p>",
+    "sp13/inline_block_basic": "<span>Text before </span><div style='display:inline-block;width:80px;height:40px;background-color:red;'></div><span> text after</span>",
+    "sp13/inline_block_vertical_align": "<div style='background-color:rgb(230,230,230);'><span>Aligned: </span><div style='display:inline-block;width:60px;height:60px;background-color:blue;vertical-align:middle;'></div><span> middle-aligned inline-block</span></div>",
 
     # ── SP13 Mixed Content ───────────────────────────────────────────
-    "sp13/mixed_block_inline": "<div><p>First paragraph</p><span style='color:red;'>Inline text</span><p>Second paragraph</p></div>",
+    "sp13/mixed_block_inline": "<div style='width:300px;height:40px;background-color:rgb(200,220,255);'><span>Block element with text</span></div><span style='color:red;'>Inline span after block </span><div style='width:300px;height:40px;background-color:rgb(220,255,200);'></div>",
 
-    # ── SP13 White Space ─────────────────────────────────────────────
-    "sp13/white_space_collapsing": "<p>Hello     world    how    are    you</p>",
-    "sp13/white_space_preserving": "<pre>Hello     world    how    are    you</pre>",
+    # ── SP13 White Space Handling ────────────────────────────────────
+    "sp13/white_space_collapsing": "<div style='width:300px;background-color:rgb(230,230,230);'><span>  Multiple  </span><span>  spaces  </span><span>  should  </span><span>  collapse  </span></div>",
+    "sp13/white_space_preserving": "<div style='width:400px;white-space:pre;background-color:rgb(230,230,230);'><span>  Preserved   spaces   and\n  newlines  </span></div>",
 
     # ── SP13 Inline Decoration ───────────────────────────────────────
-    "sp13/inline_background_color": "<p>Normal <span style='background:yellow;'>highlighted text</span> normal</p>",
-    "sp13/inline_padding": "<p>Normal <span style='padding:5px 10px;background:yellow;'>padded text</span> normal</p>",
-    "sp13/inline_border": "<p>Normal <span style='border:1px solid red;padding:2px 4px;'>bordered text</span> normal</p>",
+    "sp13/inline_background_color": "<span>Normal text </span><span style='background-color:yellow;'>highlighted span</span><span> normal text</span>",
+    "sp13/inline_padding": "<span>Before </span><span style='padding:4px 12px;background-color:rgb(200,230,255);'>padded inline</span><span> after</span>",
+    "sp13/inline_border": "<span>Before </span><span style='border:2px solid red;padding-left:6px;padding-right:6px;'>bordered inline</span><span> after</span>",
 }
 
 
