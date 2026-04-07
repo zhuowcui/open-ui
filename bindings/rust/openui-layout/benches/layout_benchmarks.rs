@@ -5,8 +5,9 @@
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_geometry::{LayoutUnit, Length};
-use openui_layout::{block_layout, ConstraintSpace};
+use openui_geometry::{BfcOffset, BfcRect, LayoutUnit, Length};
+use openui_layout::{block_layout, compute_ruby_layout, ConstraintSpace, ExclusionSpace};
+use openui_layout::exclusions::{ExclusionArea, ExclusionType};
 use openui_style::*;
 
 // ---------------------------------------------------------------------------
@@ -899,6 +900,229 @@ fn bench_text_inline_line_breaking_stress(c: &mut Criterion) {
 // Criterion groups and main
 // ===========================================================================
 
+// ===========================================================================
+// 11. Sticky Positioning Benchmarks
+// ===========================================================================
+
+fn bench_sticky_basic(c: &mut Criterion) {
+    c.bench_function("sticky/basic_sticky", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // Scrollable container
+                let container = add_block(&mut doc, vp);
+                doc.node_mut(container).style.width = Length::px(800.0);
+                doc.node_mut(container).style.overflow_y = Overflow::Scroll;
+
+                // Sticky header — sticks to top during scroll
+                let sticky_header = add_block(&mut doc, container);
+                doc.node_mut(sticky_header).style.width = Length::px(800.0);
+                doc.node_mut(sticky_header).style.height = Length::px(40.0);
+                doc.node_mut(sticky_header).style.position = Position::Sticky;
+                doc.node_mut(sticky_header).style.top = Length::px(0.0);
+                doc.node_mut(sticky_header).style.background_color =
+                    Color::from_rgba8(220, 230, 255, 255);
+
+                // Content blocks that scroll behind the sticky header
+                for _ in 0..10 {
+                    add_sized_block(&mut doc, container, 800.0, 60.0);
+                }
+
+                // Another sticky element mid-page
+                let sticky_mid = add_block(&mut doc, container);
+                doc.node_mut(sticky_mid).style.width = Length::px(800.0);
+                doc.node_mut(sticky_mid).style.height = Length::px(30.0);
+                doc.node_mut(sticky_mid).style.position = Position::Sticky;
+                doc.node_mut(sticky_mid).style.top = Length::px(40.0);
+
+                for _ in 0..10 {
+                    add_sized_block(&mut doc, container, 800.0, 60.0);
+                }
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 12. Ruby Annotation Benchmarks
+// ===========================================================================
+
+fn bench_ruby_annotation_layout(c: &mut Criterion) {
+    c.bench_function("ruby/annotation_layout", |b| {
+        b.iter_batched_ref(
+            || {
+                // Benchmark direct ruby layout computation with varying sizes.
+                // This covers the alignment arithmetic in compute_ruby_layout.
+                (0.0f32, 0.0f32)
+            },
+            |(_, _)| {
+                // 20 ruby pairs with different base/annotation widths
+                for i in 0..20 {
+                    let base_width = 60.0 + i as f32 * 5.0;
+                    let annotation_width = 30.0 + i as f32 * 2.0;
+                    let _ = compute_ruby_layout(
+                        base_width,
+                        annotation_width,
+                        12.0,
+                        RubyAlign::SpaceAround,
+                        RubyPosition::Over,
+                        WritingMode::HorizontalTb,
+                    );
+                }
+            },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 13. Fixed Positioning Benchmarks
+// ===========================================================================
+
+fn bench_position_fixed_children(c: &mut Criterion) {
+    c.bench_function("position/fixed_children", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // Normal flow content
+                for _ in 0..8 {
+                    add_sized_block(&mut doc, vp, 800.0, 80.0);
+                }
+
+                // Fixed-position overlay (e.g. modal backdrop)
+                let overlay = add_block(&mut doc, vp);
+                doc.node_mut(overlay).style.position = Position::Fixed;
+                doc.node_mut(overlay).style.top = Length::px(0.0);
+                doc.node_mut(overlay).style.left = Length::px(0.0);
+                doc.node_mut(overlay).style.width = Length::px(800.0);
+                doc.node_mut(overlay).style.height = Length::px(600.0);
+                doc.node_mut(overlay).style.background_color =
+                    Color::from_rgba8(0, 0, 0, 128);
+
+                // Fixed-position dialog within the overlay
+                let dialog = add_block(&mut doc, vp);
+                doc.node_mut(dialog).style.position = Position::Fixed;
+                doc.node_mut(dialog).style.top = Length::px(150.0);
+                doc.node_mut(dialog).style.left = Length::px(200.0);
+                doc.node_mut(dialog).style.width = Length::px(400.0);
+                doc.node_mut(dialog).style.height = Length::px(300.0);
+                doc.node_mut(dialog).style.background_color = Color::WHITE;
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 14. BFC Float-Triggered Benchmarks
+// ===========================================================================
+
+fn bench_bfc_float_triggered(c: &mut Criterion) {
+    c.bench_function("bfc/float_triggered", |b| {
+        b.iter_batched_ref(
+            || {
+                let mut doc = Document::new();
+                let vp = doc.root();
+
+                // BFC container (overflow:hidden establishes a new formatting context)
+                let bfc = add_block(&mut doc, vp);
+                doc.node_mut(bfc).style.width = Length::px(800.0);
+                doc.node_mut(bfc).style.overflow_x = Overflow::Hidden;
+                doc.node_mut(bfc).style.overflow_y = Overflow::Hidden;
+
+                // Several floats that trigger BFC deferral/resolution passes
+                for i in 0..6 {
+                    let float_box = add_sized_block(&mut doc, bfc, 120.0, 80.0);
+                    doc.node_mut(float_box).style.float = if i % 2 == 0 {
+                        Float::Left
+                    } else {
+                        Float::Right
+                    };
+                    doc.node_mut(float_box).style.margin_right = Length::px(8.0);
+                    doc.node_mut(float_box).style.margin_bottom = Length::px(8.0);
+                }
+
+                // Block children that must resolve their BFC block offset
+                for _ in 0..4 {
+                    let child = add_sized_block(&mut doc, bfc, 200.0, 50.0);
+                    // overflow:hidden on children also triggers new FC
+                    doc.node_mut(child).style.overflow_x = Overflow::Hidden;
+                    doc.node_mut(child).style.overflow_y = Overflow::Hidden;
+                }
+
+                doc
+            },
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// 15. Float Exclusion Space Query Benchmarks
+// ===========================================================================
+
+fn bench_float_exclusion_query(c: &mut Criterion) {
+    c.bench_function("float/exclusion_query", |b| {
+        b.iter_batched_ref(
+            || {
+                // Build an exclusion space with 10 left and 10 right floats
+                let mut space = ExclusionSpace::new();
+                for i in 0..10 {
+                    let top = LayoutUnit::from_f32(i as f32 * 80.0);
+                    let bottom = LayoutUnit::from_f32(i as f32 * 80.0 + 70.0);
+                    space.add(ExclusionArea {
+                        rect: BfcRect::new(
+                            BfcOffset::new(LayoutUnit::zero(), top),
+                            BfcOffset::new(LayoutUnit::from_f32(150.0), bottom),
+                        ),
+                        exclusion_type: ExclusionType::Left,
+                    });
+                    space.add(ExclusionArea {
+                        rect: BfcRect::new(
+                            BfcOffset::new(LayoutUnit::from_f32(650.0), top),
+                            BfcOffset::new(LayoutUnit::from_f32(800.0), bottom),
+                        ),
+                        exclusion_type: ExclusionType::Right,
+                    });
+                }
+                space
+            },
+            |space| {
+                // Query layout opportunities at various block offsets —
+                // simulates the inner loop of inline layout with floats.
+                for i in 0..20 {
+                    let offset = BfcOffset::new(
+                        LayoutUnit::zero(),
+                        LayoutUnit::from_f32(i as f32 * 40.0),
+                    );
+                    let _ = space.find_layout_opportunity(
+                        &offset,
+                        LayoutUnit::from_f32(800.0),
+                        LayoutUnit::from_f32(200.0),
+                    );
+                }
+            },
+            criterion::BatchSize::SmallInput,
+        )
+    });
+}
+
+// ===========================================================================
+// Criterion groups and main
+// ===========================================================================
+
 criterion_group!(
     block_benches,
     bench_single_block,
@@ -915,12 +1139,14 @@ criterion_group!(
     bench_float_left_simple,
     bench_float_text_wrap,
     bench_float_complex,
+    bench_float_exclusion_query,
 );
 
 criterion_group!(
     position_benches,
     bench_absolute_positioning,
     bench_relative_offsets,
+    bench_position_fixed_children,
 );
 
 criterion_group!(
@@ -962,6 +1188,21 @@ criterion_group!(
 );
 
 criterion_group!(
+    sticky_benches,
+    bench_sticky_basic,
+);
+
+criterion_group!(
+    ruby_benches,
+    bench_ruby_annotation_layout,
+);
+
+criterion_group!(
+    bfc_benches,
+    bench_bfc_float_triggered,
+);
+
+criterion_group!(
     text_benches,
     bench_text_inline_long_paragraph,
     bench_text_inline_mixed_bidi,
@@ -979,4 +1220,7 @@ criterion_main!(
     multicol_benches,
     fragmentation_benches,
     text_benches,
+    sticky_benches,
+    ruby_benches,
+    bfc_benches,
 );

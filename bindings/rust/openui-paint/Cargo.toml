@@ -14,3 +14,8 @@ skia-safe = "0.82"
 
 [dev-dependencies]
 png = "0.17"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "paint_benchmarks"
+harness = false
