@@ -374,6 +374,23 @@ def main():
         }, f, indent=2)
     print(f"\nSummary written to {summary_file}")
 
+    # Validate summary.json
+    with open(summary_file) as f:
+        written = json.load(f)
+    written_ids = {t["id"] for t in written.get("tests", [])}
+    expected_ids = set(all_tests)
+    if len(written.get("tests", [])) != len(all_tests):
+        print(f"\nERROR: summary.json has {len(written.get('tests', []))} entries "
+              f"but expected {len(all_tests)}", file=sys.stderr)
+        sys.exit(1)
+    missing = expected_ids - written_ids
+    if missing:
+        print(f"\nERROR: summary.json is missing {len(missing)} test IDs:", file=sys.stderr)
+        for m in sorted(missing):
+            print(f"  - {m}", file=sys.stderr)
+        sys.exit(1)
+    print("summary.json validated OK")
+
 
 if __name__ == "__main__":
     main()

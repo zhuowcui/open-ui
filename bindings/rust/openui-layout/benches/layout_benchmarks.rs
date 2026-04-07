@@ -56,14 +56,14 @@ fn add_text(doc: &mut Document, parent: NodeId, text: &str) -> NodeId {
 
 fn bench_single_block(c: &mut Criterion) {
     c.bench_function("block/single_200x100", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
                 add_sized_block(&mut doc, vp, 200.0, 100.0);
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -71,7 +71,7 @@ fn bench_single_block(c: &mut Criterion) {
 
 fn bench_10_stacked_blocks(c: &mut Criterion) {
     c.bench_function("block/10_stacked", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -80,7 +80,7 @@ fn bench_10_stacked_blocks(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -88,7 +88,7 @@ fn bench_10_stacked_blocks(c: &mut Criterion) {
 
 fn bench_100_stacked_blocks(c: &mut Criterion) {
     c.bench_function("block/100_stacked", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -97,7 +97,7 @@ fn bench_100_stacked_blocks(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -105,7 +105,7 @@ fn bench_100_stacked_blocks(c: &mut Criterion) {
 
 fn bench_deep_nesting_10(c: &mut Criterion) {
     c.bench_function("block/deep_nesting_10", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -115,7 +115,7 @@ fn bench_deep_nesting_10(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -123,7 +123,7 @@ fn bench_deep_nesting_10(c: &mut Criterion) {
 
 fn bench_deep_nesting_50(c: &mut Criterion) {
     c.bench_function("block/deep_nesting_50", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -133,7 +133,7 @@ fn bench_deep_nesting_50(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -141,7 +141,7 @@ fn bench_deep_nesting_50(c: &mut Criterion) {
 
 fn bench_margin_collapsing(c: &mut Criterion) {
     c.bench_function("block/margin_collapsing_20", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -152,7 +152,7 @@ fn bench_margin_collapsing(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -160,7 +160,7 @@ fn bench_margin_collapsing(c: &mut Criterion) {
 
 fn bench_mixed_sizing(c: &mut Criterion) {
     c.bench_function("block/mixed_sizing", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -191,7 +191,7 @@ fn bench_mixed_sizing(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -203,7 +203,7 @@ fn bench_mixed_sizing(c: &mut Criterion) {
 
 fn bench_float_left_simple(c: &mut Criterion) {
     c.bench_function("float/left_5_boxes", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -216,7 +216,7 @@ fn bench_float_left_simple(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -224,7 +224,7 @@ fn bench_float_left_simple(c: &mut Criterion) {
 
 fn bench_float_text_wrap(c: &mut Criterion) {
     c.bench_function("float/text_wrap", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -244,7 +244,7 @@ fn bench_float_text_wrap(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -252,7 +252,7 @@ fn bench_float_text_wrap(c: &mut Criterion) {
 
 fn bench_float_complex(c: &mut Criterion) {
     c.bench_function("float/complex_20_alternating", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -270,7 +270,7 @@ fn bench_float_complex(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -282,7 +282,7 @@ fn bench_float_complex(c: &mut Criterion) {
 
 fn bench_absolute_positioning(c: &mut Criterion) {
     c.bench_function("position/absolute_10_children", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -301,7 +301,7 @@ fn bench_absolute_positioning(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -309,7 +309,7 @@ fn bench_absolute_positioning(c: &mut Criterion) {
 
 fn bench_relative_offsets(c: &mut Criterion) {
     c.bench_function("position/relative_20_blocks", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -321,7 +321,7 @@ fn bench_relative_offsets(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -333,7 +333,7 @@ fn bench_relative_offsets(c: &mut Criterion) {
 
 fn bench_blog_layout(c: &mut Criterion) {
     c.bench_function("complex/blog_layout", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -379,7 +379,7 @@ fn bench_blog_layout(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -387,7 +387,7 @@ fn bench_blog_layout(c: &mut Criterion) {
 
 fn bench_form_layout(c: &mut Criterion) {
     c.bench_function("complex/form_layout", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -428,7 +428,7 @@ fn bench_form_layout(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -436,7 +436,7 @@ fn bench_form_layout(c: &mut Criterion) {
 
 fn bench_grid_of_cards(c: &mut Criterion) {
     c.bench_function("complex/4x4_card_grid", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -471,7 +471,7 @@ fn bench_grid_of_cards(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -483,7 +483,7 @@ fn bench_grid_of_cards(c: &mut Criterion) {
 
 fn bench_flex_row_5_items(c: &mut Criterion) {
     c.bench_function("flex/row_5_items", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -502,7 +502,7 @@ fn bench_flex_row_5_items(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -510,7 +510,7 @@ fn bench_flex_row_5_items(c: &mut Criterion) {
 
 fn bench_flex_column_10_items(c: &mut Criterion) {
     c.bench_function("flex/column_10_items", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -529,7 +529,7 @@ fn bench_flex_column_10_items(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -537,7 +537,7 @@ fn bench_flex_column_10_items(c: &mut Criterion) {
 
 fn bench_flex_wrap_20_items(c: &mut Criterion) {
     c.bench_function("flex/wrap_20_items", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -558,7 +558,7 @@ fn bench_flex_wrap_20_items(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -570,7 +570,7 @@ fn bench_flex_wrap_20_items(c: &mut Criterion) {
 
 fn bench_inline_short_text(c: &mut Criterion) {
     c.bench_function("inline/short_text", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -581,7 +581,7 @@ fn bench_inline_short_text(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -589,7 +589,7 @@ fn bench_inline_short_text(c: &mut Criterion) {
 
 fn bench_inline_long_paragraph(c: &mut Criterion) {
     c.bench_function("inline/long_paragraph", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -607,7 +607,7 @@ fn bench_inline_long_paragraph(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -615,7 +615,7 @@ fn bench_inline_long_paragraph(c: &mut Criterion) {
 
 fn bench_inline_mixed_spans(c: &mut Criterion) {
     c.bench_function("inline/mixed_spans_10", |b| {
-        b.iter_batched(
+        b.iter_batched_ref(
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
@@ -633,7 +633,7 @@ fn bench_inline_mixed_spans(c: &mut Criterion) {
 
                 doc
             },
-            |doc| block_layout(&doc, doc.root(), &root_space()),
+            |doc| { block_layout(doc, doc.root(), &root_space()); },
             criterion::BatchSize::SmallInput,
         )
     });

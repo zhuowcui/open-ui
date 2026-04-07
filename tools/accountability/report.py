@@ -69,6 +69,19 @@ AREA_LABELS = {
     "SP13": "Inline Layout",
 }
 
+SUMMARY_JSON = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results", "summary.json")
+
+
+def load_pixel_summary():
+    """Load authoritative pixel results from summary.json.
+
+    Returns a list of test dicts or None if the file is missing.
+    """
+    if not os.path.isfile(SUMMARY_JSON):
+        return None
+    with open(SUMMARY_JSON) as f:
+        return json.load(f).get("tests", [])
+
 
 def load_chromium_csvs():
     """Load all chromium test CSVs into a list of dicts."""
@@ -239,10 +252,9 @@ def cmd_summary():
         print("──────────────────────────────")
 
         # Read authoritative pixel results from summary.json if available
-        summary_json = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results", "summary.json")
-        if os.path.isfile(summary_json):
-            with open(summary_json) as f:
-                pixel_summary = json.load(f)
+        pixel_tests = load_pixel_summary()
+        if pixel_tests is not None:
+            pixel_summary = {"tests": pixel_tests}
             sp_pixel = {"sp11": {"total": 0, "pass": 0, "fail": 0, "error": 0},
                         "sp12": {"total": 0, "pass": 0, "fail": 0, "error": 0},
                         "sp13": {"total": 0, "pass": 0, "fail": 0, "error": 0}}
@@ -364,20 +376,59 @@ def cmd_area(area_filter):
             print(f"  {feat:<30} {impl:>3}/{len(rows):<3} impl  {pixel:>3}/{len(rows):<3} pixel-compared  {pixel_pass} pass")
         print()
 
+    # Pixel comparison from summary.json (authoritative)
+    pixel_tests = load_pixel_summary()
+    if pixel_tests is not None:
+        area_pixel = [t for t in pixel_tests if t["id"].split("/")[0].upper() == area_filter]
+        if area_pixel:
+            print(f"PIXEL COMPARISON ({len(area_pixel)} tests from summary.json)")
+            print("─" * 50)
+            p = sum(1 for t in area_pixel if t["status"] == "pass")
+            fl = sum(1 for t in area_pixel if t["status"] == "fail")
+            e = sum(1 for t in area_pixel if t["status"] == "error")
+            print(f"  {p} pass  |  {fl} fail  |  {e} error")
+            for t in area_pixel:
+                if t["status"] != "pass":
+                    mismatch = t.get("mismatch_pct", 0.0)
+                    label = "error" if t["status"] == "error" else f"{mismatch:.2f}% mismatch"
+                    print(f"    {t['id']} — {label}")
+            print()
+
 
 def cmd_failing():
-    """List all failing ported tests."""
+    """List all failing ported tests and pixel failures."""
     chromium = load_chromium_csvs()
     failing = [r for r in chromium if r.get("pass_fail") == "fail"]
 
-    print_header(f"FAILING TESTS ({len(failing)} total)")
-    for r in failing:
-        print(f"  [{r['_area']}] {r.get('chromium_test_path', 'unknown')}")
-        if r.get("notes"):
-            print(f"         Note: {r['notes']}")
-    if not failing:
+    # Pixel failures from authoritative summary.json
+    pixel_tests = load_pixel_summary()
+    pixel_failing = []
+    if pixel_tests is not None:
+        pixel_failing = [t for t in pixel_tests if t["status"] in ("fail", "error")]
+
+    total = len(failing) + len(pixel_failing)
+    print_header(f"FAILING TESTS ({total} total)")
+
+    if failing:
+        print(f"  CHROMIUM TEST FAILURES ({len(failing)}):")
+        for r in failing:
+            print(f"    [{r['_area']}] {r.get('chromium_test_path', 'unknown')}")
+            if r.get("notes"):
+                print(f"           Note: {r['notes']}")
+        print()
+
+    if pixel_failing:
+        print(f"  PIXEL COMPARISON FAILURES ({len(pixel_failing)}):")
+        for t in pixel_failing:
+            sp = t["id"].split("/")[0].upper()
+            mismatch = t.get("mismatch_pct", 0.0)
+            label = "error" if t["status"] == "error" else f"{mismatch:.2f}% mismatch"
+            print(f"    [{sp}] {t['id']} — {label}")
+        print()
+
+    if total == 0:
         print("  No failing tests found.")
-    print()
+        print()
 
 
 def cmd_not_compared():
@@ -428,6 +479,16 @@ def cmd_csv_output():
     """Machine-readable summary as CSV."""
     chromium = load_chromium_csvs()
     features = load_feature_csvs()
+    pixel_tests = load_pixel_summary()
+
+    # Pre-aggregate pixel data from summary.json by area
+    pixel_by_area = defaultdict(lambda: {"compared": 0, "passing": 0})
+    if pixel_tests is not None:
+        for t in pixel_tests:
+            sp = t["id"].split("/")[0].upper()
+            pixel_by_area[sp]["compared"] += 1
+            if t["status"] == "pass":
+                pixel_by_area[sp]["passing"] += 1
 
     writer = csv.writer(sys.stdout)
     writer.writerow([
@@ -447,9 +508,15 @@ def cmd_csv_output():
 
         f_total = len(f_rows)
         f_impl = sum(1 for r in f_rows if r.get("implemented", "").lower() in ("yes", "partial"))
-        f_pixel = sum(1 for r in f_rows if r.get("pixel_compared_with_chromium", "").lower() == "yes")
-        f_pixel_pass = sum(1 for r in f_rows if r.get("pixel_result", "").lower() == "pass")
         f_perf = sum(1 for r in f_rows if r.get("perf_compared_with_chromium", "").lower() == "yes")
+
+        # Pixel stats from summary.json (authoritative) or fall back to CSVs
+        if pixel_tests is not None:
+            f_pixel = pixel_by_area[area]["compared"]
+            f_pixel_pass = pixel_by_area[area]["passing"]
+        else:
+            f_pixel = sum(1 for r in f_rows if r.get("pixel_compared_with_chromium", "").lower() == "yes")
+            f_pixel_pass = sum(1 for r in f_rows if r.get("pixel_result", "").lower() == "pass")
 
         writer.writerow([area, c_total, c_ported, c_passing, f_total, f_impl, f_pixel, f_pixel_pass, f_perf])
 
