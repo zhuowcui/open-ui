@@ -106,6 +106,33 @@ HTML_TEMPLATES = {
     "sp12/visibility_hidden": "<div style='width:200px;height:50px;background-color:red;'></div><div style='width:200px;height:50px;background-color:blue;visibility:hidden;'></div><div style='width:200px;height:50px;background-color:green;'></div>",
     "sp12/nested_blocks": "<div style='width:300px;padding:10px;background-color:rgb(200,200,200);'><div style='padding:10px;background-color:rgb(150,150,200);'><div style='width:100px;height:60px;background-color:red;'></div><div style='width:100px;height:60px;background-color:blue;'></div></div></div>",
 
+    # ── SP12 Sticky Positioning ──────────────────────────────────────
+    "sp12/position_sticky_top": "<div style='width:400px;height:300px;background-color:#f0f0f0;'><div style='position:sticky;top:10px;width:100px;height:30px;background-color:#4CAF50;'></div></div>",
+    "sp12/position_sticky_bottom": "<div style='width:400px;height:300px;background-color:#f0f0f0;'><div style='position:sticky;bottom:10px;width:100px;height:30px;background-color:#4CAF50;'></div></div>",
+
+    # ── SP12 Multicol ────────────────────────────────────────────────
+    "sp12/multicol_2_columns": "<div style='column-count:2;column-gap:20px;width:400px;background-color:#f0f0f0;'><div style='width:180px;height:50px;background-color:#F44336;'></div><div style='width:180px;height:50px;background-color:#4CAF50;'></div><div style='width:180px;height:50px;background-color:#2196F3;'></div><div style='width:180px;height:50px;background-color:#FF9800;'></div></div>",
+    "sp12/multicol_column_width": "<div style='column-width:150px;width:400px;background-color:#f0f0f0;'><div style='width:140px;height:50px;background-color:#F44336;'></div><div style='width:140px;height:50px;background-color:#4CAF50;'></div><div style='width:140px;height:50px;background-color:#2196F3;'></div><div style='width:140px;height:50px;background-color:#FF9800;'></div></div>",
+    "sp12/multicol_column_gap": "<div style='column-count:2;column-gap:40px;width:400px;background-color:#f0f0f0;'><div style='width:170px;height:50px;background-color:#F44336;'></div><div style='width:170px;height:50px;background-color:#4CAF50;'></div><div style='width:170px;height:50px;background-color:#2196F3;'></div><div style='width:170px;height:50px;background-color:#FF9800;'></div></div>",
+
+    # ── SP12 Flex Advanced ───────────────────────────────────────────
+    "sp12/flex_direction_row_reverse": "<div style='display:flex;flex-direction:row-reverse;width:400px;height:100px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:#F44336;'></div><div style='width:80px;height:60px;background-color:#4CAF50;'></div><div style='width:80px;height:60px;background-color:#2196F3;'></div></div>",
+    "sp12/flex_direction_column_reverse": "<div style='display:flex;flex-direction:column-reverse;width:200px;height:300px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:#F44336;'></div><div style='width:80px;height:60px;background-color:#4CAF50;'></div><div style='width:80px;height:60px;background-color:#2196F3;'></div></div>",
+    "sp12/flex_wrap_reverse": "<div style='display:flex;flex-wrap:wrap-reverse;width:200px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:#F44336;'></div><div style='width:80px;height:60px;background-color:#4CAF50;'></div><div style='width:80px;height:60px;background-color:#2196F3;'></div><div style='width:80px;height:60px;background-color:#FF9800;'></div></div>",
+    "sp12/flex_justify_space_around": "<div style='display:flex;justify-content:space-around;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:60px;height:40px;background-color:#F44336;'></div><div style='width:60px;height:40px;background-color:#4CAF50;'></div><div style='width:60px;height:40px;background-color:#2196F3;'></div></div>",
+    "sp12/flex_justify_space_evenly": "<div style='display:flex;justify-content:space-evenly;width:400px;height:80px;background-color:rgb(220,220,220);'><div style='width:60px;height:40px;background-color:#F44336;'></div><div style='width:60px;height:40px;background-color:#4CAF50;'></div><div style='width:60px;height:40px;background-color:#2196F3;'></div></div>",
+
+    # ── SP12 Margin Collapsing Advanced ──────────────────────────────
+    "sp12/margin_collapsing_parent_child": "<div style='width:200px;background-color:rgb(200,200,200);'><div style='width:100px;height:50px;background-color:#F44336;margin-top:30px;'></div></div><div style='width:200px;height:50px;background-color:#2196F3;'></div>",
+    "sp12/margin_collapsing_through_empty": "<div style='width:200px;height:50px;background-color:#F44336;margin-bottom:20px;'></div><div style='margin-top:15px;margin-bottom:25px;'></div><div style='width:200px;height:50px;background-color:#2196F3;margin-top:10px;'></div>",
+
+    # ── SP12 Overflow Axes ───────────────────────────────────────────
+    "sp12/overflow_scroll": "<div style='width:200px;height:100px;overflow:scroll;background-color:#f0f0f0;'><div style='width:180px;height:200px;background-color:#F44336;'></div></div>",
+    "sp12/overflow_auto": "<div style='width:200px;height:100px;overflow:auto;background-color:#f0f0f0;'><div style='width:180px;height:200px;background-color:#F44336;'></div></div>",
+
+    # ── SP12 Aspect Ratio ────────────────────────────────────────────
+    "sp12/aspect_ratio_basic": "<div style='width:200px;aspect-ratio:2/1;background-color:#9C27B0;'></div>",
+
     # ── SP11 Text Decoration ─────────────────────────────────────────
     "sp11/text_decoration_underline": "<div style='margin-bottom:10px;text-decoration-line:underline;'>This text has an underline decoration</div>",
     "sp11/text_decoration_overline": "<div style='margin-bottom:10px;text-decoration-line:overline;'>This text has an overline decoration</div>",
@@ -166,6 +193,35 @@ HTML_TEMPLATES = {
     "sp11/text_shadow_basic": "<div style='margin-bottom:10px;font-size:24px;text-shadow:2px 2px 4px rgba(0,0,0,0.502);'>Text with a shadow effect</div>",
     "sp11/text_overflow_ellipsis": "<div style='margin-bottom:10px;width:200px;white-space:nowrap;overflow-x:hidden;text-overflow:ellipsis;background-color:rgb(230,230,230);'>This text overflows its container and should show an ellipsis at the end</div>",
 
+    # ── SP11 Text Decoration Style ──────────────────────────────────
+    "sp11/text_decoration_style_solid": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-style:solid;'>Hello World</div>",
+    "sp11/text_decoration_style_double": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-style:double;'>Hello World</div>",
+    "sp11/text_decoration_style_dotted": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-style:dotted;'>Hello World</div>",
+    "sp11/text_decoration_style_dashed": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-style:dashed;'>Hello World</div>",
+    "sp11/text_decoration_style_wavy": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-style:wavy;'>Hello World</div>",
+
+    # ── SP11 Text Decoration Skip-Ink ───────────────────────────────
+    "sp11/text_decoration_skip_ink_auto": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-skip-ink:auto;'>Typography</div>",
+    "sp11/text_decoration_skip_ink_none": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-skip-ink:none;'>Typography</div>",
+
+    # ── SP11 Text Decoration Metrics ────────────────────────────────
+    "sp11/text_decoration_color_red": "<div style='margin-bottom:10px;color:blue;text-decoration:underline;text-decoration-color:red;'>Hello World</div>",
+    "sp11/text_decoration_thickness_3px": "<div style='margin-bottom:10px;text-decoration:underline;text-decoration-thickness:3px;'>Hello World</div>",
+    "sp11/text_underline_offset_5px": "<div style='margin-bottom:10px;text-decoration:underline;text-underline-offset:5px;'>Hello World</div>",
+
+    # ── SP11 Font Family ────────────────────────────────────────────
+    "sp11/font_family_serif": "<div style='margin-bottom:10px;font-family:serif;'>Hello World</div>",
+    "sp11/font_family_monospace": "<div style='margin-bottom:10px;font-family:monospace;'>Hello World</div>",
+
+    # ── SP11 Word Spacing Negative ──────────────────────────────────
+    "sp11/word_spacing_negative": "<div style='margin-bottom:10px;word-spacing:-3px;'>The quick brown fox</div>",
+
+    # ── SP11 Line Height Percentage ─────────────────────────────────
+    "sp11/line_height_percentage": "<div style='margin-bottom:10px;line-height:200%;width:300px;background-color:rgb(230,230,230);'>Line height 200%. This is a multi-line paragraph to demonstrate percentage-based line spacing between lines of text.</div>",
+
+    # ── SP11 Text Shadow Offset ─────────────────────────────────────
+    "sp11/text_shadow_offset": "<div style='margin-bottom:10px;text-shadow:3px 3px 0 red;'>Shadow</div>",
+
     # ── SP13 Inline Basic ────────────────────────────────────────────
     "sp13/inline_single_span": "<span style='color:red;'>A single inline span with red text</span>",
     "sp13/inline_multiple_spans": "<span style='color:red;'>First span </span><span style='color:blue;'>Second span </span><span style='color:green;'>Third span</span>",
@@ -199,6 +255,28 @@ HTML_TEMPLATES = {
     "sp13/inline_background_color": "<span>Normal text </span><span style='background-color:yellow;'>highlighted span</span><span> normal text</span>",
     "sp13/inline_padding": "<span>Before </span><span style='padding:4px 12px;background-color:rgb(200,230,255);'>padded inline</span><span> after</span>",
     "sp13/inline_border": "<span>Before </span><span style='border:2px solid red;padding-left:6px;padding-right:6px;'>bordered inline</span><span> after</span>",
+
+    # ── SP13 First-Letter / First-Line ─────────────────────────────────
+    "sp13/first_letter_basic": "<div><span style='font-size:2em;color:#F44336;'>L</span>orem ipsum dolor sit amet</div>",
+    "sp13/first_line_basic": "<div style='width:250px;'><p style='width:250px;'><span style='color:#2196F3;font-weight:bold;'>The first line is styled differently</span> and the remaining text uses the default paragraph style for subsequent lines</p></div>",
+
+    # ── SP13 Word Break ────────────────────────────────────────────────
+    "sp13/word_break_break_all": "<div style='width:100px;word-break:break-all;background-color:rgb(230,230,230);'>Supercalifragilisticexpialidocious</div>",
+    "sp13/overflow_wrap_break_word": "<div style='width:100px;overflow-wrap:break-word;background-color:rgb(230,230,230);'>Supercalifragilisticexpialidocious</div>",
+
+    # ── SP13 Vertical Align Extended ───────────────────────────────────
+    "sp13/vertical_align_text_top": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:text-top;background-color:rgb(255,200,200);'>text-top</span></div>",
+    "sp13/vertical_align_text_bottom": "<div style='background-color:rgb(230,230,230);line-height:60px;'><span style='font-size:32px;'>Big </span><span style='font-size:12px;vertical-align:text-bottom;background-color:rgb(255,200,200);'>text-bottom</span></div>",
+
+    # ── SP13 Line Breaking Extended ────────────────────────────────────
+    "sp13/line_breaking_overflow_wrap": "<div style='width:150px;overflow-wrap:anywhere;background-color:rgb(230,230,230);'>https://example.com/very/long/path/to/resource/that/should/break</div>",
+    "sp13/line_breaking_hyphens_auto": "<div style='width:120px;hyphens:auto;background-color:rgb(230,230,230);' lang='en'>Incomprehensibilities and internationalization are long words</div>",
+
+    # ── SP13 Box Decoration Break ──────────────────────────────────────
+    "sp13/inline_box_multiline": "<div style='width:200px;'><span style='background-color:rgb(200,230,255);padding:4px 8px;box-decoration-break:clone;-webkit-box-decoration-break:clone;'>This inline span has background and padding and wraps to multiple lines</span></div>",
+
+    # ── SP13 Float Interaction ─────────────────────────────────────────
+    "sp13/inline_with_float": "<div style='width:300px;overflow:hidden;'><div style='float:left;width:80px;height:80px;background-color:rgb(255,200,200);margin-right:10px;'></div><span>Inline text wraps around the floated box. More text to ensure wrapping below the float.</span></div>",
 }
 
 
