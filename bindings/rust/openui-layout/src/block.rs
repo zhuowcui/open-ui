@@ -59,6 +59,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         style,
         space,
         border_padding_inline,
+        border_padding_block,
     );
 
     // The total border-box inline size
@@ -1689,6 +1690,7 @@ fn resolve_inline_size(
     style: &ComputedStyle,
     space: &ConstraintSpace,
     border_padding: LayoutUnit,
+    border_padding_block: LayoutUnit,
 ) -> LayoutUnit {
     let available = space.available_inline_size;
 
@@ -1703,11 +1705,64 @@ fn resolve_inline_size(
 
     // Resolve the CSS width property — handle intrinsic sizing keywords
     let resolved = if style.width.is_auto() || style.width.is_stretch() {
-        // Auto/stretch width: fill available space minus border+padding
-        if style.box_sizing == BoxSizing::BorderBox {
-            available
+        // CSS Sizing 4 §5.1: when width is auto and the element has a preferred
+        // aspect ratio with a definite height, compute width from height × ratio.
+        // This overrides the normal block-level "fill available" rule.
+        let ar_width = if style.width.is_auto() {
+            if let Some(ref ar) = style.aspect_ratio {
+                let h_resolved = if !style.height.is_auto()
+                    && !style.height.is_content_or_intrinsic()
+                    && !style.height.is_stretch()
+                {
+                    let h = resolve_length(
+                        &style.height,
+                        space.percentage_resolution_block_size,
+                        openui_geometry::INDEFINITE_SIZE,
+                        openui_geometry::INDEFINITE_SIZE,
+                    );
+                    if h.is_indefinite() { None } else { Some(h) }
+                } else {
+                    None
+                };
+                if let Some(h) = h_resolved {
+                    let content_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (h - border_padding_block).clamp_negative_to_zero()
+                    } else {
+                        h
+                    };
+                    let ratio = ar.ratio;
+                    if ratio.0 != 0.0 && ratio.1 != 0.0 {
+                        let w = LayoutUnit::from_f32(content_h.to_f32() * ratio.0 / ratio.1);
+                        // AR applies to content-box dimensions. Return in the
+                        // same sizing context as other paths: border-box value
+                        // when box-sizing is border-box, content-box otherwise.
+                        Some(if style.box_sizing == BoxSizing::BorderBox {
+                            w + border_padding
+                        } else {
+                            w
+                        })
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
         } else {
-            (available - border_padding).clamp_negative_to_zero()
+            None
+        };
+
+        if let Some(w) = ar_width {
+            w
+        } else {
+            // Auto/stretch width: fill available space minus border+padding
+            if style.box_sizing == BoxSizing::BorderBox {
+                available
+            } else {
+                (available - border_padding).clamp_negative_to_zero()
+            }
         }
     } else if style.width.is_content_or_intrinsic() {
         resolve_intrinsic_inline(doc, node_id, &style.width, available, border_padding)
