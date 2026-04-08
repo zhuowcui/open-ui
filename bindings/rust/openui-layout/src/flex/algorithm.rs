@@ -186,9 +186,10 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         let container_cross = if is_column {
             content_inline_size
         } else {
-            // Use the container's own resolved content-box height when explicit,
-            // or available_block_size - bp when auto height with definite available.
-            if !style.height.is_auto() {
+            // Use the container's own resolved content-box height when explicit.
+            // CSS Flexbox §9.4: Only use container cross size if it is definite.
+            // height:auto means the cross size is NOT definite, even with definite available space.
+            if !style.height.is_auto() && !style.height.is_content_or_intrinsic() {
                 // Explicit height — use resolved content-box value
                 let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
                 if style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -196,8 +197,6 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 } else {
                     raw
                 }
-            } else if !space.available_block_size.is_indefinite() {
-                space.available_block_size - border_padding_block
             } else {
                 flex_lines[0].line_cross_size // keep computed size
             }
@@ -439,7 +438,10 @@ fn resolve_total_block_size(
     intrinsic_block_size: LayoutUnit,
     border_padding_block: LayoutUnit,
 ) -> LayoutUnit {
-    let resolved = if style.height.is_auto() {
+    let resolved = if space.is_fixed_block_size {
+        // Parent (e.g., column flex) has set a definite block size for this child
+        space.available_block_size
+    } else if style.height.is_auto() {
         intrinsic_block_size
     } else if style.height.is_content_or_intrinsic() {
         let sizes = compute_intrinsic_block_sizes(doc, node_id);

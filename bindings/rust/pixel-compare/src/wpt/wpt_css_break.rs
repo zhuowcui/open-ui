@@ -25924,6 +25924,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_096_ref() -> Document {
         doc.node_mut(n6).style.display = Display::Flex;
         doc.node_mut(n6).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n6).style.height = Length::px(180.0);
+        doc.node_mut(n6).style.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
         doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -26006,6 +26007,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_096() -> Document {
         doc.node_mut(n2).style.display = Display::Flex;
         doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n2).style.height = Length::px(180.0);
+        doc.node_mut(n2).style.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;

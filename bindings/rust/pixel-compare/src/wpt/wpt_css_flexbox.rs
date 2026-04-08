@@ -974,6 +974,7 @@ fn css_flexbox_align_self_016() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.align_self = ItemAlignment::new(ItemPosition::FlexStart);
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -1324,6 +1325,7 @@ fn css_flexbox_column_flex_child_with_max_width() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.align_self = ItemAlignment::new(ItemPosition::FlexStart);
             doc.node_mut(n3).style.max_width = Length::px(100.0);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -1645,6 +1647,7 @@ fn css_flexbox_fit_content_item_001() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.align_self = ItemAlignment::new(ItemPosition::FlexStart);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -76293,6 +76296,7 @@ fn css_flexbox_flexbox_safe_overflow_position_001_ref() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+    doc.node_mut(n1).style.justify_content = ContentAlignment::new(ContentPosition::FlexStart);
     doc.node_mut(n1).style.align_items = ItemAlignment::new(ItemPosition::Center);
     doc.node_mut(n1).style.float = Float::Left;
     doc.node_mut(n1).style.clear = Clear::Both;
@@ -76356,6 +76360,7 @@ fn css_flexbox_flexbox_safe_overflow_position_001_ref() -> Document {
         doc.node_mut(n4).style.width = Length::px(28.0);
         doc.node_mut(n4).style.height = Length::px(90.0);
         doc.node_mut(n4).style.flex_shrink = 0.0;
+        doc.node_mut(n4).style.align_self = ItemAlignment::new(ItemPosition::FlexStart);
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -76430,6 +76435,7 @@ fn css_flexbox_flexbox_safe_overflow_position_001_ref() -> Document {
     doc.node_mut(n8).style.border_left_width = 1;
     doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n8).style.align_content = ContentAlignment::new(ContentPosition::FlexStart);
     doc.node_mut(n8).style.justify_content = ContentAlignment::new(ContentPosition::Center);
     doc.node_mut(n8).style.align_items = ItemAlignment::new(ItemPosition::Center);
     doc.node_mut(n8).style.float = Float::Left;

@@ -17089,6 +17089,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_034() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n1).style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -17109,6 +17110,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_035() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n1).style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
     doc.node_mut(n1).style.width = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -17130,6 +17132,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_036() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n1).style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -17155,6 +17158,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_037() -> Document {
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Flex;
     doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n2).style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -17183,6 +17187,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_038() -> Document {
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Flex;
     doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n2).style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
     doc.node_mut(n2).style.height = Length::px(200.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
