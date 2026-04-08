@@ -32,10 +32,6 @@ display-contents-shadow-dom-1-ref,ported,css_display_display_contents_shadow_dom
 display-contents-sharing-001-ref,ported,css_display_display_contents_sharing_001_ref,
 display-contents-sharing-001,ported,css_display_display_contents_sharing_001,
 display-contents-state-change-001-ref,ported,css_display_display_contents_state_change_001_ref,
-display-contents-table-001-ref,ported,css_display_display_contents_table_001_ref,
-display-contents-table-001,ported,css_display_display_contents_table_001,
-display-contents-table-002-ref,ported,css_display_display_contents_table_002_ref,
-display-contents-table-002,ported,css_display_display_contents_table_002,
 display-contents-text-inherit-ref,ported,css_display_display_contents_text_inherit_ref,
 display-contents-text-inherit,ported,css_display_display_contents_text_inherit,
 display-contents-whitespace-inside-inline-ref,ported,css_display_display_contents_whitespace_inside_inline_ref,
@@ -105,6 +101,10 @@ display-contents-svg-anchor-child,not_portable,,uses_javascript
 display-contents-svg-elements-ref,not_portable,,unsupported element: <svg>
 display-contents-svg-elements,not_portable,,unsupported element: <svg>
 display-contents-svg-switch-child,not_portable,,uses_javascript
+display-contents-table-001-ref,not_portable,,unsupported display: table-caption
+display-contents-table-001,not_portable,,unsupported display: table-caption
+display-contents-table-002-ref,not_portable,,unsupported property: border-collapse
+display-contents-table-002,not_portable,,unsupported property: border-collapse
 display-contents-td-001,not_portable,,unsupported element: <table>
 display-contents-text-inherit-002,not_portable,,uses_javascript
 display-contents-text-only-001-ref,not_portable,,no_layout_content

@@ -555,8 +555,11 @@ class WptHtmlParser(HTMLParser):
         self.has_script = False
         self.has_style_block = False
         self.css_rules = []  # Parsed CSS rules from <style>
+        self.external_css_rules = []  # Parsed CSS rules from external stylesheets
+        self.external_stylesheet_hrefs = []  # hrefs of <link rel="stylesheet">
         self.all_styles = []  # all style dicts encountered
         self.ref_path = None
+        self.html_dir = ''  # Set by parse_wpt_html for resolving relative paths
 
     # Void elements that never have closing tags
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
@@ -568,6 +571,12 @@ class WptHtmlParser(HTMLParser):
         # Track reference
         if tag == 'link' and attrs_dict.get('rel') == 'match':
             self.ref_path = attrs_dict.get('href', '')
+
+        # Track external stylesheets
+        if tag == 'link' and attrs_dict.get('rel') == 'stylesheet':
+            href = attrs_dict.get('href', '')
+            if href:
+                self.external_stylesheet_hrefs.append(href)
 
         if tag == 'script':
             self.has_script = True
@@ -644,9 +653,11 @@ class WptHtmlParser(HTMLParser):
         pass
 
     def finalize(self):
-        """Apply CSS rules to the DOM tree after parsing."""
-        if self.css_rules:
-            apply_css_rules(self.css_rules, self.root)
+        """Apply CSS rules to the DOM tree after parsing.
+        External stylesheet rules are applied first, then inline <style> rules override."""
+        all_rules = self.external_css_rules + self.css_rules
+        if all_rules:
+            apply_css_rules(all_rules, self.root)
             # Re-collect all styles
             self.all_styles = []
             def collect(node):
@@ -663,7 +674,18 @@ def parse_wpt_html(html_path: str) -> WptHtmlParser:
         content = f.read()
 
     parser = WptHtmlParser()
+    parser.html_dir = os.path.dirname(os.path.abspath(html_path))
     parser.feed(content)
+
+    # Resolve and load external stylesheets
+    for href in parser.external_stylesheet_hrefs:
+        css_path = os.path.join(parser.html_dir, href)
+        if os.path.isfile(css_path):
+            with open(css_path, 'r', encoding='utf-8', errors='replace') as f:
+                css_text = f.read()
+            rules = parse_simple_css_rules(css_text)
+            parser.external_css_rules.extend(rules)
+
     parser.finalize()
     return parser
 

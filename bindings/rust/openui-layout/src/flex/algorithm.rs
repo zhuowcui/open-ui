@@ -100,6 +100,11 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             };
             content
         }
+    } else if space.is_fixed_block_size || space.stretch_block_size {
+        // CSS Flexbox §9.8: Parent flex has set a definite block size for this
+        // container (e.g. stretch or fixed). Treat it as the percentage base
+        // so that percentage-height children resolve correctly.
+        (space.available_block_size - border_padding_block).clamp_negative_to_zero()
     } else {
         // Container height is auto → percentages are indefinite
         LayoutUnit::from_raw(-64) // indefinite
@@ -411,13 +416,20 @@ fn resolve_container_block_size_for_flex(
     space: &ConstraintSpace,
     border_padding_block: LayoutUnit,
 ) -> LayoutUnit {
+    // When the parent flex has set a definite block size for this container,
+    // use it as the main axis size (e.g. nested column flex with stretch).
+    if space.is_fixed_block_size {
+        return (space.available_block_size - border_padding_block).clamp_negative_to_zero();
+    }
+    if space.stretch_block_size {
+        return (space.available_block_size - border_padding_block).clamp_negative_to_zero();
+    }
+
     if style.height.is_auto() {
-        if !space.available_block_size.is_indefinite() {
-            space.available_block_size - border_padding_block
-        } else {
-            // Indefinite main axis for column flex — signal with INDEFINITE
-            LayoutUnit::from_raw(-64) // INDEFINITE_SIZE sentinel
-        }
+        // Auto height → indefinite main axis for column flex.
+        // Items stay at hypothetical sizes; container shrink-wraps.
+        // CSS Flexbox §9.2: auto height means intrinsic sizing.
+        LayoutUnit::from_raw(-64) // INDEFINITE_SIZE sentinel
     } else {
         let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
         let content = if style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -1068,17 +1080,19 @@ fn resolve_cross_size(
             }
         }
 
-        // Auto cross size → lay out child to get intrinsic size
+        // Auto cross size → lay out child to get intrinsic size.
+        // For row flex: we know the inline size (main axis), need intrinsic block (cross).
+        // For column flex: we know the block size (main axis), need intrinsic inline (cross).
         let child_space = ConstraintSpace::for_block_child(
             if is_column {
-                item.flexed_border_box_size()
+                LayoutUnit::from_raw(-64) // indefinite inline to find intrinsic width
             } else {
-                item.flexed_border_box_size()
+                item.flexed_border_box_size() // known inline size (main axis)
             },
             if is_column {
-                LayoutUnit::from_raw(-64) // indefinite
+                item.flexed_border_box_size() // known block size (main axis)
             } else {
-                LayoutUnit::from_raw(-64)
+                LayoutUnit::from_raw(-64) // indefinite block to find intrinsic height
             },
             child_percentage_inline,
             child_percentage_block,
@@ -1094,10 +1108,18 @@ fn resolve_cross_size(
 
         (cross_size - cross_border_padding).clamp_negative_to_zero()
     } else {
-        // Auto cross size → lay out child to get intrinsic size
+        // Intrinsic keyword or other non-auto, non-fixed cross size
         let child_space = ConstraintSpace::for_block_child(
-            item.flexed_border_box_size(),
-            LayoutUnit::from_raw(-64),
+            if is_column {
+                LayoutUnit::from_raw(-64)
+            } else {
+                item.flexed_border_box_size()
+            },
+            if is_column {
+                item.flexed_border_box_size()
+            } else {
+                LayoutUnit::from_raw(-64)
+            },
             child_percentage_inline,
             child_percentage_block,
             child_style.creates_new_formatting_context(),
@@ -1294,21 +1316,37 @@ fn give_items_final_position(
                 let stretch_size = line.line_cross_size - item.cross_axis_margin_extent();
                 let stretch_size = stretch_size.clamp_negative_to_zero();
                 // Clamp against cross-axis min/max (CSS Flexbox §9.4)
+                // stretch_size is border-box, so convert min/max to border-box for clamping
                 let (cross_min_prop, cross_max_prop) = if is_column {
                     (&child_style.min_width, &child_style.max_width)
                 } else {
                     (&child_style.min_height, &child_style.max_height)
                 };
                 let cross_pct_base = if is_column { child_percentage_inline } else { child_percentage_block };
-                let cross_min = if cross_min_prop.is_auto() {
+                let cross_min_raw = if cross_min_prop.is_auto() {
                     LayoutUnit::zero()
                 } else {
                     resolve_length(cross_min_prop, cross_pct_base, LayoutUnit::zero(), LayoutUnit::zero())
                 };
-                let cross_max = if cross_max_prop.is_none() {
+                let cross_max_raw = if cross_max_prop.is_none() {
                     LayoutUnit::from_i32(33554431)
                 } else {
                     resolve_length(cross_max_prop, cross_pct_base, LayoutUnit::from_i32(33554431), LayoutUnit::from_i32(33554431))
+                };
+                // Convert content-box min/max to border-box for comparison with stretch_size
+                let cross_min = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    cross_min_raw
+                } else if cross_min_raw > LayoutUnit::zero() {
+                    cross_min_raw + cross_border_padding
+                } else {
+                    cross_min_raw
+                };
+                let cross_max = if cross_max_raw == LayoutUnit::from_i32(33554431) {
+                    cross_max_raw
+                } else if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    cross_max_raw
+                } else {
+                    cross_max_raw + cross_border_padding
                 };
                 stretch_size.clamp(cross_min, cross_max)
             } else {
@@ -1321,7 +1359,7 @@ fn give_items_final_position(
                 cross_content + cross_border_padding
             };
 
-            // Build final constraint space
+            // Build final constraint space.
             let (inline_size, block_size) = if is_column {
                 (cross_size_for_child, flexed_border_box)
             } else {

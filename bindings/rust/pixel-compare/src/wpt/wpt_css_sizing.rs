@@ -3339,6 +3339,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
         doc.node_mut(n2).style.vertical_align = VerticalAlign::Top;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.height = Length::min_content();
             doc.node_mut(n3).style.border_top_width = 2;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3356,6 +3357,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n3).style.line_height = LineHeight::Length(15.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.height = Length::max_content();
             doc.node_mut(n4).style.border_top_width = 2;
             doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3391,6 +3393,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
         doc.node_mut(n5).style.vertical_align = VerticalAlign::Top;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.min_height = Length::min_content();
             doc.node_mut(n6).style.border_top_width = 2;
             doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3409,6 +3412,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n6).style.height = Length::px(10.0);
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.min_height = Length::max_content();
             doc.node_mut(n7).style.border_top_width = 2;
             doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3445,6 +3449,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
         doc.node_mut(n8).style.vertical_align = VerticalAlign::Top;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.max_height = Length::min_content();
             doc.node_mut(n9).style.border_top_width = 2;
             doc.node_mut(n9).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3463,6 +3468,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n9).style.height = Length::px(120.0);
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n10).style.max_height = Length::max_content();
             doc.node_mut(n10).style.border_top_width = 2;
             doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n10).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3502,6 +3508,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
         doc.node_mut(n12).style.vertical_align = VerticalAlign::Top;
         doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n13).style.height = Length::min_content();
             doc.node_mut(n13).style.border_top_width = 2;
             doc.node_mut(n13).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n13).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3519,6 +3526,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n13).style.line_height = LineHeight::Length(15.0);
             doc.append_child(n12, n13);
             let n14 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n14).style.height = Length::max_content();
             doc.node_mut(n14).style.border_top_width = 2;
             doc.node_mut(n14).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n14).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3554,6 +3562,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
         doc.node_mut(n15).style.vertical_align = VerticalAlign::Top;
         doc.append_child(n11, n15);
             let n16 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n16).style.min_height = Length::min_content();
             doc.node_mut(n16).style.border_top_width = 2;
             doc.node_mut(n16).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n16).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3572,6 +3581,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n16).style.height = Length::px(10.0);
             doc.append_child(n15, n16);
             let n17 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n17).style.min_height = Length::max_content();
             doc.node_mut(n17).style.border_top_width = 2;
             doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n17).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3608,6 +3618,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
         doc.node_mut(n18).style.vertical_align = VerticalAlign::Top;
         doc.append_child(n11, n18);
             let n19 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n19).style.max_height = Length::min_content();
             doc.node_mut(n19).style.border_top_width = 2;
             doc.node_mut(n19).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n19).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -3626,6 +3637,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n19).style.height = Length::px(120.0);
             doc.append_child(n18, n19);
             let n20 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n20).style.max_height = Length::max_content();
             doc.node_mut(n20).style.border_top_width = 2;
             doc.node_mut(n20).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n20).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4272,6 +4284,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
     doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.height = Length::min_content();
         doc.node_mut(n2).style.border_top_width = 2;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4325,6 +4338,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.height = Length::min_content();
         doc.node_mut(n5).style.border_top_width = 2;
         doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4380,6 +4394,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n7).style.height = Length::px(10.0);
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.height = Length::min_content();
         doc.node_mut(n8).style.border_top_width = 2;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4435,6 +4450,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n10).style.height = Length::px(100.0);
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.height = Length::max_content();
         doc.node_mut(n11).style.border_top_width = 2;
         doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4488,6 +4504,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n13).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.height = Length::max_content();
         doc.node_mut(n14).style.border_top_width = 2;
         doc.node_mut(n14).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4543,6 +4560,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n16).style.height = Length::px(10.0);
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n17).style.height = Length::max_content();
         doc.node_mut(n17).style.border_top_width = 2;
         doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4654,6 +4672,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.append_child(n21, n23);
         let n24 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n24).style.min_height = Length::min_content();
         doc.node_mut(n24).style.border_top_width = 2;
         doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n24).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4709,6 +4728,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n26).style.height = Length::px(10.0);
             doc.append_child(n24, n26);
         let n27 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n27).style.min_height = Length::max_content();
         doc.node_mut(n27).style.border_top_width = 2;
         doc.node_mut(n27).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n27).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4764,6 +4784,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n29).style.height = Length::px(10.0);
             doc.append_child(n27, n29);
         let n30 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n30).style.max_height = Length::min_content();
         doc.node_mut(n30).style.border_top_width = 2;
         doc.node_mut(n30).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n30).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4819,6 +4840,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n32).style.height = Length::px(100.0);
             doc.append_child(n30, n32);
         let n33 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n33).style.max_height = Length::max_content();
         doc.node_mut(n33).style.border_top_width = 2;
         doc.node_mut(n33).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n33).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4887,6 +4909,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
     doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.height = Length::min_content();
         doc.node_mut(n2).style.border_top_width = 2;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4940,6 +4963,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.height = Length::min_content();
         doc.node_mut(n5).style.border_top_width = 2;
         doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -4995,6 +5019,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n7).style.height = Length::px(10.0);
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.height = Length::min_content();
         doc.node_mut(n8).style.border_top_width = 2;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5050,6 +5075,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n10).style.height = Length::px(100.0);
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.height = Length::max_content();
         doc.node_mut(n11).style.border_top_width = 2;
         doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5103,6 +5129,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n13).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.height = Length::max_content();
         doc.node_mut(n14).style.border_top_width = 2;
         doc.node_mut(n14).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5158,6 +5185,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n16).style.height = Length::px(10.0);
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n17).style.height = Length::max_content();
         doc.node_mut(n17).style.border_top_width = 2;
         doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5269,6 +5297,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.append_child(n21, n23);
         let n24 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n24).style.min_height = Length::min_content();
         doc.node_mut(n24).style.border_top_width = 2;
         doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n24).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5324,6 +5353,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n26).style.height = Length::px(10.0);
             doc.append_child(n24, n26);
         let n27 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n27).style.min_height = Length::max_content();
         doc.node_mut(n27).style.border_top_width = 2;
         doc.node_mut(n27).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n27).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5379,6 +5409,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n29).style.height = Length::px(10.0);
             doc.append_child(n27, n29);
         let n30 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n30).style.max_height = Length::min_content();
         doc.node_mut(n30).style.border_top_width = 2;
         doc.node_mut(n30).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n30).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -5434,6 +5465,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n32).style.height = Length::px(100.0);
             doc.append_child(n30, n32);
         let n33 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n33).style.max_height = Length::max_content();
         doc.node_mut(n33).style.border_top_width = 2;
         doc.node_mut(n33).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n33).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));

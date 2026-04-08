@@ -8,28 +8,6 @@ use openui_style::*;
 
 use crate::base_doc;
 
-// Source: align-baseline.html
-fn css_flexbox_align_baseline() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.margin_top = Length::px(0.0);
-    doc.node_mut(vp).style.margin_right = Length::px(0.0);
-    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(vp).style.margin_left = Length::px(0.0);
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n3).style.display = Display::Block;
-    doc.append_child(vp, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::Block;
-        doc.append_child(n3, n4);
-    doc
-}
-
 // Source: align-content-wrap-004.html
 fn css_flexbox_align_content_wrap_004() -> Document {
     let (mut doc, vp) = base_doc();
@@ -93,6 +71,7 @@ fn css_flexbox_align_content_wrap_004() -> Document {
 fn css_flexbox_align_content_center() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -101,12 +80,27 @@ fn css_flexbox_align_content_center() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -115,6 +109,7 @@ fn css_flexbox_align_content_center() -> Document {
 fn css_flexbox_align_content_flex_end() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -123,12 +118,27 @@ fn css_flexbox_align_content_flex_end() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -140,6 +150,7 @@ fn css_flexbox_align_content_flex_start() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n2).style.height = Length::px(200.0);
     doc.node_mut(n2).style.width = Length::px(80.0);
     doc.node_mut(n2).style.display = Display::Flex;
@@ -148,12 +159,27 @@ fn css_flexbox_align_content_flex_start() -> Document {
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(50.0);
+        doc.node_mut(n5).style.height = Length::px(50.0);
+        doc.node_mut(n5).style.text_align = TextAlign::Center;
+        doc.node_mut(n5).style.font_size = 20.0;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n2, n5);
     doc
 }
@@ -162,6 +188,7 @@ fn css_flexbox_align_content_flex_start() -> Document {
 fn css_flexbox_align_content_space_around() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(210.0);
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -170,12 +197,27 @@ fn css_flexbox_align_content_space_around() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -184,6 +226,7 @@ fn css_flexbox_align_content_space_around() -> Document {
 fn css_flexbox_align_content_space_between() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -192,12 +235,27 @@ fn css_flexbox_align_content_space_between() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -873,93 +931,6 @@ fn css_flexbox_align_self_013() -> Document {
     doc
 }
 
-// Source: align-self-015.html
-fn css_flexbox_align_self_015() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.border_top_width = 1;
-    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(n1).style.border_right_width = 1;
-    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(n1).style.border_bottom_width = 1;
-    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(n1).style.border_left_width = 1;
-    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(n1).style.width = Length::px(400.0);
-    doc.node_mut(n1).style.height = Length::px(200.0);
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::auto();
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::auto();
-        doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::Block;
-        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n5).style.display = Display::Block;
-        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n6).style.display = Display::Block;
-        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n6);
-        let n7 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n7).style.display = Display::Block;
-        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n7);
-        let n8 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n8).style.display = Display::Block;
-        doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n8);
-        let n9 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n9).style.display = Display::Block;
-        doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n9);
-        let n10 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n10).style.display = Display::Block;
-        doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n10);
-        let n11 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n11).style.display = Display::Block;
-        doc.node_mut(n11).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n11);
-        let n12 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n12).style.display = Display::Block;
-        doc.node_mut(n12).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n12);
-        let n13 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n13).style.display = Display::Block;
-        doc.node_mut(n13).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n13);
-        let n14 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n14).style.display = Display::Block;
-        doc.node_mut(n14).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n14);
-        let n15 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n15).style.display = Display::Block;
-        doc.node_mut(n15).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n15);
-        let n16 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n16).style.display = Display::Block;
-        doc.node_mut(n16).style.background_color = Color::from_rgba8(0, 255, 0, 255);
-        doc.append_child(n1, n16);
-    doc
-}
-
 // Source: align-self-016.html
 fn css_flexbox_align_self_016() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1002,7 +973,7 @@ fn css_flexbox_align_self_016() -> Document {
 fn css_flexbox_anonymous_block() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
     doc
 }
@@ -1140,41 +1111,6 @@ fn css_flexbox_aspect_ratio_transferred_max_size() -> Document {
         doc.node_mut(n2).style.flex_basis = Length::px(0.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
-    doc
-}
-
-// Source: auto-height-column-with-border-and-padding.html
-fn css_flexbox_auto_height_column_with_border_and_padding() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.border_top_width = 5;
-    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_right_width = 5;
-    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_bottom_width = 5;
-    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_left_width = 5;
-    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.padding_top = Length::px(5.0);
-    doc.node_mut(n1).style.padding_right = Length::px(5.0);
-    doc.node_mut(n1).style.padding_bottom = Length::px(5.0);
-    doc.node_mut(n1).style.padding_left = Length::px(5.0);
-    doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.min_height = Length::px(0.0);
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.height = Length::px(50.0);
-            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 192, 203, 255);
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n4).style.display = Display::Block;
-                doc.append_child(n3, n4);
     doc
 }
 
@@ -1356,97 +1292,6 @@ fn css_flexbox_column_intrinsic_size_aspect_ratio_crash() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.node_mut(n1).style.float = Float::Left;
     doc.append_child(vp, n1);
-    doc
-}
-
-// Source: content-height-with-scrollbars.html
-fn css_flexbox_content_height_with_scrollbars() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
-    doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.flex_grow = 0.0;
-        doc.node_mut(n2).style.flex_shrink = 0.0;
-        doc.node_mut(n2).style.height = Length::percent(100.0);
-        doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n3).style.display = Display::Block;
-    doc.node_mut(n3).style.height = Length::px(100.0);
-    doc.node_mut(n3).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(n3).style.overflow_y = Overflow::Scroll;
-    doc.append_child(vp, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::Block;
-        doc.node_mut(n4).style.flex_grow = 0.0;
-        doc.node_mut(n4).style.flex_shrink = 0.0;
-        doc.node_mut(n4).style.height = Length::percent(100.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::BorderBox;
-        doc.node_mut(n4).style.border_top_width = 5;
-        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
-        doc.node_mut(n4).style.border_right_width = 5;
-        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
-        doc.node_mut(n4).style.border_bottom_width = 5;
-        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
-        doc.node_mut(n4).style.border_left_width = 5;
-        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
-        doc.append_child(n3, n4);
-    let n5 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n5).style.display = Display::Block;
-    doc.node_mut(n5).style.height = Length::px(100.0);
-    doc.node_mut(n5).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(n5).style.overflow_y = Overflow::Scroll;
-    doc.append_child(vp, n5);
-        let n6 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n6).style.display = Display::Block;
-        doc.node_mut(n6).style.flex_grow = 0.0;
-        doc.node_mut(n6).style.flex_shrink = 0.0;
-        doc.node_mut(n6).style.height = Length::px(50.0);
-        doc.node_mut(n6).style.width = Length::percent(50.0);
-        doc.append_child(n5, n6);
-        let n7 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n7).style.display = Display::Block;
-        doc.node_mut(n7).style.flex_grow = 0.0;
-        doc.node_mut(n7).style.flex_shrink = 0.0;
-        doc.node_mut(n7).style.height = Length::px(50.0);
-        doc.node_mut(n7).style.width = Length::percent(50.0);
-        doc.node_mut(n7).style.background_color = Color::from_rgba8(173, 216, 230, 255);
-        doc.append_child(n5, n7);
-    let n8 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n8).style.display = Display::Block;
-    doc.node_mut(n8).style.height = Length::auto();
-    doc.node_mut(n8).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(n8).style.overflow_y = Overflow::Scroll;
-    doc.node_mut(n8).style.max_height = Length::px(100.0);
-    doc.node_mut(n8).style.padding_top = Length::px(10.0);
-    doc.node_mut(n8).style.padding_right = Length::px(10.0);
-    doc.node_mut(n8).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(n8).style.padding_left = Length::px(10.0);
-    doc.append_child(vp, n8);
-        let n9 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n9).style.display = Display::Block;
-        doc.node_mut(n9).style.flex_grow = 0.0;
-        doc.node_mut(n9).style.flex_shrink = 0.0;
-        doc.node_mut(n9).style.height = Length::px(50.0);
-        doc.node_mut(n9).style.width = Length::px(300.0);
-        doc.append_child(n8, n9);
-        let n10 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n10).style.display = Display::Block;
-        doc.node_mut(n10).style.flex_grow = 0.0;
-        doc.node_mut(n10).style.flex_shrink = 0.0;
-        doc.node_mut(n10).style.height = Length::px(50.0);
-        doc.node_mut(n10).style.width = Length::px(300.0);
-        doc.node_mut(n10).style.background_color = Color::from_rgba8(173, 216, 230, 255);
-        doc.append_child(n8, n10);
     doc
 }
 
@@ -2798,116 +2643,6 @@ fn css_flexbox_flex_basis_010() -> Document {
     doc
 }
 
-// Source: flex-basis-011-ref.html
-fn css_flexbox_flex_basis_011_ref() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.flex_grow = 1.0;
-            doc.node_mut(n3).style.flex_shrink = 0.0;
-            doc.node_mut(n3).style.flex_basis = Length::auto();
-            doc.node_mut(n3).style.height = Length::percent(100.0);
-            doc.node_mut(n3).style.border_top_width = 1;
-            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n3).style.border_right_width = 1;
-            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n3).style.border_bottom_width = 1;
-            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n3).style.border_left_width = 1;
-            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n4).style.display = Display::Block;
-                doc.append_child(n3, n4);
-            let n5 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n5).style.display = Display::Block;
-            doc.node_mut(n5).style.flex_grow = 1.0;
-            doc.node_mut(n5).style.flex_shrink = 0.0;
-            doc.node_mut(n5).style.flex_basis = Length::auto();
-            doc.node_mut(n5).style.height = Length::percent(100.0);
-            doc.node_mut(n5).style.border_top_width = 1;
-            doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n5).style.border_right_width = 1;
-            doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n5).style.border_bottom_width = 1;
-            doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n5).style.border_left_width = 1;
-            doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-            doc.append_child(n2, n5);
-                let n6 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n6).style.display = Display::Block;
-                doc.append_child(n5, n6);
-    doc
-}
-
-// Source: flex-basis-011.html
-fn css_flexbox_flex_basis_011() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.flex_grow = 1.0;
-            doc.node_mut(n3).style.flex_shrink = 0.0;
-            doc.node_mut(n3).style.flex_basis = Length::percent(100.0);
-            doc.node_mut(n3).style.border_top_width = 1;
-            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n3).style.border_right_width = 1;
-            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n3).style.border_bottom_width = 1;
-            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n3).style.border_left_width = 1;
-            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n4).style.display = Display::Block;
-                doc.append_child(n3, n4);
-            let n5 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n5).style.display = Display::Block;
-            doc.node_mut(n5).style.flex_grow = 1.0;
-            doc.node_mut(n5).style.flex_shrink = 0.0;
-            doc.node_mut(n5).style.flex_basis = Length::percent(100.0);
-            doc.node_mut(n5).style.border_top_width = 1;
-            doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n5).style.border_right_width = 1;
-            doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n5).style.border_bottom_width = 1;
-            doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-            doc.node_mut(n5).style.border_left_width = 1;
-            doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-            doc.append_child(n2, n5);
-                let n6 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n6).style.display = Display::Block;
-                doc.append_child(n5, n6);
-    doc
-}
-
 // Source: flex-basis-012.html
 fn css_flexbox_flex_basis_012() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3222,6 +2957,7 @@ fn css_flexbox_flex_container_margin() -> Document {
 fn css_flexbox_flex_direction_column_001_visual() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -3229,12 +2965,27 @@ fn css_flexbox_flex_direction_column_001_visual() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -3243,6 +2994,7 @@ fn css_flexbox_flex_direction_column_001_visual() -> Document {
 fn css_flexbox_flex_direction_column_reverse_001_visual() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -3250,12 +3002,27 @@ fn css_flexbox_flex_direction_column_reverse_001_visual() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -3436,6 +3203,7 @@ fn css_flexbox_flex_direction_column() -> Document {
 fn css_flexbox_flex_direction_row_001_visual() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -3443,12 +3211,27 @@ fn css_flexbox_flex_direction_row_001_visual() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -3457,6 +3240,7 @@ fn css_flexbox_flex_direction_row_001_visual() -> Document {
 fn css_flexbox_flex_direction_row_reverse_001_visual() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.display = Display::Flex;
@@ -3464,12 +3248,27 @@ fn css_flexbox_flex_direction_row_reverse_001_visual() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.font_size = 20.0;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(127, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.text_align = TextAlign::Center;
+        doc.node_mut(n3).style.font_size = 20.0;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.text_align = TextAlign::Center;
+        doc.node_mut(n4).style.font_size = 20.0;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(65, 105, 225, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -4943,7 +4742,7 @@ fn css_flexbox_flex_item_transferred_sizes_padding_content_sizing() -> Document 
 fn css_flexbox_flex_item_vertical_align() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -5368,31 +5167,6 @@ fn css_flexbox_flex_minimum_height_flex_items_024() -> Document {
     doc
 }
 
-// Source: flex-minimum-height-flex-items-026.html
-fn css_flexbox_flex_minimum_height_flex_items_026() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.flex_grow = 1.0;
-        doc.node_mut(n2).style.flex_shrink = 0.0;
-        doc.node_mut(n2).style.flex_basis = Length::px(0.0);
-        doc.node_mut(n2).style.height = Length::px(200.0);
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.flex_grow = 1.0;
-            doc.node_mut(n3).style.flex_shrink = 0.0;
-            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
-            doc.node_mut(n3).style.width = Length::px(100.0);
-            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-            doc.append_child(n2, n3);
-    doc
-}
-
 // Source: flex-minimum-height-flex-items-027.html
 fn css_flexbox_flex_minimum_height_flex_items_027() -> Document {
     let (mut doc, vp) = base_doc();
@@ -5416,30 +5190,6 @@ fn css_flexbox_flex_minimum_height_flex_items_027() -> Document {
                 doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.height = Length::px(200.0);
                 doc.append_child(n3, n4);
-    doc
-}
-
-// Source: flex-minimum-height-flex-items-028.html
-fn css_flexbox_flex_minimum_height_flex_items_028() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.flex_grow = 1.0;
-        doc.node_mut(n2).style.flex_shrink = 0.0;
-        doc.node_mut(n2).style.flex_basis = Length::px(0.0);
-        doc.node_mut(n2).style.min_height = Length::px(100.0);
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.flex_grow = 1.0;
-            doc.node_mut(n3).style.flex_shrink = 0.0;
-            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
-            doc.node_mut(n3).style.width = Length::px(100.0);
-            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-            doc.append_child(n2, n3);
     doc
 }
 
@@ -28207,22 +27957,6 @@ fn css_flexbox_flexbox_dyn_resize_001_ref() -> Document {
             doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLACK);
             doc.append_child(n12, n14);
-    doc
-}
-
-// Source: flexbox-flex-direction-column-percentage-ignored.html
-fn css_flexbox_flexbox_flex_direction_column_percentage_ignored() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.max_height = Length::px(10.0);
-    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.height = Length::percent(1.0);
-        doc.append_child(n1, n2);
     doc
 }
 
@@ -79736,13 +79470,13 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
 fn css_flexbox_flexbox_with_multi_column_property() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(100.0));
     doc.node_mut(n1).style.width = Length::px(320.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.display = Display::InlineFlex;
     doc.node_mut(n2).style.column_count = Some(2);
     doc.node_mut(n2).style.column_gap = Some(Length::px(100.0));
     doc.node_mut(n2).style.width = Length::px(320.0);
@@ -108631,42 +108365,6 @@ fn css_flexbox_text_overflow_on_flexbox_001() -> Document {
     doc
 }
 
-// Source: whitespace-in-flexitem-001-ref.html
-fn css_flexbox_whitespace_in_flexitem_001_ref() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.flex_grow = 0.0;
-        doc.node_mut(n2).style.flex_shrink = 0.0;
-        doc.node_mut(n2).style.width = Length::px(30.0);
-        doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n3).style.display = Display::Block;
-    doc.append_child(vp, n3);
-    doc
-}
-
-// Source: whitespace-in-flexitem-001.html
-fn css_flexbox_whitespace_in_flexitem_001() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.flex_grow = 0.0;
-        doc.node_mut(n2).style.flex_shrink = 0.0;
-        doc.node_mut(n2).style.width = Length::px(30.0);
-        doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n3).style.display = Display::Block;
-    doc.append_child(vp, n3);
-    doc
-}
-
 // Source: zero-content-size-with-scrollbar-crash.html
 fn css_flexbox_zero_content_size_with_scrollbar_crash() -> Document {
     let (mut doc, vp) = base_doc();
@@ -118630,7 +118328,6 @@ fn css_flexbox_flex_lines_multi_line_wrap_with_row_reverse() -> Document {
 
 pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
-        ("wpt/css_flexbox/align-baseline", css_flexbox_align_baseline as fn() -> Document),
         ("wpt/css_flexbox/align-content-wrap-004", css_flexbox_align_content_wrap_004 as fn() -> Document),
         ("wpt/css_flexbox/align-content_center", css_flexbox_align_content_center as fn() -> Document),
         ("wpt/css_flexbox/align-content_flex-end", css_flexbox_align_content_flex_end as fn() -> Document),
@@ -118653,7 +118350,6 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/align-self-011", css_flexbox_align_self_011 as fn() -> Document),
         ("wpt/css_flexbox/align-self-012", css_flexbox_align_self_012 as fn() -> Document),
         ("wpt/css_flexbox/align-self-013", css_flexbox_align_self_013 as fn() -> Document),
-        ("wpt/css_flexbox/align-self-015", css_flexbox_align_self_015 as fn() -> Document),
         ("wpt/css_flexbox/align-self-016", css_flexbox_align_self_016 as fn() -> Document),
         ("wpt/css_flexbox/anonymous-block", css_flexbox_anonymous_block as fn() -> Document),
         ("wpt/css_flexbox/anonymous-flex-item-002", css_flexbox_anonymous_flex_item_002 as fn() -> Document),
@@ -118663,7 +118359,6 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/aspect-ratio-intrinsic-size-008", css_flexbox_aspect_ratio_intrinsic_size_008 as fn() -> Document),
         ("wpt/css_flexbox/aspect-ratio-intrinsic-size-010", css_flexbox_aspect_ratio_intrinsic_size_010 as fn() -> Document),
         ("wpt/css_flexbox/aspect-ratio-transferred-max-size", css_flexbox_aspect_ratio_transferred_max_size as fn() -> Document),
-        ("wpt/css_flexbox/auto-height-column-with-border-and-padding", css_flexbox_auto_height_column_with_border_and_padding as fn() -> Document),
         ("wpt/css_flexbox/auto-height-with-flex", css_flexbox_auto_height_with_flex as fn() -> Document),
         ("wpt/css_flexbox/baseline-outside-flex-item", css_flexbox_baseline_outside_flex_item as fn() -> Document),
         ("wpt/css_flexbox/break-nested-float-in-flex-item-001-print", css_flexbox_break_nested_float_in_flex_item_001_print as fn() -> Document),
@@ -118671,7 +118366,6 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/break-nested-float-in-flex-item-print-ref", css_flexbox_break_nested_float_in_flex_item_print_ref as fn() -> Document),
         ("wpt/css_flexbox/column-flex-child-with-max-width", css_flexbox_column_flex_child_with_max_width as fn() -> Document),
         ("wpt/css_flexbox/column-intrinsic-size-aspect-ratio-crash", css_flexbox_column_intrinsic_size_aspect_ratio_crash as fn() -> Document),
-        ("wpt/css_flexbox/content-height-with-scrollbars", css_flexbox_content_height_with_scrollbars as fn() -> Document),
         ("wpt/css_flexbox/css-box-justify-content", css_flexbox_css_box_justify_content as fn() -> Document),
         ("wpt/css_flexbox/css-flexbox-row-ref", css_flexbox_css_flexbox_row_ref as fn() -> Document),
         ("wpt/css_flexbox/dynamic-bsize-change-ref", css_flexbox_dynamic_bsize_change_ref as fn() -> Document),
@@ -118694,8 +118388,6 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/flex-basis-007", css_flexbox_flex_basis_007 as fn() -> Document),
         ("wpt/css_flexbox/flex-basis-008", css_flexbox_flex_basis_008 as fn() -> Document),
         ("wpt/css_flexbox/flex-basis-010", css_flexbox_flex_basis_010 as fn() -> Document),
-        ("wpt/css_flexbox/flex-basis-011-ref", css_flexbox_flex_basis_011_ref as fn() -> Document),
-        ("wpt/css_flexbox/flex-basis-011", css_flexbox_flex_basis_011 as fn() -> Document),
         ("wpt/css_flexbox/flex-basis-012", css_flexbox_flex_basis_012 as fn() -> Document),
         ("wpt/css_flexbox/flex-basis-item-margins-001", css_flexbox_flex_basis_item_margins_001 as fn() -> Document),
         ("wpt/css_flexbox/flex-box-wrap", css_flexbox_flex_box_wrap as fn() -> Document),
@@ -118762,9 +118454,7 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/flex-minimum-height-flex-items-017", css_flexbox_flex_minimum_height_flex_items_017 as fn() -> Document),
         ("wpt/css_flexbox/flex-minimum-height-flex-items-018", css_flexbox_flex_minimum_height_flex_items_018 as fn() -> Document),
         ("wpt/css_flexbox/flex-minimum-height-flex-items-024", css_flexbox_flex_minimum_height_flex_items_024 as fn() -> Document),
-        ("wpt/css_flexbox/flex-minimum-height-flex-items-026", css_flexbox_flex_minimum_height_flex_items_026 as fn() -> Document),
         ("wpt/css_flexbox/flex-minimum-height-flex-items-027", css_flexbox_flex_minimum_height_flex_items_027 as fn() -> Document),
-        ("wpt/css_flexbox/flex-minimum-height-flex-items-028", css_flexbox_flex_minimum_height_flex_items_028 as fn() -> Document),
         ("wpt/css_flexbox/flex-minimum-height-flex-items-029", css_flexbox_flex_minimum_height_flex_items_029 as fn() -> Document),
         ("wpt/css_flexbox/flex-minimum-height-flex-items-030", css_flexbox_flex_minimum_height_flex_items_030 as fn() -> Document),
         ("wpt/css_flexbox/flex-minimum-width-flex-items-001", css_flexbox_flex_minimum_width_flex_items_001 as fn() -> Document),
@@ -118882,7 +118572,6 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/flexbox-definite-sizes-005", css_flexbox_flexbox_definite_sizes_005 as fn() -> Document),
         ("wpt/css_flexbox/flexbox-definite-sizes-006", css_flexbox_flexbox_definite_sizes_006 as fn() -> Document),
         ("wpt/css_flexbox/flexbox-dyn-resize-001-ref", css_flexbox_flexbox_dyn_resize_001_ref as fn() -> Document),
-        ("wpt/css_flexbox/flexbox-flex-direction-column-percentage-ignored", css_flexbox_flexbox_flex_direction_column_percentage_ignored as fn() -> Document),
         ("wpt/css_flexbox/flexbox-flex-flow-001-ref", css_flexbox_flexbox_flex_flow_001_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox-flex-flow-001", css_flexbox_flexbox_flex_flow_001 as fn() -> Document),
         ("wpt/css_flexbox/flexbox-flex-flow-002-ref", css_flexbox_flexbox_flex_flow_002_ref as fn() -> Document),
@@ -119431,8 +119120,6 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/table-item-flex-percentage-min-width-ref", css_flexbox_table_item_flex_percentage_min_width_ref as fn() -> Document),
         ("wpt/css_flexbox/table-item-flex-percentage-width-ref", css_flexbox_table_item_flex_percentage_width_ref as fn() -> Document),
         ("wpt/css_flexbox/text-overflow-on-flexbox-001", css_flexbox_text_overflow_on_flexbox_001 as fn() -> Document),
-        ("wpt/css_flexbox/whitespace-in-flexitem-001-ref", css_flexbox_whitespace_in_flexitem_001_ref as fn() -> Document),
-        ("wpt/css_flexbox/whitespace-in-flexitem-001", css_flexbox_whitespace_in_flexitem_001 as fn() -> Document),
         ("wpt/css_flexbox/zero-content-size-with-scrollbar-crash", css_flexbox_zero_content_size_with_scrollbar_crash as fn() -> Document),
         ("wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001-ref", css_flexbox_abspos_flex_abspos_staticpos_fallback_justify_content_001_ref as fn() -> Document),
         ("wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001", css_flexbox_abspos_flex_abspos_staticpos_fallback_justify_content_001 as fn() -> Document),
