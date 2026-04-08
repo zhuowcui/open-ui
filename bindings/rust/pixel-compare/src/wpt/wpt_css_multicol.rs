@@ -3518,11 +3518,11 @@ fn css_multicol_moz_multicol3_column_balancing_break_inside_avoid_1() -> Documen
         doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
+            doc.node_mut(n12).style.break_inside = BreakInside::Avoid;
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
             doc.node_mut(n12).style.margin_right = Length::px(0.0);
             doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
             doc.node_mut(n12).style.margin_left = Length::px(0.0);
-            doc.node_mut(n12).style.break_inside = BreakInside::Avoid;
             doc.append_child(n11, n12);
     doc
 }
@@ -4538,26 +4538,34 @@ fn css_multicol_multicol_fill_balance_nested_000() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.break_inside = BreakInside::Avoid;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.break_inside = BreakInside::Avoid;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n4).style.height = Length::px(100.0);
             doc.append_child(n2, n4);
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
+                doc.node_mut(n5).style.break_inside = BreakInside::Avoid;
+                doc.node_mut(n5).style.background_color = Color::RED;
                 doc.node_mut(n5).style.margin_left = Length::percent(100.0);
                 doc.node_mut(n5).style.width = Length::percent(100.0);
                 doc.node_mut(n5).style.height = Length::px(50.0);
-                doc.node_mut(n5).style.background_color = Color::RED;
                 doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.break_inside = BreakInside::Avoid;
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n6).style.height = Length::px(50.0);
             doc.append_child(n2, n6);
     doc

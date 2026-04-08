@@ -287,22 +287,11 @@ def parse_simple_css_rules(css_text: str) -> list:
     return rules
 
 
-def match_selector(selector: str, tag: str, classes: list, id_val: str) -> bool:
-    """Check if a simple CSS selector matches an element."""
-    selector = selector.strip()
-    if not selector:
-        return False
-
-    # Handle compound selectors like "div.foo" or ".foo.bar"
-    # Split on combinators (space, >, +, ~) — only match if no combinator (simple selector)
-    if ' ' in selector or '>' in selector or '+' in selector or '~' in selector:
-        # Complex selectors not supported
-        return False
-
+def _match_simple_selector(selector: str, tag: str, classes: list, id_val: str) -> bool:
+    """Check if a simple (non-compound) CSS selector matches an element."""
     parts = re.findall(r'[.#]?[a-zA-Z0-9_-]+|\*', selector)
     if not parts:
         return False
-
     for part in parts:
         if part == '*':
             continue
@@ -313,30 +302,73 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str) -> bool:
             if part[1:] != id_val:
                 return False
         else:
-            # Tag name
             if part.lower() != tag.lower():
                 return False
-
     return True
 
 
-def apply_css_rules(rules: list, node: 'DomNode'):
+def match_selector(selector: str, tag: str, classes: list, id_val: str,
+                   ancestors: list = None) -> bool:
+    """Check if a CSS selector matches an element.
+    
+    Supports simple selectors and descendant combinators (space).
+    ancestors is a list of (tag, classes, id_val) tuples from outermost to innermost.
+    """
+    selector = selector.strip()
+    if not selector:
+        return False
+
+    # Child/sibling combinators not supported (filtered by portability gate)
+    if '>' in selector or '+' in selector or '~' in selector:
+        return False
+
+    # Split on whitespace for descendant combinator
+    parts = selector.split()
+    if len(parts) == 1:
+        # Simple selector — match against current element
+        return _match_simple_selector(parts[0], tag, classes, id_val)
+
+    # Descendant selector: last part must match current node,
+    # remaining parts must match some ancestor chain
+    if not _match_simple_selector(parts[-1], tag, classes, id_val):
+        return False
+
+    if not ancestors:
+        return False
+
+    # Walk ancestor list (innermost first) to match remaining selector parts
+    remaining = parts[:-1]  # e.g., for "#container div span", remaining = ["#container", "div"]
+    ri = len(remaining) - 1  # start from innermost required ancestor
+    for anc_tag, anc_classes, anc_id in reversed(ancestors):
+        if ri < 0:
+            break
+        if _match_simple_selector(remaining[ri], anc_tag, anc_classes, anc_id):
+            ri -= 1
+
+    return ri < 0  # All ancestor parts matched
+
+
+def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
     """Apply CSS rules to a DOM node and its descendants (recursively)."""
     if node.is_text:
         return
+
+    if ancestors is None:
+        ancestors = []
 
     classes = node.attrs.get('class', '').split()
     id_val = node.attrs.get('id', '')
 
     for selector, styles in rules:
-        if match_selector(selector, node.tag, classes, id_val):
+        if match_selector(selector, node.tag, classes, id_val, ancestors):
             # Merge styles (inline styles take precedence over sheet styles)
             merged = OrderedDict(styles)
             merged.update(node.styles)  # Inline wins
             node.styles = merged
 
+    child_ancestors = ancestors + [(node.tag, classes, id_val)]
     for child in node.children:
-        apply_css_rules(rules, child)
+        apply_css_rules(rules, child, child_ancestors)
 
 
 class WptHtmlParser(HTMLParser):

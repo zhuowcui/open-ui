@@ -1082,6 +1082,18 @@ fn css_backgrounds_background_image_005() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.width = Length::px(100.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.color = Color::TRANSPARENT;
+        doc.node_mut(n2).style.font_size = 50.0;
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -1095,6 +1107,18 @@ fn css_backgrounds_background_image_006() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.width = Length::px(100.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.color = Color::TRANSPARENT;
+        doc.node_mut(n2).style.font_size = 50.0;
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -10618,6 +10642,7 @@ fn css_backgrounds_css3_background_clip_border_box() -> Document {
         doc.node_mut(n2).style.right = Length::px(0.0);
         doc.node_mut(n2).style.bottom = Length::px(0.0);
         doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.position = Position::Absolute;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -10626,6 +10651,7 @@ fn css_backgrounds_css3_background_clip_border_box() -> Document {
         doc.node_mut(n3).style.right = Length::px(15.0);
         doc.node_mut(n3).style.bottom = Length::px(15.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.position = Position::Absolute;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -10650,6 +10676,7 @@ fn css_backgrounds_css3_background_clip_border_box() -> Document {
         doc.node_mut(n4).style.padding_bottom = Length::px(15.0);
         doc.node_mut(n4).style.padding_left = Length::px(15.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.position = Position::Absolute;
         doc.append_child(n1, n4);
     doc
 }
@@ -10670,6 +10697,7 @@ fn css_backgrounds_css3_background_clip_content_box() -> Document {
         doc.node_mut(n2).style.right = Length::px(0.0);
         doc.node_mut(n2).style.bottom = Length::px(0.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.position = Position::Absolute;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -10678,6 +10706,7 @@ fn css_backgrounds_css3_background_clip_content_box() -> Document {
         doc.node_mut(n3).style.right = Length::px(15.0);
         doc.node_mut(n3).style.bottom = Length::px(15.0);
         doc.node_mut(n3).style.background_color = Color::RED;
+        doc.node_mut(n3).style.position = Position::Absolute;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -10702,6 +10731,7 @@ fn css_backgrounds_css3_background_clip_content_box() -> Document {
         doc.node_mut(n4).style.padding_bottom = Length::px(15.0);
         doc.node_mut(n4).style.padding_left = Length::px(15.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.position = Position::Absolute;
         doc.append_child(n1, n4);
     doc
 }
@@ -10722,6 +10752,7 @@ fn css_backgrounds_css3_background_clip_padding_box() -> Document {
         doc.node_mut(n2).style.right = Length::px(0.0);
         doc.node_mut(n2).style.bottom = Length::px(0.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.position = Position::Absolute;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -10730,6 +10761,7 @@ fn css_backgrounds_css3_background_clip_padding_box() -> Document {
         doc.node_mut(n3).style.right = Length::px(15.0);
         doc.node_mut(n3).style.bottom = Length::px(15.0);
         doc.node_mut(n3).style.background_color = Color::RED;
+        doc.node_mut(n3).style.position = Position::Absolute;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -10754,6 +10786,7 @@ fn css_backgrounds_css3_background_clip_padding_box() -> Document {
         doc.node_mut(n4).style.padding_bottom = Length::px(15.0);
         doc.node_mut(n4).style.padding_left = Length::px(15.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.position = Position::Absolute;
         doc.append_child(n1, n4);
     doc
 }
@@ -13782,6 +13815,9 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_6
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.height = Length::px(500.0);
+        doc.node_mut(n2).style.margin_top = Length::px(-15.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -13904,6 +13940,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_image_6
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(500.0);
+        doc.node_mut(n2).style.margin_top = Length::px(-15.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -13929,6 +13967,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_positioning_2_re
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(250.0);
+        doc.node_mut(n2).style.height = Length::px(370.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -13957,6 +13997,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_positioning_3_re
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(250.0);
+        doc.node_mut(n2).style.height = Length::px(370.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -13989,6 +14031,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_positioning_4_re
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(250.0);
+        doc.node_mut(n2).style.height = Length::px(370.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;

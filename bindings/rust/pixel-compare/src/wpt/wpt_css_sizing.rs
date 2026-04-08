@@ -3250,7 +3250,7 @@ fn css_sizing_min_content_min_width_000() -> Document {
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.display = Display::InlineBlock;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(10.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -3264,7 +3264,7 @@ fn css_sizing_min_content_min_width_000() -> Document {
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.display = Display::InlineBlock;
             doc.node_mut(n5).style.width = Length::px(100.0);
             doc.node_mut(n5).style.height = Length::px(10.0);
             doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
