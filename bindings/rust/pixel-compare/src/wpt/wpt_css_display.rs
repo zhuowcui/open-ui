@@ -509,6 +509,18 @@ fn css_display_display_contents_inline_flex_001() -> Document {
     doc
 }
 
+// Source: display-contents-line-height-ref.html
+fn css_display_display_contents_line_height_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n1).style.font_size = 40.0;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n2).style.font_size = 40.0;
+    doc.append_child(vp, n2);
+    doc
+}
+
 // Source: display-contents-list-001-ref.html
 fn css_display_display_contents_list_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1324,6 +1336,7 @@ pub fn css_display_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_display/display-contents-flex-003", css_display_display_contents_flex_003 as fn() -> Document),
         ("wpt/css_display/display-contents-inline-flex-001-ref", css_display_display_contents_inline_flex_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-inline-flex-001", css_display_display_contents_inline_flex_001 as fn() -> Document),
+        ("wpt/css_display/display-contents-line-height-ref", css_display_display_contents_line_height_ref as fn() -> Document),
         ("wpt/css_display/display-contents-list-001-ref", css_display_display_contents_list_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-list-001", css_display_display_contents_list_001 as fn() -> Document),
         ("wpt/css_display/display-contents-multicol-001-ref", css_display_display_contents_multicol_001_ref as fn() -> Document),

@@ -20,6 +20,7 @@ fn css_break_abspos_in_clipped_overflow_print() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.height = Length::px(2100.0);
         doc.append_child(n1, n2);
     doc
 }
@@ -29,6 +30,7 @@ fn css_break_abspos_in_offset_relpos() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -93,6 +95,7 @@ fn css_break_abspos_in_opacity_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -140,6 +143,7 @@ fn css_break_abspos_in_opacity_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -170,6 +174,7 @@ fn css_break_abspos_in_opacity_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -200,6 +205,7 @@ fn css_break_abspos_in_opacity_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -235,6 +241,7 @@ fn css_break_abspos_inside_relpos_inside_monolithic() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -273,6 +280,8 @@ fn css_break_abspos_overflow_hidden_001_print_ref() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.break_after = BreakValue::Page;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.height = Length::px(600.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -294,6 +303,8 @@ fn css_break_abspos_overflow_hidden_001_print_ref() -> Document {
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.break_after = BreakValue::Page;
+    doc.node_mut(n3).style.width = Length::px(800.0);
+    doc.node_mut(n3).style.height = Length::px(600.0);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -328,6 +339,8 @@ fn css_break_abspos_overflow_hidden_001_print() -> Document {
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.break_after = BreakValue::Page;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.height = Length::px(600.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -353,6 +366,8 @@ fn css_break_abspos_overflow_hidden_001_print() -> Document {
     doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n3).style.position = Position::Relative;
     doc.node_mut(n3).style.break_after = BreakValue::Page;
+    doc.node_mut(n3).style.width = Length::px(800.0);
+    doc.node_mut(n3).style.height = Length::px(600.0);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -380,6 +395,7 @@ fn css_break_area_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.append_child(n1, n2);
@@ -391,9 +407,12 @@ fn css_break_area_in_inline_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(10);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
     doc.node_mut(n1).style.height = Length::px(20.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.append_child(n1, n2);
@@ -411,6 +430,7 @@ fn css_break_auto_overflow_inside_second_abspos_fragment_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -449,6 +469,7 @@ fn css_break_avoid_border_break() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_left = Length::px(-100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(200.0);
@@ -544,6 +565,7 @@ fn css_break_background_image_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -554,6 +576,7 @@ fn css_break_background_image_003() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(250.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -581,6 +604,7 @@ fn css_break_background_image_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -607,6 +631,7 @@ fn css_break_background_image_004() -> Document {
         doc.node_mut(n2).style.border_left_width = 10;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
     doc
 }
@@ -616,6 +641,7 @@ fn css_break_background_image_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -647,6 +673,7 @@ fn css_break_background_image_005() -> Document {
         doc.node_mut(n3).style.padding_right = Length::px(0.0);
         doc.node_mut(n3).style.padding_bottom = Length::px(10.0);
         doc.node_mut(n3).style.padding_left = Length::px(0.0);
+        doc.node_mut(n3).style.background_color = Color::RED;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -691,6 +718,7 @@ fn css_break_background_image_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.width = Length::px(600.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -734,6 +762,7 @@ fn css_break_block_end_aligned_abspos_with_overflow() -> Document {
     doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -779,10 +808,13 @@ fn css_break_block_in_inline_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
@@ -813,10 +845,13 @@ fn css_break_block_in_inline_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
@@ -857,10 +892,13 @@ fn css_break_block_in_inline_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
@@ -901,10 +939,13 @@ fn css_break_block_in_inline_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
@@ -938,11 +979,14 @@ fn css_break_block_in_inline_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -977,6 +1021,7 @@ fn css_break_block_in_inline_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -1016,10 +1061,13 @@ fn css_break_block_in_inline_009() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(200.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1057,6 +1105,7 @@ fn css_break_block_in_inline_013() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(4);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -1108,6 +1157,7 @@ fn css_break_block_in_inline_014() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(4);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -1296,6 +1346,7 @@ fn css_break_borders_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(430.0);
@@ -1366,6 +1417,7 @@ fn css_break_borders_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(430.0);
@@ -1454,6 +1506,7 @@ fn css_break_borders_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(430.0);
@@ -1566,6 +1619,7 @@ fn css_break_borders_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(620.0);
@@ -1678,6 +1732,7 @@ fn css_break_borders_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(620.0);
@@ -1790,6 +1845,7 @@ fn css_break_borders_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(620.0);
@@ -1998,6 +2054,7 @@ fn css_break_borders_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.width = Length::px(320.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
@@ -2033,6 +2090,8 @@ fn css_break_box_decoration_break_clone_001() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -2058,6 +2117,8 @@ fn css_break_box_decoration_break_clone_002() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -2078,10 +2139,13 @@ fn css_break_box_decoration_break_clone_003() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(70.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -2098,6 +2162,8 @@ fn css_break_box_decoration_break_clone_004() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -2110,6 +2176,7 @@ fn css_break_box_decoration_break_clone_004() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(60.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n3);
     doc
@@ -2120,6 +2187,7 @@ fn css_break_box_decoration_break_clone_005_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2166,6 +2234,7 @@ fn css_break_box_decoration_break_clone_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2204,6 +2273,7 @@ fn css_break_box_decoration_break_clone_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2237,6 +2307,7 @@ fn css_break_box_decoration_break_clone_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2275,6 +2346,7 @@ fn css_break_box_decoration_break_clone_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2284,6 +2356,7 @@ fn css_break_box_decoration_break_clone_010() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -2310,6 +2383,7 @@ fn css_break_box_decoration_break_clone_011() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2351,6 +2425,7 @@ fn css_break_box_decoration_break_clone_012() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -2411,6 +2486,7 @@ fn css_break_box_decoration_break_clone_013() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2448,6 +2524,7 @@ fn css_break_box_decoration_break_clone_014() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2484,6 +2561,7 @@ fn css_break_box_decoration_break_clone_015() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2493,6 +2571,7 @@ fn css_break_box_decoration_break_clone_015() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
@@ -2519,6 +2598,7 @@ fn css_break_box_decoration_break_clone_016() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2555,6 +2635,7 @@ fn css_break_box_decoration_break_clone_017() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2564,6 +2645,7 @@ fn css_break_box_decoration_break_clone_017() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
@@ -2580,6 +2662,9 @@ fn css_break_box_decoration_break_clone_017() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 1.0;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.width = Length::px(5.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -2591,6 +2676,7 @@ fn css_break_box_decoration_break_clone_018() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2627,6 +2713,7 @@ fn css_break_box_decoration_break_clone_019() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2636,6 +2723,7 @@ fn css_break_box_decoration_break_clone_019() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -2662,6 +2750,7 @@ fn css_break_box_decoration_break_clone_020() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2671,6 +2760,7 @@ fn css_break_box_decoration_break_clone_020() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -2698,6 +2788,7 @@ fn css_break_box_decoration_break_clone_021() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2707,6 +2798,7 @@ fn css_break_box_decoration_break_clone_021() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -2737,6 +2829,7 @@ fn css_break_box_decoration_break_clone_022() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -2746,6 +2839,7 @@ fn css_break_box_decoration_break_clone_022() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -2800,6 +2894,7 @@ fn css_break_box_decoration_break_clone_023() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(4);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -2807,6 +2902,7 @@ fn css_break_box_decoration_break_clone_023() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.flex_wrap = FlexWrap::Wrap;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
             doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
@@ -2856,6 +2952,7 @@ fn css_break_box_decoration_break_clone_036_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::min_content();
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.append_child(n1, n2);
@@ -2867,6 +2964,7 @@ fn css_break_br_clear_all() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -2897,6 +2995,7 @@ fn css_break_break_after_in_parallel_flow_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(40.0);
     doc.append_child(vp, n1);
@@ -2924,6 +3023,7 @@ fn css_break_break_after_oof_before_preceding_pushed_float_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.append_child(vp, n1);
@@ -2970,10 +3070,13 @@ fn css_break_break_at_end_container_edge_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -3003,10 +3106,13 @@ fn css_break_break_at_end_container_edge_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -3043,10 +3149,13 @@ fn css_break_break_at_end_container_edge_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 2_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -3083,10 +3192,13 @@ fn css_break_break_at_end_container_edge_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -3120,10 +3232,13 @@ fn css_break_break_at_end_container_edge_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -3179,9 +3294,12 @@ fn css_break_break_before_float_after_line_after_floats_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(320.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -3214,6 +3332,7 @@ fn css_break_break_between_avoid_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3252,6 +3371,7 @@ fn css_break_break_between_avoid_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3290,6 +3410,7 @@ fn css_break_break_between_avoid_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3351,6 +3472,7 @@ fn css_break_break_between_avoid_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3398,10 +3520,13 @@ fn css_break_break_between_avoid_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(120.0);
+    doc.node_mut(n1).style.orphans = 2_u32;
+    doc.node_mut(n1).style.widows = 2_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -3454,6 +3579,7 @@ fn css_break_break_between_avoid_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3493,6 +3619,7 @@ fn css_break_break_between_avoid_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3550,6 +3677,7 @@ fn css_break_break_between_avoid_007() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.width = Length::px(250.0);
         doc.node_mut(n2).style.column_gap = Some(Length::px(50.0));
@@ -3594,6 +3722,7 @@ fn css_break_break_between_avoid_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3634,6 +3763,7 @@ fn css_break_break_between_avoid_009() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(250.0);
@@ -3725,6 +3855,7 @@ fn css_break_break_between_avoid_011() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -3783,6 +3914,7 @@ fn css_break_break_between_avoid_012() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -3844,6 +3976,7 @@ fn css_break_break_between_avoid_013() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -3902,6 +4035,7 @@ fn css_break_break_between_avoid_014() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -3961,6 +4095,7 @@ fn css_break_break_between_force_000() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(250.0);
@@ -3997,6 +4132,7 @@ fn css_break_break_between_force_001() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(250.0);
@@ -4032,6 +4168,7 @@ fn css_break_break_between_force_002() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(250.0);
@@ -4065,18 +4202,22 @@ fn css_break_change_inline_color_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(16.0);
         doc.node_mut(n2).style.text_align = TextAlign::Center;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(16.0);
         doc.node_mut(n3).style.text_align = TextAlign::Center;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(16.0);
         doc.node_mut(n4).style.text_align = TextAlign::Center;
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(16.0);
         doc.node_mut(n5).style.text_align = TextAlign::Center;
         doc.append_child(n1, n5);
     doc
@@ -4087,6 +4228,7 @@ fn css_break_class_c_breakpoint_after_float_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -4137,6 +4279,7 @@ fn css_break_class_c_breakpoint_after_float_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4179,6 +4322,7 @@ fn css_break_class_c_breakpoint_after_float_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -4229,6 +4373,7 @@ fn css_break_class_c_breakpoint_after_float_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -4279,6 +4424,7 @@ fn css_break_class_c_breakpoint_after_float_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -4329,6 +4475,7 @@ fn css_break_clear_br_in_size_containment_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -4353,6 +4500,7 @@ fn css_break_clear_float_in_size_containment_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -4380,6 +4528,7 @@ fn css_break_clear_past_float_with_oof_twice_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -4411,6 +4560,7 @@ fn css_break_clearance_parallel_flow_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4478,6 +4628,7 @@ fn css_break_clearance_parallel_flow_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4514,6 +4665,7 @@ fn css_break_clearance_parallel_flow_002() -> Document {
             doc.append_child(n2, n6);
         let n7 = doc.create_node(ElementTag::Div);
         doc.node_mut(n7).style.display = Display::Flex;
+        doc.node_mut(n7).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n7).style.clear = Clear::Left;
         doc.append_child(n1, n7);
             let n8 = doc.create_node(ElementTag::Div);
@@ -4549,6 +4701,7 @@ fn css_break_clearance_self_collapsing_past_fragmented_float() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4583,6 +4736,7 @@ fn css_break_clipping_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -4637,6 +4791,7 @@ fn css_break_clipping_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -5007,6 +5162,7 @@ fn css_break_flex_item_padding_block_in_inline_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -5047,6 +5203,7 @@ fn css_break_float_000() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(150.0);
@@ -5088,6 +5245,7 @@ fn css_break_float_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5126,6 +5284,7 @@ fn css_break_float_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5168,6 +5327,7 @@ fn css_break_float_003() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(150.0);
@@ -5214,6 +5374,7 @@ fn css_break_float_004() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(4);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(150.0);
@@ -5302,6 +5463,7 @@ fn css_break_float_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5335,6 +5497,7 @@ fn css_break_float_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5368,6 +5531,7 @@ fn css_break_float_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5401,6 +5565,7 @@ fn css_break_float_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5434,6 +5599,7 @@ fn css_break_float_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -5475,6 +5641,7 @@ fn css_break_float_011_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
@@ -5515,6 +5682,7 @@ fn css_break_float_013() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -5548,6 +5716,7 @@ fn css_break_float_014_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -5580,6 +5749,7 @@ fn css_break_float_015_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -5616,12 +5786,15 @@ fn css_break_float_016() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.line_height = LineHeight::Length(20.0);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -5658,11 +5831,13 @@ fn css_break_float_017_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(320.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(160.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -5676,11 +5851,15 @@ fn css_break_float_017() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(320.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -5707,9 +5886,12 @@ fn css_break_float_after_self_collapsing_block_in_inline_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
     doc.node_mut(n1).style.height = Length::px(25.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.append_child(n1, n2);
@@ -5731,6 +5913,9 @@ fn css_break_float_in_inline_widows_orphans_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_width = Some(Length::px(160.0));
+    doc.node_mut(n1).style.orphans = 2_u32;
+    doc.node_mut(n1).style.widows = 2_u32;
     doc.node_mut(n1).style.height = Length::px(20.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
@@ -5764,6 +5949,7 @@ fn css_break_float_in_self_collapsing_block_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5799,6 +5985,7 @@ fn css_break_float_in_self_collapsing_block_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5839,6 +6026,7 @@ fn css_break_float_inside_small_block() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(180.0);
@@ -5883,6 +6071,7 @@ fn css_break_float_stretching_bfc_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5907,6 +6096,7 @@ fn css_break_float_stretching_bfc_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5940,21 +6130,29 @@ fn css_break_floats_and_text_narrow_and_short_dynamic_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.height = Length::px(32.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::BLUE;
     doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.height = Length::px(32.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n3).style.float = Float::Left;
+    doc.node_mut(n3).style.width = Length::px(32.0);
+    doc.node_mut(n3).style.height = Length::px(32.0);
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.background_color = Color::BLUE;
     doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.width = Length::px(32.0);
+    doc.node_mut(n4).style.height = Length::px(32.0);
     doc.append_child(vp, n4);
     doc
 }
@@ -5964,6 +6162,7 @@ fn css_break_forced_break_at_fragmentainer_start_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
@@ -5986,6 +6185,7 @@ fn css_break_forced_break_at_fragmentainer_start_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -6010,6 +6210,7 @@ fn css_break_forced_break_before_new_fc_001() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -6056,6 +6257,7 @@ fn css_break_forced_break_before_new_fc_002() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -6102,6 +6304,7 @@ fn css_break_forced_break_before_new_fc_003() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -6147,6 +6350,7 @@ fn css_break_fragmentainer_1px_clamping_000_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(0.9);
     doc.append_child(vp, n1);
@@ -6166,6 +6370,7 @@ fn css_break_fragmentainer_1px_clamping_001_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_gap = Some(Length::px(100.0));
     doc.node_mut(n1).style.height = Length::px(0.9);
@@ -6184,6 +6389,7 @@ fn css_break_fragmented_autowidth_fc_root_beside_floats() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(620.0);
@@ -6215,6 +6421,7 @@ fn css_break_fragmented_empty_contenteditable_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.append_child(vp, n1);
@@ -6231,6 +6438,7 @@ fn css_break_fragmented_float_in_inline_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -6250,6 +6458,7 @@ fn css_break_fragmented_float_overflowing_container() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -6285,10 +6494,13 @@ fn css_break_inline_skipping_fragmentainer_001() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -6297,6 +6509,7 @@ fn css_break_inline_skipping_fragmentainer_001() -> Document {
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_count = Some(2);
             doc.node_mut(n4).style.width = Length::px(11.0);
             doc.node_mut(n4).style.row_gap = Some(Length::px(0.0));
             doc.node_mut(n4).style.column_gap = Some(Length::px(0.0));
@@ -6319,12 +6532,15 @@ fn css_break_inline_skipping_fragmentainer_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(50.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -6389,6 +6605,7 @@ fn css_break_inline_skipping_fragmentainer_003_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -6406,8 +6623,11 @@ fn css_break_inline_skipping_fragmentainer_004_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -6415,6 +6635,7 @@ fn css_break_inline_skipping_fragmentainer_004_crash() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
         doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -6438,11 +6659,14 @@ fn css_break_inline_with_float_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -6490,11 +6714,14 @@ fn css_break_inline_with_float_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -6548,11 +6775,14 @@ fn css_break_inline_with_float_004() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(5);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.margin_top = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -6666,8 +6896,11 @@ fn css_break_line_and_fragmentainer_break_before_float_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -6702,6 +6935,7 @@ fn css_break_line_pushed_by_float_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -6730,6 +6964,7 @@ fn css_break_line_pushed_by_float_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -6758,6 +6993,7 @@ fn css_break_margin_after_overflowed_block() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -6801,6 +7037,7 @@ fn css_break_margin_at_break_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -6841,6 +7078,7 @@ fn css_break_margin_at_break_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -6881,6 +7119,7 @@ fn css_break_margin_at_break_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -6920,6 +7159,7 @@ fn css_break_margin_at_break_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -6961,6 +7201,7 @@ fn css_break_margin_at_break_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -7007,6 +7248,7 @@ fn css_break_max_height_with_margin_pushed_below_fragmentation_line_crash() -> D
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
     doc.node_mut(n1).style.height = Length::px(25.0);
@@ -7024,6 +7266,7 @@ fn css_break_monolithic_content_with_forced_break_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Balance;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -7055,6 +7298,7 @@ fn css_break_monolithic_content_with_forced_break_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -7086,6 +7330,7 @@ fn css_break_monolithic_content_with_forced_break_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -7122,6 +7367,7 @@ fn css_break_monolithic_overflow_001_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(60.0);
         doc.append_child(n1, n2);
@@ -7148,6 +7394,7 @@ fn css_break_monolithic_overflow_002_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(60.0);
         doc.append_child(n1, n2);
@@ -7173,6 +7420,7 @@ fn css_break_monolithic_overflow_003_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -7205,6 +7453,7 @@ fn css_break_monolithic_overflow_004_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -7236,6 +7485,7 @@ fn css_break_monolithic_overflow_005_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -7269,6 +7519,7 @@ fn css_break_monolithic_overflow_006_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -7315,30 +7566,39 @@ fn css_break_monolithic_with_overflow() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
+        doc.node_mut(n2).style.height = Length::px(50.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.height = Length::px(0.0);
             doc.append_child(n2, n4);
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
+                doc.node_mut(n5).style.height = Length::px(25.0);
                 doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n4, n5);
                 let n6 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n6).style.display = Display::Block;
+                doc.node_mut(n6).style.height = Length::px(25.0);
                 doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n4, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
+            doc.node_mut(n7).style.height = Length::px(100.0);
             doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n7);
     doc
@@ -7385,9 +7645,11 @@ fn css_break_nested_multicol_with_spanner_and_oof_001_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -7412,9 +7674,11 @@ fn css_break_nested_multicol_with_spanner_and_oof_002_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -7512,9 +7776,11 @@ fn css_break_nested_multicol_with_spanner_and_oof_006_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.node_mut(n2).style.column_span = ColumnSpan::All;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -7523,6 +7789,7 @@ fn css_break_nested_multicol_with_spanner_and_oof_006_crash() -> Document {
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.column_count = Some(2);
                 doc.node_mut(n4).style.position = Position::Absolute;
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);
@@ -7638,10 +7905,13 @@ fn css_break_orphans_in_parallel_flow() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 2_u32;
+    doc.node_mut(n1).style.widows = 2_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(130.0);
@@ -7673,12 +7943,14 @@ fn css_break_out_of_flow_in_inline_with_negative_offset_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(15.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -7691,6 +7963,7 @@ fn css_break_out_of_flow_in_inline_with_negative_offset_crash() -> Document {
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
                 doc.node_mut(n5).style.column_span = ColumnSpan::All;
+                doc.node_mut(n5).style.column_count = Some(1);
                 doc.node_mut(n5).style.padding_top = Length::px(30.0);
                 doc.append_child(n4, n5);
                 let n6 = doc.create_node(ElementTag::Div);
@@ -8165,6 +8438,7 @@ fn css_break_out_of_flow_in_multicolumn_011() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.margin_left = Length::px(-50.0);
@@ -8297,6 +8571,7 @@ fn css_break_out_of_flow_in_multicolumn_014() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(300.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -8329,6 +8604,7 @@ fn css_break_out_of_flow_in_multicolumn_015() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -9504,6 +9780,7 @@ fn css_break_out_of_flow_in_multicolumn_077() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -9516,6 +9793,7 @@ fn css_break_out_of_flow_in_multicolumn_077() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
@@ -9542,6 +9820,7 @@ fn css_break_out_of_flow_in_multicolumn_078() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -9554,6 +9833,7 @@ fn css_break_out_of_flow_in_multicolumn_078() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
@@ -9581,6 +9861,7 @@ fn css_break_out_of_flow_in_multicolumn_079() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -9593,6 +9874,7 @@ fn css_break_out_of_flow_in_multicolumn_079() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
@@ -9630,6 +9912,7 @@ fn css_break_out_of_flow_in_multicolumn_080() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -9642,6 +9925,7 @@ fn css_break_out_of_flow_in_multicolumn_080() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
@@ -9680,6 +9964,7 @@ fn css_break_out_of_flow_in_multicolumn_081() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -9688,11 +9973,13 @@ fn css_break_out_of_flow_in_multicolumn_081() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
             doc.append_child(n2, n3);
@@ -9715,6 +10002,7 @@ fn css_break_out_of_flow_in_multicolumn_082() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -9728,6 +10016,7 @@ fn css_break_out_of_flow_in_multicolumn_082() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
             doc.node_mut(n3).style.width = Length::percent(100.0);
@@ -9752,6 +10041,7 @@ fn css_break_out_of_flow_in_multicolumn_083() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -9762,6 +10052,7 @@ fn css_break_out_of_flow_in_multicolumn_083() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -9784,6 +10075,7 @@ fn css_break_out_of_flow_in_multicolumn_084() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -9817,6 +10109,7 @@ fn css_break_out_of_flow_in_multicolumn_094() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -9851,6 +10144,7 @@ fn css_break_out_of_flow_in_multicolumn_095() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -9891,10 +10185,12 @@ fn css_break_out_of_flow_in_multicolumn_096() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(200.0);
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -9929,6 +10225,7 @@ fn css_break_out_of_flow_in_multicolumn_097() -> Document {
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
+    doc.node_mut(n2).style.column_count = Some(2);
     doc.node_mut(n2).style.margin_top = Length::px(-300.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.append_child(vp, n2);
@@ -9988,6 +10285,7 @@ fn css_break_out_of_flow_in_multicolumn_098() -> Document {
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
+    doc.node_mut(n2).style.column_count = Some(2);
     doc.node_mut(n2).style.margin_top = Length::px(-300.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.append_child(vp, n2);
@@ -10041,6 +10339,7 @@ fn css_break_out_of_flow_in_multicolumn_099() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -10073,6 +10372,7 @@ fn css_break_out_of_flow_in_multicolumn_104() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -10115,6 +10415,7 @@ fn css_break_out_of_flow_in_multicolumn_107() -> Document {
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.column_count = Some(3);
     doc.node_mut(n3).style.width = Length::px(100.0);
     doc.node_mut(n3).style.row_gap = Some(Length::px(20.0));
     doc.node_mut(n3).style.column_gap = Some(Length::px(20.0));
@@ -10145,6 +10446,7 @@ fn css_break_out_of_flow_in_multicolumn_109() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
@@ -10174,6 +10476,7 @@ fn css_break_out_of_flow_in_multicolumn_112() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -10214,6 +10517,7 @@ fn css_break_out_of_flow_in_multicolumn_113() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -10271,6 +10575,7 @@ fn css_break_out_of_flow_in_multicolumn_114() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -10311,6 +10616,7 @@ fn css_break_out_of_flow_in_multicolumn_115() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -10351,6 +10657,7 @@ fn css_break_out_of_flow_in_multicolumn_116() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -10389,6 +10696,7 @@ fn css_break_out_of_flow_in_multicolumn_117() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -10402,6 +10710,7 @@ fn css_break_out_of_flow_in_multicolumn_117() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
         doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n3).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
@@ -10584,6 +10893,10 @@ fn css_break_out_of_flow_in_multicolumn_124() -> Document {
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.position = Position::Absolute;
+                doc.node_mut(n4).style.top = Length::px(0.0);
+                doc.node_mut(n4).style.right = Length::px(0.0);
+                doc.node_mut(n4).style.bottom = Length::px(0.0);
+                doc.node_mut(n4).style.left = Length::px(0.0);
                 doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n4).style.border_top_width = 5;
                 doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
@@ -10616,6 +10929,10 @@ fn css_break_out_of_flow_in_multicolumn_124() -> Document {
                 let n7 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n7).style.display = Display::Block;
                 doc.node_mut(n7).style.position = Position::Absolute;
+                doc.node_mut(n7).style.top = Length::px(0.0);
+                doc.node_mut(n7).style.right = Length::px(0.0);
+                doc.node_mut(n7).style.bottom = Length::px(0.0);
+                doc.node_mut(n7).style.left = Length::px(0.0);
                 doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n7).style.border_top_width = 5;
                 doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
@@ -10680,6 +10997,10 @@ fn css_break_out_of_flow_in_multicolumn_125() -> Document {
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
                 doc.node_mut(n5).style.position = Position::Absolute;
+                doc.node_mut(n5).style.top = Length::px(3.0);
+                doc.node_mut(n5).style.right = Length::px(5.0);
+                doc.node_mut(n5).style.bottom = Length::px(7.0);
+                doc.node_mut(n5).style.left = Length::px(9.0);
                 doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n3, n5);
         let n6 = doc.create_node(ElementTag::Div);
@@ -10722,6 +11043,10 @@ fn css_break_out_of_flow_in_multicolumn_125() -> Document {
                 let n9 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n9).style.display = Display::Block;
                 doc.node_mut(n9).style.position = Position::Absolute;
+                doc.node_mut(n9).style.top = Length::px(3.0);
+                doc.node_mut(n9).style.right = Length::px(5.0);
+                doc.node_mut(n9).style.bottom = Length::px(7.0);
+                doc.node_mut(n9).style.left = Length::px(9.0);
                 doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n9).style.box_sizing = BoxSizing::BorderBox;
                 doc.append_child(n7, n9);
@@ -10756,6 +11081,10 @@ fn css_break_out_of_flow_in_multicolumn_126() -> Document {
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.position = Position::Absolute;
+                doc.node_mut(n4).style.top = Length::px(0.0);
+                doc.node_mut(n4).style.right = Length::px(0.0);
+                doc.node_mut(n4).style.bottom = Length::px(0.0);
+                doc.node_mut(n4).style.left = Length::px(0.0);
                 doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n3, n4);
         let n5 = doc.create_node(ElementTag::Div);
@@ -10780,6 +11109,10 @@ fn css_break_out_of_flow_in_multicolumn_126() -> Document {
                 let n7 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n7).style.display = Display::Block;
                 doc.node_mut(n7).style.position = Position::Absolute;
+                doc.node_mut(n7).style.top = Length::px(0.0);
+                doc.node_mut(n7).style.right = Length::px(0.0);
+                doc.node_mut(n7).style.bottom = Length::px(0.0);
+                doc.node_mut(n7).style.left = Length::px(0.0);
                 doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n7).style.box_sizing = BoxSizing::BorderBox;
                 doc.append_child(n6, n7);
@@ -10791,6 +11124,7 @@ fn css_break_out_of_flow_in_multicolumn_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -10814,6 +11148,7 @@ fn css_break_out_of_flow_in_multicolumn_paint_order_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -10849,6 +11184,7 @@ fn css_break_out_of_flow_in_multicolumn_paint_order_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -10884,13 +11220,16 @@ fn css_break_out_of_flow_in_nested_spanner_multicol_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.column_span = ColumnSpan::All;
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -10909,6 +11248,7 @@ fn css_break_out_of_flow_in_new_column_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
     doc.node_mut(n1).style.height = Length::px(20.0);
@@ -10942,11 +11282,13 @@ fn css_break_out_of_flow_with_negative_offset_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(15.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -10964,6 +11306,7 @@ fn css_break_out_of_flow_with_negative_offset_crash() -> Document {
                 let n6 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n6).style.display = Display::Block;
                 doc.node_mut(n6).style.column_span = ColumnSpan::All;
+                doc.node_mut(n6).style.column_count = Some(1);
                 doc.node_mut(n6).style.padding_top = Length::px(30.0);
                 doc.append_child(n4, n6);
                 let n7 = doc.create_node(ElementTag::Div);
@@ -10984,8 +11327,11 @@ fn css_break_out_of_order_float_in_inline_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.append_child(n1, n2);
@@ -11004,6 +11350,7 @@ fn css_break_overflow_auto_height_with_bottom_padding_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -11027,6 +11374,7 @@ fn css_break_overflow_clip_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
@@ -11056,6 +11404,7 @@ fn css_break_overflow_clip_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
@@ -11086,6 +11435,7 @@ fn css_break_overflow_clip_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(180.0);
@@ -11119,6 +11469,7 @@ fn css_break_overflow_clip_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(180.0);
@@ -11155,6 +11506,7 @@ fn css_break_overflow_clip_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -11184,6 +11536,7 @@ fn css_break_overflow_clip_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(180.0);
@@ -11195,6 +11548,7 @@ fn css_break_overflow_clip_010() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_count = Some(1);
             doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
             doc.node_mut(n3).style.max_height = Length::px(300.0);
@@ -11223,6 +11577,7 @@ fn css_break_overflow_clip_013() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
@@ -11259,6 +11614,7 @@ fn css_break_overflow_clip_014() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11300,6 +11656,7 @@ fn css_break_overflow_clip_015() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11346,6 +11703,7 @@ fn css_break_overflow_clip_016() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11397,6 +11755,7 @@ fn css_break_overflow_clip_017() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -11466,9 +11825,11 @@ fn css_break_overflowed_abs_pos_with_percentage_height_print_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.break_after = BreakValue::Page;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.break_after = BreakValue::Page;
     doc.append_child(vp, n2);
     doc
 }
@@ -11485,6 +11846,7 @@ fn css_break_overflowed_block_with_no_room_after_000() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.column_count = Some(2);
     doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n2).style.width = Length::px(100.0);
@@ -11521,6 +11883,7 @@ fn css_break_overflowed_block_with_no_room_after_001() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.column_count = Some(2);
     doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n2).style.width = Length::px(100.0);
@@ -11553,6 +11916,7 @@ fn css_break_overflowed_block_with_room_after_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11599,6 +11963,7 @@ fn css_break_overflowed_block_with_room_after_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11640,6 +12005,7 @@ fn css_break_overflowed_block_with_room_after_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11681,6 +12047,7 @@ fn css_break_overflowed_block_with_room_after_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11730,6 +12097,7 @@ fn css_break_overflowed_block_with_room_after_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11782,6 +12150,7 @@ fn css_break_overflowing_block_003_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(150.0);
     doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.border_top_width = 3;
@@ -11811,6 +12180,7 @@ fn css_break_overflowing_block_003_ref() -> Document {
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.width = Length::px(150.0);
     doc.node_mut(n3).style.height = Length::px(50.0);
+    doc.node_mut(n3).style.column_count = Some(2);
     doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n3).style.border_top_width = 3;
@@ -11897,6 +12267,7 @@ fn css_break_parallel_flow_trailing_margin_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11929,6 +12300,7 @@ fn css_break_parallel_flow_trailing_margin_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -11961,6 +12333,7 @@ fn css_break_parallel_flow_trailing_margin_003_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.height = Length::px(10.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -12063,11 +12436,14 @@ fn css_break_relpos_inline() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(30.0);
     doc.node_mut(n1).style.width = Length::px(600.0);
     doc.node_mut(n1).style.height = Length::px(60.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.position = Position::Relative;
@@ -12090,6 +12466,7 @@ fn css_break_resumed_float_and_inline_block_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -12133,9 +12510,12 @@ fn css_break_ruby_000() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(4);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(175.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.append_child(n2, n3);
@@ -12199,9 +12579,12 @@ fn css_break_ruby_001() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(4);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(175.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.append_child(n2, n3);
@@ -12266,9 +12649,12 @@ fn css_break_ruby_002() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(175.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.append_child(n2, n3);
@@ -12362,6 +12748,7 @@ fn css_break_ruby_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(60.0);
@@ -12391,6 +12778,7 @@ fn css_break_tall_break_inside_avoid_at_start() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -12420,6 +12808,7 @@ fn css_break_tall_content_inside_constrained_block_000_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(75.0);
@@ -12458,6 +12847,7 @@ fn css_break_tall_content_inside_constrained_block_001_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(75.0);
@@ -12500,6 +12890,7 @@ fn css_break_tall_content_inside_constrained_block_002_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(75.0);
@@ -12542,6 +12933,7 @@ fn css_break_tall_content_inside_constrained_block_003_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(75.0);
@@ -12586,6 +12978,7 @@ fn css_break_tall_content_inside_constrained_block_004_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(75.0);
@@ -12624,6 +13017,7 @@ fn css_break_tall_float_pushed_to_next_fragmentainer_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -12663,6 +13057,7 @@ fn css_break_tall_float_pushed_to_next_fragmentainer_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(150.0);
@@ -12706,6 +13101,7 @@ fn css_break_tall_float_pushed_to_next_fragmentainer_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(150.0);
@@ -12744,6 +13140,7 @@ fn css_break_tall_float_pushed_to_next_fragmentainer_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -12776,6 +13173,7 @@ fn css_break_tall_line_in_short_fragmentainer_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(300.0);
@@ -12816,6 +13214,7 @@ fn css_break_tall_line_in_short_fragmentainer_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -12851,6 +13250,7 @@ fn css_break_tall_line_in_short_fragmentainer_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -12879,6 +13279,7 @@ fn css_break_trailing_child_margin_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -12908,6 +13309,7 @@ fn css_break_trailing_child_margin_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -12935,6 +13337,7 @@ fn css_break_trailing_child_margin_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -12977,6 +13380,7 @@ fn css_break_transform_022_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(3000.0);
     doc.append_child(vp, n1);
     doc
 }
@@ -12986,9 +13390,12 @@ fn css_break_uncontained_oof_in_inline_after_break_001_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(20.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.append_child(n1, n2);
@@ -13009,6 +13416,7 @@ fn css_break_underflow_from_next_page_print_ref() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.top = Length::px(300.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -13027,6 +13435,7 @@ fn css_break_underflow_from_next_page_print() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.break_before = BreakValue::Page;
+    doc.node_mut(n1).style.margin_top = Length::px(-300.0);
     doc.append_child(vp, n1);
     doc
 }
@@ -13036,6 +13445,7 @@ fn css_break_wide_line_after_floats_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -13058,8 +13468,12 @@ fn css_break_widows_block_in_inline_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n1).style.height = Length::px(80.0);
+    doc.node_mut(n1).style.orphans = 3_u32;
+    doc.node_mut(n1).style.widows = 3_u32;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -13078,11 +13492,14 @@ fn css_break_widows_orphans_019() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.line_height = LineHeight::Length(25.0);
+    doc.node_mut(n1).style.orphans = 4_u32;
+    doc.node_mut(n1).style.widows = 4_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -13211,11 +13628,14 @@ fn css_break_widows_orphans_020() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.width = Length::px(190.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.orphans = 2_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -13237,12 +13657,15 @@ fn css_break_widows_orphans_021() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(25.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.orphans = 3_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -13268,12 +13691,15 @@ fn css_break_widows_orphans_022() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(25.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 3_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -13299,12 +13725,15 @@ fn css_break_widows_orphans_023() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.line_height = LineHeight::Length(25.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 3_u32;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -13360,6 +13789,7 @@ fn css_break_flexbox_auto_height_flex_item_in_multicol_crash() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -13730,6 +14160,8 @@ fn css_break_flexbox_flex_item_content_overflow_001_ref() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
@@ -13746,6 +14178,8 @@ fn css_break_flexbox_flex_item_content_overflow_001_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(130.0);
+        doc.node_mut(n2).style.height = Length::px(70.0);
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -13762,6 +14196,7 @@ fn css_break_flexbox_flex_item_content_overflow_001_ref() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.border_top_width = 10;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
@@ -13790,6 +14225,7 @@ fn css_break_flexbox_flex_item_content_overflow_001_ref() -> Document {
                 doc.node_mut(n4).style.border_left_width = 10;
                 doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
                 doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+                doc.node_mut(n4).style.height = Length::px(140.0);
                 doc.node_mut(n4).style.box_sizing = BoxSizing::BorderBox;
                 doc.append_child(n3, n4);
     doc
@@ -13803,6 +14239,8 @@ fn css_break_flexbox_flex_item_content_overflow_001a() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
@@ -13819,6 +14257,8 @@ fn css_break_flexbox_flex_item_content_overflow_001a() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.width = Length::px(130.0);
+        doc.node_mut(n2).style.height = Length::px(70.0);
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -13835,6 +14275,9 @@ fn css_break_flexbox_flex_item_content_overflow_001a() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 1.0;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.border_top_width = 10;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
@@ -13863,6 +14306,7 @@ fn css_break_flexbox_flex_item_content_overflow_001a() -> Document {
                 doc.node_mut(n4).style.border_left_width = 10;
                 doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
                 doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+                doc.node_mut(n4).style.height = Length::px(140.0);
                 doc.node_mut(n4).style.box_sizing = BoxSizing::BorderBox;
                 doc.append_child(n3, n4);
     doc
@@ -13876,6 +14320,8 @@ fn css_break_flexbox_flex_item_content_overflow_001b() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(280.0);
+    doc.node_mut(n1).style.height = Length::px(80.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
@@ -13891,6 +14337,8 @@ fn css_break_flexbox_flex_item_content_overflow_001b() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.width = Length::px(110.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -13906,6 +14354,9 @@ fn css_break_flexbox_flex_item_content_overflow_001b() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 1.0;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.border_top_width = 10;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
@@ -13933,6 +14384,7 @@ fn css_break_flexbox_flex_item_content_overflow_001b() -> Document {
                 doc.node_mut(n4).style.border_left_width = 10;
                 doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
                 doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+                doc.node_mut(n4).style.height = Length::px(120.0);
                 doc.append_child(n3, n4);
     doc
 }
@@ -13945,6 +14397,8 @@ fn css_break_flexbox_flex_item_content_overflow_002a() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
@@ -13962,6 +14416,8 @@ fn css_break_flexbox_flex_item_content_overflow_002a() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
         doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
+        doc.node_mut(n2).style.width = Length::px(130.0);
+        doc.node_mut(n2).style.height = Length::px(70.0);
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -13978,6 +14434,9 @@ fn css_break_flexbox_flex_item_content_overflow_002a() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 1.0;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.min_height = Length::px(0.0);
             doc.node_mut(n3).style.border_top_width = 10;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
@@ -14007,6 +14466,7 @@ fn css_break_flexbox_flex_item_content_overflow_002a() -> Document {
                 doc.node_mut(n4).style.border_left_width = 10;
                 doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
                 doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+                doc.node_mut(n4).style.height = Length::px(140.0);
                 doc.node_mut(n4).style.box_sizing = BoxSizing::BorderBox;
                 doc.append_child(n3, n4);
     doc
@@ -14020,6 +14480,8 @@ fn css_break_flexbox_flex_item_content_overflow_002b() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(280.0);
+    doc.node_mut(n1).style.height = Length::px(80.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
@@ -14036,6 +14498,8 @@ fn css_break_flexbox_flex_item_content_overflow_002b() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
         doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
+        doc.node_mut(n2).style.width = Length::px(110.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
         doc.node_mut(n2).style.border_top_width = 10;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -14051,6 +14515,9 @@ fn css_break_flexbox_flex_item_content_overflow_002b() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 1.0;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.min_height = Length::px(0.0);
             doc.node_mut(n3).style.border_top_width = 10;
             doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
@@ -14079,6 +14546,7 @@ fn css_break_flexbox_flex_item_content_overflow_002b() -> Document {
                 doc.node_mut(n4).style.border_left_width = 10;
                 doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
                 doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+                doc.node_mut(n4).style.height = Length::px(120.0);
                 doc.append_child(n3, n4);
     doc
 }
@@ -14088,6 +14556,7 @@ fn css_break_flexbox_flex_item_content_overflow_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -14180,11 +14649,13 @@ fn css_break_flexbox_monolithic_overflow_001_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(60.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -14206,11 +14677,13 @@ fn css_break_flexbox_monolithic_overflow_002_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(60.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -14231,6 +14704,7 @@ fn css_break_flexbox_monolithic_overflow_003_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -14238,6 +14712,7 @@ fn css_break_flexbox_monolithic_overflow_003_tentative() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
             doc.node_mut(n3).style.height = Length::px(200.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -14263,6 +14738,7 @@ fn css_break_flexbox_monolithic_overflow_004_tentative() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
@@ -14270,6 +14746,7 @@ fn css_break_flexbox_monolithic_overflow_004_tentative() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -14290,6 +14767,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_009() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -14323,6 +14801,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_010() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -14371,12 +14850,14 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_011() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
@@ -14404,6 +14885,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_012() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -14443,6 +14925,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_013() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -14519,6 +15002,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_014() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -14585,6 +15069,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_015() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -14824,6 +15309,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_041_ref() -> Document 
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -14890,6 +15376,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_041() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -14956,6 +15443,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_042_ref() -> Document 
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -15022,6 +15510,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_042() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -15088,6 +15577,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_043_ref() -> Document 
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -15154,6 +15644,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_043() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -15220,6 +15711,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_044_ref() -> Document 
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -15295,6 +15787,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_044() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -15370,6 +15863,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_048() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -15382,6 +15876,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_048() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n3).style.flex_basis = Length::fit_content();
             doc.node_mut(n3).style.height = Length::px(10.0);
             doc.node_mut(n3).style.width = Length::px(25.0);
             doc.append_child(n2, n3);
@@ -15404,6 +15899,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_048() -> Document {
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n7).style.flex_basis = Length::min_content();
             doc.node_mut(n7).style.height = Length::px(10.0);
             doc.node_mut(n7).style.width = Length::px(25.0);
             doc.append_child(n2, n7);
@@ -15433,6 +15929,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_049() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -15519,6 +16016,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_051() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -15568,6 +16066,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_052() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -15632,6 +16131,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_053() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
@@ -15687,6 +16187,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_059_ref() -> Document 
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(60.0));
     doc.node_mut(n1).style.width = Length::px(130.0);
@@ -15790,6 +16291,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_059() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(60.0));
     doc.node_mut(n1).style.width = Length::px(130.0);
@@ -15853,6 +16355,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_060_ref() -> Document 
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(60.0));
     doc.node_mut(n1).style.width = Length::px(130.0);
@@ -15956,6 +16459,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_060() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(60.0));
     doc.node_mut(n1).style.width = Length::px(130.0);
@@ -16019,6 +16523,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_061_ref() -> Document 
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(60.0));
     doc.node_mut(n1).style.width = Length::px(130.0);
@@ -16122,6 +16627,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_061() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(60.0));
     doc.node_mut(n1).style.width = Length::px(130.0);
@@ -16216,6 +16722,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_007() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16254,6 +16761,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_008() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -16292,6 +16800,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_009() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16329,6 +16838,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_011() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16387,6 +16897,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_012() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16398,6 +16909,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_012() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(50.0);
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -16435,6 +16947,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_013() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16484,6 +16997,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_014() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16548,6 +17062,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_024() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16579,6 +17094,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_025() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16627,6 +17143,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_026() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16676,6 +17193,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_027() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16738,6 +17256,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_028() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16794,6 +17313,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_029() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16854,6 +17374,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_030() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -16914,6 +17435,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_046() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -16925,11 +17447,17 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_046() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 0.5;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.width = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.flex_grow = 0.5;
+            doc.node_mut(n4).style.flex_shrink = 1.0;
+            doc.node_mut(n4).style.flex_basis = Length::px(0.0);
             doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n4);
                 let n5 = doc.create_node(ElementTag::Div);
@@ -16947,6 +17475,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_047_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -16989,11 +17518,13 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_047() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::RowReverse;
         doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
@@ -17031,6 +17562,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_048_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -17073,6 +17605,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_048() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -17115,6 +17648,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_049_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -17157,11 +17691,13 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_049() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::RowReverse;
         doc.node_mut(n2).style.flex_wrap = FlexWrap::WrapReverse;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
@@ -17199,6 +17735,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_050_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -17261,6 +17798,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_050() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -17272,6 +17810,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_050() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Flex;
+        doc.node_mut(n3).style.flex_direction = FlexDirection::RowReverse;
         doc.node_mut(n3).style.flex_wrap = FlexWrap::WrapReverse;
         doc.node_mut(n3).style.height = Length::px(200.0);
         doc.append_child(n1, n3);
@@ -17430,6 +17969,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_083a() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -17480,6 +18020,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_083b() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -17530,6 +18071,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_083c() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -17580,6 +18122,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_083d() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -17642,6 +18185,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_092() -> Document {
         doc.node_mut(n2).style.display = Display::Flex;
         doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.height = Length::px(200.0);
         doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -17704,6 +18248,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_094_ref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.column_count = Some(2);
     doc.node_mut(n4).style.height = Length::px(60.0);
     doc.node_mut(n4).style.column_width = Some(Length::px(140.0));
     doc.node_mut(n4).style.width = Length::px(290.0);
@@ -17786,6 +18331,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_094() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(140.0));
     doc.node_mut(n1).style.width = Length::px(290.0);
@@ -17889,6 +18435,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_095_ref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.column_count = Some(2);
     doc.node_mut(n4).style.height = Length::px(60.0);
     doc.node_mut(n4).style.column_width = Some(Length::px(140.0));
     doc.node_mut(n4).style.width = Length::px(290.0);
@@ -17971,6 +18518,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_095() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(140.0));
     doc.node_mut(n1).style.width = Length::px(290.0);
@@ -18083,6 +18631,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_096_ref() -> Document {
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.column_count = Some(2);
     doc.node_mut(n5).style.height = Length::px(60.0);
     doc.node_mut(n5).style.column_width = Some(Length::px(140.0));
     doc.node_mut(n5).style.width = Length::px(290.0);
@@ -18164,6 +18713,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_096() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(60.0);
     doc.node_mut(n1).style.column_width = Some(Length::px(140.0));
     doc.node_mut(n1).style.width = Length::px(290.0);
@@ -18235,6 +18785,7 @@ fn css_break_flexbox_nested_flex_item_expansion_in_mulicol() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -18316,6 +18867,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_007() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -18348,6 +18900,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_008() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -18381,6 +18934,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_009() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -18418,6 +18972,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_010() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -18461,6 +19016,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_011() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -18500,6 +19056,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_012() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -18511,6 +19068,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_012() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(50.0);
+            doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -18546,6 +19104,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_013() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -18592,6 +19151,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_014() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -19034,6 +19594,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_023() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.height = Length::px(160.0);
@@ -19071,6 +19632,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_024() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(180.0);
@@ -19111,6 +19673,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_025() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(180.0);
@@ -19148,6 +19711,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_026() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -19190,6 +19754,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_027() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -19251,6 +19816,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_028() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -19313,6 +19879,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_029() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -19384,6 +19951,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_035() -> Document {
         doc.node_mut(n2).style.margin_left = Length::px(-40.0);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.column_count = Some(5);
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.append_child(n1, n2);
@@ -19414,12 +19982,14 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_036() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -19441,12 +20011,14 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_037() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -19490,12 +20062,14 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_038() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -19540,11 +20114,13 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_040_ref() -> Document
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -19581,11 +20157,13 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_040() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::ColumnReverse;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -19621,6 +20199,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_046() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_left = Length::px(-100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -19636,6 +20215,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_046() -> Document {
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_count = Some(2);
             doc.node_mut(n4).style.width = Length::percent(100.0);
             doc.node_mut(n4).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n4).style.background_color = Color::RED;
@@ -19663,6 +20243,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_047() -> Document {
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19697,6 +20278,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_048() -> Document {
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19742,6 +20324,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_049() -> Document {
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19771,17 +20354,26 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_049() -> Document {
             doc.node_mut(n5).style.display = Display::Block;
             doc.node_mut(n5).style.width = Length::px(50.0);
             doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n5).style.flex_grow = 1.0;
+            doc.node_mut(n5).style.flex_shrink = 1.0;
+            doc.node_mut(n5).style.flex_basis = Length::px(0.0);
             doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
             doc.node_mut(n6).style.width = Length::px(50.0);
             doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n6).style.flex_grow = 1.0;
+            doc.node_mut(n6).style.flex_shrink = 1.0;
+            doc.node_mut(n6).style.flex_basis = Length::px(0.0);
             doc.node_mut(n6).style.break_before = BreakValue::Column;
             doc.append_child(n4, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.width = Length::px(50.0);
             doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n7).style.flex_grow = 2.0;
+            doc.node_mut(n7).style.flex_shrink = 1.0;
+            doc.node_mut(n7).style.flex_basis = Length::px(0.0);
             doc.append_child(n4, n7);
     doc
 }
@@ -19793,6 +20385,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_050() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19825,6 +20418,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_051() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19864,6 +20458,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_052() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19896,6 +20491,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_053() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19942,6 +20538,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_054() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -19975,6 +20572,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_055() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -20125,6 +20723,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_059() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -20137,6 +20736,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_059() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
             doc.node_mut(n3).style.height = Length::percent(100.0);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -20249,6 +20849,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_067() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -20260,6 +20861,8 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_067() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 0.0;
+            doc.node_mut(n3).style.flex_shrink = 0.0;
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -20276,11 +20879,216 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_067() -> Document {
     doc
 }
 
+// Source: flexbox_single-line-column-flex-fragmentation-068-print-ref.html
+fn css_break_flexbox_single_line_column_flex_fragmentation_068_print_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.break_before = BreakValue::Page;
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n2, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: flexbox_single-line-column-flex-fragmentation-068a-print.html
+fn css_break_flexbox_single_line_column_flex_fragmentation_068a_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.break_before = BreakValue::Page;
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n2, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: flexbox_single-line-column-flex-fragmentation-068b-print.html
+fn css_break_flexbox_single_line_column_flex_fragmentation_068b_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.break_after = BreakValue::Page;
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n2, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: flexbox_single-line-column-flex-fragmentation-068c-print.html
+fn css_break_flexbox_single_line_column_flex_fragmentation_068c_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_direction = FlexDirection::ColumnReverse;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.break_before = BreakValue::Page;
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n2, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: flexbox_single-line-column-flex-fragmentation-068d-print.html
+fn css_break_flexbox_single_line_column_flex_fragmentation_068d_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_direction = FlexDirection::ColumnReverse;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.break_after = BreakValue::Page;
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n2, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.append_child(vp, n7);
+    doc
+}
+
 // Source: flexbox_single-line-column-flex-fragmentation-070a.html
 fn css_break_flexbox_single_line_column_flex_fragmentation_070a() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -20327,6 +21135,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_070b() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -20373,6 +21182,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_070c() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -20419,6 +21229,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_070d() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -20465,6 +21276,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_071() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -20531,6 +21343,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_007() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -20562,6 +21375,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_008() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -20600,6 +21414,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_009() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -20636,6 +21451,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_010() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -20673,6 +21489,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_011() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -20720,6 +21537,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_015() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -20761,6 +21579,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_016() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -20803,6 +21622,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_017() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -20857,6 +21677,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_018() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -20906,6 +21727,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_021() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -20930,6 +21752,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_022() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -20959,6 +21782,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_026() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -20969,6 +21793,9 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_026() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.flex_grow = 1.0;
+            doc.node_mut(n3).style.flex_shrink = 1.0;
+            doc.node_mut(n3).style.flex_basis = Length::px(0.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -20985,6 +21812,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_027_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
@@ -21032,11 +21860,13 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_027() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.flex_direction = FlexDirection::RowReverse;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -21078,6 +21908,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_032() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_left = Length::px(-100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -21092,6 +21923,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_032() -> Document {
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_count = Some(2);
             doc.node_mut(n4).style.width = Length::percent(100.0);
             doc.node_mut(n4).style.column_gap = Some(Length::px(0.0));
             doc.node_mut(n4).style.background_color = Color::RED;
@@ -21119,6 +21951,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_035() -> Document {
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -21152,6 +21985,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_036() -> Document {
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -21196,6 +22030,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_037() -> Document {
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -21499,6 +22334,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_047() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -21533,6 +22369,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_048() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
@@ -21543,6 +22380,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_048() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(50.0);
+            doc.node_mut(n3).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 2.0_f32), auto_flag: false });
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
@@ -21557,6 +22395,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_049() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.height = Length::px(300.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.append_child(vp, n1);
@@ -21582,6 +22421,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_050() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
     doc.node_mut(n1).style.height = Length::px(300.0);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.append_child(vp, n1);
@@ -21783,10 +22623,13 @@ fn css_break_table_table_caption_and_cells_fixed_width_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_left = Length::px(240.0);
+    doc.node_mut(n1).style.width = Length::px(160.0);
     doc.node_mut(n1).style.text_align = TextAlign::Center;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(32.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
         doc.append_child(n1, n2);
     doc
@@ -21798,10 +22641,12 @@ fn css_break_table_table_caption_and_cells_ref() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_left = Length::percent(50.0);
+    doc.node_mut(n1).style.width = Length::px(160.0);
     doc.node_mut(n1).style.text_align = TextAlign::Center;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(32.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
         doc.append_child(n1, n2);
     doc
@@ -21812,6 +22657,7 @@ fn css_break_table_table_caption_with_block_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_left = Length::px(320.0);
     doc.append_child(vp, n1);
     doc
 }
@@ -21821,6 +22667,9 @@ fn css_break_table_table_col_paint_htb_ltr_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -21828,29 +22677,41 @@ fn css_break_table_table_col_paint_htb_ltr_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.node_mut(n2).style.height = Length::px(400.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.width = Length::percent(100.0);
             doc.node_mut(n3).style.background_color = Color::RED;
+            doc.node_mut(n3).style.height = Length::px(50.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 0, 255);
             doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.height = Length::px(255.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 165, 0, 255);
             doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.height = Length::px(255.0);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
             doc.node_mut(n6).style.position = Position::Absolute;
+            doc.node_mut(n6).style.width = Length::percent(100.0);
+            doc.node_mut(n6).style.height = Length::px(10.0);
             doc.node_mut(n6).style.background_color = Color::WHITE;
             doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.position = Position::Absolute;
+            doc.node_mut(n7).style.width = Length::percent(100.0);
             doc.node_mut(n7).style.background_color = Color::RED;
+            doc.node_mut(n7).style.height = Length::px(75.0);
             doc.append_child(n2, n7);
     doc
 }
@@ -21862,6 +22723,7 @@ fn css_break_table_table_collapsed_borders_paint_at_boundary_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(500.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(5);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
@@ -21994,6 +22856,9 @@ fn css_break_table_table_collapsed_borders_paint_htb_ltr_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(10.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(10.0));
@@ -22012,9 +22877,11 @@ fn css_break_table_table_collapsed_borders_paint_htb_ltr_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(120.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(40.0);
         doc.node_mut(n3).style.border_top_width = 10;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
@@ -22030,6 +22897,7 @@ fn css_break_table_table_collapsed_borders_paint_htb_ltr_ref() -> Document {
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::px(135.0);
         doc.node_mut(n4).style.border_top_width = 10;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n4).style.border_right_width = 10;
@@ -22042,6 +22910,7 @@ fn css_break_table_table_collapsed_borders_paint_htb_ltr_ref() -> Document {
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.height = Length::px(40.0);
         doc.node_mut(n5).style.border_top_width = 10;
         doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -22058,6 +22927,7 @@ fn css_break_table_table_collapsed_borders_paint_htb_ltr_ref() -> Document {
         doc.append_child(n1, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(15.0);
         doc.node_mut(n6).style.border_top_width = 10;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -22080,16 +22950,21 @@ fn css_break_table_table_grid_paint_htb_ltr_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(140.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
         doc.node_mut(n3).style.border_top_width = 10;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_right_width = 10;
@@ -22098,9 +22973,11 @@ fn css_break_table_table_grid_paint_htb_ltr_ref() -> Document {
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_left_width = 10;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.height = Length::px(225.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::px(15.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 0, 255);
         doc.append_child(n1, n4);
     doc
@@ -22111,6 +22988,9 @@ fn css_break_table_table_row_paint_htb_ltr_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -22118,29 +22998,41 @@ fn css_break_table_table_row_paint_htb_ltr_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.node_mut(n2).style.height = Length::px(400.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.width = Length::percent(100.0);
             doc.node_mut(n3).style.background_color = Color::RED;
+            doc.node_mut(n3).style.height = Length::px(50.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 165, 0, 255);
             doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.height = Length::px(110.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 165, 0, 255);
             doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.height = Length::px(135.0);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
             doc.node_mut(n6).style.position = Position::Absolute;
+            doc.node_mut(n6).style.width = Length::px(10.0);
+            doc.node_mut(n6).style.height = Length::px(255.0);
             doc.node_mut(n6).style.background_color = Color::WHITE;
             doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.position = Position::Absolute;
+            doc.node_mut(n7).style.width = Length::percent(100.0);
             doc.node_mut(n7).style.background_color = Color::RED;
+            doc.node_mut(n7).style.height = Length::px(75.0);
             doc.append_child(n2, n7);
     doc
 }
@@ -22150,6 +23042,9 @@ fn css_break_table_table_section_paint_htb_ltr_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(4);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -22157,30 +23052,42 @@ fn css_break_table_table_section_paint_htb_ltr_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.node_mut(n2).style.height = Length::px(400.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.width = Length::percent(100.0);
             doc.node_mut(n3).style.background_color = Color::RED;
+            doc.node_mut(n3).style.height = Length::px(50.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 165, 0, 255);
             doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.height = Length::px(255.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
             doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.width = Length::percent(100.0);
+            doc.node_mut(n5).style.height = Length::px(10.0);
             doc.node_mut(n5).style.background_color = Color::WHITE;
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
             doc.node_mut(n6).style.position = Position::Absolute;
+            doc.node_mut(n6).style.width = Length::px(10.0);
+            doc.node_mut(n6).style.height = Length::px(255.0);
             doc.node_mut(n6).style.background_color = Color::WHITE;
             doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.position = Position::Absolute;
+            doc.node_mut(n7).style.width = Length::percent(100.0);
             doc.node_mut(n7).style.background_color = Color::RED;
+            doc.node_mut(n7).style.height = Length::px(75.0);
             doc.append_child(n2, n7);
     doc
 }
@@ -22282,25 +23189,33 @@ fn css_break_table_repeated_section_fixedpos_in_footer_forced_break_print_ref() 
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(600.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.height = Length::px(600.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.height = Length::px(600.0);
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.position = Position::Absolute;
     doc.node_mut(n4).style.bottom = Length::px(0.0);
+    doc.node_mut(n4).style.height = Length::px(48.0);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.position = Position::Absolute;
+    doc.node_mut(n5).style.bottom = Length::px(-600.0);
+    doc.node_mut(n5).style.height = Length::px(48.0);
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.position = Position::Absolute;
+    doc.node_mut(n6).style.bottom = Length::px(-1200.0);
+    doc.node_mut(n6).style.height = Length::px(48.0);
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -22310,14 +23225,17 @@ fn css_break_table_repeated_section_fixedpos_in_footer_forced_break_print_ref() 
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.position = Position::Absolute;
+    doc.node_mut(n8).style.bottom = Length::px(-600.0);
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
     doc.node_mut(n9).style.position = Position::Absolute;
+    doc.node_mut(n9).style.bottom = Length::px(-1200.0);
     doc.append_child(vp, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
     doc.node_mut(n10).style.position = Position::Absolute;
+    doc.node_mut(n10).style.bottom = Length::px(-1800.0);
     doc.append_child(vp, n10);
     doc
 }
@@ -22327,6 +23245,8 @@ fn css_break_table_repeated_section_text_in_nested_multicol_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::fit_content();
+    doc.node_mut(n1).style.column_count = Some(6);
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
@@ -22915,6 +23835,11 @@ pub fn css_break_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-066-print-ref", css_break_flexbox_single_line_column_flex_fragmentation_066_print_ref as fn() -> Document),
         ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-066-print", css_break_flexbox_single_line_column_flex_fragmentation_066_print as fn() -> Document),
         ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-067", css_break_flexbox_single_line_column_flex_fragmentation_067 as fn() -> Document),
+        ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-068-print-ref", css_break_flexbox_single_line_column_flex_fragmentation_068_print_ref as fn() -> Document),
+        ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-068a-print", css_break_flexbox_single_line_column_flex_fragmentation_068a_print as fn() -> Document),
+        ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-068b-print", css_break_flexbox_single_line_column_flex_fragmentation_068b_print as fn() -> Document),
+        ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-068c-print", css_break_flexbox_single_line_column_flex_fragmentation_068c_print as fn() -> Document),
+        ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-068d-print", css_break_flexbox_single_line_column_flex_fragmentation_068d_print as fn() -> Document),
         ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-070a", css_break_flexbox_single_line_column_flex_fragmentation_070a as fn() -> Document),
         ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-070b", css_break_flexbox_single_line_column_flex_fragmentation_070b as fn() -> Document),
         ("wpt/css_break/flexbox_single-line-column-flex-fragmentation-070c", css_break_flexbox_single_line_column_flex_fragmentation_070c as fn() -> Document),

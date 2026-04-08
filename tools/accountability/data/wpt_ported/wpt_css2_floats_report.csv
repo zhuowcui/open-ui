@@ -9,6 +9,8 @@ float-under-flatten-under-preserve-3d,ported,css2_floats_float_under_flatten_und
 float-with-absolutely-positioned-child-with-static-inset-ref,ported,css2_floats_float_with_absolutely_positioned_child_with_static_inset_ref,
 float-with-absolutely-positioned-child-with-static-inset,ported,css2_floats_float_with_absolutely_positioned_child_with_static_inset,
 floats-in-table-caption-001-ref,ported,css2_floats_floats_in_table_caption_001_ref,
+floats-line-wrap-shifted-001-ref,ported,css2_floats_floats_line_wrap_shifted_001_ref,
+floats-line-wrap-shifted-001,ported,css2_floats_floats_line_wrap_shifted_001,
 floats-placement-001,ported,css2_floats_floats_placement_001,
 floats-placement-002,ported,css2_floats_floats_placement_002,
 floats-placement-003,ported,css2_floats_floats_placement_003,
@@ -49,6 +51,7 @@ floats-wrap-bfc-003-left-table-ref,ported,css2_floats_floats_wrap_bfc_003_left_t
 floats-wrap-bfc-003-right-overflow-ref,ported,css2_floats_floats_wrap_bfc_003_right_overflow_ref,
 floats-wrap-bfc-003-right-table-ref,ported,css2_floats_floats_wrap_bfc_003_right_table_ref,
 floats-wrap-bfc-004-ref,ported,css2_floats_floats_wrap_bfc_004_ref,
+floats-wrap-bfc-005-ref,ported,css2_floats_floats_wrap_bfc_005_ref,
 floats-wrap-bfc-008,ported,css2_floats_floats_wrap_bfc_008,
 floats-wrap-bfc-with-margin-004,ported,css2_floats_floats_wrap_bfc_with_margin_004,
 floats-wrap-bfc-with-margin-006.tentative,ported,css2_floats_floats_wrap_bfc_with_margin_006_tentative,
@@ -77,6 +80,9 @@ floats-wrap-top-below-inline-002l,ported,css2_floats_floats_wrap_top_below_inlin
 floats-wrap-top-below-inline-002r,ported,css2_floats_floats_wrap_top_below_inline_002r,
 floats-wrap-top-below-inline-003l,ported,css2_floats_floats_wrap_top_below_inline_003l,
 floats-wrap-top-below-inline-003r,ported,css2_floats_floats_wrap_top_below_inline_003r,
+floats-zero-height-wrap-001-ref,ported,css2_floats_floats_zero_height_wrap_001_ref,
+floats-zero-height-wrap-001,ported,css2_floats_floats_zero_height_wrap_001,
+floats-zero-height-wrap-002,ported,css2_floats_floats_zero_height_wrap_002,
 intrinsic-size-float-and-line,ported,css2_floats_intrinsic_size_float_and_line,
 line-pushed-by-floats-crash,ported,css2_floats_line_pushed_by_floats_crash,
 negative-block-margin-pushing-float-out-of-block-formatting-context-ref,ported,css2_floats_negative_block_margin_pushing_float_out_of_block_formatting_context_ref,
@@ -126,8 +132,6 @@ float-table-align-left-quirk-ref,not_portable,,unsupported element: <table>
 float-table-align-left-quirk,not_portable,,unsupported element: <table>
 floated-table-wider-than-specified,not_portable,,unsupported display: table
 floats-in-table-caption-001,not_portable,,unsupported element: <table>
-floats-line-wrap-shifted-001-ref,not_portable,,style_block_unsupported property: font-size
-floats-line-wrap-shifted-001,not_portable,,style_block_unsupported property: font-size
 floats-placement-007,not_portable,,style_block_unsupported property: direction
 floats-saturated-position-crash,not_portable,,uses_javascript
 floats-wrap-bfc-001-left-overflow,not_portable,,style_block_unsupported property: border-spacing
@@ -143,10 +147,9 @@ floats-wrap-bfc-003-left-table,not_portable,,style_block_unsupported property: b
 floats-wrap-bfc-003-right-overflow,not_portable,,style_block_unsupported property: border-spacing
 floats-wrap-bfc-003-right-table,not_portable,,style_block_unsupported property: border-spacing
 floats-wrap-bfc-004,not_portable,,style_block_unsupported property: border-spacing
-floats-wrap-bfc-005-ref,not_portable,,style_block_unsupported property: font-size
-floats-wrap-bfc-005,not_portable,,style_block_unsupported property: font-size
-floats-wrap-bfc-006-ref,not_portable,,style_block_unsupported property: font-size
-floats-wrap-bfc-006,not_portable,,style_block_unsupported property: font-size
+floats-wrap-bfc-005,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-006-ref,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-006,not_portable,,style_block_unsupported property: border-spacing
 floats-wrap-bfc-007-ref,not_portable,,style_block_unsupported property: border-spacing
 floats-wrap-bfc-007,not_portable,,style_block_unsupported property: border-spacing
 floats-wrap-bfc-outside-001-ref,not_portable,,unsupported element: <textarea>
@@ -159,9 +162,6 @@ floats-wrap-bfc-with-margin-002.tentative,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-003-ref,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-003.tentative,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-005,not_portable,,unsupported property: direction
-floats-zero-height-wrap-001-ref,not_portable,,unsupported property: font-size
-floats-zero-height-wrap-001,not_portable,,unsupported property: font-size
-floats-zero-height-wrap-002,not_portable,,unsupported property: font-size
 hit-test-floats-001,not_portable,,uses_javascript
 hit-test-floats-002,not_portable,,uses_javascript
 hit-test-floats-003,not_portable,,uses_javascript

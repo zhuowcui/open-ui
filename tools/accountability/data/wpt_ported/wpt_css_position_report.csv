@@ -27,6 +27,7 @@ sticky_position-sticky-bottom-006,ported,css_position_sticky_position_sticky_bot
 sticky_position-sticky-change-top-ref,ported,css_position_sticky_position_sticky_change_top_ref,
 sticky_position-sticky-column-reverse-flex-ref,ported,css_position_sticky_position_sticky_column_reverse_flex_ref,
 sticky_position-sticky-escape-scroller-001-ref,ported,css_position_sticky_position_sticky_escape_scroller_001_ref,
+sticky_position-sticky-fixed-ancestor-003,ported,css_position_sticky_position_sticky_fixed_ancestor_003,
 sticky_position-sticky-margins-002,ported,css_position_sticky_position_sticky_margins_002,
 sticky_position-sticky-margins-003,ported,css_position_sticky_position_sticky_margins_003,
 sticky_position-sticky-padding-001-ref,ported,css_position_sticky_position_sticky_padding_001_ref,
@@ -245,7 +246,6 @@ sticky_position-sticky-escape-scroller-003,not_portable,,uses_javascript
 sticky_position-sticky-escape-scroller-004-ref,not_portable,,uses_javascript
 sticky_position-sticky-escape-scroller-004,not_portable,,uses_javascript
 sticky_position-sticky-fixed-ancestor-002,not_portable,,uses_javascript
-sticky_position-sticky-fixed-ancestor-003,not_portable,,style_block_unsupported property: font-size
 sticky_position-sticky-fixed-ancestor-iframe-ref,not_portable,,uses_javascript
 sticky_position-sticky-fixed-ancestor-iframe,not_portable,,uses_javascript
 sticky_position-sticky-fixed-ancestor-ref,not_portable,,uses_javascript

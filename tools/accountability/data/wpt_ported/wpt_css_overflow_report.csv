@@ -39,6 +39,7 @@ overflow-clip-margin-010-ref,ported,css_overflow_overflow_clip_margin_010_ref,
 overflow-clip-margin-010,ported,css_overflow_overflow_clip_margin_010,
 overflow-clip-margin-011-ref,ported,css_overflow_overflow_clip_margin_011_ref,
 overflow-clip-margin-011,ported,css_overflow_overflow_clip_margin_011,
+overflow-clip-margin-border-radius-002-ref,ported,css_overflow_overflow_clip_margin_border_radius_002_ref,
 overflow-clip-margin-invalidation-ref,ported,css_overflow_overflow_clip_margin_invalidation_ref,
 overflow-clip-margin-mul-column-border-box-ref,ported,css_overflow_overflow_clip_margin_mul_column_border_box_ref,
 overflow-clip-margin-mul-column-border-box,ported,css_overflow_overflow_clip_margin_mul_column_border_box,
@@ -118,15 +119,15 @@ inheritance,not_portable,,uses_javascript
 input-scrollable-region-001,not_portable,,style_block_unsupported property: font-family
 keyboard-scroll,not_portable,,uses_javascript
 logical-overflow-001,not_portable,,uses_javascript
-margin-block-end-scroll-area-001,not_portable,,style_block_unsupported property: font-size
+margin-block-end-scroll-area-001,not_portable,,complex_css_selector: div#red > p
 multicol-in-orthogonal-writing-mode-crash,not_portable,,unsupported property: writing-mode
 no-scrollable-overflow-vertical-rl-2,not_portable,,style_block_unsupported property: writing-mode
 no-scrollable-overflow-vertical-rl,not_portable,,style_block_unsupported property: writing-mode
 orthogonal-flow-with-inline-end-margin,not_portable,,uses_javascript
 outline-with-opacity-crash,not_portable,,uses_javascript
 overflow-abpos-transform,not_portable,,uses_javascript
-overflow-alignment-001-ref,not_portable,,style_block_unsupported property: font-size
-overflow-alignment-002-ref,not_portable,,style_block_unsupported property: font-size
+overflow-alignment-001-ref,not_portable,,style_block_unsupported property: font-variant
+overflow-alignment-002-ref,not_portable,,style_block_unsupported property: font-variant
 overflow-alignment-block-001,not_portable,,uses_javascript
 overflow-alignment-block-002,not_portable,,uses_javascript
 overflow-alignment-flex-col-reverse-001,not_portable,,uses_javascript
@@ -179,8 +180,7 @@ overflow-clip-margin-006,not_portable,,style_block_unsupported property: box-sha
 overflow-clip-margin-007-ref,not_portable,,uses_javascript
 overflow-clip-margin-007,not_portable,,uses_javascript
 overflow-clip-margin-012,not_portable,,uses_javascript
-overflow-clip-margin-border-radius-002-ref,not_portable,,style_block_unsupported property: font-size
-overflow-clip-margin-border-radius-002,not_portable,,style_block_unsupported property: font-size
+overflow-clip-margin-border-radius-002,not_portable,,complex_css_selector: div::before
 overflow-clip-margin-border-radius-ref,not_portable,,style_block_unsupported property: box-shadow
 overflow-clip-margin-border-radius,not_portable,,style_block_unsupported property: box-shadow
 overflow-clip-margin-hit-testing,not_portable,,uses_javascript
@@ -413,8 +413,8 @@ line-clamp_line-clamp-023.tentative,not_portable,,style_block_unsupported proper
 line-clamp_line-clamp-024.tentative,not_portable,,style_block_unsupported property: font
 line-clamp_line-clamp-025.tentative,not_portable,,style_block_unsupported property: font
 line-clamp_line-clamp-026,not_portable,,style_block_unsupported property: font
-line-clamp_line-clamp-027,not_portable,,style_block_unsupported property: font-size
-line-clamp_line-clamp-028,not_portable,,style_block_unsupported property: font-size
+line-clamp_line-clamp-027,not_portable,,style_block_unsupported property: white-space
+line-clamp_line-clamp-028,not_portable,,style_block_unsupported property: white-space
 line-clamp_line-clamp-029,not_portable,,style_block_unsupported property: font
 line-clamp_line-clamp-030,not_portable,,style_block_unsupported property: font
 line-clamp_line-clamp-031,not_portable,,style_block_unsupported property: font
@@ -477,7 +477,7 @@ line-clamp_line-clamp-balance-005,not_portable,,style_block_unsupported property
 line-clamp_line-clamp-balance-006,not_portable,,style_block_unsupported property: font-family
 line-clamp_line-clamp-balance-007,not_portable,,style_block_unsupported property: font-family
 line-clamp_line-clamp-balance-008,not_portable,,style_block_unsupported property: font-family
-line-clamp_line-clamp-balance-009,not_portable,,style_block_unsupported property: font-size
+line-clamp_line-clamp-balance-009,not_portable,,style_block_unsupported property: font-family
 line-clamp_line-clamp-balance-010,not_portable,,style_block_unsupported property: font-family
 line-clamp_line-clamp-balance-011,not_portable,,style_block_unsupported property: font-family
 line-clamp_line-clamp-balance-012,not_portable,,style_block_unsupported property: font-family

@@ -7,6 +7,7 @@ display-contents-flex-002,ported,css_display_display_contents_flex_002,
 display-contents-flex-003,ported,css_display_display_contents_flex_003,
 display-contents-inline-flex-001-ref,ported,css_display_display_contents_inline_flex_001_ref,
 display-contents-inline-flex-001,ported,css_display_display_contents_inline_flex_001,
+display-contents-line-height-ref,ported,css_display_display_contents_line_height_ref,
 display-contents-list-001-ref,ported,css_display_display_contents_list_001_ref,
 display-contents-list-001,ported,css_display_display_contents_list_001,
 display-contents-multicol-001-ref,ported,css_display_display_contents_multicol_001_ref,
@@ -44,7 +45,7 @@ display-contents-details-001,not_portable,,unsupported display: contents
 display-contents-details,not_portable,,complex_css_selector: details::details-content
 display-contents-dynamic-before-after-001,not_portable,,uses_javascript
 display-contents-dynamic-before-after-first-letter-001,not_portable,,uses_javascript
-display-contents-dynamic-fieldset-legend-001-ref,not_portable,,style_block_unsupported property: font-size
+display-contents-dynamic-fieldset-legend-001-ref,not_portable,,unsupported element: <fieldset>
 display-contents-dynamic-fieldset-legend-001,not_portable,,uses_javascript
 display-contents-dynamic-flex-001-inline,not_portable,,uses_javascript
 display-contents-dynamic-flex-001-none,not_portable,,uses_javascript
@@ -79,8 +80,7 @@ display-contents-float-001,not_portable,,unsupported display: contents
 display-contents-focusable-001,not_portable,,uses_javascript
 display-contents-inline-001,not_portable,,unsupported display: contents
 display-contents-inline-002,not_portable,,unsupported display: contents
-display-contents-line-height-ref,not_portable,,style_block_unsupported property: font-size
-display-contents-line-height,not_portable,,style_block_unsupported property: font-size
+display-contents-line-height,not_portable,,unsupported display: contents
 display-contents-oof-001,not_portable,,unsupported display: contents
 display-contents-oof-002,not_portable,,unsupported display: contents
 display-contents-parsing-001,not_portable,,uses_javascript

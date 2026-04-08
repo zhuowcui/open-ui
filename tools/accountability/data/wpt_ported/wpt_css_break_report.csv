@@ -477,6 +477,11 @@ flexbox_single-line-column-flex-fragmentation-059,ported,css_break_flexbox_singl
 flexbox_single-line-column-flex-fragmentation-066-print-ref,ported,css_break_flexbox_single_line_column_flex_fragmentation_066_print_ref,
 flexbox_single-line-column-flex-fragmentation-066-print,ported,css_break_flexbox_single_line_column_flex_fragmentation_066_print,
 flexbox_single-line-column-flex-fragmentation-067,ported,css_break_flexbox_single_line_column_flex_fragmentation_067,
+flexbox_single-line-column-flex-fragmentation-068-print-ref,ported,css_break_flexbox_single_line_column_flex_fragmentation_068_print_ref,
+flexbox_single-line-column-flex-fragmentation-068a-print,ported,css_break_flexbox_single_line_column_flex_fragmentation_068a_print,
+flexbox_single-line-column-flex-fragmentation-068b-print,ported,css_break_flexbox_single_line_column_flex_fragmentation_068b_print,
+flexbox_single-line-column-flex-fragmentation-068c-print,ported,css_break_flexbox_single_line_column_flex_fragmentation_068c_print,
+flexbox_single-line-column-flex-fragmentation-068d-print,ported,css_break_flexbox_single_line_column_flex_fragmentation_068d_print,
 flexbox_single-line-column-flex-fragmentation-070a,ported,css_break_flexbox_single_line_column_flex_fragmentation_070a,
 flexbox_single-line-column-flex-fragmentation-070b,ported,css_break_flexbox_single_line_column_flex_fragmentation_070b,
 flexbox_single-line-column-flex-fragmentation-070c,ported,css_break_flexbox_single_line_column_flex_fragmentation_070c,
@@ -796,7 +801,7 @@ transform-025,not_portable,,unsupported property: writing-mode
 truncated-margin-at-fragmentainer-end-001,not_portable,,uses_javascript
 truncated-margin-at-fragmentainer-end-002,not_portable,,uses_javascript
 uncontained-oof-in-inline-after-break-000-crash,not_portable,,uses_javascript
-widows-001,not_portable,,style_block_unsupported property: font-size
+widows-001,not_portable,,no_layout_content
 widows-orphans-001,not_portable,,no_layout_content
 widows-orphans-002,not_portable,,no_layout_content
 widows-orphans-003,not_portable,,no_layout_content
@@ -804,17 +809,17 @@ widows-orphans-004,not_portable,,no_layout_content
 widows-orphans-005,not_portable,,uses_javascript
 widows-orphans-006,not_portable,,uses_javascript
 widows-orphans-007,not_portable,,uses_javascript
-widows-orphans-008,not_portable,,style_block_unsupported property: font-size
-widows-orphans-009,not_portable,,style_block_unsupported property: font-size
-widows-orphans-010,not_portable,,style_block_unsupported property: font-size
-widows-orphans-011,not_portable,,style_block_unsupported property: font-size
-widows-orphans-012,not_portable,,style_block_unsupported property: font-size
-widows-orphans-013,not_portable,,style_block_unsupported property: font-size
-widows-orphans-014,not_portable,,style_block_unsupported property: font-size
-widows-orphans-015,not_portable,,style_block_unsupported property: font-size
-widows-orphans-016,not_portable,,style_block_unsupported property: font-size
-widows-orphans-017,not_portable,,style_block_unsupported property: font-size
-widows-orphans-018,not_portable,,style_block_unsupported property: font-size
+widows-orphans-008,not_portable,,no_layout_content
+widows-orphans-009,not_portable,,no_layout_content
+widows-orphans-010,not_portable,,no_layout_content
+widows-orphans-011,not_portable,,no_layout_content
+widows-orphans-012,not_portable,,no_layout_content
+widows-orphans-013,not_portable,,no_layout_content
+widows-orphans-014,not_portable,,no_layout_content
+widows-orphans-015,not_portable,,no_layout_content
+widows-orphans-016,not_portable,,no_layout_content
+widows-orphans-017,not_portable,,no_layout_content
+widows-orphans-018,not_portable,,no_layout_content
 will-change-filter,not_portable,,unsupported property: filter
 parsing_box-decoration-break-computed,not_portable,,uses_javascript
 parsing_box-decoration-break-invalid,not_portable,,uses_javascript
@@ -950,16 +955,16 @@ flexbox_multi-line-row-flex-fragmentation-078,not_portable,,complex_css_selector
 flexbox_multi-line-row-flex-fragmentation-079,not_portable,,complex_css_selector: .flex > div
 flexbox_multi-line-row-flex-fragmentation-080-print-ref,not_portable,,complex_css_selector: :root
 flexbox_multi-line-row-flex-fragmentation-080-print,not_portable,,complex_css_selector: :root
-flexbox_multi-line-row-flex-fragmentation-081-print-ref,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-081a-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-081b-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-081c-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-081d-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-082-print-ref,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-082a-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-082b-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-082c-print,not_portable,,style_block_unsupported property: font-size
-flexbox_multi-line-row-flex-fragmentation-082d-print,not_portable,,style_block_unsupported property: font-size
+flexbox_multi-line-row-flex-fragmentation-081-print-ref,not_portable,,complex_css_selector: .flexbox > div > div
+flexbox_multi-line-row-flex-fragmentation-081a-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-081b-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-081c-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-081d-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-082-print-ref,not_portable,,complex_css_selector: .flexbox > div > div
+flexbox_multi-line-row-flex-fragmentation-082a-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-082b-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-082c-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_multi-line-row-flex-fragmentation-082d-print,not_portable,,complex_css_selector: .flexbox > div
 flexbox_multi-line-row-flex-fragmentation-084,not_portable,,complex_css_selector: .flex>div
 flexbox_multi-line-row-flex-fragmentation-085,not_portable,,complex_css_selector: .flex>div
 flexbox_multi-line-row-flex-fragmentation-086,not_portable,,complex_css_selector: .flex>div
@@ -995,16 +1000,11 @@ flexbox_single-line-column-flex-fragmentation-063,not_portable,,complex_css_sele
 flexbox_single-line-column-flex-fragmentation-064,not_portable,,complex_css_selector: .multicol > div
 flexbox_single-line-column-flex-fragmentation-065-print-ref,not_portable,,complex_css_selector: :root
 flexbox_single-line-column-flex-fragmentation-065-print,not_portable,,complex_css_selector: :root
-flexbox_single-line-column-flex-fragmentation-068-print-ref,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-068a-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-068b-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-068c-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-068d-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-069-print-ref,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-069a-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-069b-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-069c-print,not_portable,,style_block_unsupported property: font-size
-flexbox_single-line-column-flex-fragmentation-069d-print,not_portable,,style_block_unsupported property: font-size
+flexbox_single-line-column-flex-fragmentation-069-print-ref,not_portable,,complex_css_selector: .flexbox > div
+flexbox_single-line-column-flex-fragmentation-069a-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_single-line-column-flex-fragmentation-069b-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_single-line-column-flex-fragmentation-069c-print,not_portable,,complex_css_selector: .flexbox > div
+flexbox_single-line-column-flex-fragmentation-069d-print,not_portable,,complex_css_selector: .flexbox > div
 flexbox_single-line-row-flex-fragmentation-001,not_portable,,complex_css_selector: .flex > div
 flexbox_single-line-row-flex-fragmentation-002,not_portable,,complex_css_selector: .flex > div
 flexbox_single-line-row-flex-fragmentation-003,not_portable,,complex_css_selector: .flex > div

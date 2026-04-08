@@ -88,7 +88,7 @@ UNSUPPORTED_FEATURES = {
     'table-layout', 'caption-side', 'border-collapse', 'border-spacing',
     'counter-reset', 'counter-increment', 'content',
     'text-decoration', 'text-transform', 'text-indent', 'text-shadow',
-    'font', 'font-size', 'font-family', 'font-weight', 'font-style',
+    'font', 'font-family', 'font-weight', 'font-style',
     'font-variant', 'letter-spacing', 'word-spacing',
     'white-space', 'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type',
@@ -178,6 +178,32 @@ def parse_length(value: str) -> str | None:
     m = re.match(r'^(-?[\d.]+)%$', value)
     if m:
         return f'Length::percent({float(m.group(1))})'
+    # em → convert to px assuming 16px base font-size (our default)
+    m = re.match(r'^(-?[\d.]+)em$', value)
+    if m:
+        px_val = float(m.group(1)) * 16.0
+        return f'Length::px({px_val})'
+    # rem → same as em for root element (base 16px)
+    m = re.match(r'^(-?[\d.]+)rem$', value)
+    if m:
+        px_val = float(m.group(1)) * 16.0
+        return f'Length::px({px_val})'
+    # Keyword lengths
+    if value == 'min-content':
+        return 'Length::min_content()'
+    if value == 'max-content':
+        return 'Length::max_content()'
+    if value == 'fit-content':
+        return 'Length::fit_content()'
+    # vw/vh — approximate as % of 800x600 viewport
+    m = re.match(r'^(-?[\d.]+)vw$', value)
+    if m:
+        px_val = float(m.group(1)) * 8.0  # 800px viewport
+        return f'Length::px({px_val})'
+    m = re.match(r'^(-?[\d.]+)vh$', value)
+    if m:
+        px_val = float(m.group(1)) * 6.0  # 600px viewport
+        return f'Length::px({px_val})'
     return None
 
 
@@ -660,9 +686,15 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── border-radius ──
     if prop == 'border-radius':
-        m = re.match(r'^(-?[\d.]+)px$', val.strip())
+        m = re.match(r'^(-?[\d.]+)(px|em|rem|%)$', val.strip())
         if m:
-            v = float(m.group(1))
+            num = float(m.group(1))
+            unit = m.group(2)
+            if unit == 'em' or unit == 'rem':
+                num = num * 16.0
+            elif unit == '%':
+                pass  # stored as-is, layout resolves
+            v = num
             return [
                 f"{s}.border_top_left_radius = ({v}_f32, {v}_f32);",
                 f"{s}.border_top_right_radius = ({v}_f32, {v}_f32);",
@@ -705,11 +737,33 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {mapping[val]};"
 
-    # ── background-color / background (color only) ──
-    if prop in ('background-color', 'background'):
+    # ── background-color ──
+    if prop == 'background-color':
         color = parse_color(val)
         if color:
             return f"{s}.background_color = {color};"
+
+    # ── background shorthand — extract color component ──
+    if prop == 'background':
+        # Try parsing entire value as color first (simplest case)
+        color = parse_color(val)
+        if color:
+            return f"{s}.background_color = {color};"
+        # Try extracting color from complex shorthand
+        # background: <color> url(...) ... or <color> <other>
+        parts = val.split()
+        for part in parts:
+            part = part.strip()
+            if part.startswith('url(') or part.startswith('no-repeat') or part.startswith('repeat'):
+                continue
+            if '/' in part or part in ('top', 'left', 'right', 'bottom', 'center',
+                                        'cover', 'contain', 'fixed', 'scroll', 'local',
+                                        'no-repeat', 'repeat-x', 'repeat-y', 'repeat',
+                                        'padding-box', 'border-box', 'content-box'):
+                continue
+            color = parse_color(part)
+            if color:
+                return f"{s}.background_color = {color};"
 
     # ── color ──
     if prop == 'color':
@@ -741,7 +795,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     if prop == 'flex-wrap':
         mapping = {
-            'nowrap': 'FlexWrap::NoWrap', 'wrap': 'FlexWrap::Wrap',
+            'nowrap': 'FlexWrap::Nowrap', 'wrap': 'FlexWrap::Wrap',
             'wrap-reverse': 'FlexWrap::WrapReverse',
         }
         if val in mapping:
@@ -902,6 +956,169 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         }
         if val in mapping:
             return f"{s}.vertical_align = {mapping[val]};"
+
+    # ── columns shorthand (column-count + column-width) ──
+    if prop == 'columns':
+        parts = val.split()
+        lines = []
+        for part in parts:
+            part = part.strip()
+            if part == 'auto':
+                continue
+            m = re.match(r'^(\d+)$', part)
+            if m:
+                lines.append(f"{s}.column_count = Some({int(m.group(1))});")
+                continue
+            length = parse_length(part)
+            if length:
+                lines.append(f"{s}.column_width = Some({length});")
+        return lines if lines else None
+
+    # ── column-rule shorthand — skip (not commonly needed for layout) ──
+
+    # ── logical properties: block-size/inline-size → height/width (horizontal writing mode) ──
+    if prop in ('block-size', 'min-block-size', 'max-block-size'):
+        length = parse_length(val)
+        if length:
+            physical = prop.replace('block-size', 'height').replace('-', '_')
+            return f"{s}.{physical} = {length};"
+
+    if prop in ('inline-size', 'min-inline-size', 'max-inline-size'):
+        length = parse_length(val)
+        if length:
+            physical = prop.replace('inline-size', 'width').replace('-', '_')
+            return f"{s}.{physical} = {length};"
+
+    # ── inset (shorthand for top/right/bottom/left) ──
+    if prop == 'inset':
+        parts = val.split()
+        props = ['top', 'right', 'bottom', 'left']
+        if len(parts) == 1:
+            length = parse_length(parts[0])
+            if length:
+                return [f"{s}.{p} = {length};" for p in props]
+        elif len(parts) == 2:
+            tb, lr = parse_length(parts[0]), parse_length(parts[1])
+            if tb and lr:
+                return [f"{s}.top = {tb};", f"{s}.right = {lr};", f"{s}.bottom = {tb};", f"{s}.left = {lr};"]
+        elif len(parts) == 4:
+            lengths = [parse_length(p) for p in parts]
+            if all(lengths):
+                return [f"{s}.{props[i]} = {lengths[i]};" for i in range(4)]
+
+    # ── inset-block / inset-inline (logical shorthands) ──
+    if prop == 'inset-block':
+        length = parse_length(val)
+        if length:
+            return [f"{s}.top = {length};", f"{s}.bottom = {length};"]
+
+    if prop == 'inset-inline':
+        length = parse_length(val)
+        if length:
+            return [f"{s}.left = {length};", f"{s}.right = {length};"]
+
+    # ── font-size ──
+    if prop == 'font-size':
+        m = re.match(r'^(-?[\d.]+)px$', val.strip())
+        if m:
+            return f"{s}.font_size = {float(m.group(1))};"
+
+    # ── aspect-ratio ──
+    if prop == 'aspect-ratio':
+        if val.strip() == 'auto':
+            return f"{s}.aspect_ratio = None;"
+        # "16 / 9" or "16/9" or "2"
+        m = re.match(r'^([\d.]+)\s*/\s*([\d.]+)$', val.strip())
+        if m:
+            w, h = float(m.group(1)), float(m.group(2))
+            return f"{s}.aspect_ratio = Some(AspectRatio {{ ratio: ({w}_f32, {h}_f32), auto_flag: false }});"
+        # "auto 16 / 9"
+        m = re.match(r'^auto\s+([\d.]+)\s*/\s*([\d.]+)$', val.strip())
+        if m:
+            w, h = float(m.group(1)), float(m.group(2))
+            return f"{s}.aspect_ratio = Some(AspectRatio {{ ratio: ({w}_f32, {h}_f32), auto_flag: true }});"
+        try:
+            r = float(val.strip())
+            return f"{s}.aspect_ratio = Some(AspectRatio {{ ratio: ({r}_f32, 1.0_f32), auto_flag: false }});"
+        except ValueError:
+            pass
+
+    # ── contain — not yet implemented in our style system ──
+
+    # ── margin-block / margin-inline (logical) ──
+    if prop == 'margin-block':
+        length = parse_length(val)
+        if length:
+            return [f"{s}.margin_top = {length};", f"{s}.margin_bottom = {length};"]
+
+    if prop == 'margin-inline':
+        length = parse_length(val)
+        if length:
+            return [f"{s}.margin_left = {length};", f"{s}.margin_right = {length};"]
+
+    # ── padding-block / padding-inline (logical) ──
+    if prop == 'padding-block':
+        length = parse_length(val)
+        if length:
+            return [f"{s}.padding_top = {length};", f"{s}.padding_bottom = {length};"]
+
+    if prop == 'padding-inline':
+        length = parse_length(val)
+        if length:
+            return [f"{s}.padding_left = {length};", f"{s}.padding_right = {length};"]
+
+    # ── widows / orphans ──
+    if prop in ('widows', 'orphans'):
+        try:
+            return f"{s}.{prop} = {int(val)}_u32;"
+        except ValueError:
+            pass
+
+    # ── page-break-before / page-break-after (legacy) ──
+    if prop in ('page-break-before', 'page-break-after'):
+        mapping = {
+            'auto': 'BreakValue::Auto', 'always': 'BreakValue::Page',
+            'avoid': 'BreakValue::Avoid',
+        }
+        if val in mapping:
+            # Map page-break-* to break-*
+            side = prop.replace('page-break-', '')
+            return f"{s}.break_{side} = {mapping[val]};"
+
+    # ── page-break-inside (legacy) ──
+    if prop == 'page-break-inside':
+        mapping = {'auto': 'BreakInside::Auto', 'avoid': 'BreakInside::Avoid'}
+        if val in mapping:
+            return f"{s}.break_inside = {mapping[val]};"
+
+    # ── flex shorthand ──
+    if prop == 'flex':
+        parts = val.split()
+        if len(parts) == 1:
+            if val == 'none':
+                return [f"{s}.flex_grow = 0.0;", f"{s}.flex_shrink = 0.0;"]
+            if val == 'auto':
+                return [f"{s}.flex_grow = 1.0;", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::auto();"]
+            try:
+                g = float(val)
+                return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::px(0.0);"]
+            except ValueError:
+                pass
+
+    # ── flex-flow shorthand ──
+    if prop == 'flex-flow':
+        lines = []
+        for part in val.split():
+            part = part.strip()
+            dir_map = {'row': 'FlexDirection::Row', 'row-reverse': 'FlexDirection::RowReverse',
+                       'column': 'FlexDirection::Column', 'column-reverse': 'FlexDirection::ColumnReverse'}
+            wrap_map = {'nowrap': 'FlexWrap::Nowrap', 'wrap': 'FlexWrap::Wrap',
+                        'wrap-reverse': 'FlexWrap::WrapReverse'}
+            if part in dir_map:
+                lines.append(f"{s}.flex_direction = {dir_map[part]};")
+            elif part in wrap_map:
+                lines.append(f"{s}.flex_wrap = {wrap_map[part]};")
+        return lines if lines else None
 
     return None
 
@@ -1113,35 +1330,42 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
 
 
 def generate_html_template(html_path: str) -> str:
-    """Read an HTML file and extract just the body content for Chrome rendering.
-    Strips <p> instruction text, keeps layout elements with styles.
+    """Read an HTML file and extract body content + style blocks for Chrome rendering.
+    The template must include <style> blocks so Chrome applies the same CSS rules
+    that the Rust code generator parsed and encoded into Document builder code.
     """
     with open(html_path, 'r', encoding='utf-8', errors='replace') as f:
         content = f.read()
 
-    # For Chrome, we want to render the same HTML the test specifies.
-    # We strip doctype, links, meta, but keep the body content.
-    # We use a simpler regex approach for HTML template extraction.
+    # Extract <style> blocks from anywhere in the document (head or body)
+    style_blocks = re.findall(r'<style[^>]*>.*?</style>', content, re.DOTALL | re.IGNORECASE)
+    style_prefix = '\n'.join(style_blocks)
+
+    # Extract body content
     body_match = re.search(r'<body[^>]*>(.*?)</body>', content, re.DOTALL | re.IGNORECASE)
     if body_match:
         body = body_match.group(1)
     else:
         # No explicit body — use content after meta/link tags
         body = content
-        # Remove DOCTYPE, html, head, meta, link, title, script, style tags
+        # Remove DOCTYPE, html, head, meta, link, title, script tags (NOT style)
         body = re.sub(r'<!DOCTYPE[^>]*>', '', body, flags=re.IGNORECASE)
         body = re.sub(r'<html[^>]*>|</html>', '', body, flags=re.IGNORECASE)
+        # Remove <head> but preserve <style> blocks (already extracted above)
         body = re.sub(r'<head[^>]*>.*?</head>', '', body, flags=re.DOTALL | re.IGNORECASE)
         body = re.sub(r'<link[^>]*>', '', body, flags=re.IGNORECASE)
         body = re.sub(r'<meta[^>]*>', '', body, flags=re.IGNORECASE)
         body = re.sub(r'<title[^>]*>.*?</title>', '', body, flags=re.DOTALL | re.IGNORECASE)
         body = re.sub(r'<script[^>]*>.*?</script>', '', body, flags=re.DOTALL | re.IGNORECASE)
+        # Remove style blocks from body (they're already in style_prefix)
         body = re.sub(r'<style[^>]*>.*?</style>', '', body, flags=re.DOTALL | re.IGNORECASE)
 
     # Strip instructional <p> tags (contain "Test passes if")
     body = re.sub(r'<p[^>]*>.*?Test passes.*?</p>', '', body, flags=re.DOTALL | re.IGNORECASE)
 
-    return body.strip()
+    # Combine: style blocks first, then body content
+    template = style_prefix + '\n' + body.strip() if style_prefix else body.strip()
+    return template
 
 
 # ─── Batch processing ─────────────────────────────────────────────────────

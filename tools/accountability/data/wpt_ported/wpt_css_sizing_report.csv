@@ -56,15 +56,20 @@ div-top-and-non-auto-margin.tentative,ported,css_sizing_div_top_and_non_auto_mar
 fit-content-contribution-001,ported,css_sizing_fit_content_contribution_001,
 fit-content-length-percentage-001,ported,css_sizing_fit_content_length_percentage_001,
 fit-content-length-percentage-002,ported,css_sizing_fit_content_length_percentage_002,
+fit-content-length-percentage-003,ported,css_sizing_fit_content_length_percentage_003,
 fit-content-length-percentage-004,ported,css_sizing_fit_content_length_percentage_004,
 fit-content-length-percentage-005,ported,css_sizing_fit_content_length_percentage_005,
+fit-content-length-percentage-006,ported,css_sizing_fit_content_length_percentage_006,
 fit-content-length-percentage-007,ported,css_sizing_fit_content_length_percentage_007,
 fit-content-length-percentage-008,ported,css_sizing_fit_content_length_percentage_008,
 fit-content-length-percentage-009,ported,css_sizing_fit_content_length_percentage_009,
 fit-content-length-percentage-010,ported,css_sizing_fit_content_length_percentage_010,
 fit-content-length-percentage-011,ported,css_sizing_fit_content_length_percentage_011,
 fit-content-length-percentage-012,ported,css_sizing_fit_content_length_percentage_012,
+fit-content-length-percentage-013,ported,css_sizing_fit_content_length_percentage_013,
+fit-content-length-percentage-014,ported,css_sizing_fit_content_length_percentage_014,
 fit-content-length-percentage-015,ported,css_sizing_fit_content_length_percentage_015,
+fit-content-length-percentage-016,ported,css_sizing_fit_content_length_percentage_016,
 fit-content-max-inline-size.tentative,ported,css_sizing_fit_content_max_inline_size_tentative,
 fit-content-min-inline-size,ported,css_sizing_fit_content_min_inline_size,
 float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001,ported,css_sizing_float_clearance_with_margin_collapse_and_fit_content_and_padding_percentage_001,
@@ -79,6 +84,7 @@ margin-collapse-with-indefinite-block-size-002,ported,css_sizing_margin_collapse
 margin-collapse-with-indefinite-block-size-003,ported,css_sizing_margin_collapse_with_indefinite_block_size_003,
 margin-collapse-with-indefinite-block-size-004,ported,css_sizing_margin_collapse_with_indefinite_block_size_004,
 margin-collapse-with-indefinite-block-size-005,ported,css_sizing_margin_collapse_with_indefinite_block_size_005,
+min-content-le-max-content.tentative,ported,css_sizing_min_content_le_max_content_tentative,
 min-content-min-width-000,ported,css_sizing_min_content_min_width_000,
 min-content-negative-margin-crash,ported,css_sizing_min_content_negative_margin_crash,
 percentage-width-subpixels.tentative-ref,ported,css_sizing_percentage_width_subpixels_tentative_ref,
@@ -326,11 +332,6 @@ dynamic-change-inline-size-004,not_portable,,uses_javascript
 fit-content-block-size-abspos,not_portable,,unsupported property: outline
 fit-content-block-size-fixedpos-ref,not_portable,,unsupported property: outline
 fit-content-block-size-fixedpos,not_portable,,unsupported property: outline
-fit-content-length-percentage-003,not_portable,,unsupported property: font-size
-fit-content-length-percentage-006,not_portable,,unsupported property: font-size
-fit-content-length-percentage-013,not_portable,,unsupported property: font-size
-fit-content-length-percentage-014,not_portable,,unsupported property: font-size
-fit-content-length-percentage-016,not_portable,,unsupported property: font-size
 fit-content-percentage-padding,not_portable,,uses_javascript
 frameset-intrinsic-crash,not_portable,,uses_javascript
 grid-item-image-percentage-min-height-computes-as-0-ref,not_portable,,unsupported element: <img>
@@ -427,7 +428,6 @@ keyword-sizes-on-inline-block,not_portable,,uses_javascript
 keyword-sizes-on-replaced-element,not_portable,,uses_javascript
 max-content-input-001-ref,not_portable,,style_block_unsupported property: font
 max-content-input-001,not_portable,,style_block_unsupported property: font
-min-content-le-max-content.tentative,not_portable,,style_block_unsupported property: font-size
 min-max-content-orthogonal-flow-crash-001,not_portable,,uses_javascript
 min-width-max-width-precedence,not_portable,,uses_javascript
 nested-flexbox-image-percentage-max-height-computes-as-none-ref,not_portable,,unsupported element: <img>

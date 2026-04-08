@@ -10,9 +10,11 @@ align-self-002,ported,css_flexbox_align_self_002,
 align-self-003,ported,css_flexbox_align_self_003,
 align-self-004,ported,css_flexbox_align_self_004,
 align-self-005,ported,css_flexbox_align_self_005,
+align-self-006,ported,css_flexbox_align_self_006,
 align-self-007,ported,css_flexbox_align_self_007,
 align-self-008,ported,css_flexbox_align_self_008,
 align-self-009,ported,css_flexbox_align_self_009,
+align-self-010,ported,css_flexbox_align_self_010,
 align-self-011,ported,css_flexbox_align_self_011,
 align-self-012,ported,css_flexbox_align_self_012,
 align-self-013,ported,css_flexbox_align_self_013,
@@ -128,12 +130,20 @@ flex-wrap-004,ported,css_flexbox_flex_wrap_004,
 flex-wrap-005,ported,css_flexbox_flex_wrap_005,
 flexbox-align-items-center-nested-001-ref,ported,css_flexbox_flexbox_align_items_center_nested_001_ref,
 flexbox-align-items-center-nested-001,ported,css_flexbox_flexbox_align_items_center_nested_001,
+flexbox-align-self-stretch-vert-001-ref,ported,css_flexbox_flexbox_align_self_stretch_vert_001_ref,
+flexbox-align-self-stretch-vert-001,ported,css_flexbox_flexbox_align_self_stretch_vert_001,
 flexbox-align-self-stretch-vert-002-ref,ported,css_flexbox_flexbox_align_self_stretch_vert_002_ref,
 flexbox-align-self-stretch-vert-002,ported,css_flexbox_flexbox_align_self_stretch_vert_002,
+flexbox-align-self-vert-001,ported,css_flexbox_flexbox_align_self_vert_001,
 flexbox-anonymous-items-001-ref,ported,css_flexbox_flexbox_anonymous_items_001_ref,
 flexbox-anonymous-items-001,ported,css_flexbox_flexbox_anonymous_items_001,
+flexbox-baseline-align-self-baseline-horiz-001,ported,css_flexbox_flexbox_baseline_align_self_baseline_horiz_001,
+flexbox-baseline-multi-item-horiz-001a,ported,css_flexbox_flexbox_baseline_multi_item_horiz_001a,
+flexbox-baseline-multi-item-horiz-001b,ported,css_flexbox_flexbox_baseline_multi_item_horiz_001b,
 flexbox-basic-block-horiz-001-ref,ported,css_flexbox_flexbox_basic_block_horiz_001_ref,
+flexbox-basic-block-horiz-001,ported,css_flexbox_flexbox_basic_block_horiz_001,
 flexbox-basic-block-vert-001-ref,ported,css_flexbox_flexbox_basic_block_vert_001_ref,
+flexbox-basic-block-vert-001,ported,css_flexbox_flexbox_basic_block_vert_001,
 flexbox-break-request-horiz-001-ref,ported,css_flexbox_flexbox_break_request_horiz_001_ref,
 flexbox-break-request-horiz-001a,ported,css_flexbox_flexbox_break_request_horiz_001a,
 flexbox-break-request-horiz-001b,ported,css_flexbox_flexbox_break_request_horiz_001b,
@@ -146,6 +156,8 @@ flexbox-break-request-vert-001b,ported,css_flexbox_flexbox_break_request_vert_00
 flexbox-break-request-vert-002-ref,ported,css_flexbox_flexbox_break_request_vert_002_ref,
 flexbox-break-request-vert-002a,ported,css_flexbox_flexbox_break_request_vert_002a,
 flexbox-break-request-vert-002b,ported,css_flexbox_flexbox_break_request_vert_002b,
+flexbox-collapsed-item-baseline-001-ref,ported,css_flexbox_flexbox_collapsed_item_baseline_001_ref,
+flexbox-collapsed-item-baseline-001,ported,css_flexbox_flexbox_collapsed_item_baseline_001,
 flexbox-collapsed-item-horiz-002-ref,ported,css_flexbox_flexbox_collapsed_item_horiz_002_ref,
 flexbox-collapsed-item-horiz-002,ported,css_flexbox_flexbox_collapsed_item_horiz_002,
 flexbox-collapsed-item-horiz-003-ref,ported,css_flexbox_flexbox_collapsed_item_horiz_003_ref,
@@ -207,7 +219,11 @@ flexbox-margin-auto-horiz-002-ref,ported,css_flexbox_flexbox_margin_auto_horiz_0
 flexbox-margin-auto-horiz-002,ported,css_flexbox_flexbox_margin_auto_horiz_002,
 flexbox-mbp-horiz-001-ref,ported,css_flexbox_flexbox_mbp_horiz_001_ref,
 flexbox-mbp-horiz-001-reverse-ref,ported,css_flexbox_flexbox_mbp_horiz_001_reverse_ref,
+flexbox-mbp-horiz-001-reverse,ported,css_flexbox_flexbox_mbp_horiz_001_reverse,
+flexbox-mbp-horiz-001,ported,css_flexbox_flexbox_mbp_horiz_001,
 flexbox-mbp-horiz-002-ref,ported,css_flexbox_flexbox_mbp_horiz_002_ref,
+flexbox-mbp-horiz-002a,ported,css_flexbox_flexbox_mbp_horiz_002a,
+flexbox-mbp-horiz-002b,ported,css_flexbox_flexbox_mbp_horiz_002b,
 flexbox-mbp-horiz-004-ref,ported,css_flexbox_flexbox_mbp_horiz_004_ref,
 flexbox-mbp-horiz-004,ported,css_flexbox_flexbox_mbp_horiz_004,
 flexbox-order-from-lowest,ported,css_flexbox_flexbox_order_from_lowest,
@@ -243,6 +259,14 @@ flexbox-single-line-clamp-2-ref,ported,css_flexbox_flexbox_single_line_clamp_2_r
 flexbox-single-line-clamp-2,ported,css_flexbox_flexbox_single_line_clamp_2,
 flexbox-single-line-clamp-3-ref,ported,css_flexbox_flexbox_single_line_clamp_3_ref,
 flexbox-single-line-clamp-3,ported,css_flexbox_flexbox_single_line_clamp_3,
+flexbox-sizing-horiz-001-ref,ported,css_flexbox_flexbox_sizing_horiz_001_ref,
+flexbox-sizing-horiz-001,ported,css_flexbox_flexbox_sizing_horiz_001,
+flexbox-sizing-horiz-002-ref,ported,css_flexbox_flexbox_sizing_horiz_002_ref,
+flexbox-sizing-horiz-002,ported,css_flexbox_flexbox_sizing_horiz_002,
+flexbox-sizing-vert-001-ref,ported,css_flexbox_flexbox_sizing_vert_001_ref,
+flexbox-sizing-vert-001,ported,css_flexbox_flexbox_sizing_vert_001,
+flexbox-sizing-vert-002-ref,ported,css_flexbox_flexbox_sizing_vert_002_ref,
+flexbox-sizing-vert-002,ported,css_flexbox_flexbox_sizing_vert_002,
 flexbox-table-fixup-001-ref,ported,css_flexbox_flexbox_table_fixup_001_ref,
 flexbox-with-multi-column-property,ported,css_flexbox_flexbox_with_multi_column_property,
 flexbox-with-pseudo-elements-002-ref,ported,css_flexbox_flexbox_with_pseudo_elements_002_ref,
@@ -326,6 +350,11 @@ inline-flex-frameset-main-axis-crash,ported,css_flexbox_inline_flex_frameset_mai
 inline-flex-min-content-height,ported,css_flexbox_inline_flex_min_content_height,
 inline-flexbox-absurd-block-size-crash,ported,css_flexbox_inline_flexbox_absurd_block_size_crash,
 item-with-max-height-and-scrollbar,ported,css_flexbox_item_with_max_height_and_scrollbar,
+justify-content_center,ported,css_flexbox_justify_content_center,
+justify-content_flex-end,ported,css_flexbox_justify_content_flex_end,
+justify-content_flex-start,ported,css_flexbox_justify_content_flex_start,
+justify-content_space-around,ported,css_flexbox_justify_content_space_around,
+justify-content_space-between-001,ported,css_flexbox_justify_content_space_between_001,
 justify-content_space-between-003.tentative,ported,css_flexbox_justify_content_space_between_003_tentative,
 min-height-min-content-crash,ported,css_flexbox_min_height_min_content_crash,
 min-size-auto-overflow-clip-ref,ported,css_flexbox_min_size_auto_overflow_clip_ref,
@@ -417,6 +446,10 @@ order_order-with-column-reverse-ref,ported,css_flexbox_order_order_with_column_r
 order_order-with-column-reverse,ported,css_flexbox_order_order_with_column_reverse,
 order_order-with-row-reverse-ref,ported,css_flexbox_order_order_with_row_reverse_ref,
 order_order-with-row-reverse,ported,css_flexbox_order_order_with_row_reverse,
+flex-lines_multi-line-wrap-reverse-row-reverse-ref,ported,css_flexbox_flex_lines_multi_line_wrap_reverse_row_reverse_ref,
+flex-lines_multi-line-wrap-reverse-row-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_reverse_row_reverse,
+flex-lines_multi-line-wrap-with-column-reverse-ref,ported,css_flexbox_flex_lines_multi_line_wrap_with_column_reverse_ref,
+flex-lines_multi-line-wrap-with-column-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_with_column_reverse,
 flex-lines_multi-line-wrap-with-row-reverse-ref,ported,css_flexbox_flex_lines_multi_line_wrap_with_row_reverse_ref,
 flex-lines_multi-line-wrap-with-row-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_with_row_reverse,
 align-content-horiz-001a,not_portable,,uses_javascript
@@ -458,8 +491,6 @@ align-items-baseline-vert-rl-column-horz-flexbox-item,not_portable,,uses_javascr
 align-items-baseline-vert-rl-column-horz-grid-item,not_portable,,uses_javascript
 align-items-baseline-vert-rl-column-horz-items,not_portable,,uses_javascript
 align-items-baseline-vert-rl-column-horz-table-item,not_portable,,uses_javascript
-align-self-006,not_portable,,style_block_unsupported property: font-size
-align-self-010,not_portable,,style_block_unsupported property: font-size
 align-self-014,not_portable,,uses_javascript
 anonymous-flex-item-001,not_portable,,uses_javascript
 anonymous-flex-item-003,not_portable,,uses_javascript
@@ -668,23 +699,23 @@ flexbox-align-self-baseline-horiz-007-ref,not_portable,,style_block_unsupported 
 flexbox-align-self-baseline-horiz-007,not_portable,,style_block_unsupported property: font
 flexbox-align-self-baseline-horiz-008-ref,not_portable,,style_block_unsupported property: writing-mode
 flexbox-align-self-baseline-horiz-008,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-horiz-001-block,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-001-table,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-002-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-002,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-003-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-003,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-004-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-004,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-005-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-horiz-005,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-stretch-vert-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-stretch-vert-001,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-vert-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-vert-001,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-vert-002-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-vert-002,not_portable,,style_block_unsupported property: font-size
+flexbox-align-self-horiz-001-block,not_portable,,complex_css_selector: .flexbox > div
+flexbox-align-self-horiz-001-ref,not_portable,,complex_css_selector: .flexbox > div
+flexbox-align-self-horiz-001-table,not_portable,,complex_css_selector: .flexbox > *
+flexbox-align-self-horiz-002-ref,not_portable,,complex_css_selector: .flexbox > div
+flexbox-align-self-horiz-002,not_portable,,complex_css_selector: .flexbox > div
+flexbox-align-self-horiz-003-ref,not_portable,,style_block_unsupported property: font-family
+flexbox-align-self-horiz-003,not_portable,,style_block_unsupported property: font-family
+flexbox-align-self-horiz-004-ref,not_portable,,style_block_unsupported property: font-family
+flexbox-align-self-horiz-004,not_portable,,style_block_unsupported property: font-family
+flexbox-align-self-horiz-005-ref,not_portable,,complex_css_selector: .kidsAutoTop > div
+flexbox-align-self-horiz-005,not_portable,,complex_css_selector: .kidsAutoTop > div
+flexbox-align-self-vert-001-ref,not_portable,,complex_css_selector: .flexbox > *
+flexbox-align-self-vert-002-ref,not_portable,,"complex_css_selector: and
+           then wrapping that inline-block in a helper-div that has
+           ""text-align:center"" set. -->
+      .centerParent"
+flexbox-align-self-vert-002,not_portable,,complex_css_selector: .flexbox > div
 flexbox-align-self-vert-003-ref,not_portable,,style_block_unsupported property: font-family
 flexbox-align-self-vert-003,not_portable,,style_block_unsupported property: font-family
 flexbox-align-self-vert-004-ref,not_portable,,style_block_unsupported property: font-family
@@ -697,18 +728,15 @@ flexbox-align-self-vert-rtl-003-ref,not_portable,,style_block_unsupported proper
 flexbox-align-self-vert-rtl-003,not_portable,,style_block_unsupported property: direction
 flexbox-align-self-vert-rtl-004-ref,not_portable,,style_block_unsupported property: direction
 flexbox-align-self-vert-rtl-004,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-005-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-align-self-vert-rtl-005,not_portable,,style_block_unsupported property: font-size
-flexbox-baseline-align-self-baseline-horiz-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-baseline-align-self-baseline-horiz-001,not_portable,,style_block_unsupported property: font-size
+flexbox-align-self-vert-rtl-005-ref,not_portable,,style_block_unsupported property: direction
+flexbox-align-self-vert-rtl-005,not_portable,,style_block_unsupported property: direction
+flexbox-baseline-align-self-baseline-horiz-001-ref,not_portable,,complex_css_selector: .flexContainer > *
 flexbox-baseline-align-self-baseline-vert-001-ref,not_portable,,style_block_unsupported property: font
 flexbox-baseline-align-self-baseline-vert-001,not_portable,,style_block_unsupported property: font
 flexbox-baseline-empty-001-ref,not_portable,,style_block_unsupported property: font
 flexbox-baseline-empty-001a,not_portable,,style_block_unsupported property: font
 flexbox-baseline-empty-001b,not_portable,,style_block_unsupported property: font
 flexbox-baseline-multi-item-horiz-001-ref,not_portable,,complex_css_selector: .flexContainer > *
-flexbox-baseline-multi-item-horiz-001a,not_portable,,style_block_unsupported property: font-size
-flexbox-baseline-multi-item-horiz-001b,not_portable,,style_block_unsupported property: font-size
 flexbox-baseline-multi-item-vert-001-ref,not_portable,,style_block_unsupported property: font
 flexbox-baseline-multi-item-vert-001a,not_portable,,style_block_unsupported property: font
 flexbox-baseline-multi-item-vert-001b,not_portable,,style_block_unsupported property: font
@@ -729,10 +757,8 @@ flexbox-baseline-nested-001,not_portable,,unsupported element: <input>
 flexbox-baseline-single-item-001-ref,not_portable,,style_block_unsupported property: font
 flexbox-baseline-single-item-001a,not_portable,,style_block_unsupported property: font
 flexbox-baseline-single-item-001b,not_portable,,style_block_unsupported property: font
-flexbox-basic-block-horiz-001,not_portable,,style_block_unsupported property: font-size
-flexbox-basic-block-horiz-001v,not_portable,,style_block_unsupported property: font-size
-flexbox-basic-block-vert-001,not_portable,,style_block_unsupported property: font-size
-flexbox-basic-block-vert-001v,not_portable,,style_block_unsupported property: font-size
+flexbox-basic-block-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
+flexbox-basic-block-vert-001v,not_portable,,style_block_unsupported property: writing-mode
 flexbox-basic-canvas-horiz-001-ref,not_portable,,unsupported element: <canvas>
 flexbox-basic-canvas-horiz-001,not_portable,,unsupported element: <canvas>
 flexbox-basic-canvas-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
@@ -759,8 +785,6 @@ flexbox-basic-video-horiz-001-ref,not_portable,,unsupported element: <video>
 flexbox-basic-video-horiz-001,not_portable,,unsupported element: <video>
 flexbox-basic-video-vert-001-ref,not_portable,,unsupported property: font
 flexbox-basic-video-vert-001,not_portable,,style_block_unsupported property: font
-flexbox-collapsed-item-baseline-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-collapsed-item-baseline-001,not_portable,,style_block_unsupported property: font-size
 flexbox-collapsed-item-horiz-001-ref,not_portable,,complex_css_selector: .flexContainer > *
 flexbox-collapsed-item-horiz-001,not_portable,,complex_css_selector: .flexContainer > *
 flexbox-column-row-gap-002-ref,not_portable,,style_block_unsupported property: writing-mode
@@ -804,13 +828,9 @@ flexbox-justify-content-wmvert-003,not_portable,,uses_javascript
 flexbox-lines-must-be-stretched-by-default,not_portable,,uses_javascript
 flexbox-margin-auto-horiz-001-ref,not_portable,,"complex_css_selector: and the number = number of pixels) -->
       div.l180"
-flexbox-mbp-horiz-001-reverse,not_portable,,style_block_unsupported property: font-size
-flexbox-mbp-horiz-001-rtl-reverse,not_portable,,style_block_unsupported property: font-size
-flexbox-mbp-horiz-001-rtl,not_portable,,style_block_unsupported property: font-size
-flexbox-mbp-horiz-001,not_portable,,style_block_unsupported property: font-size
-flexbox-mbp-horiz-002a,not_portable,,style_block_unsupported property: font-size
-flexbox-mbp-horiz-002b,not_portable,,style_block_unsupported property: font-size
-flexbox-mbp-horiz-002v,not_portable,,style_block_unsupported property: font-size
+flexbox-mbp-horiz-001-rtl-reverse,not_portable,,style_block_unsupported property: direction
+flexbox-mbp-horiz-001-rtl,not_portable,,style_block_unsupported property: direction
+flexbox-mbp-horiz-002v,not_portable,,style_block_unsupported property: writing-mode
 flexbox-mbp-horiz-003-ref,not_portable,,"complex_css_selector: <!-- customizations for flexbox border/padding -->
       .borderA"
 flexbox-mbp-horiz-003-reverse-ref,not_portable,,"complex_css_selector: <!-- customizations for flexbox border/padding -->
@@ -856,14 +876,6 @@ flexbox-root-node-001a,not_portable,,no_layout_content
 flexbox-root-node-001b,not_portable,,no_layout_content
 flexbox-safe-overflow-position-005,not_portable,,style_block_unsupported property: writing-mode
 flexbox-safe-overflow-position-006,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-align
-flexbox-sizing-horiz-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-horiz-001,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-horiz-002-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-horiz-002,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-vert-001-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-vert-001,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-vert-002-ref,not_portable,,style_block_unsupported property: font-size
-flexbox-sizing-vert-002,not_portable,,style_block_unsupported property: font-size
 flexbox-table-fixup-001,not_portable,,unsupported element: <td>
 flexbox-vert-lr-with-img,not_portable,,unsupported property: writing-mode
 flexbox-whitespace-handling-001-ref,not_portable,,unsupported element: <img>
@@ -1335,11 +1347,6 @@ justify-content-006,not_portable,,uses_javascript
 justify-content-007,not_portable,,uses_javascript
 justify-content-rounding,not_portable,,uses_javascript
 justify-content-sideways-001,not_portable,,unsupported property: writing-mode
-justify-content_center,not_portable,,style_block_unsupported property: font-size
-justify-content_flex-end,not_portable,,style_block_unsupported property: font-size
-justify-content_flex-start,not_portable,,style_block_unsupported property: font-size
-justify-content_space-around,not_portable,,style_block_unsupported property: font-size
-justify-content_space-between-001,not_portable,,style_block_unsupported property: font-size
 justify-content_space-between-002,not_portable,,uses_javascript
 layout-algorithm_algo-cross-line-001,not_portable,,complex_css_selector: .flex>*
 layout-algorithm_algo-cross-line-002,not_portable,,complex_css_selector: .flex>*
@@ -1693,12 +1700,8 @@ animation_flex-basis-interpolation,not_portable,,uses_javascript
 animation_flex-grow-interpolation,not_portable,,uses_javascript
 animation_flex-shrink-interpolation,not_portable,,uses_javascript
 animation_order-interpolation,not_portable,,uses_javascript
-flex-lines_multi-line-wrap-reverse-column-reverse-ref,not_portable,,style_block_unsupported property: font-size
-flex-lines_multi-line-wrap-reverse-column-reverse,not_portable,,style_block_unsupported property: font-size
-flex-lines_multi-line-wrap-reverse-row-reverse-ref,not_portable,,style_block_unsupported property: font-size
-flex-lines_multi-line-wrap-reverse-row-reverse,not_portable,,style_block_unsupported property: font-size
-flex-lines_multi-line-wrap-with-column-reverse-ref,not_portable,,style_block_unsupported property: font-size
-flex-lines_multi-line-wrap-with-column-reverse,not_portable,,style_block_unsupported property: font-size
+flex-lines_multi-line-wrap-reverse-column-reverse-ref,not_portable,,style_block_unsupported property: font-family
+flex-lines_multi-line-wrap-reverse-column-reverse,not_portable,,style_block_unsupported property: font-family
 alignment_flex-align-baseline-001,not_portable,,uses_javascript
 alignment_flex-align-baseline-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-003,not_portable,,uses_javascript

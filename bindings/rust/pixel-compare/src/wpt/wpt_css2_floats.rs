@@ -57,6 +57,7 @@ fn css2_floats_float_in_nested_multicol_001() -> Document {
             doc.append_child(n2, n4);
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
+                doc.node_mut(n5).style.margin_top = Length::px(16.0);
                 doc.append_child(n4, n5);
     doc
 }
@@ -69,6 +70,7 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(160.0);
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -80,6 +82,8 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Span);
         doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.width = Length::px(80.0);
+        doc.node_mut(n3).style.height = Length::px(80.0);
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
@@ -91,6 +95,7 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
         doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(160.0);
     doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
@@ -102,6 +107,8 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.append_child(vp, n4);
         let n5 = doc.create_node(ElementTag::Span);
         doc.node_mut(n5).style.float = Float::Left;
+        doc.node_mut(n5).style.width = Length::px(80.0);
+        doc.node_mut(n5).style.height = Length::px(80.0);
         doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
@@ -113,6 +120,7 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
         doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
+    doc.node_mut(n6).style.width = Length::px(160.0);
     doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
@@ -124,6 +132,8 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.append_child(vp, n6);
         let n7 = doc.create_node(ElementTag::Span);
         doc.node_mut(n7).style.float = Float::Left;
+        doc.node_mut(n7).style.width = Length::px(80.0);
+        doc.node_mut(n7).style.height = Length::px(80.0);
         doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
@@ -144,6 +154,7 @@ fn css2_floats_float_no_content_beside_001() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(160.0);
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -155,6 +166,8 @@ fn css2_floats_float_no_content_beside_001() -> Document {
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Span);
         doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.width = Length::px(80.0);
+        doc.node_mut(n3).style.height = Length::px(80.0);
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
@@ -166,6 +179,7 @@ fn css2_floats_float_no_content_beside_001() -> Document {
         doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(160.0);
     doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
@@ -177,6 +191,8 @@ fn css2_floats_float_no_content_beside_001() -> Document {
     doc.append_child(vp, n4);
         let n5 = doc.create_node(ElementTag::Span);
         doc.node_mut(n5).style.float = Float::Left;
+        doc.node_mut(n5).style.width = Length::px(80.0);
+        doc.node_mut(n5).style.height = Length::px(80.0);
         doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
@@ -188,6 +204,7 @@ fn css2_floats_float_no_content_beside_001() -> Document {
         doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
+    doc.node_mut(n6).style.width = Length::px(160.0);
     doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
@@ -199,6 +216,8 @@ fn css2_floats_float_no_content_beside_001() -> Document {
     doc.append_child(vp, n6);
         let n7 = doc.create_node(ElementTag::Span);
         doc.node_mut(n7).style.float = Float::Left;
+        doc.node_mut(n7).style.width = Length::px(80.0);
+        doc.node_mut(n7).style.height = Length::px(80.0);
         doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
@@ -317,6 +336,47 @@ fn css2_floats_floats_in_table_caption_001_ref() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: floats-line-wrap-shifted-001-ref.html
+fn css2_floats_floats_line_wrap_shifted_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 10.0;
+    doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(16.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.font_size = 10.0;
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: floats-line-wrap-shifted-001.html
+fn css2_floats_floats_line_wrap_shifted_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 10.0;
+    doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.float = Float::Left;
+            doc.node_mut(n3).style.height = Length::px(16.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n3).style.font_size = 10.0;
+            doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
+            doc.append_child(n2, n3);
     doc
 }
 
@@ -1062,6 +1122,7 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
 fn css2_floats_floats_placement_vertical_003_ref() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.width = Length::px(100.0);
+    doc.node_mut(vp).style.font_size = 5.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLUE;
@@ -1089,6 +1150,7 @@ fn css2_floats_floats_placement_vertical_003_ref() -> Document {
 fn css2_floats_floats_placement_vertical_003() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.width = Length::px(100.0);
+    doc.node_mut(vp).style.font_size = 5.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLUE;
@@ -1117,6 +1179,7 @@ fn css2_floats_floats_placement_vertical_003() -> Document {
 fn css2_floats_floats_placement_vertical_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.width = Length::px(200.0);
+    doc.node_mut(vp).style.font_size = 5.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -1138,6 +1201,7 @@ fn css2_floats_floats_placement_vertical_004_ref() -> Document {
 fn css2_floats_floats_placement_vertical_004_ref2() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.width = Length::px(200.0);
+    doc.node_mut(vp).style.font_size = 5.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
@@ -1165,6 +1229,7 @@ fn css2_floats_floats_placement_vertical_004_ref2() -> Document {
 fn css2_floats_floats_placement_vertical_004() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.width = Length::px(200.0);
+    doc.node_mut(vp).style.font_size = 5.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -1977,6 +2042,97 @@ fn css2_floats_floats_wrap_bfc_004_ref() -> Document {
         doc.node_mut(n32).style.height = Length::px(10.0);
         doc.node_mut(n32).style.background_color = Color::from_rgba8(128, 0, 128, 255);
         doc.append_child(n29, n32);
+    doc
+}
+
+// Source: floats-wrap-bfc-005-ref.html
+fn css2_floats_floats_wrap_bfc_005_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_size = 10.0;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(40.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.clear = Clear::Left;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.width = Length::px(150.0);
+        doc.node_mut(n3).style.height = Length::px(20.0);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(300.0);
+    doc.node_mut(n4).style.height = Length::px(40.0);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.float = Float::Right;
+        doc.node_mut(n5).style.background_color = Color::BLUE;
+        doc.node_mut(n5).style.width = Length::px(200.0);
+        doc.node_mut(n5).style.height = Length::px(20.0);
+        doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.float = Float::Left;
+        doc.node_mut(n6).style.clear = Clear::Right;
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n6).style.width = Length::px(150.0);
+        doc.node_mut(n6).style.height = Length::px(20.0);
+        doc.append_child(n4, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.width = Length::px(300.0);
+    doc.node_mut(n7).style.height = Length::px(40.0);
+    doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.float = Float::Left;
+        doc.node_mut(n8).style.background_color = Color::BLUE;
+        doc.node_mut(n8).style.width = Length::px(200.0);
+        doc.node_mut(n8).style.height = Length::px(20.0);
+        doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.float = Float::Left;
+        doc.node_mut(n9).style.clear = Clear::Left;
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n9).style.width = Length::px(150.0);
+        doc.node_mut(n9).style.height = Length::px(20.0);
+        doc.append_child(n7, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.width = Length::px(300.0);
+    doc.node_mut(n10).style.height = Length::px(40.0);
+    doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+    doc.append_child(vp, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.float = Float::Right;
+        doc.node_mut(n11).style.background_color = Color::BLUE;
+        doc.node_mut(n11).style.width = Length::px(200.0);
+        doc.node_mut(n11).style.height = Length::px(20.0);
+        doc.append_child(n10, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.float = Float::Left;
+        doc.node_mut(n12).style.clear = Clear::Right;
+        doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n12).style.width = Length::px(150.0);
+        doc.node_mut(n12).style.height = Length::px(20.0);
+        doc.append_child(n10, n12);
     doc
 }
 
@@ -3316,6 +3472,136 @@ fn css2_floats_floats_wrap_top_below_inline_003r() -> Document {
     doc
 }
 
+// Source: floats-zero-height-wrap-001-ref.html
+fn css2_floats_floats_zero_height_wrap_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(500.0);
+    doc.node_mut(n1).style.height = Length::px(500.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.font_size = 12.0;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.node_mut(n2).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.node_mut(n2).style.width = Length::px(300.0);
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.margin_left = Length::px(10.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.node_mut(n3).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n3).style.height = Length::px(20.0);
+        doc.node_mut(n3).style.width = Length::px(300.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n3).style.margin_left = Length::px(100.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.display = Display::InlineBlock;
+        doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n4).style.height = Length::px(20.0);
+        doc.node_mut(n4).style.width = Length::px(300.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 0, 255, 255);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: floats-zero-height-wrap-001.html
+fn css2_floats_floats_zero_height_wrap_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(500.0);
+    doc.node_mut(n1).style.height = Length::px(500.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.font_size = 12.0;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(10.0);
+        doc.node_mut(n2).style.height = Length::px(30.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.clear = Clear::Left;
+        doc.node_mut(n3).style.width = Length::px(100.0);
+        doc.node_mut(n3).style.height = Length::px(1.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.display = Display::InlineBlock;
+        doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n4).style.height = Length::px(20.0);
+        doc.node_mut(n4).style.width = Length::px(300.0);
+        doc.node_mut(n4).style.background_color = Color::BLUE;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.display = Display::InlineBlock;
+        doc.node_mut(n5).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n5).style.height = Length::px(20.0);
+        doc.node_mut(n5).style.width = Length::px(300.0);
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.display = Display::InlineBlock;
+        doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n6).style.height = Length::px(20.0);
+        doc.node_mut(n6).style.width = Length::px(300.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: floats-zero-height-wrap-002.html
+fn css2_floats_floats_zero_height_wrap_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(500.0);
+    doc.node_mut(n1).style.height = Length::px(500.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.font_size = 12.0;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(10.0);
+        doc.node_mut(n2).style.height = Length::px(30.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.clear = Clear::Left;
+        doc.node_mut(n3).style.width = Length::px(100.0);
+        doc.node_mut(n3).style.height = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.display = Display::InlineBlock;
+        doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n4).style.height = Length::px(20.0);
+        doc.node_mut(n4).style.width = Length::px(300.0);
+        doc.node_mut(n4).style.background_color = Color::BLUE;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.display = Display::InlineBlock;
+        doc.node_mut(n5).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n5).style.height = Length::px(20.0);
+        doc.node_mut(n5).style.width = Length::px(300.0);
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.display = Display::InlineBlock;
+        doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
+        doc.node_mut(n6).style.height = Length::px(20.0);
+        doc.node_mut(n6).style.width = Length::px(300.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
 // Source: intrinsic-size-float-and-line.html
 fn css2_floats_intrinsic_size_float_and_line() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3992,6 +4278,8 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/float-with-absolutely-positioned-child-with-static-inset-ref", css2_floats_float_with_absolutely_positioned_child_with_static_inset_ref as fn() -> Document),
         ("wpt/css2_floats/float-with-absolutely-positioned-child-with-static-inset", css2_floats_float_with_absolutely_positioned_child_with_static_inset as fn() -> Document),
         ("wpt/css2_floats/floats-in-table-caption-001-ref", css2_floats_floats_in_table_caption_001_ref as fn() -> Document),
+        ("wpt/css2_floats/floats-line-wrap-shifted-001-ref", css2_floats_floats_line_wrap_shifted_001_ref as fn() -> Document),
+        ("wpt/css2_floats/floats-line-wrap-shifted-001", css2_floats_floats_line_wrap_shifted_001 as fn() -> Document),
         ("wpt/css2_floats/floats-placement-001", css2_floats_floats_placement_001 as fn() -> Document),
         ("wpt/css2_floats/floats-placement-002", css2_floats_floats_placement_002 as fn() -> Document),
         ("wpt/css2_floats/floats-placement-003", css2_floats_floats_placement_003 as fn() -> Document),
@@ -4032,6 +4320,7 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/floats-wrap-bfc-003-right-overflow-ref", css2_floats_floats_wrap_bfc_003_right_overflow_ref as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-003-right-table-ref", css2_floats_floats_wrap_bfc_003_right_table_ref as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-004-ref", css2_floats_floats_wrap_bfc_004_ref as fn() -> Document),
+        ("wpt/css2_floats/floats-wrap-bfc-005-ref", css2_floats_floats_wrap_bfc_005_ref as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-008", css2_floats_floats_wrap_bfc_008 as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-with-margin-004", css2_floats_floats_wrap_bfc_with_margin_004 as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-with-margin-006.tentative", css2_floats_floats_wrap_bfc_with_margin_006_tentative as fn() -> Document),
@@ -4060,6 +4349,9 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/floats-wrap-top-below-inline-002r", css2_floats_floats_wrap_top_below_inline_002r as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-top-below-inline-003l", css2_floats_floats_wrap_top_below_inline_003l as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-top-below-inline-003r", css2_floats_floats_wrap_top_below_inline_003r as fn() -> Document),
+        ("wpt/css2_floats/floats-zero-height-wrap-001-ref", css2_floats_floats_zero_height_wrap_001_ref as fn() -> Document),
+        ("wpt/css2_floats/floats-zero-height-wrap-001", css2_floats_floats_zero_height_wrap_001 as fn() -> Document),
+        ("wpt/css2_floats/floats-zero-height-wrap-002", css2_floats_floats_zero_height_wrap_002 as fn() -> Document),
         ("wpt/css2_floats/intrinsic-size-float-and-line", css2_floats_intrinsic_size_float_and_line as fn() -> Document),
         ("wpt/css2_floats/line-pushed-by-floats-crash", css2_floats_line_pushed_by_floats_crash as fn() -> Document),
         ("wpt/css2_floats/negative-block-margin-pushing-float-out-of-block-formatting-context-ref", css2_floats_negative_block_margin_pushing_float_out_of_block_formatting_context_ref as fn() -> Document),
