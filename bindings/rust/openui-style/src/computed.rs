@@ -780,6 +780,13 @@ impl ComputedStyle {
             || self.border_bottom_right_radius != (0.0, 0.0)
             || self.border_bottom_left_radius != (0.0, 0.0)
     }
+
+    /// Chromium: `IsScrollContainer()` — true when overflow creates a scroll
+    /// container (overflow is not visible/clip on either axis, i.e., auto or
+    /// scroll). Used for automatic minimum size with aspect-ratio.
+    pub fn is_scroll_container(&self) -> bool {
+        self.overflow_x.is_scrollable() || self.overflow_y.is_scrollable()
+    }
 }
 
 impl Default for ComputedStyle {

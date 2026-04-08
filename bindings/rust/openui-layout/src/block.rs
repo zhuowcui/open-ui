@@ -1843,8 +1843,25 @@ fn resolve_block_size(
     // min/max values are in content-box space (for box-sizing: content-box),
     // so convert them to border-box before clamping against the resolved value
     // which is already in border-box space.
+    //
+    // CSS Sizing 4 §5.1 — Automatic Minimum Size:
+    // When height is auto + aspect-ratio is set + element is NOT a scroll
+    // container + min-height is auto, the automatic minimum size is the
+    // intrinsic (content-based) block size. This prevents the element from
+    // shrinking below its content just because the aspect ratio gives a
+    // smaller height. Chromium: `apply_automatic_min_size` →
+    // `Length::MinIntrinsic()` → `block_size_func(kIntrinsic) = intrinsic_size`.
+    let apply_automatic_min_size = style.min_height.is_auto()
+        && style.aspect_ratio.is_some()
+        && !style.is_scroll_container()
+        && style.height.is_auto();
     let min_raw = if style.min_height.is_auto() {
-        LayoutUnit::zero()
+        if apply_automatic_min_size {
+            // Automatic minimum = intrinsic block size (already border-box)
+            intrinsic_block_size
+        } else {
+            LayoutUnit::zero()
+        }
     } else if style.min_height.is_content_or_intrinsic() {
         // CSS Sizing 3: min-height: min-content / max-content / fit-content
         return resolved.max_of(resolve_intrinsic_block(
@@ -1858,7 +1875,10 @@ fn resolve_block_size(
             LayoutUnit::zero(),
         )
     };
-    let min = if style.box_sizing == BoxSizing::ContentBox && min_raw > LayoutUnit::zero() {
+    let min = if apply_automatic_min_size && style.min_height.is_auto() {
+        // Automatic minimum is already in border-box space — clamp by max-height.
+        min_raw
+    } else if style.box_sizing == BoxSizing::ContentBox && min_raw > LayoutUnit::zero() {
         min_raw + border_padding_block
     } else if min_raw > LayoutUnit::zero() {
         min_raw.max_of(border_padding_block)
