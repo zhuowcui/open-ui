@@ -1741,8 +1741,18 @@ fn resolve_inline_size(
     let resolved = if style.width.is_auto() || style.width.is_stretch() {
         // CSS Sizing 4 §5.1: when width is auto and the element has a preferred
         // aspect ratio with a definite height, compute width from height × ratio.
-        // This overrides the normal block-level "fill available" rule.
-        let ar_width = if style.width.is_auto() {
+        //
+        // IMPORTANT: This only applies in shrink-to-fit contexts (floats,
+        // inline-blocks, table cells, etc). Block-level boxes in normal flow
+        // always fill available width and derive height from AR instead.
+        // See CSS Sizing 4 §5.1: "The aspect ratio does not affect the
+        // inline size of a block-level box in a block flow whose size is
+        // given by its context."
+        let is_shrink_to_fit = style.float != openui_style::Float::None
+            || style.display.is_inline_level()
+            || space.is_fixed_inline_size
+            || space.stretch_inline_size;
+        let ar_width = if style.width.is_auto() && is_shrink_to_fit {
             if let Some(ref ar) = style.aspect_ratio {
                 let h_resolved = if !style.height.is_auto()
                     && !style.height.is_content_or_intrinsic()
