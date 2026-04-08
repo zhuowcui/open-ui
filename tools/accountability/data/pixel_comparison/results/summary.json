@@ -1,7 +1,7 @@
 {
   "total": 293,
-  "passed": 137,
-  "failed": 156,
+  "passed": 136,
+  "failed": 157,
   "errors": 0,
   "tests": [
     {
@@ -636,13 +636,13 @@
     },
     {
       "id": "wpt/css_sizing/stretch_bfc-next-to-float-1",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 4.583333
     },
     {
       "id": "wpt/css_sizing/stretch_bfc-next-to-float-2",
       "status": "fail",
-      "mismatch_pct": 0.15625
+      "mismatch_pct": 2.395833
     },
     {
       "id": "wpt/css_sizing/stretch_block-height-003-ref",

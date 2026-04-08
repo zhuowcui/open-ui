@@ -677,13 +677,38 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 }
 
                 // Adjust available inline size for float exclusions.
+                // CSS 2.1 §9.5: New-FC children must NOT overlap float margin boxes.
+                let child_is_new_fc_caller = establishes_new_fc(child_style);
                 let (float_inline_offset, adjusted_available) = if exclusion_space_mixed.has_floats() {
-                    let content_block_offset = block_offset - content_edge;
+                    let (content_block_offset, min_inline_size) = if child_is_new_fc_caller {
+                        let child_top_margin = resolve_margins(child_style, child_available_inline).top;
+                        let mut temp_strut = margin_strut;
+                        temp_strut.append_normal(child_top_margin);
+                        let resolved_offset = block_offset + temp_strut.sum();
+                        let cbo = resolved_offset - content_edge;
+                        let min = new_fc_min_inline_size(child_style, child_available_inline);
+                        (cbo, min)
+                    } else {
+                        let content_block_offset = block_offset - content_edge;
+                        (content_block_offset, LayoutUnit::zero())
+                    };
+
                     let opp = exclusion_space_mixed.find_layout_opportunity(
                         &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
                         child_available_inline,
-                        LayoutUnit::zero(),
+                        min_inline_size,
                     );
+
+                    if child_is_new_fc_caller {
+                        let pushed_bfc = opp.rect.block_start_offset();
+                        if pushed_bfc > content_block_offset {
+                            let push_amount = pushed_bfc - content_block_offset;
+                            block_offset = block_offset + push_amount;
+                            margin_strut = MarginStrut::new();
+                            start_margin_resolved = true;
+                        }
+                    }
+
                     (opp.rect.line_start_offset(), opp.inline_size())
                 } else {
                     (LayoutUnit::zero(), child_available_inline)
@@ -817,13 +842,42 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         }
 
         // Adjust available inline size for float exclusions.
+        // CSS 2.1 §9.5: New-FC children must NOT overlap float margin boxes.
+        // Regular children have line boxes avoid floats, not the block box.
+        let child_is_new_fc_caller = establishes_new_fc(child_style);
         let (float_inline_offset, adjusted_available) = if exclusion_space.has_floats() {
-            let content_block_offset = block_offset - content_edge;
+            // For new-FC children, use post-margin BFC offset and proper min size.
+            let (content_block_offset, min_inline_size) = if child_is_new_fc_caller {
+                // Tentative BFC block offset including margin collapsing.
+                let child_top_margin = resolve_margins(child_style, child_available_inline).top;
+                let mut temp_strut = margin_strut;
+                temp_strut.append_normal(child_top_margin);
+                let resolved_offset = block_offset + temp_strut.sum();
+                let cbo = resolved_offset - content_edge;
+                let min = new_fc_min_inline_size(child_style, child_available_inline);
+                (cbo, min)
+            } else {
+                (block_offset - content_edge, LayoutUnit::zero())
+            };
+
             let opp = exclusion_space.find_layout_opportunity(
                 &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
                 child_available_inline,
-                LayoutUnit::zero(),
+                min_inline_size,
             );
+
+            // Handle push-down for new-FC children: if the layout opportunity
+            // starts below the child's tentative position, push the child down.
+            if child_is_new_fc_caller {
+                let pushed_bfc = opp.rect.block_start_offset();
+                if pushed_bfc > content_block_offset {
+                    let push_amount = pushed_bfc - content_block_offset;
+                    block_offset = block_offset + push_amount;
+                    margin_strut = MarginStrut::new();
+                    start_margin_resolved = true;
+                }
+            }
+
             (opp.rect.line_start_offset(), opp.inline_size())
         } else {
             (LayoutUnit::zero(), child_available_inline)
@@ -1681,6 +1735,48 @@ fn layout_block_child(
 /// these conditions. Provided as a free function for use in layout algorithms.
 pub fn establishes_new_fc(style: &ComputedStyle) -> bool {
     style.creates_new_formatting_context()
+}
+
+/// Compute the minimum inline size for a new-FC child's float avoidance query.
+///
+/// Per CSS 2.1 §9.5: "The border box of ... an element in normal flow that
+/// establishes a new block formatting context must not overlap the margin box
+/// of any floats in the same block formatting context."
+///
+/// The min_inline_size is the start margin + border-box width. The end margin
+/// can extend past the opportunity (it doesn't cause float overlap).
+///
+/// For auto-width: start margin + border + padding (content can shrink to 0).
+/// For explicit width: start margin + border-box width.
+fn new_fc_min_inline_size(
+    style: &ComputedStyle,
+    containing_inline: LayoutUnit,
+) -> LayoutUnit {
+    let margin = resolve_margins(style, containing_inline);
+    // Only the start margin matters — it shifts the border box within the
+    // opportunity. The end margin can overflow past the opportunity edge.
+    // TODO: handle RTL (use margin_right as start margin)
+    let margin_start = margin.left;
+    let bp_left = LayoutUnit::from_i32(style.effective_border_left())
+        + resolve_margin_or_padding(&style.padding_left, containing_inline);
+    let bp_right = LayoutUnit::from_i32(style.effective_border_right())
+        + resolve_margin_or_padding(&style.padding_right, containing_inline);
+    let bp = bp_left + bp_right;
+
+    if style.width.is_auto() {
+        // Auto-width: can shrink to 0 content, so just start margin + border + padding
+        margin_start + bp
+    } else {
+        // Explicit width: resolve and compute border-box width
+        let w = resolve_length(
+            &style.width, containing_inline, containing_inline, containing_inline,
+        );
+        let border_box_w = match style.box_sizing {
+            BoxSizing::ContentBox => w + bp,
+            BoxSizing::BorderBox => w,
+        };
+        margin_start + border_box_w
+    }
 }
 
 // ── Helper: resolve border widths from style ─────────────────────────
