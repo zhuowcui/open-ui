@@ -894,6 +894,49 @@ fn resolve_content_based_size(
                 };
                 return content;
             }
+
+            // CSS Flexbox §9.2 step 3(B): If cross-size is auto but the item
+            // will stretch (align-self: stretch + definite container cross),
+            // the cross-size is definite and equals the container cross minus margins.
+            if cross_prop.is_auto() {
+                let cross_container = if is_column {
+                    space.available_inline_size
+                } else {
+                    space.available_block_size
+                };
+                if !cross_container.is_indefinite() {
+                    // Check alignment: auto/normal → stretch in flex context
+                    let align_pos = child_style.align_self.position;
+                    let would_stretch = align_pos == ItemPosition::Auto
+                        || align_pos == ItemPosition::Normal
+                        || align_pos == ItemPosition::Stretch;
+                    if would_stretch {
+                        let margin = resolve_margins(child_style, LayoutUnit::zero());
+                        let cross_margin = if is_column {
+                            margin.left + margin.right
+                        } else {
+                            margin.top + margin.bottom
+                        };
+                        let cross_bp = {
+                            let b = resolve_border(child_style);
+                            let p = resolve_padding(child_style, LayoutUnit::zero());
+                            if is_column {
+                                b.left + b.right + p.left + p.right
+                            } else {
+                                b.top + b.bottom + p.top + p.bottom
+                            }
+                        };
+                        let stretched_bb = (cross_container - cross_margin).clamp_negative_to_zero();
+                        let content_cross = (stretched_bb - cross_bp).clamp_negative_to_zero();
+                        let main_val = if is_column {
+                            LayoutUnit::from_f32(content_cross.to_f32() * ratio.1 / ratio.0)
+                        } else {
+                            LayoutUnit::from_f32(content_cross.to_f32() * ratio.0 / ratio.1)
+                        };
+                        return main_val;
+                    }
+                }
+            }
         }
     }
 
