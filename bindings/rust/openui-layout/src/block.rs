@@ -935,6 +935,40 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         is_viewport,
     );
 
+    // ── Fixup: percentage-based relative positioning ─────────────────
+    // During child layout, percentage top/bottom in relative positioning
+    // resolved against space.available_block_size. If that was indefinite,
+    // percentage offsets resolved to 0. Now that the final height is known,
+    // re-apply those offsets with the actual container content height.
+    if space.available_block_size.is_indefinite() {
+        let actual_content_height = (resolved_block_size - border_padding_block).clamp_negative_to_zero();
+        if actual_content_height > LayoutUnit::zero() {
+            for frag in &mut child_fragments {
+                if frag.node_id == openui_dom::NodeId::NONE {
+                    continue;
+                }
+                let child_style = &doc.node(frag.node_id).style;
+                if child_style.position != Position::Relative {
+                    continue;
+                }
+                let has_pct_top = !child_style.top.is_auto()
+                    && child_style.top.length_type() == openui_geometry::LengthType::Percent;
+                let has_pct_bottom = !child_style.bottom.is_auto()
+                    && child_style.bottom.length_type() == openui_geometry::LengthType::Percent;
+                if !has_pct_top && !has_pct_bottom {
+                    continue;
+                }
+                let zero = LayoutUnit::zero();
+                let block_offset = if has_pct_top {
+                    resolve_length(&child_style.top, actual_content_height, zero, zero)
+                } else {
+                    -resolve_length(&child_style.bottom, actual_content_height, zero, zero)
+                };
+                frag.offset.top += block_offset;
+            }
+        }
+    }
+
     // ── Out-of-flow layout ───────────────────────────────────────────
     // Layout absolutely and fixed positioned children that were collected
     // earlier. Must happen AFTER height resolution so that the containing
