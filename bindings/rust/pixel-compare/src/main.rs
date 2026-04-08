@@ -54,10 +54,15 @@ fn main() {
                 );
                 let fragment = openui_layout::block_layout(&doc, root, &space);
                 println!("Fragment size: {:?}", fragment.size);
-                println!("Fragment children: {}", fragment.children.len());
-                for (i, child) in fragment.children.iter().enumerate().take(5) {
-                    println!("  frag[{}]: offset={:?} size={:?}", i, child.offset, child.size);
+                fn dump_frag(f: &openui_layout::Fragment, depth: usize) {
+                    let indent = "  ".repeat(depth);
+                    println!("{}frag: offset={:?} size={:?} kind={:?} node={:?} children={}",
+                        indent, f.offset, f.size, f.kind, f.node_id, f.children.len());
+                    for child in &f.children {
+                        dump_frag(child, depth + 1);
+                    }
                 }
+                dump_frag(&fragment, 0);
             } else {
                 eprintln!("Unknown test ID: {}", test_id);
             }

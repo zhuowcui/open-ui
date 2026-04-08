@@ -156,6 +156,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // coordinates) so BFC roots can extend their auto height to include floats.
     let mut max_float_bottom = LayoutUnit::zero();
 
+    // Track whether a descendant float forced BFC offset resolution.
+    // When true, this block's start_margin_strut should NOT propagate to the
+    // parent — subsequent margins go into internal block_offset instead.
+    // Cascaded from child fragments via float_resolved_bfc flag.
+    let mut float_resolved_bfc = false;
+
     // CSS 2.1 §8.3.1: Self-collapsing blocks are positioned at the final
     // collapsed margin boundary, but that boundary is unknown until the next
     // non-self-collapsing sibling resolves the strut. Track their indices
@@ -506,6 +512,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     block_offset += margin_strut.sum();
                     margin_strut = MarginStrut::new();
                     start_margin_resolved = true;
+                    float_resolved_bfc = true;
                 }
                 handle_float(
                     doc, child_id, space,
@@ -772,6 +779,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 block_offset += margin_strut.sum();
                 margin_strut = MarginStrut::new();
                 start_margin_resolved = true;
+                float_resolved_bfc = true;
             }
             handle_float(
                 doc, child_id, space,
@@ -1092,6 +1100,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         fragment.start_margin_strut = margin_strut;
     }
     fragment.end_margin_strut = final_end_margin_strut;
+    fragment.float_resolved_bfc = float_resolved_bfc;
 
     // ── Baseline propagation ─────────────────────────────────────────
     // CSS Inline 3 §3: The first baseline set of a block container is the
@@ -1393,6 +1402,31 @@ fn layout_block_child(
         }
     }
 
+    // ── Cascade float-forced BFC resolution ─────────────────────────
+    // CSS 2.1 §9.5 + Chromium LayoutNG: When a descendant float forces
+    // BFC offset resolution, that resolution cascades upward through all
+    // non-BFC ancestors to the BFC root. This prevents margin-collapse
+    // propagation from incorrectly pushing the float's ancestor down.
+    //
+    // If the child's float_resolved_bfc is set and our start margin isn't
+    // resolved yet, force resolution now. For non-BFC blocks, save the
+    // current strut (margins before the float) for parent propagation,
+    // then mark as resolved so subsequent margins become internal.
+    if child_fragment.float_resolved_bfc && !*start_margin_resolved {
+        if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+            *block_offset += margin_strut.sum();
+            *margin_strut = MarginStrut::new();
+        } else {
+            // Non-BFC: save accumulated margins before the float for parent
+            // propagation, then reset. Margins after the float go internal.
+            if saved_start_strut.is_none() {
+                *saved_start_strut = Some(*margin_strut);
+            }
+            *margin_strut = MarginStrut::new();
+        }
+        *start_margin_resolved = true;
+    }
+
     // ── NOW resolve the margin strut ─────────────────────────────────
     // When start_margin_resolved is true, we tentatively resolve the strut
     // but save state for rollback if the child turns out self-collapsing.
@@ -1557,26 +1591,48 @@ fn layout_block_child(
         // top margin. Don't reset the strut — append the bottom margin to
         // the existing strut so both top and bottom are preserved.
         //
-        // If we tentatively resolved the strut above, roll back: the
-        // self-collapsing child means the preceding bottom margin is
-        // still adjoining (they form one collapsing group).
-        if strut_resolved_this_child {
-            *block_offset = pre_resolve_offset;
-            *margin_strut = pre_resolve_strut;
-        }
-        margin_strut.append_normal(child_margin.bottom);
-        if !child_fragment.end_margin_strut.is_empty() {
-            let child_end = child_fragment.end_margin_strut;
-            margin_strut.append_normal(child_end.positive_margin);
-            if child_end.negative_margin < LayoutUnit::zero() {
-                margin_strut.append_normal(child_end.negative_margin);
+        // Exception: if a descendant float forced BFC resolution (cascaded
+        // via float_resolved_bfc), the margin boundary IS known and final.
+        // Don't rollback and don't defer — position is at block_offset.
+        if child_fragment.float_resolved_bfc {
+            // Float cascade resolved the position — it's final.
+            // Start a new strut from this boundary with the child's bottom margin.
+            *margin_strut = MarginStrut::new();
+            margin_strut.append_normal(child_margin.bottom);
+            if !child_fragment.end_margin_strut.is_empty() {
+                let child_end = child_fragment.end_margin_strut;
+                margin_strut.append_normal(child_end.positive_margin);
+                if child_end.negative_margin < LayoutUnit::zero() {
+                    margin_strut.append_normal(child_end.negative_margin);
+                }
             }
+            // Also flush any previously pending self-collapsing blocks to
+            // the current margin boundary (block_offset before height add).
+            let boundary = child_fragment.offset.top;
+            for &idx in pending_self_collapsing.iter() {
+                child_fragments[idx].offset.top = boundary;
+            }
+            pending_self_collapsing.clear();
+        } else {
+            // Normal self-collapsing handling: rollback tentative resolution.
+            if strut_resolved_this_child {
+                *block_offset = pre_resolve_offset;
+                *margin_strut = pre_resolve_strut;
+            }
+            margin_strut.append_normal(child_margin.bottom);
+            if !child_fragment.end_margin_strut.is_empty() {
+                let child_end = child_fragment.end_margin_strut;
+                margin_strut.append_normal(child_end.positive_margin);
+                if child_end.negative_margin < LayoutUnit::zero() {
+                    margin_strut.append_normal(child_end.negative_margin);
+                }
+            }
+            // Record index for deferred repositioning. The self-collapsing block's
+            // final position is the next collapsed margin boundary, which we only
+            // know when a non-self-collapsing sibling resolves the strut.
+            let idx = child_fragments.len(); // index after push below
+            pending_self_collapsing.push(idx);
         }
-        // Record index for deferred repositioning. The self-collapsing block's
-        // final position is the next collapsed margin boundary, which we only
-        // know when a non-self-collapsing sibling resolves the strut.
-        let idx = child_fragments.len(); // index after push below
-        pending_self_collapsing.push(idx);
     } else {
         // Non-self-collapsing child: the child occupies space, so margin
         // collapsing ends here. Start a new strut with the bottom margin.

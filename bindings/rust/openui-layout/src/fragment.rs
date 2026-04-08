@@ -173,6 +173,15 @@ pub struct Fragment {
     ///
     /// Blink: `PhysicalBoxFragment::BreakToken()`.
     pub break_token: Option<crate::fragmentation::BreakToken>,
+
+    /// Whether a descendant float forced BFC offset resolution during layout.
+    ///
+    /// CSS 2.1 §9.5: When a float is encountered, the BFC block offset must
+    /// be resolved immediately (Chromium: `ResolveBFCBlockOffset()`). This
+    /// resolution must cascade up to the BFC root. This flag signals to the
+    /// parent that it should also resolve its own pending margin strut to
+    /// prevent incorrect margin-collapse propagation past the float.
+    pub float_resolved_bfc: bool,
 }
 
 impl Fragment {
@@ -202,6 +211,7 @@ impl Fragment {
             is_first_for_node: true,
             is_last_for_node: true,
             break_token: None,
+            float_resolved_bfc: false,
         }
     }
 
@@ -239,6 +249,7 @@ impl Fragment {
             is_first_for_node: true,
             is_last_for_node: true,
             break_token: None,
+            float_resolved_bfc: false,
         }
     }
 
