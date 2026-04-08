@@ -1853,11 +1853,10 @@ fn resolve_inline_size(
     // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
     // min-height/max-height transfer to the inline axis via the ratio.
     //
-    // Transferred sizes only apply when the inline size is being resolved
-    // through the aspect ratio (i.e., width is auto in a shrink-to-fit
-    // context). When width is explicit or fills available space, the
-    // transferred constraints do not override the resolved width.
-    let (min, max) = if width_from_ar {
+    // Transferred sizes only apply when the inline size is auto (the
+    // dimension could be influenced by AR). When width is explicit, the
+    // author's specified width takes precedence over transferred constraints.
+    let (min, max) = if style.width.is_auto() || style.width.is_stretch() {
         if let Some(ar) = &style.aspect_ratio {
             let ratio = ar.ratio;
             if ratio.0 == 0.0 || ratio.1 == 0.0 {

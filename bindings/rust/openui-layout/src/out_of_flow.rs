@@ -206,7 +206,7 @@ fn layout_out_of_flow_child(
     // The constraint equation (§10.3.7/§10.6.4) gives a tentative width/height.
     // If that tentative value violates min/max, re-resolve the full constraint
     // equation with the clamped value treated as specified (not auto).
-    let width_from_ar = ar_width_from_height.is_some();
+    let width_from_ar = style.width.is_auto() || style.width.is_stretch();
     let height_from_ar = style.height.is_auto()
         && style.aspect_ratio.is_some()
         && !(!style.top.is_auto() && !style.bottom.is_auto());
