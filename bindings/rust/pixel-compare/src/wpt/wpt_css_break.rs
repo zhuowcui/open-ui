@@ -13935,6 +13935,109 @@ fn css_break_overflowing_block_003() -> Document {
     doc
 }
 
+// Source: overflowing-block-print-ref.html
+fn css_break_overflowing_block_print_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.position = Position::Absolute;
+    doc.node_mut(vp).style.left = Length::px(0.0);
+    doc.node_mut(vp).style.right = Length::px(0.0);
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.left = Length::px(0.0);
+    doc.node_mut(n1).style.right = Length::px(0.0);
+    doc.node_mut(n1).style.height = Length::percent(100.0);
+    doc.node_mut(n1).style.border_top_width = 10;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(n1).style.border_right_width = 10;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(n1).style.border_bottom_width = 10;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(n1).style.border_left_width = 10;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.position = Position::Absolute;
+    doc.node_mut(n2).style.left = Length::px(0.0);
+    doc.node_mut(n2).style.right = Length::px(0.0);
+    doc.node_mut(n2).style.height = Length::percent(100.0);
+    doc.node_mut(n2).style.border_top_width = 20;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n2).style.border_right_width = 20;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n2).style.border_bottom_width = 20;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n2).style.border_left_width = 20;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.padding_top = Length::px(0.0);
+        doc.node_mut(n3).style.padding_right = Length::px(0.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.padding_left = Length::px(0.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.right = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::percent(300.0);
+        doc.node_mut(n3).style.border_top_width = 10;
+        doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+        doc.node_mut(n3).style.border_right_width = 10;
+        doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+        doc.node_mut(n3).style.border_bottom_width = 10;
+        doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+        doc.node_mut(n3).style.border_left_width = 10;
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
 // Source: overflowing-block-print.html
 fn css_break_overflowing_block_print() -> Document {
     let (mut doc, vp) = base_doc();
@@ -32636,6 +32739,7 @@ pub fn css_break_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_break/overflowing-block-002-print", css_break_overflowing_block_002_print as fn() -> Document),
         ("wpt/css_break/overflowing-block-003-ref", css_break_overflowing_block_003_ref as fn() -> Document),
         ("wpt/css_break/overflowing-block-003", css_break_overflowing_block_003 as fn() -> Document),
+        ("wpt/css_break/overflowing-block-print-ref", css_break_overflowing_block_print_ref as fn() -> Document),
         ("wpt/css_break/overflowing-block-print", css_break_overflowing_block_print as fn() -> Document),
         ("wpt/css_break/parallel-flow-trailing-margin-003-crash", css_break_parallel_flow_trailing_margin_003_crash as fn() -> Document),
         ("wpt/css_break/relpos-inline-ref", css_break_relpos_inline_ref as fn() -> Document),

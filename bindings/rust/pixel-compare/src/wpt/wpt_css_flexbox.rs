@@ -85982,6 +85982,130 @@ fn css_flexbox_flexbox_columns_flexitems() -> Document {
     doc
 }
 
+// Source: flexbox_direction-column-ref.html
+fn css_flexbox_flexbox_direction_column_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::WHITE;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.width = Length::px(128.0);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.margin_top = Length::px(32.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.width = Length::px(128.0);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.background_color = Color::WHITE;
+        doc.node_mut(n4).style.margin_top = Length::px(32.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.width = Length::px(128.0);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.background_color = Color::WHITE;
+        doc.node_mut(n5).style.margin_top = Length::px(32.0);
+        doc.node_mut(n5).style.margin_right = Length::px(16.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n5).style.margin_left = Length::px(16.0);
+        doc.node_mut(n5).style.width = Length::px(128.0);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: flexbox_direction-column-reverse-ref.html
+fn css_flexbox_flexbox_direction_column_reverse_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::WHITE;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.width = Length::px(128.0);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.margin_top = Length::px(32.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.width = Length::px(128.0);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.background_color = Color::WHITE;
+        doc.node_mut(n4).style.margin_top = Length::px(32.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.width = Length::px(128.0);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 204, 0, 255);
+        doc.node_mut(n5).style.margin_top = Length::px(32.0);
+        doc.node_mut(n5).style.margin_right = Length::px(16.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n5).style.margin_left = Length::px(16.0);
+        doc.node_mut(n5).style.width = Length::px(128.0);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+    doc
+}
+
 // Source: flexbox_direction-column-reverse.html
 fn css_flexbox_flexbox_direction_column_reverse() -> Document {
     let (mut doc, vp) = base_doc();
@@ -101501,6 +101625,88 @@ fn css_flexbox_flexbox_justifycontent_right_001_ref() -> Document {
     doc
 }
 
+// Source: flexbox_justifycontent-right-001.html
+fn css_flexbox_flexbox_justifycontent_right_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.width = Length::px(640.0);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.flex_direction = FlexDirection::Row;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.padding_top = Length::px(0.0);
+        doc.node_mut(n2).style.padding_right = Length::px(32.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.padding_left = Length::px(32.0);
+        doc.node_mut(n2).style.width = Length::px(64.0);
+        doc.node_mut(n2).style.height = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n3).style.padding_top = Length::px(0.0);
+        doc.node_mut(n3).style.padding_right = Length::px(32.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.padding_left = Length::px(32.0);
+        doc.node_mut(n3).style.width = Length::px(64.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+        doc.node_mut(n4).style.padding_top = Length::px(0.0);
+        doc.node_mut(n4).style.padding_right = Length::px(32.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.padding_left = Length::px(32.0);
+        doc.node_mut(n4).style.width = Length::px(64.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.background_color = Color::BLUE;
+    doc.node_mut(n5).style.margin_top = Length::px(16.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.height = Length::px(64.0);
+    doc.node_mut(n5).style.width = Length::px(640.0);
+    doc.node_mut(n5).style.display = Display::Flex;
+    doc.node_mut(n5).style.flex_direction = FlexDirection::RowReverse;
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n6).style.padding_top = Length::px(0.0);
+        doc.node_mut(n6).style.padding_right = Length::px(32.0);
+        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.padding_left = Length::px(32.0);
+        doc.node_mut(n6).style.width = Length::px(64.0);
+        doc.node_mut(n6).style.height = Length::px(32.0);
+        doc.append_child(n5, n6);
+        let n7 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n7).style.padding_top = Length::px(0.0);
+        doc.node_mut(n7).style.padding_right = Length::px(32.0);
+        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n7).style.padding_left = Length::px(32.0);
+        doc.node_mut(n7).style.width = Length::px(64.0);
+        doc.node_mut(n7).style.height = Length::px(32.0);
+        doc.append_child(n5, n7);
+        let n8 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n8).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+        doc.node_mut(n8).style.padding_top = Length::px(0.0);
+        doc.node_mut(n8).style.padding_right = Length::px(32.0);
+        doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n8).style.padding_left = Length::px(32.0);
+        doc.node_mut(n8).style.width = Length::px(64.0);
+        doc.node_mut(n8).style.height = Length::px(32.0);
+        doc.append_child(n5, n8);
+    doc
+}
+
 // Source: flexbox_justifycontent-right-002-ref.html
 fn css_flexbox_flexbox_justifycontent_right_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -102387,6 +102593,169 @@ fn css_flexbox_flexbox_justifycontent_stretch() -> Document {
     doc
 }
 
+// Source: flexbox_margin-auto-overflow-ref.html
+fn css_flexbox_flexbox_margin_auto_overflow_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::WHITE;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(480.0);
+        doc.node_mut(n2).style.height = Length::px(96.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.top = Length::px(16.0);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(480.0);
+        doc.node_mut(n3).style.height = Length::px(96.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.left = Length::px(480.0);
+        doc.node_mut(n3).style.top = Length::px(16.0);
+        doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: flexbox_margin-auto-overflow.html
+fn css_flexbox_flexbox_margin_auto_overflow() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::WHITE;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::auto();
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::auto();
+        doc.node_mut(n2).style.width = Length::px(480.0);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.node_mut(n2).style.flex_grow = 0.0;
+        doc.node_mut(n2).style.flex_shrink = 0.0;
+        doc.node_mut(n2).style.flex_basis = Length::auto();
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::auto();
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::auto();
+        doc.node_mut(n3).style.width = Length::px(480.0);
+        doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.node_mut(n3).style.flex_grow = 0.0;
+        doc.node_mut(n3).style.flex_shrink = 0.0;
+        doc.node_mut(n3).style.flex_basis = Length::auto();
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: flexbox_margin-auto-ref.html
+fn css_flexbox_flexbox_margin_auto_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::WHITE;
+        doc.node_mut(n2).style.width = Length::px(64.0);
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.node_mut(n2).style.height = Length::px(96.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.left = Length::px(96.0);
+        doc.node_mut(n2).style.top = Length::px(16.0);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.width = Length::px(64.0);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::px(96.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.left = Length::px(352.0);
+        doc.node_mut(n3).style.top = Length::px(16.0);
+        doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.append_child(n1, n3);
+    doc
+}
+
 // Source: flexbox_margin-auto.html
 fn css_flexbox_flexbox_margin_auto() -> Document {
     let (mut doc, vp) = base_doc();
@@ -102430,6 +102799,46 @@ fn css_flexbox_flexbox_margin_auto() -> Document {
         doc.node_mut(n3).style.margin_left = Length::auto();
         doc.node_mut(n3).style.width = Length::px(64.0);
         doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: flexbox_margin-collapse-ref.html
+fn css_flexbox_flexbox_margin_collapse_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(32.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
         doc.append_child(n1, n3);
     doc
 }
@@ -102653,6 +103062,58 @@ fn css_flexbox_flexbox_object_ref() -> Document {
         doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n3).style.margin_left = Length::px(0.0);
         doc.append_child(n1, n3);
+    doc
+}
+
+// Source: flexbox_order-abspos-space-around-ref.html
+fn css_flexbox_flexbox_order_abspos_space_around_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.width = Length::px(432.0);
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(80.0);
+        doc.node_mut(n2).style.height = Length::px(128.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(32.0);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.width = Length::px(80.0);
+        doc.node_mut(n3).style.height = Length::px(128.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(176.0);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.width = Length::px(80.0);
+        doc.node_mut(n4).style.height = Length::px(128.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(176.0);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
     doc
 }
 
@@ -102923,6 +103384,59 @@ fn css_flexbox_flexbox_order_box() -> Document {
             doc.node_mut(n7).style.height = Length::px(19.2);
             doc.node_mut(n7).style.display = Display::InlineBlock;
             doc.append_child(n5, n7);
+    doc
+}
+
+// Source: flexbox_order-noninteger-invalid.html
+fn css_flexbox_flexbox_order_noninteger_invalid() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.flex_grow = 1.0;
+        doc.node_mut(n2).style.flex_shrink = 0.0;
+        doc.node_mut(n2).style.flex_basis = Length::percent(0.0);
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.order = 0;
+        doc.node_mut(n3).style.flex_grow = 1.0;
+        doc.node_mut(n3).style.flex_shrink = 0.0;
+        doc.node_mut(n3).style.flex_basis = Length::percent(0.0);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(64.0);
+    doc.node_mut(n4).style.background_color = Color::WHITE;
+    doc.node_mut(n4).style.position = Position::Absolute;
+    doc.node_mut(n4).style.top = Length::px(0.0);
+    doc.node_mut(n4).style.left = Length::px(0.0);
+    doc.append_child(vp, n4);
     doc
 }
 
@@ -117365,6 +117879,208 @@ fn css_flexbox_interactive_flexbox_interactive_break_after_item() -> Document {
     doc
 }
 
+// Source: interactive_flexbox_interactive_break-after-line-order.html
+fn css_flexbox_interactive_flexbox_interactive_break_after_line_order() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.widows = 1_u32;
+    doc.node_mut(vp).style.orphans = 1_u32;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.background_color = Color::RED;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::percent(100.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.flex_grow = 1.0;
+        doc.node_mut(n3).style.flex_shrink = 0.0;
+        doc.node_mut(n3).style.flex_basis = Length::auto();
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::percent(100.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.flex_grow = 1.0;
+        doc.node_mut(n4).style.flex_shrink = 0.0;
+        doc.node_mut(n4).style.flex_basis = Length::auto();
+        doc.node_mut(n4).style.order = -1;
+        doc.append_child(n2, n4);
+    doc
+}
+
+// Source: interactive_flexbox_interactive_break-after-line.html
+fn css_flexbox_interactive_flexbox_interactive_break_after_line() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.widows = 1_u32;
+    doc.node_mut(vp).style.orphans = 1_u32;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::percent(100.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.flex_grow = 1.0;
+        doc.node_mut(n3).style.flex_shrink = 0.0;
+        doc.node_mut(n3).style.flex_basis = Length::auto();
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.background_color = Color::RED;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::percent(100.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.flex_grow = 1.0;
+        doc.node_mut(n4).style.flex_shrink = 0.0;
+        doc.node_mut(n4).style.flex_basis = Length::auto();
+        doc.append_child(n2, n4);
+    doc
+}
+
+// Source: interactive_flexbox_interactive_break-after-multiline.html
+fn css_flexbox_interactive_flexbox_interactive_break_after_multiline() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.widows = 1_u32;
+    doc.node_mut(vp).style.orphans = 1_u32;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.flex_grow = 1.0;
+        doc.node_mut(n3).style.flex_shrink = 0.0;
+        doc.node_mut(n3).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(0.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.flex_grow = 1.0;
+        doc.node_mut(n4).style.flex_shrink = 0.0;
+        doc.node_mut(n4).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.widows = 1_u32;
+        doc.node_mut(n5).style.orphans = 1_u32;
+        doc.node_mut(n5).style.background_color = Color::RED;
+        doc.node_mut(n5).style.margin_top = Length::px(0.0);
+        doc.node_mut(n5).style.margin_right = Length::px(0.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n5).style.margin_left = Length::px(0.0);
+        doc.node_mut(n5).style.height = Length::px(32.0);
+        doc.node_mut(n5).style.flex_grow = 1.0;
+        doc.node_mut(n5).style.flex_shrink = 0.0;
+        doc.node_mut(n5).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.widows = 1_u32;
+        doc.node_mut(n6).style.orphans = 1_u32;
+        doc.node_mut(n6).style.background_color = Color::RED;
+        doc.node_mut(n6).style.margin_top = Length::px(0.0);
+        doc.node_mut(n6).style.margin_right = Length::px(0.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.margin_left = Length::px(0.0);
+        doc.node_mut(n6).style.height = Length::px(32.0);
+        doc.node_mut(n6).style.flex_grow = 1.0;
+        doc.node_mut(n6).style.flex_shrink = 0.0;
+        doc.node_mut(n6).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n6);
+    doc
+}
+
 // Source: interactive_flexbox_interactive_break-before-column-firstitem.html
 fn css_flexbox_interactive_flexbox_interactive_break_before_column_firstitem() -> Document {
     let (mut doc, vp) = base_doc();
@@ -117575,6 +118291,137 @@ fn css_flexbox_interactive_flexbox_interactive_break_before_item() -> Document {
         doc.node_mut(n3).style.flex_shrink = 1.0;
         doc.node_mut(n3).style.flex_basis = Length::px(0.0);
         doc.append_child(n2, n3);
+    doc
+}
+
+// Source: interactive_flexbox_interactive_break-before-multiline.html
+fn css_flexbox_interactive_flexbox_interactive_break_before_multiline() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.widows = 1_u32;
+    doc.node_mut(vp).style.orphans = 1_u32;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::WHITE);
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.node_mut(n2).style.display = Display::Flex;
+    doc.node_mut(n2).style.flex_wrap = FlexWrap::Wrap;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.flex_grow = 1.0;
+        doc.node_mut(n3).style.flex_shrink = 0.0;
+        doc.node_mut(n3).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(0.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.flex_grow = 1.0;
+        doc.node_mut(n4).style.flex_shrink = 0.0;
+        doc.node_mut(n4).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.widows = 1_u32;
+        doc.node_mut(n5).style.orphans = 1_u32;
+        doc.node_mut(n5).style.background_color = Color::RED;
+        doc.node_mut(n5).style.margin_top = Length::px(0.0);
+        doc.node_mut(n5).style.margin_right = Length::px(0.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n5).style.margin_left = Length::px(0.0);
+        doc.node_mut(n5).style.height = Length::px(32.0);
+        doc.node_mut(n5).style.flex_grow = 1.0;
+        doc.node_mut(n5).style.flex_shrink = 0.0;
+        doc.node_mut(n5).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.widows = 1_u32;
+        doc.node_mut(n6).style.orphans = 1_u32;
+        doc.node_mut(n6).style.background_color = Color::RED;
+        doc.node_mut(n6).style.margin_top = Length::px(0.0);
+        doc.node_mut(n6).style.margin_right = Length::px(0.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.margin_left = Length::px(0.0);
+        doc.node_mut(n6).style.height = Length::px(32.0);
+        doc.node_mut(n6).style.flex_grow = 1.0;
+        doc.node_mut(n6).style.flex_shrink = 0.0;
+        doc.node_mut(n6).style.flex_basis = Length::px(160.0);
+        doc.append_child(n2, n6);
+    doc
+}
+
+// Source: interactive_flexbox_interactive_break-natural.html
+fn css_flexbox_interactive_flexbox_interactive_break_natural() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.widows = 1_u32;
+    doc.node_mut(vp).style.orphans = 1_u32;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    doc.node_mut(vp).style.display = Display::Flex;
+    doc.node_mut(vp).style.flex_direction = FlexDirection::Column;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.height = Length::percent(75.0);
+    doc.node_mut(n1).style.flex_grow = 0.0;
+    doc.node_mut(n1).style.flex_shrink = 0.0;
+    doc.node_mut(n1).style.flex_basis = Length::auto();
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.height = Length::percent(75.0);
+    doc.node_mut(n2).style.flex_grow = 0.0;
+    doc.node_mut(n2).style.flex_shrink = 0.0;
+    doc.node_mut(n2).style.flex_basis = Length::auto();
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.append_child(vp, n2);
     doc
 }
 
@@ -119263,6 +120110,8 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/flexbox_columns-flexitems-2", css_flexbox_flexbox_columns_flexitems_2 as fn() -> Document),
         ("wpt/css_flexbox/flexbox_columns-flexitems-ref", css_flexbox_flexbox_columns_flexitems_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_columns-flexitems", css_flexbox_flexbox_columns_flexitems as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_direction-column-ref", css_flexbox_flexbox_direction_column_ref as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_direction-column-reverse-ref", css_flexbox_flexbox_direction_column_reverse_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_direction-column-reverse", css_flexbox_flexbox_direction_column_reverse as fn() -> Document),
         ("wpt/css_flexbox/flexbox_direction-column", css_flexbox_flexbox_direction_column as fn() -> Document),
         ("wpt/css_flexbox/flexbox_direction-row-reverse-ref", css_flexbox_flexbox_direction_row_reverse_ref as fn() -> Document),
@@ -119479,6 +120328,7 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/flexbox_justifycontent-left-002-ref", css_flexbox_flexbox_justifycontent_left_002_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-left-002", css_flexbox_flexbox_justifycontent_left_002 as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-right-001-ref", css_flexbox_flexbox_justifycontent_right_001_ref as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_justifycontent-right-001", css_flexbox_flexbox_justifycontent_right_001 as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-right-002-ref", css_flexbox_flexbox_justifycontent_right_002_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-right-002", css_flexbox_flexbox_justifycontent_right_002 as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-spacearound-negative-ref", css_flexbox_flexbox_justifycontent_spacearound_negative_ref as fn() -> Document),
@@ -119494,16 +120344,22 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/flexbox_justifycontent-spacebetween-ref", css_flexbox_flexbox_justifycontent_spacebetween_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-spacebetween", css_flexbox_flexbox_justifycontent_spacebetween as fn() -> Document),
         ("wpt/css_flexbox/flexbox_justifycontent-stretch", css_flexbox_flexbox_justifycontent_stretch as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_margin-auto-overflow-ref", css_flexbox_flexbox_margin_auto_overflow_ref as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_margin-auto-overflow", css_flexbox_flexbox_margin_auto_overflow as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_margin-auto-ref", css_flexbox_flexbox_margin_auto_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_margin-auto", css_flexbox_flexbox_margin_auto as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_margin-collapse-ref", css_flexbox_flexbox_margin_collapse_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_margin-left-ex-ref", css_flexbox_flexbox_margin_left_ex_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_margin-left-ex", css_flexbox_flexbox_margin_left_ex as fn() -> Document),
         ("wpt/css_flexbox/flexbox_margin-ref", css_flexbox_flexbox_margin_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_margin", css_flexbox_flexbox_margin as fn() -> Document),
         ("wpt/css_flexbox/flexbox_nested-flex", css_flexbox_flexbox_nested_flex as fn() -> Document),
         ("wpt/css_flexbox/flexbox_object-ref", css_flexbox_flexbox_object_ref as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_order-abspos-space-around-ref", css_flexbox_flexbox_order_abspos_space_around_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_order-abspos-space-around", css_flexbox_flexbox_order_abspos_space_around as fn() -> Document),
         ("wpt/css_flexbox/flexbox_order-box-ref", css_flexbox_flexbox_order_box_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_order-box", css_flexbox_flexbox_order_box as fn() -> Document),
+        ("wpt/css_flexbox/flexbox_order-noninteger-invalid", css_flexbox_flexbox_order_noninteger_invalid as fn() -> Document),
         ("wpt/css_flexbox/flexbox_order-ref", css_flexbox_flexbox_order_ref as fn() -> Document),
         ("wpt/css_flexbox/flexbox_order", css_flexbox_flexbox_order as fn() -> Document),
         ("wpt/css_flexbox/flexbox_rtl-flow-ref", css_flexbox_flexbox_rtl_flow_ref as fn() -> Document),
@@ -119666,10 +120522,15 @@ pub fn css_flexbox_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-after-column-lastitem", css_flexbox_interactive_flexbox_interactive_break_after_column_lastitem as fn() -> Document),
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-after-container", css_flexbox_interactive_flexbox_interactive_break_after_container as fn() -> Document),
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-after-item", css_flexbox_interactive_flexbox_interactive_break_after_item as fn() -> Document),
+        ("wpt/css_flexbox/interactive_flexbox_interactive_break-after-line-order", css_flexbox_interactive_flexbox_interactive_break_after_line_order as fn() -> Document),
+        ("wpt/css_flexbox/interactive_flexbox_interactive_break-after-line", css_flexbox_interactive_flexbox_interactive_break_after_line as fn() -> Document),
+        ("wpt/css_flexbox/interactive_flexbox_interactive_break-after-multiline", css_flexbox_interactive_flexbox_interactive_break_after_multiline as fn() -> Document),
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-before-column-firstitem", css_flexbox_interactive_flexbox_interactive_break_before_column_firstitem as fn() -> Document),
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-before-column-item", css_flexbox_interactive_flexbox_interactive_break_before_column_item as fn() -> Document),
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-before-container", css_flexbox_interactive_flexbox_interactive_break_before_container as fn() -> Document),
         ("wpt/css_flexbox/interactive_flexbox_interactive_break-before-item", css_flexbox_interactive_flexbox_interactive_break_before_item as fn() -> Document),
+        ("wpt/css_flexbox/interactive_flexbox_interactive_break-before-multiline", css_flexbox_interactive_flexbox_interactive_break_before_multiline as fn() -> Document),
+        ("wpt/css_flexbox/interactive_flexbox_interactive_break-natural", css_flexbox_interactive_flexbox_interactive_break_natural as fn() -> Document),
         ("wpt/css_flexbox/order_order-abs-children-painting-order-different-container", css_flexbox_order_order_abs_children_painting_order_different_container as fn() -> Document),
         ("wpt/css_flexbox/order_order-abs-children-painting-order", css_flexbox_order_order_abs_children_painting_order as fn() -> Document),
         ("wpt/css_flexbox/order_order-with-column-reverse-ref", css_flexbox_order_order_with_column_reverse_ref as fn() -> Document),

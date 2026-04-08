@@ -447,6 +447,8 @@ flexbox_columns-flexitems-2-ref,ported,css_flexbox_flexbox_columns_flexitems_2_r
 flexbox_columns-flexitems-2,ported,css_flexbox_flexbox_columns_flexitems_2,
 flexbox_columns-flexitems-ref,ported,css_flexbox_flexbox_columns_flexitems_ref,
 flexbox_columns-flexitems,ported,css_flexbox_flexbox_columns_flexitems,
+flexbox_direction-column-ref,ported,css_flexbox_flexbox_direction_column_ref,
+flexbox_direction-column-reverse-ref,ported,css_flexbox_flexbox_direction_column_reverse_ref,
 flexbox_direction-column-reverse,ported,css_flexbox_flexbox_direction_column_reverse,
 flexbox_direction-column,ported,css_flexbox_flexbox_direction_column,
 flexbox_direction-row-reverse-ref,ported,css_flexbox_flexbox_direction_row_reverse_ref,
@@ -663,6 +665,7 @@ flexbox_justifycontent-left-001,ported,css_flexbox_flexbox_justifycontent_left_0
 flexbox_justifycontent-left-002-ref,ported,css_flexbox_flexbox_justifycontent_left_002_ref,
 flexbox_justifycontent-left-002,ported,css_flexbox_flexbox_justifycontent_left_002,
 flexbox_justifycontent-right-001-ref,ported,css_flexbox_flexbox_justifycontent_right_001_ref,
+flexbox_justifycontent-right-001,ported,css_flexbox_flexbox_justifycontent_right_001,
 flexbox_justifycontent-right-002-ref,ported,css_flexbox_flexbox_justifycontent_right_002_ref,
 flexbox_justifycontent-right-002,ported,css_flexbox_flexbox_justifycontent_right_002,
 flexbox_justifycontent-spacearound-negative-ref,ported,css_flexbox_flexbox_justifycontent_spacearound_negative_ref,
@@ -678,16 +681,22 @@ flexbox_justifycontent-spacebetween-only,ported,css_flexbox_flexbox_justifyconte
 flexbox_justifycontent-spacebetween-ref,ported,css_flexbox_flexbox_justifycontent_spacebetween_ref,
 flexbox_justifycontent-spacebetween,ported,css_flexbox_flexbox_justifycontent_spacebetween,
 flexbox_justifycontent-stretch,ported,css_flexbox_flexbox_justifycontent_stretch,
+flexbox_margin-auto-overflow-ref,ported,css_flexbox_flexbox_margin_auto_overflow_ref,
+flexbox_margin-auto-overflow,ported,css_flexbox_flexbox_margin_auto_overflow,
+flexbox_margin-auto-ref,ported,css_flexbox_flexbox_margin_auto_ref,
 flexbox_margin-auto,ported,css_flexbox_flexbox_margin_auto,
+flexbox_margin-collapse-ref,ported,css_flexbox_flexbox_margin_collapse_ref,
 flexbox_margin-left-ex-ref,ported,css_flexbox_flexbox_margin_left_ex_ref,
 flexbox_margin-left-ex,ported,css_flexbox_flexbox_margin_left_ex,
 flexbox_margin-ref,ported,css_flexbox_flexbox_margin_ref,
 flexbox_margin,ported,css_flexbox_flexbox_margin,
 flexbox_nested-flex,ported,css_flexbox_flexbox_nested_flex,
 flexbox_object-ref,ported,css_flexbox_flexbox_object_ref,
+flexbox_order-abspos-space-around-ref,ported,css_flexbox_flexbox_order_abspos_space_around_ref,
 flexbox_order-abspos-space-around,ported,css_flexbox_flexbox_order_abspos_space_around,
 flexbox_order-box-ref,ported,css_flexbox_flexbox_order_box_ref,
 flexbox_order-box,ported,css_flexbox_flexbox_order_box,
+flexbox_order-noninteger-invalid,ported,css_flexbox_flexbox_order_noninteger_invalid,
 flexbox_order-ref,ported,css_flexbox_flexbox_order_ref,
 flexbox_order,ported,css_flexbox_flexbox_order,
 flexbox_rtl-flow-ref,ported,css_flexbox_flexbox_rtl_flow_ref,
@@ -850,10 +859,15 @@ interactive_flexbox_interactive_break-after-column-item,ported,css_flexbox_inter
 interactive_flexbox_interactive_break-after-column-lastitem,ported,css_flexbox_interactive_flexbox_interactive_break_after_column_lastitem,
 interactive_flexbox_interactive_break-after-container,ported,css_flexbox_interactive_flexbox_interactive_break_after_container,
 interactive_flexbox_interactive_break-after-item,ported,css_flexbox_interactive_flexbox_interactive_break_after_item,
+interactive_flexbox_interactive_break-after-line-order,ported,css_flexbox_interactive_flexbox_interactive_break_after_line_order,
+interactive_flexbox_interactive_break-after-line,ported,css_flexbox_interactive_flexbox_interactive_break_after_line,
+interactive_flexbox_interactive_break-after-multiline,ported,css_flexbox_interactive_flexbox_interactive_break_after_multiline,
 interactive_flexbox_interactive_break-before-column-firstitem,ported,css_flexbox_interactive_flexbox_interactive_break_before_column_firstitem,
 interactive_flexbox_interactive_break-before-column-item,ported,css_flexbox_interactive_flexbox_interactive_break_before_column_item,
 interactive_flexbox_interactive_break-before-container,ported,css_flexbox_interactive_flexbox_interactive_break_before_container,
 interactive_flexbox_interactive_break-before-item,ported,css_flexbox_interactive_flexbox_interactive_break_before_item,
+interactive_flexbox_interactive_break-before-multiline,ported,css_flexbox_interactive_flexbox_interactive_break_before_multiline,
+interactive_flexbox_interactive_break-natural,ported,css_flexbox_interactive_flexbox_interactive_break_natural,
 order_order-abs-children-painting-order-different-container,ported,css_flexbox_order_order_abs_children_painting_order_different_container,
 order_order-abs-children-painting-order,ported,css_flexbox_order_order_abs_children_painting_order,
 order_order-with-column-reverse-ref,ported,css_flexbox_order_order_with_column_reverse_ref,
@@ -1223,8 +1237,6 @@ flexbox-writing-mode-srl-rtl,not_portable,,style_block_unsupported property: dir
 flexbox-writing-mode-srl,not_portable,,style_block_unsupported property: direction
 flexbox_align-items-center-3,not_portable,,style_block_unsupported property: writing-mode
 flexbox_align-items-stretch-3,not_portable,,style_block_unsupported property: writing-mode
-flexbox_direction-column-ref,not_portable,,complex_css_selector: span~span
-flexbox_direction-column-reverse-ref,not_portable,,complex_css_selector: span~span
 flexbox_first-letter,not_portable,,uses_javascript
 flexbox_first-line,not_portable,,complex_css_selector: ul:first-child::first-line
 flexbox_flex-formatting-interop-ref,not_portable,,style_block_unsupported property: table-layout
@@ -1244,20 +1256,13 @@ flexbox_justifycontent-end-ref,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-end-rtl-ref,not_portable,,style_block_unsupported property: direction
 flexbox_justifycontent-end-rtl,not_portable,,style_block_unsupported property: direction
 flexbox_justifycontent-end,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-right-001,not_portable,,complex_css_selector: div + div
 flexbox_justifycontent-rtl-001,not_portable,,uses_javascript
 flexbox_justifycontent-rtl-002,not_portable,,uses_javascript
 flexbox_justifycontent-start-ref,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-start-rtl-ref,not_portable,,style_block_unsupported property: direction
 flexbox_justifycontent-start-rtl,not_portable,,style_block_unsupported property: direction
 flexbox_justifycontent-start,not_portable,,unsupported display: inline-grid
-flexbox_margin-auto-overflow-ref,not_portable,,complex_css_selector: span+span
-flexbox_margin-auto-overflow,not_portable,,complex_css_selector: span+span
-flexbox_margin-auto-ref,not_portable,,complex_css_selector: span+span
-flexbox_margin-collapse-ref,not_portable,,complex_css_selector: p+p
 flexbox_object,not_portable,,unsupported element: <object>
-flexbox_order-abspos-space-around-ref,not_portable,,complex_css_selector: span+span
-flexbox_order-noninteger-invalid,not_portable,,complex_css_selector: span+span
 flexbox_quirks_body,not_portable,,no_layout_content
 flexbox_rowspan-overflow-automatic,not_portable,,style_block_unsupported property: border-spacing
 flexbox_rowspan-overflow,not_portable,,style_block_unsupported property: table-layout
@@ -1684,16 +1689,11 @@ intrinsic-size_row-008,not_portable,,uses_javascript
 intrinsic-size_row-compat-001,not_portable,,uses_javascript
 intrinsic-size_row-use-cases-001,not_portable,,uses_javascript
 intrinsic-size_row-wrap-001,not_portable,,uses_javascript
-interactive_flexbox_interactive_break-after-line-order,not_portable,,complex_css_selector: p+p
-interactive_flexbox_interactive_break-after-line,not_portable,,complex_css_selector: p+p
-interactive_flexbox_interactive_break-after-multiline,not_portable,,complex_css_selector: #test~p
-interactive_flexbox_interactive_break-before-multiline,not_portable,,complex_css_selector: #test+p
-interactive_flexbox_interactive_break-natural,not_portable,,complex_css_selector: div+div
-interactive_flexbox_interactive_flex-basis-transitions,not_portable,,complex_css_selector: p+div
+interactive_flexbox_interactive_flex-basis-transitions,not_portable,,complex_css_selector: div:hover #test
 interactive_flexbox_interactive_flex-grow-transitions,not_portable,,complex_css_selector: div:hover #test
 interactive_flexbox_interactive_flex-shrink-transitions-invalid,not_portable,,complex_css_selector: div:hover #test
 interactive_flexbox_interactive_flex-shrink-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-transitions,not_portable,,complex_css_selector: p+div
+interactive_flexbox_interactive_flex-transitions,not_portable,,complex_css_selector: div:hover #test
 interactive_flexbox_interactive_order-transitions-2,not_portable,,complex_css_selector: div:hover .test
 interactive_flexbox_interactive_order-transitions,not_portable,,complex_css_selector: div:hover .one
 animation_discrete-no-interpolation,not_portable,,uses_javascript

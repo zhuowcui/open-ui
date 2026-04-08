@@ -310,6 +310,7 @@ overflowing-block-002-print-ref,ported,css_break_overflowing_block_002_print_ref
 overflowing-block-002-print,ported,css_break_overflowing_block_002_print,
 overflowing-block-003-ref,ported,css_break_overflowing_block_003_ref,
 overflowing-block-003,ported,css_break_overflowing_block_003,
+overflowing-block-print-ref,ported,css_break_overflowing_block_print_ref,
 overflowing-block-print,ported,css_break_overflowing_block_print,
 parallel-flow-trailing-margin-003-crash,ported,css_break_parallel_flow_trailing_margin_003_crash,
 relpos-inline-ref,ported,css_break_relpos_inline_ref,
@@ -843,7 +844,6 @@ overflow-clip-011,not_portable,,unsupported element: <fieldset>
 overflow-clip-012,not_portable,,style_block_unsupported property: contain
 overflowed-abs-pos-with-percentage-height-print,not_portable,,complex_css_selector: div.cell:before
 overflowing-block-004,not_portable,,uses_javascript
-overflowing-block-print-ref,not_portable,,complex_css_selector: div + div
 page-break-important,not_portable,,uses_javascript
 page-break-legacy-shorthands,not_portable,,uses_javascript
 parallel-flow-trailing-margin-001,not_portable,,unsupported property: contain
