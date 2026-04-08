@@ -194,7 +194,11 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             // Use the container's own resolved content-box height when explicit.
             // CSS Flexbox §9.4: Only use container cross size if it is definite.
             // height:auto means the cross size is NOT definite, even with definite available space.
-            if !style.height.is_auto() && !style.height.is_content_or_intrinsic() {
+            // Exception: if the parent flex has set a definite block size (via
+            // is_fixed_block_size or stretch_block_size), the cross size IS definite.
+            if space.is_fixed_block_size || space.stretch_block_size {
+                (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+            } else if !style.height.is_auto() && !style.height.is_content_or_intrinsic() {
                 // Explicit height — use resolved content-box value
                 let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
                 if style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -452,6 +456,9 @@ fn resolve_total_block_size(
 ) -> LayoutUnit {
     let resolved = if space.is_fixed_block_size {
         // Parent (e.g., column flex) has set a definite block size for this child
+        space.available_block_size
+    } else if space.stretch_block_size {
+        // Parent flex is stretching this container on the cross axis
         space.available_block_size
     } else if style.height.is_auto() {
         intrinsic_block_size
@@ -921,7 +928,8 @@ fn resolve_main_axis_min_max(
                 // Need to compute actual content contribution
                 if is_column {
                     let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
-                    intrinsic.min_content_block_size
+                    // min_content_block_size is border-box, convert to content-box
+                    (intrinsic.min_content_block_size - main_axis_border_padding).clamp_negative_to_zero()
                 } else {
                     let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
                     // min-content inline size is already border-box, convert to content-box
