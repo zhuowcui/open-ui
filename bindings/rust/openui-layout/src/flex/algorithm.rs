@@ -87,14 +87,19 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     // indefinite regardless of parent's available block size.
     let child_percentage_inline = content_inline_size;
     let child_percentage_block = if !style.height.is_auto() {
-        // Container has explicit height → use it as percentage base
-        let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
-        let content = if style.box_sizing == openui_style::BoxSizing::BorderBox {
-            (raw - border_padding_block).clamp_negative_to_zero()
+        if style.height.is_content_or_intrinsic() {
+            // Intrinsic keyword on container height → treat as indefinite for child percentages
+            LayoutUnit::from_raw(-64) // indefinite
         } else {
-            raw
-        };
-        content
+            // Container has explicit height → use it as percentage base
+            let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
+            let content = if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                (raw - border_padding_block).clamp_negative_to_zero()
+            } else {
+                raw
+            };
+            content
+        }
     } else {
         // Container height is auto → percentages are indefinite
         LayoutUnit::from_raw(-64) // indefinite
@@ -201,22 +206,44 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         // Clamp cross size to container's min/max constraints (CSS Flexbox §9.4)
         let clamped_cross = if !is_column {
             let pct_base = space.percentage_resolution_block_size;
-            let min_h = if !style.min_height.is_auto() && (!pct_base.is_indefinite() || style.min_height.is_fixed()) {
-                let min_raw = resolve_length(&style.min_height, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
-                if style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    (min_raw - border_padding_block).clamp_negative_to_zero()
+            let min_h = if !style.min_height.is_auto() {
+                if style.min_height.is_content_or_intrinsic() {
+                    let sizes = compute_intrinsic_block_sizes(doc, node_id);
+                    let intrinsic = match style.min_height.length_type() {
+                        LengthType::MinContent => sizes.min_content_block_size,
+                        _ => sizes.max_content_block_size,
+                    };
+                    (intrinsic - border_padding_block).clamp_negative_to_zero()
+                } else if !pct_base.is_indefinite() || style.min_height.is_fixed() {
+                    let min_raw = resolve_length(&style.min_height, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+                    if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        (min_raw - border_padding_block).clamp_negative_to_zero()
+                    } else {
+                        min_raw
+                    }
                 } else {
-                    min_raw
+                    LayoutUnit::zero()
                 }
             } else {
                 LayoutUnit::zero()
             };
-            let max_h = if !style.max_height.is_none() && (!pct_base.is_indefinite() || style.max_height.is_fixed()) {
-                let max_raw = resolve_length(&style.max_height, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
-                if style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    (max_raw - border_padding_block).clamp_negative_to_zero()
+            let max_h = if !style.max_height.is_none() {
+                if style.max_height.is_content_or_intrinsic() {
+                    let sizes = compute_intrinsic_block_sizes(doc, node_id);
+                    let intrinsic = match style.max_height.length_type() {
+                        LengthType::MinContent => sizes.min_content_block_size,
+                        _ => sizes.max_content_block_size,
+                    };
+                    (intrinsic - border_padding_block).clamp_negative_to_zero()
+                } else if !pct_base.is_indefinite() || style.max_height.is_fixed() {
+                    let max_raw = resolve_length(&style.max_height, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
+                    if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        (max_raw - border_padding_block).clamp_negative_to_zero()
+                    } else {
+                        max_raw
+                    }
                 } else {
-                    max_raw
+                    LayoutUnit::from_i32(33554431)
                 }
             } else {
                 LayoutUnit::from_i32(33554431)
@@ -643,6 +670,24 @@ fn resolve_flex_basis(
 
     // Step 1: If flex-basis is not auto, try to resolve it
     if !flex_basis.is_auto() {
+        // Handle intrinsic sizing keywords (min-content, max-content, fit-content)
+        if flex_basis.is_content_or_intrinsic() {
+            let sizes = compute_intrinsic_block_sizes(doc, child_id);
+            let intrinsic = if is_column {
+                match flex_basis.length_type() {
+                    LengthType::MinContent => sizes.min_content_block_size,
+                    _ => sizes.max_content_block_size,
+                }
+            } else {
+                match flex_basis.length_type() {
+                    LengthType::MinContent => sizes.min_content_inline_size,
+                    _ => sizes.max_content_inline_size,
+                }
+            };
+            let content = (intrinsic - main_axis_border_padding).clamp_negative_to_zero();
+            return (content, false);
+        }
+
         let pct_base = if is_column {
             child_percentage_block
         } else {
@@ -675,6 +720,24 @@ fn resolve_flex_basis(
     };
 
     if !main_length.is_auto() {
+        // Handle intrinsic sizing keywords on width/height
+        if main_length.is_content_or_intrinsic() {
+            let sizes = compute_intrinsic_block_sizes(doc, child_id);
+            let intrinsic = if is_column {
+                match main_length.length_type() {
+                    LengthType::MinContent => sizes.min_content_block_size,
+                    _ => sizes.max_content_block_size,
+                }
+            } else {
+                match main_length.length_type() {
+                    LengthType::MinContent => sizes.min_content_inline_size,
+                    _ => sizes.max_content_inline_size,
+                }
+            };
+            let content = (intrinsic - main_axis_border_padding).clamp_negative_to_zero();
+            return (content, false);
+        }
+
         let pct_base = if is_column {
             child_percentage_block
         } else {
