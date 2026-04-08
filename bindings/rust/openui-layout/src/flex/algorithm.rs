@@ -1670,7 +1670,10 @@ fn give_items_final_position(
                             // main = cross * (w/h)
                             LayoutUnit::from_f32(cross_size_for_child.to_f32() * ratio.0 / ratio.1)
                         };
-                        final_main = ar_main;
+                        // Re-clamp to min/max constraints after AR transfer.
+                        // CSS Flexbox §9.7: aspect-ratio can override the flexed
+                        // main size but must still respect min/max constraints.
+                        final_main = item.main_axis_min_max.clamp(ar_main);
                     }
                 }
             }

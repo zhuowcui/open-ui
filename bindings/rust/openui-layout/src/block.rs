@@ -2550,9 +2550,39 @@ fn layout_multicol(
             let mut col_idx: usize = 0;
             let mut col_block_offset = LayoutUnit::zero();
             let mut col_remaining = column_height;
+            let mut prev_break_after_forces = false;
 
             for (i, child_frag) in col_fragments.into_iter().enumerate() {
                 let child_height = col_block_sizes[i];
+                let child_style = &doc.node(children_info[group_start + i].id).style;
+
+                // CSS Fragmentation §3.1: Forced breaks —
+                // break-before: column/page/always forces a break before this child.
+                // break-after on the *previous* child forces a break before this one.
+                let forced_break = child_style.break_before.is_forced()
+                    || prev_break_after_forces;
+
+                if forced_break && col_block_offset > LayoutUnit::zero() && col_idx + 1 < positions.len() {
+                    col_idx += 1;
+                    col_block_offset = LayoutUnit::zero();
+                    col_remaining = column_height;
+                }
+
+                // CSS Fragmentation §3.2: break-inside: avoid —
+                // If the child doesn't fit but would fit in a fresh column,
+                // and break-inside is avoid, move to the next column.
+                let avoid_break_inside = child_style.break_inside.is_avoid();
+                if !forced_break
+                    && avoid_break_inside
+                    && col_remaining.raw() < child_height.raw()
+                    && col_block_offset > LayoutUnit::zero()
+                    && child_height.raw() <= column_height.raw()
+                    && col_idx + 1 < positions.len()
+                {
+                    col_idx += 1;
+                    col_block_offset = LayoutUnit::zero();
+                    col_remaining = column_height;
+                }
 
                 // If child doesn't fit and there's content already in this column,
                 // move to next column first.
@@ -2561,6 +2591,8 @@ fn layout_multicol(
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
                 }
+
+                prev_break_after_forces = child_style.break_after.is_forced();
 
                 if col_remaining.raw() >= child_height.raw() || col_idx >= positions.len() {
                     // Child fits in current column (or overflow: last column).
