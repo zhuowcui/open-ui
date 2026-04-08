@@ -1738,6 +1738,7 @@ fn resolve_inline_size(
     }
 
     // Resolve the CSS width property — handle intrinsic sizing keywords
+    let mut width_from_ar = false;
     let resolved = if style.width.is_auto() || style.width.is_stretch() {
         // CSS Sizing 4 §5.1: when width is auto and the element has a preferred
         // aspect ratio with a definite height, compute width from height × ratio.
@@ -1799,6 +1800,7 @@ fn resolve_inline_size(
         };
 
         if let Some(w) = ar_width {
+            width_from_ar = true;
             w
         } else {
             // Auto/stretch width: fill available space minus border+padding
@@ -1850,72 +1852,81 @@ fn resolve_inline_size(
 
     // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
     // min-height/max-height transfer to the inline axis via the ratio.
-    let (min, max) = if let Some(ar) = &style.aspect_ratio {
-        let ratio = ar.ratio;
-        if ratio.0 == 0.0 || ratio.1 == 0.0 {
-            (min, max)
-        } else {
-            let h_to_w = ratio.0 / ratio.1;
-            let bp_block = border_padding_block;
-            let bp_inline = border_padding;
+    //
+    // Transferred sizes only apply when the inline size is being resolved
+    // through the aspect ratio (i.e., width is auto in a shrink-to-fit
+    // context). When width is explicit or fills available space, the
+    // transferred constraints do not override the resolved width.
+    let (min, max) = if width_from_ar {
+        if let Some(ar) = &style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 == 0.0 || ratio.1 == 0.0 {
+                (min, max)
+            } else {
+                let h_to_w = ratio.0 / ratio.1;
+                let bp_block = border_padding_block;
+                let bp_inline = border_padding;
 
-            let transferred_min = if !style.min_height.is_auto()
-                && !style.min_height.is_content_or_intrinsic()
-            {
-                let min_h_raw = resolve_length(
-                    &style.min_height,
-                    space.percentage_resolution_block_size,
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
-                );
-                if min_h_raw > LayoutUnit::zero() {
-                    let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
-                        (min_h_raw - bp_block).clamp_negative_to_zero()
+                let transferred_min = if !style.min_height.is_auto()
+                    && !style.min_height.is_content_or_intrinsic()
+                {
+                    let min_h_raw = resolve_length(
+                        &style.min_height,
+                        space.percentage_resolution_block_size,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    );
+                    if min_h_raw > LayoutUnit::zero() {
+                        let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
+                            (min_h_raw - bp_block).clamp_negative_to_zero()
+                        } else {
+                            min_h_raw
+                        };
+                        let transferred_w = LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
+                        let transferred = if style.box_sizing == BoxSizing::BorderBox {
+                            transferred_w + bp_inline
+                        } else {
+                            transferred_w
+                        };
+                        min.max_of(transferred)
                     } else {
-                        min_h_raw
-                    };
-                    let transferred_w = LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
-                    let transferred = if style.box_sizing == BoxSizing::BorderBox {
-                        transferred_w + bp_inline
-                    } else {
-                        transferred_w
-                    };
-                    min.max_of(transferred)
+                        min
+                    }
                 } else {
                     min
-                }
-            } else {
-                min
-            };
+                };
 
-            let transferred_max = if max == LayoutUnit::max() {
-                let max_h_raw = resolve_length(
-                    &style.max_height,
-                    space.percentage_resolution_block_size,
-                    LayoutUnit::max(),
-                    LayoutUnit::max(),
-                );
-                if max_h_raw != LayoutUnit::max() {
-                    let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
-                        (max_h_raw - bp_block).clamp_negative_to_zero()
+                let transferred_max = if max == LayoutUnit::max() {
+                    let max_h_raw = resolve_length(
+                        &style.max_height,
+                        space.percentage_resolution_block_size,
+                        LayoutUnit::max(),
+                        LayoutUnit::max(),
+                    );
+                    if max_h_raw != LayoutUnit::max() {
+                        let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
+                            (max_h_raw - bp_block).clamp_negative_to_zero()
+                        } else {
+                            max_h_raw
+                        };
+                        let transferred_w = LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
+                        let transferred = if style.box_sizing == BoxSizing::BorderBox {
+                            transferred_w + bp_inline
+                        } else {
+                            transferred_w
+                        };
+                        max.min_of(transferred)
                     } else {
-                        max_h_raw
-                    };
-                    let transferred_w = LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
-                    let transferred = if style.box_sizing == BoxSizing::BorderBox {
-                        transferred_w + bp_inline
-                    } else {
-                        transferred_w
-                    };
-                    max.min_of(transferred)
+                        max
+                    }
                 } else {
                     max
-                }
-            } else {
-                max
-            };
+                };
 
-            (transferred_min, transferred_max)
+                (transferred_min, transferred_max)
+            }
+        } else {
+            (min, max)
         }
     } else {
         (min, max)
@@ -1947,10 +1958,15 @@ fn resolve_block_size(
 
     // For the viewport/initial containing block, auto height = viewport height
     // (not content-sized). This matches Blink's initial containing block behavior.
+    //
+    // Track whether height is being resolved through the aspect ratio so we
+    // know whether transferred min/max sizes apply (CSS Sizing 4 §5.2).
+    let mut height_from_ar = false;
     let resolved = if style.height.is_auto() {
         if is_viewport {
             space.available_block_size
         } else if let Some(ref ar) = style.aspect_ratio {
+            height_from_ar = true;
             // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
             // compute height from the resolved width using the aspect ratio.
             //
@@ -2025,6 +2041,7 @@ fn resolve_block_size(
         if percentage_resolved_to_auto {
             if let Some(ref ar) = style.aspect_ratio {
                 if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                    height_from_ar = true;
                     let box_sizing_for_ar = if ar.auto_flag {
                         BoxSizing::ContentBox
                     } else {
@@ -2077,14 +2094,19 @@ fn resolve_block_size(
     // which is already in border-box space.
     //
     // CSS Sizing 4 §5.1 — Automatic Minimum Size:
-    // When height is auto + aspect-ratio is set + element is NOT a scroll
-    // container + min-height is auto, the automatic minimum size is the
-    // intrinsic (content-based) block size. This prevents the element from
-    // shrinking below its content just because the aspect ratio gives a
-    // smaller height. Chromium: `apply_automatic_min_size` →
-    // `Length::MinIntrinsic()` → `block_size_func(kIntrinsic) = intrinsic_size`.
+    // When height is auto + aspect-ratio includes 'auto' keyword + element
+    // is NOT a scroll container + min-height is auto, the automatic minimum
+    // size is the intrinsic (content-based) block size.
+    //
+    // IMPORTANT: Content-based automatic minimum only applies when the AR
+    // includes the 'auto' keyword (i.e. `auto <ratio>`). For bare `<ratio>`
+    // the automatic minimum is just the transferred minimum from the
+    // opposite axis (handled by the transfer code below), NOT the content
+    // size. CSS Sizing 4 §5.1: "Content-based minimums are automatic only
+    // when the aspect-ratio includes 'auto'."
+    let ar_auto_flag = style.aspect_ratio.as_ref().map_or(false, |ar| ar.auto_flag);
     let apply_automatic_min_size = style.min_height.is_auto()
-        && style.aspect_ratio.is_some()
+        && ar_auto_flag
         && !style.is_scroll_container()
         && style.height.is_auto();
     let min_raw = if style.min_height.is_auto() {
@@ -2149,11 +2171,16 @@ fn resolve_block_size(
 
     // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
     // min-width/max-width transfer to the block axis via the ratio.
-    let (min, max) = if let Some(ar) = &style.aspect_ratio {
-        let ratio = ar.ratio;
-        if ratio.0 == 0.0 || ratio.1 == 0.0 {
-            (min, max)
-        } else {
+    //
+    // Transferred sizes only apply when the block size is being resolved
+    // through the aspect ratio (height is auto or percentage-resolved-to-auto
+    // with AR). When height is explicit, transfers do not override it.
+    let (min, max) = if height_from_ar {
+        if let Some(ar) = &style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 == 0.0 || ratio.1 == 0.0 {
+                (min, max)
+            } else {
             let w_to_h = ratio.1 / ratio.0;
 
             let transferred_min = if !style.min_width.is_auto()
@@ -2213,6 +2240,9 @@ fn resolve_block_size(
             };
 
             (transferred_min, transferred_max)
+            }
+        } else {
+            (min, max)
         }
     } else {
         (min, max)
