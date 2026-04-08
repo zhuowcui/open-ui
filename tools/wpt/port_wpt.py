@@ -364,18 +364,72 @@ def _match_simple_selector(selector: str, tag: str, classes: list, id_val: str) 
     return True
 
 
+def _eval_nth_expr(expr: str, index: int) -> bool:
+    """Evaluate an :nth-child() expression against a 1-based sibling index.
+    
+    Supports: integer (e.g. '3'), 'odd', 'even', 'An+B' forms.
+    """
+    expr = expr.strip().lower()
+    if expr == 'odd':
+        return index % 2 == 1
+    if expr == 'even':
+        return index % 2 == 0
+    # Try plain integer
+    m = re.match(r'^(-?\d+)$', expr)
+    if m:
+        return index == int(m.group(1))
+    # Try An+B form (e.g. '2n+1', '-n+3', 'n', '3n')
+    m = re.match(r'^(-?\d*)n\s*([+-]\s*\d+)?$', expr)
+    if m:
+        a_str = m.group(1)
+        if a_str in ('', '+'):
+            a = 1
+        elif a_str == '-':
+            a = -1
+        else:
+            a = int(a_str)
+        b = int(m.group(2).replace(' ', '')) if m.group(2) else 0
+        if a == 0:
+            return index == b
+        # index = a*n + b for some non-negative integer n
+        diff = index - b
+        if a > 0:
+            return diff >= 0 and diff % a == 0
+        else:
+            return diff <= 0 and diff % a == 0
+    return False
+
+
 def match_selector(selector: str, tag: str, classes: list, id_val: str,
-                   ancestors: list = None) -> bool:
+                   ancestors: list = None, sibling_index: int = 0,
+                   sibling_count: int = 0) -> bool:
     """Check if a CSS selector matches an element.
     
     Supports simple selectors, descendant combinators (space), and child combinator (>).
     ancestors is a list of (tag, classes, id_val) tuples from outermost to innermost.
+    sibling_index is the 1-based index among element siblings.
+    sibling_count is the total number of element siblings.
     """
     selector = selector.strip()
     if not selector:
         return False
 
-    # Strip pseudo-classes for matching purposes
+    # Evaluate structural pseudo-classes before stripping
+    # :first-child
+    if ':first-child' in selector and sibling_index != 1:
+        return False
+    # :last-child
+    if ':last-child' in selector and sibling_index != sibling_count:
+        return False
+    # :only-child
+    if ':only-child' in selector and sibling_count != 1:
+        return False
+    # :nth-child(expr)
+    for m in re.finditer(r':nth-child\(([^)]+)\)', selector):
+        if not _eval_nth_expr(m.group(1), sibling_index):
+            return False
+
+    # Strip pseudo-classes after evaluation
     selector = re.sub(r':(?:root|first-child|last-child|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))', '', selector)
     selector = selector.strip()
 
@@ -437,11 +491,14 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     return ri < 0
 
 
-def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
+def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
+                    sibling_index: int = 1, sibling_count: int = 1):
     """Apply CSS rules to a DOM node and its descendants (recursively).
 
     CSS cascade: later rules override earlier rules for the same property.
     Inline styles (already in node.styles) take highest precedence.
+    sibling_index: 1-based index among element siblings.
+    sibling_count: total number of element siblings.
     """
     if node.is_text:
         return
@@ -458,7 +515,8 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
     # Apply stylesheet rules in order (later wins)
     cascade = OrderedDict()
     for selector, styles in rules:
-        if match_selector(selector, node.tag, classes, id_val, ancestors):
+        if match_selector(selector, node.tag, classes, id_val, ancestors,
+                          sibling_index, sibling_count):
             cascade.update(styles)
 
     # Inline styles override stylesheet rules
@@ -466,8 +524,16 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
     node.styles = cascade
 
     child_ancestors = ancestors + [(node.tag, classes, id_val)]
+    # Compute sibling indices for element children (skip text nodes)
+    element_children = [c for c in node.children if not c.is_text]
+    total_elements = len(element_children)
+    elem_idx = 0
     for child in node.children:
-        apply_css_rules(rules, child, child_ancestors)
+        if not child.is_text:
+            elem_idx += 1
+            apply_css_rules(rules, child, child_ancestors, elem_idx, total_elements)
+        else:
+            apply_css_rules(rules, child, child_ancestors)
 
 
 class WptHtmlParser(HTMLParser):

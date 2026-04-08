@@ -8648,7 +8648,6 @@ fn css_multicol_multicol_inherit_002() -> Document {
         doc.node_mut(n3).style.widows = 1_u32;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -8661,7 +8660,6 @@ fn css_multicol_multicol_inherit_002() -> Document {
         doc.node_mut(n4).style.widows = 1_u32;
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
         doc.append_child(n1, n4);
     doc
 }
@@ -9322,7 +9320,6 @@ fn css_multicol_multicol_margin_003() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_bottom = Length::px(13.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -9583,7 +9580,6 @@ fn css_multicol_multicol_nested_005() -> Document {
         doc.node_mut(n3).style.orphans = 1_u32;
         doc.node_mut(n3).style.widows = 1_u32;
         doc.node_mut(n3).style.column_count = Some(3);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -9597,7 +9593,6 @@ fn css_multicol_multicol_nested_005() -> Document {
         doc.node_mut(n4).style.orphans = 1_u32;
         doc.node_mut(n4).style.widows = 1_u32;
         doc.node_mut(n4).style.column_count = Some(3);
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
         doc.append_child(n1, n4);
     doc
 }
@@ -10707,7 +10702,7 @@ fn css_multicol_multicol_nested_margin_001() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
         doc.node_mut(n2).style.margin_right = Length::px(16.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -10718,7 +10713,7 @@ fn css_multicol_multicol_nested_margin_001() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 192, 203, 255);
         doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.node_mut(n3).style.margin_right = Length::px(16.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10804,26 +10799,26 @@ fn css_multicol_multicol_nested_margin_002() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n2).style.orphans = 1_u32;
         doc.node_mut(n2).style.widows = 1_u32;
         doc.node_mut(n2).style.column_count = Some(3);
         doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
-        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
         doc.node_mut(n2).style.margin_right = Length::px(16.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n2).style.margin_left = Length::px(16.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n3).style.orphans = 1_u32;
         doc.node_mut(n3).style.widows = 1_u32;
         doc.node_mut(n3).style.column_count = Some(3);
         doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
-        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.node_mut(n3).style.margin_right = Length::px(16.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n3).style.margin_left = Length::px(16.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
@@ -10970,7 +10965,7 @@ fn css_multicol_multicol_nested_margin_003() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.node_mut(n2).style.margin_top = Length::px(16.0);
         doc.node_mut(n2).style.margin_right = Length::px(16.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -10983,7 +10978,7 @@ fn css_multicol_multicol_nested_margin_003() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 192, 203, 255);
         doc.node_mut(n3).style.margin_top = Length::px(16.0);
         doc.node_mut(n3).style.margin_right = Length::px(16.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -11168,7 +11163,7 @@ fn css_multicol_multicol_nested_margin_004() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.node_mut(n2).style.margin_top = Length::px(16.0);
         doc.node_mut(n2).style.margin_right = Length::px(16.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -11181,8 +11176,8 @@ fn css_multicol_multicol_nested_margin_004() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n3).style.color = Color::BLUE;
-        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.node_mut(n3).style.margin_right = Length::px(16.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n3).style.margin_left = Length::px(16.0);
@@ -11195,7 +11190,7 @@ fn css_multicol_multicol_nested_margin_004() -> Document {
         doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n4).style.color = Color::BLUE;
-        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
         doc.node_mut(n4).style.margin_right = Length::px(16.0);
         doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n4).style.margin_left = Length::px(16.0);
@@ -11228,7 +11223,7 @@ fn css_multicol_multicol_nested_margin_005() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.node_mut(n2).style.margin_top = Length::px(16.0);
         doc.node_mut(n2).style.margin_right = Length::px(16.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -11241,8 +11236,8 @@ fn css_multicol_multicol_nested_margin_005() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n3).style.color = Color::BLUE;
-        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.node_mut(n3).style.margin_right = Length::px(16.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n3).style.margin_left = Length::px(16.0);
@@ -11255,7 +11250,7 @@ fn css_multicol_multicol_nested_margin_005() -> Document {
         doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n4).style.color = Color::BLUE;
-        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
         doc.node_mut(n4).style.margin_right = Length::px(16.0);
         doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n4).style.margin_left = Length::px(16.0);

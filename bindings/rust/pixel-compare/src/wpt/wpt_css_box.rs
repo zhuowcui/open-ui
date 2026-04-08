@@ -407,7 +407,6 @@ fn css_box_margin_trim_flex_inline_end_trimmed_only_ref() -> Document {
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.node_mut(n3).style.margin_top = Length::px(10.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(n3).style.margin_left = Length::px(10.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -416,7 +415,6 @@ fn css_box_margin_trim_flex_inline_end_trimmed_only_ref() -> Document {
         doc.node_mut(n4).style.height = Length::px(50.0);
         doc.node_mut(n4).style.margin_top = Length::px(10.0);
         doc.node_mut(n4).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(n4).style.margin_left = Length::px(10.0);
         doc.append_child(n1, n4);
     doc
 }
@@ -449,7 +447,6 @@ fn css_box_margin_trim_flex_inline_start_trimmed_only_ref() -> Document {
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.node_mut(n2).style.margin_top = Length::px(10.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(n2).style.margin_right = Length::px(10.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -458,7 +455,6 @@ fn css_box_margin_trim_flex_inline_start_trimmed_only_ref() -> Document {
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.node_mut(n3).style.margin_top = Length::px(10.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(n3).style.margin_right = Length::px(10.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
