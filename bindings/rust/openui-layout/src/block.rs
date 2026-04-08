@@ -2007,7 +2007,54 @@ fn resolve_block_size(
             intrinsic_block_size, // auto fallback
             intrinsic_block_size, // none fallback
         );
-        if style.box_sizing == BoxSizing::BorderBox {
+        // CSS Sizing 4 §5.1: When height is a percentage that resolves to auto
+        // (percentage against indefinite containing block), and the element has
+        // aspect-ratio + definite width, compute height from width × ratio.
+        let percentage_resolved_to_auto = style.height.length_type() == openui_geometry::LengthType::Percent
+            && space.percentage_resolution_block_size.is_indefinite();
+        if percentage_resolved_to_auto {
+            if let Some(ref ar) = style.aspect_ratio {
+                if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                    let box_sizing_for_ar = if ar.auto_flag {
+                        BoxSizing::ContentBox
+                    } else {
+                        style.box_sizing
+                    };
+                    let ar_inline = if style.box_sizing == BoxSizing::BorderBox
+                        && box_sizing_for_ar == BoxSizing::ContentBox
+                    {
+                        (content_inline_size - border_padding_inline).clamp_negative_to_zero()
+                    } else {
+                        content_inline_size
+                    };
+                    let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
+                        ar_inline,
+                        openui_geometry::INDEFINITE_SIZE,
+                        ar,
+                        None,
+                    );
+                    if !h.is_indefinite() {
+                        if box_sizing_for_ar == BoxSizing::BorderBox {
+                            h.max_of(border_padding_block)
+                        } else {
+                            h + border_padding_block
+                        }
+                    } else if style.box_sizing == BoxSizing::BorderBox {
+                        raw.max_of(border_padding_block)
+                    } else {
+                        raw + border_padding_block
+                    }
+                } else if style.box_sizing == BoxSizing::BorderBox {
+                    raw.max_of(border_padding_block)
+                } else {
+                    raw + border_padding_block
+                }
+            } else if style.box_sizing == BoxSizing::BorderBox {
+                raw.max_of(border_padding_block)
+            } else {
+                raw + border_padding_block
+            }
+        } else if style.box_sizing == BoxSizing::BorderBox {
             raw.max_of(border_padding_block)
         } else {
             raw + border_padding_block
