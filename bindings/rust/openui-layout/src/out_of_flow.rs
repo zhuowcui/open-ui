@@ -206,10 +206,14 @@ fn layout_out_of_flow_child(
     // The constraint equation (§10.3.7/§10.6.4) gives a tentative width/height.
     // If that tentative value violates min/max, re-resolve the full constraint
     // equation with the clamped value treated as specified (not auto).
+    let width_from_ar = ar_width_from_height.is_some();
+    let height_from_ar = style.height.is_auto()
+        && style.aspect_ratio.is_some()
+        && !(!style.top.is_auto() && !style.bottom.is_auto());
     let resolved_width = apply_min_max_inline(doc, candidate.node_id, style, cb_width, resolved_width_raw,
-                                              &border, &padding);
+                                              &border, &padding, width_from_ar);
     let resolved_height = apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, resolved_height_raw,
-                                              &border, &padding);
+                                              &border, &padding, height_from_ar);
 
     // CSS 2.1 §10.4: When min/max changes the width, re-solve §10.3.7 with
     // the clamped width treated as the specified width. This is needed to
@@ -289,7 +293,7 @@ fn layout_out_of_flow_child(
     // must still be clamped by min-height / max-height constraints.
     let final_height = if style.height.is_auto() && !height_resolved_from_constraints {
         let content_height = child_fragment.size.height;
-        apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding)
+        apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding, height_from_ar)
     } else {
         resolved_height
     };
@@ -728,6 +732,7 @@ fn apply_min_max_inline(
     border_box_width: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
+    width_from_ar: bool,
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
     let border_padding_h = border.left + border.right + padding.left + padding.right;
@@ -779,12 +784,13 @@ fn apply_min_max_inline(
 
     // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
     // min-height/max-height transfer to the inline axis via the ratio.
-    let (min_bb, max_bb) = if let Some(ar) = &style.aspect_ratio {
-        let ratio = ar.ratio;
-        // Guard against degenerate ratios
-        if ratio.0 == 0.0 || ratio.1 == 0.0 {
-            (min_bb, max_bb)
-        } else {
+    // Only apply when width was resolved through the aspect ratio.
+    let (min_bb, max_bb) = if width_from_ar {
+        if let Some(ar) = &style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 == 0.0 || ratio.1 == 0.0 {
+                (min_bb, max_bb)
+            } else {
             let h_to_w = ratio.0 / ratio.1;
 
             let transferred_min_bb = if !style.min_height.is_auto() {
@@ -834,6 +840,9 @@ fn apply_min_max_inline(
             };
 
             (transferred_min_bb, transferred_max_bb)
+            }
+        } else {
+            (min_bb, max_bb)
         }
     } else {
         (min_bb, max_bb)
@@ -854,6 +863,7 @@ fn apply_min_max_block(
     border_box_height: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
+    height_from_ar: bool,
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
     let border_padding_h = border.left + border.right + padding.left + padding.right;
@@ -906,11 +916,13 @@ fn apply_min_max_block(
 
     // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
     // min-width/max-width transfer to the block axis via the ratio.
-    let (min_bb, max_bb) = if let Some(ar) = &style.aspect_ratio {
-        let ratio = ar.ratio;
-        if ratio.0 == 0.0 || ratio.1 == 0.0 {
-            (min_bb, max_bb)
-        } else {
+    // Only apply when height was resolved through the aspect ratio.
+    let (min_bb, max_bb) = if height_from_ar {
+        if let Some(ar) = &style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 == 0.0 || ratio.1 == 0.0 {
+                (min_bb, max_bb)
+            } else {
             let w_to_h = ratio.1 / ratio.0;
 
             let transferred_min_bb = if !style.min_width.is_auto() {
@@ -960,6 +972,9 @@ fn apply_min_max_block(
             };
 
             (transferred_min_bb, transferred_max_bb)
+            }
+        } else {
+            (min_bb, max_bb)
         }
     } else {
         (min_bb, max_bb)
