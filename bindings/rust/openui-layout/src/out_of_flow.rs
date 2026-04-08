@@ -178,9 +178,10 @@ fn layout_out_of_flow_child(
 
     // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
     // compute height from the resolved width using the aspect ratio.
+    // This applies even when both top/bottom insets are specified — AR
+    // takes precedence over the constraint equation (CSS Positioned §5.3).
     let resolved_height_raw = if style.height.is_auto()
         && style.aspect_ratio.is_some()
-        && !(!style.top.is_auto() && !style.bottom.is_auto())
     {
         let content_w = (resolved_width_raw - border_padding_h).clamp_negative_to_zero();
         let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
@@ -208,8 +209,7 @@ fn layout_out_of_flow_child(
     // equation with the clamped value treated as specified (not auto).
     let width_from_ar = style.width.is_auto() || style.width.is_stretch();
     let height_from_ar = style.height.is_auto()
-        && style.aspect_ratio.is_some()
-        && !(!style.top.is_auto() && !style.bottom.is_auto());
+        && style.aspect_ratio.is_some();
     let resolved_width = apply_min_max_inline(doc, candidate.node_id, style, cb_width, resolved_width_raw,
                                               &border, &padding, width_from_ar);
     let resolved_height = apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, resolved_height_raw,
