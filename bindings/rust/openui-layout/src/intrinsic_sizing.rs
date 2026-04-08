@@ -562,11 +562,37 @@ fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> L
             b.left + b.right + p.left + p.right
         };
         if style.box_sizing == BoxSizing::BorderBox {
-            // Floor at border+padding — border-box width can't be less than bp
             raw.max_of(bp_val)
         } else {
-            // content-box → border-box: add border + padding
             raw + bp_val
+        }
+    } else if style.width.is_auto() {
+        // CSS Sizing 4 §5.1: When width is auto and the element has
+        // aspect-ratio + definite height, compute width from height × ratio.
+        if let Some(ref ar) = style.aspect_ratio {
+            if style.height.length_type() == openui_geometry::LengthType::Fixed
+                && ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0
+            {
+                let b = resolve_border(style);
+                let p = resolve_padding(style, LayoutUnit::zero());
+                let bp_inline = b.left + b.right + p.left + p.right;
+                let bp_block = b.top + b.bottom + p.top + p.bottom;
+
+                let h_raw = LayoutUnit::from_f32(style.height.value());
+                let content_h = if style.box_sizing == BoxSizing::BorderBox {
+                    (h_raw - bp_block).clamp_negative_to_zero()
+                } else {
+                    h_raw
+                };
+                let content_w = LayoutUnit::from_f32(
+                    content_h.to_f32() * ar.ratio.0 / ar.ratio.1,
+                );
+                content_w + bp_inline
+            } else {
+                intrinsic
+            }
+        } else {
+            intrinsic
         }
     } else {
         intrinsic
@@ -587,6 +613,34 @@ fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> La
             raw.max_of(bp_val)
         } else {
             raw + bp_val
+        }
+    } else if style.height.is_auto() {
+        // CSS Sizing 4 §5.1: When height is auto and the element has
+        // aspect-ratio + definite width, compute height from width × ratio.
+        if let Some(ref ar) = style.aspect_ratio {
+            if style.width.length_type() == openui_geometry::LengthType::Fixed
+                && ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0
+            {
+                let b = resolve_border(style);
+                let p = resolve_padding(style, LayoutUnit::zero());
+                let bp_inline = b.left + b.right + p.left + p.right;
+                let bp_block = b.top + b.bottom + p.top + p.bottom;
+
+                let w_raw = LayoutUnit::from_f32(style.width.value());
+                let content_w = if style.box_sizing == BoxSizing::BorderBox {
+                    (w_raw - bp_inline).clamp_negative_to_zero()
+                } else {
+                    w_raw
+                };
+                let content_h = LayoutUnit::from_f32(
+                    content_w.to_f32() * ar.ratio.1 / ar.ratio.0,
+                );
+                content_h + bp_block
+            } else {
+                intrinsic
+            }
+        } else {
+            intrinsic
         }
     } else {
         intrinsic
@@ -645,6 +699,51 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
         max_raw.max_of(bp_val)
     };
 
+    // CSS Sizing 4 §5.2: transferred min/max through aspect-ratio.
+    // If min-height or max-height is definite and AR is present, transfer to inline axis.
+    let (mut min_bb, mut max_bb) = (min_bb, max_bb);
+    if let Some(ref ar) = style.aspect_ratio {
+        if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+            let bp_block = {
+                let b = resolve_border(style);
+                let p = resolve_padding(style, zero);
+                b.top + b.bottom + p.top + p.bottom
+            };
+
+            // Transfer min-height → min-width (only if min-width is auto/0)
+            let min_h_raw = resolve_length(
+                &style.min_height, indefinite, zero, zero,
+            );
+            if min_h_raw > zero && min_bb == zero {
+                let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
+                    (min_h_raw - bp_block).clamp_negative_to_zero()
+                } else {
+                    min_h_raw
+                };
+                let transferred_min_w = LayoutUnit::from_f32(
+                    content_min_h.to_f32() * ar.ratio.0 / ar.ratio.1,
+                );
+                min_bb = transferred_min_w + bp_val;
+            }
+
+            // Transfer max-height → max-width (only if max-width is unconstrained)
+            let max_h_raw = resolve_length(
+                &style.max_height, indefinite, LayoutUnit::max(), LayoutUnit::max(),
+            );
+            if max_h_raw < LayoutUnit::max() && max_bb == LayoutUnit::max() {
+                let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
+                    (max_h_raw - bp_block).clamp_negative_to_zero()
+                } else {
+                    max_h_raw
+                };
+                let transferred_max_w = LayoutUnit::from_f32(
+                    content_max_h.to_f32() * ar.ratio.0 / ar.ratio.1,
+                );
+                max_bb = transferred_max_w + bp_val;
+            }
+        }
+    }
+
     size.clamp(min_bb, max_bb)
 }
 
@@ -690,10 +789,53 @@ fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
         max_raw.max_of(bp_val)
     };
 
+    // CSS Sizing 4 §5.2: transferred min/max through aspect-ratio.
+    // If min-width or max-width is definite and AR is present, transfer to block axis.
+    let (mut min_bb, mut max_bb) = (min_bb, max_bb);
+    if let Some(ref ar) = style.aspect_ratio {
+        if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+            let bp_inline = {
+                let b = resolve_border(style);
+                let p = resolve_padding(style, zero);
+                b.left + b.right + p.left + p.right
+            };
+
+            // Transfer min-width → min-height (only if min-height is auto/0)
+            let min_w_raw = resolve_length(
+                &style.min_width, indefinite, zero, zero,
+            );
+            if min_w_raw > zero && min_bb == zero {
+                let content_min_w = if style.box_sizing == BoxSizing::BorderBox {
+                    (min_w_raw - bp_inline).clamp_negative_to_zero()
+                } else {
+                    min_w_raw
+                };
+                let transferred_min_h = LayoutUnit::from_f32(
+                    content_min_w.to_f32() * ar.ratio.1 / ar.ratio.0,
+                );
+                min_bb = transferred_min_h + bp_val;
+            }
+
+            // Transfer max-width → max-height (only if max-height is unconstrained)
+            let max_w_raw = resolve_length(
+                &style.max_width, indefinite, LayoutUnit::max(), LayoutUnit::max(),
+            );
+            if max_w_raw < LayoutUnit::max() && max_bb == LayoutUnit::max() {
+                let content_max_w = if style.box_sizing == BoxSizing::BorderBox {
+                    (max_w_raw - bp_inline).clamp_negative_to_zero()
+                } else {
+                    max_w_raw
+                };
+                let transferred_max_h = LayoutUnit::from_f32(
+                    content_max_w.to_f32() * ar.ratio.1 / ar.ratio.0,
+                );
+                max_bb = transferred_max_h + bp_val;
+            }
+        }
+    }
+
     size.clamp(min_bb, max_bb)
 }
-
-#[cfg(test)]
 mod tests {
     use super::*;
 
