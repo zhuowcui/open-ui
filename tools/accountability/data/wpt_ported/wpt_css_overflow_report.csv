@@ -21,7 +21,6 @@ overflow-body-propagation-008,ported,css_overflow_overflow_body_propagation_008,
 overflow-body-propagation-009-ref,ported,css_overflow_overflow_body_propagation_009_ref,
 overflow-body-propagation-009,ported,css_overflow_overflow_body_propagation_009,
 overflow-body-propagation-010-ref,ported,css_overflow_overflow_body_propagation_010_ref,
-overflow-body-propagation-010,ported,css_overflow_overflow_body_propagation_010,
 overflow-body-propagation-011-ref,ported,css_overflow_overflow_body_propagation_011_ref,
 overflow-body-propagation-012-ref,ported,css_overflow_overflow_body_propagation_012_ref,
 overflow-body-propagation-012,ported,css_overflow_overflow_body_propagation_012,
@@ -34,13 +33,8 @@ overflow-clip-margin-002,ported,css_overflow_overflow_clip_margin_002,
 overflow-clip-margin-003-ref,ported,css_overflow_overflow_clip_margin_003_ref,
 overflow-clip-margin-003,ported,css_overflow_overflow_clip_margin_003,
 overflow-clip-margin-004-ref,ported,css_overflow_overflow_clip_margin_004_ref,
-overflow-clip-margin-004,ported,css_overflow_overflow_clip_margin_004,
 overflow-clip-margin-005-ref,ported,css_overflow_overflow_clip_margin_005_ref,
-overflow-clip-margin-005,ported,css_overflow_overflow_clip_margin_005,
 overflow-clip-margin-006-ref,ported,css_overflow_overflow_clip_margin_006_ref,
-overflow-clip-margin-006,ported,css_overflow_overflow_clip_margin_006,
-overflow-clip-margin-008-ref,ported,css_overflow_overflow_clip_margin_008_ref,
-overflow-clip-margin-008,ported,css_overflow_overflow_clip_margin_008,
 overflow-clip-margin-009-ref,ported,css_overflow_overflow_clip_margin_009_ref,
 overflow-clip-margin-009,ported,css_overflow_overflow_clip_margin_009,
 overflow-clip-margin-010-ref,ported,css_overflow_overflow_clip_margin_010_ref,
@@ -91,142 +85,7 @@ scrollbar-large-scale-in-iframe-ref,ported,css_overflow_scrollbar_large_scale_in
 text-overflow-ellipsis-001,ported,css_overflow_text_overflow_ellipsis_001,
 text-overflow-ellipsis-002,ported,css_overflow_text_overflow_ellipsis_002,
 text-overflow-ellipsis-003-ref,ported,css_overflow_text_overflow_ellipsis_003_ref,
-line-clamp_block-ellipsis-001,ported,css_overflow_line_clamp_block_ellipsis_001,
-line-clamp_block-ellipsis-002,ported,css_overflow_line_clamp_block_ellipsis_002,
-line-clamp_block-ellipsis-003,ported,css_overflow_line_clamp_block_ellipsis_003,
-line-clamp_block-ellipsis-004,ported,css_overflow_line_clamp_block_ellipsis_004,
-line-clamp_block-ellipsis-005,ported,css_overflow_line_clamp_block_ellipsis_005,
-line-clamp_block-ellipsis-006,ported,css_overflow_line_clamp_block_ellipsis_006,
-line-clamp_block-ellipsis-011,ported,css_overflow_line_clamp_block_ellipsis_011,
-line-clamp_block-ellipsis-012,ported,css_overflow_line_clamp_block_ellipsis_012,
-line-clamp_block-ellipsis-013,ported,css_overflow_line_clamp_block_ellipsis_013,
-line-clamp_block-ellipsis-014,ported,css_overflow_line_clamp_block_ellipsis_014,
-line-clamp_block-ellipsis-015.tentative,ported,css_overflow_line_clamp_block_ellipsis_015_tentative,
-line-clamp_block-ellipsis-016,ported,css_overflow_line_clamp_block_ellipsis_016,
-line-clamp_block-ellipsis-017,ported,css_overflow_line_clamp_block_ellipsis_017,
-line-clamp_block-ellipsis-018,ported,css_overflow_line_clamp_block_ellipsis_018,
-line-clamp_block-ellipsis-022,ported,css_overflow_line_clamp_block_ellipsis_022,
-line-clamp_block-ellipsis-023,ported,css_overflow_line_clamp_block_ellipsis_023,
-line-clamp_block-ellipsis-024,ported,css_overflow_line_clamp_block_ellipsis_024,
-line-clamp_block-ellipsis-025,ported,css_overflow_line_clamp_block_ellipsis_025,
-line-clamp_block-ellipsis-028,ported,css_overflow_line_clamp_block_ellipsis_028,
-line-clamp_block-ellipsis-031,ported,css_overflow_line_clamp_block_ellipsis_031,
-line-clamp_block-ellipsis-032.tentative,ported,css_overflow_line_clamp_block_ellipsis_032_tentative,
-line-clamp_line-clamp-001,ported,css_overflow_line_clamp_line_clamp_001,
-line-clamp_line-clamp-002,ported,css_overflow_line_clamp_line_clamp_002,
-line-clamp_line-clamp-003,ported,css_overflow_line_clamp_line_clamp_003,
-line-clamp_line-clamp-004,ported,css_overflow_line_clamp_line_clamp_004,
-line-clamp_line-clamp-005,ported,css_overflow_line_clamp_line_clamp_005,
-line-clamp_line-clamp-006,ported,css_overflow_line_clamp_line_clamp_006,
-line-clamp_line-clamp-007,ported,css_overflow_line_clamp_line_clamp_007,
-line-clamp_line-clamp-010,ported,css_overflow_line_clamp_line_clamp_010,
-line-clamp_line-clamp-011.tentative,ported,css_overflow_line_clamp_line_clamp_011_tentative,
-line-clamp_line-clamp-012.tentative,ported,css_overflow_line_clamp_line_clamp_012_tentative,
-line-clamp_line-clamp-013.tentative,ported,css_overflow_line_clamp_line_clamp_013_tentative,
-line-clamp_line-clamp-014,ported,css_overflow_line_clamp_line_clamp_014,
-line-clamp_line-clamp-015,ported,css_overflow_line_clamp_line_clamp_015,
-line-clamp_line-clamp-020,ported,css_overflow_line_clamp_line_clamp_020,
-line-clamp_line-clamp-022.tentative,ported,css_overflow_line_clamp_line_clamp_022_tentative,
-line-clamp_line-clamp-023.tentative,ported,css_overflow_line_clamp_line_clamp_023_tentative,
-line-clamp_line-clamp-024.tentative,ported,css_overflow_line_clamp_line_clamp_024_tentative,
-line-clamp_line-clamp-025.tentative,ported,css_overflow_line_clamp_line_clamp_025_tentative,
-line-clamp_line-clamp-026,ported,css_overflow_line_clamp_line_clamp_026,
-line-clamp_line-clamp-027,ported,css_overflow_line_clamp_line_clamp_027,
-line-clamp_line-clamp-028,ported,css_overflow_line_clamp_line_clamp_028,
-line-clamp_line-clamp-030,ported,css_overflow_line_clamp_line_clamp_030,
-line-clamp_line-clamp-031,ported,css_overflow_line_clamp_line_clamp_031,
-line-clamp_line-clamp-035.tentative,ported,css_overflow_line_clamp_line_clamp_035_tentative,
-line-clamp_line-clamp-036,ported,css_overflow_line_clamp_line_clamp_036,
-line-clamp_line-clamp-037,ported,css_overflow_line_clamp_line_clamp_037,
-line-clamp_line-clamp-038,ported,css_overflow_line_clamp_line_clamp_038,
-line-clamp_line-clamp-auto-001-crash,ported,css_overflow_line_clamp_line_clamp_auto_001_crash,
-line-clamp_line-clamp-auto-001,ported,css_overflow_line_clamp_line_clamp_auto_001,
-line-clamp_line-clamp-auto-002-crash,ported,css_overflow_line_clamp_line_clamp_auto_002_crash,
-line-clamp_line-clamp-auto-002.tentative,ported,css_overflow_line_clamp_line_clamp_auto_002_tentative,
-line-clamp_line-clamp-auto-003.tentative,ported,css_overflow_line_clamp_line_clamp_auto_003_tentative,
-line-clamp_line-clamp-auto-004,ported,css_overflow_line_clamp_line_clamp_auto_004,
-line-clamp_line-clamp-auto-005,ported,css_overflow_line_clamp_line_clamp_auto_005,
-line-clamp_line-clamp-auto-006,ported,css_overflow_line_clamp_line_clamp_auto_006,
-line-clamp_line-clamp-auto-007,ported,css_overflow_line_clamp_line_clamp_auto_007,
-line-clamp_line-clamp-auto-008,ported,css_overflow_line_clamp_line_clamp_auto_008,
-line-clamp_line-clamp-auto-009,ported,css_overflow_line_clamp_line_clamp_auto_009,
-line-clamp_line-clamp-auto-010,ported,css_overflow_line_clamp_line_clamp_auto_010,
-line-clamp_line-clamp-auto-011,ported,css_overflow_line_clamp_line_clamp_auto_011,
-line-clamp_line-clamp-auto-012,ported,css_overflow_line_clamp_line_clamp_auto_012,
-line-clamp_line-clamp-auto-013,ported,css_overflow_line_clamp_line_clamp_auto_013,
-line-clamp_line-clamp-auto-014,ported,css_overflow_line_clamp_line_clamp_auto_014,
-line-clamp_line-clamp-auto-015.tentative,ported,css_overflow_line_clamp_line_clamp_auto_015_tentative,
-line-clamp_line-clamp-auto-016,ported,css_overflow_line_clamp_line_clamp_auto_016,
-line-clamp_line-clamp-auto-017,ported,css_overflow_line_clamp_line_clamp_auto_017,
-line-clamp_line-clamp-auto-018.tentative,ported,css_overflow_line_clamp_line_clamp_auto_018_tentative,
-line-clamp_line-clamp-auto-019.tentative,ported,css_overflow_line_clamp_line_clamp_auto_019_tentative,
-line-clamp_line-clamp-auto-020.tentative,ported,css_overflow_line_clamp_line_clamp_auto_020_tentative,
-line-clamp_line-clamp-auto-021.tentative,ported,css_overflow_line_clamp_line_clamp_auto_021_tentative,
-line-clamp_line-clamp-auto-022.tentative,ported,css_overflow_line_clamp_line_clamp_auto_022_tentative,
-line-clamp_line-clamp-auto-023.tentative,ported,css_overflow_line_clamp_line_clamp_auto_023_tentative,
-line-clamp_line-clamp-auto-024.tentative,ported,css_overflow_line_clamp_line_clamp_auto_024_tentative,
-line-clamp_line-clamp-auto-025,ported,css_overflow_line_clamp_line_clamp_auto_025,
-line-clamp_line-clamp-auto-027.tentative,ported,css_overflow_line_clamp_line_clamp_auto_027_tentative,
-line-clamp_line-clamp-auto-028.tentative,ported,css_overflow_line_clamp_line_clamp_auto_028_tentative,
-line-clamp_line-clamp-auto-029.tentative,ported,css_overflow_line_clamp_line_clamp_auto_029_tentative,
-line-clamp_line-clamp-auto-030.tentative,ported,css_overflow_line_clamp_line_clamp_auto_030_tentative,
-line-clamp_line-clamp-auto-031.tentative,ported,css_overflow_line_clamp_line_clamp_auto_031_tentative,
-line-clamp_line-clamp-auto-032.tentative,ported,css_overflow_line_clamp_line_clamp_auto_032_tentative,
-line-clamp_line-clamp-auto-033,ported,css_overflow_line_clamp_line_clamp_auto_033,
-line-clamp_line-clamp-auto-034,ported,css_overflow_line_clamp_line_clamp_auto_034,
-line-clamp_line-clamp-auto-035,ported,css_overflow_line_clamp_line_clamp_auto_035,
-line-clamp_line-clamp-auto-036,ported,css_overflow_line_clamp_line_clamp_auto_036,
-line-clamp_line-clamp-auto-037,ported,css_overflow_line_clamp_line_clamp_auto_037,
-line-clamp_line-clamp-auto-039,ported,css_overflow_line_clamp_line_clamp_auto_039,
-line-clamp_line-clamp-auto-040,ported,css_overflow_line_clamp_line_clamp_auto_040,
-line-clamp_line-clamp-auto-041,ported,css_overflow_line_clamp_line_clamp_auto_041,
-line-clamp_line-clamp-auto-042,ported,css_overflow_line_clamp_line_clamp_auto_042,
-line-clamp_line-clamp-auto-043,ported,css_overflow_line_clamp_line_clamp_auto_043,
-line-clamp_line-clamp-auto-044,ported,css_overflow_line_clamp_line_clamp_auto_044,
-line-clamp_line-clamp-auto-045,ported,css_overflow_line_clamp_line_clamp_auto_045,
-line-clamp_line-clamp-auto-046,ported,css_overflow_line_clamp_line_clamp_auto_046,
-line-clamp_line-clamp-auto-047,ported,css_overflow_line_clamp_line_clamp_auto_047,
-line-clamp_line-clamp-auto-with-ruby-001,ported,css_overflow_line_clamp_line_clamp_auto_with_ruby_001,
-line-clamp_line-clamp-auto-with-ruby-002,ported,css_overflow_line_clamp_line_clamp_auto_with_ruby_002,
-line-clamp_line-clamp-auto-with-ruby-003,ported,css_overflow_line_clamp_line_clamp_auto_with_ruby_003,
-line-clamp_line-clamp-auto-with-ruby-004,ported,css_overflow_line_clamp_line_clamp_auto_with_ruby_004,
-line-clamp_line-clamp-auto-with-ruby-005.tentative,ported,css_overflow_line_clamp_line_clamp_auto_with_ruby_005_tentative,
 line-clamp_line-clamp-content-height-with-dynamic-change-ref,ported,css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref,
-line-clamp_line-clamp-with-abspos-001,ported,css_overflow_line_clamp_line_clamp_with_abspos_001,
-line-clamp_line-clamp-with-abspos-002,ported,css_overflow_line_clamp_line_clamp_with_abspos_002,
-line-clamp_line-clamp-with-abspos-003,ported,css_overflow_line_clamp_line_clamp_with_abspos_003,
-line-clamp_line-clamp-with-abspos-004,ported,css_overflow_line_clamp_line_clamp_with_abspos_004,
-line-clamp_line-clamp-with-abspos-005,ported,css_overflow_line_clamp_line_clamp_with_abspos_005,
-line-clamp_line-clamp-with-abspos-006,ported,css_overflow_line_clamp_line_clamp_with_abspos_006,
-line-clamp_line-clamp-with-abspos-007,ported,css_overflow_line_clamp_line_clamp_with_abspos_007,
-line-clamp_line-clamp-with-abspos-008,ported,css_overflow_line_clamp_line_clamp_with_abspos_008,
-line-clamp_line-clamp-with-abspos-009,ported,css_overflow_line_clamp_line_clamp_with_abspos_009,
-line-clamp_line-clamp-with-abspos-010,ported,css_overflow_line_clamp_line_clamp_with_abspos_010,
-line-clamp_line-clamp-with-abspos-011,ported,css_overflow_line_clamp_line_clamp_with_abspos_011,
-line-clamp_line-clamp-with-abspos-012,ported,css_overflow_line_clamp_line_clamp_with_abspos_012,
-line-clamp_line-clamp-with-abspos-013,ported,css_overflow_line_clamp_line_clamp_with_abspos_013,
-line-clamp_line-clamp-with-abspos-014,ported,css_overflow_line_clamp_line_clamp_with_abspos_014,
-line-clamp_line-clamp-with-abspos-015,ported,css_overflow_line_clamp_line_clamp_with_abspos_015,
-line-clamp_line-clamp-with-abspos-016,ported,css_overflow_line_clamp_line_clamp_with_abspos_016,
-line-clamp_line-clamp-with-abspos-017,ported,css_overflow_line_clamp_line_clamp_with_abspos_017,
-line-clamp_line-clamp-with-abspos-018,ported,css_overflow_line_clamp_line_clamp_with_abspos_018,
-line-clamp_line-clamp-with-abspos-020,ported,css_overflow_line_clamp_line_clamp_with_abspos_020,
-line-clamp_line-clamp-with-abspos-021,ported,css_overflow_line_clamp_line_clamp_with_abspos_021,
-line-clamp_line-clamp-with-abspos-022,ported,css_overflow_line_clamp_line_clamp_with_abspos_022,
-line-clamp_line-clamp-with-abspos-023,ported,css_overflow_line_clamp_line_clamp_with_abspos_023,
-line-clamp_line-clamp-with-fixed-pos-001,ported,css_overflow_line_clamp_line_clamp_with_fixed_pos_001,
-line-clamp_line-clamp-with-fixed-pos-002,ported,css_overflow_line_clamp_line_clamp_with_fixed_pos_002,
-line-clamp_line-clamp-with-fixed-pos-003,ported,css_overflow_line_clamp_line_clamp_with_fixed_pos_003,
-line-clamp_line-clamp-with-fixed-pos-004,ported,css_overflow_line_clamp_line_clamp_with_fixed_pos_004,
-line-clamp_line-clamp-with-floats-001.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_001_tentative,
-line-clamp_line-clamp-with-floats-002.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_002_tentative,
-line-clamp_line-clamp-with-floats-003.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_003_tentative,
-line-clamp_line-clamp-with-floats-004.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_004_tentative,
-line-clamp_line-clamp-with-floats-005.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_005_tentative,
-line-clamp_line-clamp-with-floats-006.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_006_tentative,
-line-clamp_line-clamp-with-floats-007.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_007_tentative,
-line-clamp_line-clamp-with-floats-008,ported,css_overflow_line_clamp_line_clamp_with_floats_008,
-line-clamp_line-clamp-with-floats-009.tentative,ported,css_overflow_line_clamp_line_clamp_with_floats_009_tentative,
 scroll-markers_column-scroll-marker-001-ref,ported,css_overflow_scroll_markers_column_scroll_marker_001_ref,
 scroll-markers_column-scroll-marker-counters-ref,ported,css_overflow_scroll_markers_column_scroll_marker_counters_ref,
 scroll-markers_column-scroll-marker-reattach-target-current-ref,ported,css_overflow_scroll_markers_column_scroll_marker_reattach_target_current_ref,
@@ -313,7 +172,8 @@ overflow-body-propagation-003,not_portable,,no_layout_content
 overflow-body-propagation-004,not_portable,,no_layout_content
 overflow-body-propagation-005,not_portable,,no_layout_content
 overflow-body-propagation-006,not_portable,,no_layout_content
-overflow-body-propagation-011,not_portable,,no_layout_content
+overflow-body-propagation-010,not_portable,,style_block_unsupported property: contain
+overflow-body-propagation-011,not_portable,,style_block_unsupported property: contain
 overflow-body-propagation-013,not_portable,,no_layout_content
 overflow-body-propagation-014,not_portable,,uses_javascript
 overflow-body-propagation-015,not_portable,,uses_javascript
@@ -325,8 +185,13 @@ overflow-clip-cant-scroll,not_portable,,uses_javascript
 overflow-clip-content-visual-overflow-ref,not_portable,,style_block_unsupported property: will-change
 overflow-clip-content-visual-overflow,not_portable,,style_block_unsupported property: will-change
 overflow-clip-hit-testing,not_portable,,uses_javascript
+overflow-clip-margin-004,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-005,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-006,not_portable,,style_block_unsupported property: contain
 overflow-clip-margin-007-ref,not_portable,,uses_javascript
 overflow-clip-margin-007,not_portable,,uses_javascript
+overflow-clip-margin-008-ref,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-008,not_portable,,style_block_unsupported property: contain
 overflow-clip-margin-012,not_portable,,uses_javascript
 overflow-clip-margin-border-radius-002,not_portable,,complex_css_selector: div::before
 overflow-clip-margin-hit-testing,not_portable,,uses_javascript
@@ -376,7 +241,7 @@ overflow-shorthand-001,not_portable,,uses_javascript
 overflow-shorthand-002,not_portable,,uses_javascript
 overflow-video-ref,not_portable,,uses_javascript
 overflow-video,not_portable,,uses_javascript
-paint-containment-svg,not_portable,,unsupported element: <svg>
+paint-containment-svg,not_portable,,style_block_unsupported property: contain
 resizer-no-size-change.tentative,not_portable,,uses_javascript
 resizer-transform.tentative,not_portable,,uses_javascript
 rounded-overflow-clip-visible,not_portable,,unsupported element: <svg>
@@ -485,61 +350,196 @@ text-overflow-scroll-vertical-lr-001,not_portable,,uses_javascript
 text-overflow-scroll-vertical-lr-rtl-001,not_portable,,uses_javascript
 text-overflow-scroll-vertical-rl-001,not_portable,,uses_javascript
 text-overflow-scroll-vertical-rl-rtl-001,not_portable,,uses_javascript
-line-clamp_block-ellipsis-007,not_portable,,complex_css_selector: .clamp::first-line
-line-clamp_block-ellipsis-008,not_portable,,complex_css_selector: .container::first-line
-line-clamp_block-ellipsis-009,not_portable,,complex_css_selector: .inner::first-line
+line-clamp_block-ellipsis-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-009,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_block-ellipsis-010,not_portable,,style_block_unsupported property: grid-template-columns
-line-clamp_block-ellipsis-019,not_portable,,complex_css_selector: .clamp::first-letter
+line-clamp_block-ellipsis-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-015.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-018,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-019,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_block-ellipsis-020,not_portable,,complex_css_selector: .parent::first-line
-line-clamp_block-ellipsis-021,not_portable,,complex_css_selector: .child::first-letter
-line-clamp_block-ellipsis-026,not_portable,,no_layout_content
-line-clamp_block-ellipsis-027,not_portable,,no_layout_content
-line-clamp_block-ellipsis-029,not_portable,,no_layout_content
-line-clamp_block-ellipsis-030,not_portable,,no_layout_content
+line-clamp_block-ellipsis-021,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-022,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-023,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-024,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-025,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-026,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-027,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-028,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-029,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-030,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-031,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-032.tentative,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_block-ellipsis-repaint-001,not_portable,,uses_javascript
 line-clamp_block-ellipsis-repaint-002,not_portable,,uses_javascript
 line-clamp_block-ellipsis-repaint-003,not_portable,,uses_javascript
 line-clamp_block-ellipsis-repaint-004,not_portable,,uses_javascript
 line-clamp_continue-001,not_portable,,no_layout_content
-line-clamp_line-clamp-008,not_portable,,unsupported element: <table>
-line-clamp_line-clamp-009,not_portable,,unsupported element: <table>
+line-clamp_line-clamp-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-011.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-012.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-013.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-015,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-016,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
 line-clamp_line-clamp-017,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
 line-clamp_line-clamp-018,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
-line-clamp_line-clamp-019,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_line-clamp-019,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-020,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-021,not_portable,,uses_javascript
-line-clamp_line-clamp-029,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-align
-line-clamp_line-clamp-032,not_portable,,style_block_unsupported property: grid-template-columns
-line-clamp_line-clamp-033,not_portable,,unsupported element: <img>
-line-clamp_line-clamp-034,not_portable,,style_block_vendor/unsupported prefix: -webkit-line-clamp
+line-clamp_line-clamp-022.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-023.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-024.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-025.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-026,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-027,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-028,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-029,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-030,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-031,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-032,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-033,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-034,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-035.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-036,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-037,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-038,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-001-crash,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-002-crash,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-002.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-003.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-015.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-018.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-019.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-020.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-021.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-022.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-023.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-024.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-025,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-027.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-028.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-029.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-030.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-031.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-032.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-033,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-034,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-035,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-036,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-037,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-auto-038,not_portable,,uses_javascript
-line-clamp_line-clamp-balance-001,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-002,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-003,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-004,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-005,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-006,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-007,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-008,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-009,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-010,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-011,not_portable,,no_layout_content
-line-clamp_line-clamp-balance-012,not_portable,,no_layout_content
+line-clamp_line-clamp-auto-039,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-040,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-041,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-042,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-043,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-044,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-045,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-046,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-047,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-005.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-012,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-content-height-with-dynamic-change,not_portable,,uses_javascript
+line-clamp_line-clamp-with-abspos-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-015,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-018,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-with-abspos-019,not_portable,,uses_javascript
-line-clamp_line-clamp-with-fixed-pos-005,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-006,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-007,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-008,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-009,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-010,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-011,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-012,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-013,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-014,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-015,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-016,not_portable,,style_block_unsupported property: transform
-line-clamp_line-clamp-with-fixed-pos-017,not_portable,,style_block_unsupported property: transform
+line-clamp_line-clamp-with-abspos-020,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-021,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-022,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-023,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-015,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-001.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-002.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-003.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-004.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-005.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-006.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-007.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-009.tentative,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-with-floats-010.tentative,not_portable,,uses_javascript
 line-clamp_line-clamp-with-text-overflow-string-001,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
 line-clamp_line-clamp-with-text-overflow-string-002,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
@@ -666,7 +666,7 @@ scroll-markers_column-scroll-marker-no-content-crash,not_portable,,complex_css_s
 scroll-markers_column-scroll-marker-reattach-target-current,not_portable,,complex_css_selector: #scroller::scroll-marker-group
 scroll-markers_html-scroll-marker-target-before-after,not_portable,,uses_javascript
 scroll-markers_inline-with-scroll-marker-group-crash,not_portable,,complex_css_selector: #test::scroll-marker-group
-scroll-markers_nested-scroll-markers-under-content-visibility-auto-ref,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_nested-scroll-markers-under-content-visibility-auto-ref,not_portable,,style_block_unsupported property: contain
 scroll-markers_nested-scroll-markers-under-content-visibility-auto,not_portable,,complex_css_selector: #scroller::scroll-marker-group
 scroll-markers_root-element-layout-parent-crash,not_portable,,complex_css_selector: html::scroll-marker-group
 scroll-markers_root-scroll-button-activation,not_portable,,uses_javascript
@@ -698,7 +698,7 @@ scroll-markers_scroll-buttons-activation-with-columns,not_portable,,uses_javascr
 scroll-markers_scroll-buttons-activation,not_portable,,uses_javascript
 scroll-markers_scroll-buttons-appearance-ref,not_portable,,unsupported element: <button>
 scroll-markers_scroll-buttons-appearance,not_portable,,complex_css_selector: div::scroll-button(block-start)
-scroll-markers_scroll-buttons-container-query-crash,not_portable,,complex_css_selector: #scroller::scroll-button(right)
+scroll-markers_scroll-buttons-container-query-crash,not_portable,,style_block_unsupported property: container-type
 scroll-markers_scroll-buttons-disabled-ref,not_portable,,uses_javascript
 scroll-markers_scroll-buttons-disabled-rtl-ref,not_portable,,uses_javascript
 scroll-markers_scroll-buttons-disabled-rtl,not_portable,,uses_javascript
@@ -809,7 +809,7 @@ scroll-markers_scroll-marker-with-content-visibility-hidden-ancestor-crash,not_p
 scroll-markers_scroll-marker-with-content-visibility-hidden-crash,not_portable,,uses_javascript
 scroll-markers_scroll-markers-added-after-content-visibility-auto,not_portable,,uses_javascript
 scroll-markers_scroll-markers-added-before-content-visibility-auto,not_portable,,uses_javascript
-scroll-markers_scroll-markers-container-query-crash,not_portable,,complex_css_selector: #scroller>div::scroll-marker
+scroll-markers_scroll-markers-container-query-crash,not_portable,,style_block_unsupported property: container-type
 scroll-markers_scroll-markers-focus-active-element,not_portable,,uses_javascript
 scroll-markers_scroll-markers-focus-on-scrolling,not_portable,,uses_javascript
 scroll-markers_scroll-markers-inside-canvas-crash,not_portable,,complex_css_selector: #item::scroll-marker
@@ -825,7 +825,7 @@ scroll-markers_scroll-target-group-002-ref,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-002,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-003-ref,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-003,not_portable,,uses_javascript
-scroll-markers_scroll-target-group-004,not_portable,,complex_css_selector: a:target-current
+scroll-markers_scroll-target-group-004,not_portable,,style_block_unsupported property: container
 scroll-markers_scroll-target-group-005,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-006,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-007,not_portable,,uses_javascript

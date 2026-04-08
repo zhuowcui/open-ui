@@ -498,13 +498,15 @@ fn construct_flex_items(
 
         // ── Resolve min/max on main axis (Blink lines 1145-1157) ─────
         let main_axis_min_max = resolve_main_axis_min_max(
+            doc,
+            child_id,
             child_style,
             is_column,
             main_axis_border_padding,
             child_percentage_inline,
             child_percentage_block,
             base_content_size,
-            flex_shrink,
+            is_used_flex_basis_indefinite,
         );
 
         // Hypothetical = clamp base to min/max
@@ -741,13 +743,15 @@ fn resolve_content_based_size(
 /// Resolve min/max constraints on the main axis.
 /// Blink: lines 1034-1157.
 fn resolve_main_axis_min_max(
+    doc: &Document,
+    child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
     main_axis_border_padding: LayoutUnit,
     pct_inline: LayoutUnit,
     pct_block: LayoutUnit,
     base_content_size: LayoutUnit,
-    flex_shrink: f32,
+    is_basis_from_content: bool,
 ) -> MinMaxSizes {
     let (min_prop, max_prop, pct_base) = if is_column {
         (&child_style.min_height, &child_style.max_height, pct_block)
@@ -758,14 +762,8 @@ fn resolve_main_axis_min_max(
     // ── Resolve min ──────────────────────────────────────────────────
     let min = if min_prop.is_auto() {
         // CSS Flexbox §4.5: Automatic Minimum Size
-        // The auto minimum is the content-based minimum, but for items
-        // with overflow != visible, it's 0.
-        // 
-        // Full spec: min(content_size, specified_size), where content_size
-        // is the min-content contribution. Since we pass `base_content_size`
-        // which may be from flex-basis (not actual content), we use 0 for
-        // items with a specified flex-basis (they can shrink freely) and
-        // base_content_size for content-based items.
+        // If overflow is not visible, auto min = 0.
+        // Otherwise, auto min = min(content_size, specified_size).
         let overflow_visible = if is_column {
             child_style.overflow_y == openui_style::Overflow::Visible
         } else {
@@ -774,15 +772,56 @@ fn resolve_main_axis_min_max(
 
         if !overflow_visible {
             LayoutUnit::zero()
-        } else if flex_shrink == 0.0 {
-            // Non-shrinkable items: content protects minimum size
-            base_content_size
         } else {
-            // Shrinkable items: allow shrinking below specified sizes.
-            // The true content-based minimum (min-content) would require a
-            // separate intrinsic sizing pass. For now, use 0 for items
-            // whose base_content_size came from a specified flex-basis.
-            LayoutUnit::zero()
+            // Content size suggestion: run intrinsic sizing to get min-content
+            let content_size = if is_basis_from_content {
+                // Flex-basis was content-based, so base_content_size IS the content size
+                base_content_size
+            } else {
+                // Need to compute actual content contribution
+                if is_column {
+                    let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+                    intrinsic.min_content_block_size
+                } else {
+                    let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+                    // min-content inline size is already border-box, convert to content-box
+                    (min_max.min - main_axis_border_padding).clamp_negative_to_zero()
+                }
+            };
+
+            // Specified size suggestion
+            let main_size_prop = if is_column {
+                &child_style.height
+            } else {
+                &child_style.width
+            };
+            let has_flex_basis = !child_style.flex_basis.is_auto();
+            let has_specified_main = !main_size_prop.is_auto()
+                && (!pct_base.is_indefinite() || main_size_prop.is_fixed());
+
+            if has_flex_basis || has_specified_main {
+                // Clamp content-based minimum to the specified size
+                let specified = if has_flex_basis {
+                    let resolved = resolve_length(
+                        &child_style.flex_basis, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+                    if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        (resolved - main_axis_border_padding).clamp_negative_to_zero()
+                    } else {
+                        resolved
+                    }
+                } else {
+                    let resolved = resolve_length(
+                        main_size_prop, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+                    if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        (resolved - main_axis_border_padding).clamp_negative_to_zero()
+                    } else {
+                        resolved
+                    }
+                };
+                content_size.min_of(specified)
+            } else {
+                content_size
+            }
         }
     } else if min_prop.is_none() || *min_prop == Length::zero() {
         LayoutUnit::zero()

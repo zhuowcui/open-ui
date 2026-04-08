@@ -91,14 +91,82 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
     if needs_clip {
         paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
     } else {
-        // Paint children directly (no clipping needed).
-        for child in &fragment.children {
-            paint_fragment(canvas, child, doc, abs_offset);
-        }
+        // Paint children with CSS stacking order (z-index aware).
+        paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset);
     }
 
     if needs_layer {
         canvas.restore();
+    }
+}
+
+// ── Stacking order (z-index) ──────────────────────────────────────────
+
+/// Paint children respecting CSS stacking order.
+///
+/// CSS 2 §E.2 / CSS Positioned Layout §7.2 paint order:
+/// 1. Negative z-index stacking contexts (sorted ascending by z-index)
+/// 2. In-flow, non-positioned block backgrounds + borders
+/// 3. Non-positioned floats
+/// 4. In-flow, non-positioned inline content
+/// 5. Positioned elements with z-index: auto or 0 (in document order)
+/// 6. Positive z-index stacking contexts (sorted ascending by z-index)
+///
+/// Simplified: paint negative z-index first, then in-flow, then non-negative.
+fn paint_children_with_stacking_order(
+    canvas: &Canvas,
+    children: &[Fragment],
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    use openui_style::Position;
+
+    // Classify children into buckets
+    let mut negative_z: Vec<(i32, usize)> = Vec::new(); // (z-index, child_index)
+    let mut in_flow: Vec<usize> = Vec::new();
+    let mut non_negative_z: Vec<(i32, usize)> = Vec::new();
+
+    for (i, child) in children.iter().enumerate() {
+        if child.node_id.is_none() {
+            // Anonymous fragments (line boxes, etc.) are in-flow
+            in_flow.push(i);
+            continue;
+        }
+        let child_style = &doc.node(child.node_id).style;
+        let is_positioned = matches!(
+            child_style.position,
+            Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
+        );
+
+        if is_positioned {
+            let z = child_style.z_index.unwrap_or(0);
+            if z < 0 {
+                negative_z.push((z, i));
+            } else {
+                non_negative_z.push((z, i));
+            }
+        } else {
+            in_flow.push(i);
+        }
+    }
+
+    // Sort by z-index (stable sort preserves document order for equal z-index)
+    negative_z.sort_by_key(|&(z, _)| z);
+    non_negative_z.sort_by_key(|&(z, _)| z);
+
+    // Phase 1: Negative z-index positioned elements
+    for &(_, idx) in &negative_z {
+        paint_fragment(canvas, &children[idx], doc, offset);
+    }
+
+    // Phase 2: In-flow elements (in document order)
+    for &idx in &in_flow {
+        paint_fragment(canvas, &children[idx], doc, offset);
+    }
+
+    // Phase 3: Non-negative z-index positioned elements
+    for &(_, idx) in &non_negative_z {
+        paint_fragment(canvas, &children[idx], doc, offset);
     }
 }
 
@@ -170,10 +238,8 @@ fn paint_with_overflow_clip(
         }
     }
 
-    // Paint children inside the clip.
-    for child in &fragment.children {
-        paint_fragment(canvas, child, doc, offset);
-    }
+    // Paint children inside the clip (with stacking order).
+    paint_children_with_stacking_order(canvas, &fragment.children, doc, offset);
 
     canvas.restore();
 }

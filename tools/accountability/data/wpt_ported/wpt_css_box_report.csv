@@ -1,75 +1,20 @@
 filename,status,fn_name,reason
-margin-trim_block-container-block-001,ported,css_box_margin_trim_block_container_block_001,
-margin-trim_block-container-block-002,ported,css_box_margin_trim_block_container_block_002,
-margin-trim_block-container-block-end-001,ported,css_box_margin_trim_block_container_block_end_001,
-margin-trim_block-container-block-end-002,ported,css_box_margin_trim_block_container_block_end_002,
-margin-trim_block-container-block-end-collapsed-margins-ref,ported,css_box_margin_trim_block_container_block_end_collapsed_margins_ref,
-margin-trim_block-container-block-end-collapsed-margins,ported,css_box_margin_trim_block_container_block_end_collapsed_margins,
-margin-trim_block-container-block-end-self-collapsing-and-border,ported,css_box_margin_trim_block_container_block_end_self_collapsing_and_border,
-margin-trim_block-container-block-end-self-collapsing-block-start-margin-nested,ported,css_box_margin_trim_block_container_block_end_self_collapsing_block_start_margin_nested,
-margin-trim_block-container-block-end-self-collapsing-block-start-margin,ported,css_box_margin_trim_block_container_block_end_self_collapsing_block_start_margin,
-margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end-ref,ported,css_box_margin_trim_block_container_block_end_self_collapsing_item_has_larger_block_end_ref,
-margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end,ported,css_box_margin_trim_block_container_block_end_self_collapsing_item_has_larger_block_end,
-margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-start-ref,ported,css_box_margin_trim_block_container_block_end_self_collapsing_item_has_larger_block_start_ref,
-margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-start,ported,css_box_margin_trim_block_container_block_end_self_collapsing_item_has_larger_block_start,
-margin-trim_block-container-block-end-start-margin,ported,css_box_margin_trim_block_container_block_end_start_margin,
-margin-trim_block-container-block-in-inline-001,ported,css_box_margin_trim_block_container_block_in_inline_001,
-margin-trim_block-container-block-in-inline-002,ported,css_box_margin_trim_block_container_block_in_inline_002,
-margin-trim_block-container-block-in-inline-003,ported,css_box_margin_trim_block_container_block_in_inline_003,
-margin-trim_block-container-block-in-inline-004,ported,css_box_margin_trim_block_container_block_in_inline_004,
-margin-trim_block-container-block-in-inline-005,ported,css_box_margin_trim_block_container_block_in_inline_005,
-margin-trim_block-container-block-in-inline-006,ported,css_box_margin_trim_block_container_block_in_inline_006,
-margin-trim_block-container-block-in-inline-007,ported,css_box_margin_trim_block_container_block_in_inline_007,
-margin-trim_block-container-block-start-001,ported,css_box_margin_trim_block_container_block_start_001,
-margin-trim_block-container-block-start-002,ported,css_box_margin_trim_block_container_block_start_002,
-margin-trim_block-container-block-start-003,ported,css_box_margin_trim_block_container_block_start_003,
-margin-trim_block-container-block-start-004,ported,css_box_margin_trim_block_container_block_start_004,
-margin-trim_block-container-block-start-collapsed-margins-ref,ported,css_box_margin_trim_block_container_block_start_collapsed_margins_ref,
-margin-trim_block-container-block-start-collapsed-margins,ported,css_box_margin_trim_block_container_block_start_collapsed_margins,
-margin-trim_block-container-block-start-self-collapsing-item-has-larger-block-end-ref,ported,css_box_margin_trim_block_container_block_start_self_collapsing_item_has_larger_block_end_ref,
-margin-trim_block-container-block-start-self-collapsing-item-has-larger-block-end,ported,css_box_margin_trim_block_container_block_start_self_collapsing_item_has_larger_block_end,
-margin-trim_block-container-block-start-self-collapsing-item-larger-block-start-ref,ported,css_box_margin_trim_block_container_block_start_self_collapsing_item_larger_block_start_ref,
-margin-trim_block-container-block-start-self-collapsing-item-larger-block-start,ported,css_box_margin_trim_block_container_block_start_self_collapsing_item_larger_block_start,
-margin-trim_block-container-inline-001,ported,css_box_margin_trim_block_container_inline_001,
 margin-trim_block-container-non-adjoining-item-ref,ported,css_box_margin_trim_block_container_non_adjoining_item_ref,
-margin-trim_block-container-non-adjoining-item,ported,css_box_margin_trim_block_container_non_adjoining_item,
 margin-trim_flex-block-end-trimmed-only-ref,ported,css_box_margin_trim_flex_block_end_trimmed_only_ref,
-margin-trim_flex-block-end-trimmed-only,ported,css_box_margin_trim_flex_block_end_trimmed_only,
 margin-trim_flex-block-start-trimmed-only-ref,ported,css_box_margin_trim_flex_block_start_trimmed_only_ref,
-margin-trim_flex-block-start-trimmed-only,ported,css_box_margin_trim_flex_block_start_trimmed_only,
 margin-trim_flex-block-trimmed-only-ref,ported,css_box_margin_trim_flex_block_trimmed_only_ref,
-margin-trim_flex-block-trimmed-only,ported,css_box_margin_trim_flex_block_trimmed_only,
-margin-trim_flex-column-block-multiline,ported,css_box_margin_trim_flex_column_block_multiline,
-margin-trim_flex-column-grow,ported,css_box_margin_trim_flex_column_grow,
 margin-trim_flex-column-inline-multiline-ref,ported,css_box_margin_trim_flex_column_inline_multiline_ref,
-margin-trim_flex-column-inline-multiline,ported,css_box_margin_trim_flex_column_inline_multiline,
-margin-trim_flex-column-shrink,ported,css_box_margin_trim_flex_column_shrink,
 margin-trim_flex-column-style-change-triggers-layout-block-end-ref,ported,css_box_margin_trim_flex_column_style_change_triggers_layout_block_end_ref,
 margin-trim_flex-column-style-change-triggers-layout-block-ref,ported,css_box_margin_trim_flex_column_style_change_triggers_layout_block_ref,
 margin-trim_flex-column-style-change-triggers-layout-block-start-ref,ported,css_box_margin_trim_flex_column_style_change_triggers_layout_block_start_ref,
 margin-trim_flex-inline-end-trimmed-only-ref,ported,css_box_margin_trim_flex_inline_end_trimmed_only_ref,
-margin-trim_flex-inline-end-trimmed-only,ported,css_box_margin_trim_flex_inline_end_trimmed_only,
 margin-trim_flex-inline-start-trimmed-only-ref,ported,css_box_margin_trim_flex_inline_start_trimmed_only_ref,
-margin-trim_flex-inline-start-trimmed-only,ported,css_box_margin_trim_flex_inline_start_trimmed_only,
 margin-trim_flex-inline-trimmed-only-ref,ported,css_box_margin_trim_flex_inline_trimmed_only_ref,
-margin-trim_flex-inline-trimmed-only,ported,css_box_margin_trim_flex_inline_trimmed_only,
 margin-trim_flex-row-block-multiline-ref,ported,css_box_margin_trim_flex_row_block_multiline_ref,
-margin-trim_flex-row-block-multiline,ported,css_box_margin_trim_flex_row_block_multiline,
-margin-trim_flex-row-grow,ported,css_box_margin_trim_flex_row_grow,
-margin-trim_flex-row-inline-multiline,ported,css_box_margin_trim_flex_row_inline_multiline,
-margin-trim_flex-row-shrink,ported,css_box_margin_trim_flex_row_shrink,
 margin-trim_flex-row-style-change-triggers-layout-inline-end-ref,ported,css_box_margin_trim_flex_row_style_change_triggers_layout_inline_end_ref,
 margin-trim_flex-row-style-change-triggers-layout-inline-ref,ported,css_box_margin_trim_flex_row_style_change_triggers_layout_inline_ref,
 margin-trim_flex-row-style-change-triggers-layout-inline-start-ref,ported,css_box_margin_trim_flex_row_style_change_triggers_layout_inline_start_ref,
 margin-trim_flex-trim-all-margins-ref,ported,css_box_margin_trim_flex_trim_all_margins_ref,
-margin-trim_flex-trim-all-margins,ported,css_box_margin_trim_flex_trim_all_margins,
-margin-trim_multicol-spanner-001,ported,css_box_margin_trim_multicol_spanner_001,
-margin-trim_multicol-spanner-002,ported,css_box_margin_trim_multicol_spanner_002,
-margin-trim_multicol-spanner-003,ported,css_box_margin_trim_multicol_spanner_003,
-margin-trim_multicol-spanner-004,ported,css_box_margin_trim_multicol_spanner_004,
-margin-trim_multicol-spanner-005,ported,css_box_margin_trim_multicol_spanner_005,
-margin-trim_multicol-spanner-006,ported,css_box_margin_trim_multicol_spanner_006,
-margin-trim_multicol-spanner-007,ported,css_box_margin_trim_multicol_spanner_007,
 box-chrome-crash-001,not_portable,,uses_javascript
 inheritance,not_portable,,uses_javascript
 parsing_clear-computed,not_portable,,uses_javascript
@@ -101,25 +46,73 @@ parsing_visibility-invalid,not_portable,,uses_javascript
 parsing_visibility-valid,not_portable,,uses_javascript
 parsing_width-invalid,not_portable,,uses_javascript
 parsing_width-valid,not_portable,,uses_javascript
+margin-trim_block-container-block-001,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-002,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-001,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-002,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-collapsed-margins-ref,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-collapsed-margins,not_portable,,style_block_unsupported property: margin-trim
 margin-trim_block-container-block-end-last-child-with-border,not_portable,,uses_javascript
 margin-trim_block-container-block-end-nested-last-child-with-border,not_portable,,uses_javascript
+margin-trim_block-container-block-end-self-collapsing-and-border,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-end-self-collapsing-block-start-margin-nested,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-end-self-collapsing-block-start-margin,not_portable,,unsupported property: margin-trim
 margin-trim_block-container-block-end-self-collapsing-children-nested-at-bottom,not_portable,,uses_javascript
 margin-trim_block-container-block-end-self-collapsing-children-nested-margin-trim,not_portable,,uses_javascript
 margin-trim_block-container-block-end-self-collapsing-children-offsets-nested-multiple-times,not_portable,,uses_javascript
 margin-trim_block-container-block-end-self-collapsing-children-offsets-nested-once,not_portable,,uses_javascript
 margin-trim_block-container-block-end-self-collapsing-children-offsets-vert-lr,not_portable,,uses_javascript
 margin-trim_block-container-block-end-self-collapsing-children-offsets,not_portable,,uses_javascript
-margin-trim_block-container-replaced-block-end,not_portable,,unsupported element: <img>
-margin-trim_block-container-replaced-block-start,not_portable,,unsupported element: <img>
-margin-trim_block-container-replaced-block,not_portable,,unsupported element: <img>
-margin-trim_flex-column-orthogonal-item,not_portable,,style_block_unsupported property: writing-mode
+margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end-ref,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-start-ref,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-start,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-end-start-margin,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-001,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-002,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-003,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-004,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-005,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-006,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-in-inline-007,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-start-001,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-002,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-003,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-start-004,not_portable,,unsupported property: margin-trim
+margin-trim_block-container-block-start-collapsed-margins-ref,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-collapsed-margins,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-self-collapsing-item-has-larger-block-end-ref,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-self-collapsing-item-has-larger-block-end,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-self-collapsing-item-larger-block-start-ref,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-block-start-self-collapsing-item-larger-block-start,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-inline-001,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-non-adjoining-item,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-replaced-block-end,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-replaced-block-start,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_block-container-replaced-block,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-block-end-trimmed-only,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-block-start-trimmed-only,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-block-trimmed-only,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-column-block-multiline,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-column-grow,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-column-inline-multiline,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-column-orthogonal-item,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-column-shrink,not_portable,,style_block_unsupported property: margin-trim
 margin-trim_flex-column-style-change-triggers-layout-block-end,not_portable,,uses_javascript
 margin-trim_flex-column-style-change-triggers-layout-block-start,not_portable,,uses_javascript
 margin-trim_flex-column-style-change-triggers-layout-block,not_portable,,uses_javascript
-margin-trim_flex-row-orthogonal-item,not_portable,,style_block_unsupported property: writing-mode
+margin-trim_flex-inline-end-trimmed-only,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-inline-start-trimmed-only,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-inline-trimmed-only,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-row-block-multiline,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-row-grow,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-row-inline-multiline,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-row-orthogonal-item,not_portable,,style_block_unsupported property: margin-trim
+margin-trim_flex-row-shrink,not_portable,,style_block_unsupported property: margin-trim
 margin-trim_flex-row-style-change-triggers-layout-inline-end,not_portable,,uses_javascript
 margin-trim_flex-row-style-change-triggers-layout-inline-start,not_portable,,uses_javascript
 margin-trim_flex-row-style-change-triggers-layout-inline,not_portable,,uses_javascript
+margin-trim_flex-trim-all-margins,not_portable,,style_block_unsupported property: margin-trim
 margin-trim_grid-block-end-ref,not_portable,,style_block_unsupported property: grid-template-columns
 margin-trim_grid-block-end,not_portable,,style_block_unsupported property: grid-template-columns
 margin-trim_grid-block-start-ref,not_portable,,style_block_unsupported property: grid-template-columns
@@ -131,6 +124,13 @@ margin-trim_grid-inline-start-ref,not_portable,,style_block_unsupported property
 margin-trim_grid-inline-start,not_portable,,style_block_unsupported property: grid-template-columns
 margin-trim_grid-inline,not_portable,,style_block_unsupported property: grid-template-columns
 margin-trim_grid-trim-ignores-collapsed-tracks,not_portable,,style_block_unsupported property: grid-template-rows
+margin-trim_multicol-spanner-001,not_portable,,unsupported property: margin-trim
+margin-trim_multicol-spanner-002,not_portable,,unsupported property: margin-trim
+margin-trim_multicol-spanner-003,not_portable,,unsupported property: margin-trim
+margin-trim_multicol-spanner-004,not_portable,,unsupported property: margin-trim
+margin-trim_multicol-spanner-005,not_portable,,unsupported property: margin-trim
+margin-trim_multicol-spanner-006,not_portable,,unsupported property: margin-trim
+margin-trim_multicol-spanner-007,not_portable,,unsupported property: margin-trim
 margin-trim_computed-margin-values_block-container-block-end-nested-child,not_portable,,uses_javascript
 margin-trim_computed-margin-values_block-container-block-end-with-self-collapsing-children,not_portable,,uses_javascript
 margin-trim_computed-margin-values_block-container-block-end,not_portable,,uses_javascript

@@ -1192,6 +1192,7 @@ fn css_display_display_contents_shadow_dom_1_ref() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.color = Color::BLACK;
     doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 20.0;
     doc.node_mut(vp).style.padding_top = Length::px(0.0);
     doc.node_mut(vp).style.padding_right = Length::px(0.0);
     doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
@@ -1782,6 +1783,7 @@ fn css_display_display_flow_root_001() -> Document {
     let (mut doc, vp) = base_doc();
     doc.node_mut(vp).style.color = Color::BLACK;
     doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 16.0;
     doc.node_mut(vp).style.padding_top = Length::px(0.0);
     doc.node_mut(vp).style.padding_right = Length::px(0.0);
     doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
@@ -1904,17 +1906,17 @@ fn css_display_display_flow_root_002_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.float = Float::Right;
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.node_mut(n2).style.width = Length::px(250.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.float = Float::Right;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.float = Float::Left;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(250.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.float = Float::Left;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -1936,17 +1938,17 @@ fn css_display_display_flow_root_002() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.float = Float::Right;
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.node_mut(n2).style.width = Length::px(250.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.float = Float::Right;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.float = Float::Left;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(250.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.float = Float::Left;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::FlowRoot;
@@ -1967,9 +1969,9 @@ fn css_display_display_flow_root_dynamic_ref() -> Document {
 // Source: display-flow-root-list-item-001.html
 fn css_display_display_flow_root_list_item_001() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.padding_left = Length::px(100.0);
     doc.node_mut(vp).style.color = Color::BLACK;
     doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 16.0;
     doc.node_mut(vp).style.padding_top = Length::px(0.0);
     doc.node_mut(vp).style.padding_right = Length::px(0.0);
     doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
@@ -1978,6 +1980,7 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(100.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;

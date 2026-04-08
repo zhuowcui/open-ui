@@ -664,8 +664,8 @@ background-color-body-propagation-004,not_portable,,no_layout_content
 background-color-body-propagation-005,not_portable,,no_layout_content
 background-color-body-propagation-006,not_portable,,uses_javascript
 background-color-body-propagation-007,not_portable,,no_layout_content
-background-color-body-propagation-008,not_portable,,no_layout_content
-background-color-body-propagation-009,not_portable,,no_layout_content
+background-color-body-propagation-008,not_portable,,style_block_unsupported property: contain
+background-color-body-propagation-009,not_portable,,style_block_unsupported property: contain
 background-color-root-propagation-001,not_portable,,no_layout_content
 background-color-root-propagation-002,not_portable,,uses_javascript
 background-gradient-interpolation-002-notref,not_portable,,style_block_vendor/unsupported prefix: -webkit-background-clip

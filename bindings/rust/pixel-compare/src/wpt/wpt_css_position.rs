@@ -115,9 +115,9 @@ fn css_position_position_absolute_center_001() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Row;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.flex_grow = 1.0;
         doc.node_mut(n2).style.display = Display::Flex;
         doc.node_mut(n2).style.justify_content = ContentAlignment::new(ContentPosition::Center);
-        doc.node_mut(n2).style.flex_grow = 1.0;
         doc.node_mut(n2).style.margin_top = Length::px(10.0);
         doc.node_mut(n2).style.margin_right = Length::px(10.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
@@ -301,6 +301,7 @@ fn css_position_position_absolute_in_inline_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.color = Color::WHITE;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -334,6 +335,7 @@ fn css_position_position_absolute_in_inline_004() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.color = Color::WHITE;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -464,12 +466,12 @@ fn css_position_position_fixed_overflow_print_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.position = Position::Absolute;
-        doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 0, 128, 255);
-        doc.node_mut(n2).style.top = Length::px(0.0);
-        doc.node_mut(n2).style.left = Length::percent(50.0);
+        doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.node_mut(n2).style.width = Length::percent(50.0);
         doc.node_mut(n2).style.height = Length::px(600.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::percent(50.0);
         doc.append_child(n1, n2);
     doc
 }
@@ -489,12 +491,12 @@ fn css_position_position_fixed_overflow_print() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.position = Position::Fixed;
-        doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 0, 128, 255);
-        doc.node_mut(n2).style.top = Length::px(0.0);
-        doc.node_mut(n2).style.left = Length::percent(50.0);
+        doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.node_mut(n2).style.width = Length::px(800.0);
         doc.node_mut(n2).style.height = Length::px(600.0);
+        doc.node_mut(n2).style.position = Position::Fixed;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::percent(50.0);
         doc.append_child(n1, n2);
     doc
 }
@@ -696,8 +698,8 @@ fn css_position_static_position_htb_ref() -> Document {
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
-    doc.node_mut(n3).style.height = Length::px(16.0);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.border_top_width = 3;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -718,8 +720,8 @@ fn css_position_static_position_htb_ref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
-    doc.node_mut(n4).style.height = Length::px(16.0);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.border_top_width = 3;
     doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -784,8 +786,8 @@ fn css_position_static_position_htb_ref() -> Document {
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
-    doc.node_mut(n7).style.height = Length::px(16.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.border_top_width = 3;
     doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -806,8 +808,8 @@ fn css_position_static_position_htb_ref() -> Document {
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
-    doc.node_mut(n8).style.height = Length::px(16.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.border_top_width = 3;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -872,8 +874,8 @@ fn css_position_static_position_htb_ref() -> Document {
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
-    doc.node_mut(n11).style.height = Length::px(16.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n11).style.height = Length::px(32.0);
     doc.node_mut(n11).style.border_top_width = 3;
     doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -894,8 +896,8 @@ fn css_position_static_position_htb_ref() -> Document {
     doc.append_child(vp, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
-    doc.node_mut(n12).style.height = Length::px(16.0);
     doc.node_mut(n12).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n12).style.height = Length::px(32.0);
     doc.node_mut(n12).style.border_top_width = 3;
     doc.node_mut(n12).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n12).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -1135,15 +1137,15 @@ fn css_position_sticky_position_sticky_fixed_ancestor_003() -> Document {
     doc.node_mut(vp).style.width = Length::percent(100.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.color = Color::from_rgba8(255, 255, 0, 255);
-    doc.node_mut(n1).style.position = Position::Fixed;
     doc.node_mut(n1).style.height = Length::percent(100.0);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
     doc.node_mut(n1).style.margin_left = Length::px(0.0);
     doc.node_mut(n1).style.width = Length::percent(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.position = Position::Fixed;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -1156,16 +1158,16 @@ fn css_position_sticky_position_sticky_fixed_ancestor_003() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n3).style.bottom = Length::px(0.0);
-        doc.node_mut(n3).style.color = Color::WHITE;
-        doc.node_mut(n3).style.position = Position::Sticky;
         doc.node_mut(n3).style.height = Length::percent(100.0);
         doc.node_mut(n3).style.margin_top = Length::px(0.0);
         doc.node_mut(n3).style.margin_right = Length::px(0.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n3).style.margin_left = Length::px(0.0);
         doc.node_mut(n3).style.width = Length::percent(100.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n3).style.bottom = Length::px(0.0);
+        doc.node_mut(n3).style.color = Color::WHITE;
+        doc.node_mut(n3).style.position = Position::Sticky;
         doc.append_child(n1, n3);
     doc
 }
@@ -1429,9 +1431,9 @@ fn css_position_sticky_position_sticky_stacking_context_ref() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.node_mut(n2).style.height = Length::px(200.0);
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
     doc
 }

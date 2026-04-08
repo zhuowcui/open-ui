@@ -125,7 +125,7 @@ display-math-on-non-mathml-elements,not_portable,,uses_javascript
 display-math-on-pseudo-elements-001,not_portable,,uses_javascript
 display-math-on-pseudo-elements-002-ref,not_portable,,complex_css_selector: .inline::before
 display-math-on-pseudo-elements-002,not_portable,,complex_css_selector: .inline::before
-display-none-inline-img-ref,not_portable,,unsupported element: <img>
+display-none-inline-img-ref,not_portable,,style_block_unsupported property: contain
 display-none-inline-img,not_portable,,uses_javascript
 display-none-root-hit-test-crash,not_portable,,uses_javascript
 display-with-float-dynamic,not_portable,,uses_javascript

@@ -42,15 +42,25 @@ SUPPORTED_PROPERTIES = {
     'display',
     # Position
     'position', 'top', 'right', 'bottom', 'left', 'z-index',
+    'inset', 'inset-block', 'inset-inline',
+    'inset-block-start', 'inset-block-end', 'inset-inline-start', 'inset-inline-end',
     # Float
     'float', 'clear',
     # Box model
     'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+    'margin-block', 'margin-block-start', 'margin-block-end',
+    'margin-inline', 'margin-inline-start', 'margin-inline-end',
     'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+    'padding-block', 'padding-block-start', 'padding-block-end',
+    'padding-inline', 'padding-inline-start', 'padding-inline-end',
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
     'border-width', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
     'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
     'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
+    'border-block', 'border-block-start', 'border-block-end',
+    'border-block-width', 'border-inline-width',
+    'border-block-start-width', 'border-block-end-width',
+    'border-inline-start-width', 'border-inline-end-width',
     'border-radius', 'border-top-left-radius', 'border-top-right-radius',
     'border-bottom-left-radius', 'border-bottom-right-radius',
     'box-sizing',
@@ -71,10 +81,18 @@ SUPPORTED_PROPERTIES = {
     'column-span', 'column-fill',
     # Break
     'break-before', 'break-after', 'break-inside',
+    'page-break-before', 'page-break-after', 'page-break-inside',
+    'widows', 'orphans',
+    'box-decoration-break',
+    # Sizing - logical
+    'block-size', 'inline-size', 'min-block-size', 'max-block-size',
+    'min-inline-size', 'max-inline-size',
     # Text (basic)
     'line-height', 'vertical-align', 'text-align',
     # Aspect ratio
     'aspect-ratio',
+    # Font (extract font-size)
+    'font', 'font-size',
 }
 
 UNSUPPORTED_FEATURES = {
@@ -93,19 +111,40 @@ UNSUPPORTED_FEATURES = {
     'table-layout', 'caption-side', 'border-collapse', 'border-spacing',
     # Generated content — out of scope
     'counter-reset', 'counter-increment', 'content',
+    # CSS containment — not implemented
+    'contain', 'container', 'container-type', 'container-name',
+    'contain-intrinsic-size',
+    # Line clamp — requires text layout
+    'line-clamp',
+    # margin-trim — not implemented
+    'margin-trim',
 }
 
 # Properties we can safely IGNORE (don't affect box layout geometry)
 IGNORED_PROPERTIES = {
     'text-decoration', 'text-transform', 'text-indent', 'text-shadow',
-    'font', 'font-family', 'font-weight', 'font-style',
+    'font-family', 'font-weight', 'font-style',
     'font-variant', 'letter-spacing', 'word-spacing',
     'white-space', 'word-break', 'overflow-wrap', 'hyphens',
-    'list-style', 'list-style-type',
+    'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
     'resize', 'outline', 'box-shadow', 'text-overflow',
     'vertical-align', 'line-height', 'visibility',
     'opacity', 'z-index', 'isolation',
+    # Background details that don't affect layout
+    'background-image', 'background-repeat', 'background-size',
+    'background-position', 'background-clip', 'background-origin',
+    'background-attachment',
+    # Border image (visual only)
+    'border-image', 'border-image-source', 'border-image-slice',
+    'border-image-width', 'border-image-repeat',
+    # Print/page
+    'print-color-adjust', 'image-rendering',
+    # Scroll
+    'scrollbar-gutter', 'scrollbar-width',
+    'overflow-clip-margin',
+    # Ruby
+    'ruby-position',
 }
 
 # CSS named colors → Rust Color constants
@@ -395,7 +434,11 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
 
 
 def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
-    """Apply CSS rules to a DOM node and its descendants (recursively)."""
+    """Apply CSS rules to a DOM node and its descendants (recursively).
+
+    CSS cascade: later rules override earlier rules for the same property.
+    Inline styles (already in node.styles) take highest precedence.
+    """
     if node.is_text:
         return
 
@@ -405,12 +448,18 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
     classes = node.attrs.get('class', '').split()
     id_val = node.attrs.get('id', '')
 
+    # Save inline styles (highest precedence)
+    inline_styles = OrderedDict(node.styles)
+
+    # Apply stylesheet rules in order (later wins)
+    cascade = OrderedDict()
     for selector, styles in rules:
         if match_selector(selector, node.tag, classes, id_val, ancestors):
-            # Merge styles (inline styles take precedence over sheet styles)
-            merged = OrderedDict(styles)
-            merged.update(node.styles)  # Inline wins
-            node.styles = merged
+            cascade.update(styles)
+
+    # Inline styles override stylesheet rules
+    cascade.update(inline_styles)
+    node.styles = cascade
 
     child_ancestors = ancestors + [(node.tag, classes, id_val)]
     for child in node.children:
@@ -1018,7 +1067,10 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop in ('break-before', 'break-after'):
         mapping = {
             'auto': 'BreakValue::Auto', 'avoid': 'BreakValue::Avoid',
+            'avoid-page': 'BreakValue::AvoidPage', 'avoid-column': 'BreakValue::AvoidColumn',
             'column': 'BreakValue::Column', 'page': 'BreakValue::Page',
+            'left': 'BreakValue::Left', 'right': 'BreakValue::Right',
+            'always': 'BreakValue::Always',
         }
         if val in mapping:
             rust_prop = prop.replace('-', '_')
@@ -1069,7 +1121,37 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
                 lines.append(f"{s}.column_width = Some({length});")
         return lines if lines else None
 
-    # ── column-rule shorthand — skip (not commonly needed for layout) ──
+    # ── column-rule shorthand ──
+    if prop == 'column-rule':
+        parts = val.split()
+        lines = []
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+            bstyle = border_style_to_rust(part)
+            if bstyle:
+                lines.append(f"{s}.column_rule_style = {bstyle};")
+            elif parse_border_width(part) is not None:
+                lines.append(f"{s}.column_rule_width = {parse_border_width(part)};")
+            elif parse_color(part):
+                lines.append(f"{s}.column_rule_color = StyleColor::Resolved({parse_color(part)});")
+        return lines if lines else None
+
+    if prop == 'column-rule-width':
+        px_val = parse_border_width(val)
+        if px_val is not None:
+            return f"{s}.column_rule_width = {px_val};"
+
+    if prop == 'column-rule-style':
+        style_code = border_style_to_rust(val)
+        if style_code:
+            return f"{s}.column_rule_style = {style_code};"
+
+    if prop == 'column-rule-color':
+        color = parse_color(val)
+        if color:
+            return f"{s}.column_rule_color = StyleColor::Resolved({color});"
 
     # ── logical properties: block-size/inline-size → height/width (horizontal writing mode) ──
     if prop in ('block-size', 'min-block-size', 'max-block-size'):
@@ -1112,11 +1194,151 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         if length:
             return [f"{s}.left = {length};", f"{s}.right = {length};"]
 
+    # ── inset-block-start/end, inset-inline-start/end (individual logical inset) ──
+    _inset_logical_map = {
+        'inset-block-start': 'top', 'inset-block-end': 'bottom',
+        'inset-inline-start': 'left', 'inset-inline-end': 'right',
+    }
+    if prop in _inset_logical_map:
+        length = parse_length(val)
+        if length:
+            physical = _inset_logical_map[prop]
+            return f"{s}.{physical} = {length};"
+
+    # ── margin-block / margin-inline (logical margin shorthands) ──
+    if prop == 'margin-block':
+        parts = val.split()
+        if len(parts) == 1:
+            length = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            if length:
+                return [f"{s}.margin_top = {length};", f"{s}.margin_bottom = {length};"]
+        elif len(parts) == 2:
+            start = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            end = parse_length(parts[1]) if parts[1] != 'auto' else 'LengthPercentageAuto::Auto'
+            if start and end:
+                return [f"{s}.margin_top = {start};", f"{s}.margin_bottom = {end};"]
+
+    if prop == 'margin-inline':
+        parts = val.split()
+        if len(parts) == 1:
+            length = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            if length:
+                return [f"{s}.margin_left = {length};", f"{s}.margin_right = {length};"]
+        elif len(parts) == 2:
+            start = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            end = parse_length(parts[1]) if parts[1] != 'auto' else 'LengthPercentageAuto::Auto'
+            if start and end:
+                return [f"{s}.margin_left = {start};", f"{s}.margin_right = {end};"]
+
+    # ── margin-block-start/end, margin-inline-start/end (individual logical margins) ──
+    _margin_logical_map = {
+        'margin-block-start': 'margin_top', 'margin-block-end': 'margin_bottom',
+        'margin-inline-start': 'margin_left', 'margin-inline-end': 'margin_right',
+    }
+    if prop in _margin_logical_map:
+        physical = _margin_logical_map[prop]
+        if val.strip() == 'auto':
+            return f"{s}.{physical} = LengthPercentageAuto::Auto;"
+        length = parse_length(val)
+        if length:
+            return f"{s}.{physical} = {length};"
+
+    # ── padding-block / padding-inline (logical padding shorthands) ──
+    if prop == 'padding-block':
+        parts = val.split()
+        if len(parts) == 1:
+            length = parse_length(parts[0])
+            if length:
+                return [f"{s}.padding_top = {length};", f"{s}.padding_bottom = {length};"]
+        elif len(parts) == 2:
+            start, end = parse_length(parts[0]), parse_length(parts[1])
+            if start and end:
+                return [f"{s}.padding_top = {start};", f"{s}.padding_bottom = {end};"]
+
+    if prop == 'padding-inline':
+        parts = val.split()
+        if len(parts) == 1:
+            length = parse_length(parts[0])
+            if length:
+                return [f"{s}.padding_left = {length};", f"{s}.padding_right = {length};"]
+        elif len(parts) == 2:
+            start, end = parse_length(parts[0]), parse_length(parts[1])
+            if start and end:
+                return [f"{s}.padding_left = {start};", f"{s}.padding_right = {end};"]
+
+    # ── padding-block-start/end, padding-inline-start/end ──
+    _padding_logical_map = {
+        'padding-block-start': 'padding_top', 'padding-block-end': 'padding_bottom',
+        'padding-inline-start': 'padding_left', 'padding-inline-end': 'padding_right',
+    }
+    if prop in _padding_logical_map:
+        length = parse_length(val)
+        if length:
+            physical = _padding_logical_map[prop]
+            return f"{s}.{physical} = {length};"
+
+    # ── border-block / border-inline (logical border shorthands) ──
+    if prop in ('border-block', 'border-block-start', 'border-block-end'):
+        sides = {'border-block': ['top', 'bottom'],
+                 'border-block-start': ['top'], 'border-block-end': ['bottom']}[prop]
+        lines = []
+        for part in val.split():
+            bw = parse_border_width(part)
+            if bw:
+                for side in sides:
+                    lines.append(f"{s}.border_{side}_width = {bw};")
+            else:
+                bstyle = border_style_to_rust(part)
+                if bstyle:
+                    for side in sides:
+                        lines.append(f"{s}.border_{side}_style = {bstyle};")
+                else:
+                    bc = parse_color(part)
+                    if bc:
+                        for side in sides:
+                            lines.append(f"{s}.border_{side}_color = StyleColor::Resolved({bc});")
+        if lines:
+            return lines
+
+    # ── border-block-*-width, border-inline-*-width (individual logical border widths) ──
+    _border_width_logical_map = {
+        'border-block-width': ['border_top_width', 'border_bottom_width'],
+        'border-inline-width': ['border_left_width', 'border_right_width'],
+        'border-block-start-width': ['border_top_width'],
+        'border-block-end-width': ['border_bottom_width'],
+        'border-inline-start-width': ['border_left_width'],
+        'border-inline-end-width': ['border_right_width'],
+    }
+    if prop in _border_width_logical_map:
+        bw = parse_border_width(val.strip())
+        if bw:
+            return [f"{s}.{p} = {bw};" for p in _border_width_logical_map[prop]]
+
+    # ── font shorthand (extract font-size) ──
+    if prop == 'font':
+        # font: <size>/<line-height> <family> or <size> <family> etc.
+        m = re.match(r'(?:(?:normal|italic|oblique|bold|bolder|lighter|\d{3})\s+)*'
+                     r'(-?[\d.]+)(px|em|rem)(?:\s*/\s*[\d.]+(?:px|em|rem|%)?)?', val.strip())
+        if m:
+            size_val = float(m.group(1))
+            unit = m.group(2)
+            if unit == 'px':
+                return f"{s}.font_size = {size_val};"
+            elif unit in ('em', 'rem'):
+                return f"{s}.font_size = {size_val * 16.0};"
+
     # ── font-size ──
     if prop == 'font-size':
-        m = re.match(r'^(-?[\d.]+)px$', val.strip())
+        v = val.strip()
+        m = re.match(r'^(-?[\d.]+)px$', v)
         if m:
             return f"{s}.font_size = {float(m.group(1))};"
+        m = re.match(r'^(-?[\d.]+)(em|rem)$', v)
+        if m:
+            return f"{s}.font_size = {float(m.group(1)) * 16.0};"
+        m = re.match(r'^(-?[\d.]+)pt$', v)
+        if m:
+            return f"{s}.font_size = {float(m.group(1)) * 4.0 / 3.0};"
 
     # ── aspect-ratio ──
     if prop == 'aspect-ratio':
@@ -1186,6 +1408,12 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         if val in mapping:
             return f"{s}.break_inside = {mapping[val]};"
 
+    # ── box-decoration-break ──
+    if prop == 'box-decoration-break':
+        mapping = {'slice': 'BoxDecorationBreak::Slice', 'clone': 'BoxDecorationBreak::Clone'}
+        if val.strip() in mapping:
+            return f"{s}.box_decoration_break = {mapping[val.strip()]};"
+
     # ── flex shorthand ──
     if prop == 'flex':
         parts = val.split()
@@ -1194,9 +1422,37 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
                 return [f"{s}.flex_grow = 0.0;", f"{s}.flex_shrink = 0.0;"]
             if val == 'auto':
                 return [f"{s}.flex_grow = 1.0;", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::auto();"]
+            if val == 'initial':
+                # flex: initial = flex: 0 1 auto (CSS default)
+                return [f"{s}.flex_grow = 0.0;", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::auto();"]
             try:
                 g = float(val)
                 return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::px(0.0);"]
+            except ValueError:
+                pass
+        elif len(parts) == 2:
+            # flex: <grow> <shrink> | <grow> <basis>
+            try:
+                g = float(parts[0])
+                # Try second as shrink factor
+                try:
+                    sh = float(parts[1])
+                    return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = Length::px(0.0);"]
+                except ValueError:
+                    # Second is basis
+                    basis = parse_length(parts[1])
+                    if basis:
+                        return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = {basis};"]
+            except ValueError:
+                pass
+        elif len(parts) == 3:
+            # flex: <grow> <shrink> <basis>
+            try:
+                g = float(parts[0])
+                sh = float(parts[1])
+                basis = parse_length(parts[2])
+                if basis:
+                    return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = {basis};"]
             except ValueError:
                 pass
 

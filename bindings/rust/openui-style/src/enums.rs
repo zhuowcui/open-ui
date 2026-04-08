@@ -32,6 +32,8 @@ pub enum Display {
     Table = 9,
     /// `display: list-item` — block with marker box.
     ListItem = 10,
+    /// `display: contents` — no box generated, children treated as parent's children.
+    Contents = 11,
 }
 
 impl Display {
