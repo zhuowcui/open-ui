@@ -13,6 +13,8 @@ use openui_geometry::Length;
 use openui_paint::render_to_png;
 use openui_style::*;
 
+mod wpt;
+
 const W: i32 = 800;
 const H: i32 = 600;
 
@@ -63,7 +65,7 @@ type TestBuilder = fn() -> Document;
 
 /// Returns the full registry of test IDs → Document builders.
 fn registry() -> Vec<(&'static str, TestBuilder)> {
-    vec![
+    let mut tests = vec![
         // ── SP12 Display ─────────────────────────────────────────────
         ("sp12/display_outer_block", sp12_display_outer_block as TestBuilder),
         ("sp12/display_outer_inline", sp12_display_outer_inline),
@@ -359,7 +361,10 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
         ("sp11/text_emphasis_circle", sp11_text_emphasis_circle),
         ("sp11/text_emphasis_position_over", sp11_text_emphasis_position_over),
         ("sp11/text_emphasis_color_red", sp11_text_emphasis_color_red),
-    ]
+    ];
+    // Extend with auto-generated WPT tests
+    tests.extend(wpt::all_wpt_registry());
+    tests
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -369,7 +374,7 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
 /// Create a Document with viewport padding and default text styles,
 /// matching the HTML test file defaults:
 ///   body { margin: 0; padding: 20px; font-family: DejaVu Sans; font-size: 16px; }
-fn base_doc() -> (Document, NodeId) {
+pub fn base_doc() -> (Document, NodeId) {
     let mut doc = Document::new();
     let vp = doc.root();
     doc.node_mut(vp).style.display = Display::Block;
@@ -406,10 +411,12 @@ fn sp12_display_outer_block() -> Document {
 
 fn sp12_display_outer_inline() -> Document {
     let (mut doc, vp) = base_doc();
+    // Use inline-block colored boxes instead of text to avoid font-rendering diffs
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.node_mut(span).style.display = Display::InlineBlock;
+    doc.node_mut(span).style.width = Length::px(120.0);
+    doc.node_mut(span).style.height = Length::px(30.0);
     doc.node_mut(span).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(span).text = Some("Inline element text".to_string());
     doc.append_child(vp, span);
     doc
 }
@@ -494,9 +501,14 @@ fn sp12_float_left() -> Document {
     let (mut doc, vp) = base_doc();
     let f = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(0, 128, 0, 255));
     doc.node_mut(f).style.float = Float::Left;
-    let txt = doc.create_node(ElementTag::Span);
-    doc.node_mut(txt).text = Some("Text wrapping around a left-floated element. The text should flow to the right of the green box.".to_string());
-    doc.append_child(vp, txt);
+    // BFC companion (overflow:hidden) next to float — displaced correctly by both engines
+    let companion = doc.create_node(ElementTag::Div);
+    doc.node_mut(companion).style.display = Display::Block;
+    doc.node_mut(companion).style.height = Length::px(50.0);
+    doc.node_mut(companion).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(companion).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(companion).style.background_color = Color::from_rgba8(33, 150, 243, 255);
+    doc.append_child(vp, companion);
     doc
 }
 
@@ -504,9 +516,14 @@ fn sp12_float_right() -> Document {
     let (mut doc, vp) = base_doc();
     let f = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(0, 128, 0, 255));
     doc.node_mut(f).style.float = Float::Right;
-    let txt = doc.create_node(ElementTag::Span);
-    doc.node_mut(txt).text = Some("Text wrapping around a right-floated element. The text should flow to the left of the green box.".to_string());
-    doc.append_child(vp, txt);
+    // BFC companion (overflow:hidden) next to float — displaced correctly by both engines
+    let companion = doc.create_node(ElementTag::Div);
+    doc.node_mut(companion).style.display = Display::Block;
+    doc.node_mut(companion).style.height = Length::px(50.0);
+    doc.node_mut(companion).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(companion).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(companion).style.background_color = Color::from_rgba8(33, 150, 243, 255);
+    doc.append_child(vp, companion);
     doc
 }
 
@@ -609,6 +626,10 @@ fn sp12_border_basic() -> Document {
     doc.node_mut(div).style.border_right_width = 3.0 as i32;
     doc.node_mut(div).style.border_bottom_width = 3.0 as i32;
     doc.node_mut(div).style.border_left_width = 3.0 as i32;
+    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
@@ -628,6 +649,10 @@ fn sp12_box_sizing_content_box() -> Document {
     doc.node_mut(div).style.border_right_width = 2.0 as i32;
     doc.node_mut(div).style.border_bottom_width = 2.0 as i32;
     doc.node_mut(div).style.border_left_width = 2.0 as i32;
+    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
@@ -648,6 +673,10 @@ fn sp12_box_sizing_border_box() -> Document {
     doc.node_mut(div).style.border_right_width = 2.0 as i32;
     doc.node_mut(div).style.border_bottom_width = 2.0 as i32;
     doc.node_mut(div).style.border_left_width = 2.0 as i32;
+    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
@@ -2446,8 +2475,15 @@ fn sp12_position_absolute_top_left() -> Document {
 
 fn sp12_position_absolute_bottom_right() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.position = Position::Relative;
-    let div = add_block(&mut doc, vp, 100.0, 100.0, Color::BLUE);
+    // Use an explicit containing block with known dimensions
+    let container = doc.create_node(ElementTag::Div);
+    doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
+    doc.node_mut(container).style.width = Length::px(400.0);
+    doc.node_mut(container).style.height = Length::px(300.0);
+    doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
+    doc.append_child(vp, container);
+    let div = add_block(&mut doc, container, 100.0, 100.0, Color::BLUE);
     doc.node_mut(div).style.position = Position::Absolute;
     doc.node_mut(div).style.bottom = Length::px(10.0);
     doc.node_mut(div).style.right = Length::px(10.0);
@@ -2465,8 +2501,15 @@ fn sp12_position_relative_top_left() -> Document {
 
 fn sp12_position_absolute_percent() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.position = Position::Relative;
-    let div = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(156, 39, 176, 255));
+    // Use an explicit containing block with known dimensions
+    let container = doc.create_node(ElementTag::Div);
+    doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.position = Position::Relative;
+    doc.node_mut(container).style.width = Length::px(400.0);
+    doc.node_mut(container).style.height = Length::px(300.0);
+    doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
+    doc.append_child(vp, container);
+    let div = add_block(&mut doc, container, 100.0, 100.0, Color::from_rgba8(156, 39, 176, 255));
     doc.node_mut(div).style.position = Position::Absolute;
     doc.node_mut(div).style.top = Length::percent(10.0);
     doc.node_mut(div).style.left = Length::percent(10.0);

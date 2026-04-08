@@ -72,6 +72,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         content_inline_size
     };
 
+    // ── Multicol dispatch ────────────────────────────────────────────
+    // CSS Multi-column Layout §3-4: if column-count or column-width is set,
+    // lay out children across columns instead of normal block flow.
+    if let Some(algo) = crate::multicol::ColumnLayoutAlgorithm::from_style(style) {
+        return layout_multicol(doc, node_id, style, space, &algo,
+            &border, &padding, border_padding_inline, border_padding_block,
+            child_available_inline, content_inline_size, border_box_inline);
+    }
+
     // ── Step 3: Layout children (the main loop) ─────────────────────
     // Blink: block_layout_algorithm.cc lines 981-1110
     //
@@ -915,6 +924,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         space,
         intrinsic_block_size,
         border_padding_block,
+        content_inline_size,
         is_viewport,
     );
 
@@ -1670,6 +1680,7 @@ fn resolve_block_size(
     space: &ConstraintSpace,
     intrinsic_block_size: LayoutUnit,
     border_padding_block: LayoutUnit,
+    content_inline_size: LayoutUnit,
     is_viewport: bool,
 ) -> LayoutUnit {
     // When flex layout determines the exact block size, use it directly.
@@ -1687,6 +1698,24 @@ fn resolve_block_size(
     let resolved = if style.height.is_auto() {
         if is_viewport {
             space.available_block_size
+        } else if let Some(ref ar) = style.aspect_ratio {
+            // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
+            // compute height from the resolved width using the aspect ratio.
+            let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
+                content_inline_size,
+                openui_geometry::INDEFINITE_SIZE,
+                ar,
+                None,
+            );
+            if !h.is_indefinite() {
+                if style.box_sizing == BoxSizing::BorderBox {
+                    h.max_of(border_padding_block)
+                } else {
+                    h + border_padding_block
+                }
+            } else {
+                intrinsic_block_size
+            }
         } else {
             intrinsic_block_size
         }
@@ -1741,6 +1770,269 @@ fn resolve_block_size(
     };
 
     resolved.clamp(min, max)
+}
+
+// ── Multicol layout ─────────────────────────────────────────────────────
+
+/// Lay out children across CSS multi-column layout.
+///
+/// This function handles the complete multicol path: resolves column geometry,
+/// lays out each child at the column width, distributes children across columns
+/// using balanced or auto-fill, and produces a container fragment with
+/// positioned column fragments containing the actual children.
+fn layout_multicol(
+    doc: &Document,
+    node_id: NodeId,
+    style: &ComputedStyle,
+    space: &ConstraintSpace,
+    algo: &crate::multicol::ColumnLayoutAlgorithm,
+    border: &BoxStrut,
+    padding: &BoxStrut,
+    _border_padding_inline: LayoutUnit,
+    border_padding_block: LayoutUnit,
+    child_available_inline: LayoutUnit,
+    _content_inline_size: LayoutUnit,
+    border_box_inline: LayoutUnit,
+) -> Fragment {
+    use crate::multicol::{resolve_column_count_and_width, compute_column_positions,
+                          compute_column_rule_positions, balance_columns};
+    use openui_style::{ColumnFill, ColumnSpan};
+
+    let resolved = resolve_column_count_and_width(
+        if algo.column_count > 0 { Some(algo.column_count) } else { None },
+        algo.column_width,
+        child_available_inline,
+        algo.column_gap,
+    );
+
+    let column_width = resolved.width;
+    let content_edge_x = border.left + padding.left;
+    let content_edge_y = border.top + padding.top;
+
+    let child_percentage_block_size = if !style.height.is_auto() {
+        let raw = resolve_length(
+            &style.height,
+            space.percentage_resolution_block_size,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        );
+        if style.box_sizing == BoxSizing::BorderBox {
+            (raw - border_padding_block).clamp_negative_to_zero()
+        } else {
+            raw
+        }
+    } else {
+        openui_geometry::INDEFINITE_SIZE
+    };
+
+    // Get column positions.
+    let positions = compute_column_positions(
+        resolved.count, column_width, algo.column_gap,
+        child_available_inline, false,
+    );
+
+    // Gather children, separating spanners from columnar content.
+    // A spanner (column-span: all) interrupts the column flow.
+    struct ChildInfo {
+        id: NodeId,
+        is_spanner: bool,
+    }
+    let mut children_info: Vec<ChildInfo> = Vec::new();
+    for child_id in doc.children(node_id) {
+        let child_style = &doc.node(child_id).style;
+        if child_style.display == Display::None || child_style.is_out_of_flow() {
+            continue;
+        }
+        children_info.push(ChildInfo {
+            id: child_id,
+            is_spanner: child_style.column_span == ColumnSpan::All,
+        });
+    }
+
+    let mut result_children: Vec<Fragment> = Vec::new();
+    let mut total_block_offset = LayoutUnit::zero();
+
+    // Process children in groups separated by spanners.
+    let mut group_start = 0;
+    while group_start < children_info.len() {
+        // Collect the next group of columnar children (until a spanner or end).
+        let mut group_end = group_start;
+        while group_end < children_info.len() && !children_info[group_end].is_spanner {
+            group_end += 1;
+        }
+
+        // Lay out columnar group.
+        if group_end > group_start {
+            let mut col_fragments: Vec<Fragment> = Vec::new();
+            let mut col_block_sizes: Vec<LayoutUnit> = Vec::new();
+
+            for info in &children_info[group_start..group_end] {
+                let child_space = ConstraintSpace::for_block_child(
+                    column_width,
+                    space.available_block_size,
+                    column_width,
+                    child_percentage_block_size,
+                    false,
+                );
+                let child_frag = block_layout(doc, info.id, &child_space);
+                col_block_sizes.push(child_frag.size.height);
+                col_fragments.push(child_frag);
+            }
+
+            // Determine column height for this group.
+            let column_height = match algo.column_fill {
+                ColumnFill::Balance | ColumnFill::BalanceAll => {
+                    balance_columns(&col_block_sizes, resolved.count, space.available_block_size)
+                }
+                ColumnFill::Auto => {
+                    if !style.height.is_auto() {
+                        child_percentage_block_size
+                    } else {
+                        let total: i32 = col_block_sizes.iter().map(|s| s.raw()).sum();
+                        LayoutUnit::from_raw(total)
+                    }
+                }
+            };
+
+            // Distribute children across columns (with fragmentation support).
+            let mut col_idx: usize = 0;
+            let mut col_block_offset = LayoutUnit::zero();
+            let mut col_remaining = column_height;
+
+            for (i, child_frag) in col_fragments.into_iter().enumerate() {
+                let child_height = col_block_sizes[i];
+
+                if col_remaining.raw() < child_height.raw() && col_block_offset > LayoutUnit::zero() {
+                    if col_remaining > LayoutUnit::zero() && col_idx + 1 < resolved.count as usize {
+                        // Fragment the child across columns.
+                        let first_part_height = col_remaining;
+                        let remainder_height = child_height - first_part_height;
+
+                        let pos_idx = col_idx.min(positions.len().saturating_sub(1));
+                        let col_inline_offset = positions.get(pos_idx)
+                            .map(|p| p.inline_offset)
+                            .unwrap_or(LayoutUnit::zero());
+
+                        let mut first_part = child_frag.clone();
+                        first_part.size.height = first_part_height;
+                        first_part.has_overflow_clip = true;
+                        first_part.offset = PhysicalOffset::new(
+                            content_edge_x + col_inline_offset,
+                            content_edge_y + total_block_offset + col_block_offset,
+                        );
+                        result_children.push(first_part);
+
+                        col_idx += 1;
+                        col_block_offset = LayoutUnit::zero();
+                        col_remaining = column_height;
+
+                        let next_pos_idx = col_idx.min(positions.len().saturating_sub(1));
+                        let next_col_inline = positions.get(next_pos_idx)
+                            .map(|p| p.inline_offset)
+                            .unwrap_or(LayoutUnit::zero());
+
+                        let mut remainder = child_frag.clone();
+                        remainder.size.height = remainder_height;
+                        remainder.has_overflow_clip = true;
+                        remainder.offset = PhysicalOffset::new(
+                            content_edge_x + next_col_inline,
+                            content_edge_y + total_block_offset + col_block_offset,
+                        );
+                        for c in &mut remainder.children {
+                            c.offset.top = c.offset.top - first_part_height;
+                        }
+                        col_block_offset = col_block_offset + remainder_height;
+                        col_remaining = col_remaining - remainder_height;
+                        result_children.push(remainder);
+                        continue;
+                    }
+
+                    col_idx += 1;
+                    col_block_offset = LayoutUnit::zero();
+                    col_remaining = column_height;
+                }
+
+                let pos_idx = col_idx.min(positions.len().saturating_sub(1));
+                let col_inline_offset = positions.get(pos_idx)
+                    .map(|p| p.inline_offset)
+                    .unwrap_or(LayoutUnit::zero());
+
+                let mut positioned = child_frag;
+                positioned.offset = PhysicalOffset::new(
+                    content_edge_x + col_inline_offset,
+                    content_edge_y + total_block_offset + col_block_offset,
+                );
+
+                col_block_offset = col_block_offset + child_height;
+                col_remaining = col_remaining - child_height;
+                result_children.push(positioned);
+            }
+
+            // Column rules for this group.
+            if let Some(ref rule) = algo.column_rule {
+                let rule_positions = compute_column_rule_positions(
+                    resolved.count, column_width, algo.column_gap,
+                );
+                for rp in &rule_positions {
+                    let mut rule_frag = Fragment::new_box(node_id,
+                        PhysicalSize::new(rule.width, column_height));
+                    rule_frag.offset = PhysicalOffset::new(
+                        content_edge_x + *rp - rule.width / LayoutUnit::from_i32(2),
+                        content_edge_y + total_block_offset,
+                    );
+                    rule_frag.kind = FragmentKind::ColumnRule;
+                    result_children.push(rule_frag);
+                }
+            }
+
+            total_block_offset = total_block_offset + column_height;
+        }
+
+        // Handle spanner (if current item is one).
+        if group_end < children_info.len() && children_info[group_end].is_spanner {
+            let spanner_id = children_info[group_end].id;
+            let spanner_space = ConstraintSpace::for_block_child(
+                child_available_inline,
+                space.available_block_size,
+                child_available_inline,
+                child_percentage_block_size,
+                false,
+            );
+            let mut spanner_frag = block_layout(doc, spanner_id, &spanner_space);
+            spanner_frag.offset = PhysicalOffset::new(
+                content_edge_x,
+                content_edge_y + total_block_offset,
+            );
+            total_block_offset = total_block_offset + spanner_frag.size.height;
+            result_children.push(spanner_frag);
+            group_start = group_end + 1;
+        } else {
+            group_start = group_end;
+        }
+    }
+
+    // Build container fragment.
+    let explicit_block_size = if !style.height.is_auto() {
+        let raw = resolve_length(
+            &style.height,
+            space.percentage_resolution_block_size,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        );
+        if style.box_sizing == BoxSizing::BorderBox {
+            Some(raw)
+        } else {
+            Some(raw + border_padding_block)
+        }
+    } else {
+        None
+    };
+    let container_block_size = explicit_block_size
+        .unwrap_or(total_block_offset + border_padding_block);
+    let mut container = Fragment::new_box(node_id,
+        PhysicalSize::new(border_box_inline, container_block_size));
+    container.children = result_children;
+    container
 }
 
 #[cfg(test)]

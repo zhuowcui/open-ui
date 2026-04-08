@@ -225,6 +225,13 @@ impl LayoutUnit {
         self.to_i32() + ((self.fraction().0 + (DENOMINATOR / 2)) >> FRACTIONAL_BITS)
     }
 
+    /// Round to nearest pixel, returning a LayoutUnit aligned to a whole pixel.
+    /// Used for pixel-snapping positions before painting.
+    #[inline]
+    pub fn round(self) -> LayoutUnit {
+        Self::from_i32(self.round_i32())
+    }
+
     /// Fractional part only (always non-negative for positive values,
     /// sign-preserving for negative, matching C++ `%` semantics).
     /// Matches Blink's `Fraction()`:

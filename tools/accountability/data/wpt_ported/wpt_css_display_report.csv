@@ -1,0 +1,146 @@
+filename,status,fn_name,reason
+display-contents-block-002-ref,ported,css_display_display_contents_block_002_ref,
+display-contents-dynamic-pseudo-insertion-001-ref,ported,css_display_display_contents_dynamic_pseudo_insertion_001_ref,
+display-contents-flex-001-ref,ported,css_display_display_contents_flex_001_ref,
+display-contents-flex-002-ref,ported,css_display_display_contents_flex_002_ref,
+display-contents-flex-002,ported,css_display_display_contents_flex_002,
+display-contents-flex-003,ported,css_display_display_contents_flex_003,
+display-contents-inline-flex-001-ref,ported,css_display_display_contents_inline_flex_001_ref,
+display-contents-inline-flex-001,ported,css_display_display_contents_inline_flex_001,
+display-contents-list-001-ref,ported,css_display_display_contents_list_001_ref,
+display-contents-list-001,ported,css_display_display_contents_list_001,
+display-contents-multicol-001-ref,ported,css_display_display_contents_multicol_001_ref,
+display-contents-multicol-001,ported,css_display_display_contents_multicol_001,
+display-contents-pass-green-no-red-ref,ported,css_display_display_contents_pass_green_no_red_ref,
+display-contents-pass-no-red-ref,ported,css_display_display_contents_pass_no_red_ref,
+display-contents-pass-ref,ported,css_display_display_contents_pass_ref,
+display-contents-root-background-ref,ported,css_display_display_contents_root_background_ref,
+display-contents-state-change-001-ref,ported,css_display_display_contents_state_change_001_ref,
+display-contents-table-001-ref,ported,css_display_display_contents_table_001_ref,
+display-contents-table-001,ported,css_display_display_contents_table_001,
+display-contents-table-002-ref,ported,css_display_display_contents_table_002_ref,
+display-contents-table-002,ported,css_display_display_contents_table_002,
+display-contents-text-inherit-ref,ported,css_display_display_contents_text_inherit_ref,
+display-contents-whitespace-inside-inline-ref,ported,css_display_display_contents_whitespace_inside_inline_ref,
+display-first-line-002-ref,ported,css_display_display_first_line_002_ref,
+display-flow-root-dynamic-ref,ported,css_display_display_flow_root_dynamic_ref,
+display-change-iframe,not_portable,,uses_javascript
+display-change-object-iframe,not_portable,,uses_javascript
+display-contents-001-crash,not_portable,,unsupported display: table-cell
+display-contents-alignment-001-ref,not_portable,,complex_css_selector: .container > div
+display-contents-alignment-001,not_portable,,complex_css_selector: .contents > div
+display-contents-alignment-002-ref,not_portable,,complex_css_selector: .container > div
+display-contents-alignment-002,not_portable,,complex_css_selector: .contents > div
+display-contents-before-after-001,not_portable,,complex_css_selector: .p::before
+display-contents-before-after-002,not_portable,,complex_css_selector: div::before
+display-contents-before-after-003,not_portable,,complex_css_selector: .flex::before
+display-contents-block-001,not_portable,,unsupported display: contents
+display-contents-block-002,not_portable,,unsupported display: contents
+display-contents-blockify-dynamic,not_portable,,uses_javascript
+display-contents-button,not_portable,,unsupported display: contents
+display-contents-computed-style,not_portable,,uses_javascript
+display-contents-details-001-ref,not_portable,,unsupported element: <details>
+display-contents-details-001,not_portable,,unsupported display: contents
+display-contents-details,not_portable,,complex_css_selector: details::details-content
+display-contents-dynamic-before-after-001,not_portable,,uses_javascript
+display-contents-dynamic-before-after-first-letter-001,not_portable,,uses_javascript
+display-contents-dynamic-fieldset-legend-001-ref,not_portable,,style_block_unsupported property: font-size
+display-contents-dynamic-fieldset-legend-001,not_portable,,uses_javascript
+display-contents-dynamic-flex-001-inline,not_portable,,uses_javascript
+display-contents-dynamic-flex-001-none,not_portable,,uses_javascript
+display-contents-dynamic-flex-002-inline,not_portable,,uses_javascript
+display-contents-dynamic-flex-002-none,not_portable,,uses_javascript
+display-contents-dynamic-flex-003-inline,not_portable,,uses_javascript
+display-contents-dynamic-flex-003-none,not_portable,,uses_javascript
+display-contents-dynamic-generated-content-fieldset-001-ref,not_portable,,unsupported display: contents
+display-contents-dynamic-generated-content-fieldset-001,not_portable,,uses_javascript
+display-contents-dynamic-inline-flex-001-inline,not_portable,,uses_javascript
+display-contents-dynamic-inline-flex-001-none,not_portable,,uses_javascript
+display-contents-dynamic-list-001-inline,not_portable,,uses_javascript
+display-contents-dynamic-list-001-none,not_portable,,uses_javascript
+display-contents-dynamic-multicol-001-inline,not_portable,,uses_javascript
+display-contents-dynamic-multicol-001-none,not_portable,,uses_javascript
+display-contents-dynamic-pseudo-insertion-001,not_portable,,uses_javascript
+display-contents-dynamic-table-001-inline,not_portable,,uses_javascript
+display-contents-dynamic-table-001-none,not_portable,,uses_javascript
+display-contents-dynamic-table-002-inline,not_portable,,uses_javascript
+display-contents-dynamic-table-002-none,not_portable,,uses_javascript
+display-contents-fieldset-002-ref,not_portable,,uses_javascript
+display-contents-fieldset-002,not_portable,,uses_javascript
+display-contents-fieldset-nested-legend-ref,not_portable,,unsupported element: <fieldset>
+display-contents-fieldset-nested-legend,not_portable,,style_block_unsupported property: unicode-bidi
+display-contents-fieldset,not_portable,,unsupported display: contents
+display-contents-first-letter-001,not_portable,,complex_css_selector: #contents::first-letter
+display-contents-first-letter-002,not_portable,,complex_css_selector: div::first-letter
+display-contents-first-line-001,not_portable,,complex_css_selector: #contents::first-line
+display-contents-first-line-002,not_portable,,complex_css_selector: #container::first-line
+display-contents-flex-001,not_portable,,unsupported display: contents
+display-contents-float-001,not_portable,,unsupported display: contents
+display-contents-focusable-001,not_portable,,uses_javascript
+display-contents-inline-001,not_portable,,unsupported display: contents
+display-contents-inline-002,not_portable,,unsupported display: contents
+display-contents-line-height-ref,not_portable,,style_block_unsupported property: font-size
+display-contents-line-height,not_portable,,style_block_unsupported property: font-size
+display-contents-oof-001,not_portable,,unsupported display: contents
+display-contents-oof-002,not_portable,,unsupported display: contents
+display-contents-parsing-001,not_portable,,uses_javascript
+display-contents-pseudo-click-target,not_portable,,uses_javascript
+display-contents-root-background,not_portable,,complex_css_selector: :root
+display-contents-shadow-dom-1-ref,not_portable,,style_block_unsupported property: font
+display-contents-shadow-dom-1,not_portable,,uses_javascript
+display-contents-shadow-host-whitespace,not_portable,,uses_javascript
+display-contents-sharing-001-ref,not_portable,,unsupported display: contents
+display-contents-sharing-001,not_portable,,unsupported display: contents
+display-contents-slot-attach-whitespace,not_portable,,uses_javascript
+display-contents-state-change-001,not_portable,,uses_javascript
+display-contents-suppression-dynamic-001-ref,not_portable,,no_layout_content
+display-contents-suppression-dynamic-001,not_portable,,uses_javascript
+display-contents-svg-anchor-child,not_portable,,uses_javascript
+display-contents-svg-elements-ref,not_portable,,unsupported property: font
+display-contents-svg-elements,not_portable,,unsupported property: font
+display-contents-svg-switch-child,not_portable,,uses_javascript
+display-contents-td-001,not_portable,,unsupported display: contents
+display-contents-text-inherit-002,not_portable,,uses_javascript
+display-contents-text-inherit,not_portable,,style_block_unsupported property: white-space
+display-contents-text-only-001-ref,not_portable,,no_layout_content
+display-contents-text-only-001,not_portable,,unsupported display: contents
+display-contents-tr-001-ref,not_portable,,unsupported element: <table>
+display-contents-tr-001,not_portable,,unsupported display: contents
+display-contents-unusual-html-elements-none,not_portable,,unsupported display: contents
+display-contents-whitespace-inside-inline,not_portable,,unsupported display: contents
+display-first-letter-001,not_portable,,uses_javascript
+display-first-line-001,not_portable,,uses_javascript
+display-first-line-002,not_portable,,uses_javascript
+display-flow-root-001-ref,not_portable,,style_block_unsupported property: font
+display-flow-root-001,not_portable,,style_block_unsupported property: font
+display-flow-root-002-ref,not_portable,,style_block_unsupported property: outline
+display-flow-root-002,not_portable,,style_block_unsupported property: outline
+display-flow-root-dynamic,not_portable,,uses_javascript
+display-flow-root-list-item-001-ref,not_portable,,style_block_unsupported property: font
+display-flow-root-list-item-001,not_portable,,style_block_unsupported property: font
+display-inline-dynamic-001-ref,not_portable,,complex_css_selector: div::first-line
+display-inline-dynamic-001,not_portable,,uses_javascript
+display-list-item-height-after-dom-change,not_portable,,uses_javascript
+display-math-on-non-mathml-elements,not_portable,,uses_javascript
+display-math-on-pseudo-elements-001,not_portable,,uses_javascript
+display-math-on-pseudo-elements-002-ref,not_portable,,complex_css_selector: .inline::before
+display-math-on-pseudo-elements-002,not_portable,,complex_css_selector: .inline::before
+display-none-inline-img-ref,not_portable,,unsupported element: <img>
+display-none-inline-img,not_portable,,uses_javascript
+display-none-root-hit-test-crash,not_portable,,uses_javascript
+display-with-float-dynamic,not_portable,,uses_javascript
+display-with-float,not_portable,,uses_javascript
+empty-text-baseline-001,not_portable,,uses_javascript
+empty-text-baseline-002,not_portable,,uses_javascript
+inheritance,not_portable,,uses_javascript
+order-dynamic,not_portable,,uses_javascript
+select-4-option-optgroup-display-none-ref,not_portable,,style_block_vendor/unsupported prefix: -webkit-appearance
+select-4-option-optgroup-display-none,not_portable,,style_block_vendor/unsupported prefix: -webkit-appearance
+textarea-display,not_portable,,uses_javascript
+accessibility_display-contents-role-and-label,not_portable,,uses_javascript
+focus_display-contents-focus,not_portable,,uses_javascript
+parsing_display-computed,not_portable,,uses_javascript
+parsing_display-invalid,not_portable,,uses_javascript
+parsing_display-valid,not_portable,,uses_javascript
+animations_display-interpolation,not_portable,,uses_javascript
+animations_display-interpolation.tentative,not_portable,,uses_javascript

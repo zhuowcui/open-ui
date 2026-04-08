@@ -22,6 +22,8 @@ pub enum FragmentKind {
     Text,
     /// The root viewport fragment.
     Viewport,
+    /// A column rule between multicol columns.
+    ColumnRule,
 }
 
 /// A positioned layout fragment, ready for painting.
@@ -29,7 +31,7 @@ pub enum FragmentKind {
 /// Mirrors Blink's `PhysicalBoxFragment`. Contains the resolved size,
 /// position relative to parent, and references back to the DOM node
 /// and style for painting.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Fragment {
     /// Which DOM node produced this fragment.
     pub node_id: NodeId,

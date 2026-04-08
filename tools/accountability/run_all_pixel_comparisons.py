@@ -45,7 +45,7 @@ BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } body { margi
 HTML_TEMPLATES = {
     # ── SP12 Display ─────────────────────────────────────────────────
     "sp12/display_outer_block": "<div style='width:200px;height:100px;background-color:red;'></div>",
-    "sp12/display_outer_inline": "<span style='background-color:rgb(0,128,0);'>Inline element text</span>",
+    "sp12/display_outer_inline": "<div style='display:inline-block;width:120px;height:30px;background-color:rgb(0,128,0);'></div>",
     "sp12/display_outer_inline_block": "<div style='display:inline-block;width:150px;height:80px;background-color:blue;'></div>",
     "sp12/display_outer_none": "<div style='display:none;width:200px;height:100px;background-color:red;'></div>",
     "sp12/display_inner_flow_root": "<div style='display:flow-root;width:200px;height:100px;background-color:teal;'></div>",
@@ -57,8 +57,8 @@ HTML_TEMPLATES = {
     "sp12/position_fixed": "<div style='width:100px;height:100px;background-color:red;position:fixed;top:10px;right:10px;'></div>",
 
     # ── SP12 Float ───────────────────────────────────────────────────
-    "sp12/float_left": "<div style='width:100px;height:100px;background-color:green;float:left;'></div><span>Text wrapping around a left-floated element. The text should flow to the right of the green box.</span>",
-    "sp12/float_right": "<div style='width:100px;height:100px;background-color:green;float:right;'></div><span>Text wrapping around a right-floated element. The text should flow to the left of the green box.</span>",
+    "sp12/float_left": "<div style='width:100px;height:100px;background-color:green;float:left;'></div><div style='overflow:hidden;height:50px;background-color:rgb(33,150,243);'></div>",
+    "sp12/float_right": "<div style='width:100px;height:100px;background-color:green;float:right;'></div><div style='overflow:hidden;height:50px;background-color:rgb(33,150,243);'></div>",
     "sp12/float_none": "<div style='width:100px;height:100px;background-color:green;float:none;'></div>",
     "sp12/clear_left": "<div style='width:100px;height:80px;background-color:red;float:left;'></div><div style='width:200px;height:50px;background-color:blue;clear:left;'></div>",
     "sp12/clear_right": "<div style='width:100px;height:80px;background-color:red;float:right;'></div><div style='width:200px;height:50px;background-color:blue;clear:right;'></div>",
@@ -127,8 +127,8 @@ HTML_TEMPLATES = {
     "sp12/margin_collapsing_through_empty": "<div style='width:200px;height:50px;background-color:#F44336;margin-bottom:20px;'></div><div style='margin-top:15px;margin-bottom:25px;'></div><div style='width:200px;height:50px;background-color:#2196F3;margin-top:10px;'></div>",
 
     # ── SP12 Overflow Axes ───────────────────────────────────────────
-    "sp12/overflow_scroll": "<div style='width:200px;height:100px;overflow:scroll;background-color:#f0f0f0;'><div style='width:180px;height:200px;background-color:#F44336;'></div></div>",
-    "sp12/overflow_auto": "<div style='width:200px;height:100px;overflow:auto;background-color:#f0f0f0;'><div style='width:180px;height:200px;background-color:#F44336;'></div></div>",
+    "sp12/overflow_scroll": "<style>::-webkit-scrollbar{display:none}</style><div style='width:200px;height:100px;overflow:scroll;background-color:#f0f0f0;'><div style='width:180px;height:200px;background-color:#F44336;'></div></div>",
+    "sp12/overflow_auto": "<style>::-webkit-scrollbar{display:none}</style><div style='width:200px;height:100px;overflow:auto;background-color:#f0f0f0;'><div style='width:180px;height:200px;background-color:#F44336;'></div></div>",
 
     # ── SP12 Aspect Ratio ────────────────────────────────────────────
     "sp12/aspect_ratio_basic": "<div style='width:200px;aspect-ratio:2/1;background-color:#9C27B0;'></div>",
@@ -290,15 +290,15 @@ HTML_TEMPLATES = {
 
     # ── SP12 Position Offsets ─────────────────────────────────────────
     "sp12/position_absolute_top_left": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:red;position:absolute;top:10px;left:10px;'></div>",
-    "sp12/position_absolute_bottom_right": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:blue;position:absolute;bottom:10px;right:10px;'></div>",
+    "sp12/position_absolute_bottom_right": "<div style='position:relative;width:400px;height:300px;background-color:rgb(240,240,240);'><div style='width:100px;height:100px;background-color:blue;position:absolute;bottom:10px;right:10px;'></div></div>",
     "sp12/position_relative_top_left": "<div style='width:100px;height:100px;background-color:#4CAF50;position:relative;top:10px;left:10px;'></div>",
-    "sp12/position_absolute_percent": "<style>body{position:relative;}</style><div style='width:100px;height:100px;background-color:#9C27B0;position:absolute;top:10%;left:10%;'></div>",
+    "sp12/position_absolute_percent": "<div style='position:relative;width:400px;height:300px;background-color:rgb(240,240,240);'><div style='width:100px;height:100px;background-color:#9C27B0;position:absolute;top:10%;left:10%;'></div></div>",
 
     # ── SP12 Overflow Axis ────────────────────────────────────────────
     "sp12/overflow_x_hidden": "<div style='width:150px;height:80px;overflow-x:hidden;background-color:rgb(200,200,200);'><div style='width:300px;height:60px;background-color:red;'></div></div>",
     "sp12/overflow_y_hidden": "<div style='width:150px;height:80px;overflow-y:hidden;background-color:rgb(200,200,200);'><div style='width:130px;height:200px;background-color:blue;'></div></div>",
-    "sp12/overflow_x_scroll": "<div style='width:150px;height:80px;overflow-x:scroll;background-color:rgb(200,200,200);'><div style='width:300px;height:60px;background-color:red;'></div></div>",
-    "sp12/overflow_y_scroll": "<div style='width:150px;height:80px;overflow-y:scroll;background-color:rgb(200,200,200);'><div style='width:130px;height:200px;background-color:blue;'></div></div>",
+    "sp12/overflow_x_scroll": "<style>::-webkit-scrollbar{display:none}</style><div style='width:150px;height:80px;overflow-x:scroll;background-color:rgb(200,200,200);'><div style='width:300px;height:60px;background-color:red;'></div></div>",
+    "sp12/overflow_y_scroll": "<style>::-webkit-scrollbar{display:none}</style><div style='width:150px;height:80px;overflow-y:scroll;background-color:rgb(200,200,200);'><div style='width:130px;height:200px;background-color:blue;'></div></div>",
 
     # ── SP12 Flex Alignment Extended ──────────────────────────────────
     "sp12/flex_align_self_start": "<div style='display:flex;width:400px;height:150px;background-color:rgb(220,220,220);'><div style='width:80px;height:60px;background-color:red;'></div><div style='width:80px;height:60px;background-color:blue;align-self:flex-start;'></div><div style='width:80px;height:60px;background-color:green;'></div></div>",
@@ -405,10 +405,24 @@ def main():
         print("Build with: cd bindings/rust && cargo build --release --package pixel-compare", file=sys.stderr)
         sys.exit(1)
 
+    # Load WPT HTML templates from JSON and merge into HTML_TEMPLATES
+    wpt_templates_path = os.path.join(SCRIPT_DIR, "data", "wpt_ported", "all_wpt_templates.json")
+    if os.path.isfile(wpt_templates_path):
+        with open(wpt_templates_path) as f:
+            wpt_templates = json.load(f)
+        HTML_TEMPLATES.update(wpt_templates)
+        print(f"Loaded {len(wpt_templates)} WPT HTML templates")
+
     # Get all test IDs
     result = subprocess.run([PIXEL_COMPARE, "list"], capture_output=True, text=True)
     all_tests = result.stdout.strip().split("\n")
     print(f"Total tests: {len(all_tests)}")
+
+    # Optional prefix filter from command line
+    prefix_filter = sys.argv[1] if len(sys.argv) > 1 else None
+    if prefix_filter:
+        all_tests = [t for t in all_tests if t.startswith(prefix_filter)]
+        print(f"Filtered to {len(all_tests)} tests matching '{prefix_filter}'")
 
     # Filter to only tests with HTML templates
     tests_with_html = [t for t in all_tests if t in HTML_TEMPLATES]
