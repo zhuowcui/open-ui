@@ -14,7 +14,7 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, LengthType, MinMaxSizes, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
+use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
 use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction};
 use openui_dom::{Document, NodeId};
 
@@ -22,7 +22,6 @@ use crate::constraint_space::ConstraintSpace;
 use crate::exclusions::{ExclusionSpace, ClearType};
 use crate::exclusions::float_utils::{UnpositionedFloat, position_float};
 use crate::fragment::{Fragment, FragmentKind};
-use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
 
@@ -1784,7 +1783,6 @@ fn resolve_inline_size(
     }
 
     // Resolve the CSS width property — handle intrinsic sizing keywords
-    let mut width_from_ar = false;
     let resolved = if style.width.is_auto() || style.width.is_stretch() {
         // CSS Sizing 4 §5.1: when width is auto and the element has a preferred
         // aspect ratio with a definite height, compute width from height × ratio.
@@ -1846,7 +1844,6 @@ fn resolve_inline_size(
         };
 
         if let Some(w) = ar_width {
-            width_from_ar = true;
             w
         } else {
             // Auto/stretch width: fill available space minus border+padding
