@@ -1,1473 +1,623 @@
 {
-  "total": 293,
-  "passed": 126,
-  "failed": 167,
+  "total": 123,
+  "passed": 28,
+  "failed": 95,
   "errors": 0,
   "tests": [
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-001",
+      "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
+      "status": "fail",
+      "mismatch_pct": 5.0
+    },
+    {
+      "id": "wpt/css2_floats/float-in-inline-anonymous-block-with-overflow-hidden",
+      "status": "fail",
+      "mismatch_pct": 1.041667
+    },
+    {
+      "id": "wpt/css2_floats/float-in-nested-multicol-001",
+      "status": "fail",
+      "mismatch_pct": 0.056458
+    },
+    {
+      "id": "wpt/css2_floats/float-no-content-beside-001-ref",
+      "status": "fail",
+      "mismatch_pct": 3.81375
+    },
+    {
+      "id": "wpt/css2_floats/float-no-content-beside-001",
+      "status": "fail",
+      "mismatch_pct": 3.81375
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-1-notref",
+      "status": "fail",
+      "mismatch_pct": 0.836875
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-1",
+      "status": "fail",
+      "mismatch_pct": 0.890208
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-2",
+      "status": "fail",
+      "mismatch_pct": 0.89
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-3-ref",
+      "status": "fail",
+      "mismatch_pct": 0.894792
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-3",
+      "status": "fail",
+      "mismatch_pct": 0.894792
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-4-ref",
+      "status": "fail",
+      "mismatch_pct": 0.894792
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-4-ref2",
+      "status": "fail",
+      "mismatch_pct": 0.894792
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-4",
+      "status": "fail",
+      "mismatch_pct": 0.894792
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-5-ref",
+      "status": "fail",
+      "mismatch_pct": 0.141042
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-5",
+      "status": "fail",
+      "mismatch_pct": 0.141042
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-6",
+      "status": "fail",
+      "mismatch_pct": 0.141042
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-7",
+      "status": "fail",
+      "mismatch_pct": 0.836667
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-8",
+      "status": "fail",
+      "mismatch_pct": 0.836667
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-9",
+      "status": "fail",
+      "mismatch_pct": 0.836458
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref",
+      "status": "fail",
+      "mismatch_pct": 4.371875
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref2",
+      "status": "fail",
+      "mismatch_pct": 4.392292
+    },
+    {
+      "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1",
+      "status": "fail",
+      "mismatch_pct": 4.371875
+    },
+    {
+      "id": "wpt/css2_floats/float-root-ref",
+      "status": "fail",
+      "mismatch_pct": 0.041042
+    },
+    {
+      "id": "wpt/css2_floats/float-root",
+      "status": "fail",
+      "mismatch_pct": 0.041042
+    },
+    {
+      "id": "wpt/css2_floats/float-under-flatten-under-preserve-3d",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-002",
+      "id": "wpt/css2_floats/float-with-absolutely-positioned-child-with-static-inset-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-003",
+      "id": "wpt/css2_floats/float-with-absolutely-positioned-child-with-static-inset",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-004",
+      "id": "wpt/css2_floats/floats-in-table-caption-001-ref",
+      "status": "fail",
+      "mismatch_pct": 1.661667
+    },
+    {
+      "id": "wpt/css2_floats/floats-line-wrap-shifted-001-ref",
+      "status": "fail",
+      "mismatch_pct": 2.755
+    },
+    {
+      "id": "wpt/css2_floats/floats-line-wrap-shifted-001",
+      "status": "fail",
+      "mismatch_pct": 1.7675
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-001",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-005",
+      "id": "wpt/css2_floats/floats-placement-002",
       "status": "fail",
-      "mismatch_pct": 2.083333
+      "mismatch_pct": 0.083333
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-006",
+      "id": "wpt/css2_floats/floats-placement-003",
       "status": "fail",
-      "mismatch_pct": 2.083333
+      "mismatch_pct": 0.333333
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-007",
+      "id": "wpt/css2_floats/floats-placement-004",
       "status": "fail",
-      "mismatch_pct": 2.083333
+      "mismatch_pct": 1.666667
     },
     {
-      "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-008",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/auto-scrollbar-inside-stf-abspos-ref",
-      "status": "fail",
-      "mismatch_pct": 0.77625
-    },
-    {
-      "id": "wpt/css_sizing/auto-scrollbar-inside-stf-abspos",
-      "status": "fail",
-      "mismatch_pct": 0.77625
-    },
-    {
-      "id": "wpt/css_sizing/block-size-with-min-or-max-content-2",
+      "id": "wpt/css2_floats/floats-placement-005-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/block-size-with-min-or-max-content-3",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/block-size-with-min-or-max-content-6",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/block-size-with-min-or-max-content-7",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/border-box-and-max-content-001-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/border-box-and-max-content-001",
-      "status": "fail",
-      "mismatch_pct": 0.375
-    },
-    {
-      "id": "wpt/css_sizing/border-box-and-max-content-002-ref",
-      "status": "fail",
-      "mismatch_pct": 2.544375
-    },
-    {
-      "id": "wpt/css_sizing/border-box-and-max-content-002",
-      "status": "fail",
-      "mismatch_pct": 49.141042
-    },
-    {
-      "id": "wpt/css_sizing/border-box-and-max-content-003-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/border-box-and-max-content-003",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-001-ref",
-      "status": "fail",
-      "mismatch_pct": 2.166667
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-001",
-      "status": "fail",
-      "mismatch_pct": 2.166667
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-002-ref",
-      "status": "fail",
-      "mismatch_pct": 2.166667
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-002",
-      "status": "fail",
-      "mismatch_pct": 2.166667
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-003-ref",
-      "status": "fail",
-      "mismatch_pct": 0.802708
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-003",
-      "status": "fail",
-      "mismatch_pct": 0.802708
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-004-ref",
-      "status": "fail",
-      "mismatch_pct": 0.55125
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-border-box-004",
-      "status": "fail",
-      "mismatch_pct": 0.55125
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-content-box-001-ref",
-      "status": "fail",
-      "mismatch_pct": 0.802708
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-content-box-001",
-      "status": "fail",
-      "mismatch_pct": 0.802708
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-content-box-002-ref",
-      "status": "fail",
-      "mismatch_pct": 0.802708
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-content-box-002",
-      "status": "fail",
-      "mismatch_pct": 6.8
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-content-box-003-ref",
-      "status": "fail",
-      "mismatch_pct": 0.55125
-    },
-    {
-      "id": "wpt/css_sizing/box-sizing-content-box-003",
-      "status": "fail",
-      "mismatch_pct": 0.55125
-    },
-    {
-      "id": "wpt/css_sizing/calc-margins-block",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/calc-margins-flex",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/clone-intrinsic-size-ref",
-      "status": "fail",
-      "mismatch_pct": 10.0275
-    },
-    {
-      "id": "wpt/css_sizing/clone-intrinsic-size",
-      "status": "fail",
-      "mismatch_pct": 9.892083
-    },
-    {
-      "id": "wpt/css_sizing/clone-nowrap-intrinsic-size-bidi-ref",
-      "status": "fail",
-      "mismatch_pct": 10.664167
-    },
-    {
-      "id": "wpt/css_sizing/clone-nowrap-intrinsic-size-bidi",
-      "status": "fail",
-      "mismatch_pct": 10.664167
-    },
-    {
-      "id": "wpt/css_sizing/clone-nowrap-intrinsic-size-ref",
-      "status": "fail",
-      "mismatch_pct": 10.642708
-    },
-    {
-      "id": "wpt/css_sizing/clone-nowrap-intrinsic-size",
-      "status": "fail",
-      "mismatch_pct": 10.642708
-    },
-    {
-      "id": "wpt/css_sizing/div-auto-margin-bottom-ref",
-      "status": "fail",
-      "mismatch_pct": 2.179167
-    },
-    {
-      "id": "wpt/css_sizing/div-auto-margin-ref",
-      "status": "fail",
-      "mismatch_pct": 2.179167
-    },
-    {
-      "id": "wpt/css_sizing/div-auto-margin-top-ref",
-      "status": "fail",
-      "mismatch_pct": 2.179167
-    },
-    {
-      "id": "wpt/css_sizing/div-block-size-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/div-fit-content-auto-margin-bottom.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-fit-content-auto-margin-top.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-fit-content-auto-margin.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-fit-content-block-size.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.6875
-    },
-    {
-      "id": "wpt/css_sizing/div-max-content-auto-margin-bottom.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-max-content-auto-margin-top.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-max-content-auto-margin.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-max-content-block-size.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.6875
-    },
-    {
-      "id": "wpt/css_sizing/div-min-content-auto-margin-bottom.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-min-content-auto-margin-top.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-min-content-auto-margin.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.791667
-    },
-    {
-      "id": "wpt/css_sizing/div-min-content-block-size.tentative",
-      "status": "fail",
-      "mismatch_pct": 4.6875
-    },
-    {
-      "id": "wpt/css_sizing/div-top-and-non-auto-margin-ref",
-      "status": "fail",
-      "mismatch_pct": 4.195833
-    },
-    {
-      "id": "wpt/css_sizing/div-top-and-non-auto-margin.tentative",
-      "status": "fail",
-      "mismatch_pct": 5.041667
-    },
-    {
-      "id": "wpt/css_sizing/dynamic-change-inline-size-003-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-block-size-abspos",
-      "status": "fail",
-      "mismatch_pct": 3.900417
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-block-size-fixedpos-ref",
-      "status": "fail",
-      "mismatch_pct": 3.900417
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-block-size-fixedpos",
-      "status": "fail",
-      "mismatch_pct": 3.900417
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-contribution-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-002",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-003",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-004",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-005",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-006",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-007",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-008",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-009",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-010",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-011",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-012",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-013",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-014",
+      "id": "wpt/css2_floats/floats-placement-005",
       "status": "fail",
       "mismatch_pct": 1.197917
     },
     {
-      "id": "wpt/css_sizing/fit-content-length-percentage-015",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-length-percentage-016",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/fit-content-max-inline-size.tentative",
+      "id": "wpt/css2_floats/floats-placement-006",
       "status": "fail",
       "mismatch_pct": 2.083333
     },
     {
-      "id": "wpt/css_sizing/fit-content-min-inline-size",
+      "id": "wpt/css2_floats/floats-placement-008",
       "status": "fail",
-      "mismatch_pct": 1.875
+      "mismatch_pct": 1.125
     },
     {
-      "id": "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001",
+      "id": "wpt/css2_floats/floats-placement-vertical-001-ref",
+      "status": "fail",
+      "mismatch_pct": 3.93375
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-001a",
+      "status": "fail",
+      "mismatch_pct": 3.93375
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-001b",
+      "status": "fail",
+      "mismatch_pct": 3.93375
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-001c",
+      "status": "fail",
+      "mismatch_pct": 3.93375
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-003-ref",
+      "status": "fail",
+      "mismatch_pct": 1.166667
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-003",
+      "status": "fail",
+      "mismatch_pct": 0.771667
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-004-ref",
+      "status": "fail",
+      "mismatch_pct": 0.791667
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-004-ref2",
+      "status": "fail",
+      "mismatch_pct": 0.791667
+    },
+    {
+      "id": "wpt/css2_floats/floats-placement-vertical-004",
+      "status": "fail",
+      "mismatch_pct": 0.021667
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-left-001-ref",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-left-001",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-left-002-ref",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-left-002",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-right-001-ref",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-right-001",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-right-002-ref",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule3-outside-right-002",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule7-outside-left-001-ref",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule7-outside-left-001",
+      "status": "fail",
+      "mismatch_pct": 1.811458
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule7-outside-right-001-ref",
+      "status": "fail",
+      "mismatch_pct": 1.603125
+    },
+    {
+      "id": "wpt/css2_floats/floats-rule7-outside-right-001",
+      "status": "fail",
+      "mismatch_pct": 1.707292
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-left-overflow-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-002",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-left-table-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-003",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-right-overflow-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-004",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-right-table-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-1-ref",
-      "status": "fail",
-      "mismatch_pct": 5.19125
-    },
-    {
-      "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-1",
-      "status": "fail",
-      "mismatch_pct": 5.197083
-    },
-    {
-      "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2-ref",
-      "status": "fail",
-      "mismatch_pct": 6.979792
-    },
-    {
-      "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2a",
-      "status": "fail",
-      "mismatch_pct": 6.979792
-    },
-    {
-      "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2b",
-      "status": "fail",
-      "mismatch_pct": 6.979792
-    },
-    {
-      "id": "wpt/css_sizing/inline-intrinsic-size-calc-ref",
-      "status": "fail",
-      "mismatch_pct": 0.178333
-    },
-    {
-      "id": "wpt/css_sizing/inline-intrinsic-size-calc",
-      "status": "fail",
-      "mismatch_pct": 0.494792
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-percent-non-replaced-001-ref",
-      "status": "fail",
-      "mismatch_pct": 6.792917
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-percent-non-replaced-001",
-      "status": "fail",
-      "mismatch_pct": 5.513542
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-percent-non-replaced-002-ref",
-      "status": "fail",
-      "mismatch_pct": 4.51125
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-percent-non-replaced-002",
-      "status": "fail",
-      "mismatch_pct": 4.332083
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-percent-non-replaced-003",
-      "status": "fail",
-      "mismatch_pct": 4.296667
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-ratio-replaced-box-sizing-ref",
-      "status": "fail",
-      "mismatch_pct": 7.794167
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing-ref",
-      "status": "fail",
-      "mismatch_pct": 0.366667
-    },
-    {
-      "id": "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
-      "status": "fail",
-      "mismatch_pct": 0.525
-    },
-    {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-001",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-002",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-003",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-004",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-005",
-      "status": "fail",
-      "mismatch_pct": 10.0
-    },
-    {
-      "id": "wpt/css_sizing/min-content-le-max-content.tentative",
+      "id": "wpt/css2_floats/floats-wrap-bfc-002-left-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/min-content-min-width-000",
+      "id": "wpt/css2_floats/floats-wrap-bfc-002-right-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/min-content-negative-margin-crash",
-      "status": "fail",
-      "mismatch_pct": 4.353125
-    },
-    {
-      "id": "wpt/css_sizing/percentage-width-subpixels.tentative-ref",
-      "status": "fail",
-      "mismatch_pct": 11.945833
-    },
-    {
-      "id": "wpt/css_sizing/percentage-width-subpixels.tentative",
-      "status": "fail",
-      "mismatch_pct": 11.945833
-    },
-    {
-      "id": "wpt/css_sizing/shrink-to-fit-sizing-max-width-min-content",
-      "status": "fail",
-      "mismatch_pct": 0.257083
-    },
-    {
-      "id": "wpt/css_sizing/slice-intrinsic-size-ref",
-      "status": "fail",
-      "mismatch_pct": 9.81625
-    },
-    {
-      "id": "wpt/css_sizing/slice-intrinsic-size",
-      "status": "fail",
-      "mismatch_pct": 9.786458
-    },
-    {
-      "id": "wpt/css_sizing/slice-nowrap-intrinsic-size-bidi-ref",
-      "status": "fail",
-      "mismatch_pct": 10.664167
-    },
-    {
-      "id": "wpt/css_sizing/slice-nowrap-intrinsic-size-bidi",
-      "status": "fail",
-      "mismatch_pct": 10.664167
-    },
-    {
-      "id": "wpt/css_sizing/slice-nowrap-intrinsic-size-ref",
-      "status": "fail",
-      "mismatch_pct": 10.642708
-    },
-    {
-      "id": "wpt/css_sizing/slice-nowrap-intrinsic-size",
-      "status": "fail",
-      "mismatch_pct": 10.642708
-    },
-    {
-      "id": "wpt/css_sizing/svg-intrinsic-size-006-ref",
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-left-overflow-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/table-child-percentage-height-with-border-box-ref",
-      "status": "fail",
-      "mismatch_pct": 14.11875
-    },
-    {
-      "id": "wpt/css_sizing/thin-element-render-ref",
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-left-table-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/thin-element-render",
-      "status": "fail",
-      "mismatch_pct": 0.5
-    },
-    {
-      "id": "wpt/css_sizing/whitespace-and-break",
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-right-overflow-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/stretch_abspos-1",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/stretch_abspos-2",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/stretch_bfc-next-to-float-1",
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-right-table-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/stretch_bfc-next-to-float-2",
-      "status": "fail",
-      "mismatch_pct": 0.15625
-    },
-    {
-      "id": "wpt/css_sizing/stretch_block-height-003-ref",
-      "status": "fail",
-      "mismatch_pct": 1.970208
-    },
-    {
-      "id": "wpt/css_sizing/stretch_block-height-003",
-      "status": "fail",
-      "mismatch_pct": 2.065208
-    },
-    {
-      "id": "wpt/css_sizing/stretch_block-height-006",
-      "status": "fail",
-      "mismatch_pct": 9.375
-    },
-    {
-      "id": "wpt/css_sizing/stretch_block-height-009",
-      "status": "fail",
-      "mismatch_pct": 10.0
-    },
-    {
-      "id": "wpt/css_sizing/stretch_block-height-010",
-      "status": "fail",
-      "mismatch_pct": 8.333333
-    },
-    {
-      "id": "wpt/css_sizing/stretch_cache-miss-002",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/stretch_flexbox-stretch-minimum-001",
+      "id": "wpt/css2_floats/floats-wrap-bfc-004-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/stretch_flexbox-stretch-minimum-002",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/stretch_min-width-1",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/stretch_positioned-non-replaced-1",
+      "id": "wpt/css2_floats/floats-wrap-bfc-005-ref",
       "status": "fail",
-      "mismatch_pct": 1.822917
+      "mismatch_pct": 0.115
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-002",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-003",
-      "status": "fail",
-      "mismatch_pct": 51.603125
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-005",
-      "status": "fail",
-      "mismatch_pct": 9.936458
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-006",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-007",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-008",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-009",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-010",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-011",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-012",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-013",
+      "id": "wpt/css2_floats/floats-wrap-bfc-008",
       "status": "fail",
       "mismatch_pct": 1.041667
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-017",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-004",
+      "status": "fail",
+      "mismatch_pct": 0.833333
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-018",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-006.tentative",
+      "status": "fail",
+      "mismatch_pct": 2.34375
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-019",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_abspos-021",
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-007.tentative",
       "status": "fail",
       "mismatch_pct": 2.083333
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_auto-margins-001",
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-008.tentative",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-002",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-004",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-005",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-006",
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-009.tentative",
       "status": "fail",
       "mismatch_pct": 0.520833
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-007",
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-010-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-008",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-009",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-010",
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-010",
       "status": "fail",
-      "mismatch_pct": 10.0
+      "mismatch_pct": 3.880208
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-011",
+      "id": "wpt/css2_floats/floats-wrap-top-below-001l-notref",
       "status": "fail",
-      "mismatch_pct": 0.3125
+      "mismatch_pct": 1.1175
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-012",
+      "id": "wpt/css2_floats/floats-wrap-top-below-001l-ref",
       "status": "fail",
-      "mismatch_pct": 0.578125
+      "mismatch_pct": 1.1175
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-013",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-015",
+      "id": "wpt/css2_floats/floats-wrap-top-below-001r-notref",
       "status": "fail",
-      "mismatch_pct": 1.041667
+      "mismatch_pct": 1.1175
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-016",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-018",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-019",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-020",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-021",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-022",
+      "id": "wpt/css2_floats/floats-wrap-top-below-001r-ref",
       "status": "fail",
-      "mismatch_pct": 2.083333
+      "mismatch_pct": 1.1175
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-023",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-025",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-026",
+      "id": "wpt/css2_floats/floats-wrap-top-below-002l-ref",
       "status": "fail",
-      "mismatch_pct": 0.75
+      "mismatch_pct": 0.9925
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-027",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-029-crash",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-030",
+      "id": "wpt/css2_floats/floats-wrap-top-below-002r-ref",
       "status": "fail",
-      "mismatch_pct": 2.083333
+      "mismatch_pct": 0.9925
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-032",
+      "id": "wpt/css2_floats/floats-wrap-top-below-003l-ref",
       "status": "fail",
-      "mismatch_pct": 0.520833
+      "mismatch_pct": 2.127917
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-033",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-034",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-035",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-036",
+      "id": "wpt/css2_floats/floats-wrap-top-below-003r-ref",
       "status": "fail",
-      "mismatch_pct": 0.625
+      "mismatch_pct": 3.169583
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-037",
+      "id": "wpt/css2_floats/floats-wrap-top-below-bfc-001l",
       "status": "fail",
-      "mismatch_pct": 2.083333
+      "mismatch_pct": 2.159167
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-038",
+      "id": "wpt/css2_floats/floats-wrap-top-below-bfc-001r",
       "status": "fail",
-      "mismatch_pct": 1.041667
+      "mismatch_pct": 2.159167
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-039",
+      "id": "wpt/css2_floats/floats-wrap-top-below-bfc-002l",
+      "status": "fail",
+      "mismatch_pct": 5.159167
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-bfc-002r",
+      "status": "fail",
+      "mismatch_pct": 5.159167
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-bfc-003l",
+      "status": "fail",
+      "mismatch_pct": 3.169583
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-bfc-003r",
+      "status": "fail",
+      "mismatch_pct": 3.169583
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-inline-001l",
+      "status": "fail",
+      "mismatch_pct": 2.159167
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-inline-001r",
+      "status": "fail",
+      "mismatch_pct": 2.159167
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-inline-002l",
+      "status": "fail",
+      "mismatch_pct": 5.159167
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-inline-002r",
+      "status": "fail",
+      "mismatch_pct": 5.159167
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-inline-003l",
+      "status": "fail",
+      "mismatch_pct": 3.169583
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-top-below-inline-003r",
+      "status": "fail",
+      "mismatch_pct": 3.169583
+    },
+    {
+      "id": "wpt/css2_floats/floats-zero-height-wrap-001-ref",
+      "status": "fail",
+      "mismatch_pct": 2.519792
+    },
+    {
+      "id": "wpt/css2_floats/floats-zero-height-wrap-001",
+      "status": "fail",
+      "mismatch_pct": 2.353125
+    },
+    {
+      "id": "wpt/css2_floats/floats-zero-height-wrap-002",
+      "status": "fail",
+      "mismatch_pct": 2.353125
+    },
+    {
+      "id": "wpt/css2_floats/intrinsic-size-float-and-line",
       "status": "fail",
       "mismatch_pct": 2.083333
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-040",
+      "id": "wpt/css2_floats/line-pushed-by-floats-crash",
+      "status": "fail",
+      "mismatch_pct": 2.5
+    },
+    {
+      "id": "wpt/css2_floats/negative-block-margin-pushing-float-out-of-block-formatting-context-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-041",
+      "id": "wpt/css2_floats/negative-block-margin-pushing-float-out-of-block-formatting-context",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-042",
+      "id": "wpt/css2_floats/negative-margin-float-positioning",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-043",
-      "status": "fail",
-      "mismatch_pct": 1.041667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-044",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-045",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-046",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-047",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-048",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-049",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-050",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-051-crash",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-052",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-053",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-054",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-055",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-056",
-      "status": "fail",
-      "mismatch_pct": 1.041667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-057.tentative",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-058",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-with-margin-collapsing-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-with-margin-collapsing-002",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-002",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-003",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-004",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-005",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-007",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-008",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-009",
-      "status": "fail",
-      "mismatch_pct": 10.416667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-010",
-      "status": "fail",
-      "mismatch_pct": 14.583333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-011",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-012",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-013",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-014",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-019",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-020",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-021",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-022",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-025",
-      "status": "fail",
-      "mismatch_pct": 79.875
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-026",
-      "status": "fail",
-      "mismatch_pct": 10.691667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-031",
-      "status": "fail",
-      "mismatch_pct": 6.25
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-032",
-      "status": "fail",
-      "mismatch_pct": 10.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-033",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-034",
-      "status": "fail",
-      "mismatch_pct": 89.75
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-035",
-      "status": "fail",
-      "mismatch_pct": 89.75
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-036",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-037",
-      "status": "fail",
-      "mismatch_pct": 89.75
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-038",
-      "status": "fail",
-      "mismatch_pct": 87.145833
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-039",
-      "status": "fail",
-      "mismatch_pct": 66.208333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-040",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-041",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-043",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-044",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-045",
-      "status": "fail",
-      "mismatch_pct": 10.416667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-046",
-      "status": "fail",
-      "mismatch_pct": 10.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-047",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-048",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-049",
+      "id": "wpt/css2_floats/new-fc-beside-adjoining-float-2",
       "status": "fail",
       "mismatch_pct": 4.166667
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-050",
+      "id": "wpt/css2_floats/new-fc-beside-adjoining-float",
       "status": "fail",
-      "mismatch_pct": 5.833333
+      "mismatch_pct": 7.916667
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-051",
-      "status": "fail",
-      "mismatch_pct": 1.041667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-052",
-      "status": "fail",
-      "mismatch_pct": 1.041667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-053",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-054",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_floats-aspect-ratio-001-ref",
-      "status": "fail",
-      "mismatch_pct": 1.1875
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_floats-aspect-ratio-001",
-      "status": "fail",
-      "mismatch_pct": 2.9375
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-001",
+      "id": "wpt/css2_floats/new-fc-beside-float-with-margin",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-002",
+      "id": "wpt/css2_floats/new-fc-beside-float-with-min-width",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-003",
+      "id": "wpt/css2_floats/new-fc-relayout",
+      "status": "fail",
+      "mismatch_pct": 0.34375
+    },
+    {
+      "id": "wpt/css2_floats/new-fc-separates-from-float-2",
+      "status": "fail",
+      "mismatch_pct": 4.166667
+    },
+    {
+      "id": "wpt/css2_floats/new-fc-separates-from-float-3",
+      "status": "fail",
+      "mismatch_pct": 2.916667
+    },
+    {
+      "id": "wpt/css2_floats/new-fc-separates-from-float-4",
+      "status": "fail",
+      "mismatch_pct": 4.539583
+    },
+    {
+      "id": "wpt/css2_floats/new-fc-separates-from-float",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-004",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-006",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-007",
+      "id": "wpt/css2_floats/overflow-scroll-float-paint-order-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-010",
-      "status": "fail",
-      "mismatch_pct": 0.78125
+      "id": "wpt/css2_floats/overflow-scroll-float-paint-order",
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-011",
-      "status": "fail",
-      "mismatch_pct": 2.083333
+      "id": "wpt/css2_floats/overhanging-float-paint-order-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-012",
+      "id": "wpt/css2_floats/overhanging-float-paint-order",
+      "status": "fail",
+      "mismatch_pct": 3.333333
+    },
+    {
+      "id": "wpt/css2_floats/zero-available-space-float-positioning",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/zero-width-floats-positioning.tentative",
       "status": "fail",
       "mismatch_pct": 0.9375
     },
     {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-013",
+      "id": "wpt/css2_floats/zero-width-floats",
       "status": "fail",
-      "mismatch_pct": 1.145833
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-014",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-015",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-016",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_percentage-resolution-001",
-      "status": "fail",
-      "mismatch_pct": 2.083333
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_percentage-resolution-004",
-      "status": "fail",
-      "mismatch_pct": 1.041667
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_percentage-resolution-005",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_small-aspect-ratio-crash",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_zero-or-infinity-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_zero-or-infinity-002",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_zero-or-infinity-003",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_zero-or-infinity-004",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/aspect-ratio_zero-or-infinity-005",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/responsive-iframe_responsive-iframe-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/responsive-iframe_responsive-iframe-unsized-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/responsive-iframe_resources_iframe-contents-unsized",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/responsive-iframe_resources_iframe-contents",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-001-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-002-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-003-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-004-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-005-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-007-ref",
-      "status": "fail",
-      "mismatch_pct": 0.006042
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-010-ref",
-      "status": "fail",
-      "mismatch_pct": 2.5725
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-011-ref",
-      "status": "fail",
-      "mismatch_pct": 1.1025
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-013-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-015-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-016-ref",
-      "status": "fail",
-      "mismatch_pct": 2.5725
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-018-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-019-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
-    },
-    {
-      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-021-ref",
-      "status": "fail",
-      "mismatch_pct": 1.010625
+      "mismatch_pct": 4.166667
     }
   ]
 }

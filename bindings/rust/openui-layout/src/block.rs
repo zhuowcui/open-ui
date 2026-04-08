@@ -1787,18 +1787,20 @@ fn resolve_inline_size(
         // CSS Sizing 4 §5.1: when width is auto and the element has a preferred
         // aspect ratio with a definite height, compute width from height × ratio.
         //
-        // IMPORTANT: This only applies in shrink-to-fit contexts (floats,
-        // inline-blocks, table cells, etc). Block-level boxes in normal flow
-        // always fill available width and derive height from AR instead.
-        // See CSS Sizing 4 §5.1: "The aspect ratio does not affect the
-        // inline size of a block-level box in a block flow whose size is
-        // given by its context."
-        let is_shrink_to_fit = style.float != openui_style::Float::None
-            || style.display.is_inline_level()
-            || space.is_fixed_inline_size
-            || space.stretch_inline_size;
-        let ar_width = if style.width.is_auto() && is_shrink_to_fit {
+        // This applies to ALL elements (block-level, inline-block, floats, etc.)
+        // as long as:
+        //   1. width is auto (not stretch)
+        //   2. the element has an aspect-ratio
+        //   3. the height resolves to a definite value (including after
+        //      min-height/max-height clamping)
+        //
+        // Chromium NG: ComputeInlineSizeFromAspectRatio() is called for any
+        // element with a definite block size and aspect-ratio, regardless of
+        // whether it's in a shrink-to-fit context.
+        let ar_width = if style.width.is_auto() {
             if let Some(ref ar) = style.aspect_ratio {
+                // Resolve the effective height (applying min/max constraints)
+                // so that width = effective_height × ratio.
                 let h_resolved = if !style.height.is_auto()
                     && !style.height.is_content_or_intrinsic()
                     && !style.height.is_stretch()
@@ -1809,12 +1811,44 @@ fn resolve_inline_size(
                         openui_geometry::INDEFINITE_SIZE,
                         openui_geometry::INDEFINITE_SIZE,
                     );
-                    if h.is_indefinite() { None } else { Some(h) }
+                    if h.is_indefinite() {
+                        None
+                    } else {
+                        // Apply min-height / max-height constraints
+                        let min_h = if style.min_height.is_auto() {
+                            LayoutUnit::zero()
+                        } else {
+                            resolve_length(
+                                &style.min_height,
+                                space.percentage_resolution_block_size,
+                                LayoutUnit::zero(),
+                                LayoutUnit::zero(),
+                            )
+                        };
+                        let max_h = resolve_length(
+                            &style.max_height,
+                            space.percentage_resolution_block_size,
+                            LayoutUnit::max(),
+                            LayoutUnit::max(),
+                        );
+                        let clamped = h.max_of(min_h).min_of(max_h);
+                        Some(clamped)
+                    }
                 } else {
                     None
                 };
                 if let Some(h) = h_resolved {
-                    let content_h = if style.box_sizing == BoxSizing::BorderBox {
+                    // CSS Sizing 4: when `auto <ratio>`, AR applies to
+                    // content-box regardless of box-sizing. Bare `<ratio>`
+                    // respects the element's box-sizing.
+                    let box_sizing_for_ar = if ar.auto_flag {
+                        BoxSizing::ContentBox
+                    } else {
+                        style.box_sizing
+                    };
+                    let content_h = if box_sizing_for_ar == BoxSizing::BorderBox {
+                        h
+                    } else if style.box_sizing == BoxSizing::BorderBox {
                         (h - border_padding_block).clamp_negative_to_zero()
                     } else {
                         h
@@ -1822,10 +1856,9 @@ fn resolve_inline_size(
                     let ratio = ar.ratio;
                     if ratio.0 != 0.0 && ratio.1 != 0.0 {
                         let w = LayoutUnit::from_f32(content_h.to_f32() * ratio.0 / ratio.1);
-                        // AR applies to content-box dimensions. Return in the
-                        // same sizing context as other paths: border-box value
-                        // when box-sizing is border-box, content-box otherwise.
-                        Some(if style.box_sizing == BoxSizing::BorderBox {
+                        Some(if box_sizing_for_ar == BoxSizing::BorderBox {
+                            w
+                        } else if style.box_sizing == BoxSizing::BorderBox {
                             w + border_padding
                         } else {
                             w
