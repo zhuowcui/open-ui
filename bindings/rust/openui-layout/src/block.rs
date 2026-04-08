@@ -2169,19 +2169,21 @@ fn resolve_block_size(
     // which is already in border-box space.
     //
     // CSS Sizing 4 §5.1 — Automatic Minimum Size:
-    // When height is auto + aspect-ratio includes 'auto' keyword + element
-    // is NOT a scroll container + min-height is auto, the automatic minimum
-    // size is the intrinsic (content-based) block size.
+    // In general, the automatic minimum size of an aspect-ratio'd box in
+    // either axis is its min-content size in that axis, clamped by its
+    // maximum size. This applies to BOTH `<ratio>` and `auto <ratio>`.
     //
-    // IMPORTANT: Content-based automatic minimum only applies when the AR
-    // includes the 'auto' keyword (i.e. `auto <ratio>`). For bare `<ratio>`
-    // the automatic minimum is just the transferred minimum from the
-    // opposite axis (handled by the transfer code below), NOT the content
-    // size. CSS Sizing 4 §5.1: "Content-based minimums are automatic only
-    // when the aspect-ratio includes 'auto'."
-    let ar_auto_flag = style.aspect_ratio.as_ref().map_or(false, |ar| ar.auto_flag);
+    // Exception: scroll containers (overflow != visible) have automatic
+    // minimum size of zero per CSS Sizing 4 §5.1.
+    //
+    // The automatic minimum only applies when:
+    //   1. height is auto (being resolved through AR)
+    //   2. min-height is auto (not explicitly set)
+    //   3. element has an aspect-ratio
+    //   4. element is NOT a scroll container
+    let has_ar = style.aspect_ratio.is_some();
     let apply_automatic_min_size = style.min_height.is_auto()
-        && ar_auto_flag
+        && has_ar
         && !style.is_scroll_container()
         && style.height.is_auto();
     let min_raw = if style.min_height.is_auto() {
