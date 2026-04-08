@@ -111,6 +111,32 @@ fn layout_out_of_flow_child(
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
         resolve_vertical(style, cb_width, cb_height, static_top, &border, &padding);
 
+    // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
+    // compute height from the resolved width using the aspect ratio.
+    let resolved_height_raw = if style.height.is_auto()
+        && style.aspect_ratio.is_some()
+        && !(!style.top.is_auto() && !style.bottom.is_auto())
+    {
+        let content_w = (resolved_width_raw - border_padding_h).clamp_negative_to_zero();
+        let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
+            content_w,
+            openui_geometry::INDEFINITE_SIZE,
+            style.aspect_ratio.as_ref().unwrap(),
+            None,
+        );
+        if !h.is_indefinite() {
+            if style.box_sizing == BoxSizing::BorderBox {
+                h.max_of(border_padding_v)
+            } else {
+                h + border_padding_v
+            }
+        } else {
+            resolved_height_raw
+        }
+    } else {
+        resolved_height_raw
+    };
+
     // CSS 2.1 §10.4 / §10.7: Apply min/max constraints to the resolved size.
     // The constraint equation (§10.3.7/§10.6.4) gives a tentative width/height.
     // If that tentative value violates min/max, re-resolve the full constraint
