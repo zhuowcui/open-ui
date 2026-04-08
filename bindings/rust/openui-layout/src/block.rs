@@ -1902,70 +1902,75 @@ fn layout_multicol(
             for (i, child_frag) in col_fragments.into_iter().enumerate() {
                 let child_height = col_block_sizes[i];
 
+                // If child doesn't fit and there's content already in this column,
+                // move to next column first.
                 if col_remaining.raw() < child_height.raw() && col_block_offset > LayoutUnit::zero() {
-                    if col_remaining > LayoutUnit::zero() && col_idx + 1 < resolved.count as usize {
-                        // Fragment the child across columns.
-                        let first_part_height = col_remaining;
-                        let remainder_height = child_height - first_part_height;
-
-                        let pos_idx = col_idx.min(positions.len().saturating_sub(1));
-                        let col_inline_offset = positions.get(pos_idx)
-                            .map(|p| p.inline_offset)
-                            .unwrap_or(LayoutUnit::zero());
-
-                        let mut first_part = child_frag.clone();
-                        first_part.size.height = first_part_height;
-                        first_part.has_overflow_clip = true;
-                        first_part.offset = PhysicalOffset::new(
-                            content_edge_x + col_inline_offset,
-                            content_edge_y + total_block_offset + col_block_offset,
-                        );
-                        result_children.push(first_part);
-
-                        col_idx += 1;
-                        col_block_offset = LayoutUnit::zero();
-                        col_remaining = column_height;
-
-                        let next_pos_idx = col_idx.min(positions.len().saturating_sub(1));
-                        let next_col_inline = positions.get(next_pos_idx)
-                            .map(|p| p.inline_offset)
-                            .unwrap_or(LayoutUnit::zero());
-
-                        let mut remainder = child_frag.clone();
-                        remainder.size.height = remainder_height;
-                        remainder.has_overflow_clip = true;
-                        remainder.offset = PhysicalOffset::new(
-                            content_edge_x + next_col_inline,
-                            content_edge_y + total_block_offset + col_block_offset,
-                        );
-                        for c in &mut remainder.children {
-                            c.offset.top = c.offset.top - first_part_height;
-                        }
-                        col_block_offset = col_block_offset + remainder_height;
-                        col_remaining = col_remaining - remainder_height;
-                        result_children.push(remainder);
-                        continue;
-                    }
-
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
                 }
 
-                let pos_idx = col_idx.min(positions.len().saturating_sub(1));
-                let col_inline_offset = positions.get(pos_idx)
-                    .map(|p| p.inline_offset)
-                    .unwrap_or(LayoutUnit::zero());
+                if col_remaining.raw() >= child_height.raw() || col_idx >= positions.len() {
+                    // Child fits in current column (or overflow: last column).
+                    let pos_idx = col_idx.min(positions.len().saturating_sub(1));
+                    let col_inline_offset = positions.get(pos_idx)
+                        .map(|p| p.inline_offset)
+                        .unwrap_or(LayoutUnit::zero());
 
-                let mut positioned = child_frag;
-                positioned.offset = PhysicalOffset::new(
-                    content_edge_x + col_inline_offset,
-                    content_edge_y + total_block_offset + col_block_offset,
-                );
+                    let mut positioned = child_frag;
+                    positioned.offset = PhysicalOffset::new(
+                        content_edge_x + col_inline_offset,
+                        content_edge_y + total_block_offset + col_block_offset,
+                    );
+                    col_block_offset = col_block_offset + child_height;
+                    col_remaining = col_remaining - child_height;
+                    result_children.push(positioned);
+                } else {
+                    // Child must be fragmented across multiple columns.
+                    let mut consumed = LayoutUnit::zero();
+                    while consumed.raw() < child_height.raw() {
+                        let pos_idx = col_idx.min(positions.len().saturating_sub(1));
+                        let col_inline_offset = positions.get(pos_idx)
+                            .map(|p| p.inline_offset)
+                            .unwrap_or(LayoutUnit::zero());
 
-                col_block_offset = col_block_offset + child_height;
-                col_remaining = col_remaining - child_height;
-                result_children.push(positioned);
+                        let avail = if col_block_offset > LayoutUnit::zero() {
+                            col_remaining
+                        } else {
+                            column_height
+                        };
+                        let remaining_child = child_height - consumed;
+                        let part_height = avail.min_of(remaining_child);
+
+                        let mut part = child_frag.clone();
+                        part.size.height = part_height;
+                        part.has_overflow_clip = true;
+                        part.offset = PhysicalOffset::new(
+                            content_edge_x + col_inline_offset,
+                            content_edge_y + total_block_offset + col_block_offset,
+                        );
+                        // Shift child content up by the amount already consumed
+                        if consumed > LayoutUnit::zero() {
+                            for c in &mut part.children {
+                                c.offset.top = c.offset.top - consumed;
+                            }
+                        }
+                        result_children.push(part);
+
+                        consumed = consumed + part_height;
+                        col_block_offset = col_block_offset + part_height;
+                        col_remaining = col_remaining - part_height;
+
+                        // Move to next column if this one is full and there's more content
+                        if consumed.raw() < child_height.raw() && col_idx + 1 < positions.len() {
+                            col_idx += 1;
+                            col_block_offset = LayoutUnit::zero();
+                            col_remaining = column_height;
+                        } else if consumed.raw() < child_height.raw() {
+                            break; // No more columns — overflow
+                        }
+                    }
+                }
             }
 
             // Column rules for this group.

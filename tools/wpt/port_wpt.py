@@ -78,15 +78,25 @@ SUPPORTED_PROPERTIES = {
 }
 
 UNSUPPORTED_FEATURES = {
+    # Grid layout — not implemented
     'grid', 'grid-template', 'grid-template-columns', 'grid-template-rows',
     'grid-column', 'grid-row', 'grid-area', 'grid-gap',
+    # Writing modes — changes coordinate system fundamentally
     'writing-mode', 'direction', 'unicode-bidi',
+    # Transforms & animation — out of scope
     'transform', 'rotate', 'scale', 'translate',
     'animation', 'transition', 'will-change',
+    # Shape/mask/filter — out of scope
     'shape-outside', 'shape-margin', 'shape-image-threshold',
     'clip-path', 'mask', 'filter',
+    # Table layout — not implemented
     'table-layout', 'caption-side', 'border-collapse', 'border-spacing',
+    # Generated content — out of scope
     'counter-reset', 'counter-increment', 'content',
+}
+
+# Properties we can safely IGNORE (don't affect box layout geometry)
+IGNORED_PROPERTIES = {
     'text-decoration', 'text-transform', 'text-indent', 'text-shadow',
     'font', 'font-family', 'font-weight', 'font-style',
     'font-variant', 'letter-spacing', 'word-spacing',
@@ -94,6 +104,8 @@ UNSUPPORTED_FEATURES = {
     'list-style', 'list-style-type',
     'cursor', 'pointer-events', 'user-select',
     'resize', 'outline', 'box-shadow', 'text-overflow',
+    'vertical-align', 'line-height', 'visibility',
+    'opacity', 'z-index', 'isolation',
 }
 
 # CSS named colors → Rust Color constants
@@ -241,6 +253,8 @@ def check_supported(styles: dict) -> tuple[bool, str]:
     for prop in styles:
         if prop in UNSUPPORTED_FEATURES:
             return False, f"unsupported property: {prop}"
+        if prop in IGNORED_PROPERTIES:
+            continue  # Safe to ignore — doesn't affect box layout
         if prop.startswith('grid') or prop.startswith('-webkit') or prop.startswith('-moz'):
             return False, f"vendor/unsupported prefix: {prop}"
     return True, ""
@@ -311,41 +325,73 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
                    ancestors: list = None) -> bool:
     """Check if a CSS selector matches an element.
     
-    Supports simple selectors and descendant combinators (space).
+    Supports simple selectors, descendant combinators (space), and child combinator (>).
     ancestors is a list of (tag, classes, id_val) tuples from outermost to innermost.
     """
     selector = selector.strip()
     if not selector:
         return False
 
-    # Child/sibling combinators not supported (filtered by portability gate)
-    if '>' in selector or '+' in selector or '~' in selector:
+    # Strip pseudo-classes for matching purposes
+    selector = re.sub(r':(?:root|first-child|last-child|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))', '', selector)
+    selector = selector.strip()
+
+    # After stripping, if selector is empty (e.g., bare ":root"), match everything
+    if not selector:
+        return True
+
+    # Sibling combinators not supported
+    if '+' in selector or '~' in selector:
         return False
 
-    # Split on whitespace for descendant combinator
-    parts = selector.split()
-    if len(parts) == 1:
-        # Simple selector — match against current element
-        return _match_simple_selector(parts[0], tag, classes, id_val)
+    # Tokenize: split on child combinator and whitespace while preserving combinator type
+    tokens = []
+    combinators = []
+    # Normalize whitespace around >
+    normalized = re.sub(r'\s*>\s*', ' > ', selector).strip()
+    parts = normalized.split()
+    
+    current_parts = []
+    for p in parts:
+        if p == '>':
+            if current_parts:
+                tokens.append(' '.join(current_parts))
+                current_parts = []
+            combinators.append('child')
+        else:
+            if current_parts:
+                tokens.append(' '.join(current_parts))
+                combinators.append('descendant')
+                current_parts = []
+            current_parts.append(p)
+    if current_parts:
+        tokens.append(' '.join(current_parts))
 
-    # Descendant selector: last part must match current node,
-    # remaining parts must match some ancestor chain
-    if not _match_simple_selector(parts[-1], tag, classes, id_val):
+    if len(tokens) == 1:
+        return _match_simple_selector(tokens[0], tag, classes, id_val)
+
+    # Last token must match current element
+    if not _match_simple_selector(tokens[-1], tag, classes, id_val):
         return False
 
     if not ancestors:
         return False
 
-    # Walk ancestor list (innermost first) to match remaining selector parts
-    remaining = parts[:-1]  # e.g., for "#container div span", remaining = ["#container", "div"]
-    ri = len(remaining) - 1  # start from innermost required ancestor
-    for anc_tag, anc_classes, anc_id in reversed(ancestors):
+    # Walk ancestor list (innermost first) matching remaining tokens
+    remaining_tokens = tokens[:-1]
+    remaining_combinators = combinators[:]  # combinators[i] is between tokens[i] and tokens[i+1]
+    ri = len(remaining_tokens) - 1
+    
+    for idx, (anc_tag, anc_classes, anc_id) in enumerate(reversed(ancestors)):
         if ri < 0:
             break
-        if _match_simple_selector(remaining[ri], anc_tag, anc_classes, anc_id):
+        if _match_simple_selector(remaining_tokens[ri], anc_tag, anc_classes, anc_id):
             ri -= 1
+        elif ri < len(remaining_combinators) and remaining_combinators[ri] == 'child':
+            # Child combinator requires IMMEDIATE parent match
+            return False
 
-    return ri < 0  # All ancestor parts matched
+    return ri < 0
 
 
 def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None):
@@ -512,11 +558,25 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     if parser.has_script:
         return False, "uses_javascript"
 
+    # Pseudo-classes/pseudo-elements we can handle
+    SAFE_PSEUDO_PATTERN = re.compile(
+        r':(?:root|first-child|last-child|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))'
+    )
+
     # Check CSS rules from <style> blocks for unsupported properties
     if parser.has_style_block:
         for selector, styles in parser.css_rules:
-            # Check for complex selectors
-            if any(c in selector for c in ('>', '+', '~', '::', ':')):
+            # Strip safe pseudo-classes before checking for unsupported ones
+            stripped = SAFE_PSEUDO_PATTERN.sub('', selector)
+            # After stripping safe pseudos, reject remaining pseudo-classes/elements
+            if '::' in stripped:
+                return False, f"complex_css_selector: {selector}"
+            # Allow remaining ':' only if it was fully consumed by safe pattern
+            remaining_colons = stripped.replace('::', '')
+            if ':' in remaining_colons:
+                return False, f"complex_css_selector: {selector}"
+            # Reject sibling combinators (+, ~) but ALLOW child combinator (>)
+            if '+' in stripped or '~' in stripped:
                 return False, f"complex_css_selector: {selector}"
             supported, reason = check_supported(styles)
             if not supported:
@@ -538,7 +598,7 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
         if display in ('table', 'table-row', 'table-cell', 'table-column',
                         'table-row-group', 'table-column-group', 'table-header-group',
                         'table-footer-group', 'table-caption', 'grid', 'inline-grid',
-                        'list-item', 'ruby', 'ruby-text', 'contents'):
+                        'ruby', 'ruby-text'):
             return False, f"unsupported display: {display}"
 
     # Check for unsupported elements
@@ -914,7 +974,10 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         if val == 'auto':
             return f"{s}.column_count = None;"
         try:
-            return f"{s}.column_count = Some({int(val)});"
+            v = int(val)
+            if v < 1:
+                return None  # Invalid: column-count must be >= 1
+            return f"{s}.column_count = Some({v});"
         except ValueError:
             pass
 

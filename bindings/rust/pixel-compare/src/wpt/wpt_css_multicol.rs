@@ -942,6 +942,62 @@ fn css_multicol_broken_column_rule_1() -> Document {
     doc
 }
 
+// Source: column-balancing-paged-001-print-ref.html
+fn css_multicol_column_balancing_paged_001_print_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(144, 238, 144, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.column_count = Some(2);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(144, 238, 144, 255);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n4, n5);
+    doc
+}
+
+// Source: column-balancing-paged-001-print.html
+fn css_multicol_column_balancing_paged_001_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(144, 238, 144, 255);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+            doc.append_child(n2, n5);
+    doc
+}
+
 // Source: column-balancing-with-overflow-auto-crash.html
 fn css_multicol_column_balancing_with_overflow_auto_crash() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3527,6 +3583,186 @@ fn css_multicol_moz_multicol3_column_balancing_break_inside_avoid_1() -> Documen
     doc
 }
 
+// Source: multicol-basic-001.html
+fn css_multicol_multicol_basic_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::auto();
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::auto();
+    doc.node_mut(n1).style.width = Length::px(360.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(360.0);
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n3).style.color = Color::from_rgba8(128, 0, 128, 255);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n5).style.color = Color::BLUE;
+            doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-basic-002.html
+fn css_multicol_multicol_basic_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::auto();
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::auto();
+    doc.node_mut(n1).style.width = Length::px(360.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(360.0);
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n3).style.color = Color::from_rgba8(128, 0, 128, 255);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n5).style.color = Color::BLUE;
+            doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-basic-003.html
+fn css_multicol_multicol_basic_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::auto();
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::auto();
+    doc.node_mut(n1).style.width = Length::px(360.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(360.0);
+        doc.node_mut(n2).style.column_width = Some(Length::px(120.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n3).style.color = Color::from_rgba8(128, 0, 128, 255);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n5).style.color = Color::BLUE;
+            doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-basic-004.html
+fn css_multicol_multicol_basic_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::auto();
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::auto();
+    doc.node_mut(n1).style.width = Length::px(360.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(360.0);
+        doc.node_mut(n2).style.column_width = Some(Length::px(120.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n3).style.color = Color::from_rgba8(128, 0, 128, 255);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 0, 0, 255);
+            doc.node_mut(n5).style.color = Color::BLUE;
+            doc.append_child(n2, n5);
+    doc
+}
+
 // Source: multicol-basic-005.html
 fn css_multicol_multicol_basic_005() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3643,6 +3879,1859 @@ fn css_multicol_multicol_basic_008() -> Document {
     doc
 }
 
+// Source: multicol-block-no-clip-001.html
+fn css_multicol_multicol_block_no_clip_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::WHITE;
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.color = Color::WHITE;
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: multicol-block-no-clip-002.html
+fn css_multicol_multicol_block_no_clip_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: multicol-br-inside-avoidcolumn-001.html
+fn css_multicol_multicol_br_inside_avoidcolumn_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.height = Length::px(300.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(200.0);
+        doc.node_mut(n2).style.break_inside = BreakInside::AvoidColumn;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(200.0);
+        doc.node_mut(n3).style.break_inside = BreakInside::AvoidColumn;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.height = Length::px(200.0);
+        doc.node_mut(n4).style.break_inside = BreakInside::AvoidColumn;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-breaking-000-ref.html
+fn css_multicol_multicol_breaking_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(194.0);
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.border_right_width = 4;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(188.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(95.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(188.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(204.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(188.0);
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(408.0);
+        doc.append_child(n1, n7);
+    doc
+}
+
+// Source: multicol-breaking-000.html
+fn css_multicol_multicol_breaking_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-001-ref.html
+fn css_multicol_multicol_breaking_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(194.0);
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.border_right_width = 4;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(188.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(95.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(188.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(204.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.border_right_width = 2;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n7).style.padding_right = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(86.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(204.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.padding_left = Length::px(7.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.width = Length::px(86.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.left = Length::px(299.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.height = Length::px(100.0);
+        doc.node_mut(n9).style.width = Length::px(188.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.left = Length::px(408.0);
+        doc.append_child(n1, n9);
+    doc
+}
+
+// Source: multicol-breaking-001.html
+fn css_multicol_multicol_breaking_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-002-ref.html
+fn css_multicol_multicol_breaking_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(194.0);
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.border_right_width = 4;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(188.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(95.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(188.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(204.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.border_right_width = 2;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n7).style.padding_right = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(86.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(204.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.padding_left = Length::px(7.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.width = Length::px(86.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.left = Length::px(299.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.height = Length::px(100.0);
+        doc.node_mut(n9).style.width = Length::px(188.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.left = Length::px(408.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.border_right_width = 2;
+        doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n10).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n10).style.padding_right = Length::px(7.0);
+        doc.node_mut(n10).style.height = Length::px(100.0);
+        doc.node_mut(n10).style.width = Length::px(86.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.left = Length::px(408.0);
+        doc.append_child(n1, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.padding_left = Length::px(7.0);
+        doc.node_mut(n11).style.height = Length::px(100.0);
+        doc.node_mut(n11).style.width = Length::px(86.0);
+        doc.node_mut(n11).style.position = Position::Absolute;
+        doc.node_mut(n11).style.top = Length::px(0.0);
+        doc.node_mut(n11).style.left = Length::px(503.0);
+        doc.append_child(n1, n11);
+    doc
+}
+
+// Source: multicol-breaking-002.html
+fn css_multicol_multicol_breaking_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-003-ref.html
+fn css_multicol_multicol_breaking_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(194.0);
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.border_right_width = 4;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(188.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(95.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(188.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(204.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.border_right_width = 2;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n7).style.padding_right = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(86.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(204.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.padding_left = Length::px(7.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.width = Length::px(86.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.left = Length::px(299.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.height = Length::px(100.0);
+        doc.node_mut(n9).style.width = Length::px(188.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.left = Length::px(408.0);
+        doc.append_child(n1, n9);
+    doc
+}
+
+// Source: multicol-breaking-003.html
+fn css_multicol_multicol_breaking_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-004-ref.html
+fn css_multicol_multicol_breaking_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(125.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(194.0);
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(125.0);
+        doc.node_mut(n2).style.border_right_width = 4;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(125.0);
+        doc.node_mut(n3).style.width = Length::px(188.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(95.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(25.0);
+        doc.node_mut(n6).style.width = Length::px(188.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(100.0);
+        doc.node_mut(n6).style.left = Length::px(0.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.height = Length::px(125.0);
+        doc.node_mut(n7).style.width = Length::px(188.0);
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(204.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.border_right_width = 2;
+        doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n8).style.padding_right = Length::px(7.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.width = Length::px(86.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.left = Length::px(204.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.height = Length::px(25.0);
+        doc.node_mut(n9).style.width = Length::px(188.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(100.0);
+        doc.node_mut(n9).style.left = Length::px(204.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.padding_left = Length::px(7.0);
+        doc.node_mut(n10).style.height = Length::px(100.0);
+        doc.node_mut(n10).style.width = Length::px(86.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.left = Length::px(299.0);
+        doc.append_child(n1, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.height = Length::px(125.0);
+        doc.node_mut(n11).style.width = Length::px(188.0);
+        doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n11).style.position = Position::Absolute;
+        doc.node_mut(n11).style.top = Length::px(0.0);
+        doc.node_mut(n11).style.left = Length::px(408.0);
+        doc.append_child(n1, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.height = Length::px(25.0);
+        doc.node_mut(n12).style.width = Length::px(188.0);
+        doc.node_mut(n12).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n12).style.position = Position::Absolute;
+        doc.node_mut(n12).style.top = Length::px(100.0);
+        doc.node_mut(n12).style.left = Length::px(408.0);
+        doc.append_child(n1, n12);
+    doc
+}
+
+// Source: multicol-breaking-004.html
+fn css_multicol_multicol_breaking_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(125.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_top_width = 0;
+        doc.node_mut(n2).style.border_right_width = 0;
+        doc.node_mut(n2).style.border_bottom_width = 25;
+        doc.node_mut(n2).style.border_left_width = 0;
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-005-ref.html
+fn css_multicol_multicol_breaking_005_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(262.0);
+        doc.node_mut(n2).style.width = Length::px(268.0);
+        doc.node_mut(n2).style.height = Length::px(200.0);
+        doc.node_mut(n2).style.border_right_width = 4;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(256.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(120.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(120.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(129.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(256.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(272.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.border_right_width = 2;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n7).style.padding_right = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(120.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(272.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.padding_left = Length::px(7.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.width = Length::px(120.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.left = Length::px(401.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.height = Length::px(100.0);
+        doc.node_mut(n9).style.width = Length::px(256.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.left = Length::px(544.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.border_right_width = 2;
+        doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n10).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n10).style.padding_right = Length::px(7.0);
+        doc.node_mut(n10).style.height = Length::px(100.0);
+        doc.node_mut(n10).style.width = Length::px(120.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.left = Length::px(544.0);
+        doc.append_child(n1, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.padding_left = Length::px(7.0);
+        doc.node_mut(n11).style.height = Length::px(100.0);
+        doc.node_mut(n11).style.width = Length::px(120.0);
+        doc.node_mut(n11).style.position = Position::Absolute;
+        doc.node_mut(n11).style.top = Length::px(0.0);
+        doc.node_mut(n11).style.left = Length::px(673.0);
+        doc.append_child(n1, n11);
+    doc
+}
+
+// Source: multicol-breaking-005.html
+fn css_multicol_multicol_breaking_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_fill = ColumnFill::Balance;
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-006-ref.html
+fn css_multicol_multicol_breaking_006_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(194.0);
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.border_left_width = 4;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(188.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(95.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(188.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(204.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.border_right_width = 2;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n7).style.padding_right = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(86.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(204.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.padding_left = Length::px(7.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.width = Length::px(86.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.left = Length::px(299.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.height = Length::px(20.0);
+        doc.node_mut(n9).style.width = Length::px(188.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(80.0);
+        doc.node_mut(n9).style.left = Length::px(204.0);
+        doc.append_child(n1, n9);
+    doc
+}
+
+// Source: multicol-breaking-006.html
+fn css_multicol_multicol_breaking_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 0, 255, 76);
+        doc.node_mut(n2).style.border_bottom_width = 20;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.height = Length::auto();
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-000-ref.html
+fn css_multicol_multicol_breaking_nobackground_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n2).style.padding_right = Length::px(7.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(86.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_left = Length::px(7.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(86.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(95.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-000.html
+fn css_multicol_multicol_breaking_nobackground_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-001-ref.html
+fn css_multicol_multicol_breaking_nobackground_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n2).style.padding_right = Length::px(7.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(86.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_left = Length::px(7.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(86.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(95.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(204.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(299.0);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-001.html
+fn css_multicol_multicol_breaking_nobackground_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-002-ref.html
+fn css_multicol_multicol_breaking_nobackground_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n2).style.padding_right = Length::px(7.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(86.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_left = Length::px(7.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(86.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(95.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(204.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(299.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.border_right_width = 2;
+        doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n6).style.padding_right = Length::px(7.0);
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(86.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(408.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.padding_left = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(86.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(503.0);
+        doc.append_child(n1, n7);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-002.html
+fn css_multicol_multicol_breaking_nobackground_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-003-ref.html
+fn css_multicol_multicol_breaking_nobackground_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n2).style.padding_right = Length::px(7.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(86.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_left = Length::px(7.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(86.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(95.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(86.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(204.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(299.0);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-003.html
+fn css_multicol_multicol_breaking_nobackground_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-004-ref.html
+fn css_multicol_multicol_breaking_nobackground_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(125.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n2).style.padding_right = Length::px(7.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(86.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_left = Length::px(7.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(86.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(95.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::px(25.0);
+        doc.node_mut(n4).style.width = Length::px(188.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(100.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.border_right_width = 2;
+        doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n5).style.padding_right = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(86.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(204.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.padding_left = Length::px(7.0);
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(86.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(299.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.height = Length::px(25.0);
+        doc.node_mut(n7).style.width = Length::px(188.0);
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(100.0);
+        doc.node_mut(n7).style.left = Length::px(204.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.height = Length::px(25.0);
+        doc.node_mut(n8).style.width = Length::px(188.0);
+        doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(100.0);
+        doc.node_mut(n8).style.left = Length::px(408.0);
+        doc.append_child(n1, n8);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-004.html
+fn css_multicol_multicol_breaking_nobackground_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(125.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_top_width = 0;
+        doc.node_mut(n2).style.border_right_width = 0;
+        doc.node_mut(n2).style.border_bottom_width = 25;
+        doc.node_mut(n2).style.border_left_width = 0;
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-005-ref.html
+fn css_multicol_multicol_breaking_nobackground_005_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n2).style.padding_right = Length::px(7.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(120.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_left = Length::px(7.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(120.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(129.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n4).style.padding_right = Length::px(7.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(120.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(272.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.padding_left = Length::px(7.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.width = Length::px(120.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.left = Length::px(401.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.border_right_width = 2;
+        doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 255, 255));
+        doc.node_mut(n6).style.padding_right = Length::px(7.0);
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(120.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.left = Length::px(544.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.padding_left = Length::px(7.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.width = Length::px(120.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.left = Length::px(673.0);
+        doc.append_child(n1, n7);
+    doc
+}
+
+// Source: multicol-breaking-nobackground-005.html
+fn css_multicol_multicol_breaking_nobackground_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 76);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_fill = ColumnFill::Balance;
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-clip-001.html
+fn css_multicol_multicol_clip_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::WHITE;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLUE;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(64.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-clip-002.html
+fn css_multicol_multicol_clip_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::WHITE;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLUE;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(64.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-collapsing-001.html
+fn css_multicol_multicol_collapsing_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.width = Length::px(128.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(16.0);
+            doc.node_mut(n3).style.margin_right = Length::px(0.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n3).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-columns-001-ref.html
+fn css_multicol_multicol_columns_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-001.html
+fn css_multicol_multicol_columns_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_width = Some(Length::px(100.0));
+    doc.node_mut(n1).style.column_count = Some(6);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-002.html
+fn css_multicol_multicol_columns_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(6);
+    doc.node_mut(n1).style.column_width = Some(Length::px(100.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-003.html
+fn css_multicol_multicol_columns_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_width = Some(Length::px(100.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-004.html
+fn css_multicol_multicol_columns_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_width = Some(Length::px(100.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-005.html
+fn css_multicol_multicol_columns_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(6);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-006.html
+fn css_multicol_multicol_columns_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(6);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-007.html
+fn css_multicol_multicol_columns_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(6);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-columns-invalid-001.html
+fn css_multicol_multicol_columns_invalid_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_count = Some(8);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-columns-invalid-002.html
+fn css_multicol_multicol_columns_invalid_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_count = Some(8);
+    doc.node_mut(n1).style.column_width = Some(Length::px(96.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-columns-toolong-001.html
+fn css_multicol_multicol_columns_toolong_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
 // Source: multicol-contained-absolute-ref.html
 fn css_multicol_multicol_contained_absolute_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3685,6 +5774,66 @@ fn css_multicol_multicol_contained_absolute() -> Document {
     doc
 }
 
+// Source: multicol-containing-001.html
+fn css_multicol_multicol_containing_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::RED;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(-16.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-containing-002-ref.html
+fn css_multicol_multicol_containing_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.append_child(n1, n8);
+    doc
+}
+
 // Source: multicol-containing-003.html
 fn css_multicol_multicol_containing_003() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3712,6 +5861,467 @@ fn css_multicol_multicol_containing_003() -> Document {
         doc.node_mut(n3).style.top = Length::px(0.0);
         doc.node_mut(n3).style.left = Length::px(0.0);
         doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-count-001.html
+fn css_multicol_multicol_count_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(6);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-count-002.html
+fn css_multicol_multicol_count_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.background_color = Color::BLACK;
+    doc.node_mut(vp).style.padding_right = Length::px(16.0);
+    doc.node_mut(vp).style.width = Length::px(320.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-count-computed-003.html
+fn css_multicol_multicol_count_computed_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(208.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(80.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::from_rgba8(128, 128, 128, 255);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-count-computed-004.html
+fn css_multicol_multicol_count_computed_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_count = None;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(112.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::from_rgba8(128, 128, 128, 255);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-count-computed-005.html
+fn css_multicol_multicol_count_computed_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(208.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(80.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::from_rgba8(128, 128, 128, 255);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-count-negative-001.html
+fn css_multicol_multicol_count_negative_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-count-negative-002.html
+fn css_multicol_multicol_count_negative_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-count-non-integer-001.html
+fn css_multicol_multicol_count_non_integer_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-count-non-integer-002.html
+fn css_multicol_multicol_count_non_integer_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-count-non-integer-003.html
+fn css_multicol_multicol_count_non_integer_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-dynamic-add-001-ref.html
+fn css_multicol_multicol_dynamic_add_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(300.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-dynamic-add-002-ref.html
+fn css_multicol_multicol_dynamic_add_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.column_width = Some(Length::px(0.0));
+    let n1 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n1).style.column_width = Some(Length::px(0.0));
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-fill-auto-001-ref.html
+fn css_multicol_multicol_fill_auto_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.width = Length::px(160.0);
+    doc.node_mut(n2).style.margin_right = Length::px(16.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-fill-auto-001.html
+fn css_multicol_multicol_fill_auto_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.height = Length::px(160.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-fill-auto-002-ref.html
+fn css_multicol_multicol_fill_auto_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(48.0);
+    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.height = Length::px(48.0);
+    doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.position = Position::Relative;
+    doc.node_mut(n2).style.margin_top = Length::px(16.0);
+    doc.node_mut(n2).style.margin_right = Length::px(16.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n2).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-fill-auto-002.html
+fn css_multicol_multicol_fill_auto_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(48.0);
+    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.z_index = Some(-1);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.height = Length::px(48.0);
+        doc.node_mut(n2).style.width = Length::px(16.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::RED;
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.z_index = Some(-1);
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::px(16.0);
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.height = Length::px(48.0);
+    doc.node_mut(n4).style.width = Length::px(32.0);
+    doc.node_mut(n4).style.orphans = 1_u32;
+    doc.node_mut(n4).style.widows = 1_u32;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.margin_top = Length::px(16.0);
+    doc.node_mut(n4).style.margin_right = Length::px(16.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n4).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-fill-auto-003.html
+fn css_multicol_multicol_fill_auto_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(96.0);
+    doc.node_mut(n1).style.width = Length::px(336.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -3792,6 +6402,473 @@ fn css_multicol_multicol_fill_auto_005() -> Document {
             doc.node_mut(n5).style.break_before = BreakValue::Column;
             doc.node_mut(n5).style.height = Length::px(100.0);
             doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-fill-auto-block-children-001.html
+fn css_multicol_multicol_fill_auto_block_children_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.background_color = Color::BLUE;
+    doc.node_mut(vp).style.width = Length::px(1200.0);
+    doc.node_mut(vp).style.height = Length::px(492.0);
+    doc.node_mut(vp).style.column_count = Some(3);
+    doc.node_mut(vp).style.column_gap = Some(Length::px(32.0));
+    doc.node_mut(vp).style.column_fill = ColumnFill::Auto;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_span = ColumnSpan::All;
+    doc.node_mut(n1).style.height = Length::px(70.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.color = Color::BLUE;
+    doc.node_mut(n2).style.padding_top = Length::px(5.0);
+    doc.node_mut(n2).style.padding_right = Length::px(10.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(3.0);
+    doc.node_mut(n2).style.padding_left = Length::px(10.0);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(15.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.border_top_width = 2;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_right_width = 2;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_bottom_width = 2;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_left_width = 2;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.height = Length::px(72.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::percent(47.0);
+        doc.node_mut(n3).style.height = Length::percent(100.0);
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n4).style.padding_top = Length::px(0.0);
+        doc.node_mut(n4).style.padding_right = Length::px(0.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.padding_left = Length::px(0.0);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n4).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n4).style.width = Length::percent(50.0);
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n5).style.padding_top = Length::px(0.0);
+        doc.node_mut(n5).style.padding_right = Length::px(0.0);
+        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n5).style.padding_left = Length::px(0.0);
+        doc.node_mut(n5).style.margin_top = Length::px(0.0);
+        doc.node_mut(n5).style.margin_right = Length::px(0.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n5).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n5).style.width = Length::percent(50.0);
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n6).style.padding_top = Length::px(0.0);
+        doc.node_mut(n6).style.padding_right = Length::px(0.0);
+        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.padding_left = Length::px(0.0);
+        doc.node_mut(n6).style.margin_top = Length::px(0.0);
+        doc.node_mut(n6).style.margin_right = Length::px(0.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n6).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n6).style.width = Length::percent(50.0);
+        doc.append_child(n2, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n7).style.padding_top = Length::px(0.0);
+        doc.node_mut(n7).style.padding_right = Length::px(0.0);
+        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n7).style.padding_left = Length::px(0.0);
+        doc.node_mut(n7).style.margin_top = Length::px(0.0);
+        doc.node_mut(n7).style.margin_right = Length::px(0.0);
+        doc.node_mut(n7).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n7).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n7).style.width = Length::percent(50.0);
+        doc.append_child(n2, n7);
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.color = Color::BLUE;
+    doc.node_mut(n8).style.padding_top = Length::px(5.0);
+    doc.node_mut(n8).style.padding_right = Length::px(10.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(3.0);
+    doc.node_mut(n8).style.padding_left = Length::px(10.0);
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(15.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.border_top_width = 2;
+    doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n8).style.border_right_width = 2;
+    doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n8).style.border_bottom_width = 2;
+    doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n8).style.border_left_width = 2;
+    doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n8).style.height = Length::px(72.0);
+    doc.append_child(vp, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.width = Length::percent(47.0);
+        doc.node_mut(n9).style.height = Length::percent(100.0);
+        doc.node_mut(n9).style.float = Float::Left;
+        doc.append_child(n8, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n10).style.padding_top = Length::px(0.0);
+        doc.node_mut(n10).style.padding_right = Length::px(0.0);
+        doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n10).style.padding_left = Length::px(0.0);
+        doc.node_mut(n10).style.margin_top = Length::px(0.0);
+        doc.node_mut(n10).style.margin_right = Length::px(0.0);
+        doc.node_mut(n10).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n10).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n10).style.width = Length::percent(50.0);
+        doc.append_child(n8, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n11).style.padding_top = Length::px(0.0);
+        doc.node_mut(n11).style.padding_right = Length::px(0.0);
+        doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n11).style.padding_left = Length::px(0.0);
+        doc.node_mut(n11).style.margin_top = Length::px(0.0);
+        doc.node_mut(n11).style.margin_right = Length::px(0.0);
+        doc.node_mut(n11).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n11).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n11).style.width = Length::percent(50.0);
+        doc.append_child(n8, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n12).style.padding_top = Length::px(0.0);
+        doc.node_mut(n12).style.padding_right = Length::px(0.0);
+        doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n12).style.padding_left = Length::px(0.0);
+        doc.node_mut(n12).style.margin_top = Length::px(0.0);
+        doc.node_mut(n12).style.margin_right = Length::px(0.0);
+        doc.node_mut(n12).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n12).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n12).style.width = Length::percent(50.0);
+        doc.append_child(n8, n12);
+        let n13 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n13).style.display = Display::Block;
+        doc.node_mut(n13).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n13).style.padding_top = Length::px(0.0);
+        doc.node_mut(n13).style.padding_right = Length::px(0.0);
+        doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n13).style.padding_left = Length::px(0.0);
+        doc.node_mut(n13).style.margin_top = Length::px(0.0);
+        doc.node_mut(n13).style.margin_right = Length::px(0.0);
+        doc.node_mut(n13).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n13).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n13).style.width = Length::percent(50.0);
+        doc.append_child(n8, n13);
+    let n14 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n14).style.display = Display::Block;
+    doc.node_mut(n14).style.color = Color::BLUE;
+    doc.node_mut(n14).style.padding_top = Length::px(5.0);
+    doc.node_mut(n14).style.padding_right = Length::px(10.0);
+    doc.node_mut(n14).style.padding_bottom = Length::px(3.0);
+    doc.node_mut(n14).style.padding_left = Length::px(10.0);
+    doc.node_mut(n14).style.margin_top = Length::px(0.0);
+    doc.node_mut(n14).style.margin_right = Length::px(0.0);
+    doc.node_mut(n14).style.margin_bottom = Length::px(15.0);
+    doc.node_mut(n14).style.margin_left = Length::px(0.0);
+    doc.node_mut(n14).style.border_top_width = 2;
+    doc.node_mut(n14).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.border_right_width = 2;
+    doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.border_bottom_width = 2;
+    doc.node_mut(n14).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.border_left_width = 2;
+    doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.height = Length::px(72.0);
+    doc.append_child(vp, n14);
+        let n15 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n15).style.display = Display::Block;
+        doc.node_mut(n15).style.width = Length::percent(47.0);
+        doc.node_mut(n15).style.height = Length::percent(100.0);
+        doc.node_mut(n15).style.float = Float::Left;
+        doc.append_child(n14, n15);
+        let n16 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n16).style.display = Display::Block;
+        doc.node_mut(n16).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n16).style.padding_top = Length::px(0.0);
+        doc.node_mut(n16).style.padding_right = Length::px(0.0);
+        doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n16).style.padding_left = Length::px(0.0);
+        doc.node_mut(n16).style.margin_top = Length::px(0.0);
+        doc.node_mut(n16).style.margin_right = Length::px(0.0);
+        doc.node_mut(n16).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n16).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n16).style.width = Length::percent(50.0);
+        doc.append_child(n14, n16);
+        let n17 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n17).style.display = Display::Block;
+        doc.node_mut(n17).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n17).style.padding_top = Length::px(0.0);
+        doc.node_mut(n17).style.padding_right = Length::px(0.0);
+        doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n17).style.padding_left = Length::px(0.0);
+        doc.node_mut(n17).style.margin_top = Length::px(0.0);
+        doc.node_mut(n17).style.margin_right = Length::px(0.0);
+        doc.node_mut(n17).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n17).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n17).style.width = Length::percent(50.0);
+        doc.append_child(n14, n17);
+        let n18 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n18).style.display = Display::Block;
+        doc.node_mut(n18).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n18).style.padding_top = Length::px(0.0);
+        doc.node_mut(n18).style.padding_right = Length::px(0.0);
+        doc.node_mut(n18).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n18).style.padding_left = Length::px(0.0);
+        doc.node_mut(n18).style.margin_top = Length::px(0.0);
+        doc.node_mut(n18).style.margin_right = Length::px(0.0);
+        doc.node_mut(n18).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n18).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n18).style.width = Length::percent(50.0);
+        doc.append_child(n14, n18);
+        let n19 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n19).style.display = Display::Block;
+        doc.node_mut(n19).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n19).style.padding_top = Length::px(0.0);
+        doc.node_mut(n19).style.padding_right = Length::px(0.0);
+        doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n19).style.padding_left = Length::px(0.0);
+        doc.node_mut(n19).style.margin_top = Length::px(0.0);
+        doc.node_mut(n19).style.margin_right = Length::px(0.0);
+        doc.node_mut(n19).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n19).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n19).style.width = Length::percent(50.0);
+        doc.append_child(n14, n19);
+    let n20 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n20).style.display = Display::Block;
+    doc.node_mut(n20).style.color = Color::BLUE;
+    doc.node_mut(n20).style.padding_top = Length::px(5.0);
+    doc.node_mut(n20).style.padding_right = Length::px(10.0);
+    doc.node_mut(n20).style.padding_bottom = Length::px(3.0);
+    doc.node_mut(n20).style.padding_left = Length::px(10.0);
+    doc.node_mut(n20).style.margin_top = Length::px(0.0);
+    doc.node_mut(n20).style.margin_right = Length::px(0.0);
+    doc.node_mut(n20).style.margin_bottom = Length::px(15.0);
+    doc.node_mut(n20).style.margin_left = Length::px(0.0);
+    doc.node_mut(n20).style.border_top_width = 2;
+    doc.node_mut(n20).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n20).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n20).style.border_right_width = 2;
+    doc.node_mut(n20).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n20).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n20).style.border_bottom_width = 2;
+    doc.node_mut(n20).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n20).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n20).style.border_left_width = 2;
+    doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n20).style.height = Length::px(72.0);
+    doc.append_child(vp, n20);
+        let n21 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n21).style.display = Display::Block;
+        doc.node_mut(n21).style.width = Length::percent(47.0);
+        doc.node_mut(n21).style.height = Length::percent(100.0);
+        doc.node_mut(n21).style.float = Float::Left;
+        doc.append_child(n20, n21);
+        let n22 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n22).style.display = Display::Block;
+        doc.node_mut(n22).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n22).style.padding_top = Length::px(0.0);
+        doc.node_mut(n22).style.padding_right = Length::px(0.0);
+        doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n22).style.padding_left = Length::px(0.0);
+        doc.node_mut(n22).style.margin_top = Length::px(0.0);
+        doc.node_mut(n22).style.margin_right = Length::px(0.0);
+        doc.node_mut(n22).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n22).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n22).style.width = Length::percent(50.0);
+        doc.append_child(n20, n22);
+        let n23 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n23).style.display = Display::Block;
+        doc.node_mut(n23).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n23).style.padding_top = Length::px(0.0);
+        doc.node_mut(n23).style.padding_right = Length::px(0.0);
+        doc.node_mut(n23).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n23).style.padding_left = Length::px(0.0);
+        doc.node_mut(n23).style.margin_top = Length::px(0.0);
+        doc.node_mut(n23).style.margin_right = Length::px(0.0);
+        doc.node_mut(n23).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n23).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n23).style.width = Length::percent(50.0);
+        doc.append_child(n20, n23);
+        let n24 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n24).style.display = Display::Block;
+        doc.node_mut(n24).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n24).style.padding_top = Length::px(0.0);
+        doc.node_mut(n24).style.padding_right = Length::px(0.0);
+        doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n24).style.padding_left = Length::px(0.0);
+        doc.node_mut(n24).style.margin_top = Length::px(0.0);
+        doc.node_mut(n24).style.margin_right = Length::px(0.0);
+        doc.node_mut(n24).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n24).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n24).style.width = Length::percent(50.0);
+        doc.append_child(n20, n24);
+        let n25 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n25).style.display = Display::Block;
+        doc.node_mut(n25).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n25).style.padding_top = Length::px(0.0);
+        doc.node_mut(n25).style.padding_right = Length::px(0.0);
+        doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n25).style.padding_left = Length::px(0.0);
+        doc.node_mut(n25).style.margin_top = Length::px(0.0);
+        doc.node_mut(n25).style.margin_right = Length::px(0.0);
+        doc.node_mut(n25).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n25).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n25).style.width = Length::percent(50.0);
+        doc.append_child(n20, n25);
+    let n26 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n26).style.display = Display::Block;
+    doc.node_mut(n26).style.color = Color::BLUE;
+    doc.node_mut(n26).style.padding_top = Length::px(5.0);
+    doc.node_mut(n26).style.padding_right = Length::px(10.0);
+    doc.node_mut(n26).style.padding_bottom = Length::px(3.0);
+    doc.node_mut(n26).style.padding_left = Length::px(10.0);
+    doc.node_mut(n26).style.margin_top = Length::px(0.0);
+    doc.node_mut(n26).style.margin_right = Length::px(0.0);
+    doc.node_mut(n26).style.margin_bottom = Length::px(15.0);
+    doc.node_mut(n26).style.margin_left = Length::px(0.0);
+    doc.node_mut(n26).style.border_top_width = 2;
+    doc.node_mut(n26).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n26).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n26).style.border_right_width = 2;
+    doc.node_mut(n26).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n26).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n26).style.border_bottom_width = 2;
+    doc.node_mut(n26).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n26).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n26).style.border_left_width = 2;
+    doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n26).style.height = Length::px(72.0);
+    doc.append_child(vp, n26);
+        let n27 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n27).style.display = Display::Block;
+        doc.node_mut(n27).style.width = Length::percent(47.0);
+        doc.node_mut(n27).style.height = Length::percent(100.0);
+        doc.node_mut(n27).style.float = Float::Left;
+        doc.append_child(n26, n27);
+        let n28 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n28).style.display = Display::Block;
+        doc.node_mut(n28).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n28).style.padding_top = Length::px(0.0);
+        doc.node_mut(n28).style.padding_right = Length::px(0.0);
+        doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n28).style.padding_left = Length::px(0.0);
+        doc.node_mut(n28).style.margin_top = Length::px(0.0);
+        doc.node_mut(n28).style.margin_right = Length::px(0.0);
+        doc.node_mut(n28).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n28).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n28).style.width = Length::percent(50.0);
+        doc.append_child(n26, n28);
+        let n29 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n29).style.display = Display::Block;
+        doc.node_mut(n29).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n29).style.padding_top = Length::px(0.0);
+        doc.node_mut(n29).style.padding_right = Length::px(0.0);
+        doc.node_mut(n29).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n29).style.padding_left = Length::px(0.0);
+        doc.node_mut(n29).style.margin_top = Length::px(0.0);
+        doc.node_mut(n29).style.margin_right = Length::px(0.0);
+        doc.node_mut(n29).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n29).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n29).style.width = Length::percent(50.0);
+        doc.append_child(n26, n29);
+        let n30 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n30).style.display = Display::Block;
+        doc.node_mut(n30).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n30).style.padding_top = Length::px(0.0);
+        doc.node_mut(n30).style.padding_right = Length::px(0.0);
+        doc.node_mut(n30).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n30).style.padding_left = Length::px(0.0);
+        doc.node_mut(n30).style.margin_top = Length::px(0.0);
+        doc.node_mut(n30).style.margin_right = Length::px(0.0);
+        doc.node_mut(n30).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n30).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n30).style.width = Length::percent(50.0);
+        doc.append_child(n26, n30);
+        let n31 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n31).style.display = Display::Block;
+        doc.node_mut(n31).style.line_height = LineHeight::Percentage(120.0);
+        doc.node_mut(n31).style.padding_top = Length::px(0.0);
+        doc.node_mut(n31).style.padding_right = Length::px(0.0);
+        doc.node_mut(n31).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n31).style.padding_left = Length::px(0.0);
+        doc.node_mut(n31).style.margin_top = Length::px(0.0);
+        doc.node_mut(n31).style.margin_right = Length::px(0.0);
+        doc.node_mut(n31).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n31).style.margin_left = Length::percent(47.0);
+        doc.node_mut(n31).style.width = Length::percent(50.0);
+        doc.append_child(n26, n31);
+    doc
+}
+
+// Source: multicol-fill-auto-block-children-002-ref.html
+fn css_multicol_multicol_fill_auto_block_children_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.margin_top = Length::px(8.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.node_mut(n1).style.width = Length::percent(60.0);
+    doc.node_mut(n1).style.margin_left = Length::px(8.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::WHITE;
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.25);
+        doc.node_mut(n2).style.margin_top = Length::px(21.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(21.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.float = Float::Left;
+    doc.node_mut(n3).style.margin_left = Length::px(10.0);
+    doc.node_mut(n3).style.color = Color::BLUE;
+    doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n3).style.margin_top = Length::px(122.0);
+    doc.append_child(vp, n3);
     doc
 }
 
@@ -3907,6 +6984,83 @@ fn css_multicol_multicol_fill_auto_block_children_ref() -> Document {
     doc.node_mut(n1).style.margin_left = Length::px(0.0);
     doc.node_mut(n1).style.padding_top = Length::px(10.72);
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-fill-balance-001-ref.html
+fn css_multicol_multicol_fill_balance_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(48.0);
+    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.height = Length::px(48.0);
+    doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.position = Position::Relative;
+    doc.node_mut(n2).style.margin_top = Length::px(16.0);
+    doc.node_mut(n2).style.margin_right = Length::px(16.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n2).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-fill-balance-001.html
+fn css_multicol_multicol_fill_balance_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(48.0);
+    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.z_index = Some(-1);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.height = Length::px(32.0);
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).style.height = Length::px(48.0);
+    doc.node_mut(n3).style.width = Length::px(32.0);
+    doc.node_mut(n3).style.orphans = 1_u32;
+    doc.node_mut(n3).style.widows = 1_u32;
+    doc.node_mut(n3).style.position = Position::Relative;
+    doc.node_mut(n3).style.margin_top = Length::px(16.0);
+    doc.node_mut(n3).style.margin_right = Length::px(16.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n3).style.margin_left = Length::px(16.0);
+    doc.append_child(vp, n3);
     doc
 }
 
@@ -4571,6 +7725,211 @@ fn css_multicol_multicol_fill_balance_nested_000() -> Document {
     doc
 }
 
+// Source: multicol-gap-000-ref.html
+fn css_multicol_multicol_gap_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(16.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.width = Length::px(480.0);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-gap-000.html
+fn css_multicol_multicol_gap_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_width = Some(Length::px(160.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(160.0));
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(16.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.width = Length::px(480.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-gap-001.html
+fn css_multicol_multicol_gap_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_width = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(48.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_top = Length::px(16.0);
+    doc.node_mut(n2).style.margin_right = Length::px(16.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n2).style.margin_left = Length::px(16.0);
+    doc.node_mut(n2).style.orphans = 1_u32;
+    doc.node_mut(n2).style.widows = 1_u32;
+    doc.node_mut(n2).style.width = Length::px(48.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.padding_right = Length::px(16.0);
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-gap-002.html
+fn css_multicol_multicol_gap_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-gap-003.html
+fn css_multicol_multicol_gap_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-gap-fraction-001.html
+fn css_multicol_multicol_gap_fraction_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.width = Length::px(232.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(8.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.column_gap = Some(Length::px(8.0));
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n3).style.width = Length::px(232.0);
+    doc.node_mut(n3).style.orphans = 1_u32;
+    doc.node_mut(n3).style.widows = 1_u32;
+    doc.node_mut(n3).style.column_count = Some(2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::BLUE;
+        doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.column_gap = Some(Length::px(8.0));
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n5).style.width = Length::px(232.0);
+    doc.node_mut(n5).style.orphans = 1_u32;
+    doc.node_mut(n5).style.widows = 1_u32;
+    doc.node_mut(n5).style.column_count = Some(2);
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.color = Color::BLUE;
+        doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.column_gap = Some(Length::px(8.0));
+    doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.width = Length::px(232.0);
+    doc.node_mut(n7).style.orphans = 1_u32;
+    doc.node_mut(n7).style.widows = 1_u32;
+    doc.node_mut(n7).style.column_count = Some(2);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n8).style.color = Color::BLUE;
+        doc.append_child(n7, n8);
+    doc
+}
+
 // Source: multicol-gap-fraction-002.html
 fn css_multicol_multicol_gap_fraction_002() -> Document {
     let (mut doc, vp) = base_doc();
@@ -4874,6 +8233,618 @@ fn css_multicol_multicol_gap_fraction_002() -> Document {
     doc
 }
 
+// Source: multicol-gap-large-001.html
+fn css_multicol_multicol_gap_large_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(64.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-gap-large-002.html
+fn css_multicol_multicol_gap_large_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(64.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-gap-negative-001.html
+fn css_multicol_multicol_gap_negative_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(-16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-height-001.html
+fn css_multicol_multicol_height_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::WHITE;
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(32.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-height-002-print-ref.html
+fn css_multicol_multicol_height_002_print_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(0.0);
+        doc.append_child(n2, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.border_top_width = 12;
+    doc.node_mut(n5).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.border_right_width = 12;
+    doc.node_mut(n5).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.border_bottom_width = 12;
+    doc.node_mut(n5).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.border_left_width = 12;
+    doc.node_mut(n5).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.height = Length::percent(150.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(12.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(12.0);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.border_right_width = 12;
+        doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n6).style.border_left_width = 12;
+        doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n6).style.width = Length::percent(50.0);
+        doc.node_mut(n6).style.margin_top = Length::px(0.0);
+        doc.node_mut(n6).style.margin_right = Length::px(0.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.margin_left = Length::px(0.0);
+        doc.node_mut(n6).style.height = Length::percent(100.0);
+        doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.border_top_width = 5;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.border_right_width = 5;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.border_bottom_width = 5;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.border_left_width = 5;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: multicol-height-002-print.html
+fn css_multicol_multicol_height_002_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(0.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(0.0);
+        doc.append_child(n2, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.border_top_width = 12;
+    doc.node_mut(n5).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.border_right_width = 12;
+    doc.node_mut(n5).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.border_bottom_width = 12;
+    doc.node_mut(n5).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.border_left_width = 12;
+    doc.node_mut(n5).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n5).style.column_count = Some(2);
+    doc.node_mut(n5).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n5).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n5).style.height = Length::percent(150.0);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.border_right_width = 12;
+        doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n6).style.width = Length::px(0.0);
+        doc.node_mut(n6).style.margin_top = Length::px(0.0);
+        doc.node_mut(n6).style.margin_right = Length::px(0.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.margin_left = Length::px(0.0);
+        doc.node_mut(n6).style.height = Length::percent(200.0);
+        doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.border_top_width = 5;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.border_right_width = 5;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.border_bottom_width = 5;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.border_left_width = 5;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: multicol-height-block-child-001-ref.html
+fn css_multicol_multicol_height_block_child_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(352.0);
+    doc.node_mut(n1).style.height = Length::px(80.0);
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(48.0);
+        doc.node_mut(n2).style.height = Length::px(80.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(224.0);
+    doc.node_mut(n3).style.height = Length::px(48.0);
+    doc.node_mut(n3).style.background_color = Color::BLUE;
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.float = Float::Left;
+        doc.node_mut(n4).style.width = Length::px(48.0);
+        doc.node_mut(n4).style.height = Length::px(48.0);
+        doc.node_mut(n4).style.margin_right = Length::px(80.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n3, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.float = Float::Left;
+        doc.node_mut(n5).style.width = Length::px(48.0);
+        doc.node_mut(n5).style.height = Length::px(48.0);
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n3, n5);
+    doc
+}
+
+// Source: multicol-height-block-child-001.html
+fn css_multicol_multicol_height_block_child_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(32.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.node_mut(n2).style.column_fill = ColumnFill::Balance;
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.height = Length::px(128.0);
+        doc.node_mut(n2).style.width = Length::px(224.0);
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(32.0));
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-inherit-001.html
+fn css_multicol_multicol_inherit_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(544.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-inherit-002.html
+fn css_multicol_multicol_inherit_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-inherit-3-ref.html
+fn css_multicol_multicol_inherit_3_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(1200.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(32.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.width = Length::px(32.0);
+            doc.node_mut(n3).style.height = Length::px(32.0);
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.left = Length::px(0.0);
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.left = Length::px(0.0);
+            doc.node_mut(n4).style.width = Length::px(32.0);
+            doc.node_mut(n4).style.height = Length::px(32.0);
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.top = Length::px(0.0);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.left = Length::px(0.0);
+            doc.node_mut(n5).style.width = Length::px(32.0);
+            doc.node_mut(n5).style.height = Length::px(32.0);
+            doc.node_mut(n5).style.color = Color::BLACK;
+            doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.top = Length::px(0.0);
+            doc.append_child(n2, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.left = Length::px(0.0);
+            doc.node_mut(n6).style.width = Length::px(32.0);
+            doc.node_mut(n6).style.height = Length::px(32.0);
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.position = Position::Absolute;
+            doc.node_mut(n6).style.top = Length::px(0.0);
+            doc.append_child(n2, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.left = Length::px(0.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.append_child(n1, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.node_mut(n8).style.color = Color::BLACK;
+            doc.node_mut(n8).style.width = Length::px(32.0);
+            doc.node_mut(n8).style.height = Length::px(32.0);
+            doc.node_mut(n8).style.position = Position::Absolute;
+            doc.node_mut(n8).style.left = Length::px(0.0);
+            doc.node_mut(n8).style.top = Length::px(0.0);
+            doc.append_child(n7, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.left = Length::px(0.0);
+            doc.node_mut(n9).style.width = Length::px(32.0);
+            doc.node_mut(n9).style.height = Length::px(32.0);
+            doc.node_mut(n9).style.position = Position::Absolute;
+            doc.node_mut(n9).style.top = Length::px(0.0);
+            doc.append_child(n7, n9);
+            let n10 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n10).style.display = Display::Block;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.left = Length::px(0.0);
+            doc.node_mut(n10).style.width = Length::px(32.0);
+            doc.node_mut(n10).style.height = Length::px(32.0);
+            doc.node_mut(n10).style.position = Position::Absolute;
+            doc.node_mut(n10).style.top = Length::px(0.0);
+            doc.append_child(n7, n10);
+            let n11 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n11).style.display = Display::Block;
+            doc.node_mut(n11).style.color = Color::BLACK;
+            doc.node_mut(n11).style.left = Length::px(0.0);
+            doc.node_mut(n11).style.width = Length::px(32.0);
+            doc.node_mut(n11).style.height = Length::px(32.0);
+            doc.node_mut(n11).style.position = Position::Absolute;
+            doc.node_mut(n11).style.top = Length::px(0.0);
+            doc.append_child(n7, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.left = Length::px(0.0);
+        doc.node_mut(n12).style.position = Position::Absolute;
+        doc.node_mut(n12).style.top = Length::px(0.0);
+        doc.append_child(n1, n12);
+            let n13 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n13).style.display = Display::Block;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.width = Length::px(32.0);
+            doc.node_mut(n13).style.height = Length::px(32.0);
+            doc.node_mut(n13).style.position = Position::Absolute;
+            doc.node_mut(n13).style.left = Length::px(0.0);
+            doc.node_mut(n13).style.top = Length::px(0.0);
+            doc.append_child(n12, n13);
+            let n14 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n14).style.display = Display::Block;
+            doc.node_mut(n14).style.color = Color::BLACK;
+            doc.node_mut(n14).style.left = Length::px(0.0);
+            doc.node_mut(n14).style.width = Length::px(32.0);
+            doc.node_mut(n14).style.height = Length::px(32.0);
+            doc.node_mut(n14).style.position = Position::Absolute;
+            doc.node_mut(n14).style.top = Length::px(0.0);
+            doc.append_child(n12, n14);
+            let n15 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n15).style.display = Display::Block;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.left = Length::px(0.0);
+            doc.node_mut(n15).style.width = Length::px(32.0);
+            doc.node_mut(n15).style.height = Length::px(32.0);
+            doc.node_mut(n15).style.position = Position::Absolute;
+            doc.node_mut(n15).style.top = Length::px(0.0);
+            doc.append_child(n12, n15);
+            let n16 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n16).style.display = Display::Block;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.left = Length::px(0.0);
+            doc.node_mut(n16).style.width = Length::px(32.0);
+            doc.node_mut(n16).style.height = Length::px(32.0);
+            doc.node_mut(n16).style.position = Position::Absolute;
+            doc.node_mut(n16).style.top = Length::px(0.0);
+            doc.append_child(n12, n16);
+    doc
+}
+
 // Source: multicol-list-item-001-ref.html
 fn css_multicol_multicol_list_item_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -4883,6 +8854,744 @@ fn css_multicol_multicol_list_item_001_ref() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-list-item-001.html
+fn css_multicol_multicol_list_item_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(80.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.padding_top = Length::px(0.0);
+        doc.node_mut(n2).style.padding_right = Length::px(0.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.padding_top = Length::px(0.0);
+        doc.node_mut(n3).style.padding_right = Length::px(0.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.padding_top = Length::px(0.0);
+        doc.node_mut(n4).style.padding_right = Length::px(0.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.margin_left = Length::px(16.0);
+        doc.node_mut(n5).style.padding_top = Length::px(0.0);
+        doc.node_mut(n5).style.padding_right = Length::px(0.0);
+        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n5).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.margin_left = Length::px(16.0);
+        doc.node_mut(n6).style.padding_top = Length::px(0.0);
+        doc.node_mut(n6).style.padding_right = Length::px(0.0);
+        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n6).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.margin_left = Length::px(16.0);
+        doc.node_mut(n7).style.padding_top = Length::px(0.0);
+        doc.node_mut(n7).style.padding_right = Length::px(0.0);
+        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n7).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n7);
+            let n8 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.margin_left = Length::px(16.0);
+        doc.node_mut(n9).style.padding_top = Length::px(0.0);
+        doc.node_mut(n9).style.padding_right = Length::px(0.0);
+        doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n9).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.margin_left = Length::px(16.0);
+        doc.node_mut(n10).style.padding_top = Length::px(0.0);
+        doc.node_mut(n10).style.padding_right = Length::px(0.0);
+        doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n10).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.margin_left = Length::px(16.0);
+        doc.node_mut(n11).style.padding_top = Length::px(0.0);
+        doc.node_mut(n11).style.padding_right = Length::px(0.0);
+        doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n11).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.margin_left = Length::px(16.0);
+        doc.node_mut(n12).style.padding_top = Length::px(0.0);
+        doc.node_mut(n12).style.padding_right = Length::px(0.0);
+        doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n12).style.padding_left = Length::px(0.0);
+        doc.append_child(n1, n12);
+    doc
+}
+
+// Source: multicol-list-item-002-ref.html
+fn css_multicol_multicol_list_item_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-list-item-003-ref.html
+fn css_multicol_multicol_list_item_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.width = Length::px(490.0);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-list-item-003.html
+fn css_multicol_multicol_list_item_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.width = Length::px(490.0);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(150.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-list-item-004-ref.html
+fn css_multicol_multicol_list_item_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-list-item-004.html
+fn css_multicol_multicol_list_item_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.width = Length::px(490.0);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(150.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-list-item-005-ref.html
+fn css_multicol_multicol_list_item_005_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-list-item-005.html
+fn css_multicol_multicol_list_item_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.width = Length::px(320.0);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.column_span = ColumnSpan::All;
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-list-item-006-ref.html
+fn css_multicol_multicol_list_item_006_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.left = Length::px(40.0);
+    doc.node_mut(n1).style.top = Length::px(30.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.margin_top = Length::px(50.0);
+    doc.node_mut(n2).style.margin_right = Length::px(50.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n2).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-list-item-006.html
+fn css_multicol_multicol_list_item_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.left = Length::px(40.0);
+    doc.node_mut(n1).style.top = Length::px(30.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.column_count = Some(2);
+    doc.node_mut(n2).style.column_gap = Some(Length::px(20.0));
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.node_mut(n2).style.margin_top = Length::px(50.0);
+    doc.node_mut(n2).style.margin_right = Length::px(50.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n2).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.column_span = ColumnSpan::All;
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-list-item-007-ref.html
+fn css_multicol_multicol_list_item_007_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-list-item-007.html
+fn css_multicol_multicol_list_item_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-list-item-008-ref.html
+fn css_multicol_multicol_list_item_008_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 20.0;
+    doc.node_mut(n1).style.line_height = LineHeight::Length(50.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-list-item-008.html
+fn css_multicol_multicol_list_item_008() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 20.0;
+    doc.node_mut(n1).style.line_height = LineHeight::Length(50.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(80.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.height = Length::px(10.0);
+            doc.append_child(n3, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n3, n5);
+    doc
+}
+
+// Source: multicol-loads-indefinitely-001-crash.html
+fn css_multicol_multicol_loads_indefinitely_001_crash() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.max_height = Length::px(60.0);
+    doc.node_mut(vp).style.border_top_style = BorderStyle::Dotted;
+    doc.node_mut(vp).style.column_count = Some(1);
+    doc.node_mut(vp).style.column_width = Some(Length::px(0.0));
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.max_height = Length::px(60.0);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Dotted;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.column_width = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.max_height = Length::px(60.0);
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Dotted;
+        doc.node_mut(n2).style.column_count = Some(1);
+        doc.node_mut(n2).style.column_width = Some(Length::px(0.0));
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.float = Float::Right;
+            doc.node_mut(n3).style.max_height = Length::px(60.0);
+            doc.node_mut(n3).style.border_top_style = BorderStyle::Dotted;
+            doc.node_mut(n3).style.column_count = Some(1);
+            doc.node_mut(n3).style.column_width = Some(Length::px(0.0));
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-margin-001.html
+fn css_multicol_multicol_margin_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.color = Color::WHITE;
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.width = Length::px(64.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(32.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).style.bottom = Length::px(200.0);
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.position = Position::Relative;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: multicol-margin-002.html
+fn css_multicol_multicol_margin_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.color = Color::WHITE;
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.width = Length::px(64.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.node_mut(n2).style.margin_top = Length::px(32.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).style.bottom = Length::px(200.0);
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.position = Position::Relative;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: multicol-margin-003.html
+fn css_multicol_multicol_margin_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_bottom = Length::px(13.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_bottom = Length::px(13.0);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.column_count = Some(2);
+    doc.node_mut(n4).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.orphans = 1_u32;
+    doc.node_mut(n4).style.widows = 1_u32;
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-margin-child-001-ref.html
+fn css_multicol_multicol_margin_child_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.height = Length::px(16.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(48.0);
+        doc.node_mut(n2).style.width = Length::px(80.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.top = Length::px(48.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.height = Length::px(16.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.width = Length::px(80.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.top = Length::px(48.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.height = Length::px(16.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.width = Length::px(80.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-margin-child-001.html
+fn css_multicol_multicol_margin_child_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLUE;
+    doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-nested-002-ref.html
+fn css_multicol_multicol_nested_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.left = Length::px(16.0);
+        doc.node_mut(n2).style.height = Length::px(48.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.left = Length::px(64.0);
+        doc.node_mut(n3).style.height = Length::px(48.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.height = Length::px(48.0);
+        doc.node_mut(n4).style.left = Length::px(112.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::BLUE;
+        doc.node_mut(n5).style.left = Length::px(192.0);
+        doc.node_mut(n5).style.height = Length::px(48.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.left = Length::px(240.0);
+        doc.node_mut(n6).style.height = Length::px(48.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.width = Length::px(32.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.background_color = Color::BLUE;
+        doc.node_mut(n7).style.height = Length::px(48.0);
+        doc.node_mut(n7).style.left = Length::px(288.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.width = Length::px(32.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n8).style.left = Length::px(368.0);
+        doc.node_mut(n8).style.height = Length::px(48.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.width = Length::px(32.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n9).style.left = Length::px(416.0);
+        doc.node_mut(n9).style.height = Length::px(48.0);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.width = Length::px(32.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n10).style.height = Length::px(48.0);
+        doc.node_mut(n10).style.left = Length::px(464.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.width = Length::px(32.0);
+        doc.append_child(n1, n10);
+    doc
+}
+
+// Source: multicol-nested-005.html
+fn css_multicol_multicol_nested_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.append_child(n1, n4);
     doc
 }
 
@@ -6021,6 +10730,81 @@ fn css_multicol_multicol_nested_033() -> Document {
     doc
 }
 
+// Source: multicol-nested-column-rule-001-ref.html
+fn css_multicol_multicol_nested_column_rule_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(128.0);
+    doc.node_mut(n1).style.height = Length::px(48.0);
+    doc.node_mut(n1).style.margin_left = Length::px(144.0);
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-nested-column-rule-001.html
+fn css_multicol_multicol_nested_column_rule_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::WHITE;
+    doc.node_mut(n1).style.color = Color::WHITE;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(416.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::WHITE;
+        doc.node_mut(n2).style.color = Color::WHITE;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::WHITE;
+        doc.node_mut(n3).style.color = Color::WHITE;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::WHITE;
+        doc.node_mut(n4).style.color = Color::WHITE;
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
+    doc
+}
+
 // Source: multicol-nested-column-rule-002.html
 fn css_multicol_multicol_nested_column_rule_002() -> Document {
     let (mut doc, vp) = base_doc();
@@ -6090,6 +10874,665 @@ fn css_multicol_multicol_nested_column_rule_003() -> Document {
                 doc.node_mut(n6).style.display = Display::Block;
                 doc.node_mut(n6).style.height = Length::px(200.0);
                 doc.append_child(n3, n6);
+    doc
+}
+
+// Source: multicol-nested-margin-001-ref.html
+fn css_multicol_multicol_nested_margin_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(48.0);
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.left = Length::px(16.0);
+        doc.node_mut(n2).style.height = Length::px(48.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.left = Length::px(64.0);
+        doc.node_mut(n3).style.height = Length::px(48.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.height = Length::px(48.0);
+        doc.node_mut(n4).style.left = Length::px(112.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n5).style.left = Length::px(192.0);
+        doc.node_mut(n5).style.height = Length::px(48.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n6).style.left = Length::px(240.0);
+        doc.node_mut(n6).style.height = Length::px(48.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.width = Length::px(32.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n7).style.height = Length::px(48.0);
+        doc.node_mut(n7).style.left = Length::px(288.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.width = Length::px(32.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.background_color = Color::BLUE;
+        doc.node_mut(n8).style.left = Length::px(368.0);
+        doc.node_mut(n8).style.height = Length::px(48.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.width = Length::px(32.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.background_color = Color::BLUE;
+        doc.node_mut(n9).style.left = Length::px(416.0);
+        doc.node_mut(n9).style.height = Length::px(48.0);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.width = Length::px(32.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.background_color = Color::BLUE;
+        doc.node_mut(n10).style.height = Length::px(48.0);
+        doc.node_mut(n10).style.left = Length::px(464.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.width = Length::px(32.0);
+        doc.append_child(n1, n10);
+    doc
+}
+
+// Source: multicol-nested-margin-001.html
+fn css_multicol_multicol_nested_margin_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-nested-margin-002-ref.html
+fn css_multicol_multicol_nested_margin_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(80.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.left = Length::px(464.0);
+        doc.node_mut(n2).style.height = Length::px(80.0);
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(656.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.left = Length::px(528.0);
+        doc.node_mut(n3).style.height = Length::px(80.0);
+        doc.node_mut(n3).style.position = Position::Relative;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(656.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.height = Length::px(80.0);
+        doc.node_mut(n4).style.left = Length::px(592.0);
+        doc.node_mut(n4).style.position = Position::Relative;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(656.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-nested-margin-002.html
+fn css_multicol_multicol_nested_margin_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.margin_top = Length::px(0.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-nested-margin-003-ref.html
+fn css_multicol_multicol_nested_margin_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.left = Length::px(16.0);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.height = Length::px(48.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.left = Length::px(80.0);
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::px(48.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.height = Length::px(48.0);
+        doc.node_mut(n4).style.left = Length::px(144.0);
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n5).style.left = Length::px(240.0);
+        doc.node_mut(n5).style.height = Length::px(48.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n6).style.left = Length::px(304.0);
+        doc.node_mut(n6).style.height = Length::px(48.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.width = Length::px(32.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n7).style.height = Length::px(48.0);
+        doc.node_mut(n7).style.left = Length::px(368.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.width = Length::px(32.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.background_color = Color::BLUE;
+        doc.node_mut(n8).style.left = Length::px(464.0);
+        doc.node_mut(n8).style.height = Length::px(48.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.width = Length::px(32.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.background_color = Color::BLUE;
+        doc.node_mut(n9).style.left = Length::px(528.0);
+        doc.node_mut(n9).style.height = Length::px(48.0);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.width = Length::px(32.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.background_color = Color::BLUE;
+        doc.node_mut(n10).style.height = Length::px(48.0);
+        doc.node_mut(n10).style.left = Length::px(592.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.width = Length::px(32.0);
+        doc.append_child(n1, n10);
+    doc
+}
+
+// Source: multicol-nested-margin-003.html
+fn css_multicol_multicol_nested_margin_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-nested-margin-004-ref.html
+fn css_multicol_multicol_nested_margin_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(64.0);
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.left = Length::px(16.0);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.height = Length::px(48.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.left = Length::px(80.0);
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.height = Length::px(48.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.height = Length::px(48.0);
+        doc.node_mut(n4).style.left = Length::px(144.0);
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n5).style.left = Length::px(240.0);
+        doc.node_mut(n5).style.height = Length::px(48.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.height = Length::px(48.0);
+        doc.node_mut(n6).style.left = Length::px(240.0);
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.width = Length::px(32.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n7).style.left = Length::px(304.0);
+        doc.node_mut(n7).style.height = Length::px(48.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.width = Length::px(32.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.background_color = Color::BLUE;
+        doc.node_mut(n8).style.height = Length::px(48.0);
+        doc.node_mut(n8).style.left = Length::px(304.0);
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.width = Length::px(32.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n9).style.height = Length::px(48.0);
+        doc.node_mut(n9).style.left = Length::px(368.0);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.width = Length::px(32.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.background_color = Color::BLUE;
+        doc.node_mut(n10).style.height = Length::px(48.0);
+        doc.node_mut(n10).style.left = Length::px(368.0);
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.width = Length::px(32.0);
+        doc.append_child(n1, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.background_color = Color::BLUE;
+        doc.node_mut(n11).style.height = Length::px(48.0);
+        doc.node_mut(n11).style.left = Length::px(464.0);
+        doc.node_mut(n11).style.position = Position::Absolute;
+        doc.node_mut(n11).style.top = Length::px(0.0);
+        doc.node_mut(n11).style.width = Length::px(32.0);
+        doc.append_child(n1, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.background_color = Color::BLUE;
+        doc.node_mut(n12).style.height = Length::px(48.0);
+        doc.node_mut(n12).style.left = Length::px(528.0);
+        doc.node_mut(n12).style.position = Position::Absolute;
+        doc.node_mut(n12).style.top = Length::px(0.0);
+        doc.node_mut(n12).style.width = Length::px(32.0);
+        doc.append_child(n1, n12);
+        let n13 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n13).style.display = Display::Block;
+        doc.node_mut(n13).style.background_color = Color::BLUE;
+        doc.node_mut(n13).style.height = Length::px(48.0);
+        doc.node_mut(n13).style.left = Length::px(592.0);
+        doc.node_mut(n13).style.position = Position::Absolute;
+        doc.node_mut(n13).style.top = Length::px(0.0);
+        doc.node_mut(n13).style.width = Length::px(32.0);
+        doc.append_child(n1, n13);
+    doc
+}
+
+// Source: multicol-nested-margin-004.html
+fn css_multicol_multicol_nested_margin_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-nested-margin-005.html
+fn css_multicol_multicol_nested_margin_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(656.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(16.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(16.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.node_mut(n4).style.margin_top = Length::px(16.0);
+        doc.node_mut(n4).style.margin_right = Length::px(16.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n4).style.margin_left = Length::px(16.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
     doc
 }
 
@@ -6496,6 +11939,458 @@ fn css_multicol_multicol_overflow_clip() -> Document {
     doc
 }
 
+// Source: multicol-overflowing-001-ref.html
+fn css_multicol_multicol_overflowing_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.height = Length::px(32.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(512.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.left = Length::px(16.0);
+        doc.node_mut(n2).style.height = Length::px(32.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.left = Length::px(64.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.left = Length::px(112.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.node_mut(n5).style.height = Length::px(32.0);
+        doc.node_mut(n5).style.left = Length::px(192.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.background_color = Color::BLACK;
+        doc.node_mut(n6).style.height = Length::px(32.0);
+        doc.node_mut(n6).style.left = Length::px(240.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.width = Length::px(32.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.background_color = Color::BLUE;
+        doc.node_mut(n7).style.left = Length::px(368.0);
+        doc.node_mut(n7).style.height = Length::px(32.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.width = Length::px(32.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.background_color = Color::BLUE;
+        doc.node_mut(n8).style.left = Length::px(416.0);
+        doc.node_mut(n8).style.height = Length::px(32.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.width = Length::px(32.0);
+        doc.append_child(n1, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.background_color = Color::BLUE;
+        doc.node_mut(n9).style.left = Length::px(464.0);
+        doc.node_mut(n9).style.height = Length::px(32.0);
+        doc.node_mut(n9).style.position = Position::Absolute;
+        doc.node_mut(n9).style.top = Length::px(0.0);
+        doc.node_mut(n9).style.width = Length::px(32.0);
+        doc.append_child(n1, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.background_color = Color::BLUE;
+        doc.node_mut(n10).style.height = Length::px(32.0);
+        doc.node_mut(n10).style.left = Length::px(544.0);
+        doc.node_mut(n10).style.position = Position::Absolute;
+        doc.node_mut(n10).style.top = Length::px(0.0);
+        doc.node_mut(n10).style.width = Length::px(32.0);
+        doc.append_child(n1, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n11).style.height = Length::px(32.0);
+        doc.node_mut(n11).style.left = Length::px(576.0);
+        doc.node_mut(n11).style.width = Length::px(32.0);
+        doc.node_mut(n11).style.position = Position::Absolute;
+        doc.node_mut(n11).style.top = Length::px(0.0);
+        doc.append_child(n1, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
+        doc.node_mut(n12).style.background_color = Color::BLUE;
+        doc.node_mut(n12).style.height = Length::px(32.0);
+        doc.node_mut(n12).style.left = Length::px(592.0);
+        doc.node_mut(n12).style.position = Position::Absolute;
+        doc.node_mut(n12).style.top = Length::px(0.0);
+        doc.node_mut(n12).style.width = Length::px(32.0);
+        doc.append_child(n1, n12);
+        let n13 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n13).style.display = Display::Block;
+        doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n13).style.height = Length::px(32.0);
+        doc.node_mut(n13).style.left = Length::px(624.0);
+        doc.node_mut(n13).style.width = Length::px(32.0);
+        doc.node_mut(n13).style.position = Position::Absolute;
+        doc.node_mut(n13).style.top = Length::px(0.0);
+        doc.append_child(n1, n13);
+        let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.display = Display::Block;
+        doc.node_mut(n14).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n14).style.left = Length::px(720.0);
+        doc.node_mut(n14).style.height = Length::px(32.0);
+        doc.node_mut(n14).style.position = Position::Absolute;
+        doc.node_mut(n14).style.top = Length::px(0.0);
+        doc.node_mut(n14).style.width = Length::px(32.0);
+        doc.append_child(n1, n14);
+        let n15 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n15).style.display = Display::Block;
+        doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n15).style.left = Length::px(752.0);
+        doc.node_mut(n15).style.width = Length::px(32.0);
+        doc.node_mut(n15).style.height = Length::px(32.0);
+        doc.node_mut(n15).style.position = Position::Absolute;
+        doc.node_mut(n15).style.top = Length::px(0.0);
+        doc.append_child(n1, n15);
+        let n16 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n16).style.display = Display::Block;
+        doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n16).style.left = Length::px(768.0);
+        doc.node_mut(n16).style.height = Length::px(32.0);
+        doc.node_mut(n16).style.position = Position::Absolute;
+        doc.node_mut(n16).style.top = Length::px(0.0);
+        doc.node_mut(n16).style.width = Length::px(32.0);
+        doc.append_child(n1, n16);
+        let n17 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n17).style.display = Display::Block;
+        doc.node_mut(n17).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n17).style.left = Length::px(800.0);
+        doc.node_mut(n17).style.width = Length::px(32.0);
+        doc.node_mut(n17).style.height = Length::px(32.0);
+        doc.node_mut(n17).style.position = Position::Absolute;
+        doc.node_mut(n17).style.top = Length::px(0.0);
+        doc.append_child(n1, n17);
+        let n18 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n18).style.display = Display::Block;
+        doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n18).style.left = Length::px(816.0);
+        doc.node_mut(n18).style.height = Length::px(32.0);
+        doc.node_mut(n18).style.position = Position::Absolute;
+        doc.node_mut(n18).style.top = Length::px(0.0);
+        doc.node_mut(n18).style.width = Length::px(32.0);
+        doc.append_child(n1, n18);
+        let n19 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n19).style.display = Display::Block;
+        doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n19).style.height = Length::px(32.0);
+        doc.node_mut(n19).style.left = Length::px(896.0);
+        doc.node_mut(n19).style.position = Position::Absolute;
+        doc.node_mut(n19).style.top = Length::px(0.0);
+        doc.node_mut(n19).style.width = Length::px(32.0);
+        doc.append_child(n1, n19);
+        let n20 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n20).style.display = Display::Block;
+        doc.node_mut(n20).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n20).style.height = Length::px(32.0);
+        doc.node_mut(n20).style.left = Length::px(928.0);
+        doc.node_mut(n20).style.width = Length::px(32.0);
+        doc.node_mut(n20).style.position = Position::Absolute;
+        doc.node_mut(n20).style.top = Length::px(0.0);
+        doc.append_child(n1, n20);
+        let n21 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n21).style.display = Display::Block;
+        doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n21).style.height = Length::px(32.0);
+        doc.node_mut(n21).style.left = Length::px(944.0);
+        doc.node_mut(n21).style.position = Position::Absolute;
+        doc.node_mut(n21).style.top = Length::px(0.0);
+        doc.node_mut(n21).style.width = Length::px(32.0);
+        doc.append_child(n1, n21);
+        let n22 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n22).style.display = Display::Block;
+        doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n22).style.height = Length::px(32.0);
+        doc.node_mut(n22).style.left = Length::px(976.0);
+        doc.node_mut(n22).style.width = Length::px(32.0);
+        doc.node_mut(n22).style.position = Position::Absolute;
+        doc.node_mut(n22).style.top = Length::px(0.0);
+        doc.append_child(n1, n22);
+        let n23 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n23).style.display = Display::Block;
+        doc.node_mut(n23).style.background_color = Color::TRANSPARENT;
+        doc.node_mut(n23).style.height = Length::px(32.0);
+        doc.node_mut(n23).style.left = Length::px(1024.0);
+        doc.node_mut(n23).style.width = Length::px(32.0);
+        doc.node_mut(n23).style.position = Position::Absolute;
+        doc.node_mut(n23).style.top = Length::px(0.0);
+        doc.append_child(n1, n23);
+    doc
+}
+
+// Source: multicol-reduce-000-ref.html
+fn css_multicol_multicol_reduce_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.color = Color::BLUE;
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n4).style.border_top_width = 1;
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_right_width = 1;
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_bottom_width = 1;
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_left_width = 1;
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n4).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n4).style.width = Length::px(480.0);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::BLUE;
+        doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n6).style.color = Color::BLUE;
+    doc.append_child(vp, n6);
+    doc
+}
+
+// Source: multicol-reduce-000.html
+fn css_multicol_multicol_reduce_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(201.0));
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n3).style.border_top_width = 1;
+    doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n3).style.border_right_width = 1;
+    doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n3).style.border_bottom_width = 1;
+    doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n3).style.border_left_width = 1;
+    doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n3).style.color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n3).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n3).style.width = Length::px(480.0);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::BLUE;
+        doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.color = Color::BLUE;
+    doc.append_child(vp, n5);
+    doc
+}
+
+// Source: multicol-rule-000-ref.html
+fn css_multicol_multicol_rule_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n1).style.width = Length::px(602.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_width = 1;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.node_mut(n2).style.border_right_width = 1;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n3).style.width = Length::px(602.0);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_width = 1;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.node_mut(n4).style.border_right_width = 1;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-000.html
+fn css_multicol_multicol_rule_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(1.0));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n1).style.width = Length::px(602.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n2).style.width = Length::px(602.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_width = 1;
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.node_mut(n3).style.border_right_width = 1;
+        doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-001-ref.html
+fn css_multicol_multicol_rule_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n1).style.width = Length::px(320.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-rule-001.html
+fn css_multicol_multicol_rule_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n1).style.width = Length::px(320.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::RED;
+    doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(n2).style.width = Length::px(320.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-rule-003.html
+fn css_multicol_multicol_rule_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(240.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
 // Source: multicol-rule-004-ref.html
 fn css_multicol_multicol_rule_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -6522,6 +12417,635 @@ fn css_multicol_multicol_rule_004_ref() -> Document {
     doc.node_mut(n3).style.top = Length::px(52.0);
     doc.node_mut(n3).style.width = Length::px(100.0);
     doc.append_child(vp, n3);
+    doc
+}
+
+// Source: multicol-rule-004.html
+fn css_multicol_multicol_rule_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(8.0);
+    doc.node_mut(vp).style.margin_right = Length::px(8.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(vp).style.margin_left = Length::px(8.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::RED;
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.bottom = Length::px(100.0);
+    doc.node_mut(n4).style.color = Color::TRANSPARENT;
+    doc.node_mut(n4).style.height = Length::px(80.0);
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.right = Length::px(80.0);
+    doc.node_mut(n4).style.width = Length::px(208.0);
+    doc.node_mut(n4).style.column_count = Some(2);
+    doc.node_mut(n4).style.column_fill = ColumnFill::Balance;
+    doc.node_mut(n4).style.column_gap = Some(Length::px(80.0));
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-rule-color-001.html
+fn css_multicol_multicol_rule_color_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 255, 0, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::BLACK;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::BLACK;
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-rule-color-inherit-001.html
+fn css_multicol_multicol_rule_color_inherit_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::RED;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.node_mut(n1).style.width = Length::px(272.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::RED;
+        doc.node_mut(n2).style.orphans = 1_u32;
+        doc.node_mut(n2).style.widows = 1_u32;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.color = Color::RED;
+        doc.node_mut(n3).style.orphans = 1_u32;
+        doc.node_mut(n3).style.widows = 1_u32;
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.color = Color::RED;
+        doc.node_mut(n4).style.orphans = 1_u32;
+        doc.node_mut(n4).style.widows = 1_u32;
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-rule-color-inherit-002.html
+fn css_multicol_multicol_rule_color_inherit_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.node_mut(n2).style.width = Length::px(80.0);
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.node_mut(n3).style.width = Length::px(80.0);
+        doc.node_mut(n3).style.column_count = Some(3);
+        doc.node_mut(n3).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.display = Display::InlineBlock;
+        doc.node_mut(n4).style.width = Length::px(80.0);
+        doc.node_mut(n4).style.column_count = Some(3);
+        doc.node_mut(n4).style.column_gap = Some(Length::px(16.0));
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-rule-dashed-000-ref.html
+fn css_multicol_multicol_rule_dashed_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Dashed;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n3).style.width = Length::px(131.2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Dashed;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-dashed-000.html
+fn css_multicol_multicol_rule_dashed_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Dashed;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-dotted-000-ref.html
+fn css_multicol_multicol_rule_dotted_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Dotted;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n3).style.width = Length::px(131.2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Dotted;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-dotted-000.html
+fn css_multicol_multicol_rule_dotted_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Dotted;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-double-000-ref.html
+fn css_multicol_multicol_rule_double_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Double;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n3).style.width = Length::px(131.2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Double;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-double-000.html
+fn css_multicol_multicol_rule_double_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Double;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-fraction-001.html
+fn css_multicol_multicol_rule_fraction_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-rule-fraction-002.html
+fn css_multicol_multicol_rule_fraction_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-rule-fraction-3-ref.html
+fn css_multicol_multicol_rule_fraction_3_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.height = Length::px(32.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.node_mut(n2).style.height = Length::px(32.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.left = Length::px(0.0);
+        doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.node_mut(n5).style.height = Length::px(32.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.left = Length::px(0.0);
+        doc.node_mut(n6).style.width = Length::px(32.0);
+        doc.node_mut(n6).style.height = Length::px(32.0);
+        doc.node_mut(n6).style.background_color = Color::BLACK;
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.left = Length::px(0.0);
+        doc.node_mut(n7).style.background_color = Color::BLACK;
+        doc.node_mut(n7).style.width = Length::px(32.0);
+        doc.node_mut(n7).style.height = Length::px(32.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.left = Length::px(0.0);
+        doc.node_mut(n8).style.width = Length::px(32.0);
+        doc.node_mut(n8).style.height = Length::px(32.0);
+        doc.node_mut(n8).style.background_color = Color::BLACK;
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.append_child(n1, n8);
+    doc
+}
+
+// Source: multicol-rule-groove-000-ref.html
+fn css_multicol_multicol_rule_groove_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Groove;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n3).style.width = Length::px(131.2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Groove;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-groove-000.html
+fn css_multicol_multicol_rule_groove_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Groove;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-hidden-000-ref.html
+fn css_multicol_multicol_rule_hidden_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.height = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.height = Length::px(16.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-rule-hidden-000.html
+fn css_multicol_multicol_rule_hidden_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-rule-inset-000.html
+fn css_multicol_multicol_rule_inset_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Ridge;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-large-001.html
+fn css_multicol_multicol_rule_large_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_left = Length::px(16.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 255, 0, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(240.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-rule-large-002.html
+fn css_multicol_multicol_rule_large_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 255, 0, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(240.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -6798,6 +13322,127 @@ fn css_multicol_multicol_rule_nested_balancing_004() -> Document {
     doc
 }
 
+// Source: multicol-rule-none-000.html
+fn css_multicol_multicol_rule_none_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: multicol-rule-outset-000.html
+fn css_multicol_multicol_rule_outset_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Groove;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-percent-001.html
+fn css_multicol_multicol_rule_percent_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.width = Length::px(304.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-rule-ridge-000-ref.html
+fn css_multicol_multicol_rule_ridge_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Ridge;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n3).style.width = Length::px(131.2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Ridge;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-ridge-000.html
+fn css_multicol_multicol_rule_ridge_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Ridge;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
 // Source: multicol-rule-samelength-001-ref.html
 fn css_multicol_multicol_rule_samelength_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -6821,6 +13466,199 @@ fn css_multicol_multicol_rule_samelength_001_ref() -> Document {
     doc.node_mut(n3).style.height = Length::px(100.0);
     doc.node_mut(n3).style.width = Length::px(100.0);
     doc.append_child(vp, n3);
+    doc
+}
+
+// Source: multicol-rule-samelength-001.html
+fn css_multicol_multicol_rule_samelength_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(8.0);
+    doc.node_mut(vp).style.margin_right = Length::px(8.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(vp).style.margin_left = Length::px(8.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::RED;
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.bottom = Length::px(100.0);
+    doc.node_mut(n4).style.color = Color::TRANSPARENT;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.right = Length::px(40.0);
+    doc.node_mut(n4).style.width = Length::px(144.0);
+    doc.node_mut(n4).style.column_count = Some(2);
+    doc.node_mut(n4).style.column_gap = Some(Length::px(80.0));
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-rule-shorthand-001.html
+fn css_multicol_multicol_rule_shorthand_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(8.0);
+    doc.node_mut(vp).style.margin_right = Length::px(8.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(vp).style.margin_left = Length::px(8.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::RED;
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.bottom = Length::px(100.0);
+    doc.node_mut(n4).style.color = Color::TRANSPARENT;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.right = Length::px(40.0);
+    doc.node_mut(n4).style.width = Length::px(144.0);
+    doc.node_mut(n4).style.column_count = Some(2);
+    doc.node_mut(n4).style.column_gap = Some(Length::px(80.0));
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-rule-shorthand-2.html
+fn css_multicol_multicol_rule_shorthand_2() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(16.0);
+    doc.node_mut(vp).style.margin_right = Length::px(16.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(vp).style.margin_left = Length::px(16.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.width = Length::px(240.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-rule-solid-000-ref.html
+fn css_multicol_multicol_rule_solid_000_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.node_mut(n3).style.color = Color::BLACK;
+    doc.node_mut(n3).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n3).style.width = Length::px(131.2);
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-rule-solid-000.html
+fn css_multicol_multicol_rule_solid_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(3.2));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n1).style.width = Length::px(131.2);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.margin_bottom = Length::px(3.2);
+    doc.node_mut(n2).style.width = Length::px(131.2);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+        doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-rule-stacking-001.html
+fn css_multicol_multicol_rule_stacking_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::BLUE;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.width = Length::px(224.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.z_index = Some(1);
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -6908,6 +13746,112 @@ fn css_multicol_multicol_scroll_content() -> Document {
             doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n7).style.position = Position::Relative;
             doc.append_child(n6, n7);
+    doc
+}
+
+// Source: multicol-span-all-003.html
+fn css_multicol_multicol_span_all_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.background_color = Color::BLACK;
+    doc.node_mut(vp).style.padding_right = Length::px(16.0);
+    doc.node_mut(vp).style.width = Length::px(320.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.column_span = ColumnSpan::All;
+        doc.node_mut(n2).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-span-all-007-ref.html
+fn css_multicol_multicol_span_all_007_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.column_count = Some(1);
+    doc.node_mut(vp).style.width = Length::px(400.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-span-all-007.html
+fn css_multicol_multicol_span_all_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.column_count = Some(3);
+    doc.node_mut(vp).style.width = Length::px(400.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: multicol-span-all-008-ref.html
+fn css_multicol_multicol_span_all_008_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.column_count = Some(1);
+    doc.node_mut(vp).style.width = Length::px(400.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: multicol-span-all-011-ref.html
+fn css_multicol_multicol_span_all_011_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
     doc
 }
 
@@ -7232,6 +14176,94 @@ fn css_multicol_multicol_span_all_020() -> Document {
         doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.height = Length::px(50.0);
         doc.node_mut(n4).style.background_color = Color::BLUE;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-span-all-block-sibling-003.html
+fn css_multicol_multicol_span_all_block_sibling_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_span = ColumnSpan::All;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-span-all-block-sibling-3-ref.html
+fn css_multicol_multicol_span_all_block_sibling_3_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(0.0);
+            doc.node_mut(n3).style.padding_top = Length::px(10.56);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: multicol-span-all-children-height-001-ref.html
+fn css_multicol_multicol_span_all_children_height_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::percent(25.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.height = Length::percent(25.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::percent(25.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-span-all-children-height-001.html
+fn css_multicol_multicol_span_all_children_height_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.height = Length::px(200.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::percent(50.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.node_mut(n3).style.height = Length::percent(50.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::percent(50.0);
         doc.append_child(n1, n4);
     doc
 }
@@ -8529,6 +15561,715 @@ fn css_multicol_multicol_span_all_children_height_013() -> Document {
     doc
 }
 
+// Source: multicol-span-all-dynamic-add-001-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-002-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-003-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_span = ColumnSpan::All;
+            doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-004-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.width = Length::px(400.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(2);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.column_count = Some(2);
+        doc.append_child(n1, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.append_child(n6, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.node_mut(n8).style.column_span = ColumnSpan::All;
+            doc.append_child(n6, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.append_child(n6, n9);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-007-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_007_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_span = ColumnSpan::All;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-008-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_008_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_count = Some(2);
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.column_count = Some(2);
+        doc.node_mut(n4).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-010-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_010_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-012-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_012_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.column_span = ColumnSpan::All;
+                doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-add-014-ref.html
+fn css_multicol_multicol_span_all_dynamic_add_014_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.append_child(n5, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.node_mut(n7).style.column_span = ColumnSpan::All;
+            doc.append_child(n5, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.append_child(n5, n8);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-remove-001-ref.html
+fn css_multicol_multicol_span_all_dynamic_remove_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-remove-002-ref.html
+fn css_multicol_multicol_span_all_dynamic_remove_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.append_child(n3, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-remove-004-ref.html
+fn css_multicol_multicol_span_all_dynamic_remove_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.append_child(n2, n4);
+    doc
+}
+
+// Source: multicol-span-all-dynamic-remove-005-ref.html
+fn css_multicol_multicol_span_all_dynamic_remove_005_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(3);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.column_span = ColumnSpan::All;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-span-all-list-item-001-ref.html
+fn css_multicol_multicol_span_all_list_item_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(300.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.margin_top = Length::px(0.0);
+            doc.node_mut(n4).style.margin_right = Length::px(0.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n4).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(300.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.margin_top = Length::px(0.0);
+            doc.node_mut(n6).style.margin_right = Length::px(0.0);
+            doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n6).style.margin_left = Length::px(0.0);
+            doc.append_child(n5, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.width = Length::px(300.0);
+        doc.node_mut(n7).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.node_mut(n8).style.margin_top = Length::px(0.0);
+            doc.node_mut(n8).style.margin_right = Length::px(0.0);
+            doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n8).style.margin_left = Length::px(0.0);
+            doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.width = Length::px(300.0);
+        doc.node_mut(n9).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n9);
+            let n10 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n10).style.display = Display::Block;
+            doc.node_mut(n10).style.margin_top = Length::px(0.0);
+            doc.node_mut(n10).style.margin_right = Length::px(0.0);
+            doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n10).style.margin_left = Length::px(0.0);
+            doc.append_child(n9, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.width = Length::px(300.0);
+        doc.node_mut(n11).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n11);
+            let n12 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n12).style.display = Display::Block;
+            doc.append_child(n11, n12);
+                let n13 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n13).style.display = Display::Block;
+                doc.node_mut(n13).style.margin_top = Length::px(0.0);
+                doc.node_mut(n13).style.margin_right = Length::px(0.0);
+                doc.node_mut(n13).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n13).style.margin_left = Length::px(0.0);
+                doc.append_child(n12, n13);
+        let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.display = Display::Block;
+        doc.node_mut(n14).style.width = Length::px(300.0);
+        doc.node_mut(n14).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n14);
+            let n15 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n15).style.display = Display::Block;
+            doc.append_child(n14, n15);
+                let n16 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n16).style.display = Display::Block;
+                doc.node_mut(n16).style.margin_top = Length::px(0.0);
+                doc.node_mut(n16).style.margin_right = Length::px(0.0);
+                doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n16).style.margin_left = Length::px(0.0);
+                doc.append_child(n15, n16);
+    doc
+}
+
+// Source: multicol-span-all-list-item-001.html
+fn css_multicol_multicol_span_all_list_item_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
+        doc.node_mut(n2).style.width = Length::px(300.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_span = ColumnSpan::All;
+            doc.node_mut(n3).style.margin_top = Length::px(0.0);
+            doc.node_mut(n3).style.margin_right = Length::px(0.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n3).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.column_count = Some(1);
+        doc.node_mut(n4).style.width = Length::px(300.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.column_span = ColumnSpan::All;
+            doc.node_mut(n5).style.margin_top = Length::px(0.0);
+            doc.node_mut(n5).style.margin_right = Length::px(0.0);
+            doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n5).style.margin_left = Length::px(0.0);
+            doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.column_count = Some(1);
+        doc.node_mut(n6).style.width = Length::px(300.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.node_mut(n7).style.column_span = ColumnSpan::All;
+            doc.node_mut(n7).style.margin_top = Length::px(0.0);
+            doc.node_mut(n7).style.margin_right = Length::px(0.0);
+            doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n7).style.margin_left = Length::px(0.0);
+            doc.append_child(n6, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.column_count = Some(1);
+        doc.node_mut(n8).style.width = Length::px(300.0);
+        doc.node_mut(n8).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.node_mut(n9).style.column_span = ColumnSpan::All;
+            doc.node_mut(n9).style.margin_top = Length::px(0.0);
+            doc.node_mut(n9).style.margin_right = Length::px(0.0);
+            doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n9).style.margin_left = Length::px(0.0);
+            doc.append_child(n8, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.column_count = Some(1);
+        doc.node_mut(n10).style.width = Length::px(300.0);
+        doc.node_mut(n10).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n10);
+            let n11 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n11).style.display = Display::Block;
+            doc.append_child(n10, n11);
+                let n12 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n12).style.display = Display::Block;
+                doc.node_mut(n12).style.column_span = ColumnSpan::All;
+                doc.node_mut(n12).style.margin_top = Length::px(0.0);
+                doc.node_mut(n12).style.margin_right = Length::px(0.0);
+                doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n12).style.margin_left = Length::px(0.0);
+                doc.append_child(n11, n12);
+        let n13 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n13).style.display = Display::Block;
+        doc.node_mut(n13).style.column_count = Some(1);
+        doc.node_mut(n13).style.width = Length::px(300.0);
+        doc.node_mut(n13).style.margin_bottom = Length::px(16.0);
+        doc.append_child(n1, n13);
+            let n14 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n14).style.display = Display::Block;
+            doc.append_child(n13, n14);
+                let n15 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n15).style.display = Display::Block;
+                doc.node_mut(n15).style.column_span = ColumnSpan::All;
+                doc.node_mut(n15).style.margin_top = Length::px(0.0);
+                doc.node_mut(n15).style.margin_right = Length::px(0.0);
+                doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n15).style.margin_left = Length::px(0.0);
+                doc.append_child(n14, n15);
+    doc
+}
+
+// Source: multicol-span-all-list-item-002-ref.html
+fn css_multicol_multicol_span_all_list_item_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(300.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.margin_top = Length::px(0.0);
+            doc.node_mut(n4).style.margin_right = Length::px(0.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n4).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(300.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n5).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n5).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.margin_top = Length::px(0.0);
+            doc.node_mut(n6).style.margin_right = Length::px(0.0);
+            doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n6).style.margin_left = Length::px(0.0);
+            doc.append_child(n5, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.width = Length::px(300.0);
+        doc.node_mut(n7).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n7).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n7).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.node_mut(n8).style.margin_top = Length::px(0.0);
+            doc.node_mut(n8).style.margin_right = Length::px(0.0);
+            doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n8).style.margin_left = Length::px(0.0);
+            doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.width = Length::px(300.0);
+        doc.node_mut(n9).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n9).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n9).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n9);
+            let n10 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n10).style.display = Display::Block;
+            doc.node_mut(n10).style.margin_top = Length::px(0.0);
+            doc.node_mut(n10).style.margin_right = Length::px(0.0);
+            doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n10).style.margin_left = Length::px(0.0);
+            doc.append_child(n9, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.width = Length::px(300.0);
+        doc.node_mut(n11).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n11).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n11).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n11);
+            let n12 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n12).style.display = Display::Block;
+            doc.append_child(n11, n12);
+                let n13 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n13).style.display = Display::Block;
+                doc.node_mut(n13).style.margin_top = Length::px(0.0);
+                doc.node_mut(n13).style.margin_right = Length::px(0.0);
+                doc.node_mut(n13).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n13).style.margin_left = Length::px(0.0);
+                doc.append_child(n12, n13);
+        let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.display = Display::Block;
+        doc.node_mut(n14).style.width = Length::px(300.0);
+        doc.node_mut(n14).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n14).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n14).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n14);
+            let n15 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n15).style.display = Display::Block;
+            doc.append_child(n14, n15);
+                let n16 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n16).style.display = Display::Block;
+                doc.node_mut(n16).style.margin_top = Length::px(0.0);
+                doc.node_mut(n16).style.margin_right = Length::px(0.0);
+                doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n16).style.margin_left = Length::px(0.0);
+                doc.append_child(n15, n16);
+    doc
+}
+
+// Source: multicol-span-all-list-item-002.html
+fn css_multicol_multicol_span_all_list_item_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.column_count = Some(1);
+        doc.node_mut(n2).style.width = Length::px(300.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.column_span = ColumnSpan::All;
+            doc.node_mut(n3).style.margin_top = Length::px(0.0);
+            doc.node_mut(n3).style.margin_right = Length::px(0.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n3).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.column_count = Some(1);
+        doc.node_mut(n4).style.width = Length::px(300.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n4).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n4).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.column_span = ColumnSpan::All;
+            doc.node_mut(n5).style.margin_top = Length::px(0.0);
+            doc.node_mut(n5).style.margin_right = Length::px(0.0);
+            doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n5).style.margin_left = Length::px(0.0);
+            doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.column_count = Some(1);
+        doc.node_mut(n6).style.width = Length::px(300.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n6).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n6).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.node_mut(n7).style.column_span = ColumnSpan::All;
+            doc.node_mut(n7).style.margin_top = Length::px(0.0);
+            doc.node_mut(n7).style.margin_right = Length::px(0.0);
+            doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n7).style.margin_left = Length::px(0.0);
+            doc.append_child(n6, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.column_count = Some(1);
+        doc.node_mut(n8).style.width = Length::px(300.0);
+        doc.node_mut(n8).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n8).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n8).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.node_mut(n9).style.column_span = ColumnSpan::All;
+            doc.node_mut(n9).style.margin_top = Length::px(0.0);
+            doc.node_mut(n9).style.margin_right = Length::px(0.0);
+            doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n9).style.margin_left = Length::px(0.0);
+            doc.append_child(n8, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.column_count = Some(1);
+        doc.node_mut(n10).style.width = Length::px(300.0);
+        doc.node_mut(n10).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n10).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n10).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n10);
+            let n11 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n11).style.display = Display::Block;
+            doc.append_child(n10, n11);
+                let n12 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n12).style.display = Display::Block;
+                doc.node_mut(n12).style.column_span = ColumnSpan::All;
+                doc.node_mut(n12).style.margin_top = Length::px(0.0);
+                doc.node_mut(n12).style.margin_right = Length::px(0.0);
+                doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n12).style.margin_left = Length::px(0.0);
+                doc.append_child(n11, n12);
+        let n13 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n13).style.display = Display::Block;
+        doc.node_mut(n13).style.column_count = Some(1);
+        doc.node_mut(n13).style.width = Length::px(300.0);
+        doc.node_mut(n13).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n13).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n13).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n13);
+            let n14 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n14).style.display = Display::Block;
+            doc.append_child(n13, n14);
+                let n15 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n15).style.display = Display::Block;
+                doc.node_mut(n15).style.column_span = ColumnSpan::All;
+                doc.node_mut(n15).style.margin_top = Length::px(0.0);
+                doc.node_mut(n15).style.margin_right = Length::px(0.0);
+                doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n15).style.margin_left = Length::px(0.0);
+                doc.append_child(n14, n15);
+    doc
+}
+
 // Source: multicol-span-all-margin-003.html
 fn css_multicol_multicol_span_all_margin_003() -> Document {
     let (mut doc, vp) = base_doc();
@@ -8556,6 +16297,241 @@ fn css_multicol_multicol_span_all_margin_003() -> Document {
     doc
 }
 
+// Source: multicol-span-all-margin-nested-001.html
+fn css_multicol_multicol_span_all_margin_nested_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 0, 128, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(128.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(176.0);
+        doc.node_mut(n2).style.column_span = ColumnSpan::All;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.margin_top = Length::px(0.0);
+            doc.node_mut(n4).style.margin_right = Length::px(0.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n4).style.margin_left = Length::px(0.0);
+            doc.node_mut(n4).style.width = Length::px(176.0);
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.node_mut(n4).style.background_color = Color::BLACK;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-span-all-margin-nested-002.html
+fn css_multicol_multicol_span_all_margin_nested_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 0, 128, 255);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(128.0);
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(176.0);
+        doc.node_mut(n2).style.column_span = ColumnSpan::All;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(16.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.width = Length::px(176.0);
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.node_mut(n4).style.background_color = Color::BLACK;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.margin_top = Length::px(16.0);
+            doc.node_mut(n4).style.margin_right = Length::px(0.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+            doc.node_mut(n4).style.margin_left = Length::px(0.0);
+            doc.append_child(n3, n4);
+    doc
+}
+
+// Source: multicol-span-all-margin-nested-firstchild-ref.html
+fn css_multicol_multicol_span_all_margin_nested_firstchild_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 0, 128, 255);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_right = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.width = Length::px(128.0);
+    doc.node_mut(n1).style.height = Length::px(208.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(128.0);
+        doc.node_mut(n2).style.height = Length::px(32.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(128.0);
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(128.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.height = Length::px(32.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.left = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(128.0);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.node_mut(n6).style.top = Length::px(0.0);
+        doc.node_mut(n6).style.height = Length::px(32.0);
+        doc.node_mut(n6).style.position = Position::Absolute;
+        doc.node_mut(n6).style.left = Length::px(0.0);
+        doc.node_mut(n6).style.width = Length::px(128.0);
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.node_mut(n7).style.top = Length::px(0.0);
+        doc.node_mut(n7).style.height = Length::px(32.0);
+        doc.node_mut(n7).style.position = Position::Absolute;
+        doc.node_mut(n7).style.left = Length::px(0.0);
+        doc.node_mut(n7).style.width = Length::px(128.0);
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 0, 128, 255);
+        doc.node_mut(n8).style.top = Length::px(0.0);
+        doc.node_mut(n8).style.height = Length::px(32.0);
+        doc.node_mut(n8).style.position = Position::Absolute;
+        doc.node_mut(n8).style.left = Length::px(0.0);
+        doc.node_mut(n8).style.width = Length::px(128.0);
+        doc.append_child(n1, n8);
+    doc
+}
+
+// Source: multicol-span-all-restyle-001-ref.html
+fn css_multicol_multicol_span_all_restyle_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n2, n5);
+    doc
+}
+
 // Source: multicol-span-all-restyle-002-ref.html
 fn css_multicol_multicol_span_all_restyle_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -8574,6 +16550,56 @@ fn css_multicol_multicol_span_all_restyle_002_ref() -> Document {
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
             doc.append_child(n2, n4);
+    doc
+}
+
+// Source: multicol-span-all-restyle-003-ref.html
+fn css_multicol_multicol_span_all_restyle_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n2, n5);
+    doc
+}
+
+// Source: multicol-span-all-restyle-004-ref.html
+fn css_multicol_multicol_span_all_restyle_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n2, n5);
     doc
 }
 
@@ -8880,6 +16906,270 @@ fn css_multicol_multicol_span_all_rule_002_ref() -> Document {
         doc.node_mut(n28).style.height = Length::px(195.0);
         doc.node_mut(n28).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.append_child(n22, n28);
+    doc
+}
+
+// Source: multicol-span-float-002-ref.html
+fn css_multicol_multicol_span_float_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Right;
+        doc.node_mut(n3).style.color = Color::from_rgba8(0, 0, 128, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.clear = Clear::Both;
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.float = Float::Left;
+        doc.node_mut(n5).style.color = Color::BLACK;
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.float = Float::Right;
+        doc.node_mut(n6).style.color = Color::from_rgba8(0, 0, 128, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: multicol-span-float-002.html
+fn css_multicol_multicol_span_float_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.color = Color::BLACK;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Right;
+        doc.node_mut(n3).style.color = Color::from_rgba8(0, 0, 128, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.column_span = ColumnSpan::All;
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.float = Float::Left;
+        doc.node_mut(n5).style.color = Color::BLACK;
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.float = Float::Right;
+        doc.node_mut(n6).style.color = Color::from_rgba8(0, 0, 128, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: multicol-span-float-003.html
+fn css_multicol_multicol_span_float_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(1);
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.float = Float::Left;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.float = Float::Right;
+            doc.node_mut(n4).style.color = Color::from_rgba8(0, 0, 128, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.column_span = ColumnSpan::All;
+            doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+            doc.append_child(n2, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.float = Float::Left;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.append_child(n2, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.node_mut(n7).style.float = Float::Right;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 0, 128, 255);
+            doc.append_child(n2, n7);
+    doc
+}
+
+// Source: multicol-span-none-001.html
+fn css_multicol_multicol_span_none_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(176.0);
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.color = Color::BLACK;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(176.0);
+        doc.node_mut(n3).style.column_span = ColumnSpan::None;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: multicol-width-001-ref.html
+fn css_multicol_multicol_width_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-width-001.html
+fn css_multicol_multicol_width_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(96.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-width-002.html
+fn css_multicol_multicol_width_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(96.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-width-003.html
+fn css_multicol_multicol_width_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.height = Length::px(32.0);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_width = Some(Length::px(96.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.height = Length::px(32.0);
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.right = Length::px(112.0);
+        doc.node_mut(n3).style.background_color = Color::BLACK;
+        doc.node_mut(n3).style.height = Length::px(32.0);
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::BLACK;
+        doc.node_mut(n4).style.right = Length::px(64.0);
+        doc.node_mut(n4).style.height = Length::px(32.0);
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(0.0);
+        doc.node_mut(n4).style.width = Length::px(32.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.node_mut(n5).style.right = Length::px(16.0);
+        doc.node_mut(n5).style.height = Length::px(32.0);
+        doc.node_mut(n5).style.position = Position::Absolute;
+        doc.node_mut(n5).style.top = Length::px(0.0);
+        doc.node_mut(n5).style.width = Length::px(32.0);
+        doc.append_child(n1, n5);
     doc
 }
 
@@ -9562,6 +17852,186 @@ fn css_multicol_multicol_width_005() -> Document {
     doc
 }
 
+// Source: multicol-width-ch-001.html
+fn css_multicol_multicol_width_ch_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-width-count-001.html
+fn css_multicol_multicol_width_count_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(480.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.column_count = Some(5);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(80.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-width-count-002.html
+fn css_multicol_multicol_width_count_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.background_color = Color::BLACK;
+    doc.node_mut(vp).style.padding_right = Length::px(16.0);
+    doc.node_mut(vp).style.width = Length::px(320.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.column_count = Some(4);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(64.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-width-invalid-001.html
+fn css_multicol_multicol_width_invalid_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-width-large-001.html
+fn css_multicol_multicol_width_large_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(144.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-width-large-002.html
+fn css_multicol_multicol_width_large_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(192.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: multicol-width-negative-001.html
+fn css_multicol_multicol_width_negative_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.width = Length::px(304.0);
+    doc.node_mut(n1).style.column_width = Some(Length::px(-100.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-width-small-001.html
+fn css_multicol_multicol_width_small_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_width = Some(Length::px(16.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.color = Color::BLUE;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n4).style.color = Color::BLUE;
+            doc.append_child(n2, n4);
+    doc
+}
+
 // Source: multicol-zero-height-001-ref.html
 fn css_multicol_multicol_zero_height_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -9571,6 +18041,60 @@ fn css_multicol_multicol_zero_height_001_ref() -> Document {
     doc.node_mut(n1).style.height = Length::px(1.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 255, 0, 255);
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-zero-height-001.html
+fn css_multicol_multicol_zero_height_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(0.0);
+    doc.node_mut(n1).style.orphans = 1_u32;
+    doc.node_mut(n1).style.widows = 1_u32;
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.column_count = Some(10);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 255, 0, 255);
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.height = Length::px(10.0);
+        doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: multicol-zero-height-002-ref.html
+fn css_multicol_multicol_zero_height_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: multicol-zero-height-002.html
+fn css_multicol_multicol_zero_height_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_width = Some(Length::px(100.0));
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(0.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(100.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -11346,6 +19870,43 @@ fn css_multicol_zero_column_width_layout() -> Document {
     doc
 }
 
+// Source: table_table-cell-as-multicol-ref.html
+fn css_multicol_table_table_cell_as_multicol_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n2).style.width = Length::px(16.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n3).style.width = Length::px(16.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.float = Float::Left;
+        doc.node_mut(n4).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n4).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n4).style.width = Length::px(16.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.float = Float::Left;
+        doc.node_mut(n5).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n5).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n5).style.width = Length::px(16.0);
+        doc.append_child(n1, n5);
+    doc
+}
+
 // Source: table_table-cell-content-change-000-ref.html
 fn css_multicol_table_table_cell_content_change_000_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -11422,6 +19983,8 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/baseline-008", css_multicol_baseline_008 as fn() -> Document),
         ("wpt/css_multicol/broken-column-rule-1-ref", css_multicol_broken_column_rule_1_ref as fn() -> Document),
         ("wpt/css_multicol/broken-column-rule-1", css_multicol_broken_column_rule_1 as fn() -> Document),
+        ("wpt/css_multicol/column-balancing-paged-001-print-ref", css_multicol_column_balancing_paged_001_print_ref as fn() -> Document),
+        ("wpt/css_multicol/column-balancing-paged-001-print", css_multicol_column_balancing_paged_001_print as fn() -> Document),
         ("wpt/css_multicol/column-balancing-with-overflow-auto-crash", css_multicol_column_balancing_with_overflow_auto_crash as fn() -> Document),
         ("wpt/css_multicol/column-balancing-with-span-and-oof-001", css_multicol_column_balancing_with_span_and_oof_001 as fn() -> Document),
         ("wpt/css_multicol/column-balancing-with-span-and-oof-002", css_multicol_column_balancing_with_span_and_oof_002 as fn() -> Document),
@@ -11484,19 +20047,89 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/move-with-text-after-paint-ref", css_multicol_move_with_text_after_paint_ref as fn() -> Document),
         ("wpt/css_multicol/moz-multicol3-column-balancing-break-inside-avoid-1-ref", css_multicol_moz_multicol3_column_balancing_break_inside_avoid_1_ref as fn() -> Document),
         ("wpt/css_multicol/moz-multicol3-column-balancing-break-inside-avoid-1", css_multicol_moz_multicol3_column_balancing_break_inside_avoid_1 as fn() -> Document),
+        ("wpt/css_multicol/multicol-basic-001", css_multicol_multicol_basic_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-basic-002", css_multicol_multicol_basic_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-basic-003", css_multicol_multicol_basic_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-basic-004", css_multicol_multicol_basic_004 as fn() -> Document),
         ("wpt/css_multicol/multicol-basic-005", css_multicol_multicol_basic_005 as fn() -> Document),
         ("wpt/css_multicol/multicol-basic-006", css_multicol_multicol_basic_006 as fn() -> Document),
         ("wpt/css_multicol/multicol-basic-007", css_multicol_multicol_basic_007 as fn() -> Document),
         ("wpt/css_multicol/multicol-basic-008", css_multicol_multicol_basic_008 as fn() -> Document),
+        ("wpt/css_multicol/multicol-block-no-clip-001", css_multicol_multicol_block_no_clip_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-block-no-clip-002", css_multicol_multicol_block_no_clip_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-br-inside-avoidcolumn-001", css_multicol_multicol_br_inside_avoidcolumn_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-000-ref", css_multicol_multicol_breaking_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-000", css_multicol_multicol_breaking_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-001-ref", css_multicol_multicol_breaking_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-001", css_multicol_multicol_breaking_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-002-ref", css_multicol_multicol_breaking_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-002", css_multicol_multicol_breaking_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-003-ref", css_multicol_multicol_breaking_003_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-003", css_multicol_multicol_breaking_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-004-ref", css_multicol_multicol_breaking_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-004", css_multicol_multicol_breaking_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-005-ref", css_multicol_multicol_breaking_005_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-005", css_multicol_multicol_breaking_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-006-ref", css_multicol_multicol_breaking_006_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-006", css_multicol_multicol_breaking_006 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-000-ref", css_multicol_multicol_breaking_nobackground_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-000", css_multicol_multicol_breaking_nobackground_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-001-ref", css_multicol_multicol_breaking_nobackground_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-001", css_multicol_multicol_breaking_nobackground_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-002-ref", css_multicol_multicol_breaking_nobackground_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-002", css_multicol_multicol_breaking_nobackground_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-003-ref", css_multicol_multicol_breaking_nobackground_003_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-003", css_multicol_multicol_breaking_nobackground_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-004-ref", css_multicol_multicol_breaking_nobackground_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-004", css_multicol_multicol_breaking_nobackground_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-005-ref", css_multicol_multicol_breaking_nobackground_005_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-breaking-nobackground-005", css_multicol_multicol_breaking_nobackground_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-clip-001", css_multicol_multicol_clip_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-clip-002", css_multicol_multicol_clip_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-collapsing-001", css_multicol_multicol_collapsing_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-001-ref", css_multicol_multicol_columns_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-001", css_multicol_multicol_columns_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-002", css_multicol_multicol_columns_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-003", css_multicol_multicol_columns_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-004", css_multicol_multicol_columns_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-005", css_multicol_multicol_columns_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-006", css_multicol_multicol_columns_006 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-007", css_multicol_multicol_columns_007 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-invalid-001", css_multicol_multicol_columns_invalid_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-invalid-002", css_multicol_multicol_columns_invalid_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-columns-toolong-001", css_multicol_multicol_columns_toolong_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-contained-absolute-ref", css_multicol_multicol_contained_absolute_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-contained-absolute", css_multicol_multicol_contained_absolute as fn() -> Document),
+        ("wpt/css_multicol/multicol-containing-001", css_multicol_multicol_containing_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-containing-002-ref", css_multicol_multicol_containing_002_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-containing-003", css_multicol_multicol_containing_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-001", css_multicol_multicol_count_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-002", css_multicol_multicol_count_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-computed-003", css_multicol_multicol_count_computed_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-computed-004", css_multicol_multicol_count_computed_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-computed-005", css_multicol_multicol_count_computed_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-negative-001", css_multicol_multicol_count_negative_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-negative-002", css_multicol_multicol_count_negative_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-non-integer-001", css_multicol_multicol_count_non_integer_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-non-integer-002", css_multicol_multicol_count_non_integer_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-count-non-integer-003", css_multicol_multicol_count_non_integer_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-dynamic-add-001-ref", css_multicol_multicol_dynamic_add_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-dynamic-add-002-ref", css_multicol_multicol_dynamic_add_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-001-ref", css_multicol_multicol_fill_auto_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-001", css_multicol_multicol_fill_auto_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-002-ref", css_multicol_multicol_fill_auto_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-002", css_multicol_multicol_fill_auto_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-003", css_multicol_multicol_fill_auto_003 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-auto-004", css_multicol_multicol_fill_auto_004 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-auto-005", css_multicol_multicol_fill_auto_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-block-children-001", css_multicol_multicol_fill_auto_block_children_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-auto-block-children-002-ref", css_multicol_multicol_fill_auto_block_children_002_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-auto-block-children-002", css_multicol_multicol_fill_auto_block_children_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-auto-block-children-003-ref", css_multicol_multicol_fill_auto_block_children_003_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-auto-block-children-003", css_multicol_multicol_fill_auto_block_children_003 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-auto-block-children-ref", css_multicol_multicol_fill_auto_block_children_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-balance-001-ref", css_multicol_multicol_fill_balance_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-fill-balance-001", css_multicol_multicol_fill_balance_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-balance-002", css_multicol_multicol_fill_balance_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-balance-003", css_multicol_multicol_fill_balance_003 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-balance-005", css_multicol_multicol_fill_balance_005 as fn() -> Document),
@@ -11516,8 +20149,47 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/multicol-fill-balance-040", css_multicol_multicol_fill_balance_040 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-balance-041", css_multicol_multicol_fill_balance_041 as fn() -> Document),
         ("wpt/css_multicol/multicol-fill-balance-nested-000", css_multicol_multicol_fill_balance_nested_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-000-ref", css_multicol_multicol_gap_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-000", css_multicol_multicol_gap_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-001", css_multicol_multicol_gap_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-002", css_multicol_multicol_gap_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-003", css_multicol_multicol_gap_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-fraction-001", css_multicol_multicol_gap_fraction_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-gap-fraction-002", css_multicol_multicol_gap_fraction_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-large-001", css_multicol_multicol_gap_large_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-large-002", css_multicol_multicol_gap_large_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-gap-negative-001", css_multicol_multicol_gap_negative_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-height-001", css_multicol_multicol_height_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-height-002-print-ref", css_multicol_multicol_height_002_print_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-height-002-print", css_multicol_multicol_height_002_print as fn() -> Document),
+        ("wpt/css_multicol/multicol-height-block-child-001-ref", css_multicol_multicol_height_block_child_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-height-block-child-001", css_multicol_multicol_height_block_child_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-inherit-001", css_multicol_multicol_inherit_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-inherit-002", css_multicol_multicol_inherit_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-inherit-3-ref", css_multicol_multicol_inherit_3_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-list-item-001-ref", css_multicol_multicol_list_item_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-001", css_multicol_multicol_list_item_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-002-ref", css_multicol_multicol_list_item_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-003-ref", css_multicol_multicol_list_item_003_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-003", css_multicol_multicol_list_item_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-004-ref", css_multicol_multicol_list_item_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-004", css_multicol_multicol_list_item_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-005-ref", css_multicol_multicol_list_item_005_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-005", css_multicol_multicol_list_item_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-006-ref", css_multicol_multicol_list_item_006_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-006", css_multicol_multicol_list_item_006 as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-007-ref", css_multicol_multicol_list_item_007_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-007", css_multicol_multicol_list_item_007 as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-008-ref", css_multicol_multicol_list_item_008_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-list-item-008", css_multicol_multicol_list_item_008 as fn() -> Document),
+        ("wpt/css_multicol/multicol-loads-indefinitely-001-crash", css_multicol_multicol_loads_indefinitely_001_crash as fn() -> Document),
+        ("wpt/css_multicol/multicol-margin-001", css_multicol_multicol_margin_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-margin-002", css_multicol_multicol_margin_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-margin-003", css_multicol_multicol_margin_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-margin-child-001-ref", css_multicol_multicol_margin_child_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-margin-child-001", css_multicol_multicol_margin_child_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-002-ref", css_multicol_multicol_nested_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-005", css_multicol_multicol_nested_005 as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-007", css_multicol_multicol_nested_007 as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-008", css_multicol_multicol_nested_008 as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-009", css_multicol_multicol_nested_009 as fn() -> Document),
@@ -11546,8 +20218,19 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/multicol-nested-032", css_multicol_multicol_nested_032 as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-033-ref", css_multicol_multicol_nested_033_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-033", css_multicol_multicol_nested_033 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-column-rule-001-ref", css_multicol_multicol_nested_column_rule_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-column-rule-001", css_multicol_multicol_nested_column_rule_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-column-rule-002", css_multicol_multicol_nested_column_rule_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-nested-column-rule-003", css_multicol_multicol_nested_column_rule_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-001-ref", css_multicol_multicol_nested_margin_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-001", css_multicol_multicol_nested_margin_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-002-ref", css_multicol_multicol_nested_margin_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-002", css_multicol_multicol_nested_margin_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-003-ref", css_multicol_multicol_nested_margin_003_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-003", css_multicol_multicol_nested_margin_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-004-ref", css_multicol_multicol_nested_margin_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-004", css_multicol_multicol_nested_margin_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-nested-margin-005", css_multicol_multicol_nested_margin_005 as fn() -> Document),
         ("wpt/css_multicol/multicol-oof-inline-cb-001-ref", css_multicol_multicol_oof_inline_cb_001_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-oof-inline-cb-001", css_multicol_multicol_oof_inline_cb_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-oof-inline-cb-002", css_multicol_multicol_oof_inline_cb_002 as fn() -> Document),
@@ -11557,7 +20240,35 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/multicol-overflow-clip-positioned", css_multicol_multicol_overflow_clip_positioned as fn() -> Document),
         ("wpt/css_multicol/multicol-overflow-clip-ref", css_multicol_multicol_overflow_clip_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-overflow-clip", css_multicol_multicol_overflow_clip as fn() -> Document),
+        ("wpt/css_multicol/multicol-overflowing-001-ref", css_multicol_multicol_overflowing_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-reduce-000-ref", css_multicol_multicol_reduce_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-reduce-000", css_multicol_multicol_reduce_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-000-ref", css_multicol_multicol_rule_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-000", css_multicol_multicol_rule_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-001-ref", css_multicol_multicol_rule_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-001", css_multicol_multicol_rule_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-003", css_multicol_multicol_rule_003 as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-004-ref", css_multicol_multicol_rule_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-004", css_multicol_multicol_rule_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-color-001", css_multicol_multicol_rule_color_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-color-inherit-001", css_multicol_multicol_rule_color_inherit_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-color-inherit-002", css_multicol_multicol_rule_color_inherit_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-dashed-000-ref", css_multicol_multicol_rule_dashed_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-dashed-000", css_multicol_multicol_rule_dashed_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-dotted-000-ref", css_multicol_multicol_rule_dotted_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-dotted-000", css_multicol_multicol_rule_dotted_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-double-000-ref", css_multicol_multicol_rule_double_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-double-000", css_multicol_multicol_rule_double_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-fraction-001", css_multicol_multicol_rule_fraction_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-fraction-002", css_multicol_multicol_rule_fraction_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-fraction-3-ref", css_multicol_multicol_rule_fraction_3_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-groove-000-ref", css_multicol_multicol_rule_groove_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-groove-000", css_multicol_multicol_rule_groove_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-hidden-000-ref", css_multicol_multicol_rule_hidden_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-hidden-000", css_multicol_multicol_rule_hidden_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-inset-000", css_multicol_multicol_rule_inset_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-large-001", css_multicol_multicol_rule_large_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-large-002", css_multicol_multicol_rule_large_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-nested-balancing-001-ref", css_multicol_multicol_rule_nested_balancing_001_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-nested-balancing-001", css_multicol_multicol_rule_nested_balancing_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-nested-balancing-002-ref", css_multicol_multicol_rule_nested_balancing_002_ref as fn() -> Document),
@@ -11566,9 +20277,25 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/multicol-rule-nested-balancing-003", css_multicol_multicol_rule_nested_balancing_003 as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-nested-balancing-004-ref", css_multicol_multicol_rule_nested_balancing_004_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-nested-balancing-004", css_multicol_multicol_rule_nested_balancing_004 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-none-000", css_multicol_multicol_rule_none_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-outset-000", css_multicol_multicol_rule_outset_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-percent-001", css_multicol_multicol_rule_percent_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-ridge-000-ref", css_multicol_multicol_rule_ridge_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-ridge-000", css_multicol_multicol_rule_ridge_000 as fn() -> Document),
         ("wpt/css_multicol/multicol-rule-samelength-001-ref", css_multicol_multicol_rule_samelength_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-samelength-001", css_multicol_multicol_rule_samelength_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-shorthand-001", css_multicol_multicol_rule_shorthand_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-shorthand-2", css_multicol_multicol_rule_shorthand_2 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-solid-000-ref", css_multicol_multicol_rule_solid_000_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-solid-000", css_multicol_multicol_rule_solid_000 as fn() -> Document),
+        ("wpt/css_multicol/multicol-rule-stacking-001", css_multicol_multicol_rule_stacking_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-scroll-content-ref", css_multicol_multicol_scroll_content_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-scroll-content", css_multicol_multicol_scroll_content as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-003", css_multicol_multicol_span_all_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-007-ref", css_multicol_multicol_span_all_007_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-007", css_multicol_multicol_span_all_007 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-008-ref", css_multicol_multicol_span_all_008_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-011-ref", css_multicol_multicol_span_all_011_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-012", css_multicol_multicol_span_all_012 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-013", css_multicol_multicol_span_all_013 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-014", css_multicol_multicol_span_all_014 as fn() -> Document),
@@ -11577,6 +20304,10 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/multicol-span-all-019", css_multicol_multicol_span_all_019 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-020-ref", css_multicol_multicol_span_all_020_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-020", css_multicol_multicol_span_all_020 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-block-sibling-003", css_multicol_multicol_span_all_block_sibling_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-block-sibling-3-ref", css_multicol_multicol_span_all_block_sibling_3_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-children-height-001-ref", css_multicol_multicol_span_all_children_height_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-children-height-001", css_multicol_multicol_span_all_children_height_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-children-height-002-ref", css_multicol_multicol_span_all_children_height_002_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-children-height-002", css_multicol_multicol_span_all_children_height_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-children-height-003-ref", css_multicol_multicol_span_all_children_height_003_ref as fn() -> Document),
@@ -11598,16 +20329,58 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/multicol-span-all-children-height-011", css_multicol_multicol_span_all_children_height_011 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-children-height-012", css_multicol_multicol_span_all_children_height_012 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-children-height-013", css_multicol_multicol_span_all_children_height_013 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-001-ref", css_multicol_multicol_span_all_dynamic_add_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-002-ref", css_multicol_multicol_span_all_dynamic_add_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-003-ref", css_multicol_multicol_span_all_dynamic_add_003_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-004-ref", css_multicol_multicol_span_all_dynamic_add_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-007-ref", css_multicol_multicol_span_all_dynamic_add_007_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-008-ref", css_multicol_multicol_span_all_dynamic_add_008_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-010-ref", css_multicol_multicol_span_all_dynamic_add_010_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-012-ref", css_multicol_multicol_span_all_dynamic_add_012_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-add-014-ref", css_multicol_multicol_span_all_dynamic_add_014_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-remove-001-ref", css_multicol_multicol_span_all_dynamic_remove_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-remove-002-ref", css_multicol_multicol_span_all_dynamic_remove_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-remove-004-ref", css_multicol_multicol_span_all_dynamic_remove_004_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-dynamic-remove-005-ref", css_multicol_multicol_span_all_dynamic_remove_005_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-list-item-001-ref", css_multicol_multicol_span_all_list_item_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-list-item-001", css_multicol_multicol_span_all_list_item_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-list-item-002-ref", css_multicol_multicol_span_all_list_item_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-list-item-002", css_multicol_multicol_span_all_list_item_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-margin-003", css_multicol_multicol_span_all_margin_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-margin-nested-001", css_multicol_multicol_span_all_margin_nested_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-margin-nested-002", css_multicol_multicol_span_all_margin_nested_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-margin-nested-firstchild-ref", css_multicol_multicol_span_all_margin_nested_firstchild_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-restyle-001-ref", css_multicol_multicol_span_all_restyle_001_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-restyle-002-ref", css_multicol_multicol_span_all_restyle_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-restyle-003-ref", css_multicol_multicol_span_all_restyle_003_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-all-restyle-004-ref", css_multicol_multicol_span_all_restyle_004_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-rule-001-ref", css_multicol_multicol_span_all_rule_001_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-rule-001", css_multicol_multicol_span_all_rule_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-span-all-rule-002-ref", css_multicol_multicol_span_all_rule_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-float-002-ref", css_multicol_multicol_span_float_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-float-002", css_multicol_multicol_span_float_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-float-003", css_multicol_multicol_span_float_003 as fn() -> Document),
+        ("wpt/css_multicol/multicol-span-none-001", css_multicol_multicol_span_none_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-001-ref", css_multicol_multicol_width_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-001", css_multicol_multicol_width_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-002", css_multicol_multicol_width_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-003", css_multicol_multicol_width_003 as fn() -> Document),
         ("wpt/css_multicol/multicol-width-004-ref", css_multicol_multicol_width_004_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-width-004", css_multicol_multicol_width_004 as fn() -> Document),
         ("wpt/css_multicol/multicol-width-005-ref", css_multicol_multicol_width_005_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-width-005", css_multicol_multicol_width_005 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-ch-001", css_multicol_multicol_width_ch_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-count-001", css_multicol_multicol_width_count_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-count-002", css_multicol_multicol_width_count_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-invalid-001", css_multicol_multicol_width_invalid_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-large-001", css_multicol_multicol_width_large_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-large-002", css_multicol_multicol_width_large_002 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-negative-001", css_multicol_multicol_width_negative_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-width-small-001", css_multicol_multicol_width_small_001 as fn() -> Document),
         ("wpt/css_multicol/multicol-zero-height-001-ref", css_multicol_multicol_zero_height_001_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-zero-height-001", css_multicol_multicol_zero_height_001 as fn() -> Document),
+        ("wpt/css_multicol/multicol-zero-height-002-ref", css_multicol_multicol_zero_height_002_ref as fn() -> Document),
+        ("wpt/css_multicol/multicol-zero-height-002", css_multicol_multicol_zero_height_002 as fn() -> Document),
         ("wpt/css_multicol/multicol-zero-height-003-ref", css_multicol_multicol_zero_height_003_ref as fn() -> Document),
         ("wpt/css_multicol/multicol-zero-height-003", css_multicol_multicol_zero_height_003 as fn() -> Document),
         ("wpt/css_multicol/named-page", css_multicol_named_page as fn() -> Document),
@@ -11661,6 +20434,7 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/triply-nested-with-fixedpos-in-abspos-crash", css_multicol_triply_nested_with_fixedpos_in_abspos_crash as fn() -> Document),
         ("wpt/css_multicol/with-custom-layout-on-same-element.https", css_multicol_with_custom_layout_on_same_element_https as fn() -> Document),
         ("wpt/css_multicol/zero-column-width-layout", css_multicol_zero_column_width_layout as fn() -> Document),
+        ("wpt/css_multicol/table_table-cell-as-multicol-ref", css_multicol_table_table_cell_as_multicol_ref as fn() -> Document),
         ("wpt/css_multicol/table_table-cell-content-change-000-ref", css_multicol_table_table_cell_content_change_000_ref as fn() -> Document),
         ("wpt/css_multicol/table_table-cell-content-change-001-ref", css_multicol_table_table_cell_content_change_001_ref as fn() -> Document),
     ]

@@ -172,6 +172,258 @@ fn css_overflow_clip_002() -> Document {
     doc
 }
 
+// Source: clip-003-ref.html
+fn css_overflow_clip_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_left = Length::px(30.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n1).style.width = Length::px(50.0);
+    doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Relative;
+            doc.node_mut(n3).style.top = Length::px(-10.0);
+            doc.node_mut(n3).style.left = Length::px(-10.0);
+            doc.node_mut(n3).style.height = Length::px(100.0);
+            doc.node_mut(n3).style.width = Length::px(100.0);
+            doc.node_mut(n3).style.background_color = Color::BLUE;
+            doc.node_mut(n3).style.opacity = 0.5;
+            doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.margin_left = Length::px(30.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n4).style.width = Length::px(50.0);
+    doc.node_mut(n4).style.height = Length::px(50.0);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(50.0);
+        doc.node_mut(n5).style.height = Length::px(50.0);
+        doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.append_child(n4, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.position = Position::Relative;
+            doc.node_mut(n6).style.top = Length::px(-10.0);
+            doc.node_mut(n6).style.left = Length::px(0.0);
+            doc.node_mut(n6).style.height = Length::px(100.0);
+            doc.node_mut(n6).style.width = Length::px(50.0);
+            doc.node_mut(n6).style.background_color = Color::BLUE;
+            doc.node_mut(n6).style.opacity = 0.5;
+            doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.margin_left = Length::px(30.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n7).style.width = Length::px(50.0);
+    doc.node_mut(n7).style.height = Length::px(50.0);
+    doc.node_mut(n7).style.margin_top = Length::px(50.0);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.width = Length::px(50.0);
+        doc.node_mut(n8).style.height = Length::px(50.0);
+        doc.node_mut(n8).style.background_color = Color::BLACK;
+        doc.append_child(n7, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.node_mut(n9).style.position = Position::Relative;
+            doc.node_mut(n9).style.top = Length::px(-10.0);
+            doc.node_mut(n9).style.left = Length::px(-10.0);
+            doc.node_mut(n9).style.height = Length::px(100.0);
+            doc.node_mut(n9).style.width = Length::px(1.0);
+            doc.node_mut(n9).style.background_color = Color::BLUE;
+            doc.node_mut(n9).style.opacity = 0.5;
+            doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.margin_left = Length::px(30.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n10).style.width = Length::px(50.0);
+    doc.node_mut(n10).style.height = Length::px(50.0);
+    doc.append_child(vp, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.width = Length::px(50.0);
+        doc.node_mut(n11).style.height = Length::px(50.0);
+        doc.node_mut(n11).style.background_color = Color::BLACK;
+        doc.append_child(n10, n11);
+            let n12 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n12).style.display = Display::Block;
+            doc.node_mut(n12).style.position = Position::Relative;
+            doc.node_mut(n12).style.top = Length::px(0.0);
+            doc.node_mut(n12).style.left = Length::px(-10.0);
+            doc.node_mut(n12).style.height = Length::px(50.0);
+            doc.node_mut(n12).style.width = Length::px(100.0);
+            doc.node_mut(n12).style.background_color = Color::BLUE;
+            doc.node_mut(n12).style.opacity = 0.5;
+            doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n13).style.display = Display::Block;
+    doc.node_mut(n13).style.margin_left = Length::px(30.0);
+    doc.node_mut(n13).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n13).style.width = Length::px(50.0);
+    doc.node_mut(n13).style.height = Length::px(50.0);
+    doc.append_child(vp, n13);
+        let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.display = Display::Block;
+        doc.node_mut(n14).style.width = Length::px(50.0);
+        doc.node_mut(n14).style.height = Length::px(50.0);
+        doc.node_mut(n14).style.background_color = Color::BLACK;
+        doc.append_child(n13, n14);
+            let n15 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n15).style.display = Display::Block;
+            doc.node_mut(n15).style.position = Position::Relative;
+            doc.node_mut(n15).style.top = Length::px(-10.0);
+            doc.node_mut(n15).style.left = Length::px(-10.0);
+            doc.node_mut(n15).style.height = Length::px(1.0);
+            doc.node_mut(n15).style.width = Length::px(100.0);
+            doc.node_mut(n15).style.background_color = Color::BLUE;
+            doc.node_mut(n15).style.opacity = 0.5;
+            doc.append_child(n14, n15);
+    doc
+}
+
+// Source: clip-003.html
+fn css_overflow_clip_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_left = Length::px(30.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n1).style.width = Length::px(50.0);
+    doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Auto;
+    doc.node_mut(n1).style.overflow_y = Overflow::Auto;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Relative;
+            doc.node_mut(n3).style.top = Length::px(-10.0);
+            doc.node_mut(n3).style.left = Length::px(-10.0);
+            doc.node_mut(n3).style.height = Length::px(100.0);
+            doc.node_mut(n3).style.width = Length::px(100.0);
+            doc.node_mut(n3).style.background_color = Color::BLUE;
+            doc.node_mut(n3).style.opacity = 0.5;
+            doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.margin_left = Length::px(30.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n4).style.width = Length::px(50.0);
+    doc.node_mut(n4).style.height = Length::px(50.0);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(50.0);
+        doc.node_mut(n5).style.height = Length::px(50.0);
+        doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.append_child(n4, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.position = Position::Relative;
+            doc.node_mut(n6).style.top = Length::px(-10.0);
+            doc.node_mut(n6).style.left = Length::px(-10.0);
+            doc.node_mut(n6).style.height = Length::px(100.0);
+            doc.node_mut(n6).style.width = Length::px(100.0);
+            doc.node_mut(n6).style.background_color = Color::BLUE;
+            doc.node_mut(n6).style.opacity = 0.5;
+            doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.margin_left = Length::px(30.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n7).style.width = Length::px(50.0);
+    doc.node_mut(n7).style.height = Length::px(50.0);
+    doc.node_mut(n7).style.overflow_x = Overflow::Auto;
+    doc.node_mut(n7).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n7).style.margin_top = Length::px(50.0);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.width = Length::px(50.0);
+        doc.node_mut(n8).style.height = Length::px(50.0);
+        doc.node_mut(n8).style.background_color = Color::BLACK;
+        doc.append_child(n7, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.node_mut(n9).style.position = Position::Relative;
+            doc.node_mut(n9).style.top = Length::px(-10.0);
+            doc.node_mut(n9).style.left = Length::px(-10.0);
+            doc.node_mut(n9).style.height = Length::px(100.0);
+            doc.node_mut(n9).style.width = Length::px(1.0);
+            doc.node_mut(n9).style.background_color = Color::BLUE;
+            doc.node_mut(n9).style.opacity = 0.5;
+            doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.margin_left = Length::px(30.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n10).style.width = Length::px(50.0);
+    doc.node_mut(n10).style.height = Length::px(50.0);
+    doc.append_child(vp, n10);
+        let n11 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n11).style.display = Display::Block;
+        doc.node_mut(n11).style.width = Length::px(50.0);
+        doc.node_mut(n11).style.height = Length::px(50.0);
+        doc.node_mut(n11).style.background_color = Color::BLACK;
+        doc.append_child(n10, n11);
+            let n12 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n12).style.display = Display::Block;
+            doc.node_mut(n12).style.position = Position::Relative;
+            doc.node_mut(n12).style.top = Length::px(-10.0);
+            doc.node_mut(n12).style.left = Length::px(-10.0);
+            doc.node_mut(n12).style.height = Length::px(100.0);
+            doc.node_mut(n12).style.width = Length::px(100.0);
+            doc.node_mut(n12).style.background_color = Color::BLUE;
+            doc.node_mut(n12).style.opacity = 0.5;
+            doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n13).style.display = Display::Block;
+    doc.node_mut(n13).style.margin_left = Length::px(30.0);
+    doc.node_mut(n13).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n13).style.width = Length::px(50.0);
+    doc.node_mut(n13).style.height = Length::px(50.0);
+    doc.node_mut(n13).style.overflow_x = Overflow::Auto;
+    doc.node_mut(n13).style.overflow_y = Overflow::Auto;
+    doc.append_child(vp, n13);
+        let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.display = Display::Block;
+        doc.node_mut(n14).style.width = Length::px(50.0);
+        doc.node_mut(n14).style.height = Length::px(50.0);
+        doc.node_mut(n14).style.background_color = Color::BLACK;
+        doc.append_child(n13, n14);
+            let n15 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n15).style.display = Display::Block;
+            doc.node_mut(n15).style.position = Position::Relative;
+            doc.node_mut(n15).style.top = Length::px(-10.0);
+            doc.node_mut(n15).style.left = Length::px(-10.0);
+            doc.node_mut(n15).style.height = Length::px(1.0);
+            doc.node_mut(n15).style.width = Length::px(100.0);
+            doc.node_mut(n15).style.background_color = Color::BLUE;
+            doc.node_mut(n15).style.opacity = 0.5;
+            doc.append_child(n14, n15);
+    doc
+}
+
 // Source: clip-004-ref.html
 fn css_overflow_clip_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -230,6 +482,134 @@ fn css_overflow_clip_004_ref() -> Document {
 
 // Source: clip-004.html
 fn css_overflow_clip_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(30.0);
+    doc.node_mut(n1).style.height = Length::px(30.0);
+    doc.node_mut(n1).style.padding_top = Length::px(10.0);
+    doc.node_mut(n1).style.padding_right = Length::px(10.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(10.0);
+    doc.node_mut(n1).style.padding_left = Length::px(10.0);
+    doc.node_mut(n1).style.margin_left = Length::px(100.0);
+    doc.node_mut(n1).style.margin_top = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.top = Length::px(-20.0);
+        doc.node_mut(n2).style.left = Length::px(-40.0);
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.width = Length::px(100.0);
+        doc.node_mut(n2).style.opacity = 0.5;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(30.0);
+    doc.node_mut(n3).style.height = Length::px(30.0);
+    doc.node_mut(n3).style.padding_top = Length::px(10.0);
+    doc.node_mut(n3).style.padding_right = Length::px(10.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(10.0);
+    doc.node_mut(n3).style.padding_left = Length::px(10.0);
+    doc.node_mut(n3).style.margin_left = Length::px(100.0);
+    doc.node_mut(n3).style.margin_top = Length::px(100.0);
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.position = Position::Relative;
+        doc.node_mut(n4).style.top = Length::px(-20.0);
+        doc.node_mut(n4).style.left = Length::px(-40.0);
+        doc.node_mut(n4).style.background_color = Color::BLUE;
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(100.0);
+        doc.node_mut(n4).style.opacity = 0.5;
+        doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.width = Length::px(30.0);
+    doc.node_mut(n5).style.height = Length::px(30.0);
+    doc.node_mut(n5).style.padding_top = Length::px(10.0);
+    doc.node_mut(n5).style.padding_right = Length::px(10.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(10.0);
+    doc.node_mut(n5).style.padding_left = Length::px(10.0);
+    doc.node_mut(n5).style.margin_left = Length::px(100.0);
+    doc.node_mut(n5).style.margin_top = Length::px(100.0);
+    doc.node_mut(n5).style.background_color = Color::BLACK;
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.position = Position::Relative;
+        doc.node_mut(n6).style.top = Length::px(-20.0);
+        doc.node_mut(n6).style.left = Length::px(-40.0);
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.width = Length::px(100.0);
+        doc.node_mut(n6).style.opacity = 0.5;
+        doc.append_child(n5, n6);
+    doc
+}
+
+// Source: clip-005-ref.html
+fn css_overflow_clip_005_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(50.0);
+    doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(100.0);
+    doc.node_mut(n1).style.margin_top = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.opacity = 0.5;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(50.0);
+    doc.node_mut(n3).style.height = Length::px(50.0);
+    doc.node_mut(n3).style.margin_left = Length::px(100.0);
+    doc.node_mut(n3).style.margin_top = Length::px(100.0);
+    doc.node_mut(n3).style.background_color = Color::BLACK;
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.position = Position::Relative;
+        doc.node_mut(n4).style.background_color = Color::BLUE;
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.opacity = 0.5;
+        doc.node_mut(n4).style.top = Length::px(-10.0);
+        doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.width = Length::px(50.0);
+    doc.node_mut(n5).style.height = Length::px(50.0);
+    doc.node_mut(n5).style.margin_left = Length::px(100.0);
+    doc.node_mut(n5).style.margin_top = Length::px(100.0);
+    doc.node_mut(n5).style.background_color = Color::BLACK;
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.position = Position::Relative;
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.height = Length::px(50.0);
+        doc.node_mut(n6).style.width = Length::px(100.0);
+        doc.node_mut(n6).style.opacity = 0.5;
+        doc.node_mut(n6).style.left = Length::px(-30.0);
+        doc.append_child(n5, n6);
+    doc
+}
+
+// Source: clip-005.html
+fn css_overflow_clip_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
@@ -844,6 +1224,18 @@ fn css_overflow_overflow_clip_margin_002() -> Document {
     doc
 }
 
+// Source: overflow-clip-margin-003-ref.html
+fn css_overflow_overflow_clip_margin_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc
+}
+
+// Source: overflow-clip-margin-003.html
+fn css_overflow_overflow_clip_margin_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc
+}
+
 // Source: overflow-clip-margin-004-ref.html
 fn css_overflow_overflow_clip_margin_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1026,6 +1418,18 @@ fn css_overflow_overflow_clip_margin_005() -> Document {
         doc.node_mut(n8).style.height = Length::px(100.0);
         doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n7, n8);
+    doc
+}
+
+// Source: overflow-clip-margin-006-ref.html
+fn css_overflow_overflow_clip_margin_006_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc
+}
+
+// Source: overflow-clip-margin-006.html
+fn css_overflow_overflow_clip_margin_006() -> Document {
+    let (mut doc, vp) = base_doc();
     doc
 }
 
@@ -1308,6 +1712,56 @@ fn css_overflow_overflow_clip_margin_border_radius_002_ref() -> Document {
     doc.node_mut(n5).style.border_bottom_left_radius = (64.0_f32, 64.0_f32);
     doc.node_mut(n5).style.border_bottom_right_radius = (64.0_f32, 64.0_f32);
     doc.append_child(vp, n5);
+    doc
+}
+
+// Source: overflow-clip-margin-border-radius-ref.html
+fn css_overflow_overflow_clip_margin_border_radius_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(50.0);
+    doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.border_top_left_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.border_top_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.margin_top = Length::px(125.0);
+    doc.node_mut(n1).style.margin_right = Length::px(125.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(125.0);
+    doc.node_mut(n1).style.margin_left = Length::px(125.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: overflow-clip-margin-border-radius.html
+fn css_overflow_overflow_clip_margin_border_radius() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(50.0);
+    doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.border_top_left_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.border_top_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.margin_top = Length::px(125.0);
+    doc.node_mut(n1).style.margin_right = Length::px(125.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(125.0);
+    doc.node_mut(n1).style.margin_left = Length::px(125.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -2376,6 +2830,26 @@ fn css_overflow_overflow_clip_y_visible_x_svg_ref() -> Document {
     doc
 }
 
+// Source: overflow-does-not-apply-to-inline-box.html
+fn css_overflow_overflow_does_not_apply_to_inline_box() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n2).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+        doc.node_mut(n2).style.border_top_right_radius = (50.0_f32, 50.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
+        doc.node_mut(n2).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+    doc
+}
+
 // Source: overflow-inline-block-with-opacity.html
 fn css_overflow_overflow_inline_block_with_opacity() -> Document {
     let (mut doc, vp) = base_doc();
@@ -2641,6 +3115,16 @@ fn css_overflow_scrollbar_gutter_abspos_001() -> Document {
     doc
 }
 
+// Source: scrollbar-gutter-dynamic-001-ref.html
+fn css_overflow_scrollbar_gutter_dynamic_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
 // Source: scrollbar-gutter-dynamic-004-ref.html
 fn css_overflow_scrollbar_gutter_dynamic_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -2649,6 +3133,159 @@ fn css_overflow_scrollbar_gutter_dynamic_004_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 0, 128, 255);
     doc.node_mut(n1).style.color = Color::WHITE;
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: scrollbar-gutter-fixedpos-001-ref.html
+fn css_overflow_scrollbar_gutter_fixedpos_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.left = Length::px(0.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.position = Position::Absolute;
+    doc.node_mut(n2).style.right = Length::px(0.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: scrollbar-gutter-fixedpos-001.html
+fn css_overflow_scrollbar_gutter_fixedpos_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.position = Position::Fixed;
+    doc.node_mut(n1).style.left = Length::px(0.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.position = Position::Fixed;
+    doc.node_mut(n2).style.right = Length::px(0.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: scrollbar-gutter-fixedpos-002-ref.html
+fn css_overflow_scrollbar_gutter_fixedpos_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.left = Length::px(0.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.position = Position::Absolute;
+    doc.node_mut(n2).style.right = Length::px(0.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: scrollbar-gutter-fixedpos-002.html
+fn css_overflow_scrollbar_gutter_fixedpos_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.position = Position::Fixed;
+    doc.node_mut(n1).style.left = Length::px(0.0);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.position = Position::Fixed;
+    doc.node_mut(n2).style.right = Length::px(0.0);
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: scrollbar-gutter-fixedpos-003-ref.html
+fn css_overflow_scrollbar_gutter_fixedpos_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: scrollbar-gutter-fixedpos-003.html
+fn css_overflow_scrollbar_gutter_fixedpos_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.position = Position::Fixed;
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.background_color = Color::RED;
+    doc.append_child(vp, n4);
     doc
 }
 
@@ -2667,6 +3304,1511 @@ fn css_overflow_scrollbar_large_scale_in_iframe_ref() -> Document {
     doc
 }
 
+// Source: text-overflow-ellipsis-001.html
+fn css_overflow_text_overflow_ellipsis_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(400.0);
+    doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(400.0);
+    doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: text-overflow-ellipsis-002.html
+fn css_overflow_text_overflow_ellipsis_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.node_mut(n1).style.vertical_align = VerticalAlign::Top;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.visibility = Visibility::Hidden;
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.visibility = Visibility::Visible;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: text-overflow-ellipsis-003-ref.html
+fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::px(150.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n2).style.border_top_width = 1;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_right_width = 1;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_bottom_width = 1;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_left_width = 1;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.display = Display::InlineBlock;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n3).style.width = Length::px(30.0);
+            doc.node_mut(n3).style.height = Length::px(16.0);
+            doc.node_mut(n3).style.padding_top = Length::px(4.0);
+            doc.node_mut(n3).style.padding_right = Length::px(4.0);
+            doc.node_mut(n3).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.padding_left = Length::px(4.0);
+            doc.node_mut(n3).style.margin_top = Length::px(5.0);
+            doc.node_mut(n3).style.margin_right = Length::px(5.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n3).style.margin_left = Length::px(5.0);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n4).style.display = Display::InlineBlock;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n4).style.width = Length::px(30.0);
+            doc.node_mut(n4).style.height = Length::px(16.0);
+            doc.node_mut(n4).style.padding_top = Length::px(4.0);
+            doc.node_mut(n4).style.padding_right = Length::px(4.0);
+            doc.node_mut(n4).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n4).style.padding_left = Length::px(4.0);
+            doc.node_mut(n4).style.margin_top = Length::px(5.0);
+            doc.node_mut(n4).style.margin_right = Length::px(5.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n4).style.margin_left = Length::px(5.0);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n5).style.display = Display::InlineBlock;
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n5).style.width = Length::px(30.0);
+            doc.node_mut(n5).style.height = Length::px(16.0);
+            doc.node_mut(n5).style.padding_top = Length::px(4.0);
+            doc.node_mut(n5).style.padding_right = Length::px(4.0);
+            doc.node_mut(n5).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n5).style.padding_left = Length::px(4.0);
+            doc.node_mut(n5).style.margin_top = Length::px(5.0);
+            doc.node_mut(n5).style.margin_right = Length::px(5.0);
+            doc.node_mut(n5).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n5).style.margin_left = Length::px(5.0);
+            doc.append_child(n2, n5);
+            let n6 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n6).style.display = Display::InlineBlock;
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n6).style.width = Length::px(30.0);
+            doc.node_mut(n6).style.height = Length::px(16.0);
+            doc.node_mut(n6).style.padding_top = Length::px(4.0);
+            doc.node_mut(n6).style.padding_right = Length::px(4.0);
+            doc.node_mut(n6).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n6).style.padding_left = Length::px(4.0);
+            doc.node_mut(n6).style.margin_top = Length::px(5.0);
+            doc.node_mut(n6).style.margin_right = Length::px(5.0);
+            doc.node_mut(n6).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n6).style.margin_left = Length::px(5.0);
+            doc.append_child(n2, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n7).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n7).style.border_top_width = 1;
+        doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n7).style.border_right_width = 1;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n7).style.border_bottom_width = 1;
+        doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n7).style.border_left_width = 1;
+        doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n7);
+            let n8 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n8).style.display = Display::InlineBlock;
+            doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n8).style.width = Length::px(30.0);
+            doc.node_mut(n8).style.height = Length::px(16.0);
+            doc.node_mut(n8).style.padding_top = Length::px(4.0);
+            doc.node_mut(n8).style.padding_right = Length::px(4.0);
+            doc.node_mut(n8).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n8).style.padding_left = Length::px(4.0);
+            doc.node_mut(n8).style.margin_top = Length::px(5.0);
+            doc.node_mut(n8).style.margin_right = Length::px(5.0);
+            doc.node_mut(n8).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n8).style.margin_left = Length::px(5.0);
+            doc.append_child(n7, n8);
+            let n9 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n9).style.display = Display::InlineBlock;
+            doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n9).style.width = Length::px(30.0);
+            doc.node_mut(n9).style.height = Length::px(16.0);
+            doc.node_mut(n9).style.padding_top = Length::px(4.0);
+            doc.node_mut(n9).style.padding_right = Length::px(4.0);
+            doc.node_mut(n9).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n9).style.padding_left = Length::px(4.0);
+            doc.node_mut(n9).style.margin_top = Length::px(5.0);
+            doc.node_mut(n9).style.margin_right = Length::px(5.0);
+            doc.node_mut(n9).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n9).style.margin_left = Length::px(5.0);
+            doc.append_child(n7, n9);
+            let n10 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n10).style.display = Display::InlineBlock;
+            doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n10).style.width = Length::px(30.0);
+            doc.node_mut(n10).style.height = Length::px(16.0);
+            doc.node_mut(n10).style.padding_top = Length::px(4.0);
+            doc.node_mut(n10).style.padding_right = Length::px(4.0);
+            doc.node_mut(n10).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n10).style.padding_left = Length::px(4.0);
+            doc.node_mut(n10).style.margin_top = Length::px(5.0);
+            doc.node_mut(n10).style.margin_right = Length::px(5.0);
+            doc.node_mut(n10).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n10).style.margin_left = Length::px(5.0);
+            doc.append_child(n7, n10);
+            let n11 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n11).style.display = Display::InlineBlock;
+            doc.node_mut(n11).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n11).style.width = Length::px(30.0);
+            doc.node_mut(n11).style.height = Length::px(16.0);
+            doc.node_mut(n11).style.padding_top = Length::px(4.0);
+            doc.node_mut(n11).style.padding_right = Length::px(4.0);
+            doc.node_mut(n11).style.padding_bottom = Length::px(4.0);
+            doc.node_mut(n11).style.padding_left = Length::px(4.0);
+            doc.node_mut(n11).style.margin_top = Length::px(5.0);
+            doc.node_mut(n11).style.margin_right = Length::px(5.0);
+            doc.node_mut(n11).style.margin_bottom = Length::px(5.0);
+            doc.node_mut(n11).style.margin_left = Length::px(5.0);
+            doc.append_child(n7, n11);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-001.html
+fn css_overflow_line_clamp_block_ellipsis_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-002.html
+fn css_overflow_line_clamp_block_ellipsis_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-003.html
+fn css_overflow_line_clamp_block_ellipsis_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-004.html
+fn css_overflow_line_clamp_block_ellipsis_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-005.html
+fn css_overflow_line_clamp_block_ellipsis_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-006.html
+fn css_overflow_line_clamp_block_ellipsis_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-011.html
+fn css_overflow_line_clamp_block_ellipsis_011() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-012.html
+fn css_overflow_line_clamp_block_ellipsis_012() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(0.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-013.html
+fn css_overflow_line_clamp_block_ellipsis_013() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-014.html
+fn css_overflow_line_clamp_block_ellipsis_014() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-015.tentative.html
+fn css_overflow_line_clamp_block_ellipsis_015_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-016.html
+fn css_overflow_line_clamp_block_ellipsis_016() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-017.html
+fn css_overflow_line_clamp_block_ellipsis_017() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-018.html
+fn css_overflow_line_clamp_block_ellipsis_018() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.line_height = LineHeight::Length(25.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.color = Color::RED;
+            doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.width = Length::px(100.0);
+        doc.node_mut(n4).style.bottom = Length::px(0.0);
+        doc.node_mut(n4).style.left = Length::px(0.0);
+        doc.node_mut(n4).style.color = Color::TRANSPARENT;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n4);
+            let n5 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n5).style.color = Color::RED;
+            doc.append_child(n4, n5);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-022.html
+fn css_overflow_line_clamp_block_ellipsis_022() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-023.html
+fn css_overflow_line_clamp_block_ellipsis_023() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-024.html
+fn css_overflow_line_clamp_block_ellipsis_024() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-025.html
+fn css_overflow_line_clamp_block_ellipsis_025() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-028.html
+fn css_overflow_line_clamp_block_ellipsis_028() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-031.html
+fn css_overflow_line_clamp_block_ellipsis_031() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_block-ellipsis-032.tentative.html
+fn css_overflow_line_clamp_block_ellipsis_032_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.background_color = Color::RED;
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.text_align = TextAlign::Right;
+    doc.node_mut(n4).style.border_top_width = 1;
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_right_width = 1;
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_bottom_width = 1;
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_left_width = 1;
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.margin_bottom = Length::px(16.0);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.background_color = Color::RED;
+        doc.append_child(n4, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.text_align = TextAlign::Justify;
+    doc.node_mut(n7).style.border_top_width = 1;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n7).style.border_right_width = 1;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n7).style.border_bottom_width = 1;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n7).style.border_left_width = 1;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n7).style.margin_bottom = Length::px(16.0);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n8).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n9).style.background_color = Color::RED;
+        doc.append_child(n7, n9);
+    doc
+}
+
+// Source: line-clamp_line-clamp-001.html
+fn css_overflow_line_clamp_line_clamp_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-002.html
+fn css_overflow_line_clamp_line_clamp_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-003.html
+fn css_overflow_line_clamp_line_clamp_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-004.html
+fn css_overflow_line_clamp_line_clamp_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-005.html
+fn css_overflow_line_clamp_line_clamp_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-006.html
+fn css_overflow_line_clamp_line_clamp_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-007.html
+fn css_overflow_line_clamp_line_clamp_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Auto;
+        doc.node_mut(n2).style.overflow_y = Overflow::Auto;
+        doc.node_mut(n2).style.color = Color::BLUE;
+        doc.node_mut(n2).style.padding_top = Length::px(0.0);
+        doc.node_mut(n2).style.padding_right = Length::px(4.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.padding_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-010.html
+fn css_overflow_line_clamp_line_clamp_010() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-011.tentative.html
+fn css_overflow_line_clamp_line_clamp_011_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-012.tentative.html
+fn css_overflow_line_clamp_line_clamp_012_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(4.0);
+        doc.node_mut(n2).style.padding_right = Length::px(4.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.padding_left = Length::px(4.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-013.tentative.html
+fn css_overflow_line_clamp_line_clamp_013_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(4.0);
+        doc.node_mut(n2).style.padding_right = Length::px(4.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.padding_left = Length::px(4.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-014.html
+fn css_overflow_line_clamp_line_clamp_014() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-015.html
+fn css_overflow_line_clamp_line_clamp_015() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::InlineBlock;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-020.html
+fn css_overflow_line_clamp_line_clamp_020() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-022.tentative.html
+fn css_overflow_line_clamp_line_clamp_022_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.node_mut(n2).style.border_top_width = 1;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 1;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 1;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 1;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.node_mut(n3).style.border_top_width = 1;
+            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+            doc.node_mut(n3).style.border_right_width = 1;
+            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+            doc.node_mut(n3).style.border_bottom_width = 1;
+            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+            doc.node_mut(n3).style.border_left_width = 1;
+            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-023.tentative.html
+fn css_overflow_line_clamp_line_clamp_023_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-024.tentative.html
+fn css_overflow_line_clamp_line_clamp_024_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.node_mut(n2).style.border_top_width = 1;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 1;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 1;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 1;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.node_mut(n3).style.border_top_width = 1;
+            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+            doc.node_mut(n3).style.border_right_width = 1;
+            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+            doc.node_mut(n3).style.border_bottom_width = 1;
+            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+            doc.node_mut(n3).style.border_left_width = 1;
+            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.background_color = Color::RED;
+            doc.node_mut(n4).style.margin_top = Length::px(20.0);
+            doc.node_mut(n4).style.margin_right = Length::px(20.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(20.0);
+            doc.node_mut(n4).style.margin_left = Length::px(20.0);
+            doc.node_mut(n4).style.height = Length::px(20.0);
+            doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::RED;
+        doc.node_mut(n5).style.margin_top = Length::px(20.0);
+        doc.node_mut(n5).style.margin_right = Length::px(20.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n5).style.margin_left = Length::px(20.0);
+        doc.node_mut(n5).style.height = Length::px(20.0);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: line-clamp_line-clamp-025.tentative.html
+fn css_overflow_line_clamp_line_clamp_025_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.background_color = Color::RED;
+            doc.node_mut(n4).style.margin_top = Length::px(20.0);
+            doc.node_mut(n4).style.margin_right = Length::px(20.0);
+            doc.node_mut(n4).style.margin_bottom = Length::px(20.0);
+            doc.node_mut(n4).style.margin_left = Length::px(20.0);
+            doc.node_mut(n4).style.height = Length::px(20.0);
+            doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::RED;
+        doc.node_mut(n5).style.margin_top = Length::px(20.0);
+        doc.node_mut(n5).style.margin_right = Length::px(20.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n5).style.margin_left = Length::px(20.0);
+        doc.node_mut(n5).style.height = Length::px(20.0);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: line-clamp_line-clamp-026.html
+fn css_overflow_line_clamp_line_clamp_026() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.append_child(n2, n4);
+                let n5 = doc.create_node(ElementTag::Div);
+                doc.append_child(n4, n5);
+                let n6 = doc.create_node(ElementTag::Div);
+                doc.append_child(n4, n6);
+                    let n7 = doc.create_node(ElementTag::Div);
+                    doc.append_child(n6, n7);
+                    let n8 = doc.create_node(ElementTag::Span);
+                    doc.append_child(n6, n8);
+                        let n9 = doc.create_node(ElementTag::Div);
+                        doc.append_child(n8, n9);
+                            let n10 = doc.create_node(ElementTag::Div);
+                            doc.append_child(n9, n10);
+                            let n11 = doc.create_node(ElementTag::Div);
+                            doc.append_child(n9, n11);
+                                let n12 = doc.create_node(ElementTag::Div);
+                                doc.append_child(n11, n12);
+                                let n13 = doc.create_node(ElementTag::Div);
+                                doc.append_child(n11, n13);
+                                    let n14 = doc.create_node(ElementTag::Div);
+                                    doc.append_child(n13, n14);
+                                let n15 = doc.create_node(ElementTag::Div);
+                                doc.append_child(n11, n15);
+                                    let n16 = doc.create_node(ElementTag::Div);
+                                    doc.append_child(n15, n16);
+                                        let n17 = doc.create_node(ElementTag::Div);
+                                        doc.append_child(n16, n17);
+                                            let n18 = doc.create_node(ElementTag::Div);
+                                            doc.append_child(n17, n18);
+                                        let n19 = doc.create_node(ElementTag::Div);
+                                        doc.append_child(n16, n19);
+                                            let n20 = doc.create_node(ElementTag::Div);
+                                            doc.append_child(n19, n20);
+                                                let n21 = doc.create_node(ElementTag::Div);
+                                                doc.append_child(n20, n21);
+                                                    let n22 = doc.create_node(ElementTag::Div);
+                                                    doc.append_child(n21, n22);
+                                                let n23 = doc.create_node(ElementTag::Div);
+                                                doc.append_child(n20, n23);
+                                                    let n24 = doc.create_node(ElementTag::Div);
+                                                    doc.append_child(n23, n24);
+                                                        let n25 = doc.create_node(ElementTag::Div);
+                                                        doc.append_child(n24, n25);
+                                                            let n26 = doc.create_node(ElementTag::Div);
+                                                            doc.append_child(n25, n26);
+                                                        let n27 = doc.create_node(ElementTag::Div);
+                                                        doc.append_child(n24, n27);
+                                                            let n28 = doc.create_node(ElementTag::Div);
+                                                            doc.append_child(n27, n28);
+                                                            let n29 = doc.create_node(ElementTag::Div);
+                                                            doc.append_child(n27, n29);
+                                                                let n30 = doc.create_node(ElementTag::Div);
+                                                                doc.append_child(n29, n30);
+                                                                let n31 = doc.create_node(ElementTag::Div);
+                                                                doc.append_child(n29, n31);
+                                                                    let n32 = doc.create_node(ElementTag::Div);
+                                                                    doc.append_child(n31, n32);
+                                                                    let n33 = doc.create_node(ElementTag::Span);
+                                                                    doc.append_child(n31, n33);
+                                                                        let n34 = doc.create_node(ElementTag::Div);
+                                                                        doc.append_child(n33, n34);
+                                                                            let n35 = doc.create_node(ElementTag::Div);
+                                                                            doc.append_child(n34, n35);
+                                                                            let n36 = doc.create_node(ElementTag::Div);
+                                                                            doc.append_child(n34, n36);
+                                                                                let n37 = doc.create_node(ElementTag::Div);
+                                                                                doc.append_child(n36, n37);
+                                                                                let n38 = doc.create_node(ElementTag::Div);
+                                                                                doc.append_child(n36, n38);
+                                                                                    let n39 = doc.create_node(ElementTag::Div);
+                                                                                    doc.append_child(n38, n39);
+                                                                                let n40 = doc.create_node(ElementTag::Div);
+                                                                                doc.append_child(n36, n40);
+                                                                                    let n41 = doc.create_node(ElementTag::Div);
+                                                                                    doc.append_child(n40, n41);
+                                                                                        let n42 = doc.create_node(ElementTag::Div);
+                                                                                        doc.append_child(n41, n42);
+                                                                                            let n43 = doc.create_node(ElementTag::Div);
+                                                                                            doc.append_child(n42, n43);
+                                                                                        let n44 = doc.create_node(ElementTag::Div);
+                                                                                        doc.append_child(n41, n44);
+                                                                                            let n45 = doc.create_node(ElementTag::Div);
+                                                                                            doc.append_child(n44, n45);
+                                                                                                let n46 = doc.create_node(ElementTag::Div);
+                                                                                                doc.append_child(n45, n46);
+                                                                                                    let n47 = doc.create_node(ElementTag::Div);
+                                                                                                    doc.append_child(n46, n47);
+                                                                                                let n48 = doc.create_node(ElementTag::Div);
+                                                                                                doc.append_child(n45, n48);
+                                                                                                    let n49 = doc.create_node(ElementTag::Div);
+                                                                                                    doc.append_child(n48, n49);
+                                                                                                        let n50 = doc.create_node(ElementTag::Div);
+                                                                                                        doc.append_child(n49, n50);
+                                                                                                            let n51 = doc.create_node(ElementTag::Div);
+                                                                                                            doc.append_child(n50, n51);
+    doc
+}
+
+// Source: line-clamp_line-clamp-027.html
+fn css_overflow_line_clamp_line_clamp_027() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.append_child(n2, n4);
+                let n5 = doc.create_node(ElementTag::Div);
+                doc.append_child(n4, n5);
+                let n6 = doc.create_node(ElementTag::Div);
+                doc.append_child(n4, n6);
+                    let n7 = doc.create_node(ElementTag::Div);
+                    doc.append_child(n6, n7);
+    doc
+}
+
+// Source: line-clamp_line-clamp-028.html
+fn css_overflow_line_clamp_line_clamp_028() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_bottom = Length::px(16.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.append_child(n2, n4);
+                let n5 = doc.create_node(ElementTag::Div);
+                doc.append_child(n4, n5);
+                let n6 = doc.create_node(ElementTag::Div);
+                doc.append_child(n4, n6);
+                    let n7 = doc.create_node(ElementTag::Div);
+                    doc.append_child(n6, n7);
+    doc
+}
+
+// Source: line-clamp_line-clamp-030.html
+fn css_overflow_line_clamp_line_clamp_030() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.append_child(n2, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-031.html
+fn css_overflow_line_clamp_line_clamp_031() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.background_color = Color::RED;
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::FlowRoot;
+            doc.node_mut(n4).style.background_color = Color::RED;
+            doc.append_child(n2, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-035.tentative.html
+fn css_overflow_line_clamp_line_clamp_035_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-036.html
+fn css_overflow_line_clamp_line_clamp_036() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::RED;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::FlowRoot;
+        doc.node_mut(n4).style.background_color = Color::RED;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-037.html
+fn css_overflow_line_clamp_line_clamp_037() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-038.html
+fn css_overflow_line_clamp_line_clamp_038() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.margin_top = Length::px(0.0);
+                doc.node_mut(n4).style.margin_right = Length::px(0.0);
+                doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n4).style.margin_left = Length::px(0.0);
+                doc.append_child(n3, n4);
+                let n5 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n5).style.display = Display::Block;
+                doc.node_mut(n5).style.margin_top = Length::px(0.0);
+                doc.node_mut(n5).style.margin_right = Length::px(0.0);
+                doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n5).style.margin_left = Length::px(0.0);
+                doc.append_child(n3, n5);
+                let n6 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n6).style.display = Display::Block;
+                doc.node_mut(n6).style.margin_top = Length::px(0.0);
+                doc.node_mut(n6).style.margin_right = Length::px(0.0);
+                doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n6).style.margin_left = Length::px(0.0);
+                doc.append_child(n3, n6);
+                let n7 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n7).style.display = Display::Block;
+                doc.node_mut(n7).style.margin_top = Length::px(0.0);
+                doc.node_mut(n7).style.margin_right = Length::px(0.0);
+                doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n7).style.margin_left = Length::px(0.0);
+                doc.append_child(n3, n7);
+                let n8 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n8).style.display = Display::Block;
+                doc.node_mut(n8).style.margin_top = Length::px(0.0);
+                doc.node_mut(n8).style.margin_right = Length::px(0.0);
+                doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n8).style.margin_left = Length::px(0.0);
+                doc.append_child(n3, n8);
+    doc
+}
+
 // Source: line-clamp_line-clamp-auto-001-crash.html
 fn css_overflow_line_clamp_line_clamp_auto_001_crash() -> Document {
     let (mut doc, vp) = base_doc();
@@ -2679,6 +4821,20 @@ fn css_overflow_line_clamp_line_clamp_auto_001_crash() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-001.html
+fn css_overflow_line_clamp_line_clamp_auto_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -2698,6 +4854,964 @@ fn css_overflow_line_clamp_line_clamp_auto_002_crash() -> Document {
             doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.float = Float::Left;
             doc.append_child(n3, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-002.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_002_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(2.0);
+    doc.node_mut(n1).style.margin_right = Length::px(2.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(2.0);
+    doc.node_mut(n1).style.margin_left = Length::px(2.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-003.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_003_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.max_height = Length::px(138.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(2.0);
+    doc.node_mut(n1).style.margin_right = Length::px(2.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(2.0);
+    doc.node_mut(n1).style.margin_left = Length::px(2.0);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-004.html
+fn css_overflow_line_clamp_line_clamp_auto_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-005.html
+fn css_overflow_line_clamp_line_clamp_auto_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-006.html
+fn css_overflow_line_clamp_line_clamp_auto_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-007.html
+fn css_overflow_line_clamp_line_clamp_auto_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-008.html
+fn css_overflow_line_clamp_line_clamp_auto_008() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-009.html
+fn css_overflow_line_clamp_line_clamp_auto_009() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.max_height = Length::px(80.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-010.html
+fn css_overflow_line_clamp_line_clamp_auto_010() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-011.html
+fn css_overflow_line_clamp_line_clamp_auto_011() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.max_height = Length::px(0.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-012.html
+fn css_overflow_line_clamp_line_clamp_auto_012() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-013.html
+fn css_overflow_line_clamp_line_clamp_auto_013() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-014.html
+fn css_overflow_line_clamp_line_clamp_auto_014() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-015.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_015_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.float = Float::Left;
+            doc.node_mut(n3).style.width = Length::px(300.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-016.html
+fn css_overflow_line_clamp_line_clamp_auto_016() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(200.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.float = Float::Left;
+            doc.node_mut(n3).style.width = Length::px(300.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-017.html
+fn css_overflow_line_clamp_line_clamp_auto_017() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-018.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_018_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(2.0);
+        doc.node_mut(n2).style.padding_right = Length::px(2.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(2.0);
+        doc.node_mut(n2).style.padding_left = Length::px(2.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-019.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_019_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(14.0);
+        doc.node_mut(n2).style.padding_right = Length::px(14.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(14.0);
+        doc.node_mut(n2).style.padding_left = Length::px(14.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-020.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_020_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(15.0);
+        doc.node_mut(n2).style.padding_right = Length::px(15.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(15.0);
+        doc.node_mut(n2).style.padding_left = Length::px(15.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-021.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_021_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(6.0);
+        doc.node_mut(n2).style.padding_right = Length::px(6.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n2).style.padding_left = Length::px(6.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_top = Length::px(6.0);
+        doc.node_mut(n3).style.padding_right = Length::px(6.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n3).style.padding_left = Length::px(6.0);
+        doc.node_mut(n3).style.border_top_width = 2;
+        doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_right_width = 2;
+        doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_bottom_width = 2;
+        doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_left_width = 2;
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.padding_top = Length::px(6.0);
+        doc.node_mut(n4).style.padding_right = Length::px(6.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n4).style.padding_left = Length::px(6.0);
+        doc.node_mut(n4).style.border_top_width = 2;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_bottom_width = 2;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_left_width = 2;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-022.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_022_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(6.0);
+        doc.node_mut(n2).style.padding_right = Length::px(6.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n2).style.padding_left = Length::px(6.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_top = Length::px(6.0);
+        doc.node_mut(n3).style.padding_right = Length::px(6.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n3).style.padding_left = Length::px(6.0);
+        doc.node_mut(n3).style.border_top_width = 2;
+        doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_right_width = 2;
+        doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_bottom_width = 2;
+        doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_left_width = 2;
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.padding_top = Length::px(6.0);
+        doc.node_mut(n4).style.padding_right = Length::px(6.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n4).style.padding_left = Length::px(6.0);
+        doc.node_mut(n4).style.border_top_width = 2;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_bottom_width = 2;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_left_width = 2;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-023.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_023_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(6.0);
+        doc.node_mut(n2).style.padding_right = Length::px(6.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n2).style.padding_left = Length::px(6.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_top = Length::px(6.0);
+        doc.node_mut(n3).style.padding_right = Length::px(6.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n3).style.padding_left = Length::px(6.0);
+        doc.node_mut(n3).style.border_top_width = 2;
+        doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_right_width = 2;
+        doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_bottom_width = 2;
+        doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_left_width = 2;
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.padding_top = Length::px(6.0);
+        doc.node_mut(n4).style.padding_right = Length::px(6.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n4).style.padding_left = Length::px(6.0);
+        doc.node_mut(n4).style.border_top_width = 2;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_bottom_width = 2;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_left_width = 2;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-024.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_024_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.padding_top = Length::px(6.0);
+        doc.node_mut(n2).style.padding_right = Length::px(6.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n2).style.padding_left = Length::px(6.0);
+        doc.node_mut(n2).style.border_top_width = 2;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_right_width = 2;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_bottom_width = 2;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n2).style.border_left_width = 2;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.padding_top = Length::px(6.0);
+        doc.node_mut(n3).style.padding_right = Length::px(6.0);
+        doc.node_mut(n3).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n3).style.padding_left = Length::px(6.0);
+        doc.node_mut(n3).style.border_top_width = 2;
+        doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_right_width = 2;
+        doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_bottom_width = 2;
+        doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n3).style.border_left_width = 2;
+        doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.padding_top = Length::px(6.0);
+        doc.node_mut(n4).style.padding_right = Length::px(6.0);
+        doc.node_mut(n4).style.padding_bottom = Length::px(6.0);
+        doc.node_mut(n4).style.padding_left = Length::px(6.0);
+        doc.node_mut(n4).style.border_top_width = 2;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_right_width = 2;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_bottom_width = 2;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+        doc.node_mut(n4).style.border_left_width = 2;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-025.html
+fn css_overflow_line_clamp_line_clamp_auto_025() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.width = Length::px(100.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-027.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_027_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(17.0);
+        doc.node_mut(n2).style.margin_right = Length::px(17.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(17.0);
+        doc.node_mut(n2).style.margin_left = Length::px(17.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-028.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_028_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(16.0);
+        doc.node_mut(n2).style.margin_right = Length::px(16.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
+        doc.node_mut(n2).style.margin_left = Length::px(16.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-029.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_029_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(4.0);
+    doc.node_mut(n1).style.margin_right = Length::px(4.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.margin_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.margin_top = Length::px(4.0);
+                doc.node_mut(n4).style.margin_right = Length::px(4.0);
+                doc.node_mut(n4).style.margin_bottom = Length::px(4.0);
+                doc.node_mut(n4).style.margin_left = Length::px(4.0);
+                doc.append_child(n3, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-030.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_030_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.margin_top = Length::px(4.0);
+    doc.node_mut(n1).style.margin_right = Length::px(4.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.margin_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.margin_top = Length::px(4.0);
+                doc.node_mut(n4).style.margin_right = Length::px(4.0);
+                doc.node_mut(n4).style.margin_bottom = Length::px(4.0);
+                doc.node_mut(n4).style.margin_left = Length::px(4.0);
+                doc.append_child(n3, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-031.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_031_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(5.0);
+        doc.node_mut(n2).style.margin_right = Length::px(5.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n2).style.margin_left = Length::px(5.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(10.0);
+        doc.node_mut(n3).style.margin_right = Length::px(10.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
+        doc.node_mut(n3).style.margin_left = Length::px(10.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.position = Position::Relative;
+        doc.append_child(n1, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.right = Length::px(0.0);
+            doc.node_mut(n5).style.height = Length::px(100.0);
+            doc.node_mut(n5).style.width = Length::px(100.0);
+            doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.margin_top = Length::px(5.0);
+        doc.node_mut(n6).style.margin_right = Length::px(5.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n6).style.margin_left = Length::px(5.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-032.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_032_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(5.0);
+        doc.node_mut(n2).style.margin_right = Length::px(5.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n2).style.margin_left = Length::px(5.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(5.0);
+        doc.node_mut(n3).style.margin_right = Length::px(5.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n3).style.margin_left = Length::px(5.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.right = Length::px(0.0);
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.width = Length::px(100.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.margin_top = Length::px(5.0);
+        doc.node_mut(n5).style.margin_right = Length::px(5.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n5).style.margin_left = Length::px(5.0);
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.append_child(n1, n5);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-033.html
+fn css_overflow_line_clamp_line_clamp_auto_033() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::FlowRoot;
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-034.html
+fn css_overflow_line_clamp_line_clamp_auto_034() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::FlowRoot;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::FlowRoot;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-035.html
+fn css_overflow_line_clamp_line_clamp_auto_035() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-036.html
+fn css_overflow_line_clamp_line_clamp_auto_036() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-037.html
+fn css_overflow_line_clamp_line_clamp_auto_037() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(4.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(4.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -2724,6 +5838,36 @@ fn css_overflow_line_clamp_line_clamp_auto_040() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(0.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-041.html
+fn css_overflow_line_clamp_line_clamp_auto_041() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-042.html
+fn css_overflow_line_clamp_line_clamp_auto_042() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
     doc
 }
@@ -2878,6 +6022,1178 @@ fn css_overflow_line_clamp_line_clamp_auto_047() -> Document {
     doc
 }
 
+// Source: line-clamp_line-clamp-auto-with-ruby-001.html
+fn css_overflow_line_clamp_line_clamp_auto_with_ruby_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.color = Color::BLUE;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-with-ruby-002.html
+fn css_overflow_line_clamp_line_clamp_auto_with_ruby_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.color = Color::RED;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-with-ruby-003.html
+fn css_overflow_line_clamp_line_clamp_auto_with_ruby_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.color = Color::BLUE;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-with-ruby-004.html
+fn css_overflow_line_clamp_line_clamp_auto_with_ruby_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.color = Color::BLUE;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-auto-with-ruby-005.tentative.html
+fn css_overflow_line_clamp_line_clamp_auto_with_ruby_005_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.color = Color::BLUE;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-content-height-with-dynamic-change-ref.html
+fn css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 20.0;
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-001.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-002.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-003.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-004.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(20.0);
+        doc.node_mut(n3).style.height = Length::px(20.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-005.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-006.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_006() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-007.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-008.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_008() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.position = Position::Absolute;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(20.0);
+        doc.node_mut(n3).style.height = Length::px(20.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-009.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_009() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.node_mut(n3).style.left = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.height = Length::px(20.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-010.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_010() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.position = Position::Relative;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.top = Length::px(0.0);
+            doc.node_mut(n4).style.left = Length::px(0.0);
+            doc.node_mut(n4).style.width = Length::px(20.0);
+            doc.node_mut(n4).style.height = Length::px(20.0);
+            doc.append_child(n3, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.append_child(n3, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.append_child(n3, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.append_child(n1, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.append_child(n1, n8);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-011.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_011() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.node_mut(n3).style.left = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.height = Length::px(20.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-012.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_012() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.position = Position::Relative;
+        doc.append_child(n1, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.node_mut(n7).style.position = Position::Absolute;
+            doc.node_mut(n7).style.top = Length::px(0.0);
+            doc.node_mut(n7).style.left = Length::px(0.0);
+            doc.node_mut(n7).style.width = Length::px(20.0);
+            doc.node_mut(n7).style.height = Length::px(20.0);
+            doc.append_child(n6, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.append_child(n6, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.append_child(n6, n9);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-013.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_013() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.node_mut(n3).style.left = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.height = Length::px(20.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-014.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_014() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.position = Position::Relative;
+        doc.append_child(n1, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.append_child(n5, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.display = Display::Block;
+            doc.append_child(n5, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.node_mut(n8).style.position = Position::Absolute;
+            doc.node_mut(n8).style.top = Length::px(0.0);
+            doc.node_mut(n8).style.left = Length::px(0.0);
+            doc.node_mut(n8).style.width = Length::px(20.0);
+            doc.node_mut(n8).style.height = Length::px(20.0);
+            doc.append_child(n5, n8);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-015.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_015() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.node_mut(n3).style.left = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.height = Length::px(20.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-016.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_016() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.node_mut(n3).style.left = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.height = Length::px(20.0);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-017.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_017() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.position = Position::Relative;
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.position = Position::Absolute;
+                doc.node_mut(n4).style.top = Length::px(0.0);
+                doc.node_mut(n4).style.left = Length::px(0.0);
+                doc.node_mut(n4).style.width = Length::px(20.0);
+                doc.node_mut(n4).style.height = Length::px(20.0);
+                doc.append_child(n3, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-018.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_018() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-020.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_020() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.append_child(n1, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.append_child(n1, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.position = Position::Relative;
+        doc.append_child(n1, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
+            doc.append_child(n7, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.display = Display::Block;
+            doc.node_mut(n9).style.position = Position::Absolute;
+            doc.node_mut(n9).style.width = Length::px(100.0);
+            doc.node_mut(n9).style.height = Length::px(100.0);
+            doc.append_child(n7, n9);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-021.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_021() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.position = Position::Relative;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.width = Length::px(100.0);
+            doc.node_mut(n4).style.height = Length::px(100.0);
+            doc.append_child(n3, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-022.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_022() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.right = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(100.0);
+            doc.node_mut(n3).style.margin_top = Length::px(4.0);
+            doc.node_mut(n3).style.margin_right = Length::px(4.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+            doc.node_mut(n3).style.margin_left = Length::px(4.0);
+            doc.node_mut(n3).style.background_color = Color::RED;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-abspos-023.html
+fn css_overflow_line_clamp_line_clamp_with_abspos_023() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Relative;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.right = Length::px(0.0);
+            doc.node_mut(n3).style.width = Length::px(100.0);
+            doc.node_mut(n3).style.height = Length::px(100.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-fixed-pos-001.html
+fn css_overflow_line_clamp_line_clamp_with_fixed_pos_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Fixed;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-fixed-pos-002.html
+fn css_overflow_line_clamp_line_clamp_with_fixed_pos_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Fixed;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-fixed-pos-003.html
+fn css_overflow_line_clamp_line_clamp_with_fixed_pos_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Fixed;
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::px(0.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-fixed-pos-004.html
+fn css_overflow_line_clamp_line_clamp_with_fixed_pos_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.position = Position::Fixed;
+        doc.node_mut(n3).style.top = Length::px(0.0);
+        doc.node_mut(n3).style.left = Length::px(0.0);
+        doc.node_mut(n3).style.width = Length::px(20.0);
+        doc.node_mut(n3).style.height = Length::px(20.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-001.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_001_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-002.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_002_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-003.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_003_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-004.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_004_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.margin_top = Length::px(4.0);
+        doc.node_mut(n3).style.margin_right = Length::px(4.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n3).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-005.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_005_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-006.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_006_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(75.0);
+        doc.node_mut(n3).style.margin_top = Length::px(4.0);
+        doc.node_mut(n3).style.margin_right = Length::px(4.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n3).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-007.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_007_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-008.html
+fn css_overflow_line_clamp_line_clamp_with_floats_008() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: line-clamp_line-clamp-with-floats-009.tentative.html
+fn css_overflow_line_clamp_line_clamp_with_floats_009_tentative() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::FlowRoot;
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(4.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(4.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(4.0);
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(4.0);
+        doc.node_mut(n2).style.margin_left = Length::px(4.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: scroll-markers_column-scroll-marker-001-ref.html
+fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(450.0);
+    doc.node_mut(n1).style.line_height = LineHeight::Length(20.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.float = Float::Left;
+            doc.node_mut(n3).style.display = Display::Flex;
+            doc.node_mut(n3).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n3).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n3).style.width = Length::px(50.0);
+            doc.node_mut(n3).style.height = Length::px(50.0);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.float = Float::Left;
+            doc.node_mut(n4).style.display = Display::Flex;
+            doc.node_mut(n4).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n4).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n4).style.width = Length::px(50.0);
+            doc.node_mut(n4).style.height = Length::px(50.0);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.float = Float::Left;
+            doc.node_mut(n5).style.display = Display::Flex;
+            doc.node_mut(n5).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n5).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n5).style.width = Length::px(50.0);
+            doc.node_mut(n5).style.height = Length::px(50.0);
+            doc.append_child(n2, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.float = Float::Left;
+            doc.node_mut(n6).style.display = Display::Flex;
+            doc.node_mut(n6).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n6).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n6).style.width = Length::px(50.0);
+            doc.node_mut(n6).style.height = Length::px(50.0);
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.append_child(n2, n6);
+            let n7 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n7).style.float = Float::Left;
+            doc.node_mut(n7).style.display = Display::Flex;
+            doc.node_mut(n7).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n7).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n7).style.width = Length::px(50.0);
+            doc.node_mut(n7).style.height = Length::px(50.0);
+            doc.append_child(n2, n7);
+            let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.float = Float::Left;
+            doc.node_mut(n8).style.display = Display::Flex;
+            doc.node_mut(n8).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n8).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n8).style.width = Length::px(50.0);
+            doc.node_mut(n8).style.height = Length::px(50.0);
+            doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.append_child(n2, n8);
+            let n9 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n9).style.float = Float::Left;
+            doc.node_mut(n9).style.display = Display::Flex;
+            doc.node_mut(n9).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n9).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n9).style.width = Length::px(50.0);
+            doc.node_mut(n9).style.height = Length::px(50.0);
+            doc.append_child(n2, n9);
+            let n10 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n10).style.float = Float::Left;
+            doc.node_mut(n10).style.display = Display::Flex;
+            doc.node_mut(n10).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n10).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n10).style.width = Length::px(50.0);
+            doc.node_mut(n10).style.height = Length::px(50.0);
+            doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.append_child(n2, n10);
+            let n11 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n11).style.float = Float::Left;
+            doc.node_mut(n11).style.display = Display::Flex;
+            doc.node_mut(n11).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+            doc.node_mut(n11).style.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.node_mut(n11).style.width = Length::px(50.0);
+            doc.node_mut(n11).style.height = Length::px(50.0);
+            doc.append_child(n2, n11);
+        let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::FlowRoot;
+        doc.node_mut(n12).style.border_top_width = 15;
+        doc.node_mut(n12).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n12).style.border_right_width = 15;
+        doc.node_mut(n12).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n12).style.border_bottom_width = 15;
+        doc.node_mut(n12).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n12).style.border_left_width = 15;
+        doc.node_mut(n12).style.border_left_style = BorderStyle::Solid;
+        doc.append_child(n1, n12);
+            let n13 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n13).style.display = Display::Block;
+            doc.node_mut(n13).style.float = Float::Left;
+            doc.node_mut(n13).style.width = Length::px(140.0);
+            doc.node_mut(n13).style.height = Length::px(100.0);
+            doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.append_child(n12, n13);
+            let n14 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n14).style.display = Display::Block;
+            doc.node_mut(n14).style.float = Float::Left;
+            doc.node_mut(n14).style.width = Length::px(140.0);
+            doc.node_mut(n14).style.height = Length::px(100.0);
+            doc.node_mut(n14).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.append_child(n12, n14);
+            let n15 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n15).style.display = Display::Block;
+            doc.node_mut(n15).style.float = Float::Left;
+            doc.node_mut(n15).style.width = Length::px(140.0);
+            doc.node_mut(n15).style.height = Length::px(100.0);
+            doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.append_child(n12, n15);
+    doc
+}
+
 // Source: scroll-markers_column-scroll-marker-counters-ref.html
 fn css_overflow_scroll_markers_column_scroll_marker_counters_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -2950,6 +7266,22 @@ fn css_overflow_scroll_markers_column_scroll_marker_counters_ref() -> Document {
         doc.node_mut(n8).style.height = Length::px(100.0);
         doc.node_mut(n8).style.width = Length::px(100.0);
         doc.append_child(n5, n8);
+    doc
+}
+
+// Source: scroll-markers_column-scroll-marker-reattach-target-current-ref.html
+fn css_overflow_scroll_markers_column_scroll_marker_reattach_target_current_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.append_child(n2, n3);
     doc
 }
 
@@ -3034,6 +7366,372 @@ fn css_overflow_scroll_markers_root_scroll_marker_ref() -> Document {
     doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n7);
+    doc
+}
+
+// Source: scroll-markers_scroll-marker-001-ref.html
+fn css_overflow_scroll_markers_scroll_marker_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(600.0);
+    doc.node_mut(n1).style.height = Length::px(300.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(600.0);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(600.0);
+        doc.node_mut(n3).style.height = Length::px(300.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.border_top_width = 3;
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_right_width = 3;
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_bottom_width = 3;
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_left_width = 3;
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.padding_top = Length::px(5.0);
+    doc.node_mut(n4).style.padding_right = Length::px(5.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(5.0);
+    doc.node_mut(n4).style.padding_left = Length::px(5.0);
+    doc.node_mut(n4).style.height = Length::px(20.0);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.background_color = Color::BLUE;
+        doc.node_mut(n5).style.display = Display::InlineBlock;
+        doc.node_mut(n5).style.width = Length::px(10.0);
+        doc.node_mut(n5).style.height = Length::px(10.0);
+        doc.node_mut(n5).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n5).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n5).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n5).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::InlineBlock;
+        doc.node_mut(n6).style.width = Length::px(10.0);
+        doc.node_mut(n6).style.height = Length::px(10.0);
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n4, n6);
+    doc
+}
+
+// Source: scroll-markers_scroll-marker-002-ref.html
+fn css_overflow_scroll_markers_scroll_marker_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.border_top_width = 3;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 3;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 3;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 3;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(5.0);
+    doc.node_mut(n1).style.padding_right = Length::px(5.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(5.0);
+    doc.node_mut(n1).style.padding_left = Length::px(5.0);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.margin_right = Length::px(4.0);
+        doc.node_mut(n2).style.width = Length::px(10.0);
+        doc.node_mut(n2).style.height = Length::px(10.0);
+        doc.node_mut(n2).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n2).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n2).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.width = Length::px(10.0);
+        doc.node_mut(n3).style.height = Length::px(10.0);
+        doc.node_mut(n3).style.background_color = Color::BLUE;
+        doc.node_mut(n3).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n3).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n3).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(600.0);
+    doc.node_mut(n4).style.height = Length::px(300.0);
+    doc.node_mut(n4).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n4).style.overflow_y = Overflow::Scroll;
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(600.0);
+        doc.node_mut(n5).style.height = Length::px(300.0);
+        doc.node_mut(n5).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.width = Length::px(600.0);
+        doc.node_mut(n6).style.height = Length::px(300.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n4, n6);
+    doc
+}
+
+// Source: scroll-markers_scroll-marker-003-ref.html
+fn css_overflow_scroll_markers_scroll_marker_003_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.height = Length::px(40.0);
+    doc.node_mut(n2).style.border_top_width = 3;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_right_width = 3;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_bottom_width = 3;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.border_left_width = 3;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.padding_top = Length::px(5.0);
+    doc.node_mut(n2).style.padding_right = Length::px(5.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(5.0);
+    doc.node_mut(n2).style.padding_left = Length::px(5.0);
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.background_color = Color::BLUE;
+        doc.node_mut(n3).style.display = Display::InlineBlock;
+        doc.node_mut(n3).style.width = Length::px(10.0);
+        doc.node_mut(n3).style.height = Length::px(10.0);
+        doc.node_mut(n3).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n3).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n3).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::InlineBlock;
+        doc.node_mut(n4).style.width = Length::px(10.0);
+        doc.node_mut(n4).style.height = Length::px(10.0);
+        doc.node_mut(n4).style.background_color = Color::BLUE;
+        doc.node_mut(n4).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n4).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n4).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n4).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n2, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.width = Length::px(600.0);
+    doc.node_mut(n5).style.height = Length::px(300.0);
+    doc.node_mut(n5).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n5).style.overflow_y = Overflow::Scroll;
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.width = Length::px(600.0);
+        doc.node_mut(n6).style.height = Length::px(300.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n5, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.width = Length::px(600.0);
+        doc.node_mut(n7).style.height = Length::px(300.0);
+        doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n5, n7);
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style.display = Display::Block;
+    doc.append_child(vp, n8);
+    doc
+}
+
+// Source: scroll-markers_scroll-marker-004-ref.html
+fn css_overflow_scroll_markers_scroll_marker_004_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(600.0);
+    doc.node_mut(n2).style.height = Length::px(300.0);
+    doc.node_mut(n2).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n2).style.overflow_y = Overflow::Scroll;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(600.0);
+        doc.node_mut(n3).style.height = Length::px(300.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(600.0);
+        doc.node_mut(n4).style.height = Length::px(300.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n2, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.height = Length::px(40.0);
+    doc.node_mut(n5).style.border_top_width = 3;
+    doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n5).style.border_right_width = 3;
+    doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n5).style.border_bottom_width = 3;
+    doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n5).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n5).style.border_left_width = 3;
+    doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n5).style.padding_top = Length::px(5.0);
+    doc.node_mut(n5).style.padding_right = Length::px(5.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(5.0);
+    doc.node_mut(n5).style.padding_left = Length::px(5.0);
+    doc.node_mut(n5).style.display = Display::Flex;
+    doc.append_child(vp, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.margin_right = Length::px(4.0);
+        doc.node_mut(n6).style.width = Length::px(10.0);
+        doc.node_mut(n6).style.height = Length::px(10.0);
+        doc.node_mut(n6).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n5, n6);
+        let n7 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n7).style.width = Length::px(10.0);
+        doc.node_mut(n7).style.height = Length::px(10.0);
+        doc.node_mut(n7).style.background_color = Color::BLUE;
+        doc.node_mut(n7).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n7).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n7).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n7).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n5, n7);
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style.display = Display::Block;
+    doc.append_child(vp, n8);
+    doc
+}
+
+// Source: scroll-markers_scroll-marker-010-ref.html
+fn css_overflow_scroll_markers_scroll_marker_010_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(600.0);
+    doc.node_mut(n1).style.height = Length::px(300.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(600.0);
+        doc.node_mut(n2).style.height = Length::px(300.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.width = Length::px(600.0);
+        doc.node_mut(n3).style.height = Length::px(300.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.border_top_width = 3;
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_right_width = 3;
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_bottom_width = 3;
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.border_left_width = 3;
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n4).style.height = Length::px(60.0);
+    doc.node_mut(n4).style.padding_top = Length::px(5.0);
+    doc.node_mut(n4).style.padding_right = Length::px(5.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(5.0);
+    doc.node_mut(n4).style.padding_left = Length::px(5.0);
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.background_color = Color::BLUE;
+        doc.node_mut(n5).style.display = Display::InlineBlock;
+        doc.node_mut(n5).style.width = Length::px(30.0);
+        doc.node_mut(n5).style.height = Length::px(30.0);
+        doc.node_mut(n5).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n5).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n5).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n5).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n4, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::InlineBlock;
+        doc.node_mut(n6).style.width = Length::px(30.0);
+        doc.node_mut(n6).style.height = Length::px(30.0);
+        doc.node_mut(n6).style.background_color = Color::BLUE;
+        doc.node_mut(n6).style.border_top_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_top_right_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_bottom_left_radius = (100.0_f32, 100.0_f32);
+        doc.node_mut(n6).style.border_bottom_right_radius = (100.0_f32, 100.0_f32);
+        doc.append_child(n4, n6);
+    doc
+}
+
+// Source: scroll-markers_scroll-marker-011-ref.html
+fn css_overflow_scroll_markers_scroll_marker_011_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.append_child(n2, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.append_child(n2, n5);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.append_child(n2, n6);
     doc
 }
 
@@ -3330,8 +8028,12 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/clip-001", css_overflow_clip_001 as fn() -> Document),
         ("wpt/css_overflow/clip-002-ref", css_overflow_clip_002_ref as fn() -> Document),
         ("wpt/css_overflow/clip-002", css_overflow_clip_002 as fn() -> Document),
+        ("wpt/css_overflow/clip-003-ref", css_overflow_clip_003_ref as fn() -> Document),
+        ("wpt/css_overflow/clip-003", css_overflow_clip_003 as fn() -> Document),
         ("wpt/css_overflow/clip-004-ref", css_overflow_clip_004_ref as fn() -> Document),
         ("wpt/css_overflow/clip-004", css_overflow_clip_004 as fn() -> Document),
+        ("wpt/css_overflow/clip-005-ref", css_overflow_clip_005_ref as fn() -> Document),
+        ("wpt/css_overflow/clip-005", css_overflow_clip_005 as fn() -> Document),
         ("wpt/css_overflow/clip-006", css_overflow_clip_006 as fn() -> Document),
         ("wpt/css_overflow/clip-007", css_overflow_clip_007 as fn() -> Document),
         ("wpt/css_overflow/clip-008", css_overflow_clip_008 as fn() -> Document),
@@ -3354,10 +8056,14 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/overflow-clip-margin-001", css_overflow_overflow_clip_margin_001 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-002-ref", css_overflow_overflow_clip_margin_002_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-002", css_overflow_overflow_clip_margin_002 as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-margin-003-ref", css_overflow_overflow_clip_margin_003_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-margin-003", css_overflow_overflow_clip_margin_003 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-004-ref", css_overflow_overflow_clip_margin_004_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-004", css_overflow_overflow_clip_margin_004 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-005-ref", css_overflow_overflow_clip_margin_005_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-005", css_overflow_overflow_clip_margin_005 as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-margin-006-ref", css_overflow_overflow_clip_margin_006_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-margin-006", css_overflow_overflow_clip_margin_006 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-008-ref", css_overflow_overflow_clip_margin_008_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-008", css_overflow_overflow_clip_margin_008 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-009-ref", css_overflow_overflow_clip_margin_009_ref as fn() -> Document),
@@ -3367,6 +8073,8 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/overflow-clip-margin-011-ref", css_overflow_overflow_clip_margin_011_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-011", css_overflow_overflow_clip_margin_011 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-border-radius-002-ref", css_overflow_overflow_clip_margin_border_radius_002_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-margin-border-radius-ref", css_overflow_overflow_clip_margin_border_radius_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-margin-border-radius", css_overflow_overflow_clip_margin_border_radius as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-invalidation-ref", css_overflow_overflow_clip_margin_invalidation_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-mul-column-border-box-ref", css_overflow_overflow_clip_margin_mul_column_border_box_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-mul-column-border-box", css_overflow_overflow_clip_margin_mul_column_border_box as fn() -> Document),
@@ -3383,6 +8091,7 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/overflow-clip-margin-visual-box", css_overflow_overflow_clip_margin_visual_box as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-x-visible-y-svg-ref", css_overflow_overflow_clip_x_visible_y_svg_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-y-visible-x-svg-ref", css_overflow_overflow_clip_y_visible_x_svg_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-does-not-apply-to-inline-box", css_overflow_overflow_does_not_apply_to_inline_box as fn() -> Document),
         ("wpt/css_overflow/overflow-inline-block-with-opacity", css_overflow_overflow_inline_block_with_opacity as fn() -> Document),
         ("wpt/css_overflow/overflow-negative-margin", css_overflow_overflow_negative_margin as fn() -> Document),
         ("wpt/css_overflow/overflow-no-frameset-propagation", css_overflow_overflow_no_frameset_propagation as fn() -> Document),
@@ -3395,19 +8104,164 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/scrollbar-empty-001", css_overflow_scrollbar_empty_001 as fn() -> Document),
         ("wpt/css_overflow/scrollbar-gutter-abspos-001-ref", css_overflow_scrollbar_gutter_abspos_001_ref as fn() -> Document),
         ("wpt/css_overflow/scrollbar-gutter-abspos-001", css_overflow_scrollbar_gutter_abspos_001 as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-dynamic-001-ref", css_overflow_scrollbar_gutter_dynamic_001_ref as fn() -> Document),
         ("wpt/css_overflow/scrollbar-gutter-dynamic-004-ref", css_overflow_scrollbar_gutter_dynamic_004_ref as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-fixedpos-001-ref", css_overflow_scrollbar_gutter_fixedpos_001_ref as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-fixedpos-001", css_overflow_scrollbar_gutter_fixedpos_001 as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-fixedpos-002-ref", css_overflow_scrollbar_gutter_fixedpos_002_ref as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-fixedpos-002", css_overflow_scrollbar_gutter_fixedpos_002 as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-fixedpos-003-ref", css_overflow_scrollbar_gutter_fixedpos_003_ref as fn() -> Document),
+        ("wpt/css_overflow/scrollbar-gutter-fixedpos-003", css_overflow_scrollbar_gutter_fixedpos_003 as fn() -> Document),
         ("wpt/css_overflow/scrollbar-large-scale-in-iframe-ref", css_overflow_scrollbar_large_scale_in_iframe_ref as fn() -> Document),
+        ("wpt/css_overflow/text-overflow-ellipsis-001", css_overflow_text_overflow_ellipsis_001 as fn() -> Document),
+        ("wpt/css_overflow/text-overflow-ellipsis-002", css_overflow_text_overflow_ellipsis_002 as fn() -> Document),
+        ("wpt/css_overflow/text-overflow-ellipsis-003-ref", css_overflow_text_overflow_ellipsis_003_ref as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-001", css_overflow_line_clamp_block_ellipsis_001 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-002", css_overflow_line_clamp_block_ellipsis_002 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-003", css_overflow_line_clamp_block_ellipsis_003 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-004", css_overflow_line_clamp_block_ellipsis_004 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-005", css_overflow_line_clamp_block_ellipsis_005 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-006", css_overflow_line_clamp_block_ellipsis_006 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-011", css_overflow_line_clamp_block_ellipsis_011 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-012", css_overflow_line_clamp_block_ellipsis_012 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-013", css_overflow_line_clamp_block_ellipsis_013 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-014", css_overflow_line_clamp_block_ellipsis_014 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-015.tentative", css_overflow_line_clamp_block_ellipsis_015_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-016", css_overflow_line_clamp_block_ellipsis_016 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-017", css_overflow_line_clamp_block_ellipsis_017 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-018", css_overflow_line_clamp_block_ellipsis_018 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-022", css_overflow_line_clamp_block_ellipsis_022 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-023", css_overflow_line_clamp_block_ellipsis_023 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-024", css_overflow_line_clamp_block_ellipsis_024 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-025", css_overflow_line_clamp_block_ellipsis_025 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-028", css_overflow_line_clamp_block_ellipsis_028 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-031", css_overflow_line_clamp_block_ellipsis_031 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_block-ellipsis-032.tentative", css_overflow_line_clamp_block_ellipsis_032_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-001", css_overflow_line_clamp_line_clamp_001 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-002", css_overflow_line_clamp_line_clamp_002 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-003", css_overflow_line_clamp_line_clamp_003 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-004", css_overflow_line_clamp_line_clamp_004 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-005", css_overflow_line_clamp_line_clamp_005 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-006", css_overflow_line_clamp_line_clamp_006 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-007", css_overflow_line_clamp_line_clamp_007 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-010", css_overflow_line_clamp_line_clamp_010 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-011.tentative", css_overflow_line_clamp_line_clamp_011_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-012.tentative", css_overflow_line_clamp_line_clamp_012_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-013.tentative", css_overflow_line_clamp_line_clamp_013_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-014", css_overflow_line_clamp_line_clamp_014 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-015", css_overflow_line_clamp_line_clamp_015 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-020", css_overflow_line_clamp_line_clamp_020 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-022.tentative", css_overflow_line_clamp_line_clamp_022_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-023.tentative", css_overflow_line_clamp_line_clamp_023_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-024.tentative", css_overflow_line_clamp_line_clamp_024_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-025.tentative", css_overflow_line_clamp_line_clamp_025_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-026", css_overflow_line_clamp_line_clamp_026 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-027", css_overflow_line_clamp_line_clamp_027 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-028", css_overflow_line_clamp_line_clamp_028 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-030", css_overflow_line_clamp_line_clamp_030 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-031", css_overflow_line_clamp_line_clamp_031 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-035.tentative", css_overflow_line_clamp_line_clamp_035_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-036", css_overflow_line_clamp_line_clamp_036 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-037", css_overflow_line_clamp_line_clamp_037 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-038", css_overflow_line_clamp_line_clamp_038 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-001-crash", css_overflow_line_clamp_line_clamp_auto_001_crash as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-001", css_overflow_line_clamp_line_clamp_auto_001 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-002-crash", css_overflow_line_clamp_line_clamp_auto_002_crash as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-002.tentative", css_overflow_line_clamp_line_clamp_auto_002_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-003.tentative", css_overflow_line_clamp_line_clamp_auto_003_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-004", css_overflow_line_clamp_line_clamp_auto_004 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-005", css_overflow_line_clamp_line_clamp_auto_005 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-006", css_overflow_line_clamp_line_clamp_auto_006 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-007", css_overflow_line_clamp_line_clamp_auto_007 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-008", css_overflow_line_clamp_line_clamp_auto_008 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-009", css_overflow_line_clamp_line_clamp_auto_009 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-010", css_overflow_line_clamp_line_clamp_auto_010 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-011", css_overflow_line_clamp_line_clamp_auto_011 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-012", css_overflow_line_clamp_line_clamp_auto_012 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-013", css_overflow_line_clamp_line_clamp_auto_013 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-014", css_overflow_line_clamp_line_clamp_auto_014 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-015.tentative", css_overflow_line_clamp_line_clamp_auto_015_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-016", css_overflow_line_clamp_line_clamp_auto_016 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-017", css_overflow_line_clamp_line_clamp_auto_017 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-018.tentative", css_overflow_line_clamp_line_clamp_auto_018_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-019.tentative", css_overflow_line_clamp_line_clamp_auto_019_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-020.tentative", css_overflow_line_clamp_line_clamp_auto_020_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-021.tentative", css_overflow_line_clamp_line_clamp_auto_021_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-022.tentative", css_overflow_line_clamp_line_clamp_auto_022_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-023.tentative", css_overflow_line_clamp_line_clamp_auto_023_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-024.tentative", css_overflow_line_clamp_line_clamp_auto_024_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-025", css_overflow_line_clamp_line_clamp_auto_025 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-027.tentative", css_overflow_line_clamp_line_clamp_auto_027_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-028.tentative", css_overflow_line_clamp_line_clamp_auto_028_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-029.tentative", css_overflow_line_clamp_line_clamp_auto_029_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-030.tentative", css_overflow_line_clamp_line_clamp_auto_030_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-031.tentative", css_overflow_line_clamp_line_clamp_auto_031_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-032.tentative", css_overflow_line_clamp_line_clamp_auto_032_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-033", css_overflow_line_clamp_line_clamp_auto_033 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-034", css_overflow_line_clamp_line_clamp_auto_034 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-035", css_overflow_line_clamp_line_clamp_auto_035 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-036", css_overflow_line_clamp_line_clamp_auto_036 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-037", css_overflow_line_clamp_line_clamp_auto_037 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-039", css_overflow_line_clamp_line_clamp_auto_039 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-040", css_overflow_line_clamp_line_clamp_auto_040 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-041", css_overflow_line_clamp_line_clamp_auto_041 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-042", css_overflow_line_clamp_line_clamp_auto_042 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-043", css_overflow_line_clamp_line_clamp_auto_043 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-044", css_overflow_line_clamp_line_clamp_auto_044 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-045", css_overflow_line_clamp_line_clamp_auto_045 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-046", css_overflow_line_clamp_line_clamp_auto_046 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-auto-047", css_overflow_line_clamp_line_clamp_auto_047 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-001", css_overflow_line_clamp_line_clamp_auto_with_ruby_001 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-002", css_overflow_line_clamp_line_clamp_auto_with_ruby_002 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-003", css_overflow_line_clamp_line_clamp_auto_with_ruby_003 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-004", css_overflow_line_clamp_line_clamp_auto_with_ruby_004 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-005.tentative", css_overflow_line_clamp_line_clamp_auto_with_ruby_005_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-content-height-with-dynamic-change-ref", css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-001", css_overflow_line_clamp_line_clamp_with_abspos_001 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-002", css_overflow_line_clamp_line_clamp_with_abspos_002 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-003", css_overflow_line_clamp_line_clamp_with_abspos_003 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-004", css_overflow_line_clamp_line_clamp_with_abspos_004 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-005", css_overflow_line_clamp_line_clamp_with_abspos_005 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-006", css_overflow_line_clamp_line_clamp_with_abspos_006 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-007", css_overflow_line_clamp_line_clamp_with_abspos_007 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-008", css_overflow_line_clamp_line_clamp_with_abspos_008 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-009", css_overflow_line_clamp_line_clamp_with_abspos_009 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-010", css_overflow_line_clamp_line_clamp_with_abspos_010 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-011", css_overflow_line_clamp_line_clamp_with_abspos_011 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-012", css_overflow_line_clamp_line_clamp_with_abspos_012 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-013", css_overflow_line_clamp_line_clamp_with_abspos_013 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-014", css_overflow_line_clamp_line_clamp_with_abspos_014 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-015", css_overflow_line_clamp_line_clamp_with_abspos_015 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-016", css_overflow_line_clamp_line_clamp_with_abspos_016 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-017", css_overflow_line_clamp_line_clamp_with_abspos_017 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-018", css_overflow_line_clamp_line_clamp_with_abspos_018 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-020", css_overflow_line_clamp_line_clamp_with_abspos_020 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-021", css_overflow_line_clamp_line_clamp_with_abspos_021 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-022", css_overflow_line_clamp_line_clamp_with_abspos_022 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-abspos-023", css_overflow_line_clamp_line_clamp_with_abspos_023 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-001", css_overflow_line_clamp_line_clamp_with_fixed_pos_001 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-002", css_overflow_line_clamp_line_clamp_with_fixed_pos_002 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-003", css_overflow_line_clamp_line_clamp_with_fixed_pos_003 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-004", css_overflow_line_clamp_line_clamp_with_fixed_pos_004 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-001.tentative", css_overflow_line_clamp_line_clamp_with_floats_001_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-002.tentative", css_overflow_line_clamp_line_clamp_with_floats_002_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-003.tentative", css_overflow_line_clamp_line_clamp_with_floats_003_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-004.tentative", css_overflow_line_clamp_line_clamp_with_floats_004_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-005.tentative", css_overflow_line_clamp_line_clamp_with_floats_005_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-006.tentative", css_overflow_line_clamp_line_clamp_with_floats_006_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-007.tentative", css_overflow_line_clamp_line_clamp_with_floats_007_tentative as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-008", css_overflow_line_clamp_line_clamp_with_floats_008 as fn() -> Document),
+        ("wpt/css_overflow/line-clamp_line-clamp-with-floats-009.tentative", css_overflow_line_clamp_line_clamp_with_floats_009_tentative as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_column-scroll-marker-001-ref", css_overflow_scroll_markers_column_scroll_marker_001_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_column-scroll-marker-counters-ref", css_overflow_scroll_markers_column_scroll_marker_counters_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_column-scroll-marker-reattach-target-current-ref", css_overflow_scroll_markers_column_scroll_marker_reattach_target_current_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_root-scroll-marker-ref", css_overflow_scroll_markers_root_scroll_marker_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-marker-001-ref", css_overflow_scroll_markers_scroll_marker_001_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-marker-002-ref", css_overflow_scroll_markers_scroll_marker_002_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-marker-003-ref", css_overflow_scroll_markers_scroll_marker_003_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-marker-004-ref", css_overflow_scroll_markers_scroll_marker_004_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-marker-010-ref", css_overflow_scroll_markers_scroll_marker_010_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-marker-011-ref", css_overflow_scroll_markers_scroll_marker_011_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-marker-counters-ref", css_overflow_scroll_markers_scroll_marker_counters_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-marker-dynamic-ref", css_overflow_scroll_markers_scroll_marker_dynamic_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-marker-group-007-ref", css_overflow_scroll_markers_scroll_marker_group_007_ref as fn() -> Document),

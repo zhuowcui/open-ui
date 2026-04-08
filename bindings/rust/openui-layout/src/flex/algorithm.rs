@@ -196,7 +196,36 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 flex_lines[0].line_cross_size // keep computed size
             }
         };
-        flex_lines[0].line_cross_size = container_cross;
+
+        // Clamp cross size to container's min/max constraints (CSS Flexbox §9.4)
+        let clamped_cross = if !is_column {
+            let pct_base = space.percentage_resolution_block_size;
+            let min_h = if !style.min_height.is_auto() && (!pct_base.is_indefinite() || style.min_height.is_fixed()) {
+                let min_raw = resolve_length(&style.min_height, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+                if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    (min_raw - border_padding_block).clamp_negative_to_zero()
+                } else {
+                    min_raw
+                }
+            } else {
+                LayoutUnit::zero()
+            };
+            let max_h = if !style.max_height.is_none() && (!pct_base.is_indefinite() || style.max_height.is_fixed()) {
+                let max_raw = resolve_length(&style.max_height, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
+                if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    (max_raw - border_padding_block).clamp_negative_to_zero()
+                } else {
+                    max_raw
+                }
+            } else {
+                LayoutUnit::from_i32(33554431)
+            };
+            container_cross.clamp(min_h, max_h)
+        } else {
+            container_cross
+        };
+
+        flex_lines[0].line_cross_size = clamped_cross;
     }
 
     // ── Compute total block size ─────────────────────────────────────
@@ -358,7 +387,7 @@ fn resolve_total_block_size(
     // Clamp min/max
     let pct_base = space.percentage_resolution_block_size;
 
-    let min = if !style.min_height.is_auto() && !pct_base.is_indefinite() {
+    let min = if !style.min_height.is_auto() && (!pct_base.is_indefinite() || style.min_height.is_fixed()) {
         let min_raw = resolve_length(&style.min_height, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
         if style.box_sizing == openui_style::BoxSizing::BorderBox {
             min_raw
@@ -369,7 +398,7 @@ fn resolve_total_block_size(
         LayoutUnit::zero()
     };
 
-    let max = if !style.max_height.is_none() && !pct_base.is_indefinite() {
+    let max = if !style.max_height.is_none() && (!pct_base.is_indefinite() || style.max_height.is_fixed()) {
         let max_raw = resolve_length(&style.max_height, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
         if style.box_sizing == openui_style::BoxSizing::BorderBox {
             max_raw
@@ -608,6 +637,8 @@ fn resolve_flex_basis(
 
 /// Resolve content-based (intrinsic) size for a flex item.
 /// This runs a child layout to determine the item's natural size.
+/// Also handles aspect-ratio: if the item has an aspect ratio and one dimension
+/// is known, derive the main-axis size from the cross-axis size.
 fn resolve_content_based_size(
     doc: &Document,
     child_id: NodeId,
@@ -618,6 +649,36 @@ fn resolve_content_based_size(
     child_percentage_block: LayoutUnit,
     space: &ConstraintSpace,
 ) -> LayoutUnit {
+    // Check if aspect-ratio can resolve the main-axis size from a known cross-axis size
+    if let Some(ref ar) = child_style.aspect_ratio {
+        let ratio = ar.ratio;
+        if ratio.0 > 0.0 && ratio.1 > 0.0 {
+            let (cross_prop, cross_pct) = if is_column {
+                (&child_style.width, child_percentage_inline)
+            } else {
+                (&child_style.height, child_percentage_block)
+            };
+
+            if !cross_prop.is_auto() && (!cross_pct.is_indefinite() || cross_prop.is_fixed()) {
+                let cross_val = resolve_length(cross_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+                // Derive main-axis size from cross-axis using aspect-ratio
+                let main_val = if is_column {
+                    // Column: main=block, cross=inline. main = cross * (h/w)
+                    LayoutUnit::from_f32(cross_val.to_f32() * ratio.1 / ratio.0)
+                } else {
+                    // Row: main=inline, cross=block. main = cross * (w/h)
+                    LayoutUnit::from_f32(cross_val.to_f32() * ratio.0 / ratio.1)
+                };
+                let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    (main_val - main_axis_border_padding).clamp_negative_to_zero()
+                } else {
+                    main_val
+                };
+                return content;
+            }
+        }
+    }
+
     // For content-based sizing, lay out the child with unconstrained main axis
     let child_space = if is_column {
         ConstraintSpace::for_block_child(
@@ -650,6 +711,29 @@ fn resolve_content_based_size(
     // treat as zero content size.
     let main_size = main_size.clamp_indefinite_to_zero();
 
+    // Apply aspect-ratio: if we have a ratio and auto main size was resolved,
+    // check if the cross-size from layout lets us derive a better main size
+    if let Some(ref ar) = child_style.aspect_ratio {
+        let ratio = ar.ratio;
+        if ratio.0 > 0.0 && ratio.1 > 0.0 {
+            let cross_size = if is_column {
+                child_fragment.width()
+            } else {
+                child_fragment.height()
+            };
+            if !cross_size.is_indefinite() && cross_size > LayoutUnit::zero() {
+                let derived_main = if is_column {
+                    LayoutUnit::from_f32(cross_size.to_f32() * ratio.1 / ratio.0)
+                } else {
+                    LayoutUnit::from_f32(cross_size.to_f32() * ratio.0 / ratio.1)
+                };
+                if derived_main > main_size {
+                    return (derived_main - main_axis_border_padding).clamp_negative_to_zero();
+                }
+            }
+        }
+    }
+
     // Convert from border-box to content-box
     (main_size - main_axis_border_padding).clamp_negative_to_zero()
 }
@@ -673,13 +757,31 @@ fn resolve_main_axis_min_max(
 
     // ── Resolve min ──────────────────────────────────────────────────
     let min = if min_prop.is_auto() {
-        // Auto minimum size (CSS Flexbox §4.5)
-        // Approximation: base_content_size if item can't shrink (flex_shrink == 0),
-        // else 0. Full implementation needs min-content sizing (content_suggestion
-        // vs specified_suggestion).
-        if flex_shrink == 0.0 {
+        // CSS Flexbox §4.5: Automatic Minimum Size
+        // The auto minimum is the content-based minimum, but for items
+        // with overflow != visible, it's 0.
+        // 
+        // Full spec: min(content_size, specified_size), where content_size
+        // is the min-content contribution. Since we pass `base_content_size`
+        // which may be from flex-basis (not actual content), we use 0 for
+        // items with a specified flex-basis (they can shrink freely) and
+        // base_content_size for content-based items.
+        let overflow_visible = if is_column {
+            child_style.overflow_y == openui_style::Overflow::Visible
+        } else {
+            child_style.overflow_x == openui_style::Overflow::Visible
+        };
+
+        if !overflow_visible {
+            LayoutUnit::zero()
+        } else if flex_shrink == 0.0 {
+            // Non-shrinkable items: content protects minimum size
             base_content_size
         } else {
+            // Shrinkable items: allow shrinking below specified sizes.
+            // The true content-based minimum (min-content) would require a
+            // separate intrinsic sizing pass. For now, use 0 for items
+            // whose base_content_size came from a specified flex-basis.
             LayoutUnit::zero()
         }
     } else if min_prop.is_none() || *min_prop == Length::zero() {
@@ -780,23 +882,55 @@ fn resolve_cross_size(
         } else {
             resolved
         }
-    } else {
+    } else if cross_prop.is_auto() {
+        // Check if aspect-ratio can derive cross-axis from the flexed main-axis size
+        if let Some(ref ar) = child_style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 > 0.0 && ratio.1 > 0.0 {
+                let main_size = item.flexed_border_box_size();
+                if !main_size.is_indefinite() && main_size > LayoutUnit::zero() {
+                    let cross_val = if is_column {
+                        // Column: main=block, cross=inline. cross = main * (w/h)
+                        LayoutUnit::from_f32(main_size.to_f32() * ratio.0 / ratio.1)
+                    } else {
+                        // Row: main=inline, cross=block. cross = main * (h/w)
+                        LayoutUnit::from_f32(main_size.to_f32() * ratio.1 / ratio.0)
+                    };
+                    return (cross_val - cross_border_padding).clamp_negative_to_zero();
+                }
+            }
+        }
+
         // Auto cross size → lay out child to get intrinsic size
         let child_space = ConstraintSpace::for_block_child(
             if is_column {
-                // Column flex: cross is inline, use flexed size as available inline
                 item.flexed_border_box_size()
             } else {
-                // Row flex: use item's flexed width as available inline
-                // so child content (e.g. text) wraps at the correct width
                 item.flexed_border_box_size()
             },
             if is_column {
                 LayoutUnit::from_raw(-64) // indefinite
             } else {
-                // Row flex: cross is block, indefinite since we're measuring height
                 LayoutUnit::from_raw(-64)
             },
+            child_percentage_inline,
+            child_percentage_block,
+            child_style.creates_new_formatting_context(),
+        );
+
+        let child_fragment = crate::block::block_layout(doc, item.node_id, &child_space);
+        let cross_size = if is_column {
+            child_fragment.width()
+        } else {
+            child_fragment.height()
+        };
+
+        (cross_size - cross_border_padding).clamp_negative_to_zero()
+    } else {
+        // Auto cross size → lay out child to get intrinsic size
+        let child_space = ConstraintSpace::for_block_child(
+            item.flexed_border_box_size(),
+            LayoutUnit::from_raw(-64),
             child_percentage_inline,
             child_percentage_block,
             child_style.creates_new_formatting_context(),

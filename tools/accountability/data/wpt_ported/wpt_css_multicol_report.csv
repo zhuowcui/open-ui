@@ -36,6 +36,8 @@ baseline-008-ref,ported,css_multicol_baseline_008_ref,
 baseline-008,ported,css_multicol_baseline_008,
 broken-column-rule-1-ref,ported,css_multicol_broken_column_rule_1_ref,
 broken-column-rule-1,ported,css_multicol_broken_column_rule_1,
+column-balancing-paged-001-print-ref,ported,css_multicol_column_balancing_paged_001_print_ref,
+column-balancing-paged-001-print,ported,css_multicol_column_balancing_paged_001_print,
 column-balancing-with-overflow-auto-crash,ported,css_multicol_column_balancing_with_overflow_auto_crash,
 column-balancing-with-span-and-oof-001,ported,css_multicol_column_balancing_with_span_and_oof_001,
 column-balancing-with-span-and-oof-002,ported,css_multicol_column_balancing_with_span_and_oof_002,
@@ -98,19 +100,89 @@ intrinsic-size-005,ported,css_multicol_intrinsic_size_005,
 move-with-text-after-paint-ref,ported,css_multicol_move_with_text_after_paint_ref,
 moz-multicol3-column-balancing-break-inside-avoid-1-ref,ported,css_multicol_moz_multicol3_column_balancing_break_inside_avoid_1_ref,
 moz-multicol3-column-balancing-break-inside-avoid-1,ported,css_multicol_moz_multicol3_column_balancing_break_inside_avoid_1,
+multicol-basic-001,ported,css_multicol_multicol_basic_001,
+multicol-basic-002,ported,css_multicol_multicol_basic_002,
+multicol-basic-003,ported,css_multicol_multicol_basic_003,
+multicol-basic-004,ported,css_multicol_multicol_basic_004,
 multicol-basic-005,ported,css_multicol_multicol_basic_005,
 multicol-basic-006,ported,css_multicol_multicol_basic_006,
 multicol-basic-007,ported,css_multicol_multicol_basic_007,
 multicol-basic-008,ported,css_multicol_multicol_basic_008,
+multicol-block-no-clip-001,ported,css_multicol_multicol_block_no_clip_001,
+multicol-block-no-clip-002,ported,css_multicol_multicol_block_no_clip_002,
+multicol-br-inside-avoidcolumn-001,ported,css_multicol_multicol_br_inside_avoidcolumn_001,
+multicol-breaking-000-ref,ported,css_multicol_multicol_breaking_000_ref,
+multicol-breaking-000,ported,css_multicol_multicol_breaking_000,
+multicol-breaking-001-ref,ported,css_multicol_multicol_breaking_001_ref,
+multicol-breaking-001,ported,css_multicol_multicol_breaking_001,
+multicol-breaking-002-ref,ported,css_multicol_multicol_breaking_002_ref,
+multicol-breaking-002,ported,css_multicol_multicol_breaking_002,
+multicol-breaking-003-ref,ported,css_multicol_multicol_breaking_003_ref,
+multicol-breaking-003,ported,css_multicol_multicol_breaking_003,
+multicol-breaking-004-ref,ported,css_multicol_multicol_breaking_004_ref,
+multicol-breaking-004,ported,css_multicol_multicol_breaking_004,
+multicol-breaking-005-ref,ported,css_multicol_multicol_breaking_005_ref,
+multicol-breaking-005,ported,css_multicol_multicol_breaking_005,
+multicol-breaking-006-ref,ported,css_multicol_multicol_breaking_006_ref,
+multicol-breaking-006,ported,css_multicol_multicol_breaking_006,
+multicol-breaking-nobackground-000-ref,ported,css_multicol_multicol_breaking_nobackground_000_ref,
+multicol-breaking-nobackground-000,ported,css_multicol_multicol_breaking_nobackground_000,
+multicol-breaking-nobackground-001-ref,ported,css_multicol_multicol_breaking_nobackground_001_ref,
+multicol-breaking-nobackground-001,ported,css_multicol_multicol_breaking_nobackground_001,
+multicol-breaking-nobackground-002-ref,ported,css_multicol_multicol_breaking_nobackground_002_ref,
+multicol-breaking-nobackground-002,ported,css_multicol_multicol_breaking_nobackground_002,
+multicol-breaking-nobackground-003-ref,ported,css_multicol_multicol_breaking_nobackground_003_ref,
+multicol-breaking-nobackground-003,ported,css_multicol_multicol_breaking_nobackground_003,
+multicol-breaking-nobackground-004-ref,ported,css_multicol_multicol_breaking_nobackground_004_ref,
+multicol-breaking-nobackground-004,ported,css_multicol_multicol_breaking_nobackground_004,
+multicol-breaking-nobackground-005-ref,ported,css_multicol_multicol_breaking_nobackground_005_ref,
+multicol-breaking-nobackground-005,ported,css_multicol_multicol_breaking_nobackground_005,
+multicol-clip-001,ported,css_multicol_multicol_clip_001,
+multicol-clip-002,ported,css_multicol_multicol_clip_002,
+multicol-collapsing-001,ported,css_multicol_multicol_collapsing_001,
+multicol-columns-001-ref,ported,css_multicol_multicol_columns_001_ref,
+multicol-columns-001,ported,css_multicol_multicol_columns_001,
+multicol-columns-002,ported,css_multicol_multicol_columns_002,
+multicol-columns-003,ported,css_multicol_multicol_columns_003,
+multicol-columns-004,ported,css_multicol_multicol_columns_004,
+multicol-columns-005,ported,css_multicol_multicol_columns_005,
+multicol-columns-006,ported,css_multicol_multicol_columns_006,
+multicol-columns-007,ported,css_multicol_multicol_columns_007,
+multicol-columns-invalid-001,ported,css_multicol_multicol_columns_invalid_001,
+multicol-columns-invalid-002,ported,css_multicol_multicol_columns_invalid_002,
+multicol-columns-toolong-001,ported,css_multicol_multicol_columns_toolong_001,
 multicol-contained-absolute-ref,ported,css_multicol_multicol_contained_absolute_ref,
 multicol-contained-absolute,ported,css_multicol_multicol_contained_absolute,
+multicol-containing-001,ported,css_multicol_multicol_containing_001,
+multicol-containing-002-ref,ported,css_multicol_multicol_containing_002_ref,
 multicol-containing-003,ported,css_multicol_multicol_containing_003,
+multicol-count-001,ported,css_multicol_multicol_count_001,
+multicol-count-002,ported,css_multicol_multicol_count_002,
+multicol-count-computed-003,ported,css_multicol_multicol_count_computed_003,
+multicol-count-computed-004,ported,css_multicol_multicol_count_computed_004,
+multicol-count-computed-005,ported,css_multicol_multicol_count_computed_005,
+multicol-count-negative-001,ported,css_multicol_multicol_count_negative_001,
+multicol-count-negative-002,ported,css_multicol_multicol_count_negative_002,
+multicol-count-non-integer-001,ported,css_multicol_multicol_count_non_integer_001,
+multicol-count-non-integer-002,ported,css_multicol_multicol_count_non_integer_002,
+multicol-count-non-integer-003,ported,css_multicol_multicol_count_non_integer_003,
+multicol-dynamic-add-001-ref,ported,css_multicol_multicol_dynamic_add_001_ref,
+multicol-dynamic-add-002-ref,ported,css_multicol_multicol_dynamic_add_002_ref,
+multicol-fill-auto-001-ref,ported,css_multicol_multicol_fill_auto_001_ref,
+multicol-fill-auto-001,ported,css_multicol_multicol_fill_auto_001,
+multicol-fill-auto-002-ref,ported,css_multicol_multicol_fill_auto_002_ref,
+multicol-fill-auto-002,ported,css_multicol_multicol_fill_auto_002,
+multicol-fill-auto-003,ported,css_multicol_multicol_fill_auto_003,
 multicol-fill-auto-004,ported,css_multicol_multicol_fill_auto_004,
 multicol-fill-auto-005,ported,css_multicol_multicol_fill_auto_005,
+multicol-fill-auto-block-children-001,ported,css_multicol_multicol_fill_auto_block_children_001,
+multicol-fill-auto-block-children-002-ref,ported,css_multicol_multicol_fill_auto_block_children_002_ref,
 multicol-fill-auto-block-children-002,ported,css_multicol_multicol_fill_auto_block_children_002,
 multicol-fill-auto-block-children-003-ref,ported,css_multicol_multicol_fill_auto_block_children_003_ref,
 multicol-fill-auto-block-children-003,ported,css_multicol_multicol_fill_auto_block_children_003,
 multicol-fill-auto-block-children-ref,ported,css_multicol_multicol_fill_auto_block_children_ref,
+multicol-fill-balance-001-ref,ported,css_multicol_multicol_fill_balance_001_ref,
+multicol-fill-balance-001,ported,css_multicol_multicol_fill_balance_001,
 multicol-fill-balance-002,ported,css_multicol_multicol_fill_balance_002,
 multicol-fill-balance-003,ported,css_multicol_multicol_fill_balance_003,
 multicol-fill-balance-005,ported,css_multicol_multicol_fill_balance_005,
@@ -130,8 +202,47 @@ multicol-fill-balance-039,ported,css_multicol_multicol_fill_balance_039,
 multicol-fill-balance-040,ported,css_multicol_multicol_fill_balance_040,
 multicol-fill-balance-041,ported,css_multicol_multicol_fill_balance_041,
 multicol-fill-balance-nested-000,ported,css_multicol_multicol_fill_balance_nested_000,
+multicol-gap-000-ref,ported,css_multicol_multicol_gap_000_ref,
+multicol-gap-000,ported,css_multicol_multicol_gap_000,
+multicol-gap-001,ported,css_multicol_multicol_gap_001,
+multicol-gap-002,ported,css_multicol_multicol_gap_002,
+multicol-gap-003,ported,css_multicol_multicol_gap_003,
+multicol-gap-fraction-001,ported,css_multicol_multicol_gap_fraction_001,
 multicol-gap-fraction-002,ported,css_multicol_multicol_gap_fraction_002,
+multicol-gap-large-001,ported,css_multicol_multicol_gap_large_001,
+multicol-gap-large-002,ported,css_multicol_multicol_gap_large_002,
+multicol-gap-negative-001,ported,css_multicol_multicol_gap_negative_001,
+multicol-height-001,ported,css_multicol_multicol_height_001,
+multicol-height-002-print-ref,ported,css_multicol_multicol_height_002_print_ref,
+multicol-height-002-print,ported,css_multicol_multicol_height_002_print,
+multicol-height-block-child-001-ref,ported,css_multicol_multicol_height_block_child_001_ref,
+multicol-height-block-child-001,ported,css_multicol_multicol_height_block_child_001,
+multicol-inherit-001,ported,css_multicol_multicol_inherit_001,
+multicol-inherit-002,ported,css_multicol_multicol_inherit_002,
+multicol-inherit-3-ref,ported,css_multicol_multicol_inherit_3_ref,
 multicol-list-item-001-ref,ported,css_multicol_multicol_list_item_001_ref,
+multicol-list-item-001,ported,css_multicol_multicol_list_item_001,
+multicol-list-item-002-ref,ported,css_multicol_multicol_list_item_002_ref,
+multicol-list-item-003-ref,ported,css_multicol_multicol_list_item_003_ref,
+multicol-list-item-003,ported,css_multicol_multicol_list_item_003,
+multicol-list-item-004-ref,ported,css_multicol_multicol_list_item_004_ref,
+multicol-list-item-004,ported,css_multicol_multicol_list_item_004,
+multicol-list-item-005-ref,ported,css_multicol_multicol_list_item_005_ref,
+multicol-list-item-005,ported,css_multicol_multicol_list_item_005,
+multicol-list-item-006-ref,ported,css_multicol_multicol_list_item_006_ref,
+multicol-list-item-006,ported,css_multicol_multicol_list_item_006,
+multicol-list-item-007-ref,ported,css_multicol_multicol_list_item_007_ref,
+multicol-list-item-007,ported,css_multicol_multicol_list_item_007,
+multicol-list-item-008-ref,ported,css_multicol_multicol_list_item_008_ref,
+multicol-list-item-008,ported,css_multicol_multicol_list_item_008,
+multicol-loads-indefinitely-001-crash,ported,css_multicol_multicol_loads_indefinitely_001_crash,
+multicol-margin-001,ported,css_multicol_multicol_margin_001,
+multicol-margin-002,ported,css_multicol_multicol_margin_002,
+multicol-margin-003,ported,css_multicol_multicol_margin_003,
+multicol-margin-child-001-ref,ported,css_multicol_multicol_margin_child_001_ref,
+multicol-margin-child-001,ported,css_multicol_multicol_margin_child_001,
+multicol-nested-002-ref,ported,css_multicol_multicol_nested_002_ref,
+multicol-nested-005,ported,css_multicol_multicol_nested_005,
 multicol-nested-007,ported,css_multicol_multicol_nested_007,
 multicol-nested-008,ported,css_multicol_multicol_nested_008,
 multicol-nested-009,ported,css_multicol_multicol_nested_009,
@@ -160,8 +271,19 @@ multicol-nested-031,ported,css_multicol_multicol_nested_031,
 multicol-nested-032,ported,css_multicol_multicol_nested_032,
 multicol-nested-033-ref,ported,css_multicol_multicol_nested_033_ref,
 multicol-nested-033,ported,css_multicol_multicol_nested_033,
+multicol-nested-column-rule-001-ref,ported,css_multicol_multicol_nested_column_rule_001_ref,
+multicol-nested-column-rule-001,ported,css_multicol_multicol_nested_column_rule_001,
 multicol-nested-column-rule-002,ported,css_multicol_multicol_nested_column_rule_002,
 multicol-nested-column-rule-003,ported,css_multicol_multicol_nested_column_rule_003,
+multicol-nested-margin-001-ref,ported,css_multicol_multicol_nested_margin_001_ref,
+multicol-nested-margin-001,ported,css_multicol_multicol_nested_margin_001,
+multicol-nested-margin-002-ref,ported,css_multicol_multicol_nested_margin_002_ref,
+multicol-nested-margin-002,ported,css_multicol_multicol_nested_margin_002,
+multicol-nested-margin-003-ref,ported,css_multicol_multicol_nested_margin_003_ref,
+multicol-nested-margin-003,ported,css_multicol_multicol_nested_margin_003,
+multicol-nested-margin-004-ref,ported,css_multicol_multicol_nested_margin_004_ref,
+multicol-nested-margin-004,ported,css_multicol_multicol_nested_margin_004,
+multicol-nested-margin-005,ported,css_multicol_multicol_nested_margin_005,
 multicol-oof-inline-cb-001-ref,ported,css_multicol_multicol_oof_inline_cb_001_ref,
 multicol-oof-inline-cb-001,ported,css_multicol_multicol_oof_inline_cb_001,
 multicol-oof-inline-cb-002,ported,css_multicol_multicol_oof_inline_cb_002,
@@ -171,7 +293,35 @@ multicol-overflow-clip-positioned-ref,ported,css_multicol_multicol_overflow_clip
 multicol-overflow-clip-positioned,ported,css_multicol_multicol_overflow_clip_positioned,
 multicol-overflow-clip-ref,ported,css_multicol_multicol_overflow_clip_ref,
 multicol-overflow-clip,ported,css_multicol_multicol_overflow_clip,
+multicol-overflowing-001-ref,ported,css_multicol_multicol_overflowing_001_ref,
+multicol-reduce-000-ref,ported,css_multicol_multicol_reduce_000_ref,
+multicol-reduce-000,ported,css_multicol_multicol_reduce_000,
+multicol-rule-000-ref,ported,css_multicol_multicol_rule_000_ref,
+multicol-rule-000,ported,css_multicol_multicol_rule_000,
+multicol-rule-001-ref,ported,css_multicol_multicol_rule_001_ref,
+multicol-rule-001,ported,css_multicol_multicol_rule_001,
+multicol-rule-003,ported,css_multicol_multicol_rule_003,
 multicol-rule-004-ref,ported,css_multicol_multicol_rule_004_ref,
+multicol-rule-004,ported,css_multicol_multicol_rule_004,
+multicol-rule-color-001,ported,css_multicol_multicol_rule_color_001,
+multicol-rule-color-inherit-001,ported,css_multicol_multicol_rule_color_inherit_001,
+multicol-rule-color-inherit-002,ported,css_multicol_multicol_rule_color_inherit_002,
+multicol-rule-dashed-000-ref,ported,css_multicol_multicol_rule_dashed_000_ref,
+multicol-rule-dashed-000,ported,css_multicol_multicol_rule_dashed_000,
+multicol-rule-dotted-000-ref,ported,css_multicol_multicol_rule_dotted_000_ref,
+multicol-rule-dotted-000,ported,css_multicol_multicol_rule_dotted_000,
+multicol-rule-double-000-ref,ported,css_multicol_multicol_rule_double_000_ref,
+multicol-rule-double-000,ported,css_multicol_multicol_rule_double_000,
+multicol-rule-fraction-001,ported,css_multicol_multicol_rule_fraction_001,
+multicol-rule-fraction-002,ported,css_multicol_multicol_rule_fraction_002,
+multicol-rule-fraction-3-ref,ported,css_multicol_multicol_rule_fraction_3_ref,
+multicol-rule-groove-000-ref,ported,css_multicol_multicol_rule_groove_000_ref,
+multicol-rule-groove-000,ported,css_multicol_multicol_rule_groove_000,
+multicol-rule-hidden-000-ref,ported,css_multicol_multicol_rule_hidden_000_ref,
+multicol-rule-hidden-000,ported,css_multicol_multicol_rule_hidden_000,
+multicol-rule-inset-000,ported,css_multicol_multicol_rule_inset_000,
+multicol-rule-large-001,ported,css_multicol_multicol_rule_large_001,
+multicol-rule-large-002,ported,css_multicol_multicol_rule_large_002,
 multicol-rule-nested-balancing-001-ref,ported,css_multicol_multicol_rule_nested_balancing_001_ref,
 multicol-rule-nested-balancing-001,ported,css_multicol_multicol_rule_nested_balancing_001,
 multicol-rule-nested-balancing-002-ref,ported,css_multicol_multicol_rule_nested_balancing_002_ref,
@@ -180,9 +330,25 @@ multicol-rule-nested-balancing-003-ref,ported,css_multicol_multicol_rule_nested_
 multicol-rule-nested-balancing-003,ported,css_multicol_multicol_rule_nested_balancing_003,
 multicol-rule-nested-balancing-004-ref,ported,css_multicol_multicol_rule_nested_balancing_004_ref,
 multicol-rule-nested-balancing-004,ported,css_multicol_multicol_rule_nested_balancing_004,
+multicol-rule-none-000,ported,css_multicol_multicol_rule_none_000,
+multicol-rule-outset-000,ported,css_multicol_multicol_rule_outset_000,
+multicol-rule-percent-001,ported,css_multicol_multicol_rule_percent_001,
+multicol-rule-ridge-000-ref,ported,css_multicol_multicol_rule_ridge_000_ref,
+multicol-rule-ridge-000,ported,css_multicol_multicol_rule_ridge_000,
 multicol-rule-samelength-001-ref,ported,css_multicol_multicol_rule_samelength_001_ref,
+multicol-rule-samelength-001,ported,css_multicol_multicol_rule_samelength_001,
+multicol-rule-shorthand-001,ported,css_multicol_multicol_rule_shorthand_001,
+multicol-rule-shorthand-2,ported,css_multicol_multicol_rule_shorthand_2,
+multicol-rule-solid-000-ref,ported,css_multicol_multicol_rule_solid_000_ref,
+multicol-rule-solid-000,ported,css_multicol_multicol_rule_solid_000,
+multicol-rule-stacking-001,ported,css_multicol_multicol_rule_stacking_001,
 multicol-scroll-content-ref,ported,css_multicol_multicol_scroll_content_ref,
 multicol-scroll-content,ported,css_multicol_multicol_scroll_content,
+multicol-span-all-003,ported,css_multicol_multicol_span_all_003,
+multicol-span-all-007-ref,ported,css_multicol_multicol_span_all_007_ref,
+multicol-span-all-007,ported,css_multicol_multicol_span_all_007,
+multicol-span-all-008-ref,ported,css_multicol_multicol_span_all_008_ref,
+multicol-span-all-011-ref,ported,css_multicol_multicol_span_all_011_ref,
 multicol-span-all-012,ported,css_multicol_multicol_span_all_012,
 multicol-span-all-013,ported,css_multicol_multicol_span_all_013,
 multicol-span-all-014,ported,css_multicol_multicol_span_all_014,
@@ -191,6 +357,10 @@ multicol-span-all-018,ported,css_multicol_multicol_span_all_018,
 multicol-span-all-019,ported,css_multicol_multicol_span_all_019,
 multicol-span-all-020-ref,ported,css_multicol_multicol_span_all_020_ref,
 multicol-span-all-020,ported,css_multicol_multicol_span_all_020,
+multicol-span-all-block-sibling-003,ported,css_multicol_multicol_span_all_block_sibling_003,
+multicol-span-all-block-sibling-3-ref,ported,css_multicol_multicol_span_all_block_sibling_3_ref,
+multicol-span-all-children-height-001-ref,ported,css_multicol_multicol_span_all_children_height_001_ref,
+multicol-span-all-children-height-001,ported,css_multicol_multicol_span_all_children_height_001,
 multicol-span-all-children-height-002-ref,ported,css_multicol_multicol_span_all_children_height_002_ref,
 multicol-span-all-children-height-002,ported,css_multicol_multicol_span_all_children_height_002,
 multicol-span-all-children-height-003-ref,ported,css_multicol_multicol_span_all_children_height_003_ref,
@@ -212,16 +382,58 @@ multicol-span-all-children-height-010,ported,css_multicol_multicol_span_all_chil
 multicol-span-all-children-height-011,ported,css_multicol_multicol_span_all_children_height_011,
 multicol-span-all-children-height-012,ported,css_multicol_multicol_span_all_children_height_012,
 multicol-span-all-children-height-013,ported,css_multicol_multicol_span_all_children_height_013,
+multicol-span-all-dynamic-add-001-ref,ported,css_multicol_multicol_span_all_dynamic_add_001_ref,
+multicol-span-all-dynamic-add-002-ref,ported,css_multicol_multicol_span_all_dynamic_add_002_ref,
+multicol-span-all-dynamic-add-003-ref,ported,css_multicol_multicol_span_all_dynamic_add_003_ref,
+multicol-span-all-dynamic-add-004-ref,ported,css_multicol_multicol_span_all_dynamic_add_004_ref,
+multicol-span-all-dynamic-add-007-ref,ported,css_multicol_multicol_span_all_dynamic_add_007_ref,
+multicol-span-all-dynamic-add-008-ref,ported,css_multicol_multicol_span_all_dynamic_add_008_ref,
+multicol-span-all-dynamic-add-010-ref,ported,css_multicol_multicol_span_all_dynamic_add_010_ref,
+multicol-span-all-dynamic-add-012-ref,ported,css_multicol_multicol_span_all_dynamic_add_012_ref,
+multicol-span-all-dynamic-add-014-ref,ported,css_multicol_multicol_span_all_dynamic_add_014_ref,
+multicol-span-all-dynamic-remove-001-ref,ported,css_multicol_multicol_span_all_dynamic_remove_001_ref,
+multicol-span-all-dynamic-remove-002-ref,ported,css_multicol_multicol_span_all_dynamic_remove_002_ref,
+multicol-span-all-dynamic-remove-004-ref,ported,css_multicol_multicol_span_all_dynamic_remove_004_ref,
+multicol-span-all-dynamic-remove-005-ref,ported,css_multicol_multicol_span_all_dynamic_remove_005_ref,
+multicol-span-all-list-item-001-ref,ported,css_multicol_multicol_span_all_list_item_001_ref,
+multicol-span-all-list-item-001,ported,css_multicol_multicol_span_all_list_item_001,
+multicol-span-all-list-item-002-ref,ported,css_multicol_multicol_span_all_list_item_002_ref,
+multicol-span-all-list-item-002,ported,css_multicol_multicol_span_all_list_item_002,
 multicol-span-all-margin-003,ported,css_multicol_multicol_span_all_margin_003,
+multicol-span-all-margin-nested-001,ported,css_multicol_multicol_span_all_margin_nested_001,
+multicol-span-all-margin-nested-002,ported,css_multicol_multicol_span_all_margin_nested_002,
+multicol-span-all-margin-nested-firstchild-ref,ported,css_multicol_multicol_span_all_margin_nested_firstchild_ref,
+multicol-span-all-restyle-001-ref,ported,css_multicol_multicol_span_all_restyle_001_ref,
 multicol-span-all-restyle-002-ref,ported,css_multicol_multicol_span_all_restyle_002_ref,
+multicol-span-all-restyle-003-ref,ported,css_multicol_multicol_span_all_restyle_003_ref,
+multicol-span-all-restyle-004-ref,ported,css_multicol_multicol_span_all_restyle_004_ref,
 multicol-span-all-rule-001-ref,ported,css_multicol_multicol_span_all_rule_001_ref,
 multicol-span-all-rule-001,ported,css_multicol_multicol_span_all_rule_001,
 multicol-span-all-rule-002-ref,ported,css_multicol_multicol_span_all_rule_002_ref,
+multicol-span-float-002-ref,ported,css_multicol_multicol_span_float_002_ref,
+multicol-span-float-002,ported,css_multicol_multicol_span_float_002,
+multicol-span-float-003,ported,css_multicol_multicol_span_float_003,
+multicol-span-none-001,ported,css_multicol_multicol_span_none_001,
+multicol-width-001-ref,ported,css_multicol_multicol_width_001_ref,
+multicol-width-001,ported,css_multicol_multicol_width_001,
+multicol-width-002,ported,css_multicol_multicol_width_002,
+multicol-width-003,ported,css_multicol_multicol_width_003,
 multicol-width-004-ref,ported,css_multicol_multicol_width_004_ref,
 multicol-width-004,ported,css_multicol_multicol_width_004,
 multicol-width-005-ref,ported,css_multicol_multicol_width_005_ref,
 multicol-width-005,ported,css_multicol_multicol_width_005,
+multicol-width-ch-001,ported,css_multicol_multicol_width_ch_001,
+multicol-width-count-001,ported,css_multicol_multicol_width_count_001,
+multicol-width-count-002,ported,css_multicol_multicol_width_count_002,
+multicol-width-invalid-001,ported,css_multicol_multicol_width_invalid_001,
+multicol-width-large-001,ported,css_multicol_multicol_width_large_001,
+multicol-width-large-002,ported,css_multicol_multicol_width_large_002,
+multicol-width-negative-001,ported,css_multicol_multicol_width_negative_001,
+multicol-width-small-001,ported,css_multicol_multicol_width_small_001,
 multicol-zero-height-001-ref,ported,css_multicol_multicol_zero_height_001_ref,
+multicol-zero-height-001,ported,css_multicol_multicol_zero_height_001,
+multicol-zero-height-002-ref,ported,css_multicol_multicol_zero_height_002_ref,
+multicol-zero-height-002,ported,css_multicol_multicol_zero_height_002,
 multicol-zero-height-003-ref,ported,css_multicol_multicol_zero_height_003_ref,
 multicol-zero-height-003,ported,css_multicol_multicol_zero_height_003,
 named-page,ported,css_multicol_named_page,
@@ -275,13 +487,14 @@ subpixel-column-rule-width.tentative,ported,css_multicol_subpixel_column_rule_wi
 triply-nested-with-fixedpos-in-abspos-crash,ported,css_multicol_triply_nested_with_fixedpos_in_abspos_crash,
 with-custom-layout-on-same-element.https,ported,css_multicol_with_custom_layout_on_same_element_https,
 zero-column-width-layout,ported,css_multicol_zero_column_width_layout,
+table_table-cell-as-multicol-ref,ported,css_multicol_table_table_cell_as_multicol_ref,
 table_table-cell-content-change-000-ref,ported,css_multicol_table_table_cell_content_change_000_ref,
 table_table-cell-content-change-001-ref,ported,css_multicol_table_table_cell_content_change_001_ref,
 abspos-in-multicol-with-spanner-crash,not_portable,,uses_javascript
 auto-fill-auto-size-001-print-ref,not_portable,,no_layout_content
 balance-grid-001,not_portable,,uses_javascript
-balance-grid-container-ref,not_portable,,complex_css_selector: :root
-balance-grid-container,not_portable,,complex_css_selector: :root
+balance-grid-container-ref,not_portable,,style_block_unsupported property: grid-template-columns
+balance-grid-container,not_portable,,style_block_unsupported property: grid-template-columns
 change-abspos-width-in-second-column-crash,not_portable,,uses_javascript
 change-fragmentainer-size-000,not_portable,,uses_javascript
 change-fragmentainer-size-001,not_portable,,uses_javascript
@@ -293,13 +506,11 @@ change-transform-in-nested,not_portable,,uses_javascript
 change-transform-in-second-column,not_portable,,uses_javascript
 change-transform-in-spanner,not_portable,,uses_javascript
 change-transform,not_portable,,uses_javascript
-column-balancing-paged-001-print-ref,not_portable,,complex_css_selector: :root
-column-balancing-paged-001-print,not_portable,,complex_css_selector: :root
 column-fill-balance-orthog-block-001,not_portable,,style_block_unsupported property: writing-mode
 column-pseudo-background-color,not_portable,,complex_css_selector: @supports not selector(::column)
 column-rule-001,not_portable,,uses_javascript
-columnfill-auto-max-height-001,not_portable,,style_block_unsupported property: font-family
-columnfill-auto-max-height-002,not_portable,,style_block_unsupported property: font-family
+columnfill-auto-max-height-001,not_portable,,no_layout_content
+columnfill-auto-max-height-002,not_portable,,no_layout_content
 columns-shorthand-reset-wrap,not_portable,,uses_javascript
 composited-under-clip-under-multicol,not_portable,,style_block_unsupported property: will-change
 dynamic-become-multicol-add-oof-inside-inline-crash,not_portable,,uses_javascript
@@ -328,84 +539,23 @@ inheritance,not_portable,,uses_javascript
 intrinsic-width-change-column-count,not_portable,,uses_javascript
 large-actual-column-count,not_portable,,uses_javascript
 move-with-text-after-paint,not_portable,,uses_javascript
-multicol-basic-001,not_portable,,complex_css_selector: .multicol-wrapper>*
-multicol-basic-002,not_portable,,complex_css_selector: .multicol-wrapper>*
-multicol-basic-003,not_portable,,complex_css_selector: .multicol-wrapper>*
-multicol-basic-004,not_portable,,complex_css_selector: .multicol-wrapper>*
 multicol-block-no-clip-001-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-block-no-clip-001,not_portable,,style_block_unsupported property: font
-multicol-block-no-clip-002-ref,not_portable,,style_block_unsupported property: font
-multicol-block-no-clip-002,not_portable,,style_block_unsupported property: font
-multicol-br-inside-avoidcolumn-001,not_portable,,complex_css_selector: .multicol > div
-multicol-break-000-ref,not_portable,,style_block_unsupported property: font
-multicol-break-000,not_portable,,style_block_unsupported property: font
-multicol-break-001-ref,not_portable,,style_block_unsupported property: font
-multicol-break-001,not_portable,,style_block_unsupported property: font
-multicol-breaking-000-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-000,not_portable,,style_block_unsupported property: font
-multicol-breaking-001-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-001,not_portable,,style_block_unsupported property: font
-multicol-breaking-002-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-002,not_portable,,style_block_unsupported property: font
-multicol-breaking-003-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-003,not_portable,,style_block_unsupported property: font
-multicol-breaking-004-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-004,not_portable,,style_block_unsupported property: font
-multicol-breaking-005-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-005,not_portable,,style_block_unsupported property: font
-multicol-breaking-006-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-006,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-000-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-000,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-001-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-001,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-002-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-002,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-003-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-003,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-004-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-004,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-005-ref,not_portable,,style_block_unsupported property: font
-multicol-breaking-nobackground-005,not_portable,,style_block_unsupported property: font
-multicol-clip-001-ref,not_portable,,style_block_unsupported property: font
-multicol-clip-001,not_portable,,style_block_unsupported property: font
-multicol-clip-002-ref,not_portable,,style_block_unsupported property: font
-multicol-clip-002,not_portable,,style_block_unsupported property: font
+multicol-block-no-clip-002-ref,not_portable,,unsupported element: <img>
+multicol-break-000-ref,not_portable,,unsupported element: <img>
+multicol-break-000,not_portable,,unsupported element: <img>
+multicol-break-001-ref,not_portable,,unsupported element: <img>
+multicol-break-001,not_portable,,unsupported element: <img>
+multicol-clip-001-ref,not_portable,,complex_css_selector: img + img
+multicol-clip-002-ref,not_portable,,complex_css_selector: img + img
 multicol-clip-scrolled-content-001,not_portable,,uses_javascript
-multicol-collapsing-001-ref,not_portable,,style_block_unsupported property: font
-multicol-collapsing-001,not_portable,,complex_css_selector: body > div
-multicol-columns-001-ref,not_portable,,style_block_unsupported property: font
-multicol-columns-001,not_portable,,style_block_unsupported property: font
-multicol-columns-002,not_portable,,style_block_unsupported property: font
-multicol-columns-003,not_portable,,style_block_unsupported property: font
-multicol-columns-004,not_portable,,style_block_unsupported property: font
-multicol-columns-005,not_portable,,style_block_unsupported property: font
-multicol-columns-006,not_portable,,style_block_unsupported property: font
-multicol-columns-007,not_portable,,style_block_unsupported property: font
+multicol-collapsing-001-ref,not_portable,,complex_css_selector: img + img + img
 multicol-columns-invalid-001-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-columns-invalid-001,not_portable,,style_block_unsupported property: font
-multicol-columns-invalid-002,not_portable,,style_block_unsupported property: font
-multicol-columns-toolong-001,not_portable,,style_block_unsupported property: font
 multicol-containing-001-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-containing-001,not_portable,,style_block_unsupported property: font
-multicol-containing-002-ref,not_portable,,style_block_unsupported property: font
-multicol-containing-002,not_portable,,style_block_unsupported property: font
-multicol-count-001,not_portable,,style_block_unsupported property: font
-multicol-count-002-ref,not_portable,,style_block_unsupported property: font
-multicol-count-002,not_portable,,style_block_unsupported property: font
-multicol-count-computed-003-ref,not_portable,,style_block_unsupported property: font
-multicol-count-computed-003,not_portable,,style_block_unsupported property: font
-multicol-count-computed-004-ref,not_portable,,style_block_unsupported property: font
-multicol-count-computed-004,not_portable,,style_block_unsupported property: font
-multicol-count-computed-005,not_portable,,style_block_unsupported property: font
-multicol-count-negative-001,not_portable,,style_block_unsupported property: font
-multicol-count-negative-002,not_portable,,style_block_unsupported property: font
-multicol-count-non-integer-001,not_portable,,style_block_unsupported property: font
-multicol-count-non-integer-002,not_portable,,style_block_unsupported property: font
-multicol-count-non-integer-003,not_portable,,style_block_unsupported property: font
-multicol-dynamic-add-001-ref,not_portable,,style_block_unsupported property: outline
+multicol-containing-002,not_portable,,unsupported element: <img>
+multicol-count-002-ref,not_portable,,unsupported element: <img>
+multicol-count-computed-003-ref,not_portable,,unsupported element: <img>
+multicol-count-computed-004-ref,not_portable,,unsupported element: <img>
 multicol-dynamic-add-001,not_portable,,uses_javascript
-multicol-dynamic-add-002-ref,not_portable,,complex_css_selector: :root
 multicol-dynamic-add-002,not_portable,,uses_javascript
 multicol-dynamic-add-003-ref,not_portable,,style_block_unsupported property: grid
 multicol-dynamic-add-003,not_portable,,uses_javascript
@@ -414,19 +564,10 @@ multicol-dynamic-add-004,not_portable,,uses_javascript
 multicol-dynamic-change-inside-break-inside-avoid-001-ref,not_portable,,style_block_vendor/unsupported prefix: -moz-appearance
 multicol-dynamic-change-inside-break-inside-avoid-001,not_portable,,uses_javascript
 multicol-fill-000-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-fill-000,not_portable,,style_block_unsupported property: font
+multicol-fill-000,not_portable,,style_block_unsupported property: border-spacing
 multicol-fill-001-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-fill-001,not_portable,,style_block_unsupported property: font
-multicol-fill-auto-001-ref,not_portable,,style_block_unsupported property: font
-multicol-fill-auto-001,not_portable,,style_block_unsupported property: font
-multicol-fill-auto-002-ref,not_portable,,complex_css_selector: body>div
-multicol-fill-auto-002,not_portable,,complex_css_selector: body>div
-multicol-fill-auto-003-ref,not_portable,,style_block_unsupported property: font
-multicol-fill-auto-003,not_portable,,style_block_unsupported property: font
-multicol-fill-auto-block-children-001,not_portable,,style_block_unsupported property: font-weight
-multicol-fill-auto-block-children-002-ref,not_portable,,style_block_unsupported property: font-weight
-multicol-fill-balance-001-ref,not_portable,,complex_css_selector: body>div
-multicol-fill-balance-001,not_portable,,complex_css_selector: body>div
+multicol-fill-001,not_portable,,style_block_unsupported property: border-spacing
+multicol-fill-auto-003-ref,not_portable,,unsupported element: <img>
 multicol-fill-balance-004,not_portable,,unsupported property: writing-mode
 multicol-fill-balance-007,not_portable,,uses_javascript
 multicol-fill-balance-008,not_portable,,uses_javascript
@@ -448,262 +589,122 @@ multicol-fill-balance-024,not_portable,,uses_javascript
 multicol-fill-balance-025,not_portable,,uses_javascript
 multicol-fill-balance-027,not_portable,,uses_javascript
 multicol-fill-balance-028,not_portable,,uses_javascript
-multicol-gap-000-ref,not_portable,,style_block_unsupported property: font
-multicol-gap-000,not_portable,,style_block_unsupported property: font
 multicol-gap-001-ref,not_portable,,unsupported element: <img>
-multicol-gap-001,not_portable,,style_block_unsupported property: font
 multicol-gap-002-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-gap-002,not_portable,,style_block_unsupported property: font
-multicol-gap-003,not_portable,,style_block_unsupported property: font
 multicol-gap-animation-001,not_portable,,uses_javascript
 multicol-gap-animation-002,not_portable,,uses_javascript
 multicol-gap-animation-003,not_portable,,uses_javascript
-multicol-gap-fraction-001-ref,not_portable,,complex_css_selector: body > div
-multicol-gap-fraction-001,not_portable,,style_block_unsupported property: font
-multicol-gap-large-001-ref,not_portable,,style_block_unsupported property: font
-multicol-gap-large-001,not_portable,,style_block_unsupported property: font
-multicol-gap-large-002-ref,not_portable,,style_block_unsupported property: font
-multicol-gap-large-002,not_portable,,style_block_unsupported property: font
-multicol-gap-negative-001,not_portable,,style_block_unsupported property: font
+multicol-gap-fraction-001-ref,not_portable,,complex_css_selector: p + p
+multicol-gap-large-001-ref,not_portable,,unsupported element: <img>
+multicol-gap-large-002-ref,not_portable,,unsupported element: <img>
 multicol-gap-percentage-001,not_portable,,uses_javascript
 multicol-height-001-ref,not_portable,,complex_css_selector: img + img
-multicol-height-001,not_portable,,style_block_unsupported property: font
-multicol-height-002-print-ref,not_portable,,complex_css_selector: div > p
-multicol-height-002-print,not_portable,,complex_css_selector: div > p
-multicol-height-block-child-001-ref,not_portable,,unsupported property: font
-multicol-height-block-child-001,not_portable,,style_block_unsupported property: font
-multicol-inherit-001-ref,not_portable,,style_block_unsupported property: font
-multicol-inherit-001,not_portable,,style_block_unsupported property: font
-multicol-inherit-002-ref,not_portable,,style_block_unsupported property: font
-multicol-inherit-002,not_portable,,complex_css_selector: body > div
-multicol-inherit-003,not_portable,,complex_css_selector: body>div
-multicol-inherit-3-ref,not_portable,,complex_css_selector: body>div
-multicol-list-item-001,not_portable,,style_block_unsupported property: font
-multicol-list-item-002-ref,not_portable,,style_block_unsupported property: font
+multicol-inherit-001-ref,not_portable,,unsupported element: <img>
+multicol-inherit-002-ref,not_portable,,unsupported element: <img>
+multicol-inherit-003,not_portable,,complex_css_selector: div+div
 multicol-list-item-002,not_portable,,uses_javascript
-multicol-list-item-003-ref,not_portable,,unsupported display: list-item
-multicol-list-item-003,not_portable,,unsupported display: list-item
-multicol-list-item-004-ref,not_portable,,unsupported display: list-item
-multicol-list-item-004,not_portable,,unsupported display: list-item
-multicol-list-item-005-ref,not_portable,,unsupported display: list-item
-multicol-list-item-005,not_portable,,unsupported display: list-item
-multicol-list-item-006-ref,not_portable,,unsupported display: list-item
-multicol-list-item-006,not_portable,,unsupported display: list-item
-multicol-list-item-007-ref,not_portable,,unsupported display: list-item
-multicol-list-item-007,not_portable,,unsupported display: list-item
-multicol-list-item-008-ref,not_portable,,unsupported display: list-item
-multicol-list-item-008,not_portable,,unsupported display: list-item
-multicol-loads-indefinitely-001-crash,not_portable,,style_block_unsupported property: word-break
-multicol-margin-001,not_portable,,style_block_unsupported property: font
-multicol-margin-002,not_portable,,style_block_unsupported property: font
-multicol-margin-003,not_portable,,style_block_unsupported property: font
-multicol-margin-child-001-ref,not_portable,,complex_css_selector: body > div
-multicol-margin-child-001,not_portable,,style_block_unsupported property: font
-multicol-nested-002-ref,not_portable,,style_block_unsupported property: font
-multicol-nested-002,not_portable,,complex_css_selector: body > div
-multicol-nested-005-ref,not_portable,,style_block_unsupported property: font
-multicol-nested-005,not_portable,,complex_css_selector: body > div
+multicol-nested-002,not_portable,,complex_css_selector: div + div
+multicol-nested-005-ref,not_portable,,unsupported element: <img>
 multicol-nested-006,not_portable,,uses_javascript
 multicol-nested-012,not_portable,,uses_javascript
-multicol-nested-column-rule-001-ref,not_portable,,unsupported property: font
-multicol-nested-column-rule-001,not_portable,,complex_css_selector: body > div
-multicol-nested-margin-001-ref,not_portable,,style_block_unsupported property: font
-multicol-nested-margin-001,not_portable,,complex_css_selector: body > div
-multicol-nested-margin-002-ref,not_portable,,style_block_unsupported property: font
-multicol-nested-margin-002,not_portable,,complex_css_selector: body > div
-multicol-nested-margin-003-ref,not_portable,,style_block_unsupported property: font
-multicol-nested-margin-003,not_portable,,complex_css_selector: body > div
-multicol-nested-margin-004-ref,not_portable,,style_block_unsupported property: font
-multicol-nested-margin-004,not_portable,,complex_css_selector: body > div
-multicol-nested-margin-005,not_portable,,complex_css_selector: body > div
 multicol-on-broken-image-alt-text,not_portable,,uses_javascript
 multicol-overflow-000-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-overflow-000,not_portable,,style_block_unsupported property: font
+multicol-overflow-000,not_portable,,style_block_unsupported property: border-spacing
 multicol-overflow-positioned-transform-001,not_portable,,uses_javascript
 multicol-overflow-transform-001,not_portable,,uses_javascript
-multicol-overflowing-001-ref,not_portable,,style_block_unsupported property: font
-multicol-overflowing-001,not_portable,,complex_css_selector: body > div
-multicol-reduce-000-ref,not_portable,,style_block_unsupported property: font
-multicol-reduce-000,not_portable,,style_block_unsupported property: font
-multicol-rule-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-000,not_portable,,style_block_unsupported property: font
-multicol-rule-001-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-001,not_portable,,style_block_unsupported property: font
-multicol-rule-002,not_portable,,complex_css_selector: body>div
-multicol-rule-003-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-003,not_portable,,style_block_unsupported property: font
-multicol-rule-004,not_portable,,style_block_unsupported property: font
-multicol-rule-color-001-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-color-001,not_portable,,style_block_unsupported property: font
+multicol-overflowing-001,not_portable,,complex_css_selector: div + div
+multicol-rule-002,not_portable,,complex_css_selector: span+span
+multicol-rule-003-ref,not_portable,,unsupported element: <img>
+multicol-rule-color-001-ref,not_portable,,unsupported element: <img>
 multicol-rule-color-inherit-001-ref,not_portable,,unsupported element: <img>
-multicol-rule-color-inherit-001,not_portable,,style_block_unsupported property: font
-multicol-rule-color-inherit-002,not_portable,,style_block_unsupported property: font
-multicol-rule-dashed-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-dashed-000,not_portable,,style_block_unsupported property: font
-multicol-rule-dotted-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-dotted-000,not_portable,,style_block_unsupported property: font
-multicol-rule-double-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-double-000,not_portable,,style_block_unsupported property: font
-multicol-rule-fraction-001-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-fraction-001,not_portable,,style_block_unsupported property: font
-multicol-rule-fraction-002-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-fraction-002,not_portable,,style_block_unsupported property: font
-multicol-rule-fraction-003,not_portable,,complex_css_selector: body>div
-multicol-rule-fraction-3-ref,not_portable,,complex_css_selector: body>div
-multicol-rule-groove-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-groove-000,not_portable,,style_block_unsupported property: font
-multicol-rule-hidden-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-hidden-000,not_portable,,style_block_unsupported property: font
-multicol-rule-inset-000,not_portable,,style_block_unsupported property: font
-multicol-rule-large-001-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-large-001,not_portable,,style_block_unsupported property: font
-multicol-rule-large-002,not_portable,,style_block_unsupported property: font
-multicol-rule-none-000,not_portable,,style_block_unsupported property: font
-multicol-rule-outset-000,not_portable,,style_block_unsupported property: font
-multicol-rule-percent-001,not_portable,,style_block_unsupported property: font
-multicol-rule-px-001,not_portable,,complex_css_selector: body>div
-multicol-rule-ref,not_portable,,complex_css_selector: body>div
-multicol-rule-ridge-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-ridge-000,not_portable,,style_block_unsupported property: font
-multicol-rule-samelength-001,not_portable,,style_block_unsupported property: font
-multicol-rule-shorthand-001,not_portable,,style_block_unsupported property: font
-multicol-rule-shorthand-2-ref,not_portable,,complex_css_selector: body>div
-multicol-rule-shorthand-2,not_portable,,complex_css_selector: body>div
-multicol-rule-solid-000-ref,not_portable,,style_block_unsupported property: font
-multicol-rule-solid-000,not_portable,,style_block_unsupported property: font
-multicol-rule-stacking-001,not_portable,,complex_css_selector: body>div
-multicol-rule-stacking-ref,not_portable,,complex_css_selector: body>div
-multicol-shorthand-001,not_portable,,complex_css_selector: body>div
+multicol-rule-fraction-001-ref,not_portable,,unsupported element: <img>
+multicol-rule-fraction-002-ref,not_portable,,unsupported element: <img>
+multicol-rule-fraction-003,not_portable,,complex_css_selector: span+span
+multicol-rule-large-001-ref,not_portable,,complex_css_selector: div + div + div
+multicol-rule-px-001,not_portable,,complex_css_selector: span+span
+multicol-rule-ref,not_portable,,complex_css_selector: div+div+div
+multicol-rule-shorthand-2-ref,not_portable,,complex_css_selector: div+div+div
+multicol-rule-stacking-ref,not_portable,,complex_css_selector: div div+div
+multicol-shorthand-001,not_portable,,complex_css_selector: span+span
 multicol-span-000-ref,not_portable,,unsupported element: <img>
-multicol-span-000,not_portable,,style_block_unsupported property: font
+multicol-span-000,not_portable,,unsupported element: <img>
 multicol-span-all-001-ref,not_portable,,complex_css_selector: div + div
-multicol-span-all-001,not_portable,,style_block_unsupported property: font
+multicol-span-all-001,not_portable,,complex_css_selector: span + span
 multicol-span-all-002-ref,not_portable,,complex_css_selector: div + div
-multicol-span-all-002,not_portable,,style_block_unsupported property: font
-multicol-span-all-003,not_portable,,style_block_unsupported property: font
-multicol-span-all-004-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-004,not_portable,,style_block_unsupported property: outline
-multicol-span-all-005-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-005,not_portable,,style_block_unsupported property: outline
-multicol-span-all-006-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-006,not_portable,,style_block_unsupported property: outline
-multicol-span-all-007-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-007,not_portable,,style_block_unsupported property: outline
-multicol-span-all-008-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-008,not_portable,,style_block_unsupported property: outline
-multicol-span-all-009-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-009,not_portable,,style_block_unsupported property: outline
-multicol-span-all-010-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-010,not_portable,,style_block_unsupported property: outline
-multicol-span-all-011-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-011,not_portable,,style_block_unsupported property: outline
+multicol-span-all-002,not_portable,,complex_css_selector: span + span
+multicol-span-all-004-ref,not_portable,,unsupported display: grid
+multicol-span-all-004,not_portable,,unsupported display: grid
+multicol-span-all-005-ref,not_portable,,unsupported display: grid
+multicol-span-all-005,not_portable,,unsupported display: grid
+multicol-span-all-006-ref,not_portable,,unsupported element: <details>
+multicol-span-all-006,not_portable,,unsupported element: <details>
+multicol-span-all-008,not_portable,,style_block_unsupported property: unicode-bidi
+multicol-span-all-009-ref,not_portable,,style_block_unsupported property: transform
+multicol-span-all-009,not_portable,,style_block_unsupported property: transform
+multicol-span-all-010-ref,not_portable,,unsupported property: transform
+multicol-span-all-010,not_portable,,unsupported property: transform
+multicol-span-all-011,not_portable,,style_block_unsupported property: unicode-bidi
 multicol-span-all-016,not_portable,,uses_javascript
 multicol-span-all-017,not_portable,,unsupported property: transform
-multicol-span-all-block-sibling-003,not_portable,,complex_css_selector: body>div
-multicol-span-all-block-sibling-3-ref,not_portable,,complex_css_selector: body>div
-multicol-span-all-button-001-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-button-001,not_portable,,style_block_unsupported property: outline
-multicol-span-all-button-002-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-button-002,not_portable,,style_block_unsupported property: outline
-multicol-span-all-button-003-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-button-003,not_portable,,style_block_unsupported property: outline
-multicol-span-all-children-height-001-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-children-height-001,not_portable,,style_block_unsupported property: outline
-multicol-span-all-dynamic-add-001-ref,not_portable,,style_block_unsupported property: outline
+multicol-span-all-button-001-ref,not_portable,,unsupported element: <button>
+multicol-span-all-button-001,not_portable,,unsupported element: <button>
+multicol-span-all-button-002-ref,not_portable,,unsupported element: <button>
+multicol-span-all-button-002,not_portable,,unsupported element: <button>
+multicol-span-all-button-003-ref,not_portable,,unsupported element: <button>
+multicol-span-all-button-003,not_portable,,unsupported element: <button>
 multicol-span-all-dynamic-add-001,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-002-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-002,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-003-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-003,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-004-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-004,not_portable,,uses_javascript
 multicol-span-all-dynamic-add-005,not_portable,,uses_javascript
 multicol-span-all-dynamic-add-006,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-007-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-007,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-008-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-008,not_portable,,uses_javascript
 multicol-span-all-dynamic-add-009,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-010-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-010,not_portable,,uses_javascript
 multicol-span-all-dynamic-add-011,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-012-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-012,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-013-ref,not_portable,,style_block_unsupported property: outline
+multicol-span-all-dynamic-add-013-ref,not_portable,,unsupported element: <details>
 multicol-span-all-dynamic-add-013,not_portable,,uses_javascript
-multicol-span-all-dynamic-add-014-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-add-014,not_portable,,uses_javascript
-multicol-span-all-dynamic-remove-001-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-remove-001,not_portable,,uses_javascript
-multicol-span-all-dynamic-remove-002-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-remove-002,not_portable,,uses_javascript
 multicol-span-all-dynamic-remove-003,not_portable,,uses_javascript
-multicol-span-all-dynamic-remove-004-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-remove-004,not_portable,,uses_javascript
-multicol-span-all-dynamic-remove-005-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-dynamic-remove-005,not_portable,,uses_javascript
 multicol-span-all-dynamic-remove-006,not_portable,,uses_javascript
 multicol-span-all-dynamic-remove-007,not_portable,,uses_javascript
-multicol-span-all-fieldset-001-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-fieldset-001,not_portable,,style_block_unsupported property: outline
-multicol-span-all-fieldset-002-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-fieldset-002,not_portable,,style_block_unsupported property: outline
-multicol-span-all-fieldset-003-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-fieldset-003,not_portable,,style_block_unsupported property: outline
-multicol-span-all-list-item-001-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-list-item-001,not_portable,,style_block_unsupported property: outline
-multicol-span-all-list-item-002-ref,not_portable,,style_block_unsupported property: outline
-multicol-span-all-list-item-002,not_portable,,style_block_unsupported property: outline
-multicol-span-all-margin-001-ref,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-001,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-002-ref,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-002,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-bottom-001-ref,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-bottom-001,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-nested-001-ref,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-nested-001,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-nested-002,not_portable,,style_block_unsupported property: font
-multicol-span-all-margin-nested-firstchild-001,not_portable,,complex_css_selector: body>div
-multicol-span-all-margin-nested-firstchild-ref,not_portable,,complex_css_selector: body>div
-multicol-span-all-restyle-001-ref,not_portable,,style_block_unsupported property: outline
+multicol-span-all-fieldset-001-ref,not_portable,,unsupported element: <fieldset>
+multicol-span-all-fieldset-001,not_portable,,unsupported element: <fieldset>
+multicol-span-all-fieldset-002-ref,not_portable,,unsupported element: <fieldset>
+multicol-span-all-fieldset-002,not_portable,,unsupported element: <fieldset>
+multicol-span-all-fieldset-003-ref,not_portable,,unsupported element: <fieldset>
+multicol-span-all-fieldset-003,not_portable,,unsupported element: <fieldset>
+multicol-span-all-margin-001-ref,not_portable,,unsupported element: <img>
+multicol-span-all-margin-001,not_portable,,complex_css_selector: span + span
+multicol-span-all-margin-002-ref,not_portable,,unsupported element: <img>
+multicol-span-all-margin-002,not_portable,,complex_css_selector: span + span
+multicol-span-all-margin-bottom-001-ref,not_portable,,unsupported element: <img>
+multicol-span-all-margin-bottom-001,not_portable,,complex_css_selector: span + span
+multicol-span-all-margin-nested-001-ref,not_portable,,unsupported element: <img>
+multicol-span-all-margin-nested-firstchild-001,not_portable,,complex_css_selector: h6~h6
 multicol-span-all-restyle-001,not_portable,,uses_javascript
 multicol-span-all-restyle-002,not_portable,,uses_javascript
-multicol-span-all-restyle-003-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-restyle-003,not_portable,,uses_javascript
-multicol-span-all-restyle-004-ref,not_portable,,style_block_unsupported property: outline
 multicol-span-all-restyle-004,not_portable,,uses_javascript
 multicol-span-all-rule-002,not_portable,,unsupported property: writing-mode
 multicol-span-auto-size-in-vertical-writing-mode-001,not_portable,,unsupported property: writing-mode
 multicol-span-auto-size-in-vertical-writing-mode-002,not_portable,,unsupported property: writing-mode
-multicol-span-float-001-ref,not_portable,,complex_css_selector: img:first-child
-multicol-span-float-001,not_portable,,style_block_unsupported property: font
-multicol-span-float-002-ref,not_portable,,style_block_unsupported property: font
-multicol-span-float-002,not_portable,,style_block_unsupported property: font
-multicol-span-float-003,not_portable,,style_block_unsupported property: font
+multicol-span-float-001-ref,not_portable,,unsupported element: <img>
+multicol-span-float-001,not_portable,,complex_css_selector: span + span
 multicol-span-float-004,not_portable,,uses_javascript
-multicol-span-none-001-ref,not_portable,,style_block_unsupported property: font
-multicol-span-none-001,not_portable,,style_block_unsupported property: font
+multicol-span-none-001-ref,not_portable,,unsupported element: <img>
 multicol-under-vertical-rl-scroll-ref,not_portable,,uses_javascript
 multicol-under-vertical-rl-scroll,not_portable,,unsupported property: writing-mode
-multicol-width-001-ref,not_portable,,style_block_unsupported property: font
-multicol-width-001,not_portable,,style_block_unsupported property: font
 multicol-width-002-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-width-002,not_portable,,style_block_unsupported property: font
-multicol-width-003,not_portable,,style_block_unsupported property: font
-multicol-width-ch-001,not_portable,,style_block_unsupported property: font
-multicol-width-ch-ref,not_portable,,style_block_unsupported property: font
-multicol-width-count-001,not_portable,,style_block_unsupported property: font
-multicol-width-count-002,not_portable,,style_block_unsupported property: font
+multicol-width-ch-ref,not_portable,,style_block_unsupported property: grid-template-columns
 multicol-width-invalid-001-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-width-invalid-001,not_portable,,style_block_unsupported property: font
-multicol-width-large-001,not_portable,,style_block_unsupported property: font
-multicol-width-large-002,not_portable,,style_block_unsupported property: font
-multicol-width-negative-001,not_portable,,style_block_unsupported property: font
 multicol-width-small-001-ref,not_portable,,style_block_unsupported property: border-spacing
-multicol-width-small-001,not_portable,,complex_css_selector: body > div
-multicol-zero-height-001,not_portable,,complex_css_selector: div > div
-multicol-zero-height-002-ref,not_portable,,style_block_unsupported property: font
-multicol-zero-height-002,not_portable,,style_block_unsupported property: font
 nested-at-outer-boundary-as-fieldset,not_portable,,unsupported element: <fieldset>
 nested-at-outer-boundary-as-legend,not_portable,,unsupported element: <fieldset>
 nested-floated-shape-outside-multicol-with-monolithic-child-crash,not_portable,,unsupported property: shape-outside
@@ -777,14 +778,13 @@ table_balance-breakafter-before-table-section-crash,not_portable,,unsupported di
 table_balance-table-with-border-spacing,not_portable,,uses_javascript
 table_balance-table-with-fractional-height-row,not_portable,,uses_javascript
 table_multicol-table-cell-001-ref,not_portable,,unsupported element: <img>
-table_multicol-table-cell-001,not_portable,,style_block_unsupported property: font
+table_multicol-table-cell-001,not_portable,,unsupported display: table-cell
 table_multicol-table-cell-height-001-ref,not_portable,,complex_css_selector: img + img
-table_multicol-table-cell-height-001,not_portable,,style_block_unsupported property: font
-table_multicol-table-cell-height-002,not_portable,,style_block_unsupported property: font
-table_multicol-table-cell-vertical-align-001,not_portable,,style_block_unsupported property: font-family
-table_multicol-table-cell-vertical-align-ref,not_portable,,style_block_unsupported property: font-family
-table_table-cell-as-multicol-ref,not_portable,,unsupported property: font-family
-table_table-cell-as-multicol,not_portable,,unsupported property: font-family
+table_multicol-table-cell-height-001,not_portable,,unsupported display: table-cell
+table_multicol-table-cell-height-002,not_portable,,unsupported display: table-cell
+table_multicol-table-cell-vertical-align-001,not_portable,,unsupported display: table-cell
+table_multicol-table-cell-vertical-align-ref,not_portable,,complex_css_selector: div+div
+table_table-cell-as-multicol,not_portable,,unsupported display: table-cell
 table_table-cell-content-change-000,not_portable,,uses_javascript
 table_table-cell-content-change-001,not_portable,,uses_javascript
 table_table-cell-multicol-nested-001,not_portable,,unsupported display: table-cell

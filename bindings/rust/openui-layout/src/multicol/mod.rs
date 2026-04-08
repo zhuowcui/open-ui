@@ -272,7 +272,7 @@ pub fn layout_columns(
             balance_columns(child_block_sizes, resolved.count, available_block_size)
         }
         ColumnFill::Auto => {
-            if available_block_size.raw() > 0 {
+            if available_block_size.raw() > 0 && available_block_size.raw() < i32::MAX / 2 {
                 available_block_size
             } else {
                 // Fallback: sum of all content (single tall column).

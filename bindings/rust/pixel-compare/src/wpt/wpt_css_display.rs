@@ -8,6 +8,101 @@ use openui_style::*;
 
 use crate::base_doc;
 
+// Source: display-contents-alignment-001-ref.html
+fn css_display_display_contents_alignment_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(300.0);
+    doc.node_mut(n1).style.align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(100.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.align_self = ItemAlignment::INITIAL_SELF;
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: display-contents-alignment-001.html
+fn css_display_display_contents_alignment_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::px(300.0);
+    doc.node_mut(n1).style.height = Length::px(300.0);
+    doc.node_mut(n1).style.align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.node_mut(n1).style.border_top_width = 2;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.border_right_width = 2;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.border_bottom_width = 2;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.border_left_width = 2;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.width = Length::px(100.0);
+            doc.node_mut(n3).style.height = Length::px(100.0);
+            doc.node_mut(n3).style.background_color = Color::BLUE;
+            doc.node_mut(n3).style.align_self = ItemAlignment::INITIAL_SELF;
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: display-contents-block-001.html
+fn css_display_display_contents_block_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.border_top_width = 10;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_right_width = 10;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_bottom_width = 10;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_left_width = 10;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Span);
+                doc.append_child(n3, n4);
+                let n5 = doc.create_node(ElementTag::Span);
+                doc.append_child(n3, n5);
+    doc
+}
+
 // Source: display-contents-block-002-ref.html
 fn css_display_display_contents_block_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -15,6 +110,23 @@ fn css_display_display_contents_block_002_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(300.0);
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: display-contents-block-002.html
+fn css_display_display_contents_block_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(100.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.margin_top = Length::px(2000.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(300.0);
+            doc.append_child(n2, n3);
     doc
 }
 
@@ -41,6 +153,66 @@ fn css_display_display_contents_flex_001_ref() -> Document {
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
             doc.append_child(n3, n4);
+    doc
+}
+
+// Source: display-contents-flex-001.html
+fn css_display_display_contents_flex_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.border_top_width = 1;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_right_width = 1;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_bottom_width = 1;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_left_width = 1;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.border_top_width = 1;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n4).style.border_right_width = 1;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n4).style.border_bottom_width = 1;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n4).style.border_left_width = 1;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Inline;
+            doc.append_child(n4, n5);
+                let n6 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n6).style.display = Display::Block;
+                doc.append_child(n5, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.border_top_width = 1;
+        doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n7).style.border_right_width = 1;
+        doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n7).style.border_bottom_width = 1;
+        doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n7).style.border_left_width = 1;
+        doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n7);
     doc
 }
 
@@ -363,6 +535,58 @@ fn css_display_display_contents_flex_003() -> Document {
     doc
 }
 
+// Source: display-contents-float-001.html
+fn css_display_display_contents_float_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.float = Float::Right;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: display-contents-inline-001.html
+fn css_display_display_contents_inline_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Span);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.border_top_width = 10;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_right_width = 10;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_bottom_width = 10;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+        doc.node_mut(n2).style.border_left_width = 10;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.append_child(n2, n3);
+    doc
+}
+
+// Source: display-contents-inline-002.html
+fn css_display_display_contents_inline_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Span);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::RED;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.append_child(n2, n3);
+    doc
+}
+
 // Source: display-contents-inline-flex-001-ref.html
 fn css_display_display_contents_inline_flex_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -511,6 +735,18 @@ fn css_display_display_contents_inline_flex_001() -> Document {
 
 // Source: display-contents-line-height-ref.html
 fn css_display_display_contents_line_height_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n1).style.font_size = 40.0;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n2).style.font_size = 40.0;
+    doc.append_child(vp, n2);
+    doc
+}
+
+// Source: display-contents-line-height.html
+fn css_display_display_contents_line_height() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Span);
     doc.node_mut(n1).style.font_size = 40.0;
@@ -876,6 +1112,36 @@ fn css_display_display_contents_multicol_001() -> Document {
     doc
 }
 
+// Source: display-contents-oof-001.html
+fn css_display_display_contents_oof_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.right = Length::px(0.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: display-contents-oof-002.html
+fn css_display_display_contents_oof_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.position = Position::Fixed;
+    doc.node_mut(n1).style.right = Length::px(0.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.append_child(n1, n3);
+    doc
+}
+
 // Source: display-contents-pass-green-no-red-ref.html
 fn css_display_display_contents_pass_green_no_red_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -910,6 +1176,181 @@ fn css_display_display_contents_pass_ref() -> Document {
 // Source: display-contents-root-background-ref.html
 fn css_display_display_contents_root_background_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc
+}
+
+// Source: display-contents-root-background.html
+fn css_display_display_contents_root_background() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: display-contents-shadow-dom-1-ref.html
+fn css_display_display_contents_shadow_dom_1_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.color = Color::BLACK;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.append_child(vp, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.append_child(vp, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
+    doc.append_child(vp, n6);
+        let n7 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n7).style.color = Color::BLUE;
+        doc.append_child(n6, n7);
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style.display = Display::Block;
+    doc.append_child(vp, n8);
+        let n9 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n9).style.color = Color::BLUE;
+        doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.append_child(vp, n10);
+        let n11 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n11).style.color = Color::BLUE;
+        doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n12).style.display = Display::Block;
+    doc.append_child(vp, n12);
+        let n13 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n13).style.color = Color::BLUE;
+        doc.append_child(n12, n13);
+    let n14 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n14).style.display = Display::Block;
+    doc.append_child(vp, n14);
+        let n15 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n15).style.color = Color::BLUE;
+        doc.append_child(n14, n15);
+    let n16 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n16).style.display = Display::Block;
+    doc.append_child(vp, n16);
+        let n17 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n17).style.color = Color::BLUE;
+        doc.append_child(n16, n17);
+    let n18 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n18).style.display = Display::Block;
+    doc.append_child(vp, n18);
+        let n19 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n19).style.color = Color::BLUE;
+        doc.append_child(n18, n19);
+    let n20 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n20).style.display = Display::Block;
+    doc.append_child(vp, n20);
+        let n21 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n21).style.color = Color::BLUE;
+        doc.append_child(n20, n21);
+    let n22 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n22).style.display = Display::Block;
+    doc.append_child(vp, n22);
+        let n23 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n23).style.color = Color::BLUE;
+        doc.append_child(n22, n23);
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style.display = Display::Block;
+    doc.append_child(vp, n24);
+        let n25 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n25).style.color = Color::BLUE;
+        doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n26).style.display = Display::Block;
+    doc.append_child(vp, n26);
+        let n27 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n27).style.color = Color::BLUE;
+        doc.append_child(n26, n27);
+    let n28 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n28).style.display = Display::Block;
+    doc.append_child(vp, n28);
+        let n29 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n29).style.color = Color::BLUE;
+        doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n30).style.display = Display::Block;
+    doc.append_child(vp, n30);
+        let n31 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n31).style.color = Color::BLUE;
+        doc.append_child(n30, n31);
+    let n32 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n32).style.display = Display::Block;
+    doc.append_child(vp, n32);
+        let n33 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n33).style.color = Color::BLUE;
+        doc.append_child(n32, n33);
+    let n34 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n34).style.display = Display::Block;
+    doc.append_child(vp, n34);
+        let n35 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n35).style.color = Color::BLUE;
+        doc.append_child(n34, n35);
+    let n36 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n36).style.display = Display::Block;
+    doc.append_child(vp, n36);
+        let n37 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n37).style.color = Color::BLUE;
+        doc.append_child(n36, n37);
+    let n38 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n38).style.display = Display::Block;
+    doc.append_child(vp, n38);
+    let n39 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n39).style.display = Display::Block;
+    doc.append_child(vp, n39);
+    let n40 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n40).style.display = Display::Block;
+    doc.append_child(vp, n40);
+    let n41 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n41).style.display = Display::Block;
+    doc.append_child(vp, n41);
+    let n42 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n42).style.color = Color::BLUE;
+    doc.append_child(vp, n42);
+    let n43 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n43).style.color = Color::BLUE;
+    doc.append_child(vp, n43);
+    let n44 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n44).style.display = Display::Block;
+    doc.append_child(vp, n44);
+    let n45 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n45).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n45);
+    doc
+}
+
+// Source: display-contents-sharing-001-ref.html
+fn css_display_display_contents_sharing_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: display-contents-sharing-001.html
+fn css_display_display_contents_sharing_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -1297,11 +1738,29 @@ fn css_display_display_contents_text_inherit_ref() -> Document {
     doc
 }
 
+// Source: display-contents-text-inherit.html
+fn css_display_display_contents_text_inherit() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.append_child(vp, n1);
+    doc
+}
+
 // Source: display-contents-whitespace-inside-inline-ref.html
 fn css_display_display_contents_whitespace_inside_inline_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Span);
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: display-contents-whitespace-inside-inline.html
+fn css_display_display_contents_whitespace_inside_inline() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Span);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -1318,6 +1777,185 @@ fn css_display_display_first_line_002_ref() -> Document {
     doc
 }
 
+// Source: display-flow-root-001.html
+fn css_display_display_flow_root_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.color = Color::BLACK;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.display = Display::FlowRoot;
+        doc.node_mut(n2).style.margin_top = Length::px(20.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(20.0);
+            doc.node_mut(n3).style.margin_right = Length::px(0.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+            doc.node_mut(n3).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.border_top_width = 1;
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_width = 1;
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_width = 1;
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_width = 1;
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.display = Display::FlowRoot;
+        doc.append_child(n4, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.float = Float::Left;
+            doc.node_mut(n6).style.width = Length::px(20.0);
+            doc.node_mut(n6).style.height = Length::px(40.0);
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+            doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.border_top_width = 1;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_right_width = 1;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_bottom_width = 1;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_left_width = 1;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.float = Float::Left;
+        doc.node_mut(n8).style.width = Length::px(20.0);
+        doc.node_mut(n8).style.height = Length::px(40.0);
+        doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n9).style.display = Display::FlowRoot;
+        doc.node_mut(n9).style.border_top_width = 1;
+        doc.node_mut(n9).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n9).style.border_right_width = 1;
+        doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n9).style.border_bottom_width = 1;
+        doc.node_mut(n9).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n9).style.border_left_width = 1;
+        doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
+        doc.append_child(n7, n9);
+    let n10 = doc.create_node(ElementTag::Span);
+    doc.append_child(vp, n10);
+        let n11 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n11).style.display = Display::FlowRoot;
+        doc.node_mut(n11).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+        doc.append_child(n10, n11);
+            let n12 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n12).style.display = Display::Block;
+            doc.node_mut(n12).style.margin_top = Length::px(20.0);
+            doc.node_mut(n12).style.margin_right = Length::px(20.0);
+            doc.node_mut(n12).style.margin_bottom = Length::px(20.0);
+            doc.node_mut(n12).style.margin_left = Length::px(20.0);
+            doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n13).style.display = Display::FlowRoot;
+    doc.node_mut(n13).style.border_top_width = 3;
+    doc.node_mut(n13).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.border_right_width = 3;
+    doc.node_mut(n13).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.border_bottom_width = 3;
+    doc.node_mut(n13).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.border_left_width = 3;
+    doc.node_mut(n13).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.height = Length::px(10.0);
+    doc.append_child(vp, n13);
+    doc
+}
+
+// Source: display-flow-root-002-ref.html
+fn css_display_display_flow_root_002_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Right;
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.width = Length::px(250.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.background_color = Color::BLUE;
+        doc.node_mut(n3).style.width = Length::px(250.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.position = Position::Absolute;
+        doc.node_mut(n4).style.top = Length::px(100.0);
+        doc.node_mut(n4).style.left = Length::px(250.0);
+        doc.node_mut(n4).style.width = Length::px(0.0);
+        doc.node_mut(n4).style.height = Length::px(200.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: display-flow-root-002.html
+fn css_display_display_flow_root_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Right;
+        doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.width = Length::px(250.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.background_color = Color::BLUE;
+        doc.node_mut(n3).style.width = Length::px(250.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::FlowRoot;
+        doc.node_mut(n4).style.width = Length::px(0.0);
+        doc.node_mut(n4).style.height = Length::px(200.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
 // Source: display-flow-root-dynamic-ref.html
 fn css_display_display_flow_root_dynamic_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1326,33 +1964,167 @@ fn css_display_display_flow_root_dynamic_ref() -> Document {
     doc
 }
 
+// Source: display-flow-root-list-item-001.html
+fn css_display_display_flow_root_list_item_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.padding_left = Length::px(100.0);
+    doc.node_mut(vp).style.color = Color::BLACK;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.margin_top = Length::px(20.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(20.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(20.0);
+            doc.node_mut(n3).style.margin_right = Length::px(0.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+            doc.node_mut(n3).style.margin_left = Length::px(0.0);
+            doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.border_top_width = 1;
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_width = 1;
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_width = 1;
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_width = 1;
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.append_child(n4, n5);
+            let n6 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n6).style.display = Display::Block;
+            doc.node_mut(n6).style.float = Float::Left;
+            doc.node_mut(n6).style.width = Length::px(20.0);
+            doc.node_mut(n6).style.height = Length::px(40.0);
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+            doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.border_top_width = 1;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_right_width = 1;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_bottom_width = 1;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.border_left_width = 1;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
+    doc.append_child(vp, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.float = Float::Left;
+        doc.node_mut(n8).style.width = Length::px(20.0);
+        doc.node_mut(n8).style.height = Length::px(40.0);
+        doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.append_child(n7, n8);
+        let n9 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n9).style.border_top_width = 1;
+        doc.node_mut(n9).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n9).style.border_right_width = 1;
+        doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n9).style.border_bottom_width = 1;
+        doc.node_mut(n9).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n9).style.border_left_width = 1;
+        doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
+        doc.append_child(n7, n9);
+    let n10 = doc.create_node(ElementTag::Span);
+    doc.append_child(vp, n10);
+        let n11 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n11).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+        doc.append_child(n10, n11);
+            let n12 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n12).style.display = Display::Block;
+            doc.node_mut(n12).style.margin_top = Length::px(20.0);
+            doc.node_mut(n12).style.margin_right = Length::px(20.0);
+            doc.node_mut(n12).style.margin_bottom = Length::px(20.0);
+            doc.node_mut(n12).style.margin_left = Length::px(20.0);
+            doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n13).style.border_top_width = 3;
+    doc.node_mut(n13).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.border_right_width = 3;
+    doc.node_mut(n13).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.border_bottom_width = 3;
+    doc.node_mut(n13).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.border_left_width = 3;
+    doc.node_mut(n13).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n13).style.height = Length::px(10.0);
+    doc.append_child(vp, n13);
+    doc
+}
+
 pub fn css_display_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
+        ("wpt/css_display/display-contents-alignment-001-ref", css_display_display_contents_alignment_001_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-alignment-001", css_display_display_contents_alignment_001 as fn() -> Document),
+        ("wpt/css_display/display-contents-block-001", css_display_display_contents_block_001 as fn() -> Document),
         ("wpt/css_display/display-contents-block-002-ref", css_display_display_contents_block_002_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-block-002", css_display_display_contents_block_002 as fn() -> Document),
         ("wpt/css_display/display-contents-dynamic-pseudo-insertion-001-ref", css_display_display_contents_dynamic_pseudo_insertion_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-flex-001-ref", css_display_display_contents_flex_001_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-flex-001", css_display_display_contents_flex_001 as fn() -> Document),
         ("wpt/css_display/display-contents-flex-002-ref", css_display_display_contents_flex_002_ref as fn() -> Document),
         ("wpt/css_display/display-contents-flex-002", css_display_display_contents_flex_002 as fn() -> Document),
         ("wpt/css_display/display-contents-flex-003", css_display_display_contents_flex_003 as fn() -> Document),
+        ("wpt/css_display/display-contents-float-001", css_display_display_contents_float_001 as fn() -> Document),
+        ("wpt/css_display/display-contents-inline-001", css_display_display_contents_inline_001 as fn() -> Document),
+        ("wpt/css_display/display-contents-inline-002", css_display_display_contents_inline_002 as fn() -> Document),
         ("wpt/css_display/display-contents-inline-flex-001-ref", css_display_display_contents_inline_flex_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-inline-flex-001", css_display_display_contents_inline_flex_001 as fn() -> Document),
         ("wpt/css_display/display-contents-line-height-ref", css_display_display_contents_line_height_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-line-height", css_display_display_contents_line_height as fn() -> Document),
         ("wpt/css_display/display-contents-list-001-ref", css_display_display_contents_list_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-list-001", css_display_display_contents_list_001 as fn() -> Document),
         ("wpt/css_display/display-contents-multicol-001-ref", css_display_display_contents_multicol_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-multicol-001", css_display_display_contents_multicol_001 as fn() -> Document),
+        ("wpt/css_display/display-contents-oof-001", css_display_display_contents_oof_001 as fn() -> Document),
+        ("wpt/css_display/display-contents-oof-002", css_display_display_contents_oof_002 as fn() -> Document),
         ("wpt/css_display/display-contents-pass-green-no-red-ref", css_display_display_contents_pass_green_no_red_ref as fn() -> Document),
         ("wpt/css_display/display-contents-pass-no-red-ref", css_display_display_contents_pass_no_red_ref as fn() -> Document),
         ("wpt/css_display/display-contents-pass-ref", css_display_display_contents_pass_ref as fn() -> Document),
         ("wpt/css_display/display-contents-root-background-ref", css_display_display_contents_root_background_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-root-background", css_display_display_contents_root_background as fn() -> Document),
+        ("wpt/css_display/display-contents-shadow-dom-1-ref", css_display_display_contents_shadow_dom_1_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-sharing-001-ref", css_display_display_contents_sharing_001_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-sharing-001", css_display_display_contents_sharing_001 as fn() -> Document),
         ("wpt/css_display/display-contents-state-change-001-ref", css_display_display_contents_state_change_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-table-001-ref", css_display_display_contents_table_001_ref as fn() -> Document),
         ("wpt/css_display/display-contents-table-001", css_display_display_contents_table_001 as fn() -> Document),
         ("wpt/css_display/display-contents-table-002-ref", css_display_display_contents_table_002_ref as fn() -> Document),
         ("wpt/css_display/display-contents-table-002", css_display_display_contents_table_002 as fn() -> Document),
         ("wpt/css_display/display-contents-text-inherit-ref", css_display_display_contents_text_inherit_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-text-inherit", css_display_display_contents_text_inherit as fn() -> Document),
         ("wpt/css_display/display-contents-whitespace-inside-inline-ref", css_display_display_contents_whitespace_inside_inline_ref as fn() -> Document),
+        ("wpt/css_display/display-contents-whitespace-inside-inline", css_display_display_contents_whitespace_inside_inline as fn() -> Document),
         ("wpt/css_display/display-first-line-002-ref", css_display_display_first_line_002_ref as fn() -> Document),
+        ("wpt/css_display/display-flow-root-001", css_display_display_flow_root_001 as fn() -> Document),
+        ("wpt/css_display/display-flow-root-002-ref", css_display_display_flow_root_002_ref as fn() -> Document),
+        ("wpt/css_display/display-flow-root-002", css_display_display_flow_root_002 as fn() -> Document),
         ("wpt/css_display/display-flow-root-dynamic-ref", css_display_display_flow_root_dynamic_ref as fn() -> Document),
+        ("wpt/css_display/display-flow-root-list-item-001", css_display_display_flow_root_list_item_001 as fn() -> Document),
     ]
 }

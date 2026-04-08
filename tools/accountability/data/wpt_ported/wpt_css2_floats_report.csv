@@ -1,10 +1,28 @@
 filename,status,fn_name,reason
+float-after-block-with-collapsed-margin-inside-inline,ported,css2_floats_float_after_block_with_collapsed_margin_inside_inline,
 float-in-inline-anonymous-block-with-overflow-hidden,ported,css2_floats_float_in_inline_anonymous_block_with_overflow_hidden,
 float-in-nested-multicol-001,ported,css2_floats_float_in_nested_multicol_001,
 float-no-content-beside-001-ref,ported,css2_floats_float_no_content_beside_001_ref,
 float-no-content-beside-001,ported,css2_floats_float_no_content_beside_001,
+float-nowrap-1-notref,ported,css2_floats_float_nowrap_1_notref,
+float-nowrap-1,ported,css2_floats_float_nowrap_1,
+float-nowrap-2,ported,css2_floats_float_nowrap_2,
+float-nowrap-3-ref,ported,css2_floats_float_nowrap_3_ref,
+float-nowrap-3,ported,css2_floats_float_nowrap_3,
+float-nowrap-4-ref,ported,css2_floats_float_nowrap_4_ref,
+float-nowrap-4-ref2,ported,css2_floats_float_nowrap_4_ref2,
+float-nowrap-4,ported,css2_floats_float_nowrap_4,
 float-nowrap-5-ref,ported,css2_floats_float_nowrap_5_ref,
+float-nowrap-5,ported,css2_floats_float_nowrap_5,
+float-nowrap-6,ported,css2_floats_float_nowrap_6,
+float-nowrap-7,ported,css2_floats_float_nowrap_7,
+float-nowrap-8,ported,css2_floats_float_nowrap_8,
+float-nowrap-9,ported,css2_floats_float_nowrap_9,
+float-nowrap-hyphen-rewind-1-ref,ported,css2_floats_float_nowrap_hyphen_rewind_1_ref,
+float-nowrap-hyphen-rewind-1-ref2,ported,css2_floats_float_nowrap_hyphen_rewind_1_ref2,
+float-nowrap-hyphen-rewind-1,ported,css2_floats_float_nowrap_hyphen_rewind_1,
 float-root-ref,ported,css2_floats_float_root_ref,
+float-root,ported,css2_floats_float_root,
 float-under-flatten-under-preserve-3d,ported,css2_floats_float_under_flatten_under_preserve_3d,
 float-with-absolutely-positioned-child-with-static-inset-ref,ported,css2_floats_float_with_absolutely_positioned_child_with_static_inset_ref,
 float-with-absolutely-positioned-child-with-static-inset,ported,css2_floats_float_with_absolutely_positioned_child_with_static_inset,
@@ -107,27 +125,9 @@ zero-width-floats,ported,css2_floats_zero_width_floats,
 adjoining-floats-dynamic,not_portable,,uses_javascript
 block-in-inline-become-float,not_portable,,uses_javascript
 computed-float-position-absolute,not_portable,,uses_javascript
-float-after-block-with-collapsed-margin-inside-inline,not_portable,,complex_css_selector: span > div
 float-in-self-painting-inline,not_portable,,uses_javascript
 float-no-interpolation,not_portable,,uses_javascript
-float-nowrap-1-notref,not_portable,,style_block_unsupported property: white-space
-float-nowrap-1,not_portable,,style_block_unsupported property: white-space
-float-nowrap-2,not_portable,,style_block_unsupported property: white-space
-float-nowrap-3-ref,not_portable,,style_block_unsupported property: font-family
-float-nowrap-3,not_portable,,style_block_unsupported property: font-family
-float-nowrap-4-ref,not_portable,,style_block_unsupported property: font-family
-float-nowrap-4-ref2,not_portable,,style_block_unsupported property: font-family
-float-nowrap-4,not_portable,,style_block_unsupported property: font-family
-float-nowrap-5,not_portable,,style_block_unsupported property: white-space
-float-nowrap-6,not_portable,,style_block_unsupported property: white-space
-float-nowrap-7,not_portable,,style_block_unsupported property: white-space
-float-nowrap-8,not_portable,,style_block_unsupported property: white-space
-float-nowrap-9,not_portable,,style_block_unsupported property: font-family
-float-nowrap-hyphen-rewind-1-ref,not_portable,,style_block_unsupported property: font-family
-float-nowrap-hyphen-rewind-1-ref2,not_portable,,style_block_unsupported property: font-family
-float-nowrap-hyphen-rewind-1,not_portable,,style_block_unsupported property: font-family
 float-paint-relayout,not_portable,,uses_javascript
-float-root,not_portable,,complex_css_selector: :root
 float-table-align-left-quirk-ref,not_portable,,unsupported element: <table>
 float-table-align-left-quirk,not_portable,,unsupported element: <table>
 floated-table-wider-than-specified,not_portable,,unsupported display: table

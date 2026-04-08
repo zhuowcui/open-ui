@@ -172,6 +172,43 @@ fn css_box_margin_trim_block_container_block_end_collapsed_margins() -> Document
     doc
 }
 
+// Source: margin-trim_block-container-block-end-self-collapsing-and-border.html
+fn css_box_margin_trim_block_container_block_end_self_collapsing_and_border() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        doc.node_mut(n2).style.background_color = Color::RED;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(94.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.margin_top = Length::px(222.0);
+            doc.append_child(n2, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.margin_top = Length::px(222.0);
+            doc.append_child(n2, n5);
+    doc
+}
+
 // Source: margin-trim_block-container-block-end-self-collapsing-block-start-margin-nested.html
 fn css_box_margin_trim_block_container_block_end_self_collapsing_block_start_margin_nested() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1353,6 +1390,43 @@ fn css_box_margin_trim_flex_block_trimmed_only() -> Document {
     doc
 }
 
+// Source: margin-trim_flex-column-block-multiline.html
+fn css_box_margin_trim_flex_column_block_multiline() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::min_content();
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.flex_wrap = FlexWrap::Wrap;
+    doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n5).style.width = Length::px(50.0);
+        doc.node_mut(n5).style.height = Length::px(50.0);
+        doc.append_child(n1, n5);
+    doc
+}
+
 // Source: margin-trim_flex-column-grow.html
 fn css_box_margin_trim_flex_column_grow() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1625,6 +1699,54 @@ fn css_box_margin_trim_flex_column_style_change_triggers_layout_block_start_ref(
     doc
 }
 
+// Source: margin-trim_flex-inline-end-trimmed-only-ref.html
+fn css_box_margin_trim_flex_inline_end_trimmed_only_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::min_content();
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.row_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(10.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.margin_top = Length::px(10.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.margin_top = Length::px(10.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(10.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
 // Source: margin-trim_flex-inline-end-trimmed-only.html
 fn css_box_margin_trim_flex_inline_end_trimmed_only() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1671,6 +1793,54 @@ fn css_box_margin_trim_flex_inline_end_trimmed_only() -> Document {
         doc.node_mut(n4).style.height = Length::px(50.0);
         doc.node_mut(n4).style.margin_left = Length::px(10.0);
         doc.node_mut(n4).style.margin_right = Length::px(10.0);
+        doc.node_mut(n4).style.margin_top = Length::px(10.0);
+        doc.node_mut(n4).style.margin_bottom = Length::px(10.0);
+        doc.append_child(n1, n4);
+    doc
+}
+
+// Source: margin-trim_flex-inline-start-trimmed-only-ref.html
+fn css_box_margin_trim_flex_inline_start_trimmed_only_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::min_content();
+    doc.node_mut(n1).style.border_top_width = 1;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_right_width = 1;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_width = 1;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_left_width = 1;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.row_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.margin_top = Length::px(10.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.node_mut(n3).style.margin_top = Length::px(10.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
         doc.node_mut(n4).style.margin_top = Length::px(10.0);
         doc.node_mut(n4).style.margin_bottom = Length::px(10.0);
         doc.append_child(n1, n4);
@@ -1946,6 +2116,41 @@ fn css_box_margin_trim_flex_row_grow() -> Document {
         doc.node_mut(n2).style.margin_right = Length::px(25.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
+    doc
+}
+
+// Source: margin-trim_flex-row-inline-multiline.html
+fn css_box_margin_trim_flex_row_inline_multiline() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.flex_wrap = FlexWrap::Wrap;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(50.0);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.width = Length::px(50.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n5).style.width = Length::px(50.0);
+        doc.node_mut(n5).style.height = Length::px(50.0);
+        doc.append_child(n1, n5);
     doc
 }
 
@@ -2493,6 +2698,7 @@ pub fn css_box_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_box/margin-trim_block-container-block-end-002", css_box_margin_trim_block_container_block_end_002 as fn() -> Document),
         ("wpt/css_box/margin-trim_block-container-block-end-collapsed-margins-ref", css_box_margin_trim_block_container_block_end_collapsed_margins_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_block-container-block-end-collapsed-margins", css_box_margin_trim_block_container_block_end_collapsed_margins as fn() -> Document),
+        ("wpt/css_box/margin-trim_block-container-block-end-self-collapsing-and-border", css_box_margin_trim_block_container_block_end_self_collapsing_and_border as fn() -> Document),
         ("wpt/css_box/margin-trim_block-container-block-end-self-collapsing-block-start-margin-nested", css_box_margin_trim_block_container_block_end_self_collapsing_block_start_margin_nested as fn() -> Document),
         ("wpt/css_box/margin-trim_block-container-block-end-self-collapsing-block-start-margin", css_box_margin_trim_block_container_block_end_self_collapsing_block_start_margin as fn() -> Document),
         ("wpt/css_box/margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end-ref", css_box_margin_trim_block_container_block_end_self_collapsing_item_has_larger_block_end_ref as fn() -> Document),
@@ -2526,6 +2732,7 @@ pub fn css_box_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_box/margin-trim_flex-block-start-trimmed-only", css_box_margin_trim_flex_block_start_trimmed_only as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-block-trimmed-only-ref", css_box_margin_trim_flex_block_trimmed_only_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-block-trimmed-only", css_box_margin_trim_flex_block_trimmed_only as fn() -> Document),
+        ("wpt/css_box/margin-trim_flex-column-block-multiline", css_box_margin_trim_flex_column_block_multiline as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-column-grow", css_box_margin_trim_flex_column_grow as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-column-inline-multiline-ref", css_box_margin_trim_flex_column_inline_multiline_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-column-inline-multiline", css_box_margin_trim_flex_column_inline_multiline as fn() -> Document),
@@ -2533,13 +2740,16 @@ pub fn css_box_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_box/margin-trim_flex-column-style-change-triggers-layout-block-end-ref", css_box_margin_trim_flex_column_style_change_triggers_layout_block_end_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-column-style-change-triggers-layout-block-ref", css_box_margin_trim_flex_column_style_change_triggers_layout_block_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-column-style-change-triggers-layout-block-start-ref", css_box_margin_trim_flex_column_style_change_triggers_layout_block_start_ref as fn() -> Document),
+        ("wpt/css_box/margin-trim_flex-inline-end-trimmed-only-ref", css_box_margin_trim_flex_inline_end_trimmed_only_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-inline-end-trimmed-only", css_box_margin_trim_flex_inline_end_trimmed_only as fn() -> Document),
+        ("wpt/css_box/margin-trim_flex-inline-start-trimmed-only-ref", css_box_margin_trim_flex_inline_start_trimmed_only_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-inline-start-trimmed-only", css_box_margin_trim_flex_inline_start_trimmed_only as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-inline-trimmed-only-ref", css_box_margin_trim_flex_inline_trimmed_only_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-inline-trimmed-only", css_box_margin_trim_flex_inline_trimmed_only as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-row-block-multiline-ref", css_box_margin_trim_flex_row_block_multiline_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-row-block-multiline", css_box_margin_trim_flex_row_block_multiline as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-row-grow", css_box_margin_trim_flex_row_grow as fn() -> Document),
+        ("wpt/css_box/margin-trim_flex-row-inline-multiline", css_box_margin_trim_flex_row_inline_multiline as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-row-shrink", css_box_margin_trim_flex_row_shrink as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-row-style-change-triggers-layout-inline-end-ref", css_box_margin_trim_flex_row_style_change_triggers_layout_inline_end_ref as fn() -> Document),
         ("wpt/css_box/margin-trim_flex-row-style-change-triggers-layout-inline-ref", css_box_margin_trim_flex_row_style_change_triggers_layout_inline_ref as fn() -> Document),

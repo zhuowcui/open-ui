@@ -103,6 +103,53 @@ fn css_position_hypothetical_dynamic_change_001_ref() -> Document {
     doc
 }
 
+// Source: position-absolute-center-001.html
+fn css_position_position_absolute_center_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.flex_direction = FlexDirection::Row;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Flex;
+        doc.node_mut(n2).style.justify_content = ContentAlignment::new(ContentPosition::Center);
+        doc.node_mut(n2).style.flex_grow = 1.0;
+        doc.node_mut(n2).style.margin_top = Length::px(10.0);
+        doc.node_mut(n2).style.margin_right = Length::px(10.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
+        doc.node_mut(n2).style.margin_left = Length::px(10.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.position = Position::Absolute;
+            doc.node_mut(n3).style.top = Length::px(0.0);
+            doc.node_mut(n3).style.height = Length::px(100.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Span);
+                doc.node_mut(n4).style.display = Display::InlineBlock;
+                doc.node_mut(n4).style.width = Length::px(50.0);
+                doc.node_mut(n4).style.height = Length::px(10.0);
+                doc.append_child(n3, n4);
+                let n5 = doc.create_node(ElementTag::Span);
+                doc.node_mut(n5).style.display = Display::InlineBlock;
+                doc.node_mut(n5).style.width = Length::px(50.0);
+                doc.node_mut(n5).style.height = Length::px(10.0);
+                doc.append_child(n3, n5);
+        let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
+        doc.node_mut(n6).style.flex_grow = 1.0;
+        doc.node_mut(n6).style.height = Length::px(100.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n6);
+    doc
+}
+
 // Source: position-absolute-center-003.html
 fn css_position_position_absolute_center_003() -> Document {
     let (mut doc, vp) = base_doc();
@@ -249,6 +296,75 @@ fn css_position_position_absolute_iframe_print_ref() -> Document {
     doc
 }
 
+// Source: position-absolute-in-inline-003.html
+fn css_position_position_absolute_in_inline_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.color = Color::WHITE;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(60.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.position = Position::Relative;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.append_child(n3, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n5).style.height = Length::px(100.0);
+            doc.node_mut(n5).style.width = Length::px(100.0);
+            doc.node_mut(n5).style.top = Length::px(-60.0);
+            doc.append_child(n3, n5);
+    doc
+}
+
+// Source: position-absolute-in-inline-004.html
+fn css_position_position_absolute_in_inline_004() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.color = Color::WHITE;
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.position = Position::Relative;
+        doc.append_child(n1, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.position = Position::Absolute;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n4).style.height = Length::px(100.0);
+            doc.node_mut(n4).style.width = Length::px(50.0);
+            doc.node_mut(n4).style.top = Length::px(-50.0);
+            doc.node_mut(n4).style.left = Length::px(-30.0);
+            doc.append_child(n3, n4);
+            let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
+            doc.node_mut(n5).style.position = Position::Absolute;
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.node_mut(n5).style.height = Length::px(100.0);
+            doc.node_mut(n5).style.width = Length::px(50.0);
+            doc.node_mut(n5).style.top = Length::px(-50.0);
+            doc.node_mut(n5).style.left = Length::px(-80.0);
+            doc.append_child(n3, n5);
+    doc
+}
+
 // Source: position-absolute-large-negative-inset-ref.html
 fn css_position_position_absolute_large_negative_inset_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -330,6 +446,56 @@ fn css_position_position_fixed_dynamic_transformed_sibling_ref() -> Document {
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.append_child(vp, n1);
+    doc
+}
+
+// Source: position-fixed-overflow-print-ref.html
+fn css_position_position_fixed_overflow_print_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+    doc.node_mut(n1).style.width = Length::percent(50.0);
+    doc.node_mut(n1).style.height = Length::px(600.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Absolute;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::percent(50.0);
+        doc.node_mut(n2).style.width = Length::percent(50.0);
+        doc.node_mut(n2).style.height = Length::px(600.0);
+        doc.append_child(n1, n2);
+    doc
+}
+
+// Source: position-fixed-overflow-print.html
+fn css_position_position_fixed_overflow_print() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+    doc.node_mut(n1).style.width = Length::px(800.0);
+    doc.node_mut(n1).style.height = Length::px(600.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.position = Position::Fixed;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n2).style.top = Length::px(0.0);
+        doc.node_mut(n2).style.left = Length::percent(50.0);
+        doc.node_mut(n2).style.width = Length::px(800.0);
+        doc.node_mut(n2).style.height = Length::px(600.0);
+        doc.append_child(n1, n2);
     doc
 }
 
@@ -1296,14 +1462,19 @@ pub fn css_position_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_position/block-axis-constraint-changes-for-out-of-flow-box-ref", css_position_block_axis_constraint_changes_for_out_of_flow_box_ref as fn() -> Document),
         ("wpt/css_position/containing-block-change-scrollframe-ref", css_position_containing_block_change_scrollframe_ref as fn() -> Document),
         ("wpt/css_position/hypothetical-dynamic-change-001-ref", css_position_hypothetical_dynamic_change_001_ref as fn() -> Document),
+        ("wpt/css_position/position-absolute-center-001", css_position_position_absolute_center_001 as fn() -> Document),
         ("wpt/css_position/position-absolute-center-003", css_position_position_absolute_center_003 as fn() -> Document),
         ("wpt/css_position/position-absolute-center-004", css_position_position_absolute_center_004 as fn() -> Document),
         ("wpt/css_position/position-absolute-fit-content", css_position_position_absolute_fit_content as fn() -> Document),
         ("wpt/css_position/position-absolute-iframe-print-ref", css_position_position_absolute_iframe_print_ref as fn() -> Document),
+        ("wpt/css_position/position-absolute-in-inline-003", css_position_position_absolute_in_inline_003 as fn() -> Document),
+        ("wpt/css_position/position-absolute-in-inline-004", css_position_position_absolute_in_inline_004 as fn() -> Document),
         ("wpt/css_position/position-absolute-large-negative-inset-ref", css_position_position_absolute_large_negative_inset_ref as fn() -> Document),
         ("wpt/css_position/position-absolute-multicol-001", css_position_position_absolute_multicol_001 as fn() -> Document),
         ("wpt/css_position/position-change-ref", css_position_position_change_ref as fn() -> Document),
         ("wpt/css_position/position-fixed-dynamic-transformed-sibling-ref", css_position_position_fixed_dynamic_transformed_sibling_ref as fn() -> Document),
+        ("wpt/css_position/position-fixed-overflow-print-ref", css_position_position_fixed_overflow_print_ref as fn() -> Document),
+        ("wpt/css_position/position-fixed-overflow-print", css_position_position_fixed_overflow_print as fn() -> Document),
         ("wpt/css_position/position-fixed-scroll-nested-fixed-ref", css_position_position_fixed_scroll_nested_fixed_ref as fn() -> Document),
         ("wpt/css_position/position-fixed-scroll-overlap-ref", css_position_position_fixed_scroll_overlap_ref as fn() -> Document),
         ("wpt/css_position/position-relative-001", css_position_position_relative_001 as fn() -> Document),

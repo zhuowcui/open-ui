@@ -34,6 +34,8 @@ background-color-body-propagation-ref,ported,css_backgrounds_background_color_bo
 background-color-clip,ported,css_backgrounds_background_color_clip,
 background-color-no-body-propagation-ref,ported,css_backgrounds_background_color_no_body_propagation_ref,
 background-gradient-interpolation-001-notref,ported,css_backgrounds_background_gradient_interpolation_001_notref,
+background-gradient-interpolation-001,ported,css_backgrounds_background_gradient_interpolation_001,
+background-gradient-subpixel-fills-area,ported,css_backgrounds_background_gradient_subpixel_fills_area,
 background-image-001,ported,css_backgrounds_background_image_001,
 background-image-002,ported,css_backgrounds_background_image_002,
 background-image-005,ported,css_backgrounds_background_image_005,
@@ -41,6 +43,7 @@ background-image-006,ported,css_backgrounds_background_image_006,
 background-image-centered-ref,ported,css_backgrounds_background_image_centered_ref,
 background-image-centered-with-border-radius,ported,css_backgrounds_background_image_centered_with_border_radius,
 background-image-centered,ported,css_backgrounds_background_image_centered,
+background-image-cover-zoomed-1,ported,css_backgrounds_background_image_cover_zoomed_1,
 background-image-gradient-currentcolor-conic-repaint-ref,ported,css_backgrounds_background_image_gradient_currentcolor_conic_repaint_ref,
 background-image-gradient-currentcolor-linear-repaint-ref,ported,css_backgrounds_background_image_gradient_currentcolor_linear_repaint_ref,
 background-image-gradient-currentcolor-radial-repaint-ref,ported,css_backgrounds_background_image_gradient_currentcolor_radial_repaint_ref,
@@ -191,6 +194,7 @@ border-image-repeat-round,ported,css_backgrounds_border_image_repeat_round,
 border-image-repeat-space-011,ported,css_backgrounds_border_image_repeat_space_011,
 border-image-repeat-space-1-ref,ported,css_backgrounds_border_image_repeat_space_1_ref,
 border-image-repeat-space-1,ported,css_backgrounds_border_image_repeat_space_1,
+border-image-repeat-space-10-ref,ported,css_backgrounds_border_image_repeat_space_10_ref,
 border-image-repeat-space-10,ported,css_backgrounds_border_image_repeat_space_10,
 border-image-repeat-space-2-ref,ported,css_backgrounds_border_image_repeat_space_2_ref,
 border-image-repeat-space-2,ported,css_backgrounds_border_image_repeat_space_2,
@@ -286,6 +290,19 @@ border-width-small-values-001-b,ported,css_backgrounds_border_width_small_values
 border-width-small-values-001-c,ported,css_backgrounds_border_width_small_values_001_c,
 border-width-small-values-001-d,ported,css_backgrounds_border_width_small_values_001_d,
 border-width-small-values-001-e,ported,css_backgrounds_border_width_small_values_001_e,
+box-shadow-005,ported,css_backgrounds_box_shadow_005,
+box-shadow-039,ported,css_backgrounds_box_shadow_039,
+box-shadow-040,ported,css_backgrounds_box_shadow_040,
+box-shadow-041,ported,css_backgrounds_box_shadow_041,
+box-shadow-042,ported,css_backgrounds_box_shadow_042,
+box-shadow-border-radius-001,ported,css_backgrounds_box_shadow_border_radius_001,
+box-shadow-calc-ref,ported,css_backgrounds_box_shadow_calc_ref,
+box-shadow-calc,ported,css_backgrounds_box_shadow_calc,
+box-shadow-currentcolor-ref,ported,css_backgrounds_box_shadow_currentcolor_ref,
+box-shadow-currentcolor,ported,css_backgrounds_box_shadow_currentcolor,
+box-shadow-inset-without-border-radius,ported,css_backgrounds_box_shadow_inset_without_border_radius,
+box-shadow-multiple-001,ported,css_backgrounds_box_shadow_multiple_001,
+box-shadow-outset-without-border-radius-001,ported,css_backgrounds_box_shadow_outset_without_border_radius_001,
 child-move-reveals-parent-background-ref,ported,css_backgrounds_child_move_reveals_parent_background_ref,
 css-border-radius-001,ported,css_backgrounds_css_border_radius_001,
 css3-background-clip-border-box,ported,css_backgrounds_css3_background_clip_border_box,
@@ -299,8 +316,13 @@ css3-background-size-001,ported,css_backgrounds_css3_background_size_001,
 css3-background-size-contain,ported,css_backgrounds_css3_background_size_contain,
 css3-background-size,ported,css_backgrounds_css3_background_size,
 css3-border-image-source,ported,css_backgrounds_css3_border_image_source,
+css3-box-shadow,ported,css_backgrounds_css3_box_shadow,
+fieldset-inset-shadow-ref,ported,css_backgrounds_fieldset_inset_shadow_ref,
 inline-background-rtl-001,ported,css_backgrounds_inline_background_rtl_001,
 inner-border-non-renderable-ref,ported,css_backgrounds_inner_border_non_renderable_ref,
+inset-box-shadow-scroll-ref,ported,css_backgrounds_inset_box_shadow_scroll_ref,
+inset-box-shadow-scroll,ported,css_backgrounds_inset_box_shadow_scroll,
+inset-box-shadow-stacking-context-scroll,ported,css_backgrounds_inset_box_shadow_stacking_context_scroll,
 linear-gradient-calc-crash,ported,css_backgrounds_linear_gradient_calc_crash,
 linear-gradient-currentcolor-first-line-ref,ported,css_backgrounds_linear_gradient_currentcolor_first_line_ref,
 local-attachment-content-box-scroll-ref,ported,css_backgrounds_local_attachment_content_box_scroll_ref,
@@ -310,8 +332,11 @@ local-attachment-rtl-and-flex-row-reverse-scroll-ref,ported,css_backgrounds_loca
 local-attachment-rtl-scroll-ref,ported,css_backgrounds_local_attachment_rtl_scroll_ref,
 subpixel-repeat-no-repeat-mix,ported,css_backgrounds_subpixel_repeat_no_repeat_mix,
 hidpi_simple-bg-color,ported,css_backgrounds_hidpi_simple_bg_color,
+background-clip_clip-border-area-background-geometry-ref,ported,css_backgrounds_background_clip_clip_border_area_background_geometry_ref,
 background-clip_clip-border-area-background-geometry,ported,css_backgrounds_background_clip_clip_border_area_background_geometry,
+background-clip_clip-border-area-border-image-ref,ported,css_backgrounds_background_clip_clip_border_area_border_image_ref,
 background-clip_clip-border-area-border-image,ported,css_backgrounds_background_clip_clip_border_area_border_image,
+background-clip_clip-border-area-border-on-top-ref,ported,css_backgrounds_background_clip_clip_border_area_border_on_top_ref,
 background-clip_clip-border-area-border-on-top,ported,css_backgrounds_background_clip_clip_border_area_border_on_top,
 background-clip_clip-border-area-multiple-backgrounds-ref,ported,css_backgrounds_background_clip_clip_border_area_multiple_backgrounds_ref,
 background-clip_clip-border-area-multiple-backgrounds,ported,css_backgrounds_background_clip_clip_border_area_multiple_backgrounds,
@@ -331,8 +356,15 @@ background-clip_clip-padding-box_with_radius,ported,css_backgrounds_background_c
 background-clip_clip-padding-box_with_size,ported,css_backgrounds_background_clip_clip_padding_box_with_size,
 background-clip_clip-rounded-corner-ref,ported,css_backgrounds_background_clip_clip_rounded_corner_ref,
 background-clip_clip-rounded-corner,ported,css_backgrounds_background_clip_clip_rounded_corner,
+background-clip_clip-text-animated-text-ref,ported,css_backgrounds_background_clip_clip_text_animated_text_ref,
+background-clip_clip-text-dynamic-2-ref,ported,css_backgrounds_background_clip_clip_text_dynamic_2_ref,
+background-clip_clip-text-ellipsis-ref,ported,css_backgrounds_background_clip_clip_text_ellipsis_ref,
+background-clip_clip-text-ellipsis,ported,css_backgrounds_background_clip_clip_text_ellipsis,
 background-clip_clip-text-flex-ref,ported,css_backgrounds_background_clip_clip_text_flex_ref,
 background-clip_clip-text-flex,ported,css_backgrounds_background_clip_clip_text_flex,
+background-clip_clip-text-out-of-flow-child-ref,ported,css_backgrounds_background_clip_clip_text_out_of_flow_child_ref,
+background-clip_clip-text-text-decorations-ref,ported,css_backgrounds_background_clip_clip_text_text_decorations_ref,
+background-clip_clip-text-text-decorations,ported,css_backgrounds_background_clip_clip_text_text_decorations,
 background-clip_clip-text-text-emphasis-ref,ported,css_backgrounds_background_clip_clip_text_text_emphasis_ref,
 background-clip_clip-text-text-emphasis,ported,css_backgrounds_background_clip_clip_text_text_emphasis,
 background-origin_origin-border-box,ported,css_backgrounds_background_origin_origin_border_box,
@@ -593,9 +625,19 @@ background-size_vector_zero-width-ratio-auto-auto,ported,css_backgrounds_backgro
 background-size_vector_zero-width-ratio-contain,ported,css_backgrounds_background_size_vector_zero_width_ratio_contain,
 background-size_vector_zero-width-ratio-cover,ported,css_backgrounds_background_size_vector_zero_width_ratio_cover,
 background-position_background-position-bottom-right-repeat-round,ported,css_backgrounds_background_position_background_position_bottom_right_repeat_round,
+background-position_subpixel-position-center.tentative,ported,css_backgrounds_background_position_subpixel_position_center_tentative,
 box-shadow_slice-block-fragmentation-001-ref,ported,css_backgrounds_box_shadow_slice_block_fragmentation_001_ref,
+box-shadow_slice-block-fragmentation-001,ported,css_backgrounds_box_shadow_slice_block_fragmentation_001,
 box-shadow_slice-block-fragmentation-002-ref,ported,css_backgrounds_box_shadow_slice_block_fragmentation_002_ref,
+box-shadow_slice-block-fragmentation-002,ported,css_backgrounds_box_shadow_slice_block_fragmentation_002,
 box-shadow_slice-block-fragmentation-003-ref,ported,css_backgrounds_box_shadow_slice_block_fragmentation_003_ref,
+box-shadow_slice-block-fragmentation-003,ported,css_backgrounds_box_shadow_slice_block_fragmentation_003,
+box-shadow_slice-inline-fragmentation-001-ref,ported,css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref,
+box-shadow_slice-inline-fragmentation-001,ported,css_backgrounds_box_shadow_slice_inline_fragmentation_001,
+box-shadow_slice-inline-fragmentation-002-ref,ported,css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref,
+box-shadow_slice-inline-fragmentation-002,ported,css_backgrounds_box_shadow_slice_inline_fragmentation_002,
+box-shadow_slice-inline-fragmentation-003-ref,ported,css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref,
+box-shadow_slice-inline-fragmentation-003,ported,css_backgrounds_box_shadow_slice_inline_fragmentation_003,
 background-331,not_portable,,uses_javascript
 background-332,not_portable,,uses_javascript
 background-333,not_portable,,uses_javascript
@@ -621,21 +663,18 @@ background-color-body-propagation-003,not_portable,,uses_javascript
 background-color-body-propagation-004,not_portable,,no_layout_content
 background-color-body-propagation-005,not_portable,,no_layout_content
 background-color-body-propagation-006,not_portable,,uses_javascript
-background-color-body-propagation-007,not_portable,,unsupported display: contents
+background-color-body-propagation-007,not_portable,,no_layout_content
 background-color-body-propagation-008,not_portable,,no_layout_content
 background-color-body-propagation-009,not_portable,,no_layout_content
 background-color-root-propagation-001,not_portable,,no_layout_content
 background-color-root-propagation-002,not_portable,,uses_javascript
-background-gradient-interpolation-001,not_portable,,complex_css_selector: :root
-background-gradient-interpolation-002-notref,not_portable,,style_block_unsupported property: font
-background-gradient-interpolation-002,not_portable,,complex_css_selector: :root
-background-gradient-interpolation-003,not_portable,,complex_css_selector: :root
-background-gradient-subpixel-fills-area,not_portable,,style_block_unsupported property: list-style
+background-gradient-interpolation-002-notref,not_portable,,style_block_vendor/unsupported prefix: -webkit-background-clip
+background-gradient-interpolation-002,not_portable,,style_block_vendor/unsupported prefix: -webkit-background-clip
+background-gradient-interpolation-003,not_portable,,style_block_vendor/unsupported prefix: -webkit-background-clip
 background-image-003,not_portable,,no_layout_content
 background-image-004,not_portable,,no_layout_content
 background-image-007,not_portable,,complex_css_selector: div::first-letter
 background-image-cors-no-reload,not_portable,,uses_javascript
-background-image-cover-zoomed-1,not_portable,,complex_css_selector: body > div
 background-image-first-letter,not_portable,,uses_javascript
 background-image-first-line,not_portable,,uses_javascript
 background-image-gradient-currentcolor-conic-repaint,not_portable,,uses_javascript
@@ -644,7 +683,7 @@ background-image-gradient-currentcolor-radial-repaint,not_portable,,uses_javascr
 background-image-gradient-currentcolor-visited,not_portable,,uses_javascript
 background-image-gradient-interpolation-repaint,not_portable,,uses_javascript
 background-image-none-gradient-repaint,not_portable,,uses_javascript
-background-image-shared-stylesheet-ref,not_portable,,complex_css_selector: :root
+background-image-shared-stylesheet-ref,not_portable,,no_layout_content
 background-image-shared-stylesheet,not_portable,,uses_javascript
 background-image-table-cells-straddling-no-repeat,not_portable,,unsupported property: border-spacing
 background-image-table-cells-zoomed,not_portable,,style_block_unsupported property: border-collapse
@@ -657,13 +696,13 @@ background-origin-001,not_portable,,uses_javascript
 background-position-calc-minmax-001,not_portable,,no_layout_content
 background-position-xy-three-four-values-passthru,not_portable,,uses_javascript
 background-repeat-round-002,not_portable,,no_layout_content
-background-rounded-image-clip-002,not_portable,,complex_css_selector: .wrapper > *
+background-rounded-image-clip-002,not_portable,,style_block_unsupported property: transform
 background-size-001,not_portable,,uses_javascript
 background-size-007,not_portable,,no_layout_content
 background-size-010,not_portable,,no_layout_content
 background-size-032,not_portable,,complex_css_selector: div::first-letter
 background-size-033,not_portable,,complex_css_selector: div::first-line
-background-size-percentage-root,not_portable,,complex_css_selector: :root
+background-size-percentage-root,not_portable,,no_layout_content
 bg-color-with-gradient-ref,not_portable,,uses_javascript
 border-image-002,not_portable,,no_layout_content
 border-image-003,not_portable,,no_layout_content
@@ -678,7 +717,6 @@ border-image-020,not_portable,,unsupported element: <img>
 border-image-outset-004,not_portable,,unsupported element: <img>
 border-image-repeat-1-ref,not_portable,,unsupported element: <svg>
 border-image-repeat-repeat-001,not_portable,,no_layout_content
-border-image-repeat-space-10-ref,not_portable,,complex_css_selector: body > div
 border-image-repeat-space-8-ref,not_portable,,unsupported property: writing-mode
 border-image-repeat-space-8,not_portable,,unsupported property: writing-mode
 border-image-repeat-space-9,not_portable,,unsupported property: writing-mode
@@ -690,37 +728,24 @@ border-image-slice-fill-002,not_portable,,no_layout_content
 border-image-slice-fill-003,not_portable,,no_layout_content
 border-image-slice-shorthand-reset,not_portable,,uses_javascript
 border-radius-013,not_portable,,unsupported element: <img>
-border-radius-clip-001,not_portable,,complex_css_selector: body > div
+border-radius-clip-001,not_portable,,unsupported element: <img>
 border-radius-clipping-002,not_portable,,no_layout_content
 border-radius-clipping-with-transform-001-ref,not_portable,,style_block_unsupported property: filter
 border-radius-clipping-with-transform-001,not_portable,,style_block_unsupported property: transform
 border-radius-css-text,not_portable,,uses_javascript
 border-radius-dynamic-from-no-radius,not_portable,,uses_javascript
 border-width-cssom,not_portable,,uses_javascript
-box-shadow-005,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-029,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-039,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-040,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-041,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-042,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-body,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-border-radius-001,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-calc-ref,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-calc,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-currentcolor-ref,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-currentcolor,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-inset-without-border-radius,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-invalid-001,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-multiple-001,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-outset-without-border-radius-001,not_portable,,style_block_unsupported property: box-shadow
-box-shadow-overlapping-001,not_portable,,style_block_unsupported property: font-family
-box-shadow-overlapping-002,not_portable,,style_block_unsupported property: font-family
-box-shadow-overlapping-003,not_portable,,style_block_unsupported property: font-family
-box-shadow-overlapping-004,not_portable,,style_block_unsupported property: font-family
-box-shadow-radius-000-ref,not_portable,,complex_css_selector: body > div
-box-shadow-radius-000,not_portable,,complex_css_selector: body > div
-box-shadow-radius-001-ref,not_portable,,complex_css_selector: body > div
-box-shadow-radius-001,not_portable,,complex_css_selector: body > div
+box-shadow-029,not_portable,,no_layout_content
+box-shadow-body,not_portable,,no_layout_content
+box-shadow-invalid-001,not_portable,,no_layout_content
+box-shadow-overlapping-001,not_portable,,no_layout_content
+box-shadow-overlapping-002,not_portable,,no_layout_content
+box-shadow-overlapping-003,not_portable,,no_layout_content
+box-shadow-overlapping-004,not_portable,,no_layout_content
+box-shadow-radius-000-ref,not_portable,,no_layout_content
+box-shadow-radius-000,not_portable,,no_layout_content
+box-shadow-radius-001-ref,not_portable,,no_layout_content
+box-shadow-radius-001,not_portable,,no_layout_content
 box-shadow-radius-generated-ref,not_portable,,uses_javascript
 box-shadow-radius-generated,not_portable,,uses_javascript
 box-shadow-table-border-collapse-001,not_portable,,style_block_unsupported property: border-collapse
@@ -734,19 +759,14 @@ color-mix-currentcolor-outline-repaint,not_portable,,uses_javascript
 css-box-shadow-001,not_portable,,uses_javascript
 css3-border-image-repeat-repeat,not_portable,,no_layout_content
 css3-border-image-repeat-stretch,not_portable,,no_layout_content
-css3-box-shadow,not_portable,,style_block_unsupported property: box-shadow
 currentcolor-border-repaint-parent,not_portable,,uses_javascript
 document-canvas-remove-body-ref,not_portable,,no_layout_content
 document-canvas-remove-body,not_portable,,uses_javascript
-fieldset-inset-shadow-ref,not_portable,,style_block_unsupported property: box-shadow
-fieldset-inset-shadow,not_portable,,style_block_unsupported property: box-shadow
+fieldset-inset-shadow,not_portable,,unsupported element: <fieldset>
 first-letter-space-not-selected,not_portable,,complex_css_selector: .test::first-letter
 gradient-wrong-interpolation-crash,not_portable,,no_layout_content
 inheritance.sub,not_portable,,uses_javascript
 inner-border-non-renderable,not_portable,,style_block_unsupported property: clip-path
-inset-box-shadow-scroll-ref,not_portable,,style_block_unsupported property: box-shadow
-inset-box-shadow-scroll,not_portable,,style_block_unsupported property: box-shadow
-inset-box-shadow-stacking-context-scroll,not_portable,,style_block_unsupported property: box-shadow
 justfortest,not_portable,,no_layout_content
 linear-gradient-currentcolor-first-line,not_portable,,complex_css_selector: div::first-line
 local-attachment-content-box-scroll,not_portable,,uses_javascript
@@ -762,31 +782,21 @@ table-cell-background-local,not_portable,,uses_javascript
 tiny-foreignObject-double-border-radius-crash,not_portable,,unsupported element: <svg>
 ttwf-reftest-borderRadius,not_portable,,style_block_unsupported property: border-collapse
 hidpi_simple-bg-color-ref,not_portable,,uses_javascript
-background-clip_clip-border-area-background-geometry-ref,not_portable,,complex_css_selector: .test > div
-background-clip_clip-border-area-border-image-ref,not_portable,,complex_css_selector: .test > div
-background-clip_clip-border-area-border-on-top-ref,not_portable,,complex_css_selector: .test > div
 background-clip_clip-border-area-box-decoration-break-ref,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-decoration-break
 background-clip_clip-border-area-box-decoration-break,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-decoration-break
 background-clip_clip-border-area-on-body-not-propagated-to-root-ref,not_portable,,no_layout_content
 background-clip_clip-border-area-on-body-not-propagated-to-root,not_portable,,no_layout_content
 background-clip_clip-border-area-on-body-propagated-to-root,not_portable,,no_layout_content
 background-clip_clip-border-area-on-root,not_portable,,no_layout_content
-background-clip_clip-text-animated-text-ref,not_portable,,style_block_unsupported property: font-family
 background-clip_clip-text-animated-text,not_portable,,uses_javascript
-background-clip_clip-text-dynamic-2-ref,not_portable,,style_block_unsupported property: font
 background-clip_clip-text-dynamic-2,not_portable,,uses_javascript
-background-clip_clip-text-ellipsis-ref,not_portable,,style_block_unsupported property: text-overflow
-background-clip_clip-text-ellipsis,not_portable,,style_block_unsupported property: text-overflow
-background-clip_clip-text-multi-line-ref,not_portable,,style_block_unsupported property: font-family
-background-clip_clip-text-multi-line,not_portable,,style_block_unsupported property: font-family
-background-clip_clip-text-on-body-not-propagated-to-root-ref,not_portable,,style_block_unsupported property: font-family
-background-clip_clip-text-on-body-not-propagated-to-root,not_portable,,style_block_unsupported property: font-family
+background-clip_clip-text-multi-line-ref,not_portable,,no_layout_content
+background-clip_clip-text-multi-line,not_portable,,no_layout_content
+background-clip_clip-text-on-body-not-propagated-to-root-ref,not_portable,,no_layout_content
+background-clip_clip-text-on-body-not-propagated-to-root,not_portable,,no_layout_content
 background-clip_clip-text-on-body-propagated-to-root,not_portable,,no_layout_content
 background-clip_clip-text-on-root,not_portable,,no_layout_content
-background-clip_clip-text-out-of-flow-child-ref,not_portable,,style_block_unsupported property: font
-background-clip_clip-text-out-of-flow-child,not_portable,,style_block_unsupported property: font
-background-clip_clip-text-text-decorations-ref,not_portable,,unsupported property: text-decoration
-background-clip_clip-text-text-decorations,not_portable,,unsupported property: text-decoration
+background-clip_clip-text-out-of-flow-child,not_portable,,style_block_unsupported property: content
 parsing_background-attachment-computed,not_portable,,uses_javascript
 parsing_background-attachment-invalid,not_portable,,uses_javascript
 parsing_background-attachment-valid,not_portable,,uses_javascript
@@ -984,15 +994,5 @@ background-repeat_background-repeat-space,not_portable,,unsupported element: <im
 background-size_background-size-contain,not_portable,,unsupported element: <img>
 background-size_background-size-cover,not_portable,,unsupported element: <img>
 background-position_background-position-right-in-body,not_portable,,no_layout_content
-background-position_subpixel-position-center.tentative,not_portable,,style_block_unsupported property: outline
-box-shadow_box-shadow-blur-definition-001,not_portable,,style_block_unsupported property: box-shadow
-box-shadow_slice-block-fragmentation-001,not_portable,,unsupported property: box-shadow
-box-shadow_slice-block-fragmentation-002,not_portable,,unsupported property: box-shadow
-box-shadow_slice-block-fragmentation-003,not_portable,,unsupported property: box-shadow
-box-shadow_slice-inline-fragmentation-001-ref,not_portable,,unsupported property: font
-box-shadow_slice-inline-fragmentation-001,not_portable,,unsupported property: font
-box-shadow_slice-inline-fragmentation-002-ref,not_portable,,unsupported property: font
-box-shadow_slice-inline-fragmentation-002,not_portable,,unsupported property: font
-box-shadow_slice-inline-fragmentation-003-ref,not_portable,,unsupported property: font
-box-shadow_slice-inline-fragmentation-003,not_portable,,unsupported property: font
+box-shadow_box-shadow-blur-definition-001,not_portable,,unsupported element: <img>
 box-shadow_tools_box-shadow-blur-definition-001-image-generator,not_portable,,uses_javascript
