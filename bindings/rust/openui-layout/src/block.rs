@@ -865,7 +865,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     //   - parent doesn't establish a new BFC
     // When any of these conditions fails, the margin strut is consumed.
     let bottom_edge = border.bottom + padding.bottom;
-    let has_non_auto_height = !style.height.is_auto()
+    let height_is_effectively_auto = style.height.is_auto()
+        || style.height.is_content_or_intrinsic()
+        || (style.height.length_type() == openui_geometry::LengthType::Percent
+            && space.percentage_resolution_block_size.is_indefinite());
+    let has_non_auto_height = !height_is_effectively_auto
         || space.is_fixed_block_size
         || space.stretch_block_size;
     // CSS 2.1 §8.3.1: min-height > 0 prevents parent/last-child collapse.
@@ -1688,32 +1692,18 @@ fn resolve_intrinsic_inline(
 /// Resolve an intrinsic sizing keyword (min-content, max-content, fit-content)
 /// to a concrete block (height) value. Returns border-box size.
 fn resolve_intrinsic_block(
-    doc: &Document,
-    node_id: NodeId,
-    length: &openui_geometry::Length,
+    _doc: &Document,
+    _node_id: NodeId,
+    _length: &openui_geometry::Length,
     intrinsic_block_size: LayoutUnit,
-    border_padding_block: LayoutUnit,
+    _border_padding_block: LayoutUnit,
 ) -> LayoutUnit {
-    // intrinsic_block_size is already the border-box height from content sizing
-    // For min/max-content in block axis, the intrinsic block size IS the content height
-    let sizes = compute_intrinsic_block_sizes(doc, node_id);
-    match length.length_type() {
-        LengthType::MinContent => {
-            let raw = sizes.min_content_block_size;
-            raw.max_of(border_padding_block)
-        }
-        LengthType::MaxContent => {
-            let raw = sizes.max_content_block_size;
-            raw.max_of(border_padding_block)
-        }
-        LengthType::FitContent => {
-            // fit-content in block axis = clamp(min-content, available, max-content)
-            // For block axis, "available" is the intrinsic block size
-            intrinsic_block_size
-        }
-        LengthType::Stretch => intrinsic_block_size,
-        _ => intrinsic_block_size,
-    }
+    // CSS Sizing 3 §5: For block containers, min-content and max-content
+    // block sizes are the content height as defined in CSS 2.1 §10.6.3.
+    // The main layout's intrinsic_block_size already accounts for margin
+    // collapsing and other block formatting effects, so use it directly
+    // rather than re-computing from scratch (which lacks margin collapsing).
+    intrinsic_block_size
 }
 
 // ── Helper: resolve inline size (width) ──────────────────────────────
