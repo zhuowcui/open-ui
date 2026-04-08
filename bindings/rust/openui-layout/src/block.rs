@@ -1804,10 +1804,81 @@ fn resolve_inline_size(
         )
     };
 
+    // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
+    // min-height/max-height transfer to the inline axis via the ratio.
+    let (min, max) = if let Some(ar) = &style.aspect_ratio {
+        let ratio = ar.ratio;
+        if ratio.0 == 0.0 || ratio.1 == 0.0 {
+            (min, max)
+        } else {
+            let h_to_w = ratio.0 / ratio.1;
+            let bp_block = border_padding_block;
+            let bp_inline = border_padding;
+
+            let transferred_min = if !style.min_height.is_auto()
+                && !style.min_height.is_content_or_intrinsic()
+            {
+                let min_h_raw = resolve_length(
+                    &style.min_height,
+                    space.percentage_resolution_block_size,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                if min_h_raw > LayoutUnit::zero() {
+                    let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (min_h_raw - bp_block).clamp_negative_to_zero()
+                    } else {
+                        min_h_raw
+                    };
+                    let transferred_w = LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
+                    let transferred = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_w + bp_inline
+                    } else {
+                        transferred_w
+                    };
+                    min.max_of(transferred)
+                } else {
+                    min
+                }
+            } else {
+                min
+            };
+
+            let transferred_max = if max == LayoutUnit::max() {
+                let max_h_raw = resolve_length(
+                    &style.max_height,
+                    space.percentage_resolution_block_size,
+                    LayoutUnit::max(),
+                    LayoutUnit::max(),
+                );
+                if max_h_raw != LayoutUnit::max() {
+                    let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (max_h_raw - bp_block).clamp_negative_to_zero()
+                    } else {
+                        max_h_raw
+                    };
+                    let transferred_w = LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
+                    let transferred = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_w + bp_inline
+                    } else {
+                        transferred_w
+                    };
+                    max.min_of(transferred)
+                } else {
+                    max
+                }
+            } else {
+                max
+            };
+
+            (transferred_min, transferred_max)
+        }
+    } else {
+        (min, max)
+    };
+
     resolved.clamp(min, max)
 }
-
-// ── Helper: resolve block size (height) ──────────────────────────────
 
 fn resolve_block_size(
     doc: &Document,
@@ -1983,6 +2054,77 @@ fn resolve_block_size(
         max_raw + border_padding_block
     } else {
         max_raw.max_of(border_padding_block)
+    };
+
+    // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
+    // min-width/max-width transfer to the block axis via the ratio.
+    let (min, max) = if let Some(ar) = &style.aspect_ratio {
+        let ratio = ar.ratio;
+        if ratio.0 == 0.0 || ratio.1 == 0.0 {
+            (min, max)
+        } else {
+            let w_to_h = ratio.1 / ratio.0;
+
+            let transferred_min = if !style.min_width.is_auto()
+                && !style.min_width.is_content_or_intrinsic()
+            {
+                let min_w_raw = resolve_length(
+                    &style.min_width,
+                    space.percentage_resolution_inline_size,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                if min_w_raw > LayoutUnit::zero() {
+                    let content_min_w = if style.box_sizing == BoxSizing::BorderBox {
+                        (min_w_raw - border_padding_inline).clamp_negative_to_zero()
+                    } else {
+                        min_w_raw
+                    };
+                    let transferred_h = LayoutUnit::from_f32(content_min_w.to_f32() * w_to_h);
+                    let transferred = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_h + border_padding_block
+                    } else {
+                        transferred_h + border_padding_block
+                    };
+                    min.max_of(transferred)
+                } else {
+                    min
+                }
+            } else {
+                min
+            };
+
+            let transferred_max = if max == LayoutUnit::max() {
+                let max_w_raw = resolve_length(
+                    &style.max_width,
+                    space.percentage_resolution_inline_size,
+                    LayoutUnit::max(),
+                    LayoutUnit::max(),
+                );
+                if max_w_raw != LayoutUnit::max() {
+                    let content_max_w = if style.box_sizing == BoxSizing::BorderBox {
+                        (max_w_raw - border_padding_inline).clamp_negative_to_zero()
+                    } else {
+                        max_w_raw
+                    };
+                    let transferred_h = LayoutUnit::from_f32(content_max_w.to_f32() * w_to_h);
+                    let transferred = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_h + border_padding_block
+                    } else {
+                        transferred_h + border_padding_block
+                    };
+                    max.min_of(transferred)
+                } else {
+                    max
+                }
+            } else {
+                max
+            };
+
+            (transferred_min, transferred_max)
+        }
+    } else {
+        (min, max)
     };
 
     resolved.clamp(min, max)

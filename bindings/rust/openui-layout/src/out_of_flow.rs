@@ -91,6 +91,61 @@ fn layout_out_of_flow_child(
     let border_padding_h = border.left + border.right + padding.left + padding.right;
     let border_padding_v = border.top + border.bottom + padding.top + padding.bottom;
 
+    // CSS Sizing 4 §5.1: For abspos elements with width:auto + aspect-ratio +
+    // definite height, compute width from height × ratio instead of shrink-to-fit.
+    // We need to know the height BEFORE resolving the horizontal axis.
+    let ar_width_from_height = if style.width.is_auto() && style.aspect_ratio.is_some() {
+        // Height is definite if explicitly specified, or if both top+bottom are set.
+        let definite_height = if !style.height.is_auto() {
+            let raw = resolve_length(&style.height, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
+            let content_h = if style.box_sizing == BoxSizing::BorderBox {
+                (raw - border_padding_v).clamp_negative_to_zero()
+            } else {
+                raw
+            };
+            Some(content_h)
+        } else if !style.top.is_auto() && !style.bottom.is_auto() {
+            // Height from constraint equation: cb_height - top - bottom - margins - bp
+            let top_val = resolve_length(&style.top, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
+            let bottom_val = resolve_length(&style.bottom, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
+            let mt = if style.margin_top.is_auto() { LayoutUnit::zero() } else {
+                resolve_margin_or_padding(&style.margin_top, cb_width)
+            };
+            let mb = if style.margin_bottom.is_auto() { LayoutUnit::zero() } else {
+                resolve_margin_or_padding(&style.margin_bottom, cb_width)
+            };
+            let content_h = (cb_height - top_val - bottom_val - mt - mb - border_padding_v)
+                .clamp_negative_to_zero();
+            Some(content_h)
+        } else {
+            None
+        };
+
+        if let Some(content_h) = definite_height {
+            let ar = style.aspect_ratio.as_ref().unwrap();
+            let (w, _) = crate::css_sizing::apply_aspect_ratio_with_auto(
+                openui_geometry::INDEFINITE_SIZE,
+                content_h,
+                ar,
+                None,
+            );
+            if !w.is_indefinite() {
+                let border_box_w = if style.box_sizing == BoxSizing::BorderBox {
+                    w.max_of(border_padding_h)
+                } else {
+                    w + border_padding_h
+                };
+                Some(border_box_w)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
     // Compute shrink-to-fit width from intrinsic sizes (CSS 2.1 §10.3.7).
     // shrink-to-fit = min(max-content, max(min-content, available))
     // intrinsic sizes include border+padding, so convert to content-box.
@@ -103,9 +158,19 @@ fn layout_out_of_flow_child(
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
     let cb_direction = candidate.containing_block_direction;
     let sp_direction = candidate.static_position_direction;
+
+    // If we have AR width-from-height, use it as a known width in the constraint equation
+    // instead of shrink-to-fit.
     let (resolved_left, resolved_width_raw, resolved_margin_left, resolved_margin_right) =
-        resolve_horizontal(style, cb_width, static_left, &border, &padding,
-                          shrink_to_fit_min, shrink_to_fit_max, cb_direction, sp_direction);
+        if let Some(ar_bb_width) = ar_width_from_height {
+            resolve_horizontal_with_known_width(
+                style, cb_width, static_left, &border, &padding,
+                ar_bb_width, cb_direction, sp_direction,
+            )
+        } else {
+            resolve_horizontal(style, cb_width, static_left, &border, &padding,
+                              shrink_to_fit_min, shrink_to_fit_max, cb_direction, sp_direction)
+        };
 
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
@@ -143,7 +208,7 @@ fn layout_out_of_flow_child(
     // equation with the clamped value treated as specified (not auto).
     let resolved_width = apply_min_max_inline(doc, candidate.node_id, style, cb_width, resolved_width_raw,
                                               &border, &padding);
-    let resolved_height = apply_min_max_block(doc, candidate.node_id, style, cb_height, resolved_height_raw,
+    let resolved_height = apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, resolved_height_raw,
                                               &border, &padding);
 
     // CSS 2.1 §10.4: When min/max changes the width, re-solve §10.3.7 with
@@ -224,7 +289,7 @@ fn layout_out_of_flow_child(
     // must still be clamped by min-height / max-height constraints.
     let final_height = if style.height.is_auto() && !height_resolved_from_constraints {
         let content_height = child_fragment.size.height;
-        apply_min_max_block(doc, candidate.node_id, style, cb_height, content_height, &border, &padding)
+        apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding)
     } else {
         resolved_height
     };
@@ -666,6 +731,7 @@ fn apply_min_max_inline(
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
     let border_padding_h = border.left + border.right + padding.left + padding.right;
+    let border_padding_v = border.top + border.bottom + padding.top + padding.bottom;
 
     let min_raw = if style.min_width.is_auto() {
         zero
@@ -711,6 +777,68 @@ fn apply_min_max_inline(
         max_raw.max_of(border_padding_h)
     };
 
+    // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
+    // min-height/max-height transfer to the inline axis via the ratio.
+    let (min_bb, max_bb) = if let Some(ar) = &style.aspect_ratio {
+        let ratio = ar.ratio;
+        // Guard against degenerate ratios
+        if ratio.0 == 0.0 || ratio.1 == 0.0 {
+            (min_bb, max_bb)
+        } else {
+            let h_to_w = ratio.0 / ratio.1;
+
+            let transferred_min_bb = if !style.min_height.is_auto() {
+                let min_h_raw = resolve_length(&style.min_height, zero, zero, zero);
+                if min_h_raw > zero {
+                    let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (min_h_raw - border_padding_v).clamp_negative_to_zero()
+                    } else {
+                        min_h_raw
+                    };
+                    let transferred_w = LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
+                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_w.max_of(border_padding_h)
+                    } else {
+                        transferred_w + border_padding_h
+                    };
+                    min_bb.max_of(transferred_bb)
+                } else {
+                    min_bb
+                }
+            } else {
+                min_bb
+            };
+
+            let transferred_max_bb = if max_raw == LayoutUnit::max() {
+                let max_h_raw = resolve_length(
+                    &style.max_height, zero, LayoutUnit::max(), LayoutUnit::max(),
+                );
+                if max_h_raw != LayoutUnit::max() {
+                    let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (max_h_raw - border_padding_v).clamp_negative_to_zero()
+                    } else {
+                        max_h_raw
+                    };
+                    let transferred_w = LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
+                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_w.max_of(border_padding_h)
+                    } else {
+                        transferred_w + border_padding_h
+                    };
+                    max_bb.min_of(transferred_bb)
+                } else {
+                    max_bb
+                }
+            } else {
+                max_bb
+            };
+
+            (transferred_min_bb, transferred_max_bb)
+        }
+    } else {
+        (min_bb, max_bb)
+    };
+
     border_box_width.clamp(min_bb, max_bb)
 }
 
@@ -721,18 +849,19 @@ fn apply_min_max_block(
     doc: &Document,
     node_id: NodeId,
     style: &ComputedStyle,
+    cb_width: LayoutUnit,
     cb_height: LayoutUnit,
     border_box_height: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
+    let border_padding_h = border.left + border.right + padding.left + padding.right;
     let border_padding_v = border.top + border.bottom + padding.top + padding.bottom;
 
     let min_raw = if style.min_height.is_auto() {
         zero
     } else if style.min_height.is_content_or_intrinsic() {
-        // For intrinsic keywords, use the element's intrinsic block sizes
         let sizes = compute_intrinsic_block_sizes(doc, node_id);
         let intrinsic_bb = match style.min_height.length_type() {
             openui_geometry::LengthType::MinContent => sizes.min_content_block_size,
@@ -754,8 +883,6 @@ fn apply_min_max_block(
     };
 
     let max_raw = if style.max_height.is_content_or_intrinsic() {
-        // For intrinsic keywords (fit-content, min-content, max-content),
-        // resolve against the element's intrinsic block sizes
         let sizes = compute_intrinsic_block_sizes(doc, node_id);
         let intrinsic_bb = match style.max_height.length_type() {
             openui_geometry::LengthType::MinContent => sizes.min_content_block_size,
@@ -775,6 +902,67 @@ fn apply_min_max_block(
         max_raw + border_padding_v
     } else {
         max_raw.max_of(border_padding_v)
+    };
+
+    // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
+    // min-width/max-width transfer to the block axis via the ratio.
+    let (min_bb, max_bb) = if let Some(ar) = &style.aspect_ratio {
+        let ratio = ar.ratio;
+        if ratio.0 == 0.0 || ratio.1 == 0.0 {
+            (min_bb, max_bb)
+        } else {
+            let w_to_h = ratio.1 / ratio.0;
+
+            let transferred_min_bb = if !style.min_width.is_auto() {
+                let min_w_raw = resolve_length(&style.min_width, cb_width, zero, zero);
+                if min_w_raw > zero {
+                    let content_min_w = if style.box_sizing == BoxSizing::BorderBox {
+                        (min_w_raw - border_padding_h).clamp_negative_to_zero()
+                    } else {
+                        min_w_raw
+                    };
+                    let transferred_h = LayoutUnit::from_f32(content_min_w.to_f32() * w_to_h);
+                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_h.max_of(border_padding_v)
+                    } else {
+                        transferred_h + border_padding_v
+                    };
+                    min_bb.max_of(transferred_bb)
+                } else {
+                    min_bb
+                }
+            } else {
+                min_bb
+            };
+
+            let transferred_max_bb = if max_raw == LayoutUnit::max() {
+                let max_w_raw = resolve_length(
+                    &style.max_width, cb_width, LayoutUnit::max(), LayoutUnit::max(),
+                );
+                if max_w_raw != LayoutUnit::max() {
+                    let content_max_w = if style.box_sizing == BoxSizing::BorderBox {
+                        (max_w_raw - border_padding_h).clamp_negative_to_zero()
+                    } else {
+                        max_w_raw
+                    };
+                    let transferred_h = LayoutUnit::from_f32(content_max_w.to_f32() * w_to_h);
+                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
+                        transferred_h.max_of(border_padding_v)
+                    } else {
+                        transferred_h + border_padding_v
+                    };
+                    max_bb.min_of(transferred_bb)
+                } else {
+                    max_bb
+                }
+            } else {
+                max_bb
+            };
+
+            (transferred_min_bb, transferred_max_bb)
+        }
+    } else {
+        (min_bb, max_bb)
     };
 
     border_box_height.clamp(min_bb, max_bb)
