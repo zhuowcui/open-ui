@@ -971,34 +971,23 @@ fn resolve_main_axis_min_max(
                 }
             };
 
-            // Specified size suggestion
+            // Specified size suggestion (CSS Flexbox §4.5):
+            // Uses the main-size property (width/height), NOT flex-basis.
             let main_size_prop = if is_column {
                 &child_style.height
             } else {
                 &child_style.width
             };
-            let has_flex_basis = !child_style.flex_basis.is_auto();
             let has_specified_main = !main_size_prop.is_auto()
                 && (!pct_base.is_indefinite() || main_size_prop.is_fixed());
 
-            if has_flex_basis || has_specified_main {
-                // Clamp content-based minimum to the specified size
-                let specified = if has_flex_basis {
-                    let resolved = resolve_length(
-                        &child_style.flex_basis, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
-                    if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                        (resolved - main_axis_border_padding).clamp_negative_to_zero()
-                    } else {
-                        resolved
-                    }
+            if has_specified_main {
+                let resolved = resolve_length(
+                    main_size_prop, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+                let specified = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    (resolved - main_axis_border_padding).clamp_negative_to_zero()
                 } else {
-                    let resolved = resolve_length(
-                        main_size_prop, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
-                    if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                        (resolved - main_axis_border_padding).clamp_negative_to_zero()
-                    } else {
-                        resolved
-                    }
+                    resolved
                 };
                 content_size.min_of(specified)
             } else {
