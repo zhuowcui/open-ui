@@ -1,4 +1,5 @@
 filename,status,fn_name,reason
+align-baseline,ported,css_flexbox_align_baseline,
 align-content-wrap-004,ported,css_flexbox_align_content_wrap_004,
 align-content_center,ported,css_flexbox_align_content_center,
 align-content_flex-end,ported,css_flexbox_align_content_flex_end,
@@ -21,6 +22,7 @@ align-self-010,ported,css_flexbox_align_self_010,
 align-self-011,ported,css_flexbox_align_self_011,
 align-self-012,ported,css_flexbox_align_self_012,
 align-self-013,ported,css_flexbox_align_self_013,
+align-self-015,ported,css_flexbox_align_self_015,
 align-self-016,ported,css_flexbox_align_self_016,
 anonymous-block,ported,css_flexbox_anonymous_block,
 anonymous-flex-item-002,ported,css_flexbox_anonymous_flex_item_002,
@@ -30,6 +32,7 @@ aspect-ratio-intrinsic-size-003,ported,css_flexbox_aspect_ratio_intrinsic_size_0
 aspect-ratio-intrinsic-size-008,ported,css_flexbox_aspect_ratio_intrinsic_size_008,
 aspect-ratio-intrinsic-size-010,ported,css_flexbox_aspect_ratio_intrinsic_size_010,
 aspect-ratio-transferred-max-size,ported,css_flexbox_aspect_ratio_transferred_max_size,
+auto-height-column-with-border-and-padding,ported,css_flexbox_auto_height_column_with_border_and_padding,
 auto-height-with-flex,ported,css_flexbox_auto_height_with_flex,
 baseline-outside-flex-item,ported,css_flexbox_baseline_outside_flex_item,
 break-nested-float-in-flex-item-001-print,ported,css_flexbox_break_nested_float_in_flex_item_001_print,
@@ -37,6 +40,7 @@ break-nested-float-in-flex-item-002-print,ported,css_flexbox_break_nested_float_
 break-nested-float-in-flex-item-print-ref,ported,css_flexbox_break_nested_float_in_flex_item_print_ref,
 column-flex-child-with-max-width,ported,css_flexbox_column_flex_child_with_max_width,
 column-intrinsic-size-aspect-ratio-crash,ported,css_flexbox_column_intrinsic_size_aspect_ratio_crash,
+content-height-with-scrollbars,ported,css_flexbox_content_height_with_scrollbars,
 css-box-justify-content,ported,css_flexbox_css_box_justify_content,
 css-flexbox-row-ref,ported,css_flexbox_css_flexbox_row_ref,
 dynamic-bsize-change-ref,ported,css_flexbox_dynamic_bsize_change_ref,
@@ -59,6 +63,8 @@ flex-basis-006,ported,css_flexbox_flex_basis_006,
 flex-basis-007,ported,css_flexbox_flex_basis_007,
 flex-basis-008,ported,css_flexbox_flex_basis_008,
 flex-basis-010,ported,css_flexbox_flex_basis_010,
+flex-basis-011-ref,ported,css_flexbox_flex_basis_011_ref,
+flex-basis-011,ported,css_flexbox_flex_basis_011,
 flex-basis-012,ported,css_flexbox_flex_basis_012,
 flex-basis-item-margins-001,ported,css_flexbox_flex_basis_item_margins_001,
 flex-box-wrap,ported,css_flexbox_flex_box_wrap,
@@ -125,7 +131,9 @@ flex-minimum-height-flex-items-016,ported,css_flexbox_flex_minimum_height_flex_i
 flex-minimum-height-flex-items-017,ported,css_flexbox_flex_minimum_height_flex_items_017,
 flex-minimum-height-flex-items-018,ported,css_flexbox_flex_minimum_height_flex_items_018,
 flex-minimum-height-flex-items-024,ported,css_flexbox_flex_minimum_height_flex_items_024,
+flex-minimum-height-flex-items-026,ported,css_flexbox_flex_minimum_height_flex_items_026,
 flex-minimum-height-flex-items-027,ported,css_flexbox_flex_minimum_height_flex_items_027,
+flex-minimum-height-flex-items-028,ported,css_flexbox_flex_minimum_height_flex_items_028,
 flex-minimum-height-flex-items-029,ported,css_flexbox_flex_minimum_height_flex_items_029,
 flex-minimum-height-flex-items-030,ported,css_flexbox_flex_minimum_height_flex_items_030,
 flex-minimum-width-flex-items-001,ported,css_flexbox_flex_minimum_width_flex_items_001,
@@ -243,6 +251,7 @@ flexbox-definite-sizes-005-ref,ported,css_flexbox_flexbox_definite_sizes_005_ref
 flexbox-definite-sizes-005,ported,css_flexbox_flexbox_definite_sizes_005,
 flexbox-definite-sizes-006,ported,css_flexbox_flexbox_definite_sizes_006,
 flexbox-dyn-resize-001-ref,ported,css_flexbox_flexbox_dyn_resize_001_ref,
+flexbox-flex-direction-column-percentage-ignored,ported,css_flexbox_flexbox_flex_direction_column_percentage_ignored,
 flexbox-flex-flow-001-ref,ported,css_flexbox_flexbox_flex_flow_001_ref,
 flexbox-flex-flow-001,ported,css_flexbox_flexbox_flex_flow_001,
 flexbox-flex-flow-002-ref,ported,css_flexbox_flexbox_flex_flow_002_ref,
@@ -791,6 +800,8 @@ stretched-child-in-nested-flexbox-003,ported,css_flexbox_stretched_child_in_nest
 table-item-flex-percentage-min-width-ref,ported,css_flexbox_table_item_flex_percentage_min_width_ref,
 table-item-flex-percentage-width-ref,ported,css_flexbox_table_item_flex_percentage_width_ref,
 text-overflow-on-flexbox-001,ported,css_flexbox_text_overflow_on_flexbox_001,
+whitespace-in-flexitem-001-ref,ported,css_flexbox_whitespace_in_flexitem_001_ref,
+whitespace-in-flexitem-001,ported,css_flexbox_whitespace_in_flexitem_001,
 zero-content-size-with-scrollbar-crash,ported,css_flexbox_zero_content_size_with_scrollbar_crash,
 abspos_flex-abspos-staticpos-fallback-justify-content-001-ref,ported,css_flexbox_abspos_flex_abspos_staticpos_fallback_justify_content_001_ref,
 abspos_flex-abspos-staticpos-fallback-justify-content-001,ported,css_flexbox_abspos_flex_abspos_staticpos_fallback_justify_content_001,
@@ -857,7 +868,6 @@ flex-lines_multi-line-wrap-with-column-reverse-ref,ported,css_flexbox_flex_lines
 flex-lines_multi-line-wrap-with-column-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_with_column_reverse,
 flex-lines_multi-line-wrap-with-row-reverse-ref,ported,css_flexbox_flex_lines_multi_line_wrap_with_row_reverse_ref,
 flex-lines_multi-line-wrap-with-row-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_with_row_reverse,
-align-baseline,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 align-content-horiz-001a,not_portable,,uses_javascript
 align-content-horiz-001b,not_portable,,uses_javascript
 align-content-horiz-002,not_portable,,uses_javascript
@@ -894,7 +904,6 @@ align-items-baseline-vert-rl-column-horz-grid-item,not_portable,,uses_javascript
 align-items-baseline-vert-rl-column-horz-items,not_portable,,uses_javascript
 align-items-baseline-vert-rl-column-horz-table-item,not_portable,,uses_javascript
 align-self-014,not_portable,,uses_javascript
-align-self-015,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 anonymous-flex-item-001,not_portable,,uses_javascript
 anonymous-flex-item-003,not_portable,,uses_javascript
 anonymous-flex-item-005,not_portable,,uses_javascript
@@ -908,11 +917,10 @@ aspect-ratio-intrinsic-size-006,not_portable,,unsupported element: <img>
 aspect-ratio-intrinsic-size-007-ref,not_portable,,unsupported element: <svg>
 aspect-ratio-intrinsic-size-007,not_portable,,unsupported element: <img>
 aspect-ratio-intrinsic-size-009,not_portable,,unsupported property: writing-mode
-auto-height-column-with-border-and-padding,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 auto-margins-001-ref,not_portable,,unsupported property: writing-mode
 auto-margins-001,not_portable,,uses_javascript
 auto-margins-002,not_portable,,unsupported element: <img>
-auto-margins-003,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
+auto-margins-003,not_portable,,unsupported property: writing-mode
 baseline-synthesis-001,not_portable,,unsupported property: writing-mode
 baseline-synthesis-002,not_portable,,unsupported property: writing-mode
 baseline-synthesis-003,not_portable,,unsupported property: writing-mode
@@ -928,7 +936,6 @@ column-flex-child-with-overflow-scroll,not_portable,,uses_javascript
 column-reverse-gap,not_portable,,uses_javascript
 columns-height-set-via-top-bottom,not_portable,,uses_javascript
 contain-size-layout-abspos-flex-container-crash,not_portable,,uses_javascript
-content-height-with-scrollbars,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 cross-axis-scrollbar,not_portable,,complex_css_selector: .flexbox::before
 css-flexbox-height-animation-stretch-ref,not_portable,,style_block_unsupported property: animation
 css-flexbox-height-animation-stretch,not_portable,,style_block_unsupported property: animation
@@ -1002,8 +1009,6 @@ flex-aspect-ratio-img-row-016,not_portable,,uses_javascript
 flex-aspect-ratio-img-row-017,not_portable,,unsupported element: <img>
 flex-aspect-ratio-img-vert-lr,not_portable,,style_block_unsupported property: writing-mode
 flex-basis-009,not_portable,,uses_javascript
-flex-basis-011-ref,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
-flex-basis-011,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 flex-basis-013,not_portable,,uses_javascript
 flex-basis-intrinsics-001,not_portable,,uses_javascript
 flex-column-relayout-assert,not_portable,,uses_javascript
@@ -1042,8 +1047,6 @@ flex-minimum-height-flex-items-021,not_portable,,unsupported element: <img>
 flex-minimum-height-flex-items-022,not_portable,,unsupported element: <img>
 flex-minimum-height-flex-items-023,not_portable,,unsupported element: <img>
 flex-minimum-height-flex-items-025,not_portable,,uses_javascript
-flex-minimum-height-flex-items-026,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
-flex-minimum-height-flex-items-028,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 flex-minimum-height-flex-items-031,not_portable,,uses_javascript
 flex-minimum-size-001,not_portable,,uses_javascript
 flex-minimum-size-002,not_portable,,uses_javascript
@@ -1150,7 +1153,6 @@ flexbox-flex-basis-content-003b,not_portable,,unsupported element: <canvas>
 flexbox-flex-basis-content-004-ref,not_portable,,unsupported element: <canvas>
 flexbox-flex-basis-content-004a,not_portable,,unsupported element: <canvas>
 flexbox-flex-basis-content-004b,not_portable,,unsupported element: <canvas>
-flexbox-flex-direction-column-percentage-ignored,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
 flexbox-flex-wrap-flexing-003,not_portable,,unsupported property: writing-mode
 flexbox-iframe-intrinsic-size-001,not_portable,,unsupported element: <iframe>
 flexbox-ignores-first-letter,not_portable,,uses_javascript
@@ -1458,10 +1460,10 @@ stretch-flex-item-checkbox-input-ref,not_portable,,unsupported element: <input>
 stretch-flex-item-checkbox-input,not_portable,,unsupported element: <input>
 stretch-flex-item-radio-input-ref,not_portable,,unsupported element: <input>
 stretch-flex-item-radio-input,not_portable,,unsupported element: <input>
-stretch-input-in-column,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
+stretch-input-in-column,not_portable,,unsupported element: <input>
 stretch-obeys-min-max-002,not_portable,,unsupported property: writing-mode
 stretched-child-shrink-on-relayout,not_portable,,uses_javascript
-stretching-orthogonal-flows,not_portable,,vendor/unsupported prefix: -webkit-flex-direction
+stretching-orthogonal-flows,not_portable,,unsupported property: writing-mode
 svg-no-natural-size-grandchild,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-001,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-002,not_portable,,unsupported element: <svg>
@@ -1508,8 +1510,6 @@ text-as-flexitem-size-001,not_portable,,uses_javascript
 total-min-max-violation-zero,not_portable,,uses_javascript
 webkit-box-vertical-writing-mode-ref,not_portable,,unsupported property: writing-mode
 webkit-box-vertical-writing-mode,not_portable,,unsupported property: writing-mode
-whitespace-in-flexitem-001-ref,not_portable,,vendor/unsupported prefix: -webkit-justify-content
-whitespace-in-flexitem-001,not_portable,,vendor/unsupported prefix: -webkit-justify-content
 abspos_abspos-autopos-htb-ltr,not_portable,,style_block_unsupported property: writing-mode
 abspos_abspos-autopos-htb-rtl,not_portable,,style_block_unsupported property: writing-mode
 abspos_abspos-autopos-vlr-ltr,not_portable,,style_block_unsupported property: writing-mode

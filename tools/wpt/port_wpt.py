@@ -298,8 +298,14 @@ def check_supported(styles: dict) -> tuple[bool, str]:
             return False, f"unsupported property: {prop}"
         if prop in IGNORED_PROPERTIES:
             continue  # Safe to ignore — doesn't affect box layout
-        if prop.startswith('grid') or prop.startswith('-webkit') or prop.startswith('-moz'):
+        if prop.startswith('-webkit-') or prop.startswith('-moz-'):
+            # Skip vendor-prefixed properties if the unprefixed version is present
+            unprefixed = prop.split('-', 2)[2] if prop.count('-') >= 2 else ''
+            if unprefixed and unprefixed in styles:
+                continue
             return False, f"vendor/unsupported prefix: {prop}"
+        if prop.startswith('grid'):
+            return False, f"unsupported property: {prop}"
     return True, ""
 
 

@@ -786,7 +786,7 @@ scroll-markers_scroll-marker-group-keeps-active-in-view,not_portable,,uses_javas
 scroll-markers_scroll-marker-group-layout-parent,not_portable,,complex_css_selector: #sc::scroll-marker-group
 scroll-markers_scroll-marker-group-size-container-query-root,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-size-container-query,not_portable,,uses_javascript
-scroll-markers_scroll-marker-group-snap-aligns-to-active-ref,not_portable,,style_block_vendor/unsupported prefix: grid-auto-flow
+scroll-markers_scroll-marker-group-snap-aligns-to-active-ref,not_portable,,style_block_unsupported property: grid-auto-flow
 scroll-markers_scroll-marker-group-snap-aligns-to-active.tentative,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-style-and-scroll-container-query,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-style-remove,not_portable,,uses_javascript
@@ -800,8 +800,8 @@ scroll-markers_scroll-marker-multiple-activation,not_portable,,uses_javascript
 scroll-markers_scroll-marker-navigation-cycles,not_portable,,uses_javascript
 scroll-markers_scroll-marker-next-focus,not_portable,,uses_javascript
 scroll-markers_scroll-marker-scroll-container,not_portable,,uses_javascript
-scroll-markers_scroll-marker-selection-in-2d-ref,not_portable,,style_block_vendor/unsupported prefix: grid-auto-flow
-scroll-markers_scroll-marker-selection-in-2d,not_portable,,style_block_vendor/unsupported prefix: grid-auto-flow
+scroll-markers_scroll-marker-selection-in-2d-ref,not_portable,,style_block_unsupported property: grid-auto-flow
+scroll-markers_scroll-marker-selection-in-2d,not_portable,,style_block_unsupported property: grid-auto-flow
 scroll-markers_scroll-marker-selection-in-padded-scroller,not_portable,,uses_javascript
 scroll-markers_scroll-marker-selection-picks-closest,not_portable,,uses_javascript
 scroll-markers_scroll-marker-target-before-after,not_portable,,uses_javascript

@@ -544,7 +544,7 @@ multicol-dynamic-add-003-ref,not_portable,,style_block_unsupported property: gri
 multicol-dynamic-add-003,not_portable,,uses_javascript
 multicol-dynamic-add-004-ref,not_portable,,complex_css_selector: #container::before
 multicol-dynamic-add-004,not_portable,,uses_javascript
-multicol-dynamic-change-inside-break-inside-avoid-001-ref,not_portable,,style_block_vendor/unsupported prefix: -moz-appearance
+multicol-dynamic-change-inside-break-inside-avoid-001-ref,not_portable,,unsupported element: <input>
 multicol-dynamic-change-inside-break-inside-avoid-001,not_portable,,uses_javascript
 multicol-fill-000-ref,not_portable,,style_block_unsupported property: border-spacing
 multicol-fill-000,not_portable,,style_block_unsupported property: border-spacing

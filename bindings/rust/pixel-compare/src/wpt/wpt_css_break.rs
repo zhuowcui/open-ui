@@ -2833,6 +2833,21 @@ fn css_break_block_min_height_001b() -> Document {
     doc
 }
 
+// Source: border-image-000.html
+fn css_break_border_image_000() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(81.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.font_size = 81.0;
+        doc.node_mut(n2).style.color = Color::TRANSPARENT;
+        doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.append_child(n1, n2);
+    doc
+}
+
 // Source: borders-000-ref.html
 fn css_break_borders_000_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -32355,6 +32370,7 @@ pub fn css_break_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_break/block-min-height-001", css_break_block_min_height_001 as fn() -> Document),
         ("wpt/css_break/block-min-height-001b-ref", css_break_block_min_height_001b_ref as fn() -> Document),
         ("wpt/css_break/block-min-height-001b", css_break_block_min_height_001b as fn() -> Document),
+        ("wpt/css_break/border-image-000", css_break_border_image_000 as fn() -> Document),
         ("wpt/css_break/borders-000-ref", css_break_borders_000_ref as fn() -> Document),
         ("wpt/css_break/borders-000", css_break_borders_000 as fn() -> Document),
         ("wpt/css_break/borders-001-ref", css_break_borders_001_ref as fn() -> Document),

@@ -1077,6 +1077,132 @@ fn css_backgrounds_background_gradient_interpolation_001() -> Document {
     doc
 }
 
+// Source: background-gradient-interpolation-002-notref.html
+fn css_backgrounds_background_gradient_interpolation_002_notref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.font_size = 50.0;
+    doc.node_mut(n2).style.width = Length::fit_content();
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_size = 50.0;
+    doc.node_mut(n3).style.width = Length::fit_content();
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.font_size = 50.0;
+    doc.node_mut(n4).style.width = Length::fit_content();
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n4);
+    doc
+}
+
+// Source: background-gradient-interpolation-002.html
+fn css_backgrounds_background_gradient_interpolation_002() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_size = 50.0;
+    doc.node_mut(n3).style.width = Length::fit_content();
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.append_child(vp, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.font_size = 50.0;
+    doc.node_mut(n5).style.width = Length::fit_content();
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
+    doc.append_child(vp, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.font_size = 50.0;
+    doc.node_mut(n7).style.width = Length::fit_content();
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n7);
+    doc
+}
+
+// Source: background-gradient-interpolation-003.html
+fn css_backgrounds_background_gradient_interpolation_003() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_size = 50.0;
+    doc.node_mut(n3).style.width = Length::fit_content();
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.append_child(vp, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.font_size = 50.0;
+    doc.node_mut(n5).style.width = Length::fit_content();
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
+    doc.append_child(vp, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.font_size = 50.0;
+    doc.node_mut(n7).style.width = Length::fit_content();
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.append_child(vp, n7);
+    doc
+}
+
 // Source: background-gradient-subpixel-fills-area.html
 fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     let (mut doc, vp) = base_doc();
@@ -12815,6 +12941,110 @@ fn css_backgrounds_background_clip_clip_border_area_border_on_top() -> Document 
     doc
 }
 
+// Source: background-clip_clip-border-area-box-decoration-break-ref.html
+fn css_backgrounds_background_clip_clip_border_area_box_decoration_break_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(20.0);
+    doc.node_mut(n1).style.margin_right = Length::px(20.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n1).style.margin_left = Length::px(20.0);
+    doc.node_mut(n1).style.font_size = 32.0;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_top_width = 10;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_right_width = 10;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_bottom_width = 10;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.border_left_width = 10;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(20.0);
+    doc.node_mut(n3).style.margin_right = Length::px(20.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n3).style.margin_left = Length::px(20.0);
+    doc.node_mut(n3).style.font_size = 32.0;
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_top_width = 10;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n4).style.border_right_width = 10;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n4).style.border_bottom_width = 10;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n4).style.border_left_width = 10;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Slice;
+        doc.append_child(n3, n4);
+    doc
+}
+
+// Source: background-clip_clip-border-area-box-decoration-break.html
+fn css_backgrounds_background_clip_clip_border_area_box_decoration_break() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(20.0);
+    doc.node_mut(n1).style.margin_right = Length::px(20.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n1).style.margin_left = Length::px(20.0);
+    doc.node_mut(n1).style.font_size = 32.0;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.border_top_width = 10;
+        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n2).style.border_right_width = 10;
+        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n2).style.border_bottom_width = 10;
+        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n2).style.border_left_width = 10;
+        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(20.0);
+    doc.node_mut(n3).style.margin_right = Length::px(20.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(n3).style.margin_left = Length::px(20.0);
+    doc.node_mut(n3).style.font_size = 32.0;
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.border_top_width = 10;
+        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n4).style.border_right_width = 10;
+        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n4).style.border_bottom_width = 10;
+        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n4).style.border_left_width = 10;
+        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+        doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Slice;
+        doc.append_child(n3, n4);
+    doc
+}
+
 // Source: background-clip_clip-border-area-multiple-backgrounds-ref.html
 fn css_backgrounds_background_clip_clip_border_area_multiple_backgrounds_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -15193,6 +15423,18 @@ fn css_backgrounds_animations_background_color_animation_with_images_ref() -> Do
     doc.node_mut(n4).style.width = Length::px(100.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.append_child(vp, n4);
+    doc
+}
+
+// Source: animations_background-color-animation-with-mask-ref.html
+fn css_backgrounds_animations_background_color_animation_with_mask_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 150, 255);
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -21196,6 +21438,9 @@ pub fn css_backgrounds_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_backgrounds/background-color-no-body-propagation-ref", css_backgrounds_background_color_no_body_propagation_ref as fn() -> Document),
         ("wpt/css_backgrounds/background-gradient-interpolation-001-notref", css_backgrounds_background_gradient_interpolation_001_notref as fn() -> Document),
         ("wpt/css_backgrounds/background-gradient-interpolation-001", css_backgrounds_background_gradient_interpolation_001 as fn() -> Document),
+        ("wpt/css_backgrounds/background-gradient-interpolation-002-notref", css_backgrounds_background_gradient_interpolation_002_notref as fn() -> Document),
+        ("wpt/css_backgrounds/background-gradient-interpolation-002", css_backgrounds_background_gradient_interpolation_002 as fn() -> Document),
+        ("wpt/css_backgrounds/background-gradient-interpolation-003", css_backgrounds_background_gradient_interpolation_003 as fn() -> Document),
         ("wpt/css_backgrounds/background-gradient-subpixel-fills-area", css_backgrounds_background_gradient_subpixel_fills_area as fn() -> Document),
         ("wpt/css_backgrounds/background-image-001", css_backgrounds_background_image_001 as fn() -> Document),
         ("wpt/css_backgrounds/background-image-002", css_backgrounds_background_image_002 as fn() -> Document),
@@ -21499,6 +21744,8 @@ pub fn css_backgrounds_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_backgrounds/background-clip_clip-border-area-border-image", css_backgrounds_background_clip_clip_border_area_border_image as fn() -> Document),
         ("wpt/css_backgrounds/background-clip_clip-border-area-border-on-top-ref", css_backgrounds_background_clip_clip_border_area_border_on_top_ref as fn() -> Document),
         ("wpt/css_backgrounds/background-clip_clip-border-area-border-on-top", css_backgrounds_background_clip_clip_border_area_border_on_top as fn() -> Document),
+        ("wpt/css_backgrounds/background-clip_clip-border-area-box-decoration-break-ref", css_backgrounds_background_clip_clip_border_area_box_decoration_break_ref as fn() -> Document),
+        ("wpt/css_backgrounds/background-clip_clip-border-area-box-decoration-break", css_backgrounds_background_clip_clip_border_area_box_decoration_break as fn() -> Document),
         ("wpt/css_backgrounds/background-clip_clip-border-area-multiple-backgrounds-ref", css_backgrounds_background_clip_clip_border_area_multiple_backgrounds_ref as fn() -> Document),
         ("wpt/css_backgrounds/background-clip_clip-border-area-multiple-backgrounds", css_backgrounds_background_clip_clip_border_area_multiple_backgrounds as fn() -> Document),
         ("wpt/css_backgrounds/background-clip_clip-border-area-ref", css_backgrounds_background_clip_clip_border_area_ref as fn() -> Document),
@@ -21550,6 +21797,7 @@ pub fn css_backgrounds_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_backgrounds/animations_background-color-animation-pseudo-element-ref", css_backgrounds_animations_background_color_animation_pseudo_element_ref as fn() -> Document),
         ("wpt/css_backgrounds/animations_background-color-animation-will-change-contents-ref", css_backgrounds_animations_background_color_animation_will_change_contents_ref as fn() -> Document),
         ("wpt/css_backgrounds/animations_background-color-animation-with-images-ref", css_backgrounds_animations_background_color_animation_with_images_ref as fn() -> Document),
+        ("wpt/css_backgrounds/animations_background-color-animation-with-mask-ref", css_backgrounds_animations_background_color_animation_with_mask_ref as fn() -> Document),
         ("wpt/css_backgrounds/animations_background-color-animation-zero-size-element-change-to-non-zero-ref", css_backgrounds_animations_background_color_animation_zero_size_element_change_to_non_zero_ref as fn() -> Document),
         ("wpt/css_backgrounds/animations_background-color-transition-currentcolor-ref", css_backgrounds_animations_background_color_transition_currentcolor_ref as fn() -> Document),
         ("wpt/css_backgrounds/animations_invalidation_background-color-animation-with-zero-alpha-ref", css_backgrounds_animations_invalidation_background_color_animation_with_zero_alpha_ref as fn() -> Document),
