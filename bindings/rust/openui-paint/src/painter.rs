@@ -138,7 +138,14 @@ fn paint_children_with_stacking_order(
             Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
         );
 
-        if is_positioned {
+        // Flex items participate in z-index ordering even when position: static
+        // (CSS Flexbox §5.4).
+        let parent_id = doc.node(child.node_id).parent;
+        let is_flex_item = !parent_id.is_none()
+            && doc.node(parent_id).style.display.is_flex();
+        let has_z_index = child_style.z_index.is_some();
+
+        if is_positioned || (is_flex_item && has_z_index) {
             let z = child_style.z_index.unwrap_or(0);
             if z < 0 {
                 negative_z.push((z, i));
