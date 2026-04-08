@@ -20,7 +20,10 @@ from shared_detectors import classify_failure_categories
 # --- Configuration ---
 
 CHROMIUM_WPT_BASE = Path(
-    "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css"
+    os.environ.get(
+        "CHROMIUM_WPT_CSS",
+        os.path.expanduser("~/chromium/src/third_party/blink/web_tests/external/wpt/css"),
+    )
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -209,7 +212,11 @@ def main():
             elif row["pixel_result"] == "fail":
                 area_stats[area]["failing"] += 1
         if row["failure_category"]:
-            area_stats[area]["categories"][row["failure_category"]] += 1
+            # Split multi-label categories for accurate per-atom counting
+            for part in row["failure_category"].split(","):
+                part = part.strip()
+                if part:
+                    area_stats[area]["categories"][part] += 1
 
     # Collect all category names for column alignment
     all_categories = set()

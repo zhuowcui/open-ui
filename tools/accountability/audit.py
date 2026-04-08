@@ -208,10 +208,12 @@ def check_rust_code_exists():
         if fname.endswith(".rs") and fname != "mod.rs":
             fpath = os.path.join(WPT_DIR, fname)
             with open(fpath) as f:
-                lines = f.readlines()
-            for line in lines:
+                content = f.read()
+            # Strip block comments /* ... */ (handles multi-line)
+            content = re.sub(r"/\*.*?\*/", "", content, flags=re.DOTALL)
+            for line in content.splitlines():
                 stripped = line.lstrip()
-                if stripped.startswith("//") or stripped.startswith("/*"):
+                if stripped.startswith("//"):
                     continue
                 for m in re.finditer(r'\("(wpt/[^"]+)"', line):
                     rust_test_ids.add(m.group(1))
@@ -432,18 +434,28 @@ def check_classification_consistency():
                         cats.add(CATEGORY_FOR_DEP[d])
                 deferred_cats[tid] = cats
 
-    # Cross-check: for every deferred test, its dependency categories
-    # should be a subset of (or equal to) the mapping categories
-    mismatches = 0
+    # Bidirectional cross-check:
+    # 1. Every deferred test's deps should appear in mapping categories
+    # 2. Every mapping test with cross-SP categories should be in deferred
+    deferred_not_in_mapping = 0
+    mapping_not_in_deferred = 0
+
     for tid, dcats in deferred_cats.items():
         mcats = mapping_cats.get(tid, set())
-        # Mapping might say "sp12_layout_bug" if no cross-SP deps detected,
-        # but deferred says it HAS deps. That's an inconsistency.
         if dcats and not dcats.issubset(mcats):
-            mismatches += 1
+            deferred_not_in_mapping += 1
 
-    if mismatches:
-        warn(f"{mismatches} tests have mapping↔deferred classification disagreements")
+    # Check reverse: mapping tests with cross-SP categories not in deferred
+    cross_sp_cats = set(CATEGORY_FOR_DEP.values())
+    for tid, mcats in mapping_cats.items():
+        if mcats & cross_sp_cats:  # has at least one cross-SP category
+            if tid not in deferred_cats:
+                mapping_not_in_deferred += 1
+
+    total_mismatches = deferred_not_in_mapping + mapping_not_in_deferred
+    if total_mismatches:
+        issue(f"Classification drift: {deferred_not_in_mapping} deferred∉mapping, "
+              f"{mapping_not_in_deferred} mapping∉deferred")
     else:
         ok(f"Mapping and deferred classifications consistent for {len(deferred_cats)} tests")
 
