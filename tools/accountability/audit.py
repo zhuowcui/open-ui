@@ -6,15 +6,14 @@ Verifies that all tracking data is consistent and no claims are unsubstantiated.
 Exit code 0 = clean audit, non-zero = discrepancies found.
 
 Checks:
-1. Every "pass" in summary.json has a result.json with status="pass",
-   mismatch_pct=0.0, AND both PNG screenshots (openui.png, chromium.png) exist
+1. Every "pass" has result.json (status="pass", mismatch_pct=0.0) + PNGs exist.
+   Also validates: no duplicate IDs, valid status values.
 2. Template ↔ summary consistency (mismatches are ERRORS)
-3. Every ported test has Rust code with proper registry entries (excluding comments)
+3. Every ported test has Rust code with registry entries (excluding comments)
 4. wpt_mapping.csv cross-checked with summary.json (accounting identity enforced)
 5. SP12.5 deferred CSV tests exist in summary AND are failing
-6. Mapping ↔ deferred classification cross-check
-7. No orphan result directories (ERRORS, not warnings)
-8. No duplicate test IDs in summary.json
+6. No orphan result directories (ERRORS)
+7. Mapping ↔ deferred classification cross-check
 """
 
 import csv
@@ -30,16 +29,11 @@ DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 RESULTS_DIR = os.path.join(DATA_DIR, "pixel_comparison", "results")
 WPT_DIR = os.path.join(PROJECT_ROOT, "bindings", "rust", "pixel-compare", "src", "wpt")
 
-VALID_FAILURE_CATEGORIES = {
-    "sp12_layout_bug",
-    "needs_text",
-    "needs_image",
-    "needs_gradient",
-    "needs_font_metrics",
-    "needs_containment",
-    "needs_margin_trim",
-    "not_ported",
-}
+# Import from shared_detectors to stay in sync automatically
+sys.path.insert(0, SCRIPT_DIR)
+from shared_detectors import CATEGORY_FOR_DEP
+
+VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "not_ported"}
 
 issues = []
 warnings = []
@@ -424,15 +418,7 @@ def check_classification_consistency():
                 mapping_cats[tid] = set(p.strip() for p in cat.split(",") if p.strip())
 
     # Load deferred: test_id → set of dependency keys
-    # Map dependency keys to category names for comparison
-    dep_to_cat = {
-        "text_rendering": "needs_text",
-        "font_metrics": "needs_font_metrics",
-        "image_rendering": "needs_image",
-        "css_containment": "needs_containment",
-        "gradient": "needs_gradient",
-        "margin_trim": "needs_margin_trim",
-    }
+    # Use CATEGORY_FOR_DEP from shared_detectors (single source of truth)
     deferred_cats = {}
     with open(deferred_path) as f:
         for row in csv.DictReader(f):
@@ -442,8 +428,8 @@ def check_classification_consistency():
                 cats = set()
                 for d in deps.split(","):
                     d = d.strip()
-                    if d in dep_to_cat:
-                        cats.add(dep_to_cat[d])
+                    if d in CATEGORY_FOR_DEP:
+                        cats.add(CATEGORY_FOR_DEP[d])
                 deferred_cats[tid] = cats
 
     # Cross-check: for every deferred test, its dependency categories
