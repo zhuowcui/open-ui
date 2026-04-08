@@ -79,6 +79,12 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         return compute_replaced_intrinsic_sizes(style);
     }
 
+    // Flex containers have their own intrinsic sizing algorithm.
+    // CSS Flexbox §9.9: Flex container intrinsic sizes.
+    if style.display == openui_style::Display::Flex {
+        return compute_flex_intrinsic_sizes(doc, node_id, style);
+    }
+
     let border = resolve_border(style);
     let padding = resolve_padding(style, LayoutUnit::zero());
     let bp_inline = border.inline_sum() + padding.inline_sum();
@@ -192,6 +198,126 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         max_content_inline_size: max_inline + bp_inline,
         min_content_block_size: min_content_block + bp_block,
         max_content_block_size: max_content_block + bp_block,
+    }
+}
+
+/// Compute intrinsic sizes for flex containers.
+///
+/// CSS Flexbox §9.9: Flex container intrinsic main size is determined by
+/// item flex-base sizes; cross size by item cross sizes.
+///
+/// For row flex (is_column = false):
+///   - min-content inline: largest item min-content contribution (single-line)
+///     or sum if no wrapping possible
+///   - max-content inline: sum of all item max-content contributions + gaps
+///   - min/max-content block: max of item cross sizes
+///
+/// For column flex (is_column = true): swap axes.
+fn compute_flex_intrinsic_sizes(
+    doc: &Document,
+    node_id: NodeId,
+    style: &ComputedStyle,
+) -> IntrinsicSizes {
+    let border = resolve_border(style);
+    let padding = resolve_padding(style, LayoutUnit::zero());
+    let bp_inline = border.inline_sum() + padding.inline_sum();
+    let bp_block = border.block_sum() + padding.block_sum();
+
+    let is_column = style.flex_direction == openui_style::FlexDirection::Column
+        || style.flex_direction == openui_style::FlexDirection::ColumnReverse;
+    let is_wrap = style.flex_wrap != openui_style::FlexWrap::Nowrap;
+
+    // Resolve gaps
+    let main_gap = if is_column {
+        style.row_gap.as_ref().map(|g| resolve_length(g, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())).unwrap_or(LayoutUnit::zero())
+    } else {
+        style.column_gap.as_ref().map(|g| resolve_length(g, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())).unwrap_or(LayoutUnit::zero())
+    };
+    let cross_gap = if is_column {
+        style.column_gap.as_ref().map(|g| resolve_length(g, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())).unwrap_or(LayoutUnit::zero())
+    } else {
+        style.row_gap.as_ref().map(|g| resolve_length(g, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())).unwrap_or(LayoutUnit::zero())
+    };
+
+    let mut item_count = 0;
+    let mut sum_main_min = LayoutUnit::zero();
+    let mut sum_main_max = LayoutUnit::zero();
+    let mut max_main_min = LayoutUnit::zero();
+    let mut max_cross_min = LayoutUnit::zero();
+    let mut max_cross_max = LayoutUnit::zero();
+
+    for child_id in doc.children(node_id) {
+        let child_style = &doc.node(child_id).style;
+
+        if child_style.display == openui_style::Display::None
+            || child_style.position.is_absolutely_positioned()
+        {
+            continue;
+        }
+
+        let child_sizes = compute_child_intrinsic_contribution(doc, child_id);
+
+        // Determine main-axis and cross-axis contributions
+        let (main_min, main_max, cross_min, cross_max) = if is_column {
+            (child_sizes.min_content_block_size, child_sizes.max_content_block_size,
+             child_sizes.min_content_inline_size, child_sizes.max_content_inline_size)
+        } else {
+            (child_sizes.min_content_inline_size, child_sizes.max_content_inline_size,
+             child_sizes.min_content_block_size, child_sizes.max_content_block_size)
+        };
+
+        // Check for explicit flex-basis
+        let flex_basis = &child_style.flex_basis;
+        let main_contribution_min;
+        let main_contribution_max;
+
+        if flex_basis.is_fixed() {
+            let basis = resolve_length(flex_basis, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero());
+            // Flex-basis overrides content size for intrinsic contribution
+            // but must be clamped by min/max main size
+            main_contribution_min = basis.max_of(main_min);
+            main_contribution_max = basis.max_of(main_max);
+        } else {
+            main_contribution_min = main_min;
+            main_contribution_max = main_max;
+        }
+
+        sum_main_min = sum_main_min + main_contribution_min;
+        sum_main_max = sum_main_max + main_contribution_max;
+        max_main_min = max_main_min.max_of(main_contribution_min);
+        max_cross_min = max_cross_min.max_of(cross_min);
+        max_cross_max = max_cross_max.max_of(cross_max);
+        item_count += 1;
+    }
+
+    // Add gaps between items
+    let gap_count = if item_count > 1 { item_count - 1 } else { 0 };
+    let total_main_gap = main_gap * gap_count as i32;
+    let _ = cross_gap; // cross gap only matters for multi-line block sizing
+
+    // CSS Flexbox §9.9.1:
+    // For single-line: min-content = sum of clamped flex-base sizes (or max of contributions for wrapping)
+    // For multi-line (wrap): min-content = largest item min-content contribution
+    let (min_main, max_main) = if is_wrap {
+        // Wrapping: min-content = largest single item; max-content = sum + gaps
+        (max_main_min, sum_main_max + total_main_gap)
+    } else {
+        // No wrap: both modes sum contributions + gaps
+        (sum_main_min + total_main_gap, sum_main_max + total_main_gap)
+    };
+
+    // Convert back to inline/block coordinates
+    let (min_inline, max_inline, min_block, max_block) = if is_column {
+        (max_cross_min, max_cross_max, min_main, max_main)
+    } else {
+        (min_main, max_main, max_cross_min, max_cross_max)
+    };
+
+    IntrinsicSizes {
+        min_content_inline_size: min_inline + bp_inline,
+        max_content_inline_size: max_inline + bp_inline,
+        min_content_block_size: min_block + bp_block,
+        max_content_block_size: max_block + bp_block,
     }
 }
 

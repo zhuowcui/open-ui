@@ -1081,10 +1081,13 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop == 'justify-content':
         mapping = {
             'flex-start': 'ContentAlignment::new(ContentPosition::FlexStart)',
-            'start': 'ContentAlignment::new(ContentPosition::FlexStart)',
+            'start': 'ContentAlignment::new(ContentPosition::Start)',
             'flex-end': 'ContentAlignment::new(ContentPosition::FlexEnd)',
-            'end': 'ContentAlignment::new(ContentPosition::FlexEnd)',
+            'end': 'ContentAlignment::new(ContentPosition::End)',
             'center': 'ContentAlignment::new(ContentPosition::Center)',
+            'left': 'ContentAlignment::new(ContentPosition::Left)',
+            'right': 'ContentAlignment::new(ContentPosition::Right)',
+            'normal': 'ContentAlignment::new(ContentPosition::Normal)',
             'space-between': 'ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)',
             'space-around': 'ContentAlignment::with_distribution(ContentDistribution::SpaceAround)',
             'space-evenly': 'ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly)',
@@ -1095,14 +1098,15 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop == 'align-items':
         mapping = {
             'flex-start': 'ItemAlignment::new(ItemPosition::FlexStart)',
-            'start': 'ItemAlignment::new(ItemPosition::FlexStart)',
+            'start': 'ItemAlignment::new(ItemPosition::Start)',
             'flex-end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
-            'end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
+            'end': 'ItemAlignment::new(ItemPosition::End)',
             'center': 'ItemAlignment::new(ItemPosition::Center)',
             'stretch': 'ItemAlignment::new(ItemPosition::Stretch)',
             'baseline': 'ItemAlignment::new(ItemPosition::Baseline)',
-            'self-start': 'ItemAlignment::new(ItemPosition::FlexStart)',
-            'self-end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
+            'normal': 'ItemAlignment::new(ItemPosition::Normal)',
+            'self-start': 'ItemAlignment::new(ItemPosition::SelfStart)',
+            'self-end': 'ItemAlignment::new(ItemPosition::SelfEnd)',
         }
         if val in mapping:
             return f"{s}.align_items = {mapping[val]};"
@@ -1111,14 +1115,15 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         mapping = {
             'auto': 'ItemAlignment::INITIAL_SELF',
             'flex-start': 'ItemAlignment::new(ItemPosition::FlexStart)',
-            'start': 'ItemAlignment::new(ItemPosition::FlexStart)',
+            'start': 'ItemAlignment::new(ItemPosition::Start)',
             'flex-end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
-            'end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
+            'end': 'ItemAlignment::new(ItemPosition::End)',
             'center': 'ItemAlignment::new(ItemPosition::Center)',
             'stretch': 'ItemAlignment::new(ItemPosition::Stretch)',
             'baseline': 'ItemAlignment::new(ItemPosition::Baseline)',
-            'self-start': 'ItemAlignment::new(ItemPosition::FlexStart)',
-            'self-end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
+            'normal': 'ItemAlignment::new(ItemPosition::Normal)',
+            'self-start': 'ItemAlignment::new(ItemPosition::SelfStart)',
+            'self-end': 'ItemAlignment::new(ItemPosition::SelfEnd)',
         }
         if val in mapping:
             return f"{s}.align_self = {mapping[val]};"
@@ -1126,10 +1131,12 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop == 'align-content':
         mapping = {
             'flex-start': 'ContentAlignment::new(ContentPosition::FlexStart)',
-            'start': 'ContentAlignment::new(ContentPosition::FlexStart)',
+            'start': 'ContentAlignment::new(ContentPosition::Start)',
             'flex-end': 'ContentAlignment::new(ContentPosition::FlexEnd)',
-            'end': 'ContentAlignment::new(ContentPosition::FlexEnd)',
+            'end': 'ContentAlignment::new(ContentPosition::End)',
             'center': 'ContentAlignment::new(ContentPosition::Center)',
+            'normal': 'ContentAlignment::new(ContentPosition::Normal)',
+            'baseline': 'ContentAlignment::new(ContentPosition::Baseline)',
             'stretch': 'ContentAlignment::with_distribution(ContentDistribution::Stretch)',
             'space-between': 'ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)',
             'space-around': 'ContentAlignment::with_distribution(ContentDistribution::SpaceAround)',
