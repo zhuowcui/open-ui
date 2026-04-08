@@ -11,6 +11,7 @@ For each test in the pixel_compare binary:
 
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -462,8 +463,9 @@ def main():
         result_json = os.path.join(test_dir, "result.json")
         html_file = os.path.join(test_dir, "test.html")
 
-        # Write HTML
-        html_content = f"<!DOCTYPE html><html><head><style>{BODY_STYLE}</style></head><body>{HTML_TEMPLATES[test_id]}</body></html>"
+        # Write HTML (strip CDATA wrappers that break CSS in HTML5 mode)
+        template = re.sub(r'<!\[CDATA\[|\]\]>', '', HTML_TEMPLATES[test_id])
+        html_content = f"<!DOCTYPE html><html><head><style>{BODY_STYLE}</style></head><body>{template}</body></html>"
         with open(html_file, "w") as f:
             f.write(html_content)
 
