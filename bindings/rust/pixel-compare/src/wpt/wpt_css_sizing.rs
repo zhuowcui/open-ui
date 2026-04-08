@@ -29131,6 +29131,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_019() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.flex_basis = Length::content();
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.min_width = Length::px(0.0);
@@ -29148,6 +29149,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_020() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.flex_basis = Length::content();
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.min_height = Length::px(0.0);
@@ -29164,6 +29166,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_021() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.flex_basis = Length::content();
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.width = Length::px(20.0);
@@ -29182,6 +29185,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_022() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.flex_basis = Length::content();
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.height = Length::px(20.0);
@@ -29593,6 +29597,9 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_036() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
+        doc.node_mut(n2).style.flex_grow = 0.0;
+        doc.node_mut(n2).style.flex_shrink = 0.0;
+        doc.node_mut(n2).style.flex_basis = Length::content();
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.node_mut(n2).style.min_width = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);

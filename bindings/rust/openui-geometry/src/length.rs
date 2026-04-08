@@ -108,6 +108,12 @@ impl Length {
         Self { value: 0.0, length_type: LengthType::FitContent }
     }
 
+    /// `content` keyword — used for flex-basis:content and certain grid contexts.
+    #[inline]
+    pub const fn content() -> Self {
+        Self { value: 0.0, length_type: LengthType::Content }
+    }
+
     /// `fr` fractional unit for CSS Grid.
     #[inline]
     pub const fn flex(value: f32) -> Self {

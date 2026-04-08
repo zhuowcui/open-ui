@@ -250,6 +250,8 @@ def parse_length(value: str) -> str | None:
         return 'Length::fit_content()'
     if value == 'stretch' or value == '-webkit-fill-available':
         return 'Length::stretch()'
+    if value == 'content':
+        return 'Length::content()'
     # vw/vh — approximate as % of 800x600 viewport
     m = re.match(r'^(-?[\d.]+)vw$', value)
     if m:

@@ -107530,6 +107530,9 @@ fn css_flexbox_percentage_heights_016() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.flex_grow = 1.0;
+        doc.node_mut(n2).style.flex_shrink = 1.0;
+        doc.node_mut(n2).style.flex_basis = Length::content();
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.append_child(n1, n2);
@@ -116540,6 +116543,7 @@ fn css_flexbox_abspos_flexbox_abspos_child_002() -> Document {
         doc.node_mut(n8).style.position = Position::Absolute;
         doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 128, 255);
         doc.node_mut(n8).style.height = Length::px(10.0);
+        doc.node_mut(n8).style.flex_basis = Length::content();
         doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Flex;
@@ -116603,6 +116607,7 @@ fn css_flexbox_abspos_flexbox_abspos_child_002() -> Document {
         doc.node_mut(n16).style.background_color = Color::from_rgba8(0, 128, 128, 255);
         doc.node_mut(n16).style.height = Length::px(10.0);
         doc.node_mut(n16).style.width = Length::px(10.0);
+        doc.node_mut(n16).style.flex_basis = Length::content();
         doc.append_child(n15, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Flex;
@@ -116670,6 +116675,7 @@ fn css_flexbox_abspos_flexbox_abspos_child_002() -> Document {
         doc.node_mut(n24).style.height = Length::px(10.0);
         doc.node_mut(n24).style.left = Length::px(0.0);
         doc.node_mut(n24).style.right = Length::px(0.0);
+        doc.node_mut(n24).style.flex_basis = Length::content();
         doc.append_child(n23, n24);
     doc
 }
