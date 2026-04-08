@@ -26,8 +26,8 @@ CHROMIUM_WPT_BASE = Path(
     )
 )
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-DATA_DIR = PROJECT_ROOT / "data"
+SCRIPT_DIR = Path(__file__).resolve().parent
+DATA_DIR = SCRIPT_DIR / "data"
 TEMPLATES_JSON = DATA_DIR / "wpt_ported" / "all_wpt_templates.json"
 SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 OUTPUT_CSV = DATA_DIR / "wpt_mapping.csv"
