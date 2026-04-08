@@ -16,7 +16,7 @@ MAPPING_CSV = os.path.join(DATA_DIR, "wpt_mapping.csv")
 SP12_CSV = os.path.join(DATA_DIR, "sp12_5_deferred.csv")
 OUTPUT_HTML = os.path.join(DATA_DIR, "report.html")
 
-TOTAL_CHROMIUM_WPT = 3737  # fallback if mapping CSV unavailable
+TOTAL_CHROMIUM_WPT = 7673  # fallback if mapping CSV unavailable
 
 
 def load_summary():
@@ -87,8 +87,12 @@ def build_report_data():
                 mapping_lookup[test_id] = row
 
             cat = row.get("failure_category", "").strip()
-            if cat:
-                failure_categories[cat] = failure_categories.get(cat, 0) + 1
+            if cat and cat != "not_ported":
+                # Support multi-label categories (comma-separated)
+                for part in cat.split(","):
+                    part = part.strip()
+                    if part:
+                        failure_categories[part] = failure_categories.get(part, 0) + 1
 
     # Build per-area stats from summary tests
     area_stats = {}
@@ -130,15 +134,17 @@ def build_report_data():
             row_data["dependency"] = m.get("dependency", "")
         test_rows.append(row_data)
 
-    # Add non-ported tests from mapping CSV
+    # Add non-ported tests from mapping CSV (use chromium_test_path as unique key)
     if mapping:
         for row in mapping:
             test_id = row.get("our_test_id", "").strip()
             ported = row.get("ported", "").strip().lower()
             if ported != "true" and ported != "yes" and ported != "1":
                 area = row.get("sp_area", "unknown").strip()
-                test_name = row.get("test_name", row.get("chromium_test_path", "")).strip()
-                display_id = test_id if test_id else test_name
+                chromium_path = row.get("chromium_test_path", "").strip()
+                test_name = row.get("test_name", "").strip()
+                # Use chromium_test_path as unique identifier to avoid flat-name collisions
+                display_id = chromium_path if chromium_path else test_name
                 if display_id and display_id not in seen_ids:
                     seen_ids.add(display_id)
                     test_rows.append({
@@ -554,7 +560,7 @@ function badgeHTML(status) {{
 function renderTable(rows) {{
   var tbody = document.getElementById('test-tbody');
   var html = '';
-  var limit = 2000;
+  var limit = 8000;
   var shown = Math.min(rows.length, limit);
   for (var i = 0; i < shown; i++) {{
     var r = rows[i];

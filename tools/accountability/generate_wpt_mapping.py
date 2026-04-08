@@ -63,51 +63,6 @@ def _strip_style_blocks(html: str) -> str:
     return re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
 
 
-def _has_descendant_selectors(html: str) -> bool:
-    """Check for descendant selectors in <style> blocks.
-
-    A descendant selector has whitespace between parts but no combinator
-    (>, +, ~) and no pseudo-class/pseudo-element (:).
-    """
-    style_blocks = re.findall(
-        r"<style[^>]*>(.*?)</style>", html, flags=re.DOTALL | re.IGNORECASE
-    )
-    for block in style_blocks:
-        # Remove comments
-        block = re.sub(r"/\*.*?\*/", "", block, flags=re.DOTALL)
-        # Extract selectors (text before { )
-        selectors = re.findall(r"([^{}]+)\{", block)
-        for sel in selectors:
-            sel = sel.strip()
-            # Skip @-rules
-            if sel.startswith("@"):
-                continue
-            # Split comma-separated selectors
-            for part in sel.split(","):
-                part = part.strip()
-                if not part:
-                    continue
-                # Tokenize by whitespace
-                tokens = part.split()
-                if len(tokens) < 2:
-                    continue
-                # Check if any adjacent pair is a descendant selector
-                # (no combinator between them)
-                for i in range(len(tokens) - 1):
-                    left = tokens[i]
-                    right = tokens[i + 1]
-                    # Skip combinators
-                    if right in (">", "+", "~"):
-                        continue
-                    if left in (">", "+", "~"):
-                        continue
-                    # Skip pseudo-selectors that look like descendant
-                    if ":" in left or ":" in right:
-                        continue
-                    return True
-    return False
-
-
 def _has_visible_text(html: str) -> bool:
     """Check for visible text content between tags (after stripping style blocks)."""
     cleaned = _strip_style_blocks(html)
@@ -132,9 +87,13 @@ def _has_gradient(html: str) -> bool:
     return bool(re.search(r"gradient\s*\(", html, re.IGNORECASE))
 
 
-def _has_ch_unit(html: str) -> bool:
-    """Check for ch unit usage."""
-    return bool(re.search(r"\d+ch\b", html, re.IGNORECASE))
+def _has_font_metrics(html: str) -> bool:
+    """Check for font-relative units (ch, ex, em, rem) or line-height dependency."""
+    if re.search(r"[\d.]+(?:ch|ex)\b", html, re.IGNORECASE):
+        return True
+    if re.search(r"line-height\s*:", html, re.IGNORECASE):
+        return True
+    return False
 
 
 def _has_containment(html: str) -> bool:
@@ -151,24 +110,35 @@ def _has_margin_trim(html: str) -> bool:
 
 
 def classify_failure(html: str) -> tuple[str, str]:
-    """Classify a failing test into a failure category.
+    """Classify a failing test's cross-SP dependencies.
 
-    Returns (failure_category, dependency).
+    Uses multi-label detection (all matching dependencies included).
+    Returns (failure_category, dependency) where category may be comma-separated.
     """
-    if _has_descendant_selectors(html):
-        return "generator_bug", "descendant selectors in style"
+    categories = []
+    dependencies = []
+
     if _has_visible_text(html):
-        return "needs_text", "text rendering"
+        categories.append("needs_text")
+        dependencies.append("text rendering")
     if _has_image_url(html):
-        return "needs_image", "background/border images"
+        categories.append("needs_image")
+        dependencies.append("background/border images")
     if _has_gradient(html):
-        return "needs_gradient", "CSS gradients"
-    if _has_ch_unit(html):
-        return "needs_font_metrics", "ch unit / font metrics"
+        categories.append("needs_gradient")
+        dependencies.append("CSS gradients")
+    if _has_font_metrics(html):
+        categories.append("needs_font_metrics")
+        dependencies.append("font metrics (ch/ex/line-height)")
     if _has_containment(html):
-        return "needs_containment", "CSS containment"
+        categories.append("needs_containment")
+        dependencies.append("CSS containment")
     if _has_margin_trim(html):
-        return "needs_margin_trim", "margin-trim property"
+        categories.append("needs_margin_trim")
+        dependencies.append("margin-trim property")
+
+    if categories:
+        return ",".join(categories), "; ".join(dependencies)
     return "sp12_layout_bug", ""
 
 
