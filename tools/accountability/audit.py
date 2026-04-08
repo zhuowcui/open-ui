@@ -6,18 +6,18 @@ Verifies that all tracking data is consistent and no claims are unsubstantiated.
 Exit code 0 = clean audit, non-zero = discrepancies found.
 
 Checks:
-1. Every "pass" in summary.json has a result.json with exactly 0.0% mismatch
-   AND both PNG screenshots exist with valid SHA256 hashes recorded
-2. Template ↔ summary consistency (count mismatches are ERRORS, not warnings)
-3. Every ported test has Rust code with proper registry entries
+1. Every "pass" in summary.json has a result.json with status="pass",
+   mismatch_pct=0.0, AND both PNG screenshots (openui.png, chromium.png) exist
+2. Template ↔ summary consistency (mismatches are ERRORS)
+3. Every ported test has Rust code with proper registry entries (excluding comments)
 4. wpt_mapping.csv cross-checked with summary.json (accounting identity enforced)
 5. SP12.5 deferred CSV tests exist in summary AND are failing
-6. No orphan result directories
-7. Global accounting identity: pass + fail = ported, ported + not_ported = total
+6. Mapping ↔ deferred classification cross-check
+7. No orphan result directories (ERRORS, not warnings)
+8. No duplicate test IDs in summary.json
 """
 
 import csv
-import hashlib
 import json
 import os
 import re
@@ -59,17 +59,8 @@ def ok(msg):
     print(f"  ✅ {msg}")
 
 
-def sha256_file(path):
-    """Compute SHA256 hash of a file."""
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(8192), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
 def check_summary_integrity():
-    """Check 1: Every pass has proof — result.json with exactly 0.0% AND PNG files exist."""
+    """Check 1: Every pass has proof — result.json with status=pass, mismatch_pct=0.0, PNGs exist."""
     print("\n── Check 1: Pass claims have proof (with image verification) ──")
     summary_path = os.path.join(RESULTS_DIR, "summary.json")
     if not os.path.isfile(summary_path):
@@ -79,9 +70,24 @@ def check_summary_integrity():
     with open(summary_path) as f:
         summary = json.load(f)
 
+    # Check for duplicate test IDs
+    all_ids = [t["id"] for t in summary["tests"]]
+    id_counts = Counter(all_ids)
+    dupes = {tid: cnt for tid, cnt in id_counts.items() if cnt > 1}
+    if dupes:
+        issue(f"{len(dupes)} duplicate test IDs in summary.json")
+        for tid in sorted(dupes)[:3]:
+            print(f"         {tid} (×{dupes[tid]})")
+
+    # Validate status values
+    valid_statuses = {"pass", "fail"}
+    invalid_statuses = {t["status"] for t in summary["tests"]} - valid_statuses
+    if invalid_statuses:
+        issue(f"Invalid status values in summary.json: {invalid_statuses}")
+
     pass_count = 0
     fail_count = 0
-    false_passes = 0
+    proof_failures = 0
     missing_results = 0
     missing_images = 0
 
@@ -100,23 +106,30 @@ def check_summary_integrity():
             with open(result_path) as f:
                 result = json.load(f)
 
+            # Each test triggers at most one proof failure (no double-counting)
+            has_proof_issue = False
+
             # Strict check: mismatch_pct must be present AND exactly 0.0
             pct = result.get("mismatch_pct")
             if pct is None:
-                false_passes += 1
-                if false_passes <= 3:
+                has_proof_issue = True
+                proof_failures += 1
+                if proof_failures <= 3:
                     issue(f"Pass claimed but mismatch_pct missing: {test['id']}")
             elif pct != 0.0:
-                false_passes += 1
-                if false_passes <= 3:
+                has_proof_issue = True
+                proof_failures += 1
+                if proof_failures <= 3:
                     issue(f"Pass claimed but mismatch={pct}%: {test['id']}")
 
             # Verify status field in result.json matches
-            result_status = result.get("status")
-            if result_status != "pass":
-                false_passes += 1
-                if false_passes <= 3:
-                    issue(f"Pass claimed but result.json status='{result_status}': {test['id']}")
+            if not has_proof_issue:
+                result_status = result.get("status")
+                if result_status != "pass":
+                    has_proof_issue = True
+                    proof_failures += 1
+                    if proof_failures <= 3:
+                        issue(f"Pass claimed but result.json status='{result_status}': {test['id']}")
 
             # Verify both PNG screenshots exist
             ours_png = os.path.join(result_dir, "openui.png")
@@ -130,12 +143,12 @@ def check_summary_integrity():
 
     if missing_results > 3:
         issue(f"... and {missing_results - 3} more passes without result.json")
-    if false_passes > 3:
-        issue(f"... and {false_passes - 3} more false passes")
+    if proof_failures > 3:
+        issue(f"... and {proof_failures - 3} more proof failures")
     if missing_images > 3:
         issue(f"... and {missing_images - 3} more passes with missing PNGs")
 
-    if missing_results == 0 and false_passes == 0 and missing_images == 0:
+    if missing_results == 0 and proof_failures == 0 and missing_images == 0:
         ok(f"All {pass_count} passes have verified 0.0% mismatch + PNG proof")
 
     # Verify totals
@@ -195,15 +208,19 @@ def check_rust_code_exists():
     with open(summary_path) as f:
         summary = json.load(f)
 
-    # Extract test IDs from Rust registry entries: ("wpt/area/test", fn as fn() -> Document)
+    # Extract test IDs from Rust registry entries, excluding comments
     rust_test_ids = set()
     for fname in os.listdir(WPT_DIR):
         if fname.endswith(".rs") and fname != "mod.rs":
             fpath = os.path.join(WPT_DIR, fname)
             with open(fpath) as f:
-                content = f.read()
-            for m in re.finditer(r'\("(wpt/[^"]+)"', content):
-                rust_test_ids.add(m.group(1))
+                lines = f.readlines()
+            for line in lines:
+                stripped = line.lstrip()
+                if stripped.startswith("//") or stripped.startswith("/*"):
+                    continue
+                for m in re.finditer(r'\("(wpt/[^"]+)"', line):
+                    rust_test_ids.add(m.group(1))
 
     summary_ids = {t["id"] for t in summary["tests"]}
     missing_rust = summary_ids - rust_test_ids
@@ -286,7 +303,15 @@ def check_mapping_coverage():
         if ported == summary["total"] and passing == summary["passed"]:
             ok(f"Mapping ↔ summary cross-check passed")
 
-    categories = Counter(r["failure_category"] for r in rows if r["failure_category"])
+    # Split multi-label categories for accurate counting
+    categories = Counter()
+    for r in rows:
+        cat = r.get("failure_category", "").strip()
+        if cat:
+            for part in cat.split(","):
+                part = part.strip()
+                if part:
+                    categories[part] += 1
     ok(f"Mapping covers {total} Chromium tests ({ported} ported, {not_ported} not ported)")
     print(f"         Pass: {passing}, Fail: {failing}")
     print(f"         Categories: {dict(categories.most_common(8))}")
@@ -329,7 +354,7 @@ def check_deferred_consistency():
             print(f"         {tid}")
 
     if deferred_but_passing:
-        warn(f"{len(deferred_but_passing)} deferred tests actually pass (stale CSV?)")
+        issue(f"{len(deferred_but_passing)} deferred tests actually pass (stale CSV — regenerate)")
         for tid in deferred_but_passing[:3]:
             print(f"         {tid}")
 
@@ -374,9 +399,67 @@ def check_no_orphan_results():
                     orphans += 1
 
     if orphans:
-        warn(f"{orphans} result directories have no corresponding summary entry")
+        issue(f"{orphans} orphan result directories (no corresponding summary entry)")
     else:
         ok("No orphan result directories")
+
+
+def check_classification_consistency():
+    """Check 7: Mapping and deferred CSVs agree on classifications."""
+    print("\n── Check 7: Mapping ↔ deferred classification consistency ──")
+    mapping_path = os.path.join(DATA_DIR, "wpt_mapping.csv")
+    deferred_path = os.path.join(DATA_DIR, "sp12_5_deferred.csv")
+
+    if not os.path.isfile(mapping_path) or not os.path.isfile(deferred_path):
+        warn("Missing mapping or deferred CSV — skipping cross-check")
+        return
+
+    # Load mapping: test_id → set of categories
+    mapping_cats = {}
+    with open(mapping_path) as f:
+        for row in csv.DictReader(f):
+            tid = row.get("our_test_id", "").strip()
+            cat = row.get("failure_category", "").strip()
+            if tid and cat:
+                mapping_cats[tid] = set(p.strip() for p in cat.split(",") if p.strip())
+
+    # Load deferred: test_id → set of dependency keys
+    # Map dependency keys to category names for comparison
+    dep_to_cat = {
+        "text_rendering": "needs_text",
+        "font_metrics": "needs_font_metrics",
+        "image_rendering": "needs_image",
+        "css_containment": "needs_containment",
+        "gradient": "needs_gradient",
+        "margin_trim": "needs_margin_trim",
+    }
+    deferred_cats = {}
+    with open(deferred_path) as f:
+        for row in csv.DictReader(f):
+            tid = row["test_id"]
+            deps = row.get("dependency", "").strip()
+            if deps:
+                cats = set()
+                for d in deps.split(","):
+                    d = d.strip()
+                    if d in dep_to_cat:
+                        cats.add(dep_to_cat[d])
+                deferred_cats[tid] = cats
+
+    # Cross-check: for every deferred test, its dependency categories
+    # should be a subset of (or equal to) the mapping categories
+    mismatches = 0
+    for tid, dcats in deferred_cats.items():
+        mcats = mapping_cats.get(tid, set())
+        # Mapping might say "sp12_layout_bug" if no cross-SP deps detected,
+        # but deferred says it HAS deps. That's an inconsistency.
+        if dcats and not dcats.issubset(mcats):
+            mismatches += 1
+
+    if mismatches:
+        warn(f"{mismatches} tests have mapping↔deferred classification disagreements")
+    else:
+        ok(f"Mapping and deferred classifications consistent for {len(deferred_cats)} tests")
 
 
 def main():
@@ -390,6 +473,7 @@ def main():
     check_mapping_coverage()
     check_deferred_consistency()
     check_no_orphan_results()
+    check_classification_consistency()
 
     print("\n═══════════════════════════════════════════════")
     if issues:

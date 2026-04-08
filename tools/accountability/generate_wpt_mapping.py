@@ -13,6 +13,10 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+# Import shared detectors (single source of truth)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from shared_detectors import classify_failure_categories
+
 # --- Configuration ---
 
 CHROMIUM_WPT_BASE = Path(
@@ -40,7 +44,6 @@ SP12_AREAS = {
 }
 
 SKIP_DIRS = {"support", "reference", "reftest"}
-TEST_EXTENSIONS = {".html", ".xht", ".xhtml", ".htm"}
 
 CSV_COLUMNS = [
     "chromium_test_path",
@@ -56,90 +59,7 @@ CSV_COLUMNS = [
 ]
 
 
-# --- Failure classification ---
-
-def _strip_style_blocks(html: str) -> str:
-    """Remove all <style>...</style> blocks from HTML."""
-    return re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
-
-
-def _has_visible_text(html: str) -> bool:
-    """Check for visible text content between tags (after stripping style blocks)."""
-    cleaned = _strip_style_blocks(html)
-    # Remove all HTML tags
-    text = re.sub(r"<[^>]+>", " ", cleaned)
-    # Remove HTML entities that are whitespace
-    text = re.sub(r"&nbsp;", " ", text)
-    # Remove HTML comments
-    text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
-    # Check for any visible non-whitespace text
-    text = text.strip()
-    return bool(re.search(r"[A-Za-z0-9]", text))
-
-
-def _has_image_url(html: str) -> bool:
-    """Check for url() near background/border-image properties."""
-    return bool(re.search(r"(background|border-image)[^;]*url\s*\(", html, re.IGNORECASE))
-
-
-def _has_gradient(html: str) -> bool:
-    """Check for gradient() in HTML."""
-    return bool(re.search(r"gradient\s*\(", html, re.IGNORECASE))
-
-
-def _has_font_metrics(html: str) -> bool:
-    """Check for font-relative units (ch, ex, em, rem) or line-height dependency."""
-    if re.search(r"[\d.]+(?:ch|ex)\b", html, re.IGNORECASE):
-        return True
-    if re.search(r"line-height\s*:", html, re.IGNORECASE):
-        return True
-    return False
-
-
-def _has_containment(html: str) -> bool:
-    """Check for contain or content-visibility CSS property."""
-    return bool(
-        re.search(r"\bcontain\s*:", html, re.IGNORECASE)
-        or re.search(r"\bcontent-visibility\s*:", html, re.IGNORECASE)
-    )
-
-
-def _has_margin_trim(html: str) -> bool:
-    """Check for margin-trim CSS property."""
-    return bool(re.search(r"\bmargin-trim\s*:", html, re.IGNORECASE))
-
-
-def classify_failure(html: str) -> tuple[str, str]:
-    """Classify a failing test's cross-SP dependencies.
-
-    Uses multi-label detection (all matching dependencies included).
-    Returns (failure_category, dependency) where category may be comma-separated.
-    """
-    categories = []
-    dependencies = []
-
-    if _has_visible_text(html):
-        categories.append("needs_text")
-        dependencies.append("text rendering")
-    if _has_image_url(html):
-        categories.append("needs_image")
-        dependencies.append("background/border images")
-    if _has_gradient(html):
-        categories.append("needs_gradient")
-        dependencies.append("CSS gradients")
-    if _has_font_metrics(html):
-        categories.append("needs_font_metrics")
-        dependencies.append("font metrics (ch/ex/line-height)")
-    if _has_containment(html):
-        categories.append("needs_containment")
-        dependencies.append("CSS containment")
-    if _has_margin_trim(html):
-        categories.append("needs_margin_trim")
-        dependencies.append("margin-trim property")
-
-    if categories:
-        return ",".join(categories), "; ".join(dependencies)
-    return "sp12_layout_bug", ""
+TEST_EXTENSIONS = {".html", ".xht", ".xhtml", ".htm"}
 
 
 # --- Data loading ---
@@ -246,7 +166,7 @@ def main():
 
                 if pr["status"] == "fail":
                     html = templates.get(test_id, "")
-                    category, dep = classify_failure(html)
+                    category, dep = classify_failure_categories(html)
                     row["failure_category"] = category
                     row["dependency"] = dep
         else:

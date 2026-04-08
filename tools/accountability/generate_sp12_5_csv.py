@@ -22,70 +22,9 @@ SUMMARY_PATH = SCRIPT_DIR / "data" / "pixel_comparison" / "results" / "summary.j
 CSV_OUTPUT = SCRIPT_DIR / "data" / "sp12_5_deferred.csv"
 MD_OUTPUT = REPO_ROOT / "docs" / "SP12.5-PLAN.md"
 
-# ---------------------------------------------------------------------------
-# Dependency detection helpers
-# ---------------------------------------------------------------------------
-
-def _strip_style_blocks(html: str) -> str:
-    """Remove <style>...</style> blocks (case-insensitive, dotall)."""
-    return re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
-
-def _has_visible_text(html: str) -> bool:
-    """Detect visible text between tags after stripping style blocks."""
-    stripped = _strip_style_blocks(html)
-    # Find text runs between > and <
-    for m in re.finditer(r">([^<]+)<", stripped):
-        text = m.group(1).strip()
-        if len(text) > 1 and not text.isspace() and text != "{":
-            return True
-    return False
-
-def _has_font_metrics(html: str) -> bool:
-    """Detect dependency on font metrics: font-relative units or line-height."""
-    if re.search(r"[\d.]+(?:ch|ex|em|rem)\b", html):
-        return True
-    if re.search(r"line-height\s*:", html, re.IGNORECASE):
-        return True
-    return False
-
-def _has_image_ref(html: str) -> bool:
-    """Detect url() near background or border-image."""
-    return bool(re.search(r"(background|border-image)[^;]*url\(", html, re.IGNORECASE))
-
-def _has_containment(html: str) -> bool:
-    """Detect CSS `contain` or `content-visibility` property."""
-    return bool(
-        re.search(r"(?<![a-zA-Z-])contain\s*:", html)
-        or re.search(r"content-visibility\s*:", html, re.IGNORECASE)
-    )
-
-def _has_gradient(html: str) -> bool:
-    """Detect gradient() function (case-insensitive)."""
-    return bool(re.search(r"gradient\(", html, re.IGNORECASE))
-
-def _has_margin_trim(html: str) -> bool:
-    """Detect margin-trim property."""
-    return bool(re.search(r"margin-trim\s*:", html, re.IGNORECASE))
-
-# Ordered list: (key, label, owning_sp, detector)
-DEPENDENCY_DEFS = [
-    ("text_rendering",  "SP11/SP13: Text Rendering",  "SP11,SP13", _has_visible_text),
-    ("font_metrics",    "SP11: Font Metrics",          "SP11",      _has_font_metrics),
-    ("image_rendering", "Image Rendering",             "TBD",       _has_image_ref),
-    ("css_containment", "CSS Containment",             "TBD",       _has_containment),
-    ("gradient",        "Gradient Rendering",          "TBD",       _has_gradient),
-    ("margin_trim",     "margin-trim",                 "TBD",       _has_margin_trim),
-]
-
-
-def classify_test(html: str) -> list[str]:
-    """Return list of dependency keys that apply to this test's HTML."""
-    deps = []
-    for key, _label, _sp, detector in DEPENDENCY_DEFS:
-        if detector(html):
-            deps.append(key)
-    return deps
-
+# Import shared detectors (single source of truth)
+sys.path.insert(0, str(SCRIPT_DIR))
+from shared_detectors import classify_dependencies, DEPENDENCY_DEFS
 
 def priority_for_count(count: int) -> str:
     if count > 100:
@@ -120,7 +59,7 @@ def main() -> None:
     for test_id, html in templates.items():
         if test_id not in fail_map:
             continue
-        deps = classify_test(html)
+        deps = classify_dependencies(html)
         if not deps:
             continue
         for d in deps:
