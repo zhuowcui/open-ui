@@ -27,6 +27,41 @@ fn main() {
                 println!("{}", id);
             }
         }
+        Some("debug") => {
+            let test_id = args.get(2).expect("Usage: pixel_compare debug <test_id>");
+            let tests = registry();
+            if let Some((_, builder)) = tests.iter().find(|(id, _)| *id == test_id) {
+                let doc = builder();
+                let root = doc.root();
+                let children: Vec<_> = doc.children(root).collect();
+                println!("Root node has {} children", children.len());
+                for (i, &child) in children.iter().enumerate() {
+                    let style = &doc.node(child).style;
+                    println!("  child[{}]: display={:?} w={:?} h={:?} bg={:?}",
+                        i, style.display, style.width, style.height, style.background_color);
+                    let grandchildren: Vec<_> = doc.children(child).collect();
+                    println!("    {} grandchildren", grandchildren.len());
+                    for (j, &gc) in grandchildren.iter().enumerate().take(3) {
+                        let gs = &doc.node(gc).style;
+                        println!("    gc[{}]: display={:?} float={:?} w={:?} h={:?} bg={:?}",
+                            j, gs.display, gs.float, gs.width, gs.height, gs.background_color);
+                    }
+                }
+                // Also do layout and check fragment
+                let space = openui_layout::ConstraintSpace::for_root(
+                    openui_geometry::LayoutUnit::from_i32(800),
+                    openui_geometry::LayoutUnit::from_i32(600),
+                );
+                let fragment = openui_layout::block_layout(&doc, root, &space);
+                println!("Fragment size: {:?}", fragment.size);
+                println!("Fragment children: {}", fragment.children.len());
+                for (i, child) in fragment.children.iter().enumerate().take(5) {
+                    println!("  frag[{}]: offset={:?} size={:?}", i, child.offset, child.size);
+                }
+            } else {
+                eprintln!("Unknown test ID: {}", test_id);
+            }
+        }
         Some("render") => {
             let test_id = args.get(2).expect("Usage: pixel_compare render <test_id> <output.png>");
             let output = args.get(3).expect("Usage: pixel_compare render <test_id> <output.png>");

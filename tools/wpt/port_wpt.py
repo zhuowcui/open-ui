@@ -1077,6 +1077,14 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
             element_tag = "ElementTag::Div"
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
 
+        # Set display:block for block-level HTML elements (our engine defaults to inline)
+        block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
+                      'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
+                      'details', 'summary', 'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                      'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'hr', 'table'}
+        if node.tag in block_tags and 'display' not in node.styles:
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+
         # Generate style code
         style_lines = generate_style_code(node.styles, var)
         for sl in style_lines:

@@ -12,16 +12,19 @@ use crate::base_doc;
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.node_mut(n3).style.margin_left = Length::percent(-50.0);
@@ -33,16 +36,19 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_001() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.node_mut(n3).style.margin_right = Length::percent(-50.0);
@@ -54,16 +60,19 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_002() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.node_mut(n3).style.padding_left = Length::percent(50.0);
@@ -75,16 +84,19 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_003() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.node_mut(n3).style.padding_right = Length::percent(50.0);
@@ -96,16 +108,19 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_004() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
             doc.node_mut(n3).style.top = Length::px(0.0);
             doc.node_mut(n3).style.left = Length::px(0.0);
@@ -113,9 +128,11 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_005() -> Document {
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.height = Length::percent(100.0);
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);
+                    doc.node_mut(n5).style.display = Display::Block;
                     doc.node_mut(n5).style.height = Length::px(100.0);
                     doc.append_child(n4, n5);
     doc
@@ -125,11 +142,13 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_005() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
@@ -143,9 +162,11 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_006() -> Document {
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.height = Length::percent(100.0);
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);
+                    doc.node_mut(n5).style.display = Display::Block;
                     doc.node_mut(n5).style.height = Length::px(100.0);
                     doc.node_mut(n5).style.width = Length::px(100.0);
                     doc.append_child(n4, n5);
@@ -156,16 +177,19 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_006() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
             doc.node_mut(n3).style.top = Length::px(0.0);
             doc.node_mut(n3).style.left = Length::px(0.0);
@@ -173,9 +197,11 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_007() -> Document {
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.height = Length::percent(100.0);
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);
+                    doc.node_mut(n5).style.display = Display::Block;
                     doc.node_mut(n5).style.height = Length::px(100.0);
                     doc.append_child(n4, n5);
     doc
@@ -185,16 +211,19 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_007() -> Document {
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
             doc.node_mut(n3).style.top = Length::px(0.0);
             doc.node_mut(n3).style.left = Length::px(0.0);
@@ -202,9 +231,11 @@ fn css_sizing_abspos_auto_sizing_fit_content_percentage_008() -> Document {
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.display = Display::Block;
                 doc.node_mut(n4).style.height = Length::percent(100.0);
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);
+                    doc.node_mut(n5).style.display = Display::Block;
                     doc.node_mut(n5).style.height = Length::px(100.0);
                     doc.append_child(n4, n5);
     doc
@@ -216,10 +247,12 @@ fn css_sizing_auto_scrollbar_inside_stf_abspos_ref() -> Document {
     doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
     doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -230,12 +263,15 @@ fn css_sizing_auto_scrollbar_inside_stf_abspos() -> Document {
     doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
     doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.overflow_y = Overflow::Auto;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.append_child(n2, n3);
     doc
 }
@@ -244,11 +280,13 @@ fn css_sizing_auto_scrollbar_inside_stf_abspos() -> Document {
 fn css_sizing_block_size_with_min_or_max_content_2() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -258,11 +296,13 @@ fn css_sizing_block_size_with_min_or_max_content_2() -> Document {
 fn css_sizing_block_size_with_min_or_max_content_3() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -272,12 +312,14 @@ fn css_sizing_block_size_with_min_or_max_content_3() -> Document {
 fn css_sizing_block_size_with_min_or_max_content_6() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.width = Length::px(0.0);
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
@@ -288,12 +330,14 @@ fn css_sizing_block_size_with_min_or_max_content_6() -> Document {
 fn css_sizing_block_size_with_min_or_max_content_7() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
@@ -304,6 +348,7 @@ fn css_sizing_block_size_with_min_or_max_content_7() -> Document {
 fn css_sizing_border_box_and_max_content_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
@@ -319,6 +364,7 @@ fn css_sizing_border_box_and_max_content_001_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(90.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.node_mut(n2).style.padding_top = Length::px(10.0);
@@ -327,6 +373,7 @@ fn css_sizing_border_box_and_max_content_001_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(20.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(50.0);
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -338,6 +385,7 @@ fn css_sizing_border_box_and_max_content_001_ref() -> Document {
 fn css_sizing_border_box_and_max_content_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
@@ -352,6 +400,7 @@ fn css_sizing_border_box_and_max_content_001() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.padding_top = Length::px(10.0);
         doc.node_mut(n2).style.padding_right = Length::px(20.0);
@@ -360,6 +409,7 @@ fn css_sizing_border_box_and_max_content_001() -> Document {
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(50.0);
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -371,6 +421,7 @@ fn css_sizing_border_box_and_max_content_001() -> Document {
 fn css_sizing_border_box_and_max_content_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
@@ -386,6 +437,7 @@ fn css_sizing_border_box_and_max_content_002_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(500.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(500.0);
         doc.node_mut(n2).style.height = Length::px(500.0);
         doc.node_mut(n2).style.background_color = Color::BLUE;
@@ -397,6 +449,7 @@ fn css_sizing_border_box_and_max_content_002_ref() -> Document {
 fn css_sizing_border_box_and_max_content_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
@@ -411,6 +464,7 @@ fn css_sizing_border_box_and_max_content_002() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(500.0);
         doc.node_mut(n2).style.padding_top = Length::px(10.0);
         doc.node_mut(n2).style.padding_right = Length::px(20.0);
@@ -426,6 +480,7 @@ fn css_sizing_border_box_and_max_content_002() -> Document {
 fn css_sizing_border_box_and_max_content_003_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
@@ -441,6 +496,7 @@ fn css_sizing_border_box_and_max_content_003_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(540.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.node_mut(n2).style.padding_top = Length::px(10.0);
         doc.node_mut(n2).style.padding_right = Length::px(20.0);
@@ -448,6 +504,7 @@ fn css_sizing_border_box_and_max_content_003_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(20.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(500.0);
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -459,6 +516,7 @@ fn css_sizing_border_box_and_max_content_003_ref() -> Document {
 fn css_sizing_border_box_and_max_content_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
@@ -473,6 +531,7 @@ fn css_sizing_border_box_and_max_content_003() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.padding_top = Length::px(10.0);
         doc.node_mut(n2).style.padding_right = Length::px(20.0);
         doc.node_mut(n2).style.padding_bottom = Length::px(10.0);
@@ -481,6 +540,7 @@ fn css_sizing_border_box_and_max_content_003() -> Document {
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(500.0);
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -492,6 +552,7 @@ fn css_sizing_border_box_and_max_content_003() -> Document {
 fn css_sizing_box_sizing_border_box_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.border_top_width = 2;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -511,6 +572,7 @@ fn css_sizing_box_sizing_border_box_001_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(140.0);
         doc.node_mut(n2).style.z_index = Some(1);
@@ -529,6 +591,7 @@ fn css_sizing_box_sizing_border_box_001_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(140.0);
         doc.node_mut(n3).style.z_index = Some(1);
@@ -553,6 +616,7 @@ fn css_sizing_box_sizing_border_box_001_ref() -> Document {
 fn css_sizing_box_sizing_border_box_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.border_top_width = 2;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -572,6 +636,7 @@ fn css_sizing_box_sizing_border_box_001() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.width = Length::percent(50.0);
@@ -591,6 +656,7 @@ fn css_sizing_box_sizing_border_box_001() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(50.0);
@@ -616,6 +682,7 @@ fn css_sizing_box_sizing_border_box_001() -> Document {
 fn css_sizing_box_sizing_border_box_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.border_top_width = 2;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -635,6 +702,7 @@ fn css_sizing_box_sizing_border_box_002_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(120.0);
         doc.node_mut(n2).style.z_index = Some(1);
@@ -657,6 +725,7 @@ fn css_sizing_box_sizing_border_box_002_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(10.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(120.0);
         doc.node_mut(n3).style.z_index = Some(1);
@@ -685,6 +754,7 @@ fn css_sizing_box_sizing_border_box_002_ref() -> Document {
 fn css_sizing_box_sizing_border_box_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.border_top_width = 2;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -704,6 +774,7 @@ fn css_sizing_box_sizing_border_box_002() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.width = Length::percent(50.0);
@@ -727,6 +798,7 @@ fn css_sizing_box_sizing_border_box_002() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(10.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(50.0);
@@ -756,6 +828,7 @@ fn css_sizing_box_sizing_border_box_002() -> Document {
 fn css_sizing_box_sizing_border_box_003_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.border_top_width = 2;
@@ -776,6 +849,7 @@ fn css_sizing_box_sizing_border_box_003_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(120.0);
         doc.node_mut(n2).style.height = Length::px(340.0);
@@ -799,6 +873,7 @@ fn css_sizing_box_sizing_border_box_003_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(10.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(120.0);
         doc.node_mut(n3).style.height = Length::px(340.0);
@@ -828,6 +903,7 @@ fn css_sizing_box_sizing_border_box_003_ref() -> Document {
 fn css_sizing_box_sizing_border_box_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.border_top_width = 2;
@@ -848,6 +924,7 @@ fn css_sizing_box_sizing_border_box_003() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.width = Length::percent(50.0);
@@ -872,6 +949,7 @@ fn css_sizing_box_sizing_border_box_003() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(10.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(50.0);
@@ -902,6 +980,7 @@ fn css_sizing_box_sizing_border_box_003() -> Document {
 fn css_sizing_box_sizing_border_box_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.min_width = Length::px(500.0);
     doc.node_mut(n1).style.max_width = Length::px(700.0);
     doc.node_mut(n1).style.min_height = Length::px(70.0);
@@ -924,6 +1003,7 @@ fn css_sizing_box_sizing_border_box_004_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_width = Length::px(240.0);
         doc.node_mut(n2).style.max_width = Length::px(340.0);
@@ -945,6 +1025,7 @@ fn css_sizing_box_sizing_border_box_004_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.min_width = Length::px(240.0);
         doc.node_mut(n3).style.max_width = Length::px(340.0);
@@ -972,6 +1053,7 @@ fn css_sizing_box_sizing_border_box_004_ref() -> Document {
 fn css_sizing_box_sizing_border_box_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.min_width = Length::px(500.0);
     doc.node_mut(n1).style.max_width = Length::px(700.0);
     doc.node_mut(n1).style.min_height = Length::px(70.0);
@@ -994,6 +1076,7 @@ fn css_sizing_box_sizing_border_box_004() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.min_width = Length::px(250.0);
@@ -1016,6 +1099,7 @@ fn css_sizing_box_sizing_border_box_004() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.min_width = Length::px(250.0);
@@ -1044,6 +1128,7 @@ fn css_sizing_box_sizing_border_box_004() -> Document {
 fn css_sizing_box_sizing_content_box_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(110.0);
     doc.node_mut(n1).style.border_top_width = 2;
@@ -1064,6 +1149,7 @@ fn css_sizing_box_sizing_content_box_001_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(150.0);
         doc.node_mut(n2).style.height = Length::px(110.0);
@@ -1071,6 +1157,7 @@ fn css_sizing_box_sizing_content_box_001_ref() -> Document {
         doc.node_mut(n2).style.float = Float::Left;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(150.0);
         doc.node_mut(n3).style.height = Length::px(110.0);
@@ -1084,6 +1171,7 @@ fn css_sizing_box_sizing_content_box_001_ref() -> Document {
 fn css_sizing_box_sizing_content_box_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(110.0);
     doc.node_mut(n1).style.border_top_width = 2;
@@ -1104,6 +1192,7 @@ fn css_sizing_box_sizing_content_box_001() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::percent(50.0);
@@ -1112,6 +1201,7 @@ fn css_sizing_box_sizing_content_box_001() -> Document {
         doc.node_mut(n2).style.float = Float::Left;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n3).style.width = Length::percent(50.0);
@@ -1126,6 +1216,7 @@ fn css_sizing_box_sizing_content_box_001() -> Document {
 fn css_sizing_box_sizing_content_box_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_width = 2;
@@ -1146,6 +1237,7 @@ fn css_sizing_box_sizing_content_box_002_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(140.0);
         doc.node_mut(n2).style.height = Length::px(90.0);
@@ -1157,6 +1249,7 @@ fn css_sizing_box_sizing_content_box_002_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(5.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.width = Length::px(140.0);
         doc.node_mut(n3).style.height = Length::px(90.0);
@@ -1174,6 +1267,7 @@ fn css_sizing_box_sizing_content_box_002_ref() -> Document {
 fn css_sizing_box_sizing_content_box_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_width = 2;
@@ -1194,6 +1288,7 @@ fn css_sizing_box_sizing_content_box_002() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.z_index = Some(1);
@@ -1204,6 +1299,7 @@ fn css_sizing_box_sizing_content_box_002() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(5.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n3).style.z_index = Some(1);
@@ -1220,6 +1316,7 @@ fn css_sizing_box_sizing_content_box_002() -> Document {
 fn css_sizing_box_sizing_content_box_003_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.min_width = Length::px(500.0);
     doc.node_mut(n1).style.max_width = Length::px(700.0);
     doc.node_mut(n1).style.height = Length::px(90.0);
@@ -1241,6 +1338,7 @@ fn css_sizing_box_sizing_content_box_003_ref() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_width = Length::px(250.0);
         doc.node_mut(n2).style.max_width = Length::px(350.0);
@@ -1249,6 +1347,7 @@ fn css_sizing_box_sizing_content_box_003_ref() -> Document {
         doc.node_mut(n2).style.float = Float::Left;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.min_width = Length::px(250.0);
         doc.node_mut(n3).style.max_width = Length::px(350.0);
@@ -1263,6 +1362,7 @@ fn css_sizing_box_sizing_content_box_003_ref() -> Document {
 fn css_sizing_box_sizing_content_box_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.min_width = Length::px(500.0);
     doc.node_mut(n1).style.max_width = Length::px(700.0);
     doc.node_mut(n1).style.height = Length::px(90.0);
@@ -1284,6 +1384,7 @@ fn css_sizing_box_sizing_content_box_003() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::percent(50.0);
@@ -1292,6 +1393,7 @@ fn css_sizing_box_sizing_content_box_003() -> Document {
         doc.node_mut(n2).style.float = Float::Left;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::BLUE;
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n3).style.width = Length::percent(50.0);
@@ -1306,10 +1408,12 @@ fn css_sizing_box_sizing_content_box_003() -> Document {
 fn css_sizing_calc_margins_block() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1323,6 +1427,7 @@ fn css_sizing_calc_margins_flex() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1331,6 +1436,7 @@ fn css_sizing_calc_margins_flex() -> Document {
 fn css_sizing_div_auto_margin_bottom_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1358,6 +1464,7 @@ fn css_sizing_div_auto_margin_bottom_ref() -> Document {
 fn css_sizing_div_auto_margin_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1384,6 +1491,7 @@ fn css_sizing_div_auto_margin_ref() -> Document {
 fn css_sizing_div_auto_margin_top_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1411,6 +1519,7 @@ fn css_sizing_div_auto_margin_top_ref() -> Document {
 fn css_sizing_div_block_size_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.border_top_width = 5;
@@ -1433,6 +1542,7 @@ fn css_sizing_div_block_size_ref() -> Document {
 fn css_sizing_div_fit_content_auto_margin_bottom_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1454,6 +1564,7 @@ fn css_sizing_div_fit_content_auto_margin_bottom_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1462,6 +1573,7 @@ fn css_sizing_div_fit_content_auto_margin_bottom_tentative() -> Document {
 fn css_sizing_div_fit_content_auto_margin_top_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1483,6 +1595,7 @@ fn css_sizing_div_fit_content_auto_margin_top_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1491,6 +1604,7 @@ fn css_sizing_div_fit_content_auto_margin_top_tentative() -> Document {
 fn css_sizing_div_fit_content_auto_margin_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1511,6 +1625,7 @@ fn css_sizing_div_fit_content_auto_margin_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1519,6 +1634,7 @@ fn css_sizing_div_fit_content_auto_margin_tentative() -> Document {
 fn css_sizing_div_fit_content_block_size_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.border_top_width = 5;
@@ -1535,6 +1651,7 @@ fn css_sizing_div_fit_content_block_size_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1543,6 +1660,7 @@ fn css_sizing_div_fit_content_block_size_tentative() -> Document {
 fn css_sizing_div_max_content_auto_margin_bottom_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1564,6 +1682,7 @@ fn css_sizing_div_max_content_auto_margin_bottom_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1572,6 +1691,7 @@ fn css_sizing_div_max_content_auto_margin_bottom_tentative() -> Document {
 fn css_sizing_div_max_content_auto_margin_top_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1593,6 +1713,7 @@ fn css_sizing_div_max_content_auto_margin_top_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1601,6 +1722,7 @@ fn css_sizing_div_max_content_auto_margin_top_tentative() -> Document {
 fn css_sizing_div_max_content_auto_margin_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1621,6 +1743,7 @@ fn css_sizing_div_max_content_auto_margin_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1629,6 +1752,7 @@ fn css_sizing_div_max_content_auto_margin_tentative() -> Document {
 fn css_sizing_div_max_content_block_size_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.border_top_width = 5;
@@ -1645,6 +1769,7 @@ fn css_sizing_div_max_content_block_size_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1653,6 +1778,7 @@ fn css_sizing_div_max_content_block_size_tentative() -> Document {
 fn css_sizing_div_min_content_auto_margin_bottom_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1674,6 +1800,7 @@ fn css_sizing_div_min_content_auto_margin_bottom_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1682,6 +1809,7 @@ fn css_sizing_div_min_content_auto_margin_bottom_tentative() -> Document {
 fn css_sizing_div_min_content_auto_margin_top_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1703,6 +1831,7 @@ fn css_sizing_div_min_content_auto_margin_top_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1711,6 +1840,7 @@ fn css_sizing_div_min_content_auto_margin_top_tentative() -> Document {
 fn css_sizing_div_min_content_auto_margin_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1731,6 +1861,7 @@ fn css_sizing_div_min_content_auto_margin_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1739,6 +1870,7 @@ fn css_sizing_div_min_content_auto_margin_tentative() -> Document {
 fn css_sizing_div_min_content_block_size_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.border_top_width = 5;
@@ -1755,6 +1887,7 @@ fn css_sizing_div_min_content_block_size_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1763,6 +1896,7 @@ fn css_sizing_div_min_content_block_size_tentative() -> Document {
 fn css_sizing_div_top_and_non_auto_margin_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1790,6 +1924,7 @@ fn css_sizing_div_top_and_non_auto_margin_ref() -> Document {
 fn css_sizing_div_top_and_non_auto_margin_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.margin_top = Length::auto();
     doc.node_mut(n1).style.margin_right = Length::auto();
@@ -1812,6 +1947,7 @@ fn css_sizing_div_top_and_non_auto_margin_tentative() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -1820,6 +1956,7 @@ fn css_sizing_div_top_and_non_auto_margin_tentative() -> Document {
 fn css_sizing_fit_content_contribution_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1827,24 +1964,30 @@ fn css_sizing_fit_content_contribution_001() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.float = Float::Left;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.append_child(n3, n4);
                 let n5 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n5).style.display = Display::Block;
                 doc.node_mut(n5).style.float = Float::Left;
                 doc.node_mut(n5).style.width = Length::px(50.0);
                 doc.append_child(n4, n5);
                 let n6 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n6).style.display = Display::Block;
                 doc.node_mut(n6).style.float = Float::Left;
                 doc.node_mut(n6).style.width = Length::px(50.0);
                 doc.append_child(n4, n6);
                 let n7 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n7).style.display = Display::Block;
                 doc.node_mut(n7).style.float = Float::Left;
                 doc.node_mut(n7).style.width = Length::px(50.0);
                 doc.append_child(n4, n7);
@@ -1855,6 +1998,7 @@ fn css_sizing_fit_content_contribution_001() -> Document {
 fn css_sizing_fit_content_length_percentage_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1862,6 +2006,7 @@ fn css_sizing_fit_content_length_percentage_001() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
@@ -1880,6 +2025,7 @@ fn css_sizing_fit_content_length_percentage_001() -> Document {
 fn css_sizing_fit_content_length_percentage_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1887,6 +2033,7 @@ fn css_sizing_fit_content_length_percentage_002() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
@@ -1905,6 +2052,7 @@ fn css_sizing_fit_content_length_percentage_002() -> Document {
 fn css_sizing_fit_content_length_percentage_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1912,9 +2060,11 @@ fn css_sizing_fit_content_length_percentage_004() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n2, n3);
@@ -1933,6 +2083,7 @@ fn css_sizing_fit_content_length_percentage_004() -> Document {
 fn css_sizing_fit_content_length_percentage_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1940,9 +2091,11 @@ fn css_sizing_fit_content_length_percentage_005() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n2, n3);
@@ -1961,6 +2114,7 @@ fn css_sizing_fit_content_length_percentage_005() -> Document {
 fn css_sizing_fit_content_length_percentage_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1968,6 +2122,7 @@ fn css_sizing_fit_content_length_percentage_007() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(10.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -1987,6 +2142,7 @@ fn css_sizing_fit_content_length_percentage_007() -> Document {
 fn css_sizing_fit_content_length_percentage_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -1994,9 +2150,11 @@ fn css_sizing_fit_content_length_percentage_008() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(10.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2016,6 +2174,7 @@ fn css_sizing_fit_content_length_percentage_008() -> Document {
 fn css_sizing_fit_content_length_percentage_009() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -2023,6 +2182,7 @@ fn css_sizing_fit_content_length_percentage_009() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2042,6 +2202,7 @@ fn css_sizing_fit_content_length_percentage_009() -> Document {
 fn css_sizing_fit_content_length_percentage_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -2049,9 +2210,11 @@ fn css_sizing_fit_content_length_percentage_010() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(200.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2071,6 +2234,7 @@ fn css_sizing_fit_content_length_percentage_010() -> Document {
 fn css_sizing_fit_content_length_percentage_011() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -2078,10 +2242,12 @@ fn css_sizing_fit_content_length_percentage_011() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::InlineBlock;
@@ -2092,10 +2258,12 @@ fn css_sizing_fit_content_length_percentage_011() -> Document {
             doc.node_mut(n5).style.width = Length::px(60.0);
             doc.append_child(n3, n5);
     let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.height = Length::px(50.0);
     doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n6);
         let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
         doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Div);
             doc.node_mut(n8).style.display = Display::InlineBlock;
@@ -2112,6 +2280,7 @@ fn css_sizing_fit_content_length_percentage_011() -> Document {
 fn css_sizing_fit_content_length_percentage_012() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -2119,10 +2288,12 @@ fn css_sizing_fit_content_length_percentage_012() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -2134,10 +2305,12 @@ fn css_sizing_fit_content_length_percentage_012() -> Document {
             doc.node_mut(n5).style.width = Length::px(60.0);
             doc.append_child(n3, n5);
     let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.height = Length::px(50.0);
     doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n6);
         let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
         doc.node_mut(n7).style.width = Length::px(50.0);
         doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Div);
@@ -2155,6 +2328,7 @@ fn css_sizing_fit_content_length_percentage_012() -> Document {
 fn css_sizing_fit_content_length_percentage_015() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -2162,10 +2336,12 @@ fn css_sizing_fit_content_length_percentage_015() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -2177,10 +2353,12 @@ fn css_sizing_fit_content_length_percentage_015() -> Document {
             doc.node_mut(n5).style.width = Length::px(60.0);
             doc.append_child(n3, n5);
     let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.height = Length::px(50.0);
     doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n6);
         let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
         doc.node_mut(n7).style.width = Length::px(50.0);
         doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Div);
@@ -2198,10 +2376,12 @@ fn css_sizing_fit_content_length_percentage_015() -> Document {
 fn css_sizing_fit_content_max_inline_size_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -2219,10 +2399,12 @@ fn css_sizing_fit_content_max_inline_size_tentative() -> Document {
 fn css_sizing_fit_content_min_inline_size() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(10.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -2244,17 +2426,21 @@ fn css_sizing_float_clearance_with_margin_collapse_and_fit_content_and_padding_p
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.clear = Clear::Both;
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.append_child(n3, n4);
                 let n5 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n5).style.display = Display::Block;
                 doc.node_mut(n5).style.padding_top = Length::percent(100.0);
                 doc.node_mut(n5).style.margin_bottom = Length::px(100.0);
                 doc.append_child(n4, n5);
@@ -2269,17 +2455,21 @@ fn css_sizing_float_clearance_with_margin_collapse_and_fit_content_and_padding_p
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.clear = Clear::Both;
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.append_child(n3, n4);
                 let n5 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n5).style.display = Display::Block;
                 doc.node_mut(n5).style.padding_top = Length::percent(100.0);
                 doc.node_mut(n5).style.margin_bottom = Length::px(75.0);
                 doc.append_child(n4, n5);
@@ -2294,15 +2484,18 @@ fn css_sizing_float_clearance_with_margin_collapse_and_fit_content_and_padding_p
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.clear = Clear::Both;
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.padding_top = Length::percent(100.0);
             doc.node_mut(n4).style.margin_bottom = Length::px(100.0);
             doc.append_child(n3, n4);
@@ -2317,15 +2510,18 @@ fn css_sizing_float_clearance_with_margin_collapse_and_fit_content_and_padding_p
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.clear = Clear::Both;
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.padding_top = Length::percent(100.0);
             doc.node_mut(n4).style.margin_bottom = Length::px(75.0);
             doc.append_child(n3, n4);
@@ -2336,6 +2532,7 @@ fn css_sizing_float_clearance_with_margin_collapse_and_fit_content_and_padding_p
 fn css_sizing_inline_intrinsic_size_calc_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
@@ -2349,6 +2546,7 @@ fn css_sizing_inline_intrinsic_size_calc_ref() -> Document {
 fn css_sizing_inline_intrinsic_size_calc() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
@@ -2538,11 +2736,13 @@ fn css_sizing_intrinsic_ratio_replaced_box_sizing_ref() -> Document {
 fn css_sizing_margin_collapse_with_indefinite_block_size_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::percent(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2554,10 +2754,12 @@ fn css_sizing_margin_collapse_with_indefinite_block_size_001() -> Document {
 fn css_sizing_margin_collapse_with_indefinite_block_size_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2569,10 +2771,12 @@ fn css_sizing_margin_collapse_with_indefinite_block_size_002() -> Document {
 fn css_sizing_margin_collapse_with_indefinite_block_size_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2584,10 +2788,12 @@ fn css_sizing_margin_collapse_with_indefinite_block_size_003() -> Document {
 fn css_sizing_margin_collapse_with_indefinite_block_size_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2599,10 +2805,12 @@ fn css_sizing_margin_collapse_with_indefinite_block_size_004() -> Document {
 fn css_sizing_margin_collapse_with_indefinite_block_size_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2614,50 +2822,60 @@ fn css_sizing_margin_collapse_with_indefinite_block_size_005() -> Document {
 fn css_sizing_min_content_min_width_000() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(25.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(10.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.color = Color::TRANSPARENT;
             doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.width = Length::px(50.0);
         doc.node_mut(n4).style.height = Length::px(25.0);
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
             doc.node_mut(n5).style.width = Length::px(100.0);
             doc.node_mut(n5).style.height = Length::px(10.0);
             doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n5).style.color = Color::TRANSPARENT;
             doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.width = Length::px(100.0);
     doc.node_mut(n6).style.height = Length::px(50.0);
     doc.node_mut(n6).style.background_color = Color::RED;
     doc.append_child(vp, n6);
         let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
         doc.node_mut(n7).style.width = Length::px(50.0);
         doc.node_mut(n7).style.height = Length::px(25.0);
         doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n8).style.display = Display::Block;
             doc.node_mut(n8).style.width = Length::px(100.0);
             doc.node_mut(n8).style.height = Length::px(10.0);
             doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n8).style.color = Color::TRANSPARENT;
             doc.append_child(n7, n8);
         let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
         doc.node_mut(n9).style.width = Length::px(50.0);
         doc.node_mut(n9).style.height = Length::px(25.0);
         doc.append_child(n6, n9);
             let n10 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n10).style.display = Display::Block;
             doc.node_mut(n10).style.width = Length::px(100.0);
             doc.node_mut(n10).style.height = Length::px(10.0);
             doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2673,6 +2891,7 @@ fn css_sizing_min_content_negative_margin_crash() -> Document {
     doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
     doc.node_mut(vp).style.margin_right = Length::px(-1.0);
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     doc
 }
@@ -2681,6 +2900,7 @@ fn css_sizing_min_content_negative_margin_crash() -> Document {
 fn css_sizing_percentage_width_subpixels_tentative_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::FlowRoot;
@@ -2701,6 +2921,7 @@ fn css_sizing_percentage_width_subpixels_tentative_ref() -> Document {
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::FlowRoot;
@@ -2721,6 +2942,7 @@ fn css_sizing_percentage_width_subpixels_tentative_ref() -> Document {
         doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n9).style.display = Display::Block;
     doc.append_child(vp, n9);
         let n10 = doc.create_node(ElementTag::Div);
         doc.node_mut(n10).style.display = Display::FlowRoot;
@@ -2741,6 +2963,7 @@ fn css_sizing_percentage_width_subpixels_tentative_ref() -> Document {
         doc.node_mut(n12).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n9, n12);
     let n13 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n13).style.display = Display::Block;
     doc.append_child(vp, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::FlowRoot;
@@ -2767,6 +2990,7 @@ fn css_sizing_percentage_width_subpixels_tentative_ref() -> Document {
 fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(0.0);
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2789,6 +3013,7 @@ fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     doc.node_mut(n1).style.margin_left = Length::px(5.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(0.0);
     doc.node_mut(n2).style.height = Length::px(0.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2811,6 +3036,7 @@ fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     doc.node_mut(n2).style.margin_left = Length::px(5.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.width = Length::px(300.0);
     doc.node_mut(n3).style.height = Length::px(150.0);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2833,6 +3059,7 @@ fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     doc.node_mut(n3).style.margin_left = Length::px(5.0);
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.width = Length::px(300.0);
     doc.node_mut(n4).style.height = Length::px(30.0);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2855,6 +3082,7 @@ fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     doc.node_mut(n4).style.margin_left = Length::px(5.0);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.width = Length::px(300.0);
     doc.node_mut(n5).style.height = Length::px(30.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2877,6 +3105,7 @@ fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     doc.node_mut(n5).style.margin_left = Length::px(5.0);
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.width = Length::px(300.0);
     doc.node_mut(n6).style.height = Length::px(30.0);
     doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2899,6 +3128,7 @@ fn css_sizing_svg_intrinsic_size_006_ref() -> Document {
     doc.node_mut(n6).style.margin_left = Length::px(5.0);
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.width = Length::px(300.0);
     doc.node_mut(n7).style.height = Length::px(30.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -2934,12 +3164,14 @@ fn css_sizing_table_child_percentage_height_with_border_box_ref() -> Document {
     doc.node_mut(vp).style.width = Length::percent(100.0);
     doc.node_mut(vp).style.height = Length::percent(100.0);
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.width = Length::percent(100.0);
     doc.node_mut(n1).style.height = Length::percent(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.width = Length::percent(100.0);
         doc.node_mut(n2).style.height = Length::percent(100.0);
@@ -2962,6 +3194,7 @@ fn css_sizing_thin_element_render_ref() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(0.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(1.0);
     doc.node_mut(n1).style.width = Length::percent(100.0);
     doc.node_mut(n1).style.border_top_width = 1;
@@ -2969,9 +3202,11 @@ fn css_sizing_thin_element_render_ref() -> Document {
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(6.5);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.height = Length::px(1.0);
     doc.node_mut(n3).style.width = Length::percent(100.0);
     doc.node_mut(n3).style.background_color = Color::BLACK;
@@ -2992,6 +3227,7 @@ fn css_sizing_thin_element_render() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(0.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(0.25);
     doc.node_mut(n1).style.width = Length::percent(100.0);
     doc.node_mut(n1).style.border_top_width = 0;
@@ -2999,9 +3235,11 @@ fn css_sizing_thin_element_render() -> Document {
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(8.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.height = Length::px(0.25);
     doc.node_mut(n3).style.width = Length::percent(100.0);
     doc.node_mut(n3).style.background_color = Color::BLACK;
@@ -3013,6 +3251,7 @@ fn css_sizing_thin_element_render() -> Document {
 fn css_sizing_whitespace_and_break() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -3029,6 +3268,7 @@ fn css_sizing_whitespace_and_break() -> Document {
 fn css_sizing_stretch_abspos_1() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3036,11 +3276,13 @@ fn css_sizing_stretch_abspos_1() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.position = Position::Absolute;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -3052,6 +3294,7 @@ fn css_sizing_stretch_abspos_1() -> Document {
 fn css_sizing_stretch_abspos_2() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3059,11 +3302,13 @@ fn css_sizing_stretch_abspos_2() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(200.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::percent(100.0);
         doc.node_mut(n3).style.position = Position::Absolute;
         doc.node_mut(n3).style.bottom = Length::px(100.0);
@@ -3076,6 +3321,7 @@ fn css_sizing_stretch_abspos_2() -> Document {
 fn css_sizing_stretch_bfc_next_to_float_1() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3083,10 +3329,12 @@ fn css_sizing_stretch_bfc_next_to_float_1() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.node_mut(n2).style.margin_left = Length::px(-100.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.float = Float::Left;
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
@@ -3103,6 +3351,7 @@ fn css_sizing_stretch_bfc_next_to_float_1() -> Document {
 fn css_sizing_stretch_bfc_next_to_float_2() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3110,10 +3359,12 @@ fn css_sizing_stretch_bfc_next_to_float_2() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(200.0);
     doc.node_mut(n2).style.margin_left = Length::px(-100.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.float = Float::Left;
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.node_mut(n3).style.height = Length::px(75.0);
@@ -3153,22 +3404,26 @@ fn css_sizing_stretch_bfc_next_to_float_2() -> Document {
         doc.node_mut(n6).style.margin_left = Length::px(10.0);
         doc.append_child(n2, n6);
     let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.width = Length::px(250.0);
     doc.node_mut(n7).style.margin_left = Length::px(-150.0);
     doc.append_child(vp, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
         doc.node_mut(n8).style.float = Float::Left;
         doc.node_mut(n8).style.clear = Clear::Left;
         doc.node_mut(n8).style.width = Length::px(100.0);
         doc.node_mut(n8).style.height = Length::px(1.0);
         doc.append_child(n7, n8);
         let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
         doc.node_mut(n9).style.float = Float::Left;
         doc.node_mut(n9).style.clear = Clear::Left;
         doc.node_mut(n9).style.width = Length::px(150.0);
         doc.node_mut(n9).style.height = Length::px(1.0);
         doc.append_child(n7, n9);
         let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
         doc.node_mut(n10).style.float = Float::Left;
         doc.node_mut(n10).style.clear = Clear::Left;
         doc.node_mut(n10).style.width = Length::px(125.0);
@@ -3186,6 +3441,7 @@ fn css_sizing_stretch_bfc_next_to_float_2() -> Document {
 fn css_sizing_stretch_block_height_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3193,6 +3449,7 @@ fn css_sizing_stretch_block_height_006() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
@@ -3202,6 +3459,7 @@ fn css_sizing_stretch_block_height_006() -> Document {
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.float = Float::Left;
         doc.node_mut(n4).style.width = Length::px(50.0);
         doc.node_mut(n4).style.height = Length::px(50.0);
@@ -3213,6 +3471,7 @@ fn css_sizing_stretch_block_height_006() -> Document {
 fn css_sizing_stretch_block_height_009() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3220,9 +3479,11 @@ fn css_sizing_stretch_block_height_009() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(50.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -3234,6 +3495,7 @@ fn css_sizing_stretch_block_height_009() -> Document {
 fn css_sizing_stretch_block_height_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3241,9 +3503,11 @@ fn css_sizing_stretch_block_height_010() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.node_mut(n3).style.height = Length::px(500.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(50.0);
@@ -3256,6 +3520,7 @@ fn css_sizing_stretch_block_height_010() -> Document {
 fn css_sizing_stretch_cache_miss_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -3269,22 +3534,27 @@ fn css_sizing_stretch_cache_miss_002() -> Document {
     doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.flex_basis = Length::px(0.0);
         doc.node_mut(n3).style.flex_grow = 1.0;
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.height = Length::percent(100.0);
             doc.node_mut(n4).style.position = Position::Relative;
             doc.append_child(n3, n4);
                 let n5 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n5).style.display = Display::Block;
                 doc.node_mut(n5).style.position = Position::Absolute;
                 doc.append_child(n4, n5);
                     let n6 = doc.create_node(ElementTag::Div);
+                    doc.node_mut(n6).style.display = Display::Block;
                     doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                     doc.node_mut(n6).style.color = Color::from_rgba8(0, 128, 0, 255);
                     doc.node_mut(n6).style.overflow_y = Overflow::Auto;
                     doc.append_child(n5, n6);
                         let n7 = doc.create_node(ElementTag::Div);
+                        doc.node_mut(n7).style.display = Display::Block;
                         doc.append_child(n6, n7);
     doc
 }
@@ -3293,6 +3563,7 @@ fn css_sizing_stretch_cache_miss_002() -> Document {
 fn css_sizing_stretch_flexbox_stretch_minimum_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.node_mut(n1).style.width = Length::px(200.0);
@@ -3305,6 +3576,7 @@ fn css_sizing_stretch_flexbox_stretch_minimum_001() -> Document {
     doc.node_mut(n2).style.height = Length::px(0.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 100;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
@@ -3325,6 +3597,7 @@ fn css_sizing_stretch_flexbox_stretch_minimum_001() -> Document {
 fn css_sizing_stretch_flexbox_stretch_minimum_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.node_mut(n1).style.width = Length::px(200.0);
@@ -3337,6 +3610,7 @@ fn css_sizing_stretch_flexbox_stretch_minimum_002() -> Document {
     doc.node_mut(n2).style.width = Length::px(0.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 100;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
@@ -3357,9 +3631,11 @@ fn css_sizing_stretch_flexbox_stretch_minimum_002() -> Document {
 fn css_sizing_stretch_min_width_1() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -3379,10 +3655,12 @@ fn css_sizing_stretch_positioned_non_replaced_1() -> Document {
     doc.node_mut(n1).style.margin_left = Length::px(-50.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.margin_left = Length::px(50.0);
         doc.node_mut(n2).style.margin_top = Length::px(50.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.position = Position::Absolute;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.min_width = Length::px(50.0);
@@ -3395,6 +3673,7 @@ fn css_sizing_stretch_positioned_non_replaced_1() -> Document {
 fn css_sizing_aspect_ratio_abspos_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.position = Position::Absolute;
@@ -3406,6 +3685,7 @@ fn css_sizing_aspect_ratio_abspos_001() -> Document {
 fn css_sizing_aspect_ratio_abspos_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.position = Position::Absolute;
@@ -3417,11 +3697,13 @@ fn css_sizing_aspect_ratio_abspos_002() -> Document {
 fn css_sizing_aspect_ratio_abspos_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(500.0);
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.left = Length::px(0.0);
@@ -3436,11 +3718,13 @@ fn css_sizing_aspect_ratio_abspos_003() -> Document {
 fn css_sizing_aspect_ratio_abspos_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(500.0);
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.position = Position::Absolute;
@@ -3456,11 +3740,13 @@ fn css_sizing_aspect_ratio_abspos_005() -> Document {
 fn css_sizing_aspect_ratio_abspos_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(500.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.position = Position::Absolute;
@@ -3476,15 +3762,18 @@ fn css_sizing_aspect_ratio_abspos_006() -> Document {
 fn css_sizing_aspect_ratio_abspos_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -3494,10 +3783,12 @@ fn css_sizing_aspect_ratio_abspos_007() -> Document {
 fn css_sizing_aspect_ratio_abspos_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.max_height = Length::percent(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -3570,10 +3861,12 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
 fn css_sizing_aspect_ratio_abspos_009() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(500.0);
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.node_mut(n2).style.position = Position::Absolute;
@@ -3583,6 +3876,7 @@ fn css_sizing_aspect_ratio_abspos_009() -> Document {
         doc.node_mut(n2).style.bottom = Length::px(0.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.append_child(n1, n3);
     doc
@@ -3592,6 +3886,7 @@ fn css_sizing_aspect_ratio_abspos_009() -> Document {
 fn css_sizing_aspect_ratio_abspos_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.padding_top = Length::px(10.0);
@@ -3608,6 +3903,7 @@ fn css_sizing_aspect_ratio_abspos_010() -> Document {
 fn css_sizing_aspect_ratio_abspos_011() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.padding_top = Length::px(0.0);
@@ -3618,9 +3914,11 @@ fn css_sizing_aspect_ratio_abspos_011() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.height = Length::px(80.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n3).style.width = Length::px(100.0);
     doc.node_mut(n3).style.height = Length::px(20.0);
@@ -3632,11 +3930,13 @@ fn css_sizing_aspect_ratio_abspos_011() -> Document {
 fn css_sizing_aspect_ratio_abspos_012() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -3646,11 +3946,13 @@ fn css_sizing_aspect_ratio_abspos_012() -> Document {
 fn css_sizing_aspect_ratio_abspos_013() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -3660,10 +3962,12 @@ fn css_sizing_aspect_ratio_abspos_013() -> Document {
 fn css_sizing_aspect_ratio_abspos_014() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.max_height = Length::percent(100.0);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
@@ -3677,15 +3981,18 @@ fn css_sizing_aspect_ratio_abspos_014() -> Document {
 fn css_sizing_aspect_ratio_abspos_017() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(200.0);
             doc.append_child(n2, n3);
     doc
@@ -3695,15 +4002,18 @@ fn css_sizing_aspect_ratio_abspos_017() -> Document {
 fn css_sizing_aspect_ratio_abspos_018() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(200.0);
             doc.append_child(n2, n3);
     doc
@@ -3713,11 +4023,13 @@ fn css_sizing_aspect_ratio_abspos_018() -> Document {
 fn css_sizing_aspect_ratio_abspos_019() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(500.0);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.position = Position::Absolute;
@@ -3732,10 +4044,12 @@ fn css_sizing_aspect_ratio_abspos_019() -> Document {
 fn css_sizing_aspect_ratio_abspos_021() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.max_height = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -3747,10 +4061,12 @@ fn css_sizing_aspect_ratio_abspos_021() -> Document {
 fn css_sizing_aspect_ratio_auto_margins_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.margin_left = Length::px(-50.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.margin_top = Length::auto();
         doc.node_mut(n2).style.margin_right = Length::auto();
@@ -3765,6 +4081,7 @@ fn css_sizing_aspect_ratio_auto_margins_001() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -3775,6 +4092,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_001() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -3785,12 +4103,14 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_002() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.padding_left = Length::px(50.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
@@ -3803,11 +4123,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_004() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.node_mut(n1).style.padding_left = Length::px(50.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(50.0);
     doc.node_mut(n2).style.padding_left = Length::px(50.0);
@@ -3819,12 +4141,14 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_005() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.padding_top = Length::px(25.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
@@ -3837,11 +4161,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_006() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(25.0);
     doc.node_mut(n1).style.padding_top = Length::px(25.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.height = Length::px(25.0);
     doc.node_mut(n2).style.padding_top = Length::px(25.0);
@@ -3853,9 +4179,11 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_007() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_008() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
@@ -3865,10 +4193,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_008() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_009() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -3878,15 +4208,18 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_009() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(500.0);
         doc.node_mut(n3).style.background_color = Color::RED;
         doc.append_child(n1, n3);
@@ -3897,15 +4230,18 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_010() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_011() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.overflow_x = Overflow::Auto;
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(500.0);
         doc.node_mut(n3).style.background_color = Color::RED;
         doc.append_child(n1, n3);
@@ -3916,15 +4252,18 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_011() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_012() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
     doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(500.0);
         doc.node_mut(n3).style.background_color = Color::RED;
         doc.append_child(n1, n3);
@@ -3935,10 +4274,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_012() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_013() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.append_child(n1, n2);
     doc
@@ -3948,10 +4289,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_013() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_015() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -3961,10 +4304,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_015() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_016() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.append_child(n1, n2);
     doc
@@ -3974,6 +4319,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_016() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_018() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
@@ -3995,10 +4341,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_018() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_019() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.float = Float::Left;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -4008,9 +4356,11 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_019() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_020() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.max_height = Length::percent(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
@@ -4081,10 +4431,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_020() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_021() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.max_height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
         doc.append_child(n1, n2);
     doc
@@ -4094,13 +4446,16 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_021() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_022() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.min_height = Length::px(200.0);
     doc.node_mut(n1).style.max_width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(300.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n3);
@@ -4111,13 +4466,16 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_022() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_023() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.max_height = Length::px(40.0);
     doc.node_mut(n1).style.min_width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n3);
@@ -4128,6 +4486,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_023() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_025() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::percent(100.0);
     doc.node_mut(n1).style.min_height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -4140,9 +4499,11 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_025() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_026() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.max_height = Length::percent(100.0);
         doc.node_mut(n2).style.padding_bottom = Length::px(20.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -4215,9 +4576,11 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_026() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_027() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.max_height = Length::px(80.0);
         doc.node_mut(n2).style.padding_bottom = Length::px(20.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -4290,6 +4653,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_027() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_029_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
     doc
@@ -4299,9 +4663,11 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_029_crash() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_030() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.append_child(n1, n2);
@@ -4312,21 +4678,25 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_030() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_032() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(300.0);
     doc.node_mut(n1).style.max_height = Length::px(25.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.height = Length::px(10.0);
     doc.node_mut(n2).style.min_height = Length::px(25.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n3).style.height = Length::px(300.0);
     doc.node_mut(n3).style.max_height = Length::px(25.0);
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n4).style.height = Length::px(10.0);
     doc.node_mut(n4).style.min_height = Length::px(25.0);
@@ -4338,11 +4708,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_032() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_033() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.max_width = Length::px(100.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(10.0);
     doc.node_mut(n2).style.min_width = Length::px(100.0);
@@ -4354,6 +4726,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_033() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_034() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(60.0);
     doc.node_mut(n1).style.border_top_width = 10;
@@ -4374,6 +4747,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_034() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(60.0);
         doc.append_child(n1, n2);
     doc
@@ -4383,6 +4757,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_034() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_035() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -4404,6 +4779,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_035() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(60.0);
         doc.append_child(n1, n2);
     doc
@@ -4430,6 +4806,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_036() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_037() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.min_height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -4441,11 +4818,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_037() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_038() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.max_width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
         doc.append_child(n1, n2);
     doc
@@ -4455,11 +4834,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_038() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_039() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.max_height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
     doc
@@ -4469,6 +4850,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_039() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_040() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.max_width = Length::px(100.0);
@@ -4481,6 +4863,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_040() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_041() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.max_height = Length::px(100.0);
@@ -4493,11 +4876,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_041() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_042() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.max_width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -4507,11 +4892,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_042() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_043() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.max_height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -4521,6 +4908,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_043() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_044() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.node_mut(n1).style.min_width = Length::px(100.0);
@@ -4533,6 +4921,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_044() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_045() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.min_height = Length::px(100.0);
@@ -4545,6 +4934,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_045() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_046() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.node_mut(n1).style.min_width = Length::px(100.0);
@@ -4557,6 +4947,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_046() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_047() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.min_height = Length::px(100.0);
@@ -4569,6 +4960,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_047() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_048() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.max_width = Length::px(150.0);
@@ -4581,6 +4973,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_048() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_049() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.max_height = Length::px(150.0);
@@ -4593,6 +4986,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_049() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_050() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
@@ -4600,6 +4994,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_050() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(50.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(90.0);
         doc.append_child(n1, n2);
     doc
@@ -4609,10 +5004,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_050() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_051_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(5.0);
         doc.append_child(n1, n2);
     doc
@@ -4622,6 +5019,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_051_crash() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_052() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4630,9 +5028,11 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_052() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(345.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(400.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -4643,6 +5043,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_052() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_053() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4651,6 +5052,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_053() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(400.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
@@ -4661,6 +5063,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_053() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_054() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
@@ -4669,6 +5072,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_054() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(25.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
@@ -4679,15 +5083,18 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_054() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_055() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.row_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(25.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -4698,12 +5105,15 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_055() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_056() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -4713,13 +5123,16 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_056() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_057_tentative() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::percent(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -4729,6 +5142,7 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_057_tentative() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_058() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -4736,10 +5150,12 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_058() -> Document {
     doc.node_mut(n1).style.z_index = Some(-1);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.max_height = Length::px(100.0);
     doc.node_mut(n2).style.background_color = Color::RED;
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::percent(100.0);
         doc.append_child(n2, n3);
     doc
@@ -4749,12 +5165,14 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_058() -> Document {
 fn css_sizing_aspect_ratio_block_aspect_ratio_with_margin_collapsing_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(25.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(-50.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -4763,11 +5181,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_with_margin_collapsing_001() -> Do
     doc.node_mut(n2).style.margin_left = Length::px(0.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.margin_top = Length::px(50.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(100.0);
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n4).style.width = Length::px(100.0);
     doc.node_mut(n4).style.height = Length::px(25.0);
@@ -4780,12 +5200,14 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_with_margin_collapsing_001() -> Do
 fn css_sizing_aspect_ratio_block_aspect_ratio_with_margin_collapsing_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(25.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(-200.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -4794,11 +5216,13 @@ fn css_sizing_aspect_ratio_block_aspect_ratio_with_margin_collapsing_002() -> Do
     doc.node_mut(n2).style.margin_left = Length::px(0.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.node_mut(n3).style.margin_top = Length::px(50.0);
         doc.node_mut(n3).style.margin_bottom = Length::px(200.0);
         doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n4).style.width = Length::px(100.0);
     doc.node_mut(n4).style.height = Length::px(25.0);
@@ -4813,6 +5237,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_001() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
@@ -4827,11 +5252,13 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_002() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.flex_basis = Length::px(0.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -4845,6 +5272,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_003() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
@@ -4860,11 +5288,13 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_004() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.flex_basis = Length::px(0.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -4877,11 +5307,13 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_005() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
@@ -4900,11 +5332,13 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_007() -> Document {
     doc.node_mut(n1).style.min_height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
@@ -4922,11 +5356,13 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_008() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.height = Length::px(100.0);
@@ -4942,6 +5378,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_009() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
         doc.append_child(n1, n2);
@@ -4956,6 +5393,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_010() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.node_mut(n2).style.min_width = Length::px(0.0);
         doc.node_mut(n2).style.margin_top = Length::auto();
@@ -4964,6 +5402,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_010() -> Document {
         doc.node_mut(n2).style.margin_left = Length::px(0.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.width = Length::px(100.0);
@@ -4979,6 +5418,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_011() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
@@ -4994,6 +5434,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_012() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
         doc.append_child(n1, n2);
@@ -5010,6 +5451,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_013() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
@@ -5027,6 +5469,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_014() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.append_child(n1, n2);
@@ -5040,6 +5483,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_019() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
@@ -5055,6 +5499,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_020() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.min_height = Length::px(0.0);
@@ -5069,6 +5514,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_021() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.width = Length::px(20.0);
@@ -5085,6 +5531,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_022() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(20.0);
@@ -5102,6 +5549,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n1).style.width = Length::auto();
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.padding_top = Length::px(15.0);
         doc.node_mut(n2).style.padding_left = Length::px(10.0);
@@ -5115,6 +5563,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n3).style.width = Length::px(1.0);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n4).style.padding_top = Length::px(15.0);
         doc.node_mut(n4).style.padding_left = Length::px(10.0);
@@ -5127,6 +5576,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n5).style.width = Length::px(1.0);
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
         doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n6).style.padding_top = Length::px(15.0);
         doc.node_mut(n6).style.padding_left = Length::px(10.0);
@@ -5139,6 +5589,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n7).style.width = Length::px(1.0);
     doc.append_child(vp, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
         doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n8).style.padding_top = Length::px(15.0);
         doc.node_mut(n8).style.padding_left = Length::px(10.0);
@@ -5152,6 +5603,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n9).style.width = Length::auto();
     doc.append_child(vp, n9);
         let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
         doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n10).style.padding_top = Length::px(15.0);
         doc.node_mut(n10).style.padding_left = Length::px(10.0);
@@ -5165,6 +5617,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n11).style.width = Length::px(1.0);
     doc.append_child(vp, n11);
         let n12 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n12).style.display = Display::Block;
         doc.node_mut(n12).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n12).style.padding_top = Length::px(15.0);
         doc.node_mut(n12).style.padding_left = Length::px(10.0);
@@ -5177,6 +5630,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n13).style.width = Length::px(1.0);
     doc.append_child(vp, n13);
         let n14 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n14).style.display = Display::Block;
         doc.node_mut(n14).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n14).style.padding_top = Length::px(15.0);
         doc.node_mut(n14).style.padding_left = Length::px(10.0);
@@ -5189,6 +5643,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_025() -> Document {
     doc.node_mut(n15).style.width = Length::px(1.0);
     doc.append_child(vp, n15);
         let n16 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n16).style.display = Display::Block;
         doc.node_mut(n16).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n16).style.padding_top = Length::px(15.0);
         doc.node_mut(n16).style.padding_left = Length::px(10.0);
@@ -5207,11 +5662,13 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_031() -> Document {
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.padding_left = Length::px(100.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.width = Length::px(100.0);
     doc.node_mut(n3).style.height = Length::px(50.0);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -5228,9 +5685,11 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_032() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::percent(100.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -5245,10 +5704,12 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_033() -> Document {
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::percent(100.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
@@ -5262,6 +5723,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_034() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.node_mut(n2).style.min_width = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -5277,6 +5739,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_035() -> Document {
     doc.node_mut(n1).style.width = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.node_mut(n2).style.min_width = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -5291,6 +5754,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_036() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.min_height = Length::px(0.0);
         doc.node_mut(n2).style.min_width = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -5302,6 +5766,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_036() -> Document {
 fn css_sizing_aspect_ratio_flex_aspect_ratio_037() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5312,10 +5777,12 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_037() -> Document {
     doc.node_mut(n2).style.display = Display::Flex;
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.min_height = Length::px(0.0);
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.width = Length::px(100.0);
             doc.append_child(n3, n4);
     doc
@@ -5325,6 +5792,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_037() -> Document {
 fn css_sizing_aspect_ratio_flex_aspect_ratio_038() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
@@ -5336,13 +5804,16 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_038() -> Document {
     doc.node_mut(n2).style.height = Length::px(200.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.min_height = Length::px(100.0);
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.width = Length::px(1.0);
             doc.append_child(n3, n4);
         let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
         doc.append_child(n2, n5);
     doc
 }
@@ -5354,6 +5825,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_039() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.min_height = Length::px(50.0);
         doc.node_mut(n2).style.min_width = Length::px(0.0);
@@ -5362,10 +5834,12 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_039() -> Document {
     doc.node_mut(n3).style.display = Display::Flex;
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n4).style.max_height = Length::px(50.0);
         doc.append_child(n3, n4);
             let n5 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n5).style.display = Display::Block;
             doc.node_mut(n5).style.width = Length::px(200.0);
             doc.append_child(n4, n5);
     doc
@@ -5380,6 +5854,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_040() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::percent(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
@@ -5396,6 +5871,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_041() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::percent(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
@@ -5410,6 +5886,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_043() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -5423,6 +5900,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_044() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.append_child(n1, n2);
     doc
 }
@@ -5436,6 +5914,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_045() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
@@ -5451,6 +5930,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_046() -> Document {
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
@@ -5465,6 +5945,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_047() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.append_child(n1, n2);
@@ -5481,6 +5962,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_048() -> Document {
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::percent(100.0);
         doc.append_child(n1, n2);
@@ -5496,9 +5978,11 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_049() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -5514,9 +5998,11 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_050() -> Document {
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -5531,10 +6017,12 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_051() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -5550,10 +6038,12 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_052() -> Document {
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::percent(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.append_child(n2, n3);
     doc
@@ -5569,6 +6059,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_053() -> Document {
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
@@ -5585,6 +6076,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_054() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
@@ -5608,23 +6100,27 @@ fn css_sizing_aspect_ratio_floats_aspect_ratio_001_ref() -> Document {
     doc.node_mut(n1).style.display = Display::FlowRoot;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.float = Float::Right;
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.float = Float::Left;
         doc.node_mut(n4).style.width = Length::px(160.0);
         doc.node_mut(n4).style.height = Length::px(50.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
         doc.node_mut(n5).style.float = Float::Right;
         doc.node_mut(n5).style.width = Length::px(40.0);
         doc.node_mut(n5).style.height = Length::px(40.0);
@@ -5649,17 +6145,20 @@ fn css_sizing_aspect_ratio_floats_aspect_ratio_001() -> Document {
     doc.node_mut(n1).style.display = Display::FlowRoot;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 255, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.float = Float::Right;
         doc.node_mut(n3).style.width = Length::px(50.0);
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.float = Float::Left;
         doc.node_mut(n4).style.width = Length::px(160.0);
         doc.node_mut(n4).style.height = Length::px(50.0);
@@ -5676,10 +6175,12 @@ fn css_sizing_aspect_ratio_floats_aspect_ratio_001() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -5689,10 +6190,12 @@ fn css_sizing_aspect_ratio_intrinsic_size_001() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -5702,9 +6205,11 @@ fn css_sizing_aspect_ratio_intrinsic_size_002() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(0.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -5716,10 +6221,12 @@ fn css_sizing_aspect_ratio_intrinsic_size_003() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
@@ -5730,13 +6237,16 @@ fn css_sizing_aspect_ratio_intrinsic_size_004() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::percent(100.0);
             doc.append_child(n2, n3);
     doc
@@ -5746,12 +6256,15 @@ fn css_sizing_aspect_ratio_intrinsic_size_006() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.node_mut(n3).style.height = Length::px(100.0);
             doc.append_child(n2, n3);
@@ -5762,35 +6275,43 @@ fn css_sizing_aspect_ratio_intrinsic_size_007() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_010() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(25.0);
     doc.node_mut(n1).style.min_width = Length::auto();
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n3).style.height = Length::px(25.0);
     doc.node_mut(n3).style.width = Length::auto();
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.width = Length::px(150.0);
         doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n5).style.min_height = Length::auto();
     doc.node_mut(n5).style.width = Length::px(100.0);
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
         doc.node_mut(n6).style.height = Length::px(25.0);
         doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n7).style.height = Length::auto();
     doc.node_mut(n7).style.width = Length::px(100.0);
     doc.append_child(vp, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
         doc.node_mut(n8).style.height = Length::px(50.0);
         doc.append_child(n7, n8);
     doc
@@ -5800,10 +6321,12 @@ fn css_sizing_aspect_ratio_intrinsic_size_010() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_011() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.append_child(vp, n2);
@@ -5814,39 +6337,47 @@ fn css_sizing_aspect_ratio_intrinsic_size_011() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_012() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(25.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(25.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.padding_top = Length::px(15.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.height = Length::px(25.0);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.height = Length::px(10.0);
         doc.node_mut(n4).style.min_height = Length::px(25.0);
         doc.node_mut(n4).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n4).style.padding_top = Length::px(15.0);
         doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.height = Length::px(25.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
         doc.node_mut(n6).style.height = Length::px(100.0);
         doc.node_mut(n6).style.max_height = Length::px(25.0);
         doc.node_mut(n6).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n6).style.padding_top = Length::px(15.0);
         doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.height = Length::px(25.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
         doc.node_mut(n8).style.height = Length::px(40.0);
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.padding_top = Length::px(15.0);
@@ -5858,39 +6389,47 @@ fn css_sizing_aspect_ratio_intrinsic_size_012() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_013() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(25.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(25.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n2).style.padding_top = Length::px(25.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.height = Length::px(25.0);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.height = Length::px(10.0);
         doc.node_mut(n4).style.min_height = Length::px(25.0);
         doc.node_mut(n4).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n4).style.padding_top = Length::px(15.0);
         doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.height = Length::px(25.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n6).style.display = Display::Block;
         doc.node_mut(n6).style.height = Length::px(100.0);
         doc.node_mut(n6).style.max_height = Length::px(25.0);
         doc.node_mut(n6).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n6).style.padding_top = Length::px(15.0);
         doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.height = Length::px(25.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n7);
         let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
         doc.node_mut(n8).style.height = Length::px(40.0);
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.padding_top = Length::px(15.0);
@@ -5902,9 +6441,11 @@ fn css_sizing_aspect_ratio_intrinsic_size_013() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_014() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -5914,9 +6455,11 @@ fn css_sizing_aspect_ratio_intrinsic_size_014() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_015() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
     doc
@@ -5926,11 +6469,13 @@ fn css_sizing_aspect_ratio_intrinsic_size_015() -> Document {
 fn css_sizing_aspect_ratio_intrinsic_size_016() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::px(200.0);
         doc.append_child(n1, n2);
     doc
@@ -5940,9 +6485,11 @@ fn css_sizing_aspect_ratio_intrinsic_size_016() -> Document {
 fn css_sizing_aspect_ratio_percentage_resolution_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.append_child(n1, n2);
@@ -5953,13 +6500,16 @@ fn css_sizing_aspect_ratio_percentage_resolution_001() -> Document {
 fn css_sizing_aspect_ratio_percentage_resolution_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(50.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.height = Length::percent(100.0);
         doc.append_child(n1, n3);
@@ -5970,10 +6520,12 @@ fn css_sizing_aspect_ratio_percentage_resolution_004() -> Document {
 fn css_sizing_aspect_ratio_percentage_resolution_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::percent(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
@@ -5984,8 +6536,10 @@ fn css_sizing_aspect_ratio_percentage_resolution_005() -> Document {
 fn css_sizing_aspect_ratio_small_aspect_ratio_crash() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.append_child(vp, n2);
     doc
 }
@@ -5994,10 +6548,12 @@ fn css_sizing_aspect_ratio_small_aspect_ratio_crash() -> Document {
 fn css_sizing_aspect_ratio_zero_or_infinity_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
@@ -6009,10 +6565,12 @@ fn css_sizing_aspect_ratio_zero_or_infinity_001() -> Document {
 fn css_sizing_aspect_ratio_zero_or_infinity_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
@@ -6023,10 +6581,12 @@ fn css_sizing_aspect_ratio_zero_or_infinity_002() -> Document {
 fn css_sizing_aspect_ratio_zero_or_infinity_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
@@ -6038,10 +6598,12 @@ fn css_sizing_aspect_ratio_zero_or_infinity_003() -> Document {
 fn css_sizing_aspect_ratio_zero_or_infinity_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
@@ -6052,10 +6614,12 @@ fn css_sizing_aspect_ratio_zero_or_infinity_004() -> Document {
 fn css_sizing_aspect_ratio_zero_or_infinity_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
@@ -6067,6 +6631,7 @@ fn css_sizing_aspect_ratio_zero_or_infinity_005() -> Document {
 fn css_sizing_responsive_iframe_responsive_iframe_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.border_top_width = 1;
@@ -6089,6 +6654,7 @@ fn css_sizing_responsive_iframe_responsive_iframe_ref() -> Document {
 fn css_sizing_responsive_iframe_responsive_iframe_unsized_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(150.0);
     doc.node_mut(n1).style.border_top_width = 1;
@@ -6115,6 +6681,7 @@ fn css_sizing_responsive_iframe_resources_iframe_contents_unsized() -> Document 
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -6133,6 +6700,7 @@ fn css_sizing_responsive_iframe_resources_iframe_contents() -> Document {
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -6147,6 +6715,7 @@ fn css_sizing_responsive_iframe_resources_iframe_contents() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.height = Length::px(222.0);
     doc.append_child(vp, n1);
@@ -6157,6 +6726,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_001_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_001() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.append_child(vp, n1);
     doc
@@ -6166,6 +6736,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_001() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -6180,6 +6751,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_002_ref() -> Documen
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.width = Length::px(111.0);
         doc.node_mut(n2).style.height = Length::px(222.0);
@@ -6191,6 +6763,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_002_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_002() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -6205,6 +6778,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_002() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.append_child(n1, n2);
     doc
@@ -6214,6 +6788,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_002() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_003_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.node_mut(n1).style.height = Length::px(222.0);
@@ -6225,6 +6800,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_003_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_003() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.append_child(vp, n1);
@@ -6235,6 +6811,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_003() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(111.0);
     doc.node_mut(n1).style.height = Length::px(222.0);
@@ -6246,6 +6823,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_004_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_004() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.append_child(vp, n1);
     doc
@@ -6255,6 +6833,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_004() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_005_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(111.0);
     doc.node_mut(n1).style.height = Length::px(222.0);
@@ -6266,6 +6845,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_005_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_005() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.append_child(vp, n1);
     doc
@@ -6275,6 +6855,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_005() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_006_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.height = Length::px(6.0);
     doc.append_child(vp, n1);
@@ -6285,6 +6866,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_006_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_006() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.append_child(vp, n1);
     doc
@@ -6294,6 +6876,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_006() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_007_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -6308,6 +6891,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_007_ref() -> Documen
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::px(55.0);
@@ -6332,6 +6916,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_007_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_007() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -6346,6 +6931,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_007() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -6373,6 +6959,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_010_ref() -> Documen
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.width = Length::px(55.0);
         doc.node_mut(n2).style.flex_grow = 3.0;
@@ -6391,6 +6978,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_010_ref() -> Documen
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.width = Length::px(66.0);
         doc.node_mut(n3).style.flex_grow = 2.0;
@@ -6409,6 +6997,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_010_ref() -> Documen
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.width = Length::px(77.0);
         doc.node_mut(n4).style.flex_grow = 1.0;
         doc.node_mut(n4).style.border_top_width = 1;
@@ -6438,6 +7027,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_010() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.flex_grow = 3.0;
         doc.node_mut(n2).style.border_top_width = 1;
@@ -6454,6 +7044,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_010() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.flex_grow = 2.0;
         doc.node_mut(n3).style.border_top_width = 1;
@@ -6470,6 +7061,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_010() -> Document {
         doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.flex_grow = 1.0;
         doc.node_mut(n4).style.border_top_width = 1;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
@@ -6497,6 +7089,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_011_ref() -> Documen
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.height = Length::px(11.0);
         doc.node_mut(n2).style.flex_grow = 3.0;
@@ -6515,6 +7108,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_011_ref() -> Documen
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.height = Length::px(22.0);
         doc.node_mut(n3).style.flex_grow = 2.0;
@@ -6533,6 +7127,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_011_ref() -> Documen
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.height = Length::px(33.0);
         doc.node_mut(n4).style.flex_grow = 1.0;
         doc.node_mut(n4).style.border_top_width = 1;
@@ -6562,6 +7157,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_011() -> Document {
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.flex_grow = 3.0;
         doc.node_mut(n2).style.border_top_width = 1;
@@ -6578,6 +7174,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_011() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.flex_grow = 2.0;
         doc.node_mut(n3).style.border_top_width = 1;
@@ -6594,6 +7191,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_011() -> Document {
         doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.flex_grow = 1.0;
         doc.node_mut(n4).style.border_top_width = 1;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
@@ -6667,6 +7265,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016_ref() -> Documen
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.width = Length::px(55.0);
         doc.node_mut(n2).style.flex_grow = 3.0;
@@ -6685,6 +7284,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016_ref() -> Documen
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.width = Length::px(66.0);
         doc.node_mut(n3).style.flex_grow = 2.0;
@@ -6703,6 +7303,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016_ref() -> Documen
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.width = Length::px(77.0);
         doc.node_mut(n4).style.flex_grow = 1.0;
         doc.node_mut(n4).style.border_top_width = 1;
@@ -6732,6 +7333,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.flex_grow = 3.0;
         doc.node_mut(n2).style.border_top_width = 1;
@@ -6748,6 +7350,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.flex_grow = 2.0;
         doc.node_mut(n3).style.border_top_width = 1;
@@ -6764,6 +7367,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016() -> Document {
         doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.flex_grow = 1.0;
         doc.node_mut(n4).style.border_top_width = 1;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
@@ -6785,6 +7389,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_016() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_018_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(55.0);
     doc.node_mut(n1).style.height = Length::px(66.0);
@@ -6796,6 +7401,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_018_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_018() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(55.0);
     doc.node_mut(n1).style.height = Length::px(66.0);
@@ -6807,6 +7413,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_018() -> Document {
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_019_ref() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.width = Length::px(111.0);
     doc.node_mut(n1).style.height = Length::px(222.0);
@@ -6818,6 +7425,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_019_ref() -> Documen
 fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_019() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.append_child(vp, n1);
     doc
@@ -6834,6 +7442,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_021_ref() -> Documen
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.width = Length::px(55.0);
         doc.node_mut(n2).style.height = Length::px(21.0);
@@ -6852,6 +7461,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_021_ref() -> Documen
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.width = Length::px(66.0);
         doc.node_mut(n3).style.height = Length::px(42.0);
@@ -6870,6 +7480,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_021_ref() -> Documen
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.align_self = ItemAlignment::new(ItemPosition::Stretch);
         doc.node_mut(n4).style.width = Length::px(77.0);
         doc.node_mut(n4).style.height = Length::px(63.0);
@@ -6901,6 +7512,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_021() -> Document {
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
         doc.node_mut(n2).style.border_top_width = 1;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
@@ -6916,6 +7528,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_021() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
         doc.node_mut(n3).style.border_top_width = 1;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
@@ -6931,6 +7544,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_021() -> Document {
         doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.align_self = ItemAlignment::new(ItemPosition::Stretch);
         doc.node_mut(n4).style.border_top_width = 1;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
@@ -6957,6 +7571,7 @@ fn css_sizing_contain_intrinsic_size_contain_intrinsic_size_logical_001() -> Doc
     doc.node_mut(n1).style.vertical_align = VerticalAlign::Bottom;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
