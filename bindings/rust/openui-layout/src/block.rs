@@ -1702,8 +1702,8 @@ fn resolve_inline_size(
     }
 
     // Resolve the CSS width property — handle intrinsic sizing keywords
-    let resolved = if style.width.is_auto() {
-        // Auto width: fill available space minus border+padding
+    let resolved = if style.width.is_auto() || style.width.is_stretch() {
+        // Auto/stretch width: fill available space minus border+padding
         if style.box_sizing == BoxSizing::BorderBox {
             available
         } else {
@@ -1725,6 +1725,8 @@ fn resolve_inline_size(
         LayoutUnit::zero() // min-width: auto → 0 for block elements
     } else if style.min_width.is_content_or_intrinsic() {
         resolve_intrinsic_inline(doc, node_id, &style.min_width, available, border_padding)
+    } else if style.min_width.is_stretch() {
+        available
     } else {
         resolve_length(
             &style.min_width,
@@ -1736,6 +1738,8 @@ fn resolve_inline_size(
 
     let max = if style.max_width.is_content_or_intrinsic() {
         resolve_intrinsic_inline(doc, node_id, &style.max_width, available, border_padding)
+    } else if style.max_width.is_stretch() {
+        available
     } else {
         resolve_length(
             &style.max_width,
@@ -1821,6 +1825,17 @@ fn resolve_block_size(
         } else {
             intrinsic_block_size
         }
+    } else if style.height.is_stretch() {
+        // CSS Sizing 4: height: stretch
+        // Resolve to available block size minus margins.
+        let avail = space.available_block_size;
+        if !avail.is_indefinite() {
+            let margin_block = resolve_margin_or_padding(&style.margin_top, space.available_inline_size)
+                + resolve_margin_or_padding(&style.margin_bottom, space.available_inline_size);
+            (avail - margin_block).clamp_negative_to_zero()
+        } else {
+            intrinsic_block_size
+        }
     } else if style.height.is_content_or_intrinsic() {
         // CSS Sizing 3: height: min-content / max-content / fit-content
         // Resolve against the element's own intrinsic block sizes.
@@ -1867,6 +1882,9 @@ fn resolve_block_size(
         return resolved.max_of(resolve_intrinsic_block(
             doc, node_id, &style.min_height, intrinsic_block_size, border_padding_block,
         ));
+    } else if style.min_height.is_stretch() {
+        let avail = space.available_block_size;
+        if !avail.is_indefinite() { avail } else { LayoutUnit::zero() }
     } else {
         resolve_length(
             &style.min_height,
@@ -1893,6 +1911,9 @@ fn resolve_block_size(
             doc, node_id, &style.max_height, intrinsic_block_size, border_padding_block,
         );
         return resolved.min_of(max_bb).max_of(min);
+    } else if style.max_height.is_stretch() {
+        let avail = space.available_block_size;
+        if !avail.is_indefinite() { avail } else { LayoutUnit::max() }
     } else {
         resolve_length(
             &style.max_height,
