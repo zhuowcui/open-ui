@@ -357,13 +357,18 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.position.is_absolutely_positioned() {
+            // CSS Flexbox §4.1: The static position of an abspos child of a
+            // flex container is determined as if the child were the sole flex
+            // item in the container, using the container's alignment properties.
+            let (sp_x, sp_y) = compute_abspos_static_position(
+                doc, child_id, child_style, style,
+                content_width, content_height, is_column,
+                &border, &padding,
+            );
             oof_candidates.push(crate::out_of_flow::OutOfFlowCandidate {
                 node_id: child_id,
                 style: child_style.clone(),
-                static_position: PhysicalOffset::new(
-                    border.left + padding.left,
-                    border.top + padding.top,
-                ),
+                static_position: PhysicalOffset::new(sp_x, sp_y),
                 containing_block_size: cb_size,
                 containing_block_border: border.clone(),
                 containing_block_direction: style.direction,
@@ -1526,6 +1531,95 @@ fn give_items_final_position(
     }
 
     children
+}
+
+/// Compute the static position for an abspos child of a flex container.
+///
+/// Per CSS Flexbox §4.1, the child is positioned as if it were the sole flex
+/// item, applying the container's `justify-content` (main axis) and
+/// `align-items` (cross axis) alignment.
+fn compute_abspos_static_position(
+    doc: &Document,
+    child_id: NodeId,
+    child_style: &openui_style::ComputedStyle,
+    container_style: &openui_style::ComputedStyle,
+    content_width: LayoutUnit,
+    content_height: LayoutUnit,
+    is_column: bool,
+    border: &BoxStrut,
+    padding: &BoxStrut,
+) -> (LayoutUnit, LayoutUnit) {
+    use openui_style::{ContentPosition, ContentDistribution, ItemPosition};
+
+    // Layout the abspos child to determine its hypothetical size.
+    let child_space = crate::constraint_space::ConstraintSpace::for_block_child(
+        content_width,
+        content_height,
+        content_width,
+        content_height,
+        false,
+    );
+    let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+    let child_margins = resolve_margins(child_style, content_width);
+    let child_w = child_fragment.size.width + child_margins.left + child_margins.right;
+    let child_h = child_fragment.size.height + child_margins.top + child_margins.bottom;
+
+    let (main_size, cross_size, child_main, child_cross) = if is_column {
+        (content_height, content_width, child_h, child_w)
+    } else {
+        (content_width, content_height, child_w, child_h)
+    };
+
+    // Main axis: apply justify-content
+    let jc = &container_style.justify_content;
+    let main_free = (main_size - child_main).clamp_negative_to_zero();
+    let main_offset = match jc.position {
+        ContentPosition::Center => main_free / 2,
+        ContentPosition::End | ContentPosition::FlexEnd => {
+            if container_style.flex_direction.is_reverse() {
+                LayoutUnit::zero()
+            } else {
+                main_free
+            }
+        }
+        ContentPosition::Start | ContentPosition::FlexStart | ContentPosition::Normal => {
+            if container_style.flex_direction.is_reverse() {
+                main_free
+            } else {
+                LayoutUnit::zero()
+            }
+        }
+        _ => LayoutUnit::zero(),
+    };
+
+    // Cross axis: resolve align-self (auto → container's align-items)
+    let ai_pos = {
+        let self_pos = child_style.align_self.position;
+        if self_pos == ItemPosition::Auto || self_pos == ItemPosition::Normal {
+            let items_pos = container_style.align_items.position;
+            if items_pos == ItemPosition::Normal {
+                ItemPosition::Stretch
+            } else {
+                items_pos
+            }
+        } else {
+            self_pos
+        }
+    };
+    let cross_free = (cross_size - child_cross).clamp_negative_to_zero();
+    let cross_offset = match ai_pos {
+        ItemPosition::Center => cross_free / 2,
+        ItemPosition::End | ItemPosition::FlexEnd => cross_free,
+        _ => LayoutUnit::zero(),
+    };
+
+    let (x_off, y_off) = if is_column {
+        (cross_offset, main_offset)
+    } else {
+        (main_offset, cross_offset)
+    };
+
+    (border.left + padding.left + x_off, border.top + padding.top + y_off)
 }
 
 #[cfg(test)]
