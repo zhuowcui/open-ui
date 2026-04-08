@@ -929,6 +929,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         space,
         intrinsic_block_size,
         border_padding_block,
+        border_padding_inline,
         content_inline_size,
         is_viewport,
     );
@@ -1756,6 +1757,7 @@ fn resolve_block_size(
     space: &ConstraintSpace,
     intrinsic_block_size: LayoutUnit,
     border_padding_block: LayoutUnit,
+    border_padding_inline: LayoutUnit,
     content_inline_size: LayoutUnit,
     is_viewport: bool,
 ) -> LayoutUnit {
@@ -1777,16 +1779,40 @@ fn resolve_block_size(
         } else if let Some(ref ar) = style.aspect_ratio {
             // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
             // compute height from the resolved width using the aspect ratio.
+            //
+            // Chromium: BoxSizingForAspectRatio() — when `auto <ratio>`, the
+            // aspect ratio always applies to the content-box dimensions,
+            // regardless of the element's box-sizing property. Only a bare
+            // `<ratio>` (without auto) respects the element's box-sizing.
+            let box_sizing_for_ar = if ar.auto_flag {
+                BoxSizing::ContentBox
+            } else {
+                style.box_sizing
+            };
+            // content_inline_size is the CSS width value: for border-box it's
+            // the border-box width, for content-box it's the content width.
+            // We need the value in the coordinate system that matches
+            // box_sizing_for_ar.
+            let ar_inline = if style.box_sizing == BoxSizing::BorderBox
+                && box_sizing_for_ar == BoxSizing::ContentBox
+            {
+                // Convert border-box width to content-box width
+                (content_inline_size - border_padding_inline).clamp_negative_to_zero()
+            } else {
+                content_inline_size
+            };
             let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
-                content_inline_size,
+                ar_inline,
                 openui_geometry::INDEFINITE_SIZE,
                 ar,
                 None,
             );
             if !h.is_indefinite() {
-                if style.box_sizing == BoxSizing::BorderBox {
+                if box_sizing_for_ar == BoxSizing::BorderBox {
+                    // h is border-box height; ensure at least border+padding
                     h.max_of(border_padding_block)
                 } else {
+                    // h is content-box height; add border+padding
                     h + border_padding_block
                 }
             } else {
