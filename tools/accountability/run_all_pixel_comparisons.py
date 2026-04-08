@@ -368,25 +368,34 @@ def render_chrome(html_file, output_png, chrome_bin, chrome_dir):
         "--force-device-scale-factor=1", "--window-size=800,600",
         f"--screenshot={output_png}", f"file://{html_file}"
     ]
-    result = subprocess.run(cmd, env=env, capture_output=True, timeout=30)
-    return result.returncode == 0 and os.path.isfile(output_png)
+    try:
+        result = subprocess.run(cmd, env=env, capture_output=True, timeout=30)
+        return result.returncode == 0 and os.path.isfile(output_png)
+    except subprocess.TimeoutExpired:
+        return False
 
 
 def render_openui(test_id, output_png):
     """Render test pattern with our engine."""
-    result = subprocess.run(
-        [PIXEL_COMPARE, "render", test_id, output_png],
-        capture_output=True, timeout=30
-    )
-    return result.returncode == 0 and os.path.isfile(output_png)
+    try:
+        result = subprocess.run(
+            [PIXEL_COMPARE, "render", test_id, output_png],
+            capture_output=True, timeout=30
+        )
+        return result.returncode == 0 and os.path.isfile(output_png)
+    except subprocess.TimeoutExpired:
+        return False
 
 
 def pixel_diff(img_a, img_b, diff_out, result_out):
     """Compare two images pixel-by-pixel."""
-    result = subprocess.run(
-        ["python3", PIXEL_DIFF, img_a, img_b, diff_out, result_out],
-        capture_output=True, timeout=30
-    )
+    try:
+        result = subprocess.run(
+            ["python3", PIXEL_DIFF, img_a, img_b, diff_out, result_out],
+            capture_output=True, timeout=30
+        )
+    except subprocess.TimeoutExpired:
+        return None
     # pixel_diff.py exits 0 for pass, 1 for fail — both produce valid JSON
     if os.path.isfile(result_out):
         with open(result_out) as f:
@@ -421,6 +430,9 @@ def main():
 
     # Optional prefix filter from command line
     prefix_filter = sys.argv[1] if len(sys.argv) > 1 else None
+    resume_mode = "--resume" in sys.argv
+    if prefix_filter and prefix_filter == "--resume":
+        prefix_filter = sys.argv[2] if len(sys.argv) > 2 else None
     if prefix_filter:
         all_tests = [t for t in all_tests if t.startswith(prefix_filter)]
         print(f"Filtered to {len(all_tests)} tests matching '{prefix_filter}'")
@@ -462,6 +474,25 @@ def main():
         diff_png = os.path.join(test_dir, "diff.png")
         result_json = os.path.join(test_dir, "result.json")
         html_file = os.path.join(test_dir, "test.html")
+
+        # Resume mode: skip tests that already have valid result.json
+        if resume_mode and os.path.isfile(result_json):
+            try:
+                with open(result_json) as f:
+                    existing = json.load(f)
+                status = existing.get("status", "")
+                mismatch = existing.get("mismatch_pct", 100.0)
+                if status in ("pass", "fail"):
+                    if status == "pass":
+                        print(f"  ✅ SKIP  {test_id} (cached)")
+                        passed += 1
+                    else:
+                        print(f"  ❌ SKIP  {test_id} — {existing.get('mismatched_pixels', '?')}px ({mismatch:.2f}%) (cached)")
+                        failed += 1
+                    results_summary.append((test_id, status, mismatch))
+                    continue
+            except (json.JSONDecodeError, KeyError):
+                pass
 
         # Write HTML (strip CDATA wrappers that break CSS in HTML5 mode)
         template = re.sub(r'<!\[CDATA\[|\]\]>', '', HTML_TEMPLATES[test_id])

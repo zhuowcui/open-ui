@@ -14,7 +14,7 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
+use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, LengthType, MinMaxSizes, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
 use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction};
 use openui_dom::{Document, NodeId};
 
@@ -22,6 +22,7 @@ use crate::constraint_space::ConstraintSpace;
 use crate::exclusions::{ExclusionSpace, ClearType};
 use crate::exclusions::float_utils::{UnpositionedFloat, position_float};
 use crate::fragment::{Fragment, FragmentKind};
+use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
 
@@ -53,6 +54,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Blink: ComputeBlockSizeForFragment / ResolveMainInlineLength
 
     let content_inline_size = resolve_inline_size(
+        doc,
+        node_id,
         style,
         space,
         border_padding_inline,
@@ -920,6 +923,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Blink: ComputeBlockSizeForFragment (length_utils.h:314)
     let is_viewport = doc.node(node_id).tag == openui_dom::ElementTag::Viewport;
     let resolved_block_size = resolve_block_size(
+        doc,
+        node_id,
         style,
         space,
         intrinsic_block_size,
@@ -1616,9 +1621,70 @@ pub fn resolve_margins(style: &ComputedStyle, percentage_base: LayoutUnit) -> Bo
     )
 }
 
+// ── Intrinsic sizing keyword helpers ─────────────────────────────────
+
+/// Resolve an intrinsic sizing keyword (min-content, max-content, fit-content)
+/// to a concrete inline (width) value. Returns content-box size.
+fn resolve_intrinsic_inline(
+    doc: &Document,
+    node_id: NodeId,
+    length: &openui_geometry::Length,
+    available: LayoutUnit,
+    border_padding: LayoutUnit,
+) -> LayoutUnit {
+    let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
+    // Intrinsic sizes include border+padding, convert to content-box
+    let min_content = (intrinsic.min - border_padding).clamp_negative_to_zero();
+    let max_content = (intrinsic.max - border_padding).clamp_negative_to_zero();
+    match length.length_type() {
+        LengthType::MinContent => min_content,
+        LengthType::MaxContent => max_content,
+        LengthType::FitContent => {
+            // fit-content = clamp(min-content, available, max-content)
+            let avail = (available - border_padding).clamp_negative_to_zero();
+            avail.clamp(min_content, max_content)
+        }
+        LengthType::Stretch => (available - border_padding).clamp_negative_to_zero(),
+        _ => (available - border_padding).clamp_negative_to_zero(), // fallback
+    }
+}
+
+/// Resolve an intrinsic sizing keyword (min-content, max-content, fit-content)
+/// to a concrete block (height) value. Returns border-box size.
+fn resolve_intrinsic_block(
+    doc: &Document,
+    node_id: NodeId,
+    length: &openui_geometry::Length,
+    intrinsic_block_size: LayoutUnit,
+    border_padding_block: LayoutUnit,
+) -> LayoutUnit {
+    // intrinsic_block_size is already the border-box height from content sizing
+    // For min/max-content in block axis, the intrinsic block size IS the content height
+    let sizes = compute_intrinsic_block_sizes(doc, node_id);
+    match length.length_type() {
+        LengthType::MinContent => {
+            let raw = sizes.min_content_block_size;
+            raw.max_of(border_padding_block)
+        }
+        LengthType::MaxContent => {
+            let raw = sizes.max_content_block_size;
+            raw.max_of(border_padding_block)
+        }
+        LengthType::FitContent => {
+            // fit-content in block axis = clamp(min-content, available, max-content)
+            // For block axis, "available" is the intrinsic block size
+            intrinsic_block_size
+        }
+        LengthType::Stretch => intrinsic_block_size,
+        _ => intrinsic_block_size,
+    }
+}
+
 // ── Helper: resolve inline size (width) ──────────────────────────────
 
 fn resolve_inline_size(
+    doc: &Document,
+    node_id: NodeId,
     style: &ComputedStyle,
     space: &ConstraintSpace,
     border_padding: LayoutUnit,
@@ -1634,7 +1700,7 @@ fn resolve_inline_size(
         };
     }
 
-    // Resolve the CSS width property
+    // Resolve the CSS width property — handle intrinsic sizing keywords
     let resolved = if style.width.is_auto() {
         // Auto width: fill available space minus border+padding
         if style.box_sizing == BoxSizing::BorderBox {
@@ -1642,6 +1708,8 @@ fn resolve_inline_size(
         } else {
             (available - border_padding).clamp_negative_to_zero()
         }
+    } else if style.width.is_content_or_intrinsic() {
+        resolve_intrinsic_inline(doc, node_id, &style.width, available, border_padding)
     } else {
         resolve_length(
             &style.width,
@@ -1654,6 +1722,8 @@ fn resolve_inline_size(
     // Apply min-width / max-width constraints
     let min = if style.min_width.is_auto() {
         LayoutUnit::zero() // min-width: auto → 0 for block elements
+    } else if style.min_width.is_content_or_intrinsic() {
+        resolve_intrinsic_inline(doc, node_id, &style.min_width, available, border_padding)
     } else {
         resolve_length(
             &style.min_width,
@@ -1663,12 +1733,16 @@ fn resolve_inline_size(
         )
     };
 
-    let max = resolve_length(
-        &style.max_width,
-        space.percentage_resolution_inline_size,
-        LayoutUnit::max(), // auto → unconstrained
-        LayoutUnit::max(), // none → unconstrained
-    );
+    let max = if style.max_width.is_content_or_intrinsic() {
+        resolve_intrinsic_inline(doc, node_id, &style.max_width, available, border_padding)
+    } else {
+        resolve_length(
+            &style.max_width,
+            space.percentage_resolution_inline_size,
+            LayoutUnit::max(), // auto → unconstrained
+            LayoutUnit::max(), // none → unconstrained
+        )
+    };
 
     resolved.clamp(min, max)
 }
@@ -1676,6 +1750,8 @@ fn resolve_inline_size(
 // ── Helper: resolve block size (height) ──────────────────────────────
 
 fn resolve_block_size(
+    doc: &Document,
+    node_id: NodeId,
     style: &ComputedStyle,
     space: &ConstraintSpace,
     intrinsic_block_size: LayoutUnit,
@@ -1719,6 +1795,10 @@ fn resolve_block_size(
         } else {
             intrinsic_block_size
         }
+    } else if style.height.is_content_or_intrinsic() {
+        // CSS Sizing 3: height: min-content / max-content / fit-content
+        // Resolve against the element's own intrinsic block sizes.
+        resolve_intrinsic_block(doc, node_id, &style.height, intrinsic_block_size, border_padding_block)
     } else {
         let raw = resolve_length(
             &style.height,
@@ -1739,6 +1819,11 @@ fn resolve_block_size(
     // which is already in border-box space.
     let min_raw = if style.min_height.is_auto() {
         LayoutUnit::zero()
+    } else if style.min_height.is_content_or_intrinsic() {
+        // CSS Sizing 3: min-height: min-content / max-content / fit-content
+        return resolved.max_of(resolve_intrinsic_block(
+            doc, node_id, &style.min_height, intrinsic_block_size, border_padding_block,
+        ));
     } else {
         resolve_length(
             &style.min_height,
@@ -1755,12 +1840,21 @@ fn resolve_block_size(
         min_raw
     };
 
-    let max_raw = resolve_length(
-        &style.max_height,
-        space.percentage_resolution_block_size,
-        LayoutUnit::max(), // auto → unconstrained
-        LayoutUnit::max(), // none → unconstrained
-    );
+    let max_raw = if style.max_height.is_content_or_intrinsic() {
+        // CSS Sizing 3: max-height: min-content / max-content / fit-content
+        // resolve_intrinsic_block returns border-box value
+        let max_bb = resolve_intrinsic_block(
+            doc, node_id, &style.max_height, intrinsic_block_size, border_padding_block,
+        );
+        return resolved.min_of(max_bb).max_of(min);
+    } else {
+        resolve_length(
+            &style.max_height,
+            space.percentage_resolution_block_size,
+            LayoutUnit::max(), // auto → unconstrained
+            LayoutUnit::max(), // none → unconstrained
+        )
+    };
     let max = if max_raw == LayoutUnit::max() {
         max_raw // don't add border_padding to unconstrained
     } else if style.box_sizing == BoxSizing::ContentBox {

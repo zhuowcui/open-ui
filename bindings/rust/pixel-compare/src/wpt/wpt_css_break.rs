@@ -14,6 +14,8 @@ fn css_break_abspos_in_clipped_overflow_print() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.position = Position::Absolute;
+    doc.node_mut(n1).style.overflow_x = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_y = Overflow::Clip;
     doc.node_mut(n1).style.width = Length::px(10.0);
     doc.node_mut(n1).style.height = Length::px(10.0);
     doc.append_child(vp, n1);
@@ -6490,6 +6492,8 @@ fn css_break_clipping_001() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.position = Position::Relative;
+        doc.node_mut(n3).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n3).style.overflow_y = Overflow::Clip;
         doc.node_mut(n3).style.height = Length::px(150.0);
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -6545,6 +6549,8 @@ fn css_break_clipping_002() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.position = Position::Relative;
+        doc.node_mut(n3).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n3).style.overflow_y = Overflow::Clip;
         doc.node_mut(n3).style.height = Length::px(350.0);
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -11999,6 +12005,8 @@ fn css_break_out_of_flow_in_multicolumn_104() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.position = Position::Relative;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
@@ -12049,6 +12057,8 @@ fn css_break_out_of_flow_in_multicolumn_107() -> Document {
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n4).style.overflow_y = Overflow::Clip;
         doc.append_child(n3, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
@@ -12083,6 +12093,7 @@ fn css_break_out_of_flow_in_multicolumn_109() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -12119,6 +12130,8 @@ fn css_break_out_of_flow_in_multicolumn_112() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.position = Position::Relative;
+        doc.node_mut(n3).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n3).style.overflow_y = Overflow::Clip;
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -12160,6 +12173,8 @@ fn css_break_out_of_flow_in_multicolumn_113() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.position = Position::Relative;
+        doc.node_mut(n3).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n3).style.overflow_y = Overflow::Clip;
         doc.node_mut(n3).style.height = Length::px(60.0);
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -12181,6 +12196,8 @@ fn css_break_out_of_flow_in_multicolumn_113() -> Document {
         let n7 = doc.create_node(ElementTag::Div);
         doc.node_mut(n7).style.display = Display::Block;
         doc.node_mut(n7).style.position = Position::Relative;
+        doc.node_mut(n7).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n7).style.overflow_y = Overflow::Clip;
         doc.node_mut(n7).style.height = Length::px(60.0);
         doc.append_child(n1, n7);
             let n8 = doc.create_node(ElementTag::Div);
@@ -12217,6 +12234,7 @@ fn css_break_out_of_flow_in_multicolumn_114() -> Document {
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.overflow_y = Overflow::Clip;
         doc.node_mut(n3).style.position = Position::Relative;
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -12930,6 +12948,7 @@ fn css_break_overflow_clip_003() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(150.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -12960,6 +12979,7 @@ fn css_break_overflow_clip_004() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -12993,6 +13013,8 @@ fn css_break_overflow_clip_005() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(300.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13030,6 +13052,8 @@ fn css_break_overflow_clip_006() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -13068,6 +13092,7 @@ fn css_break_overflow_clip_008() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13100,6 +13125,8 @@ fn css_break_overflow_clip_010() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13141,6 +13168,8 @@ fn css_break_overflow_clip_013() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13181,6 +13210,7 @@ fn css_break_overflow_clip_014() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13223,6 +13253,7 @@ fn css_break_overflow_clip_015() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13270,6 +13301,7 @@ fn css_break_overflow_clip_016() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -13335,6 +13367,7 @@ fn css_break_overflow_clip_017() -> Document {
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.position = Position::Relative;
         doc.node_mut(n4).style.display = Display::FlowRoot;
+        doc.node_mut(n4).style.overflow_y = Overflow::Clip;
         doc.node_mut(n4).style.width = Length::percent(100.0);
         doc.node_mut(n4).style.height = Length::px(90.0);
         doc.node_mut(n4).style.background_color = Color::RED;
@@ -26925,6 +26958,8 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_024() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Flex;
@@ -26971,6 +27006,8 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_025() -> Document {
         doc.node_mut(n2).style.display = Display::Flex;
         doc.node_mut(n2).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n2).style.max_height = Length::px(300.0);
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -28141,6 +28178,8 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_059() -> Document {
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
+                doc.node_mut(n4).style.overflow_x = Overflow::Clip;
+                doc.node_mut(n4).style.overflow_y = Overflow::Clip;
                 doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);

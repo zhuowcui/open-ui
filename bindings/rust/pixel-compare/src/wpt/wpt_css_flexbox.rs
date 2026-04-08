@@ -102528,6 +102528,8 @@ fn css_flexbox_flexbox_object_ref() -> Document {
         doc.node_mut(n2).style.margin_right = Length::px(0.0);
         doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
         doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -105351,6 +105353,8 @@ fn css_flexbox_min_size_auto_overflow_clip() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;

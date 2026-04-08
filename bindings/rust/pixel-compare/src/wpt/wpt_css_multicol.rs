@@ -241,6 +241,7 @@ fn css_multicol_abspos_multicol_in_second_outer_clipped() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -18053,6 +18054,8 @@ fn css_multicol_multicol_width_small_001() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_y = Overflow::Clip;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.color = Color::BLUE;

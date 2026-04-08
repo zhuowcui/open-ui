@@ -223,6 +223,8 @@ def parse_length(value: str) -> str | None:
         return 'Length::px(0.0)'
     if value == 'auto':
         return 'Length::auto()'
+    if value == 'none':
+        return 'Length::none()'
     m = re.match(r'^(-?[\d.]+)px$', value)
     if m:
         return f'Length::px({float(m.group(1))})'
@@ -246,6 +248,8 @@ def parse_length(value: str) -> str | None:
         return 'Length::max_content()'
     if value == 'fit-content':
         return 'Length::fit_content()'
+    if value == 'stretch' or value == '-webkit-fill-available':
+        return 'Length::stretch()'
     # vw/vh — approximate as % of 800x600 viewport
     m = re.match(r'^(-?[\d.]+)vw$', value)
     if m:
@@ -862,6 +866,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         mapping = {
             'visible': 'Overflow::Visible', 'hidden': 'Overflow::Hidden',
             'scroll': 'Overflow::Scroll', 'auto': 'Overflow::Auto',
+            'clip': 'Overflow::Clip',
         }
         if val in mapping:
             return [
@@ -873,6 +878,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         mapping = {
             'visible': 'Overflow::Visible', 'hidden': 'Overflow::Hidden',
             'scroll': 'Overflow::Scroll', 'auto': 'Overflow::Auto',
+            'clip': 'Overflow::Clip',
         }
         if val in mapping:
             rust_prop = prop.replace('-', '_')

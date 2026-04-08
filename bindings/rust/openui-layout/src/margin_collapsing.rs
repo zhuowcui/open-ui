@@ -400,8 +400,11 @@ pub fn establishes_new_bfc_for_collapsing(
         return true;
     }
 
-    // overflow != visible on either axis establishes a new BFC.
-    if overflow_x != Overflow::Visible || overflow_y != Overflow::Visible {
+    // overflow != visible on either axis establishes a new BFC,
+    // EXCEPT overflow:clip which only clips visually without creating a BFC.
+    if (overflow_x != Overflow::Visible && overflow_x != Overflow::Clip)
+        || (overflow_y != Overflow::Visible && overflow_y != Overflow::Clip)
+    {
         return true;
     }
 

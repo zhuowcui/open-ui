@@ -6,7 +6,7 @@
 //! Orchestrates: item collection → line breaking → flexing → alignment → positioning.
 
 use openui_dom::{Document, NodeId};
-use openui_geometry::{BoxStrut, LayoutUnit, MinMaxSizes, PhysicalOffset, PhysicalSize};
+use openui_geometry::{BoxStrut, LayoutUnit, LengthType, MinMaxSizes, PhysicalOffset, PhysicalSize};
 use openui_style::{
     ContentAlignment, ContentDistribution, ContentPosition,
     ItemPosition,
@@ -16,6 +16,7 @@ use openui_geometry::Length;
 use crate::block::{resolve_border, resolve_padding, resolve_margins};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::Fragment;
+use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
 use crate::length_resolver::resolve_length;
 
 use super::alignment::{
@@ -53,7 +54,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
     // ── Resolve container inline size (width for row, used for percentage base) ──
     let container_inline_size = resolve_container_inline_size(
-        style, space, border_padding_inline,
+        doc, node_id, style, space, border_padding_inline,
     );
 
     // Content-box sizes
@@ -234,7 +235,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     );
 
     let total_block_size = resolve_total_block_size(
-        style, space, intrinsic_block_size, border_padding_block,
+        doc, node_id, style, space, intrinsic_block_size, border_padding_block,
     );
 
     // ── Step 6: Apply reversals (Blink line 1265) ────────────────────
@@ -288,12 +289,29 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
 /// Resolve the container's inline size (width for horizontal writing mode).
 fn resolve_container_inline_size(
+    doc: &Document,
+    node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
     border_padding_inline: LayoutUnit,
 ) -> LayoutUnit {
     let resolved = if style.width.is_auto() {
         space.available_inline_size
+    } else if style.width.is_content_or_intrinsic() {
+        // Resolve intrinsic sizing keywords for flex container width
+        let sizes = compute_intrinsic_block_sizes(doc, node_id);
+        let bp = border_padding_inline;
+        match style.width.length_type() {
+            LengthType::MinContent => sizes.min_content_inline_size.max_of(bp),
+            LengthType::MaxContent => sizes.max_content_inline_size.max_of(bp),
+            LengthType::FitContent => {
+                let avail = space.available_inline_size;
+                let min = sizes.min_content_inline_size;
+                let max = sizes.max_content_inline_size;
+                avail.clamp(min, max).max_of(bp)
+            }
+            _ => space.available_inline_size,
+        }
     } else {
         let raw = resolve_length(&style.width, space.percentage_resolution_inline_size, LayoutUnit::zero(), LayoutUnit::zero());
         if style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -304,11 +322,13 @@ fn resolve_container_inline_size(
     };
 
     // Clamp to min/max
-    clamp_inline_size(style, space, resolved, border_padding_inline)
+    clamp_inline_size(doc, node_id, style, space, resolved, border_padding_inline)
 }
 
 /// Clamp inline size to min-width/max-width.
 fn clamp_inline_size(
+    doc: &Document,
+    node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
     size: LayoutUnit,
@@ -317,22 +337,39 @@ fn clamp_inline_size(
     let pct_base = space.percentage_resolution_inline_size;
 
     let min = if !style.min_width.is_auto() {
-        let min_raw = resolve_length(&style.min_width, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
-        if style.box_sizing == openui_style::BoxSizing::BorderBox {
-            min_raw
+        if style.min_width.is_content_or_intrinsic() {
+            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            match style.min_width.length_type() {
+                LengthType::MinContent => sizes.min_content_inline_size,
+                _ => sizes.max_content_inline_size,
+            }
         } else {
-            min_raw + border_padding_inline
+            let min_raw = resolve_length(&style.min_width, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+            if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                min_raw
+            } else {
+                min_raw + border_padding_inline
+            }
         }
     } else {
         LayoutUnit::zero()
     };
 
     let max = if !style.max_width.is_none() {
-        let max_raw = resolve_length(&style.max_width, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
-        if style.box_sizing == openui_style::BoxSizing::BorderBox {
-            max_raw
+        if style.max_width.is_content_or_intrinsic() {
+            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            match style.max_width.length_type() {
+                LengthType::MinContent => sizes.min_content_inline_size,
+                LengthType::MaxContent | LengthType::FitContent => sizes.max_content_inline_size,
+                _ => sizes.max_content_inline_size,
+            }
         } else {
-            max_raw + border_padding_inline
+            let max_raw = resolve_length(&style.max_width, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
+            if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                max_raw
+            } else {
+                max_raw + border_padding_inline
+            }
         }
     } else {
         LayoutUnit::from_i32(33554431) // nearly max
@@ -368,6 +405,8 @@ fn resolve_container_block_size_for_flex(
 
 /// Resolve the total block size of the container.
 fn resolve_total_block_size(
+    doc: &Document,
+    node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
     intrinsic_block_size: LayoutUnit,
@@ -375,6 +414,13 @@ fn resolve_total_block_size(
 ) -> LayoutUnit {
     let resolved = if style.height.is_auto() {
         intrinsic_block_size
+    } else if style.height.is_content_or_intrinsic() {
+        let sizes = compute_intrinsic_block_sizes(doc, node_id);
+        match style.height.length_type() {
+            LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
+            LengthType::MaxContent => sizes.max_content_block_size.max_of(border_padding_block),
+            _ => intrinsic_block_size,
+        }
     } else {
         let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
         if style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -387,23 +433,40 @@ fn resolve_total_block_size(
     // Clamp min/max
     let pct_base = space.percentage_resolution_block_size;
 
-    let min = if !style.min_height.is_auto() && (!pct_base.is_indefinite() || style.min_height.is_fixed()) {
-        let min_raw = resolve_length(&style.min_height, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
-        if style.box_sizing == openui_style::BoxSizing::BorderBox {
-            min_raw
+    let min = if !style.min_height.is_auto() && (!pct_base.is_indefinite() || style.min_height.is_fixed() || style.min_height.is_content_or_intrinsic()) {
+        if style.min_height.is_content_or_intrinsic() {
+            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            match style.min_height.length_type() {
+                LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
+                _ => sizes.max_content_block_size.max_of(border_padding_block),
+            }
         } else {
-            min_raw + border_padding_block
+            let min_raw = resolve_length(&style.min_height, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
+            if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                min_raw
+            } else {
+                min_raw + border_padding_block
+            }
         }
     } else {
         LayoutUnit::zero()
     };
 
-    let max = if !style.max_height.is_none() && (!pct_base.is_indefinite() || style.max_height.is_fixed()) {
-        let max_raw = resolve_length(&style.max_height, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
-        if style.box_sizing == openui_style::BoxSizing::BorderBox {
-            max_raw
+    let max = if !style.max_height.is_none() && (!pct_base.is_indefinite() || style.max_height.is_fixed() || style.max_height.is_content_or_intrinsic()) {
+        if style.max_height.is_content_or_intrinsic() {
+            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            match style.max_height.length_type() {
+                LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
+                LengthType::MaxContent | LengthType::FitContent => sizes.max_content_block_size.max_of(border_padding_block),
+                _ => sizes.max_content_block_size.max_of(border_padding_block),
+            }
         } else {
-            max_raw + border_padding_block
+            let max_raw = resolve_length(&style.max_height, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
+            if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                max_raw
+            } else {
+                max_raw + border_padding_block
+            }
         }
     } else {
         LayoutUnit::from_i32(33554431)
