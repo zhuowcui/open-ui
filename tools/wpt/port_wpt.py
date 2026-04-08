@@ -1833,12 +1833,29 @@ def generate_html_template(html_path: str) -> str:
     """Read an HTML file and extract body content + style blocks for Chrome rendering.
     The template must include <style> blocks so Chrome applies the same CSS rules
     that the Rust code generator parsed and encoded into Document builder code.
+    Handles external <link rel="stylesheet"> by inlining their content.
     """
     with open(html_path, 'r', encoding='utf-8', errors='replace') as f:
         content = f.read()
 
+    html_dir = os.path.dirname(os.path.abspath(html_path))
+
     # Extract <style> blocks from anywhere in the document (head or body)
     style_blocks = re.findall(r'<style[^>]*>.*?</style>', content, re.DOTALL | re.IGNORECASE)
+
+    # Inline external stylesheets referenced by <link rel="stylesheet">
+    for m in re.finditer(r'<link[^>]*rel=["\']?stylesheet["\']?[^>]*>', content, re.IGNORECASE):
+        href_match = re.search(r'href=["\']([^"\']+)["\']', m.group(0))
+        if href_match:
+            href = href_match.group(1)
+            css_path = os.path.join(html_dir, href)
+            if os.path.isfile(css_path):
+                with open(css_path, 'r', encoding='utf-8', errors='replace') as f:
+                    css_text = f.read()
+                # Strip -webkit- prefixed duplicates to keep styles clean
+                css_text = re.sub(r'\s*-webkit-[a-z-]+:\s*[^;]+;\n?', '', css_text)
+                style_blocks.insert(0, f'<style>{css_text}</style>')
+
     style_prefix = '\n'.join(style_blocks)
 
     # Extract body content
