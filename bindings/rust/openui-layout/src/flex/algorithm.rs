@@ -343,9 +343,39 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         node_id,
         PhysicalSize::new(final_inline_size, total_block_size),
     );
-    fragment.padding = padding;
-    fragment.border = border;
+    fragment.padding = padding.clone();
+    fragment.border = border.clone();
     fragment.children = children;
+
+    // ── Lay out out-of-flow (absolute/fixed) children ────────────────
+    // Flex containers establish a containing block for abspos descendants.
+    let content_width = (final_inline_size - border_padding_inline).clamp_negative_to_zero();
+    let content_height = (total_block_size - border_padding_block).clamp_negative_to_zero();
+    let cb_size = PhysicalSize::new(content_width, content_height);
+
+    let mut oof_candidates = Vec::new();
+    for child_id in doc.children(node_id) {
+        let child_style = &doc.node(child_id).style;
+        if child_style.position.is_absolutely_positioned() {
+            oof_candidates.push(crate::out_of_flow::OutOfFlowCandidate {
+                node_id: child_id,
+                style: child_style.clone(),
+                static_position: PhysicalOffset::new(
+                    border.left + padding.left,
+                    border.top + padding.top,
+                ),
+                containing_block_size: cb_size,
+                containing_block_border: border.clone(),
+                containing_block_direction: style.direction,
+                static_position_direction: style.direction,
+            });
+        }
+    }
+    if !oof_candidates.is_empty() {
+        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(doc, &oof_candidates);
+        fragment.children.extend(oof_fragments);
+    }
+
     fragment
 }
 
