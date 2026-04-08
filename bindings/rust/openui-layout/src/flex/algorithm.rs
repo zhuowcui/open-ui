@@ -1681,11 +1681,38 @@ fn give_items_final_position(
                 (final_main, cross_size_for_child)
             };
 
+            // CSS Flexbox §9.8: When a flex item is stretched, its cross size
+            // becomes definite for percentage resolution by its children.
+            // Also, the main size is always definite (set by flex sizing).
+            let item_pct_block = if is_column {
+                // Column: main axis is block. Use main axis content size.
+                (final_main - item.main_axis_border_padding).clamp_negative_to_zero()
+            } else {
+                // Row: main axis is inline, cross is block.
+                // If item is stretched or has definite cross size, use it.
+                if should_stretch || child_percentage_block.is_indefinite() {
+                    // Compute cross-axis border+padding from style
+                    let child_style = &doc.node(item.node_id).style;
+                    let bp_cross = {
+                        let bp = child_style.border_top_width as i32
+                            + child_style.border_bottom_width as i32;
+                        let pad_t = crate::length_resolver::resolve_margin_or_padding(
+                            &child_style.padding_top, child_percentage_inline);
+                        let pad_b = crate::length_resolver::resolve_margin_or_padding(
+                            &child_style.padding_bottom, child_percentage_inline);
+                        LayoutUnit::from_i32(bp) + pad_t + pad_b
+                    };
+                    (cross_size_for_child - bp_cross).clamp_negative_to_zero()
+                } else {
+                    child_percentage_block
+                }
+            };
+
             let mut child_space = ConstraintSpace::for_flex_child(
                 inline_size,
                 block_size,
                 child_percentage_inline,
-                child_percentage_block,
+                item_pct_block,
             );
 
             if is_column {

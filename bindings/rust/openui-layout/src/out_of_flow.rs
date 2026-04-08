@@ -246,6 +246,8 @@ fn layout_out_of_flow_child(
     // (both opposing insets specified with auto height).
     let height_resolved_from_constraints = style.height.is_auto()
         && !style.top.is_auto() && !style.bottom.is_auto();
+    // Height is definite if explicitly specified, stretch, or from constraints.
+    let height_is_definite = !style.height.is_auto() || height_resolved_from_constraints;
 
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();
@@ -254,9 +256,7 @@ fn layout_out_of_flow_child(
     // CSS 2.1 §10.5: When the containing block's height is determined by the
     // constraint equation (top + bottom specified), it IS definite for percentage
     // resolution in descendants — even though style.height is auto.
-    let child_percentage_block_size = if height_resolved_from_constraints {
-        content_height
-    } else if !style.height.is_auto() {
+    let child_percentage_block_size = if height_is_definite {
         content_height
     } else {
         openui_geometry::INDEFINITE_SIZE
@@ -269,7 +269,7 @@ fn layout_out_of_flow_child(
     // When the height is determined by constraints (top+bottom specified, height auto),
     // signal it as fixed so descendants can resolve percentage heights against it.
     // Similarly, when height is explicitly specified, it's a fixed block size.
-    let fixed_block = height_resolved_from_constraints || !style.height.is_auto();
+    let fixed_block = height_is_definite;
     let available_block = if fixed_block { resolved_height } else { content_height };
     let mut child_space = ConstraintSpace::for_block_child(
         resolved_width,
@@ -413,6 +413,7 @@ fn resolve_horizontal(
     // Resolve specified values (auto remains as a sentinel)
     let left_auto = style.left.is_auto();
     let right_auto = style.right.is_auto();
+    let width_stretch = style.width.is_stretch();
     let width_auto = style.width.is_auto();
 
     let left_val = if left_auto { zero } else {
@@ -495,6 +496,16 @@ fn resolve_horizontal(
     // For the remaining cases, treat auto margins as zero
     let ml = if margin_left_auto { zero } else { margin_left_val };
     let mr = if margin_right_auto { zero } else { margin_right_val };
+
+    // CSS Sizing 4: width: stretch fills the available space in the CB.
+    // Auto insets default to 0 (not static position).
+    if width_stretch {
+        let l = if left_auto { zero } else { left_val };
+        let r = if right_auto { zero } else { right_val };
+        let content_width = (cb_width - l - r - ml - mr - border_padding_h).clamp_negative_to_zero();
+        let border_box_width = content_width + border_padding_h;
+        return (l + ml, border_box_width, ml, mr);
+    }
 
     if width_auto && left_auto && right_auto {
         // ── All three auto: use static position, shrink-to-fit for width
@@ -602,6 +613,7 @@ fn resolve_vertical(
 
     let top_auto = style.top.is_auto();
     let bottom_auto = style.bottom.is_auto();
+    let height_stretch = style.height.is_stretch();
     let height_auto = style.height.is_auto();
 
     let top_val = if top_auto { zero } else {
@@ -665,6 +677,15 @@ fn resolve_vertical(
     // For remaining cases, treat auto margins as zero
     let mt = if margin_top_auto { zero } else { margin_top_val };
     let mb = if margin_bottom_auto { zero } else { margin_bottom_val };
+
+    // CSS Sizing 4: height: stretch fills the available space in the CB.
+    if height_stretch {
+        let t = if top_auto { zero } else { top_val };
+        let b = if bottom_auto { zero } else { bottom_val };
+        let content_height = (cb_height - t - b - mt - mb - border_padding_v).clamp_negative_to_zero();
+        let border_box_height = content_height + border_padding_v;
+        return (t + mt, border_box_height, mt, mb);
+    }
 
     if height_auto && top_auto && bottom_auto {
         // All three auto: use static position for top, auto height
