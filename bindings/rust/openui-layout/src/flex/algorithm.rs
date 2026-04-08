@@ -74,7 +74,14 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     // ── Main axis inner size ─────────────────────────────────────────
     let main_axis_inner_size = if is_column {
         // Column: main axis = block, may be indefinite
-        resolve_container_block_size_for_flex(style, space, border_padding_block)
+        let resolved = resolve_container_block_size_for_flex(style, space, border_padding_block);
+        // If resolved to indefinite but parent provided a fixed height, use it for
+        // wrapping decisions (CSS Flexbox §9.2: definite size from containing block)
+        if resolved.is_indefinite() && (space.is_fixed_block_size || space.stretch_block_size) {
+            (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+        } else {
+            resolved
+        }
     } else {
         // Row: main axis = inline
         content_inline_size
@@ -720,7 +727,8 @@ fn resolve_flex_basis(
             let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                 (resolved - main_axis_border_padding).clamp_negative_to_zero()
             } else {
-                resolved
+                // CSS Flexbox §4.2: negative flex-basis clamps to 0
+                resolved.clamp_negative_to_zero()
             };
             return (content, false);
         }
@@ -1212,9 +1220,13 @@ fn give_items_final_position(
         || (align_content.distribution == ContentDistribution::Default
             && align_content.position == ContentPosition::Normal);
     if should_stretch_lines && cross_free_space > LayoutUnit::zero() && lines.len() > 0 {
-        let extra_per_line = LayoutUnit::from_raw(cross_free_space.raw() / lines.len() as i32);
-        for line in lines.iter_mut() {
-            line.line_cross_size = line.line_cross_size + extra_per_line;
+        let n = lines.len() as i32;
+        let extra_per_line = LayoutUnit::from_raw(cross_free_space.raw() / n);
+        let remainder = cross_free_space.raw() % n;
+        for (i, line) in lines.iter_mut().enumerate() {
+            // Distribute remainder pixels to first lines for pixel-perfect accuracy
+            let bonus = if (i as i32) < remainder { LayoutUnit::from_raw(1) } else { LayoutUnit::zero() };
+            line.line_cross_size = line.line_cross_size + extra_per_line + bonus;
         }
     }
 
