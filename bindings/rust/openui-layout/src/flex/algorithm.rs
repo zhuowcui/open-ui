@@ -319,9 +319,29 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     );
 
     // ── Build fragment ───────────────────────────────────────────────
+    // When the container inline size is indefinite (e.g. auto-width flex container
+    // being measured for intrinsic sizing), shrink-wrap to the actual content.
+    // CSS Flexbox §9.2: auto main size → fit-content.
+    let final_inline_size = if container_inline_size.is_indefinite() || container_inline_size < LayoutUnit::zero() {
+        // Compute from actual item sizes: max of all lines' used sizes
+        let max_line_main = flex_lines.iter()
+            .map(|line| line.main_axis_used_size)
+            .fold(LayoutUnit::zero(), |acc, s| acc.max_of(s));
+        let result = if is_column {
+            let max_child_width = children.iter()
+                .map(|c| c.offset.left + c.width())
+                .fold(LayoutUnit::zero(), |acc, w| acc.max_of(w));
+            max_child_width + border.right + padding.right
+        } else {
+            max_line_main + border_padding_inline
+        };
+        result
+    } else {
+        container_inline_size
+    };
     let mut fragment = Fragment::new_box(
         node_id,
-        PhysicalSize::new(container_inline_size, total_block_size),
+        PhysicalSize::new(final_inline_size, total_block_size),
     );
     fragment.padding = padding;
     fragment.border = border;
@@ -338,7 +358,13 @@ fn resolve_container_inline_size(
     border_padding_inline: LayoutUnit,
 ) -> LayoutUnit {
     let resolved = if style.width.is_auto() {
-        space.available_inline_size
+        if space.available_inline_size.is_indefinite() {
+            // Shrink-to-fit: compute max-content inline size from children
+            let sizes = compute_intrinsic_block_sizes(doc, node_id);
+            sizes.max_content_inline_size.max_of(border_padding_inline)
+        } else {
+            space.available_inline_size
+        }
     } else if style.width.is_content_or_intrinsic() {
         // Resolve intrinsic sizing keywords for flex container width
         let sizes = compute_intrinsic_block_sizes(doc, node_id);
