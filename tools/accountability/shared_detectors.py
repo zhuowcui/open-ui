@@ -25,7 +25,7 @@ def has_visible_text(html: str) -> bool:
     stripped = re.sub(r"<!--.*?-->", "", stripped, flags=re.DOTALL)
     for m in re.finditer(r">([^<]+)<", stripped):
         text = m.group(1).strip()
-        if len(text) > 1 and not text.isspace() and text != "{":
+        if text and not text.isspace() and text != "{":
             if re.search(r"[A-Za-z0-9]", text):
                 return True
     return False
