@@ -2074,6 +2074,53 @@ def generate_html_template(html_path: str) -> str:
     # Strip instructional <p> tags (contain "Test passes if")
     body = re.sub(r'<p[^>]*>.*?Test passes.*?</p>', '', body, flags=re.DOTALL | re.IGNORECASE)
 
+    # Strip ALL bare text nodes from the HTML body.  Our Rust layout engine
+    # does not render text (cross-SP dependency), so leaving text in Chrome's
+    # HTML causes a systematic Y-offset mismatch wherever descriptive text
+    # precedes or sits between test elements.  We use an HTML parser to
+    # selectively remove text while preserving element structure.
+    from html.parser import HTMLParser
+    import io
+
+    class TextStripper(HTMLParser):
+        """Remove text nodes from HTML, preserving element structure."""
+        def __init__(self):
+            super().__init__(convert_charrefs=False)
+            self.out = io.StringIO()
+            self.in_style = False
+
+        def handle_starttag(self, tag, attrs):
+            attr_str = ''
+            for k, v in attrs:
+                if v is None:
+                    attr_str += f' {k}'
+                else:
+                    attr_str += f' {k}="{v}"'
+            self.out.write(f'<{tag}{attr_str}>')
+            if tag == 'style':
+                self.in_style = True
+
+        def handle_endtag(self, tag):
+            self.out.write(f'</{tag}>')
+            if tag == 'style':
+                self.in_style = False
+
+        def handle_data(self, data):
+            # Preserve text inside <style> tags (CSS rules)
+            if self.in_style:
+                self.out.write(data)
+            # Drop all other text content
+
+        def handle_entityref(self, name):
+            self.out.write(f'&{name};')
+
+        def handle_charref(self, name):
+            self.out.write(f'&#{name};')
+
+    stripper = TextStripper()
+    stripper.feed(body)
+    body = stripper.out.getvalue()
+
     # Combine: style blocks first, then body content
     template = style_prefix + '\n' + body.strip() if style_prefix else body.strip()
     return template
