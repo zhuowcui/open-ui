@@ -886,20 +886,29 @@ fn resolve_content_based_size(
 
             if !cross_prop.is_auto() && (!cross_pct.is_indefinite() || cross_prop.is_fixed()) {
                 let cross_val = resolve_length(cross_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
-                // Derive main-axis size from cross-axis using aspect-ratio
+                // For border-box, cross_val is the border-box size. We need
+                // content size to apply the ratio, then return content main size.
+                let content_cross = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    let b = resolve_border(child_style);
+                    let p = resolve_padding(child_style, LayoutUnit::zero());
+                    let cross_bp = if is_column {
+                        b.left + b.right + p.left + p.right
+                    } else {
+                        b.top + b.bottom + p.top + p.bottom
+                    };
+                    (cross_val - cross_bp).clamp_negative_to_zero()
+                } else {
+                    cross_val
+                };
+                // Derive main-axis content size from cross-axis content size
                 let main_val = if is_column {
                     // Column: main=block, cross=inline. main = cross * (h/w)
-                    LayoutUnit::from_f32(cross_val.to_f32() * ratio.1 / ratio.0)
+                    LayoutUnit::from_f32(content_cross.to_f32() * ratio.1 / ratio.0)
                 } else {
                     // Row: main=inline, cross=block. main = cross * (w/h)
-                    LayoutUnit::from_f32(cross_val.to_f32() * ratio.0 / ratio.1)
+                    LayoutUnit::from_f32(content_cross.to_f32() * ratio.0 / ratio.1)
                 };
-                let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    (main_val - main_axis_border_padding).clamp_negative_to_zero()
-                } else {
-                    main_val
-                };
-                return content;
+                return main_val;
             }
 
             // CSS Flexbox §9.2 step 3(B): If cross-size is auto but the item

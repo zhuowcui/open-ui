@@ -269,7 +269,7 @@ pub fn layout_columns(
 
     let column_height = match algo.column_fill {
         ColumnFill::Balance | ColumnFill::BalanceAll => {
-            balance_columns(child_block_sizes, resolved.count, available_block_size)
+            balance_columns(child_block_sizes, &vec![false; child_block_sizes.len()], resolved.count, available_block_size)
         }
         ColumnFill::Auto => {
             if available_block_size.raw() > 0 && available_block_size.raw() < i32::MAX / 2 {
@@ -384,6 +384,7 @@ fn make_column_fragment(
 /// Returns the balanced column height.
 pub fn balance_columns(
     child_block_sizes: &[LayoutUnit],
+    avoid_break_inside: &[bool],
     column_count: u32,
     max_height: LayoutUnit,
 ) -> LayoutUnit {
@@ -394,9 +395,18 @@ pub fn balance_columns(
 
     let total_raw: i64 = child_block_sizes.iter().map(|s| s.raw() as i64).sum();
 
+    // The minimum column height must accommodate any unsplittable child.
+    let max_unsplittable = child_block_sizes.iter().zip(avoid_break_inside.iter())
+        .filter(|(_, &avoid)| avoid)
+        .map(|(s, _)| s.raw() as i64)
+        .max()
+        .unwrap_or(0);
+
     // With fragmentation, children can be split at column boundaries.
-    // The minimum possible column height is ceil(total / count).
-    let min_raw = ((total_raw + column_count as i64 - 1) / column_count as i64) as i32;
+    // The minimum possible column height is ceil(total / count),
+    // but also at least as tall as the tallest unsplittable child.
+    let min_raw = ((total_raw + column_count as i64 - 1) / column_count as i64)
+        .max(max_unsplittable) as i32;
 
     let mut lo = min_raw;
     let mut hi = if max_height.raw() > 0 && max_height.raw() < i32::MAX / 2 {
@@ -416,7 +426,7 @@ pub fn balance_columns(
             break;
         }
         let mid = lo + (hi - lo) / 2;
-        let needed = columns_needed_for_height(child_block_sizes, LayoutUnit::from_raw(mid));
+        let needed = columns_needed_for_height(child_block_sizes, avoid_break_inside, LayoutUnit::from_raw(mid));
         if needed <= column_count {
             hi = mid;
         } else {
@@ -427,23 +437,38 @@ pub fn balance_columns(
     LayoutUnit::from_raw(lo)
 }
 
-/// Count how many columns are needed to fit all children at the given height,
-/// allowing children to be fragmented (split) at column boundaries.
-fn columns_needed_for_height(child_block_sizes: &[LayoutUnit], height: LayoutUnit) -> u32 {
+/// Count how many columns are needed to fit all children at the given height.
+/// Children with break-inside: avoid are treated as unsplittable units.
+fn columns_needed_for_height(child_block_sizes: &[LayoutUnit], avoid_break_inside: &[bool], height: LayoutUnit) -> u32 {
     if height.raw() <= 0 {
         return u32::MAX;
     }
     let mut columns = 1u32;
     let mut remaining = height;
 
-    for &child_size in child_block_sizes {
-        let mut left = child_size;
-        while left.raw() > remaining.raw() {
-            left = left - remaining;
-            columns += 1;
-            remaining = height;
+    for (i, &child_size) in child_block_sizes.iter().enumerate() {
+        let avoid = avoid_break_inside.get(i).copied().unwrap_or(false);
+        if avoid {
+            // Child cannot be split. If it doesn't fit in remaining space
+            // (and there's already content), move to next column.
+            if child_size.raw() > remaining.raw() && remaining < height {
+                columns += 1;
+                remaining = height;
+            }
+            // Place the whole child (even if it overflows the column)
+            remaining = remaining - child_size;
+            if remaining.raw() < 0 {
+                remaining = LayoutUnit::zero();
+            }
+        } else {
+            let mut left = child_size;
+            while left.raw() > remaining.raw() {
+                left = left - remaining;
+                columns += 1;
+                remaining = height;
+            }
+            remaining = remaining - left;
         }
-        remaining = remaining - left;
     }
 
     columns
@@ -537,7 +562,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             LayoutUnit::from_i32(100),
         ];
-        let h = balance_columns(&children, 3, LayoutUnit::from_i32(1000));
+        let h = balance_columns(&children, &vec![false; 3], 3, LayoutUnit::from_i32(1000));
         assert_eq!(h, LayoutUnit::from_i32(100));
     }
 
@@ -549,7 +574,7 @@ mod tests {
             LayoutUnit::from_i32(60),
             LayoutUnit::from_i32(40),
         ];
-        let h = balance_columns(&children, 2, LayoutUnit::from_i32(1000));
+        let h = balance_columns(&children, &vec![false; 4], 2, LayoutUnit::from_i32(1000));
         // Total = 230, 2 cols. With fragmentation:
         // col1 = 50 + 65 (first part of 80) = 115
         // col2 = 15 (remainder of 80) + 60 + 40 = 115

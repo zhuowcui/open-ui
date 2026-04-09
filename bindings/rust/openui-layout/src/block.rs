@@ -2525,6 +2525,7 @@ fn layout_multicol(
         if group_end > group_start {
             let mut col_fragments: Vec<Fragment> = Vec::new();
             let mut col_block_sizes: Vec<LayoutUnit> = Vec::new();
+            let mut col_avoid_break: Vec<bool> = Vec::new();
 
             for info in &children_info[group_start..group_end] {
                 let child_space = ConstraintSpace::for_block_child(
@@ -2536,20 +2537,43 @@ fn layout_multicol(
                 );
                 let child_frag = block_layout(doc, info.id, &child_space);
                 col_block_sizes.push(child_frag.size.height);
+                col_avoid_break.push(doc.node(info.id).style.break_inside.is_avoid());
                 col_fragments.push(child_frag);
             }
 
             // Determine column height for this group.
             let column_height = match algo.column_fill {
                 ColumnFill::Balance | ColumnFill::BalanceAll => {
-                    balance_columns(&col_block_sizes, resolved.count, space.available_block_size)
+                    balance_columns(&col_block_sizes, &col_avoid_break, resolved.count, space.available_block_size)
                 }
                 ColumnFill::Auto => {
                     if !style.height.is_auto() {
                         child_percentage_block_size
                     } else {
-                        let total: i32 = col_block_sizes.iter().map(|s| s.raw()).sum();
-                        LayoutUnit::from_raw(total)
+                        // column-fill: auto with no explicit height — use max-height if set,
+                        // otherwise fall back to summing all content (single tall column).
+                        let max_h = if !style.max_height.is_none() && !style.max_height.is_auto() {
+                            let raw = resolve_length(
+                                &style.max_height,
+                                space.percentage_resolution_block_size,
+                                LayoutUnit::zero(),
+                                LayoutUnit::zero(),
+                            );
+                            let content_h = if style.box_sizing == BoxSizing::BorderBox {
+                                (raw - border_padding_block).clamp_negative_to_zero()
+                            } else {
+                                raw
+                            };
+                            if content_h.raw() > 0 { Some(content_h) } else { None }
+                        } else {
+                            None
+                        };
+                        if let Some(mh) = max_h {
+                            mh
+                        } else {
+                            let total: i32 = col_block_sizes.iter().map(|s| s.raw()).sum();
+                            LayoutUnit::from_raw(total)
+                        }
                     }
                 }
             };
@@ -2580,8 +2604,7 @@ fn layout_multicol(
                 // If the child doesn't fit but would fit in a fresh column,
                 // and break-inside is avoid, move to the next column.
                 let avoid_break_inside = child_style.break_inside.is_avoid();
-                if !forced_break
-                    && avoid_break_inside
+                if avoid_break_inside
                     && col_remaining.raw() < child_height.raw()
                     && col_block_offset > LayoutUnit::zero()
                     && child_height.raw() <= column_height.raw()

@@ -1,7 +1,7 @@
 //! SP12 G2 — Multi-column layout integration tests.
 //!
 //! Tests for `resolve_column_count_and_width()`, `compute_column_positions()`,
-//! `balance_columns()`, `layout_columns()`, column rule positioning, and
+//! `balance_columns(, &vec![false; .len()], `, `layout_columns()`, column rule positioning, and
 //! edge cases per CSS Multi-column Layout Module Level 1.
 
 use openui_geometry::LayoutUnit;
@@ -134,7 +134,7 @@ fn column_positions_with_gap() {
 #[test]
 fn balance_equal_content() {
     let children = vec![lu(100), lu(100), lu(100)];
-    let h = balance_columns(&children, 3, lu(1000));
+    let h = balance_columns(&children, &vec![false; children.len()], 3, lu(1000));
     assert_eq!(h, lu(100));
 }
 
@@ -144,7 +144,7 @@ fn balance_equal_content() {
 fn balance_uneven_content() {
     // Total = 230. 2 columns. With fragmentation-aware balance: 115.
     let children = vec![lu(50), lu(80), lu(60), lu(40)];
-    let h = balance_columns(&children, 2, lu(1000));
+    let h = balance_columns(&children, &vec![false; children.len()], 2, lu(1000));
     assert_eq!(h, lu(115));
 }
 
@@ -234,13 +234,13 @@ fn column_rule_positions() {
 fn balance_single_column() {
     // column_count=1: should return total height.
     let children = vec![lu(100), lu(200)];
-    let h = balance_columns(&children, 1, lu(1000));
+    let h = balance_columns(&children, &vec![false; children.len()], 1, lu(1000));
     assert_eq!(h, lu(300));
 }
 
 #[test]
 fn balance_empty_content() {
-    let h = balance_columns(&[], 3, lu(1000));
+    let h = balance_columns(&[], &vec![false; 1], 3, lu(1000));
     assert_eq!(h, lu(0));
 }
 
