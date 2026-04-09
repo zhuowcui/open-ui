@@ -1,0 +1,17 @@
+{
+  "image_a_size": [
+    800,
+    600
+  ],
+  "image_b_size": [
+    800,
+    600
+  ],
+  "size_match": true,
+  "total_pixels": 471000,
+  "mismatched_pixels": 12775,
+  "mismatch_pct": 2.712314,
+  "max_channel_diff": 178,
+  "avg_channel_diff": 1.5056,
+  "status": "fail"
+}
