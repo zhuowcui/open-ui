@@ -1120,6 +1120,24 @@ fn resolve_main_axis_min_max(
         }
     } else if min_prop.is_none() || *min_prop == Length::zero() {
         LayoutUnit::zero()
+    } else if min_prop.is_content_or_intrinsic() {
+        // CSS Sizing 3: min-width/min-height: min-content/max-content
+        // Resolve via intrinsic sizing in the main axis.
+        if is_column {
+            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+            let val = match min_prop.length_type() {
+                LengthType::MinContent => intrinsic.min_content_block_size,
+                _ => intrinsic.max_content_block_size,
+            };
+            (val - main_axis_border_padding).clamp_negative_to_zero()
+        } else {
+            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+            let val = match min_prop.length_type() {
+                LengthType::MinContent => min_max.min,
+                _ => min_max.max,
+            };
+            (val - main_axis_border_padding).clamp_negative_to_zero()
+        }
     } else {
         let resolved = resolve_length(min_prop, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
         if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -1132,6 +1150,23 @@ fn resolve_main_axis_min_max(
     // ── Resolve max ──────────────────────────────────────────────────
     let max = if max_prop.is_none() {
         LayoutUnit::from_i32(33554431) // ~LayoutUnit::Max()
+    } else if max_prop.is_content_or_intrinsic() {
+        // CSS Sizing 3: max-width/max-height: min-content/max-content
+        if is_column {
+            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+            let val = match max_prop.length_type() {
+                LengthType::MinContent => intrinsic.min_content_block_size,
+                _ => intrinsic.max_content_block_size,
+            };
+            (val - main_axis_border_padding).clamp_negative_to_zero()
+        } else {
+            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+            let val = match max_prop.length_type() {
+                LengthType::MinContent => min_max.min,
+                _ => min_max.max,
+            };
+            (val - main_axis_border_padding).clamp_negative_to_zero()
+        }
     } else if !pct_base.is_indefinite() || max_prop.is_fixed() {
         let resolved = resolve_length(max_prop, pct_base, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
         if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
