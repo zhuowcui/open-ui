@@ -96,7 +96,7 @@ fn layout_out_of_flow_child(
     // We need to know the height BEFORE resolving the horizontal axis.
     let ar_width_from_height = if style.width.is_auto() && style.aspect_ratio.is_some() {
         // Height is definite if explicitly specified, or if both top+bottom are set.
-        let definite_height = if !style.height.is_auto() {
+        let definite_height = if !style.height.is_auto() && !style.height.is_fit_content() {
             let raw = resolve_length(&style.height, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
             let content_h = if style.box_sizing == BoxSizing::BorderBox {
                 (raw - border_padding_v).clamp_negative_to_zero()
@@ -246,8 +246,8 @@ fn layout_out_of_flow_child(
     // (both opposing insets specified with auto height).
     let height_resolved_from_constraints = style.height.is_auto()
         && !style.top.is_auto() && !style.bottom.is_auto();
-    // Height is definite if explicitly specified, stretch, or from constraints.
-    let height_is_definite = !style.height.is_auto() || height_resolved_from_constraints;
+    // Height is definite if explicitly specified (not auto/fit-content/intrinsic), stretch, or from constraints.
+    let height_is_definite = (!style.height.is_auto() && !style.height.is_content_or_intrinsic()) || height_resolved_from_constraints;
 
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();
@@ -291,7 +291,7 @@ fn layout_out_of_flow_child(
 
     // CSS 2.1 §10.7: For auto-height content-sized abspos, the content height
     // must still be clamped by min-height / max-height constraints.
-    let final_height = if style.height.is_auto() && !height_resolved_from_constraints {
+    let final_height = if (style.height.is_auto() || style.height.is_fit_content()) && !height_resolved_from_constraints {
         let content_height = child_fragment.size.height;
         apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding, height_from_ar)
     } else {
@@ -305,7 +305,7 @@ fn layout_out_of_flow_child(
     // will produce a fragment with height == final_height, making the
     // comparison meaningless afterward.
     let original_unclamped = child_fragment.size.height;
-    if style.height.is_auto() && !height_resolved_from_constraints {
+    if (style.height.is_auto() || style.height.is_fit_content()) && !height_resolved_from_constraints {
         if final_height != original_unclamped {
             let clamped_content = (final_height - border_padding_v).clamp_negative_to_zero();
             let mut relayout_space = ConstraintSpace::for_block_child(
@@ -324,7 +324,7 @@ fn layout_out_of_flow_child(
     // When the auto-height was clamped by min/max, re-solve the vertical
     // constraint equation to correctly recompute auto margins and insets.
     let (resolved_top, resolved_margin_top, resolved_margin_bottom) =
-        if style.height.is_auto() && !height_resolved_from_constraints {
+        if (style.height.is_auto() || style.height.is_fit_content()) && !height_resolved_from_constraints {
             if final_height != original_unclamped {
                 let (t, _h, mt, mb) = resolve_vertical_with_known_height(
                     style, cb_width, cb_height, static_top, &border, &padding, final_height,
@@ -345,7 +345,7 @@ fn layout_out_of_flow_child(
     // vertical constraint equation has a top:auto + bottom:specified pattern.
     // Note: if min/max clamped the auto-height, resolved_top was already
     // re-solved above via resolve_vertical_with_known_height.
-    let final_top = if style.height.is_auto() && !height_resolved_from_constraints
+    let final_top = if (style.height.is_auto() || style.height.is_fit_content()) && !height_resolved_from_constraints
         && final_height == child_fragment.size.height  // was NOT clamped by min/max
     {
         if style.top.is_auto() && !style.bottom.is_auto() {
@@ -414,7 +414,8 @@ fn resolve_horizontal(
     let left_auto = style.left.is_auto();
     let right_auto = style.right.is_auto();
     let width_stretch = style.width.is_stretch();
-    let width_auto = style.width.is_auto();
+    // CSS Sizing 3 §4.1: fit-content for OOF width uses shrink-to-fit, same as auto.
+    let width_auto = style.width.is_auto() || style.width.is_fit_content();
 
     let left_val = if left_auto { zero } else {
         resolve_length(&style.left, cb_width, zero, zero)
@@ -614,7 +615,8 @@ fn resolve_vertical(
     let top_auto = style.top.is_auto();
     let bottom_auto = style.bottom.is_auto();
     let height_stretch = style.height.is_stretch();
-    let height_auto = style.height.is_auto();
+    // CSS Sizing 3 §4.1: fit-content for OOF height is content-sized, same as auto.
+    let height_auto = style.height.is_auto() || style.height.is_fit_content();
 
     let top_val = if top_auto { zero } else {
         resolve_length(&style.top, cb_height, zero, zero)

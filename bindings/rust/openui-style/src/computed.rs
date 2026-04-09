@@ -785,7 +785,10 @@ impl ComputedStyle {
     /// container (overflow is not visible/clip on either axis, i.e., auto or
     /// scroll). Used for automatic minimum size with aspect-ratio.
     pub fn is_scroll_container(&self) -> bool {
-        self.overflow_x.is_scrollable() || self.overflow_y.is_scrollable()
+        // Per CSS Overflow 3, overflow: hidden/scroll/auto all create a scroll
+        // container.  overflow: clip does NOT.
+        self.overflow_x != Overflow::Visible && self.overflow_x != Overflow::Clip
+            || self.overflow_y != Overflow::Visible && self.overflow_y != Overflow::Clip
     }
 }
 
