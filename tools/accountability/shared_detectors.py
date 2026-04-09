@@ -81,10 +81,10 @@ def has_margin_trim(html: str) -> bool:
 DEPENDENCY_DEFS = [
     ("text_rendering",  "SP11/SP13: Text Rendering",  "SP11,SP13", has_visible_text),
     ("font_metrics",    "SP11: Font Metrics",          "SP11",      has_font_metrics),
-    ("image_rendering", "Image Rendering",             "TBD",       has_image_ref),
-    ("css_containment", "CSS Containment",             "TBD",       has_containment),
-    ("gradient",        "Gradient Rendering",          "TBD",       has_gradient),
-    ("margin_trim",     "margin-trim",                 "TBD",       has_margin_trim),
+    ("image_rendering", "SP13: Image Rendering",       "SP13",      has_image_ref),
+    ("css_containment", "Future SP: CSS Containment",  "Future",    has_containment),
+    ("gradient",        "SP13: Gradient Rendering",    "SP13",      has_gradient),
+    ("margin_trim",     "Future SP: margin-trim",      "Future",    has_margin_trim),
 ]
 
 # Category names used in wpt_mapping.csv (maps dependency key → category name)

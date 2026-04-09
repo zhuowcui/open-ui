@@ -63,6 +63,10 @@ def build_report_data():
     total_ported = summary["total"]
     total_passed = summary["passed"]
     total_failed = summary["failed"]
+    near_miss_aa = summary.get("near_miss_aa", 0)
+    aa_threshold = summary.get("aa_threshold_pct", 0.5)
+    ref_tests_total = summary.get("reference_tests", 0)
+    ref_tests_pass = summary.get("reference_tests_pass", 0)
 
     # Build per-test lookup from summary
     test_lookup = {}
@@ -161,6 +165,10 @@ def build_report_data():
         "total_ported": total_ported,
         "total_passed": total_passed,
         "total_failed": total_failed,
+        "near_miss_aa": near_miss_aa,
+        "aa_threshold": aa_threshold,
+        "ref_tests_total": ref_tests_total,
+        "ref_tests_pass": ref_tests_pass,
         "area_stats": area_stats,
         "chromium_area_counts": chromium_area_counts,
         "failure_categories": failure_categories,
@@ -180,6 +188,12 @@ def generate_html(data):
     total_ported = data["total_ported"]
     total_passed = data["total_passed"]
     total_failed = data["total_failed"]
+    near_miss_aa = data.get("near_miss_aa", 0)
+    aa_threshold = data.get("aa_threshold", 0.5)
+    ref_tests_total = data.get("ref_tests_total", 0)
+    ref_tests_pass = data.get("ref_tests_pass", 0)
+    non_ref_total = total_ported - ref_tests_total
+    non_ref_pass = total_passed - ref_tests_pass
     coverage_pct = (total_ported / chromium_total * 100) if chromium_total else 0
     pass_pct = (total_passed / total_ported * 100) if total_ported else 0
 
@@ -207,10 +221,19 @@ def generate_html(data):
         <div class="card-sub">{100 - pass_pct:.1f}% of ported</div>
       </div>
       <div class="card">
+        <div class="card-label">Near-Miss (AA)</div>
+        <div class="card-value" style="color:#e67e22">{near_miss_aa:,}</div>
+        <div class="card-sub">&lt;{aa_threshold}% mismatch</div>
+      </div>
+      <div class="card">
         <div class="card-label">Coverage</div>
         <div class="card-value accent-blue">{coverage_pct:.1f}%</div>
         <div class="progress-bar"><div class="progress-fill bg-blue" style="width:{coverage_pct:.1f}%"></div></div>
       </div>
+    </div>
+    <div style="margin:8px 0 16px 0; font-size:13px; color:#888;">
+      ℹ️ Includes {ref_tests_total} reference tests ({ref_tests_pass} pass).
+      Excluding refs: {non_ref_total} tests, {non_ref_pass} pass ({100*non_ref_pass//non_ref_total if non_ref_total else 0}%).
     </div>
     """
 

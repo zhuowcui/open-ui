@@ -556,6 +556,12 @@ def main():
             if status == "error":
                 print(f"  {tid}")
 
+    # Compute near-miss (anti-aliasing) and reference-test breakdowns
+    AA_THRESHOLD = 0.5  # % mismatch threshold for anti-aliasing near-misses
+    near_miss = sum(1 for _, st, mp in results_summary if st == "fail" and 0 < mp <= AA_THRESHOLD)
+    ref_total = sum(1 for tid, _, _ in results_summary if "-ref" in tid or "-notref" in tid)
+    ref_pass = sum(1 for tid, st, _ in results_summary if ("-ref" in tid or "-notref" in tid) and st == "pass")
+
     # Write summary JSON
     summary_file = os.path.join(RESULTS_DIR, "summary.json")
     with open(summary_file, "w") as f:
@@ -564,6 +570,10 @@ def main():
             "passed": passed,
             "failed": failed,
             "errors": errors,
+            "near_miss_aa": near_miss,
+            "aa_threshold_pct": AA_THRESHOLD,
+            "reference_tests": ref_total,
+            "reference_tests_pass": ref_pass,
             "tests": [{"id": tid, "status": st, "mismatch_pct": mp} for tid, st, mp in results_summary]
         }, f, indent=2)
     print(f"\nSummary written to {summary_file}")

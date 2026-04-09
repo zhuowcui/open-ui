@@ -16394,5 +16394,9 @@
       "status": "fail",
       "mismatch_pct": 0.844586
     }
-  ]
+  ],
+  "near_miss_aa": 432,
+  "aa_threshold_pct": 0.5,
+  "reference_tests": 916,
+  "reference_tests_pass": 400
 }
