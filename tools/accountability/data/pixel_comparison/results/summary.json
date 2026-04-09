@@ -2,12 +2,12 @@
   "total": 3278,
   "passed": 1509,
   "failed": 1769,
-  "errors": 1,
+  "errors": 0,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
       "status": "fail",
-      "mismatch_pct": 0.0
+      "mismatch_pct": 5.095541
     },
     {
       "id": "wpt/css2_floats/float-in-inline-anonymous-block-with-overflow-hidden",
@@ -14697,7 +14697,7 @@
     {
       "id": "wpt/css_backgrounds/box-shadow-multiple-001",
       "status": "fail",
-      "mismatch_pct": 8.123142
+      "mismatch_pct": 6.369427
     },
     {
       "id": "wpt/css_backgrounds/box-shadow-outset-without-border-radius-001",
