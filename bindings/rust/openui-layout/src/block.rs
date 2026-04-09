@@ -131,7 +131,47 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // are indefinite (treated as auto). Do NOT pass through the parent's
         // percentage resolution — that would incorrectly let grandchildren
         // resolve percentage heights against an ancestor's explicit height.
-        openui_geometry::INDEFINITE_SIZE
+        //
+        // Exception: CSS Sizing 4 §5.1 — When the element has an aspect-ratio
+        // and its width is definite, the AR-derived height is considered
+        // definite for percentage resolution purposes.
+        if let Some(ref ar) = style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 != 0.0 && ratio.1 != 0.0 {
+                // Width must be definite (explicit, or stretch, etc.)
+                let width_definite = !style.width.is_auto()
+                    || space.available_inline_size.raw() > 0;
+                if width_definite {
+                    // Compute the AR-derived content height from the resolved width.
+                    // The actual width resolution happens later, so approximate
+                    // by resolving width now (matches what resolve_block_size does).
+                    let avail = space.available_inline_size;
+                    let bp_inline = border.left + border.right + padding.left + padding.right;
+                    let content_w = if style.width.is_auto() || style.width.is_stretch() {
+                        (avail - bp_inline).clamp_negative_to_zero()
+                    } else {
+                        let raw = resolve_length(
+                            &style.width,
+                            space.percentage_resolution_inline_size,
+                            avail, avail,
+                        );
+                        if style.box_sizing == BoxSizing::BorderBox {
+                            (raw - bp_inline).clamp_negative_to_zero()
+                        } else {
+                            raw
+                        }
+                    };
+                    let content_h = LayoutUnit::from_f32(content_w.to_f32() * ratio.1 / ratio.0);
+                    content_h
+                } else {
+                    openui_geometry::INDEFINITE_SIZE
+                }
+            } else {
+                openui_geometry::INDEFINITE_SIZE
+            }
+        } else {
+            openui_geometry::INDEFINITE_SIZE
+        }
     };
 
     let content_edge = border.top + padding.top;
