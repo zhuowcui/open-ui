@@ -2807,30 +2807,43 @@ fn layout_multicol(
                 space.available_block_size
             };
 
-            let column_height = match algo.column_fill {
-                ColumnFill::Balance | ColumnFill::BalanceAll => {
-                    balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max)
-                }
-                ColumnFill::Auto => {
-                    if has_explicit_height {
-                        // Use remaining available block from explicit height.
-                        if !remaining_available_block.is_indefinite() {
-                            remaining_available_block
+            // CSS Multicol §7.2: Content preceding a column-span:all element
+            // is always balanced, even when column-fill is auto.
+            let has_spanner_after = group_end < children_info.len()
+                && children_info[group_end].is_spanner;
+
+            let column_height = if has_spanner_after
+                && algo.column_fill == ColumnFill::Auto
+                && !has_explicit_height
+                && resolved_max_height.is_none()
+            {
+                // Force balance before spanner per §7.2
+                balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max)
+            } else {
+                match algo.column_fill {
+                    ColumnFill::Balance | ColumnFill::BalanceAll => {
+                        balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max)
+                    }
+                    ColumnFill::Auto => {
+                        if has_explicit_height {
+                            if !remaining_available_block.is_indefinite() {
+                                remaining_available_block
+                            } else {
+                                child_percentage_block_size
+                            }
+                        } else if let Some(mh) = resolved_max_height {
+                            if !remaining_available_block.is_indefinite() {
+                                remaining_available_block
+                            } else {
+                                mh
+                            }
                         } else {
-                            child_percentage_block_size
+                            // column-fill:auto with no height/max-height: fill
+                            // columns sequentially. All content goes into as few
+                            // columns as possible (no balancing).
+                            let total: i32 = effective_sizes.iter().map(|s| s.raw()).sum();
+                            LayoutUnit::from_raw(total)
                         }
-                    } else if let Some(mh) = resolved_max_height {
-                        if !remaining_available_block.is_indefinite() {
-                            remaining_available_block
-                        } else {
-                            mh
-                        }
-                    } else {
-                        // column-fill:auto with no height/max-height: fill
-                        // columns sequentially. All content goes into as few
-                        // columns as possible (no balancing).
-                        let total: i32 = effective_sizes.iter().map(|s| s.raw()).sum();
-                        LayoutUnit::from_raw(total)
                     }
                 }
             };
