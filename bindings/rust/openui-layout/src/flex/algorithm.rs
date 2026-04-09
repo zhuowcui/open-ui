@@ -632,9 +632,9 @@ fn construct_flex_items(
     for (item_index, &(child_id, _)) in children_with_order.iter().enumerate() {
         let child_style = &doc.node(child_id).style;
 
-        // Read flex properties
-        let flex_grow = child_style.flex_grow;
-        let flex_shrink = child_style.flex_shrink;
+        // Read flex properties — CSS spec requires non-negative values.
+        let flex_grow = child_style.flex_grow.max(0.0);
+        let flex_shrink = child_style.flex_shrink.max(0.0);
 
         // Resolve alignment (Blink: ResolvedAlignSelf, line 261)
         let alignment = resolve_item_alignment(child_style, container_style);
@@ -785,7 +785,9 @@ fn resolve_flex_basis(
             child_percentage_inline
         };
 
-        if !pct_base.is_indefinite() || flex_basis.is_fixed() {
+        if !pct_base.is_indefinite() || flex_basis.is_fixed()
+            || (flex_basis.is_percent() && flex_basis.value() == 0.0)
+        {
             let resolved = resolve_length(flex_basis, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
             let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                 (resolved - main_axis_border_padding).clamp_negative_to_zero()
@@ -1786,6 +1788,14 @@ fn give_items_final_position(
             let mut positioned = child_fragment;
             positioned.offset = PhysicalOffset::new(x, y);
             positioned.margin = item.margin.clone();
+
+            // Apply relative positioning offsets (CSS 2.1 §9.4.3).
+            crate::relative::apply_relative_offset(
+                &mut positioned,
+                child_style,
+                child_percentage_inline,
+                child_percentage_block,
+            );
 
             // Advance main offset (compute before push moves positioned)
             let main_margin_end = if is_column { item.margin.bottom } else { item.margin.right };

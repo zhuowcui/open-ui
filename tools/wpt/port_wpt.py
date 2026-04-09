@@ -273,23 +273,59 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
 
 def _try_eval_calc(expr: str) -> str | None:
     """Try to pre-evaluate a calc() expression to a Length.
-    Handles pure-px arithmetic and simple percentage+px combos."""
+    Handles pure-px arithmetic and percentage+px combos."""
     expr = expr.strip()
-    # Replace units with just numbers for evaluation
-    # First check if it contains var() — can't handle
     if 'var(' in expr:
         return None
-    # Try pure-px evaluation: replace px units and evaluate
-    px_only = expr
-    px_only = re.sub(r'(\d+\.?\d*)px', r'\1', px_only)
-    # If no % remains, try to evaluate as pure number
+    # Replace units with just numbers for evaluation
+    # Try pure-px evaluation first
+    px_only = re.sub(r'(\d+\.?\d*)px', r'\1', expr)
     if '%' not in px_only and 'em' not in px_only and 'vw' not in px_only and 'vh' not in px_only:
         try:
             result = eval(px_only, {"__builtins__": {}}, {})
             return f'Length::px({float(result):.6f})'
         except:
             return None
-    return None
+
+    # Try percent+px combo: calc(<percent>% ± <px>px)
+    # Normalize: remove whitespace around operators for parsing
+    normalized = re.sub(r'\s*([+\-])\s*', r' \1 ', expr)
+    # Collect all percent and px terms
+    pct_total = 0.0
+    px_total = 0.0
+    # Match terms like "50%", "-10px", "+ 20px", "- 5%"
+    # Split into tokens
+    tokens = normalized.split()
+    i = 0
+    sign = 1.0
+    while i < len(tokens):
+        tok = tokens[i]
+        if tok == '+':
+            sign = 1.0
+            i += 1
+            continue
+        elif tok == '-':
+            sign = -1.0
+            i += 1
+            continue
+        m_pct = re.match(r'^(-?[\d.]+)%$', tok)
+        m_px = re.match(r'^(-?[\d.]+)px$', tok)
+        if m_pct:
+            pct_total += sign * float(m_pct.group(1))
+            sign = 1.0
+        elif m_px:
+            px_total += sign * float(m_px.group(1))
+            sign = 1.0
+        else:
+            # Unknown unit — can't handle
+            return None
+        i += 1
+
+    if pct_total == 0.0:
+        return f'Length::px({px_total:.6f})'
+    if px_total == 0.0:
+        return f'Length::percent({pct_total:.6f})'
+    return f'Length::calc_percent_px({pct_total:.6f}, {px_total:.6f})'
 
 
 def parse_border_width(value: str) -> str | None:
@@ -686,6 +722,21 @@ class WptHtmlParser(HTMLParser):
         self.stack[-1].children.append(node)
         if tag not in self.VOID_TAGS:
             self.stack.append(node)
+
+    def handle_startendtag(self, tag, attrs):
+        """Handle self-closing tags like <div/>.
+        
+        In HTML5, non-void elements like <div/> are NOT self-closing — the
+        slash is ignored and they become opening tags. Only void elements
+        (br, hr, img, etc.) are truly self-closing. This matches browser
+        behavior (Chrome, Firefox, etc.).
+        """
+        if tag in self.VOID_TAGS:
+            # Void element: handle as start + end (default behavior)
+            self.handle_starttag(tag, attrs)
+        else:
+            # Non-void element: treat as opening tag only (HTML5 spec)
+            self.handle_starttag(tag, attrs)
 
     def handle_endtag(self, tag):
         if tag == 'style':
@@ -1220,15 +1271,24 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     if prop in ('flex-grow', 'flex-shrink'):
         try:
+            v = float(val)
+            if v < 0.0:
+                v = 0.0  # CSS spec: non-negative only
             rust_prop = prop.replace('-', '_')
-            return f"{s}.{rust_prop} = {float(val)};"
+            return f"{s}.{rust_prop} = {v};"
         except ValueError:
             pass
 
     if prop == 'flex-basis':
+        if val == 'content':
+            return f"{s}.flex_basis = Length::max_content();"
         length = parse_length(val, font_size)
         if length:
-            return f"{s}.flex_basis = {length};"
+            # CSS spec: flex-basis does not accept negative lengths
+            if 'Length::px(-' in length:
+                pass  # invalid, skip
+            else:
+                return f"{s}.flex_basis = {length};"
 
     if prop == 'order':
         try:

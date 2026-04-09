@@ -49,6 +49,10 @@ pub enum LengthType {
 pub struct Length {
     value: f32,
     length_type: LengthType,
+    /// For `Calculated` type: px offset added to the percentage result.
+    /// E.g., `calc(50% - 10px)` → value=50.0, calc_offset=-10.0.
+    /// Zero for all non-calc types.
+    calc_offset: f32,
 }
 
 impl Length {
@@ -57,67 +61,74 @@ impl Length {
     /// `Length()` — default is `Fixed(0)` in Blink.
     #[inline]
     pub const fn zero() -> Self {
-        Self { value: 0.0, length_type: LengthType::Fixed }
+        Self { value: 0.0, length_type: LengthType::Fixed, calc_offset: 0.0 }
     }
 
     /// `Length::Auto()` — the `auto` keyword.
     #[inline]
     pub const fn auto() -> Self {
-        Self { value: 0.0, length_type: LengthType::Auto }
+        Self { value: 0.0, length_type: LengthType::Auto, calc_offset: 0.0 }
     }
 
     /// `Length::None()` — used as initial value for max-width/max-height.
     #[inline]
     pub const fn none() -> Self {
-        Self { value: 0.0, length_type: LengthType::None }
+        Self { value: 0.0, length_type: LengthType::None, calc_offset: 0.0 }
     }
 
     /// Fixed pixel value.
     #[inline]
     pub const fn px(value: f32) -> Self {
-        Self { value, length_type: LengthType::Fixed }
+        Self { value, length_type: LengthType::Fixed, calc_offset: 0.0 }
     }
 
     /// Percentage value (0.0 = 0%, 100.0 = 100%).
     #[inline]
     pub const fn percent(value: f32) -> Self {
-        Self { value, length_type: LengthType::Percent }
+        Self { value, length_type: LengthType::Percent, calc_offset: 0.0 }
     }
 
     /// `min-content` intrinsic keyword.
     #[inline]
     pub const fn min_content() -> Self {
-        Self { value: 0.0, length_type: LengthType::MinContent }
+        Self { value: 0.0, length_type: LengthType::MinContent, calc_offset: 0.0 }
     }
 
     /// `max-content` intrinsic keyword.
     #[inline]
     pub const fn max_content() -> Self {
-        Self { value: 0.0, length_type: LengthType::MaxContent }
+        Self { value: 0.0, length_type: LengthType::MaxContent, calc_offset: 0.0 }
     }
 
     /// `stretch` keyword.
     #[inline]
     pub const fn stretch() -> Self {
-        Self { value: 0.0, length_type: LengthType::Stretch }
+        Self { value: 0.0, length_type: LengthType::Stretch, calc_offset: 0.0 }
     }
 
     /// `fit-content` keyword.
     #[inline]
     pub const fn fit_content() -> Self {
-        Self { value: 0.0, length_type: LengthType::FitContent }
+        Self { value: 0.0, length_type: LengthType::FitContent, calc_offset: 0.0 }
     }
 
     /// `content` keyword — used for flex-basis:content and certain grid contexts.
     #[inline]
     pub const fn content() -> Self {
-        Self { value: 0.0, length_type: LengthType::Content }
+        Self { value: 0.0, length_type: LengthType::Content, calc_offset: 0.0 }
     }
 
     /// `fr` fractional unit for CSS Grid.
     #[inline]
     pub const fn flex(value: f32) -> Self {
-        Self { value, length_type: LengthType::Flex }
+        Self { value, length_type: LengthType::Flex, calc_offset: 0.0 }
+    }
+
+    /// `calc(<percent>% ± <px>px)` — percentage with a fixed pixel offset.
+    /// E.g., `calc(50% - 10px)` → `calc_percent_px(50.0, -10.0)`.
+    #[inline]
+    pub const fn calc_percent_px(percent: f32, px_offset: f32) -> Self {
+        Self { value: percent, length_type: LengthType::Calculated, calc_offset: px_offset }
     }
 
     // ── Type queries matching Blink's `Is*()` methods ────────────────
@@ -174,12 +185,18 @@ impl Length {
     #[inline]
     pub const fn length_type(&self) -> LengthType { self.length_type }
 
+    /// The calc offset (px) for `Calculated` type. Zero for all other types.
+    #[inline]
+    pub const fn calc_offset(&self) -> f32 { self.calc_offset }
+
     // ── Equality — Blink compares type + value ───────────────────────
 }
 
 impl PartialEq for Length {
     fn eq(&self, other: &Self) -> bool {
-        self.length_type == other.length_type && self.value == other.value
+        self.length_type == other.length_type
+            && self.value == other.value
+            && self.calc_offset == other.calc_offset
     }
 }
 
