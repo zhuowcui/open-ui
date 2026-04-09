@@ -2014,6 +2014,16 @@ fn resolve_inline_size(
 
         if let Some(w) = ar_width {
             w
+        } else if available.is_indefinite() || available < LayoutUnit::zero() {
+            // Indefinite available inline → shrink-to-fit (max-content width).
+            // CSS 2.1 §10.3.5: shrink-to-fit width = min(available, max(preferred_min, preferred)).
+            // With no available constraint, this reduces to max-content.
+            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
+            if style.box_sizing == BoxSizing::BorderBox {
+                intrinsic.max
+            } else {
+                (intrinsic.max - border_padding).clamp_negative_to_zero()
+            }
         } else {
             // Auto/stretch width: fill available space minus border+padding
             if style.box_sizing == BoxSizing::BorderBox {
