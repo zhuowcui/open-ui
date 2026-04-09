@@ -81,7 +81,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 
     // Flex containers have their own intrinsic sizing algorithm.
     // CSS Flexbox §9.9: Flex container intrinsic sizes.
-    if style.display == openui_style::Display::Flex {
+    if style.display.is_flex() {
         return compute_flex_intrinsic_sizes(doc, node_id, style);
     }
 
