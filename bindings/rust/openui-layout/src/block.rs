@@ -2023,7 +2023,78 @@ fn resolve_inline_size(
             }
         }
     } else if style.width.is_content_or_intrinsic() {
-        resolve_intrinsic_inline(doc, node_id, &style.width, available, border_padding)
+        // CSS Sizing 4 §5.1: For elements with a preferred aspect ratio and
+        // a definite size in the opposite axis, min-content and max-content
+        // sizes are the transferred size from the definite block constraint,
+        // NOT the content-based intrinsic size.
+        let ar_override = if let Some(ref ar) = style.aspect_ratio {
+            let h_resolved = if !style.height.is_auto()
+                && !style.height.is_content_or_intrinsic()
+                && !style.height.is_stretch()
+            {
+                let h = resolve_length(
+                    &style.height,
+                    space.percentage_resolution_block_size,
+                    openui_geometry::INDEFINITE_SIZE,
+                    openui_geometry::INDEFINITE_SIZE,
+                );
+                if h.is_indefinite() { None } else {
+                    let min_h = if style.min_height.is_auto() {
+                        LayoutUnit::zero()
+                    } else {
+                        resolve_length(
+                            &style.min_height,
+                            space.percentage_resolution_block_size,
+                            LayoutUnit::zero(),
+                            LayoutUnit::zero(),
+                        )
+                    };
+                    let max_h = resolve_length(
+                        &style.max_height,
+                        space.percentage_resolution_block_size,
+                        LayoutUnit::max(),
+                        LayoutUnit::max(),
+                    );
+                    Some(h.max_of(min_h).min_of(max_h))
+                }
+            } else {
+                None
+            };
+            if let Some(h) = h_resolved {
+                let ratio = ar.ratio;
+                if ratio.0 != 0.0 && ratio.1 != 0.0 {
+                    let box_sizing_for_ar = if ar.auto_flag {
+                        BoxSizing::ContentBox
+                    } else {
+                        style.box_sizing
+                    };
+                    let content_h = if box_sizing_for_ar == BoxSizing::BorderBox {
+                        h
+                    } else if style.box_sizing == BoxSizing::BorderBox {
+                        (h - border_padding_block).clamp_negative_to_zero()
+                    } else {
+                        h
+                    };
+                    let w = LayoutUnit::from_f32(content_h.to_f32() * ratio.0 / ratio.1);
+                    Some(if style.box_sizing == BoxSizing::BorderBox && box_sizing_for_ar != BoxSizing::BorderBox {
+                        w + border_padding
+                    } else {
+                        w
+                    })
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+        if let Some(w) = ar_override {
+            w
+        } else {
+            resolve_intrinsic_inline(doc, node_id, &style.width, available, border_padding)
+        }
     } else {
         resolve_length(
             &style.width,
@@ -2248,9 +2319,45 @@ fn resolve_block_size(
             intrinsic_block_size
         }
     } else if style.height.is_content_or_intrinsic() {
-        // CSS Sizing 3: height: min-content / max-content / fit-content
-        // Resolve against the element's own intrinsic block sizes.
-        resolve_intrinsic_block(doc, node_id, &style.height, intrinsic_block_size, border_padding_block)
+        // CSS Sizing 3 §4: For block containers, min-content and max-content in
+        // the block axis are equivalent to the auto block size. So if the element
+        // has an aspect-ratio and definite width, derive height from AR.
+        if let Some(ref ar) = style.aspect_ratio {
+            if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                height_from_ar = true;
+                let box_sizing_for_ar = if ar.auto_flag {
+                    BoxSizing::ContentBox
+                } else {
+                    style.box_sizing
+                };
+                let ar_inline = if style.box_sizing == BoxSizing::BorderBox
+                    && box_sizing_for_ar == BoxSizing::ContentBox
+                {
+                    (content_inline_size - border_padding_inline).clamp_negative_to_zero()
+                } else {
+                    content_inline_size
+                };
+                let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
+                    ar_inline,
+                    openui_geometry::INDEFINITE_SIZE,
+                    ar,
+                    None,
+                );
+                if !h.is_indefinite() {
+                    if box_sizing_for_ar == BoxSizing::BorderBox {
+                        h.max_of(border_padding_block)
+                    } else {
+                        h + border_padding_block
+                    }
+                } else {
+                    resolve_intrinsic_block(doc, node_id, &style.height, intrinsic_block_size, border_padding_block)
+                }
+            } else {
+                resolve_intrinsic_block(doc, node_id, &style.height, intrinsic_block_size, border_padding_block)
+            }
+        } else {
+            resolve_intrinsic_block(doc, node_id, &style.height, intrinsic_block_size, border_padding_block)
+        }
     } else {
         let raw = resolve_length(
             &style.height,

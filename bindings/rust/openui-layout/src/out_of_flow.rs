@@ -94,6 +94,13 @@ fn layout_out_of_flow_child(
     // CSS Sizing 4 §5.1: For abspos elements with width:auto + aspect-ratio +
     // definite height, compute width from height × ratio instead of shrink-to-fit.
     // We need to know the height BEFORE resolving the horizontal axis.
+    //
+    // EXCEPTION: When height:auto with both top+bottom set AND both left+right
+    // are also set, the width is fully determined by horizontal constraints.
+    // In that case, we should resolve width first, then derive height from AR,
+    // then apply max-height, and potentially re-derive width — not pre-compute
+    // width from the constraint-equation height (which may be 0 when CB has no height).
+    let both_horizontal_insets = !style.left.is_auto() && !style.right.is_auto();
     let ar_width_from_height = if style.width.is_auto() && style.aspect_ratio.is_some() {
         // Height is definite if explicitly specified, or if both top+bottom are set.
         let definite_height = if !style.height.is_auto() && !style.height.is_fit_content() {
@@ -104,8 +111,9 @@ fn layout_out_of_flow_child(
                 raw
             };
             Some(content_h)
-        } else if !style.top.is_auto() && !style.bottom.is_auto() {
-            // Height from constraint equation: cb_height - top - bottom - margins - bp
+        } else if !style.top.is_auto() && !style.bottom.is_auto() && !both_horizontal_insets {
+            // Height from constraint equation, but only when the horizontal axis
+            // isn't also fully constrained (otherwise width resolves first via AR).
             let top_val = resolve_length(&style.top, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
             let bottom_val = resolve_length(&style.bottom, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
             let mt = if style.margin_top.is_auto() { LayoutUnit::zero() } else {
@@ -214,6 +222,43 @@ fn layout_out_of_flow_child(
                                               &border, &padding, width_from_ar);
     let resolved_height = apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, resolved_height_raw,
                                               &border, &padding, height_from_ar);
+
+    // CSS Sizing 4 §5.1: When min/max-height clamps the AR-derived height
+    // AND width was derived from constraints (not from AR), re-derive width
+    // from the clamped height via AR. This handles the case where inset:0
+    // gives width=CB-width, AR gives height=width, max-height clamps height,
+    // and width must be re-computed from the clamped height.
+    let resolved_width = if resolved_height != resolved_height_raw
+        && height_from_ar
+        && width_from_ar
+        && ar_width_from_height.is_none()
+    {
+        if let Some(ref ar) = style.aspect_ratio {
+            let content_h = (resolved_height - border_padding_v).clamp_negative_to_zero();
+            let (w, _) = crate::css_sizing::apply_aspect_ratio_with_auto(
+                openui_geometry::INDEFINITE_SIZE,
+                content_h,
+                ar,
+                None,
+            );
+            if !w.is_indefinite() {
+                let bb_w = if style.box_sizing == BoxSizing::BorderBox {
+                    w.max_of(border_padding_h)
+                } else {
+                    w + border_padding_h
+                };
+                apply_min_max_inline(doc, candidate.node_id, style, cb_width, bb_w,
+                                     &border, &padding, true)
+            } else {
+                resolved_width
+            }
+        } else {
+            resolved_width
+        }
+    } else {
+        resolved_width
+    };
+
 
     // CSS 2.1 §10.4: When min/max changes the width, re-solve §10.3.7 with
     // the clamped width treated as the specified width. This is needed to
