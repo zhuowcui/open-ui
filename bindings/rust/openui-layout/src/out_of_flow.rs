@@ -175,6 +175,36 @@ fn layout_out_of_flow_child(
                 style, cb_width, static_left, &border, &padding,
                 ar_bb_width, cb_direction, sp_direction,
             )
+        } else if style.width.is_min_content() || style.width.is_max_content() {
+            // CSS Sizing 3: intrinsic keywords resolve to the element's
+            // intrinsic size (border-box), then feed into the constraint equation.
+            let known_bb_width = if style.width.is_min_content() {
+                intrinsic.min_content_inline_size
+            } else {
+                intrinsic.max_content_inline_size
+            };
+            resolve_horizontal_with_known_width(
+                style, cb_width, static_left, &border, &padding,
+                known_bb_width, cb_direction, sp_direction,
+            )
+        } else if style.width.is_fit_content_function() {
+            // fit-content(X) functional notation: resolve the argument as a
+            // length-percentage, then apply the fit-content formula.
+            let arg_resolved = if !cb_width.is_indefinite() {
+                LayoutUnit::from_f32(
+                    style.width.value() / 100.0 * cb_width.to_f32()
+                        + style.width.calc_offset(),
+                )
+            } else {
+                LayoutUnit::from_f32(style.width.calc_offset())
+            };
+            // fit-content(X) = min(max-content, max(min-content, X))
+            let content_width = arg_resolved.clamp(shrink_to_fit_min, shrink_to_fit_max);
+            let known_bb_width = content_width + border_padding_h;
+            resolve_horizontal_with_known_width(
+                style, cb_width, static_left, &border, &padding,
+                known_bb_width, cb_direction, sp_direction,
+            )
         } else {
             resolve_horizontal(style, cb_width, static_left, &border, &padding,
                               shrink_to_fit_min, shrink_to_fit_max, cb_direction, sp_direction)
@@ -183,6 +213,39 @@ fn layout_out_of_flow_child(
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
         resolve_vertical(style, cb_width, cb_height, static_top, &border, &padding);
+
+    // Override height for intrinsic keywords (min-content / max-content).
+    // These resolve to the element's intrinsic block size (border-box).
+    let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
+        if style.height.is_min_content() || style.height.is_max_content() {
+            let known_bb_height = if style.height.is_min_content() {
+                intrinsic.min_content_block_size
+            } else {
+                intrinsic.max_content_block_size
+            };
+            resolve_vertical_with_known_height(
+                style, cb_width, cb_height, static_top, &border, &padding, known_bb_height,
+            )
+        } else if style.height.is_fit_content_function() {
+            let arg_resolved = if !cb_height.is_indefinite() {
+                LayoutUnit::from_f32(
+                    style.height.value() / 100.0 * cb_height.to_f32()
+                        + style.height.calc_offset(),
+                )
+            } else {
+                LayoutUnit::from_f32(style.height.calc_offset())
+            };
+            let content_height = arg_resolved.clamp(
+                (intrinsic.min_content_block_size - border_padding_v).clamp_negative_to_zero(),
+                (intrinsic.max_content_block_size - border_padding_v).clamp_negative_to_zero(),
+            );
+            let known_bb_height = content_height + border_padding_v;
+            resolve_vertical_with_known_height(
+                style, cb_width, cb_height, static_top, &border, &padding, known_bb_height,
+            )
+        } else {
+            (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom)
+        };
 
     // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
     // compute height from the resolved width using the aspect ratio.
@@ -291,8 +354,14 @@ fn layout_out_of_flow_child(
     // (both opposing insets specified with auto height).
     let height_resolved_from_constraints = style.height.is_auto()
         && !style.top.is_auto() && !style.bottom.is_auto();
-    // Height is definite if explicitly specified (not auto/fit-content/intrinsic), stretch, or from constraints.
-    let height_is_definite = (!style.height.is_auto() && !style.height.is_content_or_intrinsic()) || height_resolved_from_constraints;
+    // Height is definite if explicitly specified (not auto/fit-content/intrinsic),
+    // stretch, or from constraints. min-content / max-content are also definite
+    // because we resolved them to concrete intrinsic sizes above.
+    let height_is_definite = (!style.height.is_auto() && !style.height.is_content_or_intrinsic())
+        || style.height.is_min_content()
+        || style.height.is_max_content()
+        || style.height.is_fit_content_function()
+        || height_resolved_from_constraints;
 
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();

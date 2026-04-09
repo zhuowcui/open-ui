@@ -41,13 +41,19 @@ impl SizingKeyword {
     ///
     /// Returns `None` if the length is a concrete value (fixed, percent) rather
     /// than a sizing keyword.
+    ///
+    /// For `fit-content(X)` functional notation, only the px component is used
+    /// directly. Callers needing percentage resolution should use
+    /// `resolve_size_value` instead.
     pub fn from_length(length: &Length) -> Option<Self> {
         match length.length_type() {
             LengthType::Auto => Some(SizingKeyword::Auto),
             LengthType::MinContent => Some(SizingKeyword::MinContent),
             LengthType::MaxContent => Some(SizingKeyword::MaxContent),
             LengthType::FitContent => {
-                Some(SizingKeyword::FitContent(LayoutUnit::from_f32(length.value())))
+                // Use calc_offset (px part) for the limit; value holds the
+                // percent part which requires a containing-block to resolve.
+                Some(SizingKeyword::FitContent(LayoutUnit::from_f32(length.calc_offset())))
             }
             LengthType::Stretch => Some(SizingKeyword::Stretch),
             _ => None,
@@ -384,7 +390,21 @@ fn resolve_size_value(
         LengthType::MinContent => intrinsic.min,
         LengthType::MaxContent => intrinsic.max,
         LengthType::FitContent => {
-            let limit = LayoutUnit::from_f32(length.value());
+            // Bare `fit-content` keyword → fit-content(stretch):
+            //   limit = available_size - margins
+            // `fit-content(X)` functional notation → resolve X as length-percentage:
+            //   value = percent part, calc_offset = px part (same encoding as Calculated)
+            let limit = if length.value() == 0.0 && length.calc_offset() == 0.0 {
+                (available_size - margins).clamp_negative_to_zero()
+            } else if !containing_block_size.is_indefinite() {
+                LayoutUnit::from_f32(
+                    length.value() / 100.0 * containing_block_size.to_f32()
+                        + length.calc_offset(),
+                )
+            } else {
+                LayoutUnit::from_f32(length.calc_offset())
+            };
+            // fit-content(X) = min(max-content, max(min-content, X))
             limit.clamp(intrinsic.min, intrinsic.max)
         }
         LengthType::Stretch => {
@@ -414,6 +434,10 @@ fn resolve_min_value(
         }
         LengthType::MinContent => intrinsic.min,
         LengthType::MaxContent => intrinsic.max,
+        LengthType::FitContent => {
+            // fit-content for min-size: use max-content as upper bound
+            intrinsic.max
+        }
         // auto / none → 0 (default automatic minimum)
         _ => LayoutUnit::zero(),
     }
@@ -436,6 +460,10 @@ fn resolve_max_value(
         }
         LengthType::MinContent => intrinsic.min,
         LengthType::MaxContent => intrinsic.max,
+        LengthType::FitContent => {
+            // fit-content for max-size: use max-content as upper bound
+            intrinsic.max
+        }
         // none → unconstrained
         LengthType::None => LayoutUnit::max(),
         _ => LayoutUnit::max(),

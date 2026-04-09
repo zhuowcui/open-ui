@@ -106,10 +106,24 @@ impl Length {
         Self { value: 0.0, length_type: LengthType::Stretch, calc_offset: 0.0 }
     }
 
-    /// `fit-content` keyword.
+    /// `fit-content` keyword (bare, no argument).
     #[inline]
     pub const fn fit_content() -> Self {
         Self { value: 0.0, length_type: LengthType::FitContent, calc_offset: 0.0 }
+    }
+
+    /// `fit-content(<px>)` functional notation with a pixel argument.
+    /// Encodes as `value=0.0` (no percent), `calc_offset=px`.
+    #[inline]
+    pub const fn fit_content_px(px: f32) -> Self {
+        Self { value: 0.0, length_type: LengthType::FitContent, calc_offset: px }
+    }
+
+    /// `fit-content(<percent>%)` functional notation with a percentage argument.
+    /// Encodes as `value=percent`, `calc_offset=0.0`.
+    #[inline]
+    pub const fn fit_content_percent(percent: f32) -> Self {
+        Self { value: percent, length_type: LengthType::FitContent, calc_offset: 0.0 }
     }
 
     /// `content` keyword — used for flex-basis:content and certain grid contexts.
@@ -159,6 +173,14 @@ impl Length {
 
     #[inline]
     pub const fn is_fit_content(&self) -> bool { matches!(self.length_type, LengthType::FitContent) }
+
+    /// True if this is the `fit-content(<arg>)` functional notation (has an argument),
+    /// as opposed to the bare `fit-content` keyword.
+    #[inline]
+    pub fn is_fit_content_function(&self) -> bool {
+        matches!(self.length_type, LengthType::FitContent)
+            && (self.value != 0.0 || self.calc_offset != 0.0)
+    }
 
     #[inline]
     pub const fn is_content_or_intrinsic(&self) -> bool {
