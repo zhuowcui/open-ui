@@ -486,7 +486,14 @@ impl ColumnLayoutAlgorithm {
 
         let column_gap = match style.column_gap {
             Some(ref len) if len.is_fixed() => LayoutUnit::from_f32(len.value()),
-            _ => LayoutUnit::from_i32(16), // CSS default `normal` = 1em ≈ 16px
+            Some(ref len) if len.is_percent() => {
+                // Percentage column-gap resolved later against available width
+                // For now store the percentage value; resolve_columns handles it.
+                // Actually, percentage is against the content box of the multicol.
+                // We don't have that here yet, so use 0 as placeholder.
+                LayoutUnit::zero()
+            }
+            _ => LayoutUnit::from_f32(style.font_size), // CSS default `normal` = 1em
         };
 
         let column_rule = if style.column_rule_style.has_visible_border() {
