@@ -692,9 +692,11 @@ fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> L
         } else {
             raw + bp_val
         }
-    } else if style.width.is_auto() {
-        // CSS Sizing 4 §5.1: When width is auto and the element has
-        // aspect-ratio + definite height, compute width from height × ratio.
+    } else if style.width.is_auto() || style.width.is_content_or_intrinsic() {
+        // CSS Sizing 4 §5.1: When width is auto (or an intrinsic keyword like
+        // min-content/max-content) and the element has aspect-ratio + definite
+        // height, compute width from height × ratio. For intrinsic keywords,
+        // the transferred size replaces the content-based intrinsic size.
         if let Some(ref ar) = style.aspect_ratio {
             if style.height.length_type() == openui_geometry::LengthType::Fixed
                 && ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0

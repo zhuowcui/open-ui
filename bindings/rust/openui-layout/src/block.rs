@@ -2108,9 +2108,12 @@ fn resolve_inline_size(
     let min = if style.min_width.is_auto() {
         // CSS Sizing 4 §5.1: For elements with a preferred aspect ratio,
         // min-width: auto resolves to the min-content contribution (not 0).
-        // This ensures the element can't shrink below its content size
-        // even when aspect-ratio would produce a smaller width.
-        if style.aspect_ratio.is_some() {
+        // BUT only when the aspect-ratio is actually used for sizing (i.e.,
+        // width is auto/stretch/intrinsic). When width is an explicit length
+        // (e.g., width: 100px), min-width: auto does NOT consider content.
+        if style.aspect_ratio.is_some()
+            && (style.width.is_auto() || style.width.is_stretch() || style.width.is_content_or_intrinsic())
+        {
             resolve_intrinsic_inline(doc, node_id, &Length::min_content(), available, border_padding)
         } else {
             LayoutUnit::zero() // min-width: auto → 0 for regular block elements
