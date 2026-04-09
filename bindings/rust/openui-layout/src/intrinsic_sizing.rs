@@ -282,6 +282,25 @@ fn compute_flex_intrinsic_sizes(
             main_contribution_max = main_max;
         }
 
+        // CSS Flexbox §9.9.1: Clamp item contributions by main-axis min/max constraints.
+        let (min_main_prop, max_main_prop) = if is_column {
+            (&child_style.min_height, &child_style.max_height)
+        } else {
+            (&child_style.min_width, &child_style.max_width)
+        };
+        let clamped_min_val = if !min_main_prop.is_auto() && min_main_prop.is_fixed() {
+            resolve_length(min_main_prop, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())
+        } else {
+            LayoutUnit::zero()
+        };
+        let clamped_max_val = if !max_main_prop.is_none() && max_main_prop.is_fixed() {
+            resolve_length(max_main_prop, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())
+        } else {
+            LayoutUnit::from_i32(33554431) // Max
+        };
+        let main_contribution_min = main_contribution_min.max_of(clamped_min_val).min_of(clamped_max_val);
+        let main_contribution_max = main_contribution_max.max_of(clamped_min_val).min_of(clamped_max_val);
+
         sum_main_min = sum_main_min + main_contribution_min;
         sum_main_max = sum_main_max + main_contribution_max;
         max_main_min = max_main_min.max_of(main_contribution_min);

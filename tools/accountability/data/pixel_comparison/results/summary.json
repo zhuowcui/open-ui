@@ -5,7 +5,7 @@
   "errors": 0,
   "tests": [
     {
-      "id": "wpt/css_flexbox/flex-minimum-height-flex-items-024",
+      "id": "wpt/css_flexbox/intrinsic-size_row-007",
       "status": "pass",
       "mismatch_pct": 0.0
     }
