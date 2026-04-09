@@ -1189,6 +1189,41 @@ fn resolve_main_axis_min_max(
     MinMaxSizes::new(min, max)
 }
 
+/// Resolve a cross-axis min or max constraint, handling intrinsic keywords.
+fn resolve_cross_min_max(
+    doc: &Document,
+    node_id: NodeId,
+    prop: &openui_geometry::Length,
+    is_column: bool,
+    pct_base: LayoutUnit,
+    is_min: bool,
+) -> LayoutUnit {
+    if is_min && prop.is_auto() {
+        return LayoutUnit::zero();
+    }
+    if !is_min && prop.is_none() {
+        return LayoutUnit::from_i32(33554431);
+    }
+    if prop.is_content_or_intrinsic() {
+        let sizes = if is_column {
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id)
+        } else {
+            let block = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, node_id);
+            MinMaxSizes::new(block.min_content_block_size, block.max_content_block_size)
+        };
+        return match prop.length_type() {
+            LengthType::MinContent => sizes.min,
+            _ => sizes.max,
+        };
+    }
+    let (auto_val, none_val) = if is_min {
+        (LayoutUnit::zero(), LayoutUnit::zero())
+    } else {
+        (LayoutUnit::from_i32(33554431), LayoutUnit::from_i32(33554431))
+    };
+    resolve_length(prop, pct_base, auto_val, none_val)
+}
+
 /// Compute cross-axis sizes for each line.
 /// Blink: PlaceFlexItems cross-size computation (line 1470-1558).
 fn compute_line_cross_sizes(
@@ -1233,16 +1268,8 @@ fn compute_line_cross_sizes(
                 (&child_style.min_height, &child_style.max_height)
             };
             let cross_pct_base = if is_column { child_percentage_inline } else { child_percentage_block };
-            let cross_min_raw = if cross_min_prop.is_auto() {
-                LayoutUnit::zero()
-            } else {
-                resolve_length(cross_min_prop, cross_pct_base, LayoutUnit::zero(), LayoutUnit::zero())
-            };
-            let cross_max_raw = if cross_max_prop.is_none() {
-                LayoutUnit::from_i32(33554431)
-            } else {
-                resolve_length(cross_max_prop, cross_pct_base, LayoutUnit::from_i32(33554431), LayoutUnit::from_i32(33554431))
-            };
+            let cross_min_raw = resolve_cross_min_max(doc, item.node_id, cross_min_prop, is_column, cross_pct_base, true);
+            let cross_max_raw = resolve_cross_min_max(doc, item.node_id, cross_max_prop, is_column, cross_pct_base, false);
             let cross_min_bb = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                 cross_min_raw
             } else if cross_min_raw > LayoutUnit::zero() {
@@ -1558,16 +1585,8 @@ fn give_items_final_position(
                     (&child_style.min_height, &child_style.max_height)
                 };
                 let cross_pct_base = if is_column { child_percentage_inline } else { child_percentage_block };
-                let cross_min_raw = if cross_min_prop.is_auto() {
-                    LayoutUnit::zero()
-                } else {
-                    resolve_length(cross_min_prop, cross_pct_base, LayoutUnit::zero(), LayoutUnit::zero())
-                };
-                let cross_max_raw = if cross_max_prop.is_none() {
-                    LayoutUnit::from_i32(33554431)
-                } else {
-                    resolve_length(cross_max_prop, cross_pct_base, LayoutUnit::from_i32(33554431), LayoutUnit::from_i32(33554431))
-                };
+                let cross_min_raw = resolve_cross_min_max(doc, item.node_id, cross_min_prop, is_column, cross_pct_base, true);
+                let cross_max_raw = resolve_cross_min_max(doc, item.node_id, cross_max_prop, is_column, cross_pct_base, false);
                 // Convert content-box min/max to border-box for comparison with stretch_size
                 let cross_min = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                     cross_min_raw
@@ -1599,16 +1618,8 @@ fn give_items_final_position(
                     (&child_style.min_height, &child_style.max_height)
                 };
                 let cross_pct_base = if is_column { child_percentage_inline } else { child_percentage_block };
-                let cross_min_raw = if cross_min_prop.is_auto() {
-                    LayoutUnit::zero()
-                } else {
-                    resolve_length(cross_min_prop, cross_pct_base, LayoutUnit::zero(), LayoutUnit::zero())
-                };
-                let cross_max_raw = if cross_max_prop.is_none() {
-                    LayoutUnit::from_i32(33554431)
-                } else {
-                    resolve_length(cross_max_prop, cross_pct_base, LayoutUnit::from_i32(33554431), LayoutUnit::from_i32(33554431))
-                };
+                let cross_min_raw = resolve_cross_min_max(doc, item.node_id, cross_min_prop, is_column, cross_pct_base, true);
+                let cross_max_raw = resolve_cross_min_max(doc, item.node_id, cross_max_prop, is_column, cross_pct_base, false);
                 let cross_min_bb = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                     cross_min_raw
                 } else if cross_min_raw > LayoutUnit::zero() {
