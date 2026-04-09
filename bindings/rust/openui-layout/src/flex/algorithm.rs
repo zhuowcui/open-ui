@@ -1483,6 +1483,7 @@ fn give_items_final_position(
         cross_free_after,
         lines.len(),
         is_wrap_reverse, // wrap-reverse flips cross-axis alignment semantics
+        !is_column, // cross axis: row→block(vertical), column→inline(horizontal)
     );
 
     // Assign cross-axis offsets to lines
@@ -1513,6 +1514,7 @@ fn give_items_final_position(
             effective_free,
             line.item_count(),
             is_reverse,
+            is_column, // main axis: row→inline(horizontal), column→block(vertical)
         );
 
         let mut main_offset = main_align.initial_offset;

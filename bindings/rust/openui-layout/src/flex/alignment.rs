@@ -36,6 +36,7 @@ pub fn resolve_content_alignment(
     free_space: LayoutUnit,
     item_count: usize,
     is_reverse: bool,
+    is_block_axis: bool,
 ) -> ContentAlignmentResult {
     // Handle distribution types first (space-between, space-around, space-evenly)
     if alignment.distribution != ContentDistribution::Default {
@@ -48,6 +49,7 @@ pub fn resolve_content_alignment(
         alignment.overflow,
         free_space,
         is_reverse,
+        is_block_axis,
     );
 
     ContentAlignmentResult {
@@ -135,6 +137,7 @@ fn resolve_position_offset(
     overflow: OverflowAlignment,
     free_space: LayoutUnit,
     is_reverse: bool,
+    is_block_axis: bool,
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
 
@@ -158,8 +161,13 @@ fn resolve_position_offset(
         }
         ContentPosition::Start => zero,
         ContentPosition::End => space,
-        ContentPosition::Left => zero,  // LTR assumption
-        ContentPosition::Right => space,
+        // CSS Box Alignment §5.4: left/right on block axis resolve to start
+        ContentPosition::Left => {
+            if is_block_axis { zero } else { zero } // LTR: left = start
+        }
+        ContentPosition::Right => {
+            if is_block_axis { zero } else { space } // block axis: start; inline axis: end (LTR)
+        }
         ContentPosition::Baseline | ContentPosition::LastBaseline => {
             // Baseline alignment for content is complex (SP11+).
             // For now, treat as flex-start.
@@ -308,7 +316,7 @@ mod tests {
     #[test]
     fn justify_content_flex_start() {
         let align = ContentAlignment::new(ContentPosition::FlexStart);
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false, false);
         assert_eq!(result.initial_offset, LayoutUnit::zero());
         assert_eq!(result.between_space, LayoutUnit::zero());
     }
@@ -316,7 +324,7 @@ mod tests {
     #[test]
     fn justify_content_flex_end() {
         let align = ContentAlignment::new(ContentPosition::FlexEnd);
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false, false);
         assert_eq!(result.initial_offset, LayoutUnit::from_i32(100));
         assert_eq!(result.between_space, LayoutUnit::zero());
     }
@@ -324,7 +332,7 @@ mod tests {
     #[test]
     fn justify_content_center() {
         let align = ContentAlignment::new(ContentPosition::Center);
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false, false);
         assert_eq!(result.initial_offset, LayoutUnit::from_i32(50));
         assert_eq!(result.between_space, LayoutUnit::zero());
     }
@@ -332,7 +340,7 @@ mod tests {
     #[test]
     fn justify_content_space_between() {
         let align = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, false, false);
         assert_eq!(result.initial_offset, LayoutUnit::zero());
         assert_eq!(result.between_space, LayoutUnit::from_i32(50));
     }
@@ -341,7 +349,7 @@ mod tests {
     fn justify_content_space_around() {
         let align = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
         // 120 free space, 3 items → per_item = 40, half = 20
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(120), 3, false);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(120), 3, false, false);
         assert_eq!(result.initial_offset, LayoutUnit::from_i32(20));
         assert_eq!(result.between_space, LayoutUnit::from_i32(40));
     }
@@ -350,7 +358,7 @@ mod tests {
     fn justify_content_space_evenly() {
         let align = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
         // 120 free space, 3 items → 4 slots → 30 each
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(120), 3, false);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(120), 3, false, false);
         assert_eq!(result.initial_offset, LayoutUnit::from_i32(30));
         assert_eq!(result.between_space, LayoutUnit::from_i32(30));
     }
@@ -359,7 +367,7 @@ mod tests {
     fn space_between_negative_fallback() {
         let align = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
         let neg = LayoutUnit::from_i32(-50);
-        let result = resolve_content_alignment(&align, neg, 3, false);
+        let result = resolve_content_alignment(&align, neg, 3, false, false);
         // Fallback to flex-start: offset = 0 (not reversed)
         assert_eq!(result.initial_offset, LayoutUnit::zero());
     }
@@ -368,7 +376,7 @@ mod tests {
     fn space_around_negative_fallback() {
         let align = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
         let neg = LayoutUnit::from_i32(-50);
-        let result = resolve_content_alignment(&align, neg, 3, false);
+        let result = resolve_content_alignment(&align, neg, 3, false, false);
         // Fallback to safe center: clamp to 0
         assert_eq!(result.initial_offset, LayoutUnit::zero());
     }
@@ -420,7 +428,7 @@ mod tests {
     #[test]
     fn flex_start_reversed() {
         let align = ContentAlignment::new(ContentPosition::FlexStart);
-        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, true);
+        let result = resolve_content_alignment(&align, LayoutUnit::from_i32(100), 3, true, false);
         assert_eq!(result.initial_offset, LayoutUnit::from_i32(100));
     }
 }
