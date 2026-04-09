@@ -202,8 +202,9 @@ def check_rust_code_exists():
     with open(summary_path) as f:
         summary = json.load(f)
 
-    # Extract test IDs from Rust registry entries, excluding comments
+    # Extract test IDs from Rust registry entries AND function definitions
     rust_test_ids = set()
+    rust_fn_names = set()
     for fname in os.listdir(WPT_DIR):
         if fname.endswith(".rs") and fname != "mod.rs":
             fpath = os.path.join(WPT_DIR, fname)
@@ -217,6 +218,10 @@ def check_rust_code_exists():
                     continue
                 for m in re.finditer(r'\("(wpt/[^"]+)"', line):
                     rust_test_ids.add(m.group(1))
+                # Also collect function definitions
+                m_fn = re.match(r'^fn\s+(\w+)\s*\(', stripped)
+                if m_fn:
+                    rust_fn_names.add(m_fn.group(1))
 
     summary_ids = {t["id"] for t in summary["tests"]}
     missing_rust = summary_ids - rust_test_ids
@@ -229,8 +234,28 @@ def check_rust_code_exists():
     if extra_rust:
         warn(f"{len(extra_rust)} Rust tests not in summary (possibly not compared)")
 
-    if not missing_rust:
-        ok(f"All {len(summary_ids)} summary tests have Rust registry entries")
+    # Verify function definitions exist for registry entries
+    # Registry format: ("wpt/area/name", fn_name as fn() -> Document)
+    registry_fns_missing = 0
+    for fname in os.listdir(WPT_DIR):
+        if fname.endswith(".rs") and fname != "mod.rs":
+            fpath = os.path.join(WPT_DIR, fname)
+            with open(fpath) as f:
+                content = f.read()
+            content = re.sub(r"/\*.*?\*/", "", content, flags=re.DOTALL)
+            for line in content.splitlines():
+                stripped = line.lstrip()
+                if stripped.startswith("//"):
+                    continue
+                for m in re.finditer(r',\s*(\w+)\s+as\s+fn\(\)', line):
+                    fn_name = m.group(1)
+                    if fn_name not in rust_fn_names:
+                        registry_fns_missing += 1
+                        if registry_fns_missing <= 3:
+                            issue(f"Registry references fn '{fn_name}' but no definition found")
+
+    if not missing_rust and registry_fns_missing == 0:
+        ok(f"All {len(summary_ids)} summary tests have Rust registry entries and function definitions")
 
 
 def check_mapping_coverage():

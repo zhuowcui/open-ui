@@ -189,7 +189,7 @@ def generate_html(data):
       <div class="card">
         <div class="card-label">Chromium WPT Tests</div>
         <div class="card-value">{chromium_total:,}</div>
-        <div class="card-sub">total reference tests</div>
+        <div class="card-sub">total WPT test files</div>
       </div>
       <div class="card">
         <div class="card-label">Ported</div>

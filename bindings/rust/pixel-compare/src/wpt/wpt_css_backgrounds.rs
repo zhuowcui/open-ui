@@ -11727,10 +11727,10 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n1).style.font_size = 50.0;
     doc.node_mut(n1).style.height = Length::px(50.0);
-    doc.node_mut(n1).style.margin_top = Length::px(16.0);
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
     doc.node_mut(n1).style.margin_right = Length::auto();
-    doc.node_mut(n1).style.margin_bottom = Length::px(35.2);
-    doc.node_mut(n1).style.margin_left = Length::px(16.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(110.00000000000001);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
     doc.node_mut(n1).style.width = Length::px(50.0);
     doc.node_mut(n1).style.margin_top = Length::px(58.0);
     doc.append_child(vp, n1);
@@ -11739,10 +11739,10 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n2).style.font_size = 50.0;
     doc.node_mut(n2).style.height = Length::px(50.0);
-    doc.node_mut(n2).style.margin_top = Length::px(16.0);
+    doc.node_mut(n2).style.margin_top = Length::px(50.0);
     doc.node_mut(n2).style.margin_right = Length::auto();
-    doc.node_mut(n2).style.margin_bottom = Length::px(35.2);
-    doc.node_mut(n2).style.margin_left = Length::px(16.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(110.00000000000001);
+    doc.node_mut(n2).style.margin_left = Length::px(50.0);
     doc.node_mut(n2).style.width = Length::px(50.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
@@ -11750,10 +11750,10 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n3).style.font_size = 50.0;
     doc.node_mut(n3).style.height = Length::px(50.0);
-    doc.node_mut(n3).style.margin_top = Length::px(16.0);
+    doc.node_mut(n3).style.margin_top = Length::px(50.0);
     doc.node_mut(n3).style.margin_right = Length::auto();
-    doc.node_mut(n3).style.margin_bottom = Length::px(35.2);
-    doc.node_mut(n3).style.margin_left = Length::px(16.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(110.00000000000001);
+    doc.node_mut(n3).style.margin_left = Length::px(50.0);
     doc.node_mut(n3).style.width = Length::px(50.0);
     doc.append_child(vp, n3);
     doc

@@ -1018,7 +1018,7 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     # ── margin shorthand ──
     if prop == 'margin':
-        return generate_shorthand_4(val, s, 'margin')
+        return generate_shorthand_4(val, s, 'margin', font_size=font_size)
 
     # ── margin sides ──
     if prop in ('margin-top', 'margin-right', 'margin-bottom', 'margin-left'):
@@ -1029,7 +1029,7 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     # ── padding shorthand ──
     if prop == 'padding':
-        return generate_shorthand_4(val, s, 'padding')
+        return generate_shorthand_4(val, s, 'padding', font_size=font_size)
 
     # ── padding sides ──
     if prop in ('padding-top', 'padding-right', 'padding-bottom', 'padding-left'):
@@ -1812,17 +1812,17 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
     return None
 
 
-def generate_shorthand_4(val: str, s: str, prefix: str, suffix: str = '') -> list[str] | None:
+def generate_shorthand_4(val: str, s: str, prefix: str, suffix: str = '', font_size: float = 16.0) -> list[str] | None:
     """Generate 4-side shorthand (margin, padding, border-width)."""
     parts = val.split()
     if len(parts) == 1:
-        length = parse_length(parts[0])
+        length = parse_length(parts[0], font_size)
         if length:
             sides = ['top', 'right', 'bottom', 'left']
             return [f"{s}.{prefix}_{side}{suffix} = {length};" for side in sides]
     elif len(parts) == 2:
-        tb = parse_length(parts[0])
-        lr = parse_length(parts[1])
+        tb = parse_length(parts[0], font_size)
+        lr = parse_length(parts[1], font_size)
         if tb and lr:
             return [
                 f"{s}.{prefix}_top{suffix} = {tb};",
@@ -1831,9 +1831,9 @@ def generate_shorthand_4(val: str, s: str, prefix: str, suffix: str = '') -> lis
                 f"{s}.{prefix}_left{suffix} = {lr};",
             ]
     elif len(parts) == 3:
-        top = parse_length(parts[0])
-        lr = parse_length(parts[1])
-        bot = parse_length(parts[2])
+        top = parse_length(parts[0], font_size)
+        lr = parse_length(parts[1], font_size)
+        bot = parse_length(parts[2], font_size)
         if top and lr and bot:
             return [
                 f"{s}.{prefix}_top{suffix} = {top};",
@@ -1842,7 +1842,7 @@ def generate_shorthand_4(val: str, s: str, prefix: str, suffix: str = '') -> lis
                 f"{s}.{prefix}_left{suffix} = {lr};",
             ]
     elif len(parts) == 4:
-        lengths = [parse_length(p) for p in parts]
+        lengths = [parse_length(p, font_size) for p in parts]
         if all(lengths):
             sides = ['top', 'right', 'bottom', 'left']
             return [f"{s}.{prefix}_{side}{suffix} = {lengths[i]};" for i, side in enumerate(sides)]
