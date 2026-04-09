@@ -789,9 +789,12 @@ fn resolve_flex_basis(
         };
 
         // CSS Flexbox §9.2 step E: a percentage flex-basis with an indefinite
-        // containing block falls back to content-based sizing. Do NOT special-
-        // case 0% — unlike 0px, 0% is a percentage and must follow this rule.
-        if !pct_base.is_indefinite() || flex_basis.is_fixed() {
+        // containing block falls back to content-based sizing.
+        // Exception: flex-basis: 0% resolves to 0 even with indefinite containers,
+        // matching Chromium/Blink behavior for pixel parity (0% of anything is 0).
+        if !pct_base.is_indefinite() || flex_basis.is_fixed()
+            || (flex_basis.is_percent() && flex_basis.value() == 0.0)
+        {
             let resolved = resolve_length(flex_basis, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
             let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                 (resolved - main_axis_border_padding).clamp_negative_to_zero()
@@ -1010,34 +1013,50 @@ fn resolve_content_based_size(
         )
     };
 
+    // CSS Flexbox §9.2 step E: "size the item into the available space using
+    // its used flex basis in place of its main size, treating a value of content
+    // as max-content." For column flex, the main axis is block — block_layout
+    // would use the item's own `height` property (even with indefinite available
+    // space, a fixed height still resolves). Instead, compute the intrinsic
+    // max-content block size, which ignores the item's height property and
+    // measures purely from content.
+    if is_column {
+        // For aspect-ratio items, try deriving main from cross first
+        if let Some(ref ar) = child_style.aspect_ratio {
+            let ratio = ar.ratio;
+            if ratio.0 > 0.0 && ratio.1 > 0.0 {
+                let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+                let cross_size = child_fragment.width();
+                if !cross_size.is_indefinite() && cross_size > LayoutUnit::zero() {
+                    let derived_main = LayoutUnit::from_f32(
+                        cross_size.to_f32() * ratio.1 / ratio.0
+                    );
+                    return (derived_main - main_axis_border_padding).clamp_negative_to_zero();
+                }
+            }
+        }
+
+        let intrinsic = compute_intrinsic_block_sizes(doc, child_id);
+        return (intrinsic.max_content_block_size - main_axis_border_padding).clamp_negative_to_zero();
+    }
+
     let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
 
-    let main_size = if is_column {
-        child_fragment.height()
-    } else {
-        child_fragment.width()
-    };
+    let main_size = child_fragment.width();
 
     // If block_layout returned indefinite (empty element with unconstrained axis),
     // treat as zero content size.
     let main_size = main_size.clamp_indefinite_to_zero();
 
-    // Apply aspect-ratio: if we have a ratio and auto main size was resolved,
-    // check if the cross-size from layout lets us derive a better main size
+    // Apply aspect-ratio for row flex: derive main (inline) from cross (block)
     if let Some(ref ar) = child_style.aspect_ratio {
         let ratio = ar.ratio;
         if ratio.0 > 0.0 && ratio.1 > 0.0 {
-            let cross_size = if is_column {
-                child_fragment.width()
-            } else {
-                child_fragment.height()
-            };
+            let cross_size = child_fragment.height();
             if !cross_size.is_indefinite() && cross_size > LayoutUnit::zero() {
-                let derived_main = if is_column {
-                    LayoutUnit::from_f32(cross_size.to_f32() * ratio.1 / ratio.0)
-                } else {
-                    LayoutUnit::from_f32(cross_size.to_f32() * ratio.0 / ratio.1)
-                };
+                let derived_main = LayoutUnit::from_f32(
+                    cross_size.to_f32() * ratio.0 / ratio.1
+                );
                 if derived_main > main_size {
                     return (derived_main - main_axis_border_padding).clamp_negative_to_zero();
                 }

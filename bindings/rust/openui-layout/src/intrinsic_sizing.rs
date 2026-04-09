@@ -94,6 +94,9 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     // CSS Sizing 3 §4.1: Max-content inline size must accommodate all floats
     // side-by-side (summed), plus the widest non-float child (maxed).
     let mut non_float_max_inline = LayoutUnit::zero();
+    // For inline-only containers: max-content is the SUM of inline children
+    // (they all sit on one line in max-content mode).
+    let mut inline_children_max_sum = LayoutUnit::zero();
     let mut float_max_inline_sum = LayoutUnit::zero();
     // Track min-content and max-content block sizes separately.
     // CSS Sizing 3 §5: min-content uses each child's min-content contribution,
@@ -101,10 +104,6 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     let mut min_content_block = LayoutUnit::zero();
     let mut max_content_block = LayoutUnit::zero();
     // CSS Sizing 3 §5: Float block-size contributions differ between modes.
-    // In max-content mode (infinite available width), floats sit side-by-side,
-    // so the tallest float determines the contribution (max).
-    // In min-content mode (narrowest width), floats may stack vertically
-    // when they can't fit beside each other, so we conservatively sum heights.
     let mut float_block_sum = LayoutUnit::zero();  // for min-content
     let mut float_block_max = LayoutUnit::zero();  // for max-content
     let is_bfc = style.creates_new_formatting_context();
@@ -120,28 +119,33 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         }
 
         let child_sizes = compute_child_intrinsic_contribution(doc, child_id);
+        let child_is_inline = is_inline_level(child_style)
+            || doc.node(child_id).tag == ElementTag::Text;
 
         if child_style.float != openui_style::Float::None {
-            // CSS Sizing 3 §4.1: In min-content mode, the widest float
-            // determines the container's min width. In max-content mode,
-            // floats sit side-by-side, so their widths sum.
             min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
             float_max_inline_sum = float_max_inline_sum + child_sizes.max_content_inline_size;
-
-            // CSS 2.1 §10.6.3/§10.6.7: floats only contribute to block size
-            // for BFC roots. Min-content: floats stack (sum heights).
-            // Max-content: floats side-by-side (max height).
             float_block_sum = float_block_sum + child_sizes.min_content_block_size;
             float_block_max = float_block_max.max_of(child_sizes.max_content_block_size);
+        } else if child_is_inline {
+            // CSS Sizing 3 §4.1: Inline-level children share a line.
+            // min-content: widest individual inline item.
+            // max-content: all inline items on one line (sum widths).
+            min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
+            inline_children_max_sum = inline_children_max_sum + child_sizes.max_content_inline_size;
+            min_content_block = min_content_block + child_sizes.min_content_block_size;
+            max_content_block = max_content_block + child_sizes.max_content_block_size;
         } else {
             // CSS Sizing 3 §4.1: non-float block children contribute via max.
             min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
             non_float_max_inline = non_float_max_inline.max_of(child_sizes.max_content_inline_size);
-
             min_content_block = min_content_block + child_sizes.min_content_block_size;
             max_content_block = max_content_block + child_sizes.max_content_block_size;
         }
     }
+
+    // Inline children on one line contribute their sum as max-content.
+    non_float_max_inline = non_float_max_inline.max_of(inline_children_max_sum);
 
     // Max-content inline: container must be wide enough for all floats
     // side-by-side OR the widest non-float child, whichever is larger.
@@ -239,7 +243,15 @@ fn compute_flex_intrinsic_sizes(
         style.row_gap.as_ref().map(|g| resolve_length(g, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero())).unwrap_or(LayoutUnit::zero())
     };
 
-    let mut item_count = 0;
+    // Per-item data needed for column-wrap wrapping simulation.
+    struct ItemData {
+        main_min: LayoutUnit,
+        main_max: LayoutUnit,
+        cross_min: LayoutUnit,
+        cross_max: LayoutUnit,
+    }
+
+    let mut items: Vec<ItemData> = Vec::new();
     let mut sum_main_min = LayoutUnit::zero();
     let mut sum_main_max = LayoutUnit::zero();
     let mut max_main_min = LayoutUnit::zero();
@@ -273,8 +285,6 @@ fn compute_flex_intrinsic_sizes(
 
         if flex_basis.is_fixed() {
             let basis = resolve_length(flex_basis, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero());
-            // Flex-basis overrides content size for intrinsic contribution
-            // but must be clamped by min/max main size
             main_contribution_min = basis.max_of(main_min);
             main_contribution_max = basis.max_of(main_max);
         } else {
@@ -306,28 +316,101 @@ fn compute_flex_intrinsic_sizes(
         max_main_min = max_main_min.max_of(main_contribution_min);
         max_cross_min = max_cross_min.max_of(cross_min);
         max_cross_max = max_cross_max.max_of(cross_max);
-        item_count += 1;
+
+        items.push(ItemData {
+            main_min: main_contribution_min,
+            main_max: main_contribution_max,
+            cross_min,
+            cross_max,
+        });
     }
+
+    let item_count = items.len();
 
     // Add gaps between items
     let gap_count = if item_count > 1 { item_count - 1 } else { 0 };
     let total_main_gap = main_gap * gap_count as i32;
-    let _ = cross_gap; // cross gap only matters for multi-line block sizing
 
     // CSS Flexbox §9.9.1:
-    // For single-line: min-content = sum of clamped flex-base sizes (or max of contributions for wrapping)
+    // For single-line: min-content = sum of clamped flex-base sizes
     // For multi-line (wrap): min-content = largest item min-content contribution
     let (min_main, max_main) = if is_wrap {
-        // Wrapping: min-content = largest single item; max-content = sum + gaps
         (max_main_min, sum_main_max + total_main_gap)
     } else {
-        // No wrap: both modes sum contributions + gaps
         (sum_main_min + total_main_gap, sum_main_max + total_main_gap)
+    };
+
+    // For column+wrap, the cross-axis (inline) size depends on wrapping.
+    // When the container has a definite main-axis constraint (height/max-height),
+    // simulate wrapping to determine the sum of column widths.
+    let (min_cross_total, max_cross_total) = if is_column && is_wrap && !items.is_empty() {
+        let main_constraint = {
+            let mut c = LayoutUnit::from_i32(33554431);
+            if style.height.is_fixed() {
+                let h = resolve_length(&style.height, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero());
+                let ch = if style.box_sizing == BoxSizing::BorderBox {
+                    (h - bp_block).clamp_negative_to_zero()
+                } else { h };
+                c = c.min_of(ch);
+            }
+            if !style.max_height.is_none() && style.max_height.is_fixed() {
+                let mh = resolve_length(&style.max_height, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero());
+                let cmh = if style.box_sizing == BoxSizing::BorderBox {
+                    (mh - bp_block).clamp_negative_to_zero()
+                } else { mh };
+                c = c.min_of(cmh);
+            }
+            c
+        };
+
+        if main_constraint < LayoutUnit::from_i32(33554431) {
+            // Simulate wrapping to compute cross-axis totals
+            let simulate = |use_max: bool| -> LayoutUnit {
+                let mut total_cross = LayoutUnit::zero();
+                let mut line_main = LayoutUnit::zero();
+                let mut line_cross = LayoutUnit::zero();
+                let mut line_count: usize = 0;
+                let mut items_in_line: usize = 0;
+
+                for item in &items {
+                    let im = if use_max { item.main_max } else { item.main_min };
+                    let ic = if use_max { item.cross_max } else { item.cross_min };
+                    let new_main = if items_in_line > 0 {
+                        line_main + main_gap + im
+                    } else { im };
+
+                    if items_in_line > 0 && new_main > main_constraint {
+                        total_cross = total_cross + line_cross;
+                        line_count += 1;
+                        line_main = im;
+                        line_cross = ic;
+                        items_in_line = 1;
+                    } else {
+                        line_main = new_main;
+                        line_cross = line_cross.max_of(ic);
+                        items_in_line += 1;
+                    }
+                }
+                if items_in_line > 0 {
+                    total_cross = total_cross + line_cross;
+                    line_count += 1;
+                }
+                if line_count > 1 {
+                    total_cross = total_cross + cross_gap * (line_count - 1) as i32;
+                }
+                total_cross
+            };
+            (simulate(false), simulate(true))
+        } else {
+            (max_cross_min, max_cross_max)
+        }
+    } else {
+        (max_cross_min, max_cross_max)
     };
 
     // Convert back to inline/block coordinates
     let (min_inline, max_inline, min_block, max_block) = if is_column {
-        (max_cross_min, max_cross_max, min_main, max_main)
+        (min_cross_total, max_cross_total, min_main, max_main)
     } else {
         (min_main, max_main, max_cross_min, max_cross_max)
     };
