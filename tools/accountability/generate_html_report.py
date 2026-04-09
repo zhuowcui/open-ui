@@ -223,7 +223,7 @@ def generate_html(data):
       <div class="card">
         <div class="card-label">Near-Miss (AA)</div>
         <div class="card-value" style="color:#e67e22">{near_miss_aa:,}</div>
-        <div class="card-sub">&lt;{aa_threshold}% mismatch</div>
+        <div class="card-sub">&le;{aa_threshold}% mismatch</div>
       </div>
       <div class="card">
         <div class="card-label">Coverage</div>
