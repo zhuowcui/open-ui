@@ -1178,85 +1178,13 @@ fn resolve_main_axis_min_max(
         LayoutUnit::from_i32(33554431)
     };
 
-    // CSS Sizing 4 §5.2: Transferred min/max constraints.
-    // When aspect-ratio is set, constraints on the cross axis transfer
-    // through the ratio to constrain the main axis.
-    let (min, max) = if let Some(ref ar) = child_style.aspect_ratio {
-        let ratio = ar.ratio;
-        if ratio.0 > 0.0 && ratio.1 > 0.0 {
-            let (cross_min_prop, cross_max_prop, cross_pct) = if is_column {
-                (&child_style.min_width, &child_style.max_width, pct_inline)
-            } else {
-                (&child_style.min_height, &child_style.max_height, pct_block)
-            };
-
-            // Transfer cross-axis min to main-axis min
-            let transferred_min = if !cross_min_prop.is_auto() && !cross_min_prop.is_none()
-                && *cross_min_prop != Length::zero()
-                && (!cross_pct.is_indefinite() || cross_min_prop.is_fixed())
-            {
-                let cross_min_val = resolve_length(cross_min_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
-                let cross_content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    let cross_bp = {
-                        let b = resolve_border(child_style);
-                        let p = resolve_padding(child_style, LayoutUnit::zero());
-                        if is_column { b.left + b.right + p.left + p.right }
-                        else { b.top + b.bottom + p.top + p.bottom }
-                    };
-                    (cross_min_val - cross_bp).clamp_negative_to_zero()
-                } else {
-                    cross_min_val
-                };
-                let main_from_cross = if is_column {
-                    // Column: main=block(h), cross=inline(w). main = cross * (h/w)
-                    LayoutUnit::from_f32(cross_content.to_f32() * ratio.1 / ratio.0)
-                } else {
-                    // Row: main=inline(w), cross=block(h). main = cross * (w/h)
-                    LayoutUnit::from_f32(cross_content.to_f32() * ratio.0 / ratio.1)
-                };
-                main_from_cross
-            } else {
-                LayoutUnit::zero()
-            };
-
-            // Transfer cross-axis max to main-axis max
-            let transferred_max = if !cross_max_prop.is_none()
-                && (!cross_pct.is_indefinite() || cross_max_prop.is_fixed())
-            {
-                let cross_max_val = resolve_length(cross_max_prop, cross_pct, LayoutUnit::from_i32(33554431), LayoutUnit::from_i32(33554431));
-                if cross_max_val < LayoutUnit::from_i32(33554431) {
-                    let cross_content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                        let cross_bp = {
-                            let b = resolve_border(child_style);
-                            let p = resolve_padding(child_style, LayoutUnit::zero());
-                            if is_column { b.left + b.right + p.left + p.right }
-                            else { b.top + b.bottom + p.top + p.bottom }
-                        };
-                        (cross_max_val - cross_bp).clamp_negative_to_zero()
-                    } else {
-                        cross_max_val
-                    };
-                    let main_from_cross = if is_column {
-                        LayoutUnit::from_f32(cross_content.to_f32() * ratio.1 / ratio.0)
-                    } else {
-                        LayoutUnit::from_f32(cross_content.to_f32() * ratio.0 / ratio.1)
-                    };
-                    main_from_cross
-                } else {
-                    LayoutUnit::from_i32(33554431)
-                }
-            } else {
-                LayoutUnit::from_i32(33554431)
-            };
-
-            // Combine: use max of own min and transferred min; min of own max and transferred max
-            (min.max_of(transferred_min), max.min_of(transferred_max))
-        } else {
-            (min, max)
-        }
-    } else {
-        (min, max)
-    };
+    // NOTE: CSS Sizing 4 §5.2 transferred min/max constraints are NOT
+    // applied for flex items. In flex layout, the main axis size is determined
+    // by flex-basis/grow/shrink, and the cross axis size is derived separately
+    // (via AR if present) then clamped by cross min/max. Applying transferred
+    // constraints here would incorrectly constrain the main axis — e.g. a flex
+    // item with AR 1/2 + max-height:100px + flex:1 in a 100px container should
+    // have width=100 (flex), height=min(200, 100)=100, not width=50.
 
     MinMaxSizes::new(min, max)
 }
@@ -1699,30 +1627,11 @@ fn give_items_final_position(
             };
 
             // Build final constraint space.
-            // CSS Flexbox §9.4: When a stretched flex item has aspect-ratio,
-            // the definite cross size transfers through the ratio to determine
-            // the main size (overriding the flexed main size).
-            let mut final_main = flexed_border_box;
-            if should_stretch {
-                if let Some(ref ar) = child_style.aspect_ratio {
-                    let ratio = ar.ratio;
-                    if ratio.0 > 0.0 && ratio.1 > 0.0 {
-                        let ar_main = if is_column {
-                            // Column: cross=inline(width), main=block(height)
-                            // main = cross * (h/w)
-                            LayoutUnit::from_f32(cross_size_for_child.to_f32() * ratio.1 / ratio.0)
-                        } else {
-                            // Row: cross=block(height), main=inline(width)
-                            // main = cross * (w/h)
-                            LayoutUnit::from_f32(cross_size_for_child.to_f32() * ratio.0 / ratio.1)
-                        };
-                        // Re-clamp to min/max constraints after AR transfer.
-                        // CSS Flexbox §9.7: aspect-ratio can override the flexed
-                        // main size but must still respect min/max constraints.
-                        final_main = item.main_axis_min_max.clamp(ar_main);
-                    }
-                }
-            }
+            // NOTE: We do NOT re-derive main size from AR when the item is
+            // stretched. The flex algorithm has already determined the main
+            // size (via grow/shrink). The stretched cross size is independent.
+            // Chrome: stretched items keep their flexed main size even with AR.
+            let final_main = flexed_border_box;
 
             let (inline_size, block_size) = if is_column {
                 (cross_size_for_child, final_main)
