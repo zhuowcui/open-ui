@@ -941,9 +941,11 @@ fn css_multicol_column_balancing_paged_001_print_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.height = Length::px(288.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.height = Length::px(192.0);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
@@ -957,6 +959,7 @@ fn css_multicol_column_balancing_paged_001_print_ref() -> Document {
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
         doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+        doc.node_mut(n5).style.height = Length::px(288.0);
         doc.append_child(n4, n5);
     doc
 }
@@ -982,15 +985,18 @@ fn css_multicol_column_balancing_paged_001_print() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n3).style.height = Length::px(288.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.column_span = ColumnSpan::All;
+            doc.node_mut(n4).style.height = Length::px(192.0);
             doc.node_mut(n4).style.background_color = Color::from_rgba8(173, 216, 230, 255);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
             doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+            doc.node_mut(n5).style.height = Length::px(288.0);
             doc.append_child(n2, n5);
     doc
 }
@@ -1154,6 +1160,8 @@ fn css_multicol_column_height_002() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.row_gap = Some(Length::px(10.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -1196,6 +1204,8 @@ fn css_multicol_column_height_003() -> Document {
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1229,6 +1239,8 @@ fn css_multicol_column_height_004() -> Document {
         doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(30.0);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(5.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1271,6 +1283,8 @@ fn css_multicol_column_height_005() -> Document {
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(400.0);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(20.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1294,6 +1308,8 @@ fn css_multicol_column_height_006() -> Document {
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
+        doc.node_mut(n2).style.row_gap = Some(Length::px(5.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1430,6 +1446,8 @@ fn css_multicol_column_height_007() -> Document {
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
+            doc.node_mut(n3).style.row_gap = Some(Length::px(10.0));
+            doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -1462,6 +1480,8 @@ fn css_multicol_column_height_008() -> Document {
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1741,6 +1761,8 @@ fn css_multicol_column_height_013() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1922,6 +1944,8 @@ fn css_multicol_column_height_017() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(20.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1958,6 +1982,8 @@ fn css_multicol_column_height_018() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -2015,6 +2041,8 @@ fn css_multicol_column_height_019() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(5.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -2059,6 +2087,8 @@ fn css_multicol_column_height_020() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -2112,6 +2142,8 @@ fn css_multicol_column_height_021() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_count = Some(0);
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.row_gap = Some(Length::px(99.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -2145,6 +2177,8 @@ fn css_multicol_column_height_022() -> Document {
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.row_gap = Some(Length::px(49.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
@@ -2186,6 +2220,8 @@ fn css_multicol_column_height_024() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(5.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
@@ -2264,11 +2300,15 @@ fn css_multicol_column_height_025() -> Document {
         doc.node_mut(n2).style.column_count = Some(5);
         doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(13.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
+            doc.node_mut(n3).style.row_gap = Some(Length::px(13.0));
+            doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -2341,6 +2381,8 @@ fn css_multicol_column_height_027() -> Document {
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
+            doc.node_mut(n3).style.row_gap = Some(Length::px(10.0));
+            doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -2399,6 +2441,8 @@ fn css_multicol_column_height_028() -> Document {
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
+            doc.node_mut(n3).style.row_gap = Some(Length::px(10.0));
+            doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -2457,6 +2501,8 @@ fn css_multicol_column_height_029() -> Document {
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.column_count = Some(2);
             doc.node_mut(n3).style.column_fill = ColumnFill::Auto;
+            doc.node_mut(n3).style.row_gap = Some(Length::px(13.0));
+            doc.node_mut(n3).style.column_gap = Some(Length::px(0.0));
             doc.append_child(n2, n3);
                 let n4 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n4).style.display = Display::Block;
@@ -2647,6 +2693,8 @@ fn css_multicol_column_wrap_no_constraints_001() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(20.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -2669,6 +2717,8 @@ fn css_multicol_column_wrap_no_constraints_002() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.column_count = Some(2);
+        doc.node_mut(n2).style.row_gap = Some(Length::px(10.0));
+        doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -3016,6 +3066,7 @@ fn css_multicol_float_and_block() -> Document {
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 105, 180, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;

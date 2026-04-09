@@ -69,7 +69,7 @@ SUPPORTED_PROPERTIES = {
     # Overflow
     'overflow', 'overflow-x', 'overflow-y',
     # Visual
-    'background', 'background-color', 'color', 'opacity', 'visibility',
+    'background', 'background-color', 'background-clip', 'color', 'opacity', 'visibility',
     # Flex
     'flex', 'flex-direction', 'flex-wrap', 'flex-flow',
     'justify-content', 'align-items', 'align-content', 'align-self',
@@ -133,7 +133,7 @@ IGNORED_PROPERTIES = {
     'isolation',
     # Background details that don't affect layout
     'background-image', 'background-repeat', 'background-size',
-    'background-position', 'background-clip', 'background-origin',
+    'background-position', 'background-origin',
     'background-attachment',
     # Border image (visual only)
     'border-image', 'border-image-source', 'border-image-slice',
@@ -176,6 +176,122 @@ CSS_COLORS = {
     'darkgreen': 'Color::from_rgba8(0, 100, 0, 255)',
     'darkblue': 'Color::from_rgba8(0, 0, 139, 255)',
     'darkred': 'Color::from_rgba8(139, 0, 0, 255)',
+    'hotpink': 'Color::from_rgba8(255, 105, 180, 255)',
+    'mediumaquamarine': 'Color::from_rgba8(102, 205, 170, 255)',
+    'limegreen': 'Color::from_rgba8(50, 205, 50, 255)',
+    'turquoise': 'Color::from_rgba8(64, 224, 208, 255)',
+    'coral': 'Color::from_rgba8(255, 127, 80, 255)',
+    'violet': 'Color::from_rgba8(238, 130, 238, 255)',
+    'bisque': 'Color::from_rgba8(255, 228, 196, 255)',
+    'dodgerblue': 'Color::from_rgba8(30, 144, 255, 255)',
+    'blueviolet': 'Color::from_rgba8(138, 43, 226, 255)',
+    'papayawhip': 'Color::from_rgba8(255, 239, 213, 255)',
+    'tomato': 'Color::from_rgba8(255, 99, 71, 255)',
+    'skyblue': 'Color::from_rgba8(135, 206, 235, 255)',
+    'gold': 'Color::from_rgba8(255, 215, 0, 255)',
+    'lightgray': 'Color::from_rgba8(211, 211, 211, 255)',
+    'lightgrey': 'Color::from_rgba8(211, 211, 211, 255)',
+    'darkgray': 'Color::from_rgba8(169, 169, 169, 255)',
+    'darkgrey': 'Color::from_rgba8(169, 169, 169, 255)',
+    'indianred': 'Color::from_rgba8(205, 92, 92, 255)',
+    'chocolate': 'Color::from_rgba8(210, 105, 30, 255)',
+    'brown': 'Color::from_rgba8(165, 42, 42, 255)',
+    'khaki': 'Color::from_rgba8(240, 230, 140, 255)',
+    'crimson': 'Color::from_rgba8(220, 20, 60, 255)',
+    'salmon': 'Color::from_rgba8(250, 128, 114, 255)',
+    'deepskyblue': 'Color::from_rgba8(0, 191, 255, 255)',
+    'royalblue': 'Color::from_rgba8(65, 105, 225, 255)',
+    'steelblue': 'Color::from_rgba8(70, 130, 180, 255)',
+    'tan': 'Color::from_rgba8(210, 180, 140, 255)',
+    'wheat': 'Color::from_rgba8(245, 222, 179, 255)',
+    'plum': 'Color::from_rgba8(221, 160, 221, 255)',
+    'orchid': 'Color::from_rgba8(218, 112, 214, 255)',
+    'mediumpurple': 'Color::from_rgba8(147, 112, 219, 255)',
+    'slateblue': 'Color::from_rgba8(106, 90, 205, 255)',
+    'cadetblue': 'Color::from_rgba8(95, 158, 160, 255)',
+    'springgreen': 'Color::from_rgba8(0, 255, 127, 255)',
+    'mediumseagreen': 'Color::from_rgba8(60, 179, 113, 255)',
+    'seagreen': 'Color::from_rgba8(46, 139, 87, 255)',
+    'forestgreen': 'Color::from_rgba8(34, 139, 34, 255)',
+    'olivedrab': 'Color::from_rgba8(107, 142, 35, 255)',
+    'darkorange': 'Color::from_rgba8(255, 140, 0, 255)',
+    'orangered': 'Color::from_rgba8(255, 69, 0, 255)',
+    'sienna': 'Color::from_rgba8(160, 82, 45, 255)',
+    'peru': 'Color::from_rgba8(205, 133, 63, 255)',
+    'goldenrod': 'Color::from_rgba8(218, 165, 32, 255)',
+    'cornflowerblue': 'Color::from_rgba8(100, 149, 237, 255)',
+    'midnightblue': 'Color::from_rgba8(25, 25, 112, 255)',
+    'slategray': 'Color::from_rgba8(112, 128, 144, 255)',
+    'slategrey': 'Color::from_rgba8(112, 128, 144, 255)',
+    'dimgray': 'Color::from_rgba8(105, 105, 105, 255)',
+    'dimgrey': 'Color::from_rgba8(105, 105, 105, 255)',
+    'whitesmoke': 'Color::from_rgba8(245, 245, 245, 255)',
+    'ivory': 'Color::from_rgba8(255, 255, 240, 255)',
+    'beige': 'Color::from_rgba8(245, 245, 220, 255)',
+    'linen': 'Color::from_rgba8(250, 240, 230, 255)',
+    'cornsilk': 'Color::from_rgba8(255, 248, 220, 255)',
+    'antiquewhite': 'Color::from_rgba8(250, 235, 215, 255)',
+    'lavender': 'Color::from_rgba8(230, 230, 250, 255)',
+    'mistyrose': 'Color::from_rgba8(255, 228, 225, 255)',
+    'peachpuff': 'Color::from_rgba8(255, 218, 185, 255)',
+    'moccasin': 'Color::from_rgba8(255, 228, 181, 255)',
+    'navajowhite': 'Color::from_rgba8(255, 222, 173, 255)',
+    'powderblue': 'Color::from_rgba8(176, 224, 230, 255)',
+    'lightyellow': 'Color::from_rgba8(255, 255, 224, 255)',
+    'lightcyan': 'Color::from_rgba8(224, 255, 255, 255)',
+    'lightsalmon': 'Color::from_rgba8(255, 160, 122, 255)',
+    'lightcoral': 'Color::from_rgba8(240, 128, 128, 255)',
+    'lightpink': 'Color::from_rgba8(255, 182, 193, 255)',
+    'lightseagreen': 'Color::from_rgba8(32, 178, 170, 255)',
+    'lightskyblue': 'Color::from_rgba8(135, 206, 250, 255)',
+    'lightsteelblue': 'Color::from_rgba8(176, 196, 222, 255)',
+    'lightslategray': 'Color::from_rgba8(119, 136, 153, 255)',
+    'lightslategrey': 'Color::from_rgba8(119, 136, 153, 255)',
+    'mediumblue': 'Color::from_rgba8(0, 0, 205, 255)',
+    'mediumorchid': 'Color::from_rgba8(186, 85, 211, 255)',
+    'mediumslateblue': 'Color::from_rgba8(123, 104, 238, 255)',
+    'mediumspringgreen': 'Color::from_rgba8(0, 250, 154, 255)',
+    'mediumturquoise': 'Color::from_rgba8(72, 209, 204, 255)',
+    'mediumvioletred': 'Color::from_rgba8(199, 21, 133, 255)',
+    'darkcyan': 'Color::from_rgba8(0, 139, 139, 255)',
+    'darkgoldenrod': 'Color::from_rgba8(184, 134, 11, 255)',
+    'darkkhaki': 'Color::from_rgba8(189, 183, 107, 255)',
+    'darkmagenta': 'Color::from_rgba8(139, 0, 139, 255)',
+    'darkolivegreen': 'Color::from_rgba8(85, 107, 47, 255)',
+    'darkorchid': 'Color::from_rgba8(153, 50, 204, 255)',
+    'darksalmon': 'Color::from_rgba8(233, 150, 122, 255)',
+    'darkseagreen': 'Color::from_rgba8(143, 188, 143, 255)',
+    'darkslateblue': 'Color::from_rgba8(72, 61, 139, 255)',
+    'darkslategray': 'Color::from_rgba8(47, 79, 79, 255)',
+    'darkslategrey': 'Color::from_rgba8(47, 79, 79, 255)',
+    'darkturquoise': 'Color::from_rgba8(0, 206, 209, 255)',
+    'darkviolet': 'Color::from_rgba8(148, 0, 211, 255)',
+    'deeppink': 'Color::from_rgba8(255, 20, 147, 255)',
+    'firebrick': 'Color::from_rgba8(178, 34, 34, 255)',
+    'greenyellow': 'Color::from_rgba8(173, 255, 47, 255)',
+    'honeydew': 'Color::from_rgba8(240, 255, 240, 255)',
+    'lawngreen': 'Color::from_rgba8(124, 252, 0, 255)',
+    'chartreuse': 'Color::from_rgba8(127, 255, 0, 255)',
+    'palegreen': 'Color::from_rgba8(152, 251, 152, 255)',
+    'paleturquoise': 'Color::from_rgba8(175, 238, 238, 255)',
+    'palevioletred': 'Color::from_rgba8(219, 112, 147, 255)',
+    'rosybrown': 'Color::from_rgba8(188, 143, 143, 255)',
+    'sandybrown': 'Color::from_rgba8(244, 164, 96, 255)',
+    'burlywood': 'Color::from_rgba8(222, 184, 135, 255)',
+    'thistle': 'Color::from_rgba8(216, 191, 216, 255)',
+    'snow': 'Color::from_rgba8(255, 250, 250, 255)',
+    'mintcream': 'Color::from_rgba8(245, 255, 250, 255)',
+    'azure': 'Color::from_rgba8(240, 255, 255, 255)',
+    'ghostwhite': 'Color::from_rgba8(248, 248, 255, 255)',
+    'floralwhite': 'Color::from_rgba8(255, 250, 240, 255)',
+    'aliceblue': 'Color::from_rgba8(240, 248, 255, 255)',
+    'seashell': 'Color::from_rgba8(255, 245, 238, 255)',
+    'oldlace': 'Color::from_rgba8(253, 245, 230, 255)',
+    'gainsboro': 'Color::from_rgba8(220, 220, 220, 255)',
+    'indigo': 'Color::from_rgba8(75, 0, 130, 255)',
+    'aquamarine': 'Color::from_rgba8(127, 255, 212, 255)',
+    'yellowgreen': 'Color::from_rgba8(154, 205, 50, 255)',
+    'darkcoral': 'Color::from_rgba8(205, 91, 69, 255)',
 }
 
 
@@ -241,6 +357,31 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
         return f'Length::px({px_val})'
     # rem → always relative to root font-size (16px)
     m = re.match(r'^(-?[\d.]+)rem$', value)
+    if m:
+        px_val = float(m.group(1)) * 16.0
+        return f'Length::px({px_val})'
+    # in → inches (1in = 96px)
+    m = re.match(r'^(-?[\d.]+)in$', value)
+    if m:
+        px_val = float(m.group(1)) * 96.0
+        return f'Length::px({px_val})'
+    # cm → centimeters (1cm = 37.795px)
+    m = re.match(r'^(-?[\d.]+)cm$', value)
+    if m:
+        px_val = float(m.group(1)) * 37.7952755906
+        return f'Length::px({round(px_val, 4)})'
+    # mm → millimeters (1mm = 3.7795px)
+    m = re.match(r'^(-?[\d.]+)mm$', value)
+    if m:
+        px_val = float(m.group(1)) * 3.77952755906
+        return f'Length::px({round(px_val, 4)})'
+    # pt → points (1pt = 1.333px)
+    m = re.match(r'^(-?[\d.]+)pt$', value)
+    if m:
+        px_val = float(m.group(1)) * (96.0 / 72.0)
+        return f'Length::px({round(px_val, 4)})'
+    # pc → picas (1pc = 16px)
+    m = re.match(r'^(-?[\d.]+)pc$', value)
     if m:
         px_val = float(m.group(1)) * 16.0
         return f'Length::px({px_val})'
@@ -1118,6 +1259,13 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
             'scroll': 'Overflow::Scroll', 'auto': 'Overflow::Auto',
             'clip': 'Overflow::Clip',
         }
+        # Two-value form: overflow: <x> <y>
+        parts = val.split()
+        if len(parts) == 2 and parts[0] in mapping and parts[1] in mapping:
+            return [
+                f"{s}.overflow_x = {mapping[parts[0]]};",
+                f"{s}.overflow_y = {mapping[parts[1]]};",
+            ]
         if val in mapping:
             return [
                 f"{s}.overflow_x = {mapping[val]};",
@@ -1140,8 +1288,21 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         if color:
             return f"{s}.background_color = {color};"
 
+    # ── background-clip ──
+    if prop == 'background-clip':
+        mapping = {
+            'border-box': 'BackgroundClip::BorderBox',
+            'padding-box': 'BackgroundClip::PaddingBox',
+            'content-box': 'BackgroundClip::ContentBox',
+        }
+        if val.strip() in mapping:
+            return f"{s}.background_clip = {mapping[val.strip()]};"
+
     # ── background shorthand — extract color component ──
     if prop == 'background':
+        # background: none → treat as transparent
+        if val.strip() == 'none' or val.strip() == 'none, none':
+            return f"{s}.background_color = Color::TRANSPARENT;"
         # Try parsing entire value as color first (simplest case)
         color = parse_color(val)
         if color:
@@ -1156,7 +1317,8 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
             if '/' in part or part in ('top', 'left', 'right', 'bottom', 'center',
                                         'cover', 'contain', 'fixed', 'scroll', 'local',
                                         'no-repeat', 'repeat-x', 'repeat-y', 'repeat',
-                                        'padding-box', 'border-box', 'content-box'):
+                                        'padding-box', 'border-box', 'content-box',
+                                        'none'):
                 continue
             color = parse_color(part)
             if color:
@@ -1339,15 +1501,35 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
             pass
 
     if prop in ('gap', 'row-gap', 'column-gap'):
-        length = parse_length(val, font_size)
-        if length:
-            if prop == 'gap':
+        if prop == 'gap':
+            parts = val.split()
+            if len(parts) == 2:
+                row_len = parse_length(parts[0], font_size)
+                col_len = parse_length(parts[1], font_size)
+                if row_len and col_len:
+                    return [
+                        f"{s}.row_gap = Some({row_len});",
+                        f"{s}.column_gap = Some({col_len});",
+                    ]
+            elif len(parts) == 1:
+                length = parse_length(parts[0], font_size)
+                if length:
+                    return [
+                        f"{s}.row_gap = Some({length});",
+                        f"{s}.column_gap = Some({length});",
+                    ]
+            # Fallback: try whole value as single length
+            length = parse_length(val, font_size)
+            if length:
                 return [
                     f"{s}.row_gap = Some({length});",
                     f"{s}.column_gap = Some({length});",
                 ]
-            rust_prop = prop.replace('-', '_')
-            return f"{s}.{rust_prop} = Some({length});"
+        else:
+            length = parse_length(val, font_size)
+            if length:
+                rust_prop = prop.replace('-', '_')
+                return f"{s}.{rust_prop} = Some({length});"
 
     # ── multicol ──
     if prop == 'column-count':
@@ -1406,6 +1588,18 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         if val in mapping:
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {mapping[val]};"
+
+    # ── page-break-before/after (legacy → break-before/after) ──
+    if prop in ('page-break-before', 'page-break-after'):
+        # CSS 2.1 page-break maps to CSS3 break properties
+        legacy_mapping = {
+            'auto': 'BreakValue::Auto', 'avoid': 'BreakValue::Avoid',
+            'always': 'BreakValue::Page', 'left': 'BreakValue::Left',
+            'right': 'BreakValue::Right',
+        }
+        if val in legacy_mapping:
+            rust_prop = prop.replace('page-break', 'break').replace('-', '_')
+            return f"{s}.{rust_prop} = {legacy_mapping[val]};"
 
     if prop == 'break-inside':
         mapping = {

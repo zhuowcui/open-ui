@@ -18,7 +18,7 @@
 
 use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, RRect, ColorSpace, ClipOp, Point};
 use openui_geometry::PhysicalOffset;
-use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility};
+use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility, BackgroundClip};
 use openui_dom::Document;
 use openui_layout::{Fragment, FragmentKind};
 use openui_text::font::FontMetrics;
@@ -405,22 +405,49 @@ fn paint_box_decoration_background(
         let c = &style.background_color;
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
+        // Compute background painting area based on background-clip.
+        // CSS Backgrounds §3.5: border-box (default), padding-box, content-box.
+        let bg_rect = match style.background_clip {
+            BackgroundClip::BorderBox => border_box_rect,
+            BackgroundClip::PaddingBox => {
+                let bx = x + fragment.border.left.round().to_f32();
+                let by = y + fragment.border.top.round().to_f32();
+                let br = right - fragment.border.right.round().to_f32();
+                let bb = bottom - fragment.border.bottom.round().to_f32();
+                let bw = (br - bx).max(0.0);
+                let bh = (bb - by).max(0.0);
+                Rect::from_xywh(bx, by, bw, bh)
+            }
+            BackgroundClip::ContentBox => {
+                let bx = x + fragment.border.left.round().to_f32()
+                    + fragment.padding.left.round().to_f32();
+                let by = y + fragment.border.top.round().to_f32()
+                    + fragment.padding.top.round().to_f32();
+                let br = right - fragment.border.right.round().to_f32()
+                    - fragment.padding.right.round().to_f32();
+                let bb = bottom - fragment.border.bottom.round().to_f32()
+                    - fragment.padding.bottom.round().to_f32();
+                let bw = (br - bx).max(0.0);
+                let bh = (bb - by).max(0.0);
+                Rect::from_xywh(bx, by, bw, bh)
+            }
+        };
+
         if style.has_border_radius() {
-            // Clip background to the rounded border-box rect using unadjusted radii.
-            // CSS Backgrounds §5.3: background is clipped to the border-box rounded rect.
+            // Clip background to the rounded rect using unadjusted radii.
             let radii = [
                 Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
                 Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
                 Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
                 Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
             ];
-            let rrect = RRect::new_rect_radii(border_box_rect, &radii);
+            let rrect = RRect::new_rect_radii(bg_rect, &radii);
             canvas.save();
             canvas.clip_rrect(rrect, ClipOp::Intersect, true);
-            canvas.draw_rect(border_box_rect, &paint);
+            canvas.draw_rect(bg_rect, &paint);
             canvas.restore();
         } else {
-            canvas.draw_rect(border_box_rect, &paint);
+            canvas.draw_rect(bg_rect, &paint);
         }
     }
 
@@ -557,7 +584,9 @@ pub enum BorderSide {
 
 /// Paint a column rule (divider between multicol columns).
 ///
-/// Uses the column-rule-color and column-rule-style from the parent style.
+/// Uses the column-rule-color, column-rule-style, and column-rule-width
+/// from the parent style. Supports all CSS border styles (solid, dashed,
+/// dotted, double, groove, ridge, inset, outset).
 fn paint_column_rule(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -575,18 +604,17 @@ fn paint_column_rule(
         return;
     }
 
-    let color = match style.column_rule_color {
-        StyleColor::Resolved(c) => c,
-        _ => style.color,
-    };
-
-    let mut paint = Paint::default();
-    paint.set_style(PaintStyle::Fill);
-    paint.set_anti_alias(true);
-    paint.set_color4f(Color4f::new(color.r, color.g, color.b, color.a), None::<&ColorSpace>);
-
     let rect = Rect::from_xywh(x, y, w, h);
-    canvas.draw_rect(rect, &paint);
+    // Column rules are painted like left-side borders (vertical line).
+    paint_border_side(
+        canvas,
+        style.column_rule_style,
+        &style.column_rule_color,
+        &style.color,
+        w,
+        rect,
+        BorderSide::Left,
+    );
 }
 
 /// Fix corner diagonal pixels where two different-colored solid borders meet.

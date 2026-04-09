@@ -159,6 +159,9 @@ pub struct ComputedStyle {
     /// CSS `background-color`. Initial: `transparent`.
     pub background_color: Color,
 
+    /// CSS `background-clip`. Initial: `border-box`.
+    pub background_clip: BackgroundClip,
+
     /// CSS `color` (inherited). Initial: `black` (CanvasText in Blink,
     /// but we use black for simplicity — matches most user agents).
     pub color: Color,
@@ -583,6 +586,7 @@ impl ComputedStyle {
             border_bottom_left_radius: (0.0, 0.0),
 
             background_color: Color::TRANSPARENT,
+            background_clip: BackgroundClip::BorderBox,
             color: Color::BLACK,
             opacity: 1.0,
             z_index: None, // auto

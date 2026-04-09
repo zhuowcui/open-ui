@@ -1616,3 +1616,26 @@ impl InitialLetter {
         }
     }
 }
+
+// ── Background Clip ────────────────────────────────────────────────────
+
+/// CSS `background-clip` property — defines the area within which the
+/// background is painted.
+///
+/// CSS Backgrounds and Borders Module Level 3 §3.5.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum BackgroundClip {
+    /// Background is painted within the border-box (default).
+    BorderBox = 0,
+    /// Background is painted within the padding-box.
+    PaddingBox = 1,
+    /// Background is painted within the content-box.
+    ContentBox = 2,
+}
+
+impl Default for BackgroundClip {
+    fn default() -> Self {
+        BackgroundClip::BorderBox
+    }
+}

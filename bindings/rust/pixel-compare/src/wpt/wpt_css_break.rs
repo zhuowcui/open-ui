@@ -749,6 +749,7 @@ fn css_break_block_end_aligned_abspos_with_overflow_ref() -> Document {
     doc.node_mut(n1).style.height = Length::px(20.0);
     doc.node_mut(n1).style.margin_top = Length::px(80.0);
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 105, 180, 255);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -792,6 +793,7 @@ fn css_break_block_end_aligned_abspos_with_overflow() -> Document {
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Div);
                     doc.node_mut(n5).style.display = Display::Block;
+                    doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 105, 180, 255);
                     doc.append_child(n4, n5);
                         let n6 = doc.create_node(ElementTag::Div);
                         doc.node_mut(n6).style.display = Display::Block;
@@ -2857,12 +2859,16 @@ fn css_break_borders_000_ref() -> Document {
     doc.node_mut(n1).style.margin_left = Length::px(110.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.height = Length::px(80.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
@@ -2889,12 +2895,16 @@ fn css_break_borders_000() -> Document {
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 10;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_right_width = 10;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_bottom_width = 10;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_left_width = 10;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.height = Length::px(80.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.append_child(n1, n3);
@@ -2910,12 +2920,16 @@ fn css_break_borders_001_ref() -> Document {
     doc.node_mut(n1).style.margin_left = Length::px(110.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::None;
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.height = Length::px(90.0);
@@ -2927,12 +2941,16 @@ fn css_break_borders_001_ref() -> Document {
     doc.node_mut(n2).style.margin_left = Length::px(10.0);
     doc.node_mut(n2).style.border_top_width = 10;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_right_width = 10;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_bottom_width = 10;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_left_width = 10;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_top_style = BorderStyle::None;
     doc.node_mut(n2).style.width = Length::px(80.0);
     doc.node_mut(n2).style.height = Length::px(10.0);
@@ -2960,12 +2978,16 @@ fn css_break_borders_001() -> Document {
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 10;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_right_width = 10;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_bottom_width = 10;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_left_width = 10;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.append_child(n1, n3);
@@ -2981,12 +3003,16 @@ fn css_break_borders_002_ref() -> Document {
     doc.node_mut(n1).style.margin_left = Length::px(110.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::None;
     doc.node_mut(n1).style.width = Length::px(80.0);
     doc.node_mut(n1).style.height = Length::px(90.0);
@@ -2998,12 +3024,16 @@ fn css_break_borders_002_ref() -> Document {
     doc.node_mut(n2).style.margin_left = Length::px(10.0);
     doc.node_mut(n2).style.border_top_width = 10;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_right_width = 10;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_bottom_width = 10;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_left_width = 10;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
     doc.node_mut(n2).style.border_top_style = BorderStyle::None;
     doc.node_mut(n2).style.width = Length::px(80.0);
@@ -3016,12 +3046,16 @@ fn css_break_borders_002_ref() -> Document {
     doc.node_mut(n3).style.margin_left = Length::px(10.0);
     doc.node_mut(n3).style.border_top_width = 10;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_right_width = 10;
     doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_bottom_width = 10;
     doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_left_width = 10;
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_top_style = BorderStyle::None;
     doc.node_mut(n3).style.width = Length::px(80.0);
     doc.node_mut(n3).style.height = Length::px(60.0);
@@ -3049,12 +3083,16 @@ fn css_break_borders_002() -> Document {
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 10;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_right_width = 10;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_bottom_width = 10;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.border_left_width = 10;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n3).style.height = Length::px(250.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.append_child(n1, n3);
@@ -3079,12 +3117,16 @@ fn css_break_borders_003_ref() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (15.0_f32, 15.0_f32);
         doc.node_mut(n2).style.border_top_width = 20;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_right_width = 20;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_bottom_width = 20;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_left_width = 20;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.height = Length::px(80.0);
@@ -3104,12 +3146,16 @@ fn css_break_borders_003_ref() -> Document {
         doc.node_mut(n4).style.border_bottom_right_radius = (15.0_f32, 15.0_f32);
         doc.node_mut(n4).style.border_top_width = 20;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_right_width = 20;
         doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_bottom_width = 20;
         doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_left_width = 20;
         doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n4).style.border_top_style = BorderStyle::None;
         doc.node_mut(n4).style.border_bottom_style = BorderStyle::None;
@@ -3130,12 +3176,16 @@ fn css_break_borders_003_ref() -> Document {
         doc.node_mut(n6).style.border_bottom_right_radius = (15.0_f32, 15.0_f32);
         doc.node_mut(n6).style.border_top_width = 20;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_right_width = 20;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_bottom_width = 20;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_left_width = 20;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n6).style.border_top_style = BorderStyle::None;
         doc.node_mut(n6).style.height = Length::px(70.0);
@@ -3162,12 +3212,16 @@ fn css_break_borders_003() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (15.0_f32, 15.0_f32);
         doc.node_mut(n2).style.border_top_width = 20;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_right_width = 20;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_bottom_width = 20;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_left_width = 20;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.height = Length::px(250.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.append_child(n1, n2);
@@ -3192,12 +3246,16 @@ fn css_break_borders_004_ref() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_top_width = 20;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_right_width = 20;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_bottom_width = 20;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_left_width = 20;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.height = Length::px(80.0);
@@ -3217,12 +3275,16 @@ fn css_break_borders_004_ref() -> Document {
         doc.node_mut(n4).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n4).style.border_top_width = 20;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_right_width = 20;
         doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_bottom_width = 20;
         doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_left_width = 20;
         doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n4).style.border_top_style = BorderStyle::None;
         doc.node_mut(n4).style.border_bottom_style = BorderStyle::None;
@@ -3243,12 +3305,16 @@ fn css_break_borders_004_ref() -> Document {
         doc.node_mut(n6).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n6).style.border_top_width = 20;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_right_width = 20;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_bottom_width = 20;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_left_width = 20;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n6).style.border_top_style = BorderStyle::None;
         doc.node_mut(n6).style.height = Length::px(70.0);
@@ -3275,12 +3341,16 @@ fn css_break_borders_004() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_top_width = 20;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_right_width = 20;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_bottom_width = 20;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_left_width = 20;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.height = Length::px(250.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.append_child(n1, n2);
@@ -3305,12 +3375,16 @@ fn css_break_borders_005_ref() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (80.0_f32, 80.0_f32);
         doc.node_mut(n2).style.border_top_width = 20;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_right_width = 20;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_bottom_width = 20;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_left_width = 20;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.height = Length::px(80.0);
@@ -3330,12 +3404,16 @@ fn css_break_borders_005_ref() -> Document {
         doc.node_mut(n4).style.border_bottom_right_radius = (80.0_f32, 80.0_f32);
         doc.node_mut(n4).style.border_top_width = 20;
         doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_right_width = 20;
         doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_bottom_width = 20;
         doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.border_left_width = 20;
         doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n4).style.border_top_style = BorderStyle::None;
         doc.node_mut(n4).style.border_bottom_style = BorderStyle::None;
@@ -3356,12 +3434,16 @@ fn css_break_borders_005_ref() -> Document {
         doc.node_mut(n6).style.border_bottom_right_radius = (80.0_f32, 80.0_f32);
         doc.node_mut(n6).style.border_top_width = 20;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_right_width = 20;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_bottom_width = 20;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.border_left_width = 20;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.node_mut(n6).style.border_top_style = BorderStyle::None;
         doc.node_mut(n6).style.height = Length::px(70.0);
@@ -3388,12 +3470,16 @@ fn css_break_borders_005() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (80.0_f32, 80.0_f32);
         doc.node_mut(n2).style.border_top_width = 20;
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_right_width = 20;
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_bottom_width = 20;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.border_left_width = 20;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
         doc.node_mut(n2).style.height = Length::px(250.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
         doc.append_child(n1, n2);
@@ -3409,12 +3495,16 @@ fn css_break_borders_006_ref() -> Document {
     doc.node_mut(n1).style.margin_bottom = Length::px(10.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n1).style.border_right_style = BorderStyle::None;
     doc.node_mut(n1).style.width = Length::px(90.0);
@@ -3425,12 +3515,16 @@ fn css_break_borders_006_ref() -> Document {
     doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
     doc.node_mut(n2).style.border_top_width = 10;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_right_width = 10;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_bottom_width = 10;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_left_width = 10;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n2).style.border_left_style = BorderStyle::None;
     doc.node_mut(n2).style.border_right_style = BorderStyle::None;
@@ -3442,12 +3536,16 @@ fn css_break_borders_006_ref() -> Document {
     doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
     doc.node_mut(n3).style.border_top_width = 10;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_right_width = 10;
     doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_bottom_width = 10;
     doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_left_width = 10;
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n3).style.border_left_style = BorderStyle::None;
     doc.node_mut(n3).style.width = Length::px(60.0);
@@ -3464,12 +3562,16 @@ fn css_break_borders_007_ref() -> Document {
     doc.node_mut(n1).style.margin_bottom = Length::px(10.0);
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n1).style.border_left_style = BorderStyle::None;
     doc.node_mut(n1).style.width = Length::px(90.0);
@@ -3480,12 +3582,16 @@ fn css_break_borders_007_ref() -> Document {
     doc.node_mut(n2).style.margin_bottom = Length::px(10.0);
     doc.node_mut(n2).style.border_top_width = 10;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_right_width = 10;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_bottom_width = 10;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.border_left_width = 10;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n2).style.border_right_style = BorderStyle::None;
     doc.node_mut(n2).style.border_left_style = BorderStyle::None;
@@ -3497,12 +3603,16 @@ fn css_break_borders_007_ref() -> Document {
     doc.node_mut(n3).style.margin_bottom = Length::px(10.0);
     doc.node_mut(n3).style.border_top_width = 10;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_right_width = 10;
     doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_bottom_width = 10;
     doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.border_left_width = 10;
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 105, 180, 255));
     doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.node_mut(n3).style.border_right_style = BorderStyle::None;
     doc.node_mut(n3).style.margin_left = Length::px(30.0);
@@ -5977,21 +6087,25 @@ fn css_break_break_inside_avoid_multicol_001_print_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.node_mut(n2).style.height = Length::px(96.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::percent(50.0);
+        doc.node_mut(n3).style.height = Length::px(96.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.width = Length::percent(100.0);
+        doc.node_mut(n4).style.height = Length::px(96.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
         doc.node_mut(n5).style.width = Length::percent(50.0);
+        doc.node_mut(n5).style.height = Length::px(96.0);
         doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n5);
     doc
@@ -6012,12 +6126,14 @@ fn css_break_break_inside_avoid_multicol_001_print() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.node_mut(n2).style.height = Length::px(288.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.break_inside = BreakInside::Avoid;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.width = Length::percent(100.0);
+        doc.node_mut(n3).style.height = Length::px(288.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n3).style.break_inside = BreakInside::Avoid;
         doc.append_child(n1, n3);
@@ -6034,6 +6150,8 @@ fn css_break_break_nested_float_in_table_001_print_ref() -> Document {
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.width = Length::px(192.0);
+    doc.node_mut(n1).style.height = Length::px(576.0);
     doc.append_child(vp, n1);
     doc
 }
@@ -6734,6 +6852,7 @@ fn css_break_fieldset_003_ref() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.margin_top = Length::px(-55.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(138, 43, 226, 255);
         doc.node_mut(n3).style.height = Length::px(50.0);
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
@@ -6809,6 +6928,7 @@ fn css_break_fieldset_004_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.margin_top = Length::px(-155.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(138, 43, 226, 255);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(300.0);
         doc.append_child(n1, n2);
@@ -7482,6 +7602,7 @@ fn css_break_float_011_crash() -> Document {
             doc.node_mut(n4).style.float = Float::Left;
             doc.node_mut(n4).style.width = Length::px(20.0);
             doc.node_mut(n4).style.height = Length::px(20.0);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n3, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -7833,14 +7954,18 @@ fn css_break_float_with_large_margin_bottom_cross_page_001_print_ref() -> Docume
     doc.node_mut(vp).style.font_size = 20.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(144.0);
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n2).style.width = Length::px(192.0);
+    doc.node_mut(n2).style.height = Length::px(48.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.height = Length::px(96.0);
     doc.append_child(vp, n3);
     doc
 }
@@ -7855,12 +7980,16 @@ fn css_break_float_with_large_margin_bottom_cross_page_001_print() -> Document {
     doc.node_mut(vp).style.font_size = 20.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(144.0);
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.float = Float::Left;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n2).style.width = Length::px(192.0);
+    doc.node_mut(n2).style.height = Length::px(48.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(96.0);
     doc.append_child(vp, n2);
     doc
 }
@@ -7874,11 +8003,14 @@ fn css_break_float_with_large_margin_bottom_cross_page_002_print_ref() -> Docume
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(144.0);
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n2).style.width = Length::px(192.0);
+    doc.node_mut(n2).style.height = Length::px(48.0);
     doc.node_mut(n2).style.break_before = BreakValue::Page;
     doc.append_child(vp, n2);
     doc
@@ -7893,6 +8025,7 @@ fn css_break_float_with_large_margin_bottom_cross_page_002_print() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(144.0);
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
@@ -7900,6 +8033,9 @@ fn css_break_float_with_large_margin_bottom_cross_page_002_print() -> Document {
     doc.node_mut(n2).style.float = Float::Left;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(128, 128, 128, 255);
     doc.node_mut(n2).style.break_inside = BreakInside::Avoid;
+    doc.node_mut(n2).style.width = Length::px(192.0);
+    doc.node_mut(n2).style.height = Length::px(48.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(96.0);
     doc.append_child(vp, n2);
     doc
 }
@@ -8163,6 +8299,7 @@ fn css_break_fragmented_autowidth_fc_root_beside_floats_ref() -> Document {
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(100.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.node_mut(n3).style.width = Length::px(100.0);
             doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
@@ -8175,6 +8312,7 @@ fn css_break_fragmented_autowidth_fc_root_beside_floats_ref() -> Document {
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
             doc.node_mut(n5).style.height = Length::px(100.0);
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.node_mut(n5).style.width = Length::px(10.0);
             doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Div);
@@ -8187,6 +8325,7 @@ fn css_break_fragmented_autowidth_fc_root_beside_floats_ref() -> Document {
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.height = Length::px(100.0);
+            doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.node_mut(n7).style.width = Length::px(200.0);
             doc.append_child(n6, n7);
     doc
@@ -8220,6 +8359,7 @@ fn css_break_fragmented_autowidth_fc_root_beside_floats() -> Document {
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::FlowRoot;
         doc.node_mut(n4).style.height = Length::px(300.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 105, 180, 255);
         doc.append_child(n1, n4);
     doc
 }
@@ -13770,6 +13910,7 @@ fn css_break_overflowing_block_002_print_ref() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.margin_right = Length::px(192.0);
     doc.append_child(vp, n1);
     doc
 }
@@ -13793,6 +13934,7 @@ fn css_break_overflowing_block_002_print() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.margin_right = Length::px(192.0);
     doc.append_child(vp, n1);
     doc
 }
@@ -14153,6 +14295,7 @@ fn css_break_relpos_inline_ref() -> Document {
             doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
             doc.node_mut(n4).style.border_left_width = 1;
             doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.node_mut(n4).style.border_right_style = BorderStyle::None;
             doc.append_child(n3, n4);
         let n5 = doc.create_node(ElementTag::Div);
@@ -14173,6 +14316,7 @@ fn css_break_relpos_inline_ref() -> Document {
             doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_left_width = 1;
             doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.node_mut(n6).style.border_left_style = BorderStyle::None;
             doc.node_mut(n6).style.border_right_style = BorderStyle::None;
             doc.append_child(n5, n6);
@@ -14194,6 +14338,7 @@ fn css_break_relpos_inline_ref() -> Document {
             doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
             doc.node_mut(n8).style.border_left_width = 1;
             doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.node_mut(n8).style.border_left_style = BorderStyle::None;
             doc.append_child(n7, n8);
     doc
@@ -14225,6 +14370,7 @@ fn css_break_relpos_inline() -> Document {
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_width = 1;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 105, 180, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -15118,6 +15264,7 @@ fn css_break_transform_024_print_ref() -> Document {
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.height = Length::px(600.0);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 239, 213, 255);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -15509,6 +15656,7 @@ fn css_break_zero_height_page_break_001_print_ref() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.height = Length::px(96.0);
     doc.append_child(vp, n2);
     doc
 }
@@ -19180,6 +19328,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_041_ref() -> Document 
             doc.node_mut(n7).style.display = Display::Block;
             doc.node_mut(n7).style.height = Length::px(50.0);
             doc.node_mut(n7).style.width = Length::px(25.0);
+            doc.node_mut(n7).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.append_child(n2, n7);
             let n8 = doc.create_node(ElementTag::Div);
             doc.node_mut(n8).style.display = Display::Block;
@@ -19265,6 +19414,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_041() -> Document {
             doc.node_mut(n10).style.display = Display::Block;
             doc.node_mut(n10).style.height = Length::px(50.0);
             doc.node_mut(n10).style.width = Length::px(25.0);
+            doc.node_mut(n10).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.append_child(n2, n10);
     doc
 }
@@ -19308,6 +19458,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_042_ref() -> Document 
             doc.node_mut(n6).style.display = Display::Block;
             doc.node_mut(n6).style.height = Length::px(50.0);
             doc.node_mut(n6).style.width = Length::px(25.0);
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -19399,6 +19550,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_042() -> Document {
             doc.node_mut(n10).style.display = Display::Block;
             doc.node_mut(n10).style.height = Length::px(50.0);
             doc.node_mut(n10).style.width = Length::px(25.0);
+            doc.node_mut(n10).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.append_child(n2, n10);
     doc
 }
@@ -19424,6 +19576,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_043_ref() -> Document 
             doc.node_mut(n3).style.display = Display::Block;
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.width = Length::px(25.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -19533,6 +19686,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_043() -> Document {
             doc.node_mut(n10).style.display = Display::Block;
             doc.node_mut(n10).style.height = Length::px(50.0);
             doc.node_mut(n10).style.width = Length::px(25.0);
+            doc.node_mut(n10).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.append_child(n2, n10);
     doc
 }
@@ -19564,6 +19718,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_044_ref() -> Document 
             doc.node_mut(n4).style.display = Display::Block;
             doc.node_mut(n4).style.height = Length::px(50.0);
             doc.node_mut(n4).style.width = Length::px(25.0);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.node_mut(n4).style.break_before = BreakValue::Column;
             doc.append_child(n3, n4);
             let n5 = doc.create_node(ElementTag::Div);
@@ -19684,6 +19839,7 @@ fn css_break_flexbox_multi_line_column_flex_fragmentation_044() -> Document {
             doc.node_mut(n11).style.display = Display::Block;
             doc.node_mut(n11).style.height = Length::px(50.0);
             doc.node_mut(n11).style.width = Length::px(25.0);
+            doc.node_mut(n11).style.background_color = Color::from_rgba8(102, 205, 170, 255);
             doc.node_mut(n11).style.break_before = BreakValue::Column;
             doc.append_child(n3, n11);
     doc
@@ -23493,6 +23649,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_080_print_ref() -> Docume
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(96.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
@@ -23526,6 +23683,7 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_080_print() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(96.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
@@ -24067,12 +24225,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082_print_ref() -> Docume
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(100.0);
         doc.append_child(n2, n3);
@@ -24148,12 +24310,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082_print_ref() -> Docume
         doc.node_mut(n8).style.display = Display::Block;
         doc.node_mut(n8).style.border_top_width = 4;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_right_width = 4;
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_bottom_width = 4;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_left_width = 4;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.width = Length::percent(100.0);
         doc.node_mut(n8).style.break_before = BreakValue::Page;
@@ -24259,12 +24425,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082a_print() -> Document 
         doc.node_mut(n3).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(100.0);
         doc.append_child(n2, n3);
@@ -24341,12 +24511,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082a_print() -> Document 
         doc.node_mut(n8).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n8).style.border_top_width = 4;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_right_width = 4;
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_bottom_width = 4;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_left_width = 4;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.width = Length::percent(100.0);
         doc.append_child(n2, n8);
@@ -24452,12 +24626,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082b_print() -> Document 
         doc.node_mut(n3).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(100.0);
         doc.append_child(n2, n3);
@@ -24534,12 +24712,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082b_print() -> Document 
         doc.node_mut(n8).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n8).style.border_top_width = 4;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_right_width = 4;
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_bottom_width = 4;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_left_width = 4;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.width = Length::percent(100.0);
         doc.append_child(n2, n8);
@@ -24645,12 +24827,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082c_print() -> Document 
         doc.node_mut(n3).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(100.0);
         doc.append_child(n2, n3);
@@ -24728,12 +24914,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082c_print() -> Document 
         doc.node_mut(n8).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n8).style.border_top_width = 4;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_right_width = 4;
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_bottom_width = 4;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_left_width = 4;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.width = Length::percent(100.0);
         doc.append_child(n2, n8);
@@ -24838,12 +25028,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082d_print() -> Document 
         doc.node_mut(n3).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n3).style.width = Length::percent(100.0);
         doc.append_child(n2, n3);
@@ -24921,12 +25115,16 @@ fn css_break_flexbox_multi_line_row_flex_fragmentation_082d_print() -> Document 
         doc.node_mut(n8).style.flex_wrap = FlexWrap::Wrap;
         doc.node_mut(n8).style.border_top_width = 4;
         doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_right_width = 4;
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_bottom_width = 4;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.border_left_width = 4;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n8).style.box_sizing = BoxSizing::BorderBox;
         doc.node_mut(n8).style.width = Length::percent(100.0);
         doc.append_child(n2, n8);
@@ -28398,6 +28596,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_066_print_ref() -> Do
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(24.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -28428,6 +28627,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_066_print_ref() -> Do
             doc.append_child(n3, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.height = Length::px(24.0);
     doc.append_child(vp, n8);
     doc
 }
@@ -28441,6 +28641,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_066_print() -> Docume
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(24.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Flex;
@@ -28472,6 +28673,7 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_066_print() -> Docume
             doc.append_child(n3, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.height = Length::px(24.0);
     doc.append_child(vp, n8);
     doc
 }
@@ -28705,12 +28907,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069_print_ref() -> Do
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -28746,12 +28952,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069_print_ref() -> Do
         doc.node_mut(n6).style.display = Display::Block;
         doc.node_mut(n6).style.border_top_width = 4;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_right_width = 4;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_bottom_width = 4;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_left_width = 4;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.break_before = BreakValue::Page;
         doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
@@ -28817,12 +29027,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069a_print() -> Docum
         doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -28859,12 +29073,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069a_print() -> Docum
         doc.node_mut(n6).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n6).style.border_top_width = 4;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_right_width = 4;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_bottom_width = 4;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_left_width = 4;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.break_before = BreakValue::Page;
         doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
@@ -28930,12 +29148,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069b_print() -> Docum
         doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -28972,12 +29194,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069b_print() -> Docum
         doc.node_mut(n6).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n6).style.border_top_width = 4;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_right_width = 4;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_bottom_width = 4;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_left_width = 4;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -29043,12 +29269,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069c_print() -> Docum
         doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.break_after = BreakValue::Page;
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
@@ -29086,12 +29316,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069c_print() -> Docum
         doc.node_mut(n6).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n6).style.border_top_width = 4;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_right_width = 4;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_bottom_width = 4;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_left_width = 4;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -29156,12 +29390,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069d_print() -> Docum
         doc.node_mut(n3).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n3).style.border_top_width = 4;
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_right_width = 4;
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_bottom_width = 4;
         doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n3).style.border_left_width = 4;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -29199,12 +29437,16 @@ fn css_break_flexbox_single_line_column_flex_fragmentation_069d_print() -> Docum
         doc.node_mut(n6).style.flex_direction = FlexDirection::Column;
         doc.node_mut(n6).style.border_top_width = 4;
         doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_right_width = 4;
         doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_bottom_width = 4;
         doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.node_mut(n6).style.border_left_width = 4;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 215, 0, 255));
         doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -30963,6 +31205,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_046_print_ref() -> Docum
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(24.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -30993,6 +31236,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_046_print_ref() -> Docum
             doc.append_child(n3, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.height = Length::px(24.0);
     doc.append_child(vp, n8);
     doc
 }
@@ -31006,6 +31250,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_046_print() -> Document 
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(24.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Flex;
@@ -31036,6 +31281,7 @@ fn css_break_flexbox_single_line_row_flex_fragmentation_046_print() -> Document 
             doc.append_child(n3, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.height = Length::px(24.0);
     doc.append_child(vp, n8);
     doc
 }
@@ -31464,6 +31710,7 @@ fn css_break_table_table_collapsed_borders_paint_at_boundary_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(30, 144, 255, 255);
         doc.node_mut(n2).style.height = Length::px(150.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
@@ -31599,6 +31846,7 @@ fn css_break_table_table_collapsed_borders_paint_htb_ltr_ref() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(30, 144, 255, 255);
         doc.node_mut(n2).style.height = Length::px(120.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
@@ -31676,6 +31924,7 @@ fn css_break_table_table_fragmentation_001a_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(288.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -31685,6 +31934,10 @@ fn css_break_table_table_fragmentation_001a_print_ref() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(48.0);
+    doc.node_mut(n1).style.padding_right = Length::px(48.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(48.0);
+    doc.node_mut(n1).style.padding_left = Length::px(48.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -31699,6 +31952,8 @@ fn css_break_table_table_fragmentation_001a_print_ref() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(144.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 215, 0, 255);
             doc.append_child(n2, n3);
     doc
 }
@@ -31712,6 +31967,7 @@ fn css_break_table_table_fragmentation_001c_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(288.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -31721,10 +31977,18 @@ fn css_break_table_table_fragmentation_001c_print_ref() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(24.0);
+    doc.node_mut(n1).style.padding_right = Length::px(48.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(24.0);
+    doc.node_mut(n1).style.padding_left = Length::px(48.0);
     doc.node_mut(n1).style.box_decoration_break = BoxDecorationBreak::Clone;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(24.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(24.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
         doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
@@ -31736,6 +32000,8 @@ fn css_break_table_table_fragmentation_001c_print_ref() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(192.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 215, 0, 255);
             doc.append_child(n2, n3);
     doc
 }
@@ -31749,9 +32015,11 @@ fn css_break_table_table_fragmentation_002a_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(24.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(288.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -31761,6 +32029,10 @@ fn css_break_table_table_fragmentation_002a_print_ref() -> Document {
     doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.padding_top = Length::px(48.0);
+    doc.node_mut(n2).style.padding_right = Length::px(48.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(48.0);
+    doc.node_mut(n2).style.padding_left = Length::px(48.0);
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -31775,9 +32047,12 @@ fn css_break_table_table_fragmentation_002a_print_ref() -> Document {
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.height = Length::px(144.0);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 215, 0, 255);
             doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.height = Length::px(24.0);
     doc.append_child(vp, n5);
     doc
 }
@@ -31791,9 +32066,11 @@ fn css_break_table_table_fragmentation_002c_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.height = Length::px(24.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(288.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -31803,10 +32080,18 @@ fn css_break_table_table_fragmentation_002c_print_ref() -> Document {
     doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.padding_top = Length::px(24.0);
+    doc.node_mut(n2).style.padding_right = Length::px(48.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(24.0);
+    doc.node_mut(n2).style.padding_left = Length::px(48.0);
     doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
     doc.append_child(vp, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.margin_top = Length::px(24.0);
+        doc.node_mut(n3).style.margin_right = Length::px(0.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(24.0);
+        doc.node_mut(n3).style.margin_left = Length::px(0.0);
         doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
         doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
@@ -31818,9 +32103,12 @@ fn css_break_table_table_fragmentation_002c_print_ref() -> Document {
         doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
+            doc.node_mut(n4).style.height = Length::px(144.0);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 215, 0, 255);
             doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.height = Length::px(24.0);
     doc.append_child(vp, n5);
     doc
 }
@@ -31834,6 +32122,7 @@ fn css_break_table_table_fragmentation_003a_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(288.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -31843,9 +32132,14 @@ fn css_break_table_table_fragmentation_003a_print_ref() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(24.0);
+    doc.node_mut(n1).style.padding_right = Length::px(24.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(24.0);
+    doc.node_mut(n1).style.padding_left = Length::px(24.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(24.0);
         doc.node_mut(n2).style.background_color = Color::BLUE;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
@@ -31862,13 +32156,19 @@ fn css_break_table_table_fragmentation_003a_print_ref() -> Document {
         doc.node_mut(n3).style.border_left_width = 0;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n3).style.margin_top = Length::px(12.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(12.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 215, 0, 255);
+        doc.node_mut(n3).style.height = Length::px(48.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::px(24.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 0, 128, 255);
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.height = Length::px(24.0);
         doc.node_mut(n5).style.background_color = Color::BLUE;
         doc.append_child(n1, n5);
         let n6 = doc.create_node(ElementTag::Div);
@@ -31885,13 +32185,19 @@ fn css_break_table_table_fragmentation_003a_print_ref() -> Document {
         doc.node_mut(n6).style.border_left_width = 0;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n6).style.margin_top = Length::px(12.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(12.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 215, 0, 255);
+        doc.node_mut(n6).style.height = Length::px(120.0);
         doc.append_child(n1, n6);
         let n7 = doc.create_node(ElementTag::Div);
         doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.height = Length::px(24.0);
         doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 0, 128, 255);
         doc.append_child(n1, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.height = Length::px(24.0);
         doc.node_mut(n8).style.background_color = Color::BLUE;
         doc.append_child(n1, n8);
         let n9 = doc.create_node(ElementTag::Div);
@@ -31908,9 +32214,14 @@ fn css_break_table_table_fragmentation_003a_print_ref() -> Document {
         doc.node_mut(n9).style.border_left_width = 0;
         doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n9).style.margin_top = Length::px(12.0);
+        doc.node_mut(n9).style.margin_bottom = Length::px(12.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 215, 0, 255);
+        doc.node_mut(n9).style.height = Length::px(24.0);
         doc.append_child(n1, n9);
         let n10 = doc.create_node(ElementTag::Div);
         doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.height = Length::px(24.0);
         doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 0, 128, 255);
         doc.append_child(n1, n10);
     doc
@@ -31925,6 +32236,7 @@ fn css_break_table_table_fragmentation_003c_print_ref() -> Document {
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(288.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -31934,11 +32246,17 @@ fn css_break_table_table_fragmentation_003c_print_ref() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.padding_top = Length::px(12.0);
+    doc.node_mut(n1).style.padding_right = Length::px(24.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(12.0);
+    doc.node_mut(n1).style.padding_left = Length::px(24.0);
     doc.node_mut(n1).style.box_decoration_break = BoxDecorationBreak::Clone;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(24.0);
         doc.node_mut(n2).style.background_color = Color::BLUE;
+        doc.node_mut(n2).style.margin_top = Length::px(12.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -31954,13 +32272,19 @@ fn css_break_table_table_fragmentation_003c_print_ref() -> Document {
         doc.node_mut(n3).style.border_left_width = 0;
         doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n3).style.margin_top = Length::px(12.0);
+        doc.node_mut(n3).style.margin_bottom = Length::px(12.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 215, 0, 255);
+        doc.node_mut(n3).style.height = Length::px(12.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::px(24.0);
         doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 0, 128, 255);
         doc.append_child(n1, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.height = Length::px(24.0);
         doc.node_mut(n5).style.background_color = Color::BLUE;
         doc.append_child(n1, n5);
         let n6 = doc.create_node(ElementTag::Div);
@@ -31977,13 +32301,19 @@ fn css_break_table_table_fragmentation_003c_print_ref() -> Document {
         doc.node_mut(n6).style.border_left_width = 0;
         doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n6).style.margin_top = Length::px(12.0);
+        doc.node_mut(n6).style.margin_bottom = Length::px(12.0);
+        doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 215, 0, 255);
+        doc.node_mut(n6).style.height = Length::px(48.0);
         doc.append_child(n1, n6);
         let n7 = doc.create_node(ElementTag::Div);
         doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.height = Length::px(24.0);
         doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 0, 128, 255);
         doc.append_child(n1, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.height = Length::px(24.0);
         doc.node_mut(n8).style.background_color = Color::BLUE;
         doc.append_child(n1, n8);
         let n9 = doc.create_node(ElementTag::Div);
@@ -32000,10 +32330,16 @@ fn css_break_table_table_fragmentation_003c_print_ref() -> Document {
         doc.node_mut(n9).style.border_left_width = 0;
         doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+        doc.node_mut(n9).style.margin_top = Length::px(12.0);
+        doc.node_mut(n9).style.margin_bottom = Length::px(12.0);
+        doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 215, 0, 255);
+        doc.node_mut(n9).style.height = Length::px(12.0);
         doc.append_child(n1, n9);
         let n10 = doc.create_node(ElementTag::Div);
         doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.height = Length::px(24.0);
         doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+        doc.node_mut(n10).style.margin_bottom = Length::px(12.0);
         doc.append_child(n1, n10);
     doc
 }
@@ -32360,6 +32696,7 @@ fn css_break_table_repeated_section_variable_fragmentainer_size_001_ref() -> Doc
             doc.node_mut(n4).style.margin_top = Length::px(60.0);
             doc.node_mut(n4).style.width = Length::px(20.0);
             doc.node_mut(n4).style.height = Length::px(20.0);
+            doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -32377,6 +32714,7 @@ fn css_break_table_repeated_section_variable_fragmentainer_size_001_ref() -> Doc
             doc.node_mut(n7).style.margin_top = Length::px(60.0);
             doc.node_mut(n7).style.width = Length::px(20.0);
             doc.node_mut(n7).style.height = Length::px(20.0);
+            doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -32394,6 +32732,7 @@ fn css_break_table_repeated_section_variable_fragmentainer_size_001_ref() -> Doc
             doc.node_mut(n10).style.margin_top = Length::px(10.0);
             doc.node_mut(n10).style.width = Length::px(20.0);
             doc.node_mut(n10).style.height = Length::px(20.0);
+            doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n8, n10);
     doc
 }
@@ -32432,6 +32771,7 @@ fn css_break_table_repeated_section_variable_fragmentainer_size_002_ref() -> Doc
             doc.node_mut(n6).style.display = Display::Block;
             doc.node_mut(n6).style.width = Length::px(20.0);
             doc.node_mut(n6).style.height = Length::px(20.0);
+            doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n5, n6);
     doc
 }

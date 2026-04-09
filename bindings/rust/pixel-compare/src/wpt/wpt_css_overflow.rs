@@ -235,6 +235,8 @@ fn css_overflow_clip_003_ref() -> Document {
     doc.node_mut(n7).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n7).style.width = Length::px(50.0);
     doc.node_mut(n7).style.height = Length::px(50.0);
+    doc.node_mut(n7).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n7).style.overflow_y = Overflow::Scroll;
     doc.node_mut(n7).style.margin_top = Length::px(50.0);
     doc.append_child(vp, n7);
         let n8 = doc.create_node(ElementTag::Div);
@@ -282,6 +284,8 @@ fn css_overflow_clip_003_ref() -> Document {
     doc.node_mut(n13).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n13).style.width = Length::px(50.0);
     doc.node_mut(n13).style.height = Length::px(50.0);
+    doc.node_mut(n13).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n13).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -759,6 +763,7 @@ fn css_overflow_clip_008() -> Document {
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.overflow_x = Overflow::Clip;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(245, 222, 179, 255);
         doc.node_mut(n2).style.border_top_left_radius = (50.0_f32, 50.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (50.0_f32, 50.0_f32);
         doc.node_mut(n2).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
@@ -3438,6 +3443,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n3).style.align_items = ItemAlignment::new(ItemPosition::Center);
             doc.node_mut(n3).style.width = Length::px(50.0);
             doc.node_mut(n3).style.height = Length::px(50.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.float = Float::Left;
@@ -3455,6 +3461,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n5).style.align_items = ItemAlignment::new(ItemPosition::Center);
             doc.node_mut(n5).style.width = Length::px(50.0);
             doc.node_mut(n5).style.height = Length::px(50.0);
+            doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.float = Float::Left;
@@ -3472,6 +3479,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n7).style.align_items = ItemAlignment::new(ItemPosition::Center);
             doc.node_mut(n7).style.width = Length::px(50.0);
             doc.node_mut(n7).style.height = Length::px(50.0);
+            doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n2, n7);
             let n8 = doc.create_node(ElementTag::Div);
             doc.node_mut(n8).style.float = Float::Left;
@@ -3489,6 +3497,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n9).style.align_items = ItemAlignment::new(ItemPosition::Center);
             doc.node_mut(n9).style.width = Length::px(50.0);
             doc.node_mut(n9).style.height = Length::px(50.0);
+            doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n2, n9);
             let n10 = doc.create_node(ElementTag::Div);
             doc.node_mut(n10).style.float = Float::Left;
@@ -3506,6 +3515,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n11).style.align_items = ItemAlignment::new(ItemPosition::Center);
             doc.node_mut(n11).style.width = Length::px(50.0);
             doc.node_mut(n11).style.height = Length::px(50.0);
+            doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 105, 180, 255);
             doc.append_child(n2, n11);
         let n12 = doc.create_node(ElementTag::Div);
         doc.node_mut(n12).style.display = Display::FlowRoot;

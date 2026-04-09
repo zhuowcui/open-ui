@@ -753,7 +753,7 @@ fn resolve_flex_basis(
     main_axis_border_padding: LayoutUnit,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
-    _main_axis_inner_size: LayoutUnit,
+    main_axis_inner_size: LayoutUnit,
     space: &ConstraintSpace,
     resolved_alignment: ItemPosition,
 ) -> (LayoutUnit, bool) {
@@ -779,15 +779,19 @@ fn resolve_flex_basis(
             return (content, false);
         }
 
+        // CSS Flexbox §9.2: percentage flex-basis resolves against the flex
+        // container's main size. For column flex, use main_axis_inner_size
+        // (which accounts for parent-imposed sizes), not child_percentage_block.
         let pct_base = if is_column {
-            child_percentage_block
+            main_axis_inner_size
         } else {
             child_percentage_inline
         };
 
-        if !pct_base.is_indefinite() || flex_basis.is_fixed()
-            || (flex_basis.is_percent() && flex_basis.value() == 0.0)
-        {
+        // CSS Flexbox §9.2 step E: a percentage flex-basis with an indefinite
+        // containing block falls back to content-based sizing. Do NOT special-
+        // case 0% — unlike 0px, 0% is a percentage and must follow this rule.
+        if !pct_base.is_indefinite() || flex_basis.is_fixed() {
             let resolved = resolve_length(flex_basis, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
             let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                 (resolved - main_axis_border_padding).clamp_negative_to_zero()
@@ -1055,8 +1059,8 @@ fn resolve_main_axis_min_max(
     main_axis_border_padding: LayoutUnit,
     pct_inline: LayoutUnit,
     pct_block: LayoutUnit,
-    base_content_size: LayoutUnit,
-    is_basis_from_content: bool,
+    _base_content_size: LayoutUnit,
+    _is_basis_from_content: bool,
 ) -> MinMaxSizes {
     let (min_prop, max_prop, pct_base) = if is_column {
         (&child_style.min_height, &child_style.max_height, pct_block)
@@ -1078,21 +1082,16 @@ fn resolve_main_axis_min_max(
         if !overflow_visible {
             LayoutUnit::zero()
         } else {
-            // Content size suggestion: run intrinsic sizing to get min-content
-            let content_size = if is_basis_from_content {
-                // Flex-basis was content-based, so base_content_size IS the content size
-                base_content_size
+            // CSS Flexbox §4.5: Content size suggestion is the min-content
+            // size in the main axis. Always compute min-content intrinsic
+            // size — base_content_size is max-content when flex-basis was
+            // content-based, which is NOT the right value here.
+            let content_size = if is_column {
+                let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+                (intrinsic.min_content_block_size - main_axis_border_padding).clamp_negative_to_zero()
             } else {
-                // Need to compute actual content contribution
-                if is_column {
-                    let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
-                    // min_content_block_size is border-box, convert to content-box
-                    (intrinsic.min_content_block_size - main_axis_border_padding).clamp_negative_to_zero()
-                } else {
-                    let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
-                    // min-content inline size is already border-box, convert to content-box
-                    (min_max.min - main_axis_border_padding).clamp_negative_to_zero()
-                }
+                let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+                (min_max.min - main_axis_border_padding).clamp_negative_to_zero()
             };
 
             // Specified size suggestion (CSS Flexbox §4.5):

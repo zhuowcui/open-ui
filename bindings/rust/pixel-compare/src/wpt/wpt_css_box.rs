@@ -17,6 +17,7 @@ fn css_box_margin_trim_block_container_non_adjoining_item_ref() -> Document {
     doc.node_mut(n1).style.width = Length::min_content();
     doc.node_mut(n1).style.margin_bottom = Length::px(100.0);
     doc.node_mut(n1).style.padding_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.background_clip = BackgroundClip::PaddingBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -182,6 +183,8 @@ fn css_box_margin_trim_flex_column_inline_multiline_ref() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.flex_direction = FlexDirection::Column;
     doc.node_mut(n1).style.flex_wrap = FlexWrap::Wrap;
+    doc.node_mut(n1).style.row_gap = Some(Length::px(0.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(30.0));
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -523,6 +526,8 @@ fn css_box_margin_trim_flex_row_block_multiline_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.flex_wrap = FlexWrap::Wrap;
+    doc.node_mut(n1).style.row_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.column_gap = Some(Length::px(0.0));
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
