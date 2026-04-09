@@ -15,7 +15,7 @@
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
 use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, Length, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
-use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction};
+use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction, BreakValue};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
@@ -2610,6 +2610,54 @@ fn resolve_block_size(
 
 /// Lay out children across CSS multi-column layout.
 ///
+/// CSS Fragmentation §3.1: break value propagation.
+/// `break-before` on the first in-flow child of a block propagates up
+/// to the block itself. Walk down the first-child chain and return
+/// the first forced break-before found, or Auto.
+fn propagated_break_before(doc: &Document, node_id: NodeId) -> BreakValue {
+    let style = &doc.node(node_id).style;
+    if style.break_before.is_forced() {
+        return style.break_before;
+    }
+    // Walk first in-flow child chain.
+    for child_id in doc.children(node_id) {
+        let cs = &doc.node(child_id).style;
+        if cs.display == Display::None
+            || cs.float != Float::None
+            || cs.position == Position::Absolute
+            || cs.position == Position::Fixed
+        {
+            continue;
+        }
+        // Found the first in-flow child — recurse.
+        return propagated_break_before(doc, child_id);
+    }
+    style.break_before
+}
+
+/// CSS Fragmentation §3.1: break-after propagation.
+/// `break-after` on the last in-flow child propagates up to the block.
+fn propagated_break_after(doc: &Document, node_id: NodeId) -> BreakValue {
+    let style = &doc.node(node_id).style;
+    if style.break_after.is_forced() {
+        return style.break_after;
+    }
+    // Walk last in-flow child chain (iterate in reverse to find last in-flow).
+    let children: Vec<_> = doc.children(node_id).collect();
+    for &child_id in children.iter().rev() {
+        let cs = &doc.node(child_id).style;
+        if cs.display == Display::None
+            || cs.float != Float::None
+            || cs.position == Position::Absolute
+            || cs.position == Position::Fixed
+        {
+            continue;
+        }
+        return propagated_break_after(doc, child_id);
+    }
+    style.break_after
+}
+
 /// This function handles the complete multicol path: resolves column geometry,
 /// lays out each child at the column width, distributes children across columns
 /// using balanced or auto-fill, and produces a container fragment with
@@ -2905,12 +2953,15 @@ fn layout_multicol(
                 let child_height = col_block_sizes[i];
                 let child_margin_top = col_margins_top[i];
                 let child_margin_bottom = col_margins_bottom[i];
-                let child_style = &doc.node(children_info[group_start + i].id).style;
+                let child_node_id = children_info[group_start + i].id;
+                let child_style = &doc.node(child_node_id).style;
 
                 // CSS Fragmentation §3.1: Forced breaks —
                 // break-before: column/page/always forces a break before this child.
                 // break-after on the *previous* child forces a break before this one.
-                let forced_break = child_style.break_before.is_forced()
+                // §3.1 also says break values propagate from first/last in-flow children.
+                let prop_break_before = propagated_break_before(doc, child_node_id);
+                let forced_break = prop_break_before.is_forced()
                     || prev_break_after_forces;
 
                 if forced_break && col_idx + 1 < positions.len() {
@@ -2949,7 +3000,8 @@ fn layout_multicol(
                 let avoid_break_inside = child_style.break_inside.is_avoid();
                 // CSS Fragmentation §3.1: break-before/after: avoid —
                 // This child or the previous child wants to avoid a break here.
-                let avoid_break_before = child_style.break_before.is_avoid()
+                let avoid_break_before = prop_break_before.is_avoid()
+                    || child_style.break_before.is_avoid()
                     || prev_break_after_avoids;
                 if avoid_break_inside
                     && !avoid_break_before
@@ -2990,8 +3042,10 @@ fn layout_multicol(
                     prev_margin_bottom = LayoutUnit::zero();
                 }
 
-                prev_break_after_forces = child_style.break_after.is_forced();
-                prev_break_after_avoids = child_style.break_after.is_avoid();
+                let prop_break_after = propagated_break_after(doc, child_node_id);
+                prev_break_after_forces = prop_break_after.is_forced();
+                prev_break_after_avoids = prop_break_after.is_avoid()
+                    || child_style.break_after.is_avoid();
 
                 // Final margin for positioning.
                 // CSS Fragmentation §3.5: margins adjacent to a fragmentation
