@@ -111,7 +111,7 @@ fn gap_affects_width() {
 
 #[test]
 fn column_positions_3_columns() {
-    let positions = compute_column_positions(3, lu(200), lu(20), lu(660), false);
+    let positions = compute_column_positions(3, lu(200), lu(20), lu(640), false);
     assert_eq!(positions.len(), 3);
     assert_eq!(positions[0].inline_offset, lu(0));
     assert_eq!(positions[0].width, lu(200));

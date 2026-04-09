@@ -2629,7 +2629,7 @@ fn layout_multicol(
     border_box_inline: LayoutUnit,
 ) -> Fragment {
     use crate::multicol::{resolve_column_count_and_width, compute_column_positions,
-                          compute_column_rule_positions, balance_columns};
+                          balance_columns};
     use openui_style::{ColumnFill, ColumnSpan};
 
     let resolved = resolve_column_count_and_width(
@@ -2771,12 +2771,10 @@ fn layout_multicol(
                         };
                         if let Some(mh) = max_h {
                             mh
-                        } else if resolved.count > 1 {
-                            // column-fill:auto with no height/max-height: distribute
-                            // content across the resolved column count. Use balanced
-                            // distribution (ceil division) to avoid overflow.
-                            balance_columns(&effective_sizes, &col_avoid_break, resolved.count, space.available_block_size)
                         } else {
+                            // column-fill:auto with no height/max-height: fill
+                            // columns sequentially. All content goes into as few
+                            // columns as possible (no balancing).
                             let total: i32 = effective_sizes.iter().map(|s| s.raw()).sum();
                             LayoutUnit::from_raw(total)
                         }
@@ -2957,23 +2955,30 @@ fn layout_multicol(
 
             // Finalize: include the last column's content height.
             max_col_content = max_col_content.max_of(col_block_offset);
-            // For auto-height containers, use actual content height (capped by column_height).
+            // For auto-height containers, use the balanced column_height (which
+            // IS the desired visual height) for balanced columns. For
+            // column-fill:auto, use actual content height.
             let actual_group_height = if style.height.is_auto() {
-                max_col_content.min_of(column_height)
+                if algo.column_fill == ColumnFill::Auto {
+                    max_col_content
+                } else {
+                    column_height
+                }
             } else {
                 column_height
             };
 
-            // Column rules for this group.
+            // Column rules for this group — derive positions from actual
+            // per-column positions so that rules stay centered in the gap
+            // even when column widths vary due to cumulative rounding.
             if let Some(ref rule) = algo.column_rule {
-                let rule_positions = compute_column_rule_positions(
-                    resolved.count, column_width, algo.column_gap,
-                );
-                for rp in &rule_positions {
+                let half_gap = LayoutUnit::from_raw(algo.column_gap.raw() / 2);
+                for i in 0..positions.len().saturating_sub(1) {
+                    let rp = positions[i].inline_offset + positions[i].width + half_gap;
                     let mut rule_frag = Fragment::new_box(node_id,
                         PhysicalSize::new(rule.width, actual_group_height));
                     rule_frag.offset = PhysicalOffset::new(
-                        content_edge_x + *rp - rule.width / LayoutUnit::from_i32(2),
+                        content_edge_x + rp - rule.width / LayoutUnit::from_i32(2),
                         content_edge_y + total_block_offset,
                     );
                     rule_frag.kind = FragmentKind::ColumnRule;

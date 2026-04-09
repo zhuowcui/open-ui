@@ -479,11 +479,11 @@ fn algo_with_width(count: u32, width: Option<i32>, gap: i32, fill: ColumnFill) -
 #[test] fn mc_auto_auto() { let r = resolve_column_count_and_width(None, None, lu(600), lu(10)); assert_eq!(r.count, 1); assert_eq!(r.width, lu(600)); }
 #[test] fn mc_single_pass() { let r = resolve_column_count_and_width(Some(1), None, lu(800), lu(20)); assert_eq!(r.count, 1); assert_eq!(r.width, lu(800)); }
 #[test] fn mc_positions_3() {
-    let p = compute_column_positions(3, lu(200), lu(20), lu(660), false);
+    let p = compute_column_positions(3, lu(200), lu(20), lu(640), false);
     assert_eq!(p.len(), 3); assert_eq!(p[0].inline_offset, lu(0));
     assert_eq!(p[1].inline_offset, lu(220)); assert_eq!(p[2].inline_offset, lu(440));
 }
-#[test] fn mc_positions_width() { for p in compute_column_positions(3, lu(200), lu(20), lu(660), false) { assert_eq!(p.width, lu(200)); } }
+#[test] fn mc_positions_width() { for p in compute_column_positions(3, lu(200), lu(20), lu(640), false) { assert_eq!(p.width, lu(200)); } }
 #[test] fn mc_positions_single() { let p = compute_column_positions(1, lu(600), lu(0), lu(600), false); assert_eq!(p.len(), 1); assert_eq!(p[0].inline_offset, lu(0)); }
 #[test] fn mc_positions_zero() { assert!(compute_column_positions(0, lu(100), lu(20), lu(400), false).is_empty()); }
 #[test] fn mc_positions_large_gap() { assert_eq!(compute_column_positions(2, lu(100), lu(200), lu(400), false)[1].inline_offset, lu(300)); }

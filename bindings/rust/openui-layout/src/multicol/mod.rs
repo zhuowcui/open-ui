@@ -186,9 +186,14 @@ pub struct ColumnPosition {
 
 /// Calculate the inline position of each column within the container.
 ///
-/// - First column starts at inline offset 0.
-/// - Each subsequent column at `previous + column_width + column_gap`.
-/// - If total width < available and `center` is true, columns are centered.
+/// When `center` is false (the normal case), the remaining space
+/// (`available_inline_size − total_gaps`) is distributed across columns
+/// using cumulative fractions so that every sub-pixel remainder is
+/// accounted for.  Column *i* gets width
+/// `⌊remaining*(i+1)/count⌋ − ⌊remaining*i/count⌋`.
+///
+/// When `center` is true, uniform `column_width` is used and the group
+/// is centered within the available space.
 pub fn compute_column_positions(
     column_count: u32,
     column_width: LayoutUnit,
@@ -200,20 +205,41 @@ pub fn compute_column_positions(
         return Vec::new();
     }
 
-    let total_width = column_width * LayoutUnit::from_i32(column_count as i32)
-        + column_gap * LayoutUnit::from_i32(column_count.saturating_sub(1) as i32);
+    if center {
+        // Centering mode: uniform column_width, centered within available.
+        let total_width = column_width * LayoutUnit::from_i32(column_count as i32)
+            + column_gap * LayoutUnit::from_i32(column_count.saturating_sub(1) as i32);
+        let start_offset = if total_width < available_inline_size {
+            LayoutUnit::from_raw((available_inline_size - total_width).raw() / 2)
+        } else {
+            LayoutUnit::zero()
+        };
+        let stride = column_width + column_gap;
+        return (0..column_count)
+            .map(|i| ColumnPosition {
+                inline_offset: start_offset + stride * LayoutUnit::from_i32(i as i32),
+                width: column_width,
+            })
+            .collect();
+    }
 
-    let start_offset = if center && total_width < available_inline_size {
-        LayoutUnit::from_raw((available_inline_size - total_width).raw() / 2)
-    } else {
-        LayoutUnit::zero()
-    };
+    // Non-centered: distribute remaining space using cumulative fractions
+    // so that the column widths sum to exactly (available − total_gaps).
+    let total_gaps = column_gap * LayoutUnit::from_i32(column_count.saturating_sub(1) as i32);
+    let remaining_raw = (available_inline_size - total_gaps).raw().max(0) as i64;
+    let n = column_count as i64;
 
-    let stride = column_width + column_gap;
     (0..column_count)
-        .map(|i| ColumnPosition {
-            inline_offset: start_offset + stride * LayoutUnit::from_i32(i as i32),
-            width: column_width,
+        .map(|i| {
+            let i64_i = i as i64;
+            let left_raw = (remaining_raw * i64_i / n) as i32;
+            let right_raw = (remaining_raw * (i64_i + 1) / n) as i32;
+            let w = right_raw - left_raw;
+            let gap_offset = column_gap * LayoutUnit::from_i32(i as i32);
+            ColumnPosition {
+                inline_offset: LayoutUnit::from_raw(left_raw) + gap_offset,
+                width: LayoutUnit::from_raw(w),
+            }
         })
         .collect()
 }
