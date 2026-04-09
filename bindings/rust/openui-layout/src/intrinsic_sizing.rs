@@ -361,6 +361,28 @@ fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> Int
     let min_inline = apply_min_max_inline(child_style, min_inline);
     let max_inline = apply_min_max_inline(child_style, max_inline);
 
+    // CSS Sizing 4 §5.1: For elements with AR and min-width:auto, the
+    // automatic minimum in the ratio-dependent axis is the content-based
+    // min-content. apply_size_override_inline may have replaced the
+    // content-based intrinsic with the AR-derived size (which can be
+    // smaller). Ensure the content min-content acts as a floor.
+    let min_inline = if child_style.min_width.is_auto()
+        && child_style.aspect_ratio.is_some()
+        && (child_style.width.is_auto() || child_style.width.is_content_or_intrinsic())
+    {
+        min_inline.max_of(child_intrinsic.min_content_inline_size)
+    } else {
+        min_inline
+    };
+    let max_inline = if child_style.min_width.is_auto()
+        && child_style.aspect_ratio.is_some()
+        && (child_style.width.is_auto() || child_style.width.is_content_or_intrinsic())
+    {
+        max_inline.max_of(child_intrinsic.min_content_inline_size)
+    } else {
+        max_inline
+    };
+
     // Apply explicit height if set. Compute separately for min-content
     // and max-content modes: at min-content width, wrapping content may
     // be taller than at max-content width (CSS Sizing 3 §5).
