@@ -2691,6 +2691,35 @@ fn layout_multicol(
     let mut result_children: Vec<Fragment> = Vec::new();
     let mut total_block_offset = LayoutUnit::zero();
 
+    // Remaining available block size tracks how much vertical space is left
+    // for column groups after subtracting previous groups and spanners.
+    // This is critical for correct column heights when spanners are present.
+    let has_explicit_height = !style.height.is_auto();
+    let container_content_height = if has_explicit_height {
+        child_percentage_block_size
+    } else {
+        openui_geometry::INDEFINITE_SIZE
+    };
+    let mut remaining_available_block = container_content_height;
+
+    // Resolve max-height once for column-fill:auto with auto height.
+    let resolved_max_height = if !style.max_height.is_none() && !style.max_height.is_auto() {
+        let raw = resolve_length(
+            &style.max_height,
+            space.percentage_resolution_block_size,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        );
+        let content_h = if style.box_sizing == BoxSizing::BorderBox {
+            (raw - border_padding_block).clamp_negative_to_zero()
+        } else {
+            raw
+        };
+        if content_h.raw() > 0 { Some(content_h) } else { None }
+    } else {
+        None
+    };
+
     // Process children in groups separated by spanners.
     let mut group_start = 0;
     while group_start < children_info.len() {
@@ -2702,6 +2731,32 @@ fn layout_multicol(
 
         // Lay out columnar group.
         if group_end > group_start {
+            // Determine the available block size for this column group.
+            // For explicit-height containers, use remaining space after previous
+            // groups/spanners. For auto-height, use max-height or indefinite.
+            let group_available_block = if has_explicit_height {
+                remaining_available_block
+            } else if let Some(mh) = resolved_max_height {
+                // column-fill:auto with max-height: use remaining of max-height
+                if remaining_available_block.is_indefinite() {
+                    mh
+                } else {
+                    remaining_available_block
+                }
+            } else {
+                openui_geometry::INDEFINITE_SIZE
+            };
+
+            // First pass: lay out children to get intrinsic sizes.
+            // For percentage-height children, use the group's available block
+            // as the percentage basis (this is the column height they'll resolve
+            // against per CSS Multicol spec).
+            let first_pass_pct_basis = if !group_available_block.is_indefinite() {
+                group_available_block
+            } else {
+                child_percentage_block_size
+            };
+
             let mut col_fragments: Vec<Fragment> = Vec::new();
             let mut col_block_sizes: Vec<LayoutUnit> = Vec::new();
             let mut col_margins_top: Vec<LayoutUnit> = Vec::new();
@@ -2716,9 +2771,9 @@ fn layout_multicol(
                     &child_style.margin_bottom, column_width);
                 let child_space = ConstraintSpace::for_block_child(
                     column_width,
-                    space.available_block_size,
+                    group_available_block,
                     column_width,
-                    child_percentage_block_size,
+                    first_pass_pct_basis,
                     false,
                 );
                 let child_frag = block_layout(doc, info.id, &child_space);
@@ -2731,56 +2786,97 @@ fn layout_multicol(
 
             // Compute effective block sizes including collapsed margins for balancing.
             // Margins between siblings collapse (CSS 2.1 §8.3.1), so we take max(prev_bottom, cur_top).
-            let mut effective_sizes: Vec<LayoutUnit> = Vec::with_capacity(col_block_sizes.len());
-            {
+            let compute_effective = |sizes: &[LayoutUnit], m_top: &[LayoutUnit], m_bot: &[LayoutUnit]| -> Vec<LayoutUnit> {
+                let mut eff: Vec<LayoutUnit> = Vec::with_capacity(sizes.len());
                 let mut prev_mb = LayoutUnit::zero();
-                for j in 0..col_block_sizes.len() {
-                    let mt = col_margins_top[j];
+                for j in 0..sizes.len() {
+                    let mt = m_top[j];
                     let collapsed = if j == 0 { mt } else { prev_mb.max_of(mt) };
-                    effective_sizes.push(collapsed + col_block_sizes[j]);
-                    prev_mb = col_margins_bottom[j];
+                    eff.push(collapsed + sizes[j]);
+                    prev_mb = m_bot[j];
                 }
-            }
+                eff
+            };
+
+            let mut effective_sizes = compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
 
             // Determine column height for this group.
+            let group_max = if !group_available_block.is_indefinite() {
+                group_available_block
+            } else {
+                space.available_block_size
+            };
+
             let column_height = match algo.column_fill {
                 ColumnFill::Balance | ColumnFill::BalanceAll => {
-                    balance_columns(&effective_sizes, &col_avoid_break, resolved.count, space.available_block_size)
+                    balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max)
                 }
                 ColumnFill::Auto => {
-                    if !style.height.is_auto() {
-                        child_percentage_block_size
-                    } else {
-                        // column-fill: auto with no explicit height — use max-height if set,
-                        // otherwise fall back to summing all content (single tall column).
-                        let max_h = if !style.max_height.is_none() && !style.max_height.is_auto() {
-                            let raw = resolve_length(
-                                &style.max_height,
-                                space.percentage_resolution_block_size,
-                                LayoutUnit::zero(),
-                                LayoutUnit::zero(),
-                            );
-                            let content_h = if style.box_sizing == BoxSizing::BorderBox {
-                                (raw - border_padding_block).clamp_negative_to_zero()
-                            } else {
-                                raw
-                            };
-                            if content_h.raw() > 0 { Some(content_h) } else { None }
+                    if has_explicit_height {
+                        // Use remaining available block from explicit height.
+                        if !remaining_available_block.is_indefinite() {
+                            remaining_available_block
                         } else {
-                            None
-                        };
-                        if let Some(mh) = max_h {
-                            mh
-                        } else {
-                            // column-fill:auto with no height/max-height: fill
-                            // columns sequentially. All content goes into as few
-                            // columns as possible (no balancing).
-                            let total: i32 = effective_sizes.iter().map(|s| s.raw()).sum();
-                            LayoutUnit::from_raw(total)
+                            child_percentage_block_size
                         }
+                    } else if let Some(mh) = resolved_max_height {
+                        if !remaining_available_block.is_indefinite() {
+                            remaining_available_block
+                        } else {
+                            mh
+                        }
+                    } else {
+                        // column-fill:auto with no height/max-height: fill
+                        // columns sequentially. All content goes into as few
+                        // columns as possible (no balancing).
+                        let total: i32 = effective_sizes.iter().map(|s| s.raw()).sum();
+                        LayoutUnit::from_raw(total)
                     }
                 }
             };
+
+            // Second pass: if column_height differs from first_pass_pct_basis
+            // and any child has a percentage-based height, re-lay out those
+            // children with the actual column_height as percentage basis.
+            let needs_relayout = column_height.raw() != first_pass_pct_basis.raw()
+                && !column_height.is_indefinite()
+                && children_info[group_start..group_end].iter().any(|info| {
+                    let cs = &doc.node(info.id).style;
+                    cs.height.is_percent()
+                        || cs.min_height.is_percent()
+                        || cs.max_height.is_percent()
+                });
+
+            if needs_relayout {
+                col_fragments.clear();
+                col_block_sizes.clear();
+                col_margins_top.clear();
+                col_margins_bottom.clear();
+                col_avoid_break.clear();
+
+                for info in &children_info[group_start..group_end] {
+                    let child_style = &doc.node(info.id).style;
+                    let child_margin_top = resolve_margin_or_padding(
+                        &child_style.margin_top, column_width);
+                    let child_margin_bottom = resolve_margin_or_padding(
+                        &child_style.margin_bottom, column_width);
+                    let child_space = ConstraintSpace::for_block_child(
+                        column_width,
+                        column_height,
+                        column_width,
+                        column_height,
+                        false,
+                    );
+                    let child_frag = block_layout(doc, info.id, &child_space);
+                    col_block_sizes.push(child_frag.size.height);
+                    col_margins_top.push(child_margin_top);
+                    col_margins_bottom.push(child_margin_bottom);
+                    col_avoid_break.push(doc.node(info.id).style.break_inside.is_avoid());
+                    col_fragments.push(child_frag);
+                }
+
+                effective_sizes = compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
+            }
 
             // Distribute children across columns (with fragmentation support).
             let mut col_idx: usize = 0;
@@ -3006,6 +3102,11 @@ fn layout_multicol(
             }
 
             total_block_offset = total_block_offset + actual_group_height;
+
+            // Update remaining available block for subsequent groups.
+            if !remaining_available_block.is_indefinite() {
+                remaining_available_block = (remaining_available_block - actual_group_height).clamp_negative_to_zero();
+            }
         }
 
         // Handle spanner (if current item is one).
@@ -3029,8 +3130,18 @@ fn layout_multicol(
                 content_edge_x,
                 content_edge_y + total_block_offset,
             );
+            let spanner_total = spanner_margin_top + spanner_frag.size.height + spanner_margin_bottom;
             total_block_offset = total_block_offset + spanner_frag.size.height + spanner_margin_bottom;
             result_children.push(spanner_frag);
+
+            // Update remaining available block after spanner.
+            if !remaining_available_block.is_indefinite() {
+                remaining_available_block = (remaining_available_block - spanner_total).clamp_negative_to_zero();
+            } else if let Some(mh) = resolved_max_height {
+                // Initialize remaining tracking from max-height when first spanner seen
+                remaining_available_block = (mh - total_block_offset).clamp_negative_to_zero();
+            }
+
             group_start = group_end + 1;
         } else {
             group_start = group_end;
@@ -3055,6 +3166,49 @@ fn layout_multicol(
     };
     let container_block_size = explicit_block_size
         .unwrap_or(total_block_offset + border_padding_block);
+
+    // Apply min-height / max-height constraints (CSS 2.1 §10.7).
+    // The normal block path handles this after layout, but multicol returns
+    // directly so we must apply here.
+    let container_block_size = if explicit_block_size.is_none() {
+        let mut clamped = container_block_size;
+
+        // max-height
+        if let Some(mh_content) = resolved_max_height {
+            let mh_border = if style.box_sizing == BoxSizing::ContentBox {
+                mh_content + border_padding_block
+            } else {
+                mh_content.max_of(border_padding_block)
+            };
+            if clamped > mh_border {
+                clamped = mh_border;
+            }
+        }
+
+        // min-height
+        if !style.min_height.is_auto() && !style.min_height.is_none() {
+            let min_raw = resolve_length(
+                &style.min_height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            let min_border = if style.box_sizing == BoxSizing::ContentBox && min_raw > LayoutUnit::zero() {
+                min_raw + border_padding_block
+            } else if min_raw > LayoutUnit::zero() {
+                min_raw.max_of(border_padding_block)
+            } else {
+                min_raw
+            };
+            if clamped < min_border {
+                clamped = min_border;
+            }
+        }
+
+        clamped
+    } else {
+        container_block_size
+    };
 
     // Layout out-of-flow children (absolute/fixed positioned).
     // These are positioned relative to the multicol container's padding box.

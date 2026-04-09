@@ -506,7 +506,10 @@ impl ColumnLayoutAlgorithm {
     /// Build a `ColumnLayoutAlgorithm` from a `ComputedStyle`.
     pub fn from_style(style: &ComputedStyle) -> Option<Self> {
         // A multicol container must have column-count or column-width set.
-        if style.column_count.is_none() && style.column_width.is_none() {
+        // CSS Multicol §3: column-count values less than 1 are invalid;
+        // treat Some(0) the same as None (auto).
+        let effective_count = style.column_count.filter(|&c| c >= 1);
+        if effective_count.is_none() && style.column_width.is_none() {
             return None;
         }
 
@@ -536,7 +539,7 @@ impl ColumnLayoutAlgorithm {
         };
 
         Some(Self {
-            column_count: style.column_count.unwrap_or(0),
+            column_count: effective_count.unwrap_or(0),
             column_width: style.column_width.as_ref().and_then(|l| {
                 if l.is_fixed() { Some(LayoutUnit::from_f32(l.value())) } else { None }
             }),
