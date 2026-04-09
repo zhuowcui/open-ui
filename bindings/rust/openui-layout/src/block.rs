@@ -2616,6 +2616,11 @@ fn layout_multicol(
                         };
                         if let Some(mh) = max_h {
                             mh
+                        } else if resolved.count > 1 {
+                            // column-fill:auto with no height/max-height: distribute
+                            // content across the resolved column count. Use balanced
+                            // distribution (ceil division) to avoid overflow.
+                            balance_columns(&col_block_sizes, &col_avoid_break, resolved.count, space.available_block_size)
                         } else {
                             let total: i32 = col_block_sizes.iter().map(|s| s.raw()).sum();
                             LayoutUnit::from_raw(total)
@@ -2645,6 +2650,12 @@ fn layout_multicol(
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
                 }
+                // Also handle forced break when column is empty but not the first column —
+                // break-before on the very first child in a column should still start a new column
+                // if there was a previous break-after.
+                if forced_break && col_block_offset == LayoutUnit::zero() && prev_break_after_forces && col_idx + 1 < positions.len() {
+                    col_idx += 1;
+                }
 
                 // CSS Fragmentation §3.2: break-inside: avoid —
                 // If the child doesn't fit but would fit in a fresh column,
@@ -2663,7 +2674,9 @@ fn layout_multicol(
 
                 // If child doesn't fit and there's content already in this column,
                 // move to next column first.
-                if col_remaining.raw() < child_height.raw() && col_block_offset > LayoutUnit::zero() {
+                if col_remaining.raw() < child_height.raw() && col_block_offset > LayoutUnit::zero()
+                    && col_idx + 1 < positions.len()
+                {
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
