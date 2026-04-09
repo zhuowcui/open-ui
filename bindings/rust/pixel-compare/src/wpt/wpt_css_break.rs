@@ -3641,6 +3641,7 @@ fn css_break_box_decoration_break_clone_001() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(140.000000);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
     doc
@@ -3667,9 +3668,11 @@ fn css_break_box_decoration_break_clone_002() -> Document {
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.node_mut(n2).style.height = Length::px(100.000000);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(155.000000);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
     doc
@@ -3700,6 +3703,7 @@ fn css_break_box_decoration_break_clone_003() -> Document {
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.height = Length::px(185.000000);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
     doc
@@ -3730,6 +3734,7 @@ fn css_break_box_decoration_break_clone_004() -> Document {
         doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
         doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.node_mut(n2).style.height = Length::px(80.000000);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);

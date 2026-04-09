@@ -1506,8 +1506,8 @@ fn css_overflow_overflow_clip_margin_border_radius_002_ref() -> Document {
     doc.node_mut(n1).style.font_size = 10.0;
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.vertical_align = VerticalAlign::Middle;
-    doc.node_mut(n1).style.width = Length::px(32.0);
-    doc.node_mut(n1).style.height = Length::px(32.0);
+    doc.node_mut(n1).style.width = Length::px(20.0);
+    doc.node_mut(n1).style.height = Length::px(20.0);
     doc.node_mut(n1).style.margin_top = Length::px(80.0);
     doc.node_mut(n1).style.margin_right = Length::px(80.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(80.0);
@@ -1522,8 +1522,8 @@ fn css_overflow_overflow_clip_margin_border_radius_002_ref() -> Document {
     doc.node_mut(n2).style.font_size = 10.0;
     doc.node_mut(n2).style.background_color = Color::BLACK;
     doc.node_mut(n2).style.vertical_align = VerticalAlign::Middle;
-    doc.node_mut(n2).style.width = Length::px(64.0);
-    doc.node_mut(n2).style.height = Length::px(64.0);
+    doc.node_mut(n2).style.width = Length::px(40.0);
+    doc.node_mut(n2).style.height = Length::px(40.0);
     doc.node_mut(n2).style.margin_top = Length::px(64.0);
     doc.node_mut(n2).style.margin_right = Length::px(64.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(64.0);
@@ -1538,8 +1538,8 @@ fn css_overflow_overflow_clip_margin_border_radius_002_ref() -> Document {
     doc.node_mut(n3).style.font_size = 10.0;
     doc.node_mut(n3).style.background_color = Color::BLACK;
     doc.node_mut(n3).style.vertical_align = VerticalAlign::Middle;
-    doc.node_mut(n3).style.width = Length::px(96.0);
-    doc.node_mut(n3).style.height = Length::px(96.0);
+    doc.node_mut(n3).style.width = Length::px(60.0);
+    doc.node_mut(n3).style.height = Length::px(60.0);
     doc.node_mut(n3).style.margin_top = Length::px(48.0);
     doc.node_mut(n3).style.margin_right = Length::px(48.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(48.0);
@@ -1554,8 +1554,8 @@ fn css_overflow_overflow_clip_margin_border_radius_002_ref() -> Document {
     doc.node_mut(n4).style.font_size = 10.0;
     doc.node_mut(n4).style.background_color = Color::BLACK;
     doc.node_mut(n4).style.vertical_align = VerticalAlign::Middle;
-    doc.node_mut(n4).style.width = Length::px(128.0);
-    doc.node_mut(n4).style.height = Length::px(128.0);
+    doc.node_mut(n4).style.width = Length::px(80.0);
+    doc.node_mut(n4).style.height = Length::px(80.0);
     doc.node_mut(n4).style.margin_top = Length::px(32.0);
     doc.node_mut(n4).style.margin_right = Length::px(32.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(32.0);
@@ -1570,8 +1570,8 @@ fn css_overflow_overflow_clip_margin_border_radius_002_ref() -> Document {
     doc.node_mut(n5).style.font_size = 10.0;
     doc.node_mut(n5).style.background_color = Color::BLACK;
     doc.node_mut(n5).style.vertical_align = VerticalAlign::Middle;
-    doc.node_mut(n5).style.width = Length::px(160.0);
-    doc.node_mut(n5).style.height = Length::px(160.0);
+    doc.node_mut(n5).style.width = Length::px(100.0);
+    doc.node_mut(n5).style.height = Length::px(100.0);
     doc.node_mut(n5).style.margin_top = Length::px(16.0);
     doc.node_mut(n5).style.margin_right = Length::px(16.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(16.0);

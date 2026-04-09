@@ -909,7 +909,7 @@ fn css2_floats_floats_line_wrap_shifted_001_ref() -> Document {
         doc.node_mut(n2).style.font_size = 10.0;
         doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 165, 0, 255);
-        doc.node_mut(n2).style.height = Length::px(16.0);
+        doc.node_mut(n2).style.height = Length::px(10.0);
         doc.append_child(n1, n2);
     doc
 }
@@ -931,7 +931,7 @@ fn css2_floats_floats_line_wrap_shifted_001() -> Document {
             doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
             doc.node_mut(n3).style.float = Float::Left;
-            doc.node_mut(n3).style.height = Length::px(16.0);
+            doc.node_mut(n3).style.height = Length::px(10.0);
             doc.append_child(n2, n3);
     doc
 }

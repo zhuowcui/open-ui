@@ -6347,8 +6347,8 @@ fn css_multicol_multicol_fill_auto_002_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n1).style.height = Length::px(48.0);
-    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.height = Length::px(60.0);
+    doc.node_mut(n1).style.width = Length::px(40.0);
     doc.node_mut(n1).style.orphans = 1_u32;
     doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -6361,8 +6361,8 @@ fn css_multicol_multicol_fill_auto_002_ref() -> Document {
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.font_size = 20.0;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n2).style.height = Length::px(48.0);
-    doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.height = Length::px(60.0);
+    doc.node_mut(n2).style.width = Length::px(40.0);
     doc.node_mut(n2).style.orphans = 1_u32;
     doc.node_mut(n2).style.widows = 1_u32;
     doc.node_mut(n2).style.position = Position::Relative;
@@ -6381,8 +6381,8 @@ fn css_multicol_multicol_fill_auto_002() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n1).style.height = Length::px(48.0);
-    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.height = Length::px(60.0);
+    doc.node_mut(n1).style.width = Length::px(40.0);
     doc.node_mut(n1).style.orphans = 1_u32;
     doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -6401,8 +6401,8 @@ fn css_multicol_multicol_fill_auto_002() -> Document {
         doc.node_mut(n2).style.z_index = Some(-1);
         doc.node_mut(n2).style.top = Length::px(0.0);
         doc.node_mut(n2).style.left = Length::px(0.0);
-        doc.node_mut(n2).style.height = Length::px(48.0);
-        doc.node_mut(n2).style.width = Length::px(16.0);
+        doc.node_mut(n2).style.height = Length::px(60.0);
+        doc.node_mut(n2).style.width = Length::px(20.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -6411,15 +6411,15 @@ fn css_multicol_multicol_fill_auto_002() -> Document {
         doc.node_mut(n3).style.z_index = Some(-1);
         doc.node_mut(n3).style.top = Length::px(0.0);
         doc.node_mut(n3).style.left = Length::px(0.0);
-        doc.node_mut(n3).style.height = Length::px(16.0);
-        doc.node_mut(n3).style.width = Length::px(32.0);
+        doc.node_mut(n3).style.height = Length::px(20.0);
+        doc.node_mut(n3).style.width = Length::px(40.0);
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.font_size = 20.0;
     doc.node_mut(n4).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n4).style.height = Length::px(48.0);
-    doc.node_mut(n4).style.width = Length::px(32.0);
+    doc.node_mut(n4).style.height = Length::px(60.0);
+    doc.node_mut(n4).style.width = Length::px(40.0);
     doc.node_mut(n4).style.orphans = 1_u32;
     doc.node_mut(n4).style.widows = 1_u32;
     doc.node_mut(n4).style.position = Position::Relative;
@@ -7126,7 +7126,7 @@ fn css_multicol_multicol_fill_auto_block_children_ref() -> Document {
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
     doc.node_mut(n1).style.margin_left = Length::px(0.0);
-    doc.node_mut(n1).style.padding_top = Length::px(10.72);
+    doc.node_mut(n1).style.padding_top = Length::px(21.44);
     doc.append_child(vp, n1);
     doc
 }
@@ -7138,8 +7138,8 @@ fn css_multicol_multicol_fill_balance_001_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n1).style.height = Length::px(48.0);
-    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.height = Length::px(60.0);
+    doc.node_mut(n1).style.width = Length::px(40.0);
     doc.node_mut(n1).style.orphans = 1_u32;
     doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -7152,8 +7152,8 @@ fn css_multicol_multicol_fill_balance_001_ref() -> Document {
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.font_size = 20.0;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n2).style.height = Length::px(48.0);
-    doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.height = Length::px(60.0);
+    doc.node_mut(n2).style.width = Length::px(40.0);
     doc.node_mut(n2).style.orphans = 1_u32;
     doc.node_mut(n2).style.widows = 1_u32;
     doc.node_mut(n2).style.position = Position::Relative;
@@ -7172,8 +7172,8 @@ fn css_multicol_multicol_fill_balance_001() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n1).style.height = Length::px(48.0);
-    doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.height = Length::px(60.0);
+    doc.node_mut(n1).style.width = Length::px(40.0);
     doc.node_mut(n1).style.orphans = 1_u32;
     doc.node_mut(n1).style.widows = 1_u32;
     doc.node_mut(n1).style.position = Position::Relative;
@@ -7192,15 +7192,15 @@ fn css_multicol_multicol_fill_balance_001() -> Document {
         doc.node_mut(n2).style.z_index = Some(-1);
         doc.node_mut(n2).style.top = Length::px(0.0);
         doc.node_mut(n2).style.left = Length::px(0.0);
-        doc.node_mut(n2).style.height = Length::px(32.0);
-        doc.node_mut(n2).style.width = Length::px(32.0);
+        doc.node_mut(n2).style.height = Length::px(40.0);
+        doc.node_mut(n2).style.width = Length::px(40.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.font_size = 20.0;
     doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(n3).style.height = Length::px(48.0);
-    doc.node_mut(n3).style.width = Length::px(32.0);
+    doc.node_mut(n3).style.height = Length::px(60.0);
+    doc.node_mut(n3).style.width = Length::px(40.0);
     doc.node_mut(n3).style.orphans = 1_u32;
     doc.node_mut(n3).style.widows = 1_u32;
     doc.node_mut(n3).style.position = Position::Relative;
@@ -9487,36 +9487,36 @@ fn css_multicol_multicol_margin_child_001_ref() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n1).style.font_size = 20.0;
-    doc.node_mut(n1).style.height = Length::px(128.0);
+    doc.node_mut(n1).style.height = Length::px(160.0);
     doc.node_mut(n1).style.position = Position::Relative;
-    doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.width = Length::px(200.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n2).style.height = Length::px(16.0);
+        doc.node_mut(n2).style.height = Length::px(20.0);
         doc.node_mut(n2).style.left = Length::px(0.0);
         doc.node_mut(n2).style.position = Position::Absolute;
-        doc.node_mut(n2).style.top = Length::px(48.0);
-        doc.node_mut(n2).style.width = Length::px(80.0);
+        doc.node_mut(n2).style.top = Length::px(60.0);
+        doc.node_mut(n2).style.width = Length::px(100.0);
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n3).style.height = Length::px(16.0);
+        doc.node_mut(n3).style.height = Length::px(20.0);
         doc.node_mut(n3).style.left = Length::px(0.0);
         doc.node_mut(n3).style.position = Position::Absolute;
-        doc.node_mut(n3).style.top = Length::px(80.0);
-        doc.node_mut(n3).style.width = Length::px(80.0);
+        doc.node_mut(n3).style.top = Length::px(100.0);
+        doc.node_mut(n3).style.width = Length::px(100.0);
         doc.append_child(n1, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
         doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
-        doc.node_mut(n4).style.height = Length::px(16.0);
+        doc.node_mut(n4).style.height = Length::px(20.0);
         doc.node_mut(n4).style.left = Length::px(0.0);
         doc.node_mut(n4).style.position = Position::Absolute;
-        doc.node_mut(n4).style.top = Length::px(112.0);
-        doc.node_mut(n4).style.width = Length::px(80.0);
+        doc.node_mut(n4).style.top = Length::px(140.0);
+        doc.node_mut(n4).style.width = Length::px(100.0);
         doc.append_child(n1, n4);
     doc
 }
@@ -20868,8 +20868,8 @@ fn css_multicol_table_multicol_table_cell_vertical_align_ref() -> Document {
     doc.node_mut(n1).style.vertical_align = VerticalAlign::Middle;
     doc.node_mut(n1).style.color = Color::WHITE;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(51, 102, 204, 255);
-    doc.node_mut(n1).style.width = Length::px(96.0);
-    doc.node_mut(n1).style.height = Length::px(88.0);
+    doc.node_mut(n1).style.width = Length::px(120.0);
+    doc.node_mut(n1).style.height = Length::px(110.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -20877,9 +20877,9 @@ fn css_multicol_table_multicol_table_cell_vertical_align_ref() -> Document {
     doc.node_mut(n2).style.vertical_align = VerticalAlign::Middle;
     doc.node_mut(n2).style.color = Color::WHITE;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(51, 102, 204, 255);
-    doc.node_mut(n2).style.width = Length::px(96.0);
-    doc.node_mut(n2).style.height = Length::px(88.0);
-    doc.node_mut(n2).style.margin_top = Length::px(144.0);
+    doc.node_mut(n2).style.width = Length::px(120.0);
+    doc.node_mut(n2).style.height = Length::px(110.0);
+    doc.node_mut(n2).style.margin_top = Length::px(180.0);
     doc.append_child(vp, n2);
     doc
 }
