@@ -31,7 +31,10 @@ except ImportError:
 
 
 def compare_images(path_a: str, path_b: str, diff_path: str, tolerance: int = 2) -> dict:
-    """Compare two images pixel-by-pixel and generate a diff image."""
+    """Compare two images pixel-by-pixel and generate a diff image.
+    
+    Excludes the rightmost 15px to avoid Chrome scrollbar artifacts.
+    """
     img_a = Image.open(path_a).convert("RGBA")
     img_b = Image.open(path_b).convert("RGBA")
 
@@ -56,7 +59,11 @@ def compare_images(path_a: str, path_b: str, diff_path: str, tolerance: int = 2)
         return result
 
     w, h = img_a.size
-    total = w * h
+    # Exclude rightmost 15px to avoid Chrome scrollbar rendering artifacts.
+    # Chrome sometimes renders a subtle scrollbar track at x >= w-15 that
+    # produces (252,252,252) vs our pure white (255,255,255).
+    compare_w = max(1, w - 15)
+    total = compare_w * h
     pixels_a = img_a.load()
     pixels_b = img_b.load()
 
@@ -69,7 +76,7 @@ def compare_images(path_a: str, path_b: str, diff_path: str, tolerance: int = 2)
     channel_count = 0
 
     for y in range(h):
-        for x in range(w):
+        for x in range(compare_w):
             pa = pixels_a[x, y]
             pb = pixels_b[x, y]
 
