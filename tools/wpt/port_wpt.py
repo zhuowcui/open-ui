@@ -725,18 +725,14 @@ class WptHtmlParser(HTMLParser):
 
     def handle_startendtag(self, tag, attrs):
         """Handle self-closing tags like <div/>.
-        
-        In HTML5, non-void elements like <div/> are NOT self-closing — the
-        slash is ignored and they become opening tags. Only void elements
-        (br, hr, img, etc.) are truly self-closing. This matches browser
-        behavior (Chrome, Firefox, etc.).
+
+        Many WPT tests are XHTML (.xhtml) where <div/> is genuinely
+        self-closing.  Treat all self-closing tags as open+close so that
+        sibling elements remain siblings instead of being incorrectly nested.
         """
-        if tag in self.VOID_TAGS:
-            # Void element: handle as start + end (default behavior)
-            self.handle_starttag(tag, attrs)
-        else:
-            # Non-void element: treat as opening tag only (HTML5 spec)
-            self.handle_starttag(tag, attrs)
+        self.handle_starttag(tag, attrs)
+        if tag not in self.VOID_TAGS:
+            self.handle_endtag(tag)
 
     def handle_endtag(self, tag):
         if tag == 'style':
