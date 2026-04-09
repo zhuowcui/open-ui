@@ -64,15 +64,10 @@ fit-content-block-size-abspos,ported,css_sizing_fit_content_block_size_abspos,
 fit-content-block-size-fixedpos-ref,ported,css_sizing_fit_content_block_size_fixedpos_ref,
 fit-content-block-size-fixedpos,ported,css_sizing_fit_content_block_size_fixedpos,
 fit-content-contribution-001,ported,css_sizing_fit_content_contribution_001,
-fit-content-length-percentage-001,ported,css_sizing_fit_content_length_percentage_001,
-fit-content-length-percentage-002,ported,css_sizing_fit_content_length_percentage_002,
-fit-content-length-percentage-003,ported,css_sizing_fit_content_length_percentage_003,
 fit-content-length-percentage-004,ported,css_sizing_fit_content_length_percentage_004,
 fit-content-length-percentage-005,ported,css_sizing_fit_content_length_percentage_005,
 fit-content-length-percentage-006,ported,css_sizing_fit_content_length_percentage_006,
-fit-content-length-percentage-007,ported,css_sizing_fit_content_length_percentage_007,
 fit-content-length-percentage-008,ported,css_sizing_fit_content_length_percentage_008,
-fit-content-length-percentage-009,ported,css_sizing_fit_content_length_percentage_009,
 fit-content-length-percentage-010,ported,css_sizing_fit_content_length_percentage_010,
 fit-content-length-percentage-011,ported,css_sizing_fit_content_length_percentage_011,
 fit-content-length-percentage-012,ported,css_sizing_fit_content_length_percentage_012,
@@ -339,6 +334,11 @@ dynamic-change-inline-size-001,not_portable,,uses_javascript
 dynamic-change-inline-size-002,not_portable,,uses_javascript
 dynamic-change-inline-size-003,not_portable,,uses_javascript
 dynamic-change-inline-size-004,not_portable,,uses_javascript
+fit-content-length-percentage-001,not_portable,,no_layout_content
+fit-content-length-percentage-002,not_portable,,no_layout_content
+fit-content-length-percentage-003,not_portable,,no_layout_content
+fit-content-length-percentage-007,not_portable,,no_layout_content
+fit-content-length-percentage-009,not_portable,,no_layout_content
 fit-content-percentage-padding,not_portable,,uses_javascript
 frameset-intrinsic-crash,not_portable,,uses_javascript
 grid-item-image-percentage-min-height-computes-as-0-ref,not_portable,,unsupported element: <img>

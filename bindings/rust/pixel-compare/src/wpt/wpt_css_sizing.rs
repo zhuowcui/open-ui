@@ -1310,6 +1310,8 @@ fn css_sizing_box_sizing_content_box_002() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.width = Length::calc_percent_px(50.000000, -10.000000);
+        doc.node_mut(n2).style.height = Length::calc_percent_px(100.000000, -10.000000);
         doc.node_mut(n2).style.z_index = Some(1);
         doc.node_mut(n2).style.float = Float::Left;
         doc.node_mut(n2).style.padding_top = Length::px(5.0);
@@ -1321,6 +1323,8 @@ fn css_sizing_box_sizing_content_box_002() -> Document {
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n3).style.width = Length::calc_percent_px(50.000000, -10.000000);
+        doc.node_mut(n3).style.height = Length::calc_percent_px(100.000000, -10.000000);
         doc.node_mut(n3).style.z_index = Some(1);
         doc.node_mut(n3).style.float = Float::Left;
         doc.node_mut(n3).style.padding_top = Length::px(5.0);
@@ -1435,6 +1439,7 @@ fn css_sizing_calc_margins_block() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_left = Length::calc_percent_px(10.000000, 100.000000);
         doc.append_child(n1, n2);
     doc
 }
@@ -1450,6 +1455,7 @@ fn css_sizing_calc_margins_flex() -> Document {
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_left = Length::calc_percent_px(10.000000, 100.000000);
         doc.append_child(n1, n2);
     doc
 }
@@ -11546,87 +11552,6 @@ fn css_sizing_fit_content_contribution_001() -> Document {
     doc
 }
 
-// Source: fit-content-length-percentage-001.html
-fn css_sizing_fit_content_length_percentage_001() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.position = Position::Absolute;
-    doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.width = Length::px(100.0);
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.node_mut(n1).style.z_index = Some(-1);
-    doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.height = Length::px(100.0);
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.append_child(vp, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::InlineBlock;
-        doc.node_mut(n3).style.width = Length::px(60.0);
-        doc.append_child(n2, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.width = Length::px(60.0);
-        doc.append_child(n2, n4);
-    doc
-}
-
-// Source: fit-content-length-percentage-002.html
-fn css_sizing_fit_content_length_percentage_002() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.position = Position::Absolute;
-    doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.width = Length::px(100.0);
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.node_mut(n1).style.z_index = Some(-1);
-    doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.height = Length::px(100.0);
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.append_child(vp, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::InlineBlock;
-        doc.node_mut(n3).style.width = Length::px(100.0);
-        doc.append_child(n2, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.width = Length::px(100.0);
-        doc.append_child(n2, n4);
-    doc
-}
-
-// Source: fit-content-length-percentage-003.html
-fn css_sizing_fit_content_length_percentage_003() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.position = Position::Absolute;
-    doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.width = Length::px(100.0);
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.node_mut(n1).style.z_index = Some(-1);
-    doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.height = Length::px(100.0);
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.append_child(vp, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::InlineBlock;
-        doc.node_mut(n3).style.width = Length::px(50.0);
-        doc.append_child(n2, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.width = Length::px(50.0);
-        doc.append_child(n2, n4);
-    doc
-}
-
 // Source: fit-content-length-percentage-004.html
 fn css_sizing_fit_content_length_percentage_004() -> Document {
     let (mut doc, vp) = base_doc();
@@ -11720,34 +11645,6 @@ fn css_sizing_fit_content_length_percentage_006() -> Document {
     doc
 }
 
-// Source: fit-content-length-percentage-007.html
-fn css_sizing_fit_content_length_percentage_007() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.position = Position::Absolute;
-    doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.width = Length::px(100.0);
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.node_mut(n1).style.z_index = Some(-1);
-    doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.width = Length::px(10.0);
-    doc.node_mut(n2).style.height = Length::px(100.0);
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.append_child(vp, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::InlineBlock;
-        doc.node_mut(n3).style.width = Length::px(60.0);
-        doc.append_child(n2, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.width = Length::px(60.0);
-        doc.append_child(n2, n4);
-    doc
-}
-
 // Source: fit-content-length-percentage-008.html
 fn css_sizing_fit_content_length_percentage_008() -> Document {
     let (mut doc, vp) = base_doc();
@@ -11777,34 +11674,6 @@ fn css_sizing_fit_content_length_percentage_008() -> Document {
             doc.node_mut(n5).style.display = Display::InlineBlock;
             doc.node_mut(n5).style.width = Length::px(60.0);
             doc.append_child(n3, n5);
-    doc
-}
-
-// Source: fit-content-length-percentage-009.html
-fn css_sizing_fit_content_length_percentage_009() -> Document {
-    let (mut doc, vp) = base_doc();
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.position = Position::Absolute;
-    doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.width = Length::px(100.0);
-    doc.node_mut(n1).style.height = Length::px(100.0);
-    doc.node_mut(n1).style.z_index = Some(-1);
-    doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.width = Length::px(200.0);
-    doc.node_mut(n2).style.height = Length::px(100.0);
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.append_child(vp, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::InlineBlock;
-        doc.node_mut(n3).style.width = Length::px(60.0);
-        doc.append_child(n2, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.width = Length::px(60.0);
-        doc.append_child(n2, n4);
     doc
 }
 
@@ -14865,6 +14734,8 @@ fn css_sizing_inline_intrinsic_size_calc() -> Document {
     doc.node_mut(n1).style.width = Length::max_content();
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.margin_left = Length::px(30.000000);
+        doc.node_mut(n2).style.padding_left = Length::px(50.000000);
         doc.append_child(n1, n2);
     doc
 }
@@ -15251,6 +15122,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n9).style.border_right_width = 20;
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n9).style.min_width = Length::px(160.000000);
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -15385,6 +15257,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n21).style.border_right_width = 20;
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n21).style.min_width = Length::px(160.000000);
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -15807,6 +15680,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n9).style.border_right_width = 20;
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n9).style.max_width = Length::px(40.000000);
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -15941,6 +15815,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n21).style.border_right_width = 20;
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n21).style.max_width = Length::px(40.000000);
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -16081,6 +15956,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n9).style.border_right_width = 20;
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n9).style.width = Length::px(40.000000);
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -16215,6 +16091,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n21).style.border_right_width = 20;
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n21).style.width = Length::px(40.000000);
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -29131,7 +29008,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_019() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n2).style.flex_basis = Length::content();
+        doc.node_mut(n2).style.flex_basis = Length::max_content();
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.min_width = Length::px(0.0);
@@ -29149,7 +29026,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_020() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n2).style.flex_basis = Length::content();
+        doc.node_mut(n2).style.flex_basis = Length::max_content();
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.min_height = Length::px(0.0);
@@ -29166,7 +29043,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_021() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n2).style.flex_basis = Length::content();
+        doc.node_mut(n2).style.flex_basis = Length::max_content();
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.width = Length::px(20.0);
@@ -29185,7 +29062,7 @@ fn css_sizing_aspect_ratio_flex_aspect_ratio_022() -> Document {
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n2).style.flex_basis = Length::content();
+        doc.node_mut(n2).style.flex_basis = Length::max_content();
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.aspect_ratio = Some(AspectRatio { ratio: (1.0_f32, 1.0_f32), auto_flag: false });
         doc.node_mut(n2).style.height = Length::px(20.0);
@@ -31188,15 +31065,10 @@ pub fn css_sizing_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_sizing/fit-content-block-size-fixedpos-ref", css_sizing_fit_content_block_size_fixedpos_ref as fn() -> Document),
         ("wpt/css_sizing/fit-content-block-size-fixedpos", css_sizing_fit_content_block_size_fixedpos as fn() -> Document),
         ("wpt/css_sizing/fit-content-contribution-001", css_sizing_fit_content_contribution_001 as fn() -> Document),
-        ("wpt/css_sizing/fit-content-length-percentage-001", css_sizing_fit_content_length_percentage_001 as fn() -> Document),
-        ("wpt/css_sizing/fit-content-length-percentage-002", css_sizing_fit_content_length_percentage_002 as fn() -> Document),
-        ("wpt/css_sizing/fit-content-length-percentage-003", css_sizing_fit_content_length_percentage_003 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-004", css_sizing_fit_content_length_percentage_004 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-005", css_sizing_fit_content_length_percentage_005 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-006", css_sizing_fit_content_length_percentage_006 as fn() -> Document),
-        ("wpt/css_sizing/fit-content-length-percentage-007", css_sizing_fit_content_length_percentage_007 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-008", css_sizing_fit_content_length_percentage_008 as fn() -> Document),
-        ("wpt/css_sizing/fit-content-length-percentage-009", css_sizing_fit_content_length_percentage_009 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-010", css_sizing_fit_content_length_percentage_010 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-011", css_sizing_fit_content_length_percentage_011 as fn() -> Document),
         ("wpt/css_sizing/fit-content-length-percentage-012", css_sizing_fit_content_length_percentage_012 as fn() -> Document),

@@ -12162,9 +12162,9 @@ fn css_multicol_multicol_reduce_000_ref() -> Document {
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.color = Color::BLUE;
         doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.color = Color::BLUE;
-    doc.append_child(vp, n3);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::BLUE;
+        doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
@@ -12188,9 +12188,9 @@ fn css_multicol_multicol_reduce_000_ref() -> Document {
         let n5 = doc.create_node(ElementTag::Span);
         doc.node_mut(n5).style.color = Color::BLUE;
         doc.append_child(n4, n5);
-    let n6 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n6).style.color = Color::BLUE;
-    doc.append_child(vp, n6);
+        let n6 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n6).style.color = Color::BLUE;
+        doc.append_child(n4, n6);
     doc
 }
 
@@ -12245,9 +12245,9 @@ fn css_multicol_multicol_reduce_000() -> Document {
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.color = Color::BLUE;
         doc.append_child(n3, n4);
-    let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.color = Color::BLUE;
-    doc.append_child(vp, n5);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::BLUE;
+        doc.append_child(n3, n5);
     doc
 }
 

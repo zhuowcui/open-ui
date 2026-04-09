@@ -644,6 +644,7 @@ fn css_position_position_relative_007() -> Document {
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.top = Length::calc_percent_px(10.000000, 10.000000);
         doc.node_mut(n2).style.position = Position::Relative;
         doc.append_child(n1, n2);
     doc

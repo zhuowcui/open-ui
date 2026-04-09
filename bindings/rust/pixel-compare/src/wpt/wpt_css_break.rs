@@ -31407,6 +31407,7 @@ fn css_break_table_table_col_paint_htb_ltr_ref() -> Document {
             doc.node_mut(n4).style.position = Position::Absolute;
             doc.node_mut(n4).style.top = Length::px(60.0);
             doc.node_mut(n4).style.left = Length::px(10.0);
+            doc.node_mut(n4).style.width = Length::calc_percent_px(50.000000, -15.000000);
             doc.node_mut(n4).style.height = Length::px(255.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
@@ -31415,6 +31416,7 @@ fn css_break_table_table_col_paint_htb_ltr_ref() -> Document {
             doc.node_mut(n5).style.position = Position::Absolute;
             doc.node_mut(n5).style.top = Length::px(60.0);
             doc.node_mut(n5).style.left = Length::px(55.0);
+            doc.node_mut(n5).style.width = Length::calc_percent_px(50.000000, -15.000000);
             doc.node_mut(n5).style.height = Length::px(255.0);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
@@ -32076,6 +32078,7 @@ fn css_break_table_table_row_paint_htb_ltr_ref() -> Document {
             doc.node_mut(n4).style.position = Position::Absolute;
             doc.node_mut(n4).style.top = Length::px(60.0);
             doc.node_mut(n4).style.left = Length::px(10.0);
+            doc.node_mut(n4).style.width = Length::calc_percent_px(100.000000, -20.000000);
             doc.node_mut(n4).style.height = Length::px(110.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
@@ -32084,6 +32087,7 @@ fn css_break_table_table_row_paint_htb_ltr_ref() -> Document {
             doc.node_mut(n5).style.position = Position::Absolute;
             doc.node_mut(n5).style.top = Length::px(180.0);
             doc.node_mut(n5).style.left = Length::px(10.0);
+            doc.node_mut(n5).style.width = Length::calc_percent_px(100.000000, -20.000000);
             doc.node_mut(n5).style.height = Length::px(135.0);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
@@ -32138,6 +32142,7 @@ fn css_break_table_table_section_paint_htb_ltr_ref() -> Document {
             doc.node_mut(n4).style.position = Position::Absolute;
             doc.node_mut(n4).style.top = Length::px(60.0);
             doc.node_mut(n4).style.left = Length::px(10.0);
+            doc.node_mut(n4).style.width = Length::calc_percent_px(100.000000, -20.000000);
             doc.node_mut(n4).style.height = Length::px(255.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
