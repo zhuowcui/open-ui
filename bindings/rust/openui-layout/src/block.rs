@@ -2787,6 +2787,7 @@ fn layout_multicol(
             let mut col_block_offset = LayoutUnit::zero();
             let mut col_remaining = column_height;
             let mut prev_break_after_forces = false;
+            let mut prev_break_after_avoids = false;
             let mut prev_margin_bottom = LayoutUnit::zero();
             // Track actual tallest column content for auto-height containers.
             let mut max_col_content = LayoutUnit::zero();
@@ -2823,12 +2824,13 @@ fn layout_multicol(
 
                 // Compute collapsed margin between siblings.
                 // CSS 2.1 §8.3.1: adjoining margins collapse to max.
+                // CSS Fragmentation §3.5: margin at top of non-first column truncated.
                 let margin_space = if col_block_offset > LayoutUnit::zero() {
-                    // Collapse adjacent margins (sibling margin collapsing).
                     prev_margin_bottom.max_of(child_margin_top)
-                } else {
-                    // First child in column: top margin
+                } else if col_idx == 0 {
                     child_margin_top
+                } else {
+                    LayoutUnit::zero()
                 };
                 let total_child_space = margin_space + child_height;
 
@@ -2836,7 +2838,12 @@ fn layout_multicol(
                 // If the child doesn't fit but would fit in a fresh column,
                 // and break-inside is avoid, move to the next column.
                 let avoid_break_inside = child_style.break_inside.is_avoid();
+                // CSS Fragmentation §3.1: break-before/after: avoid —
+                // This child or the previous child wants to avoid a break here.
+                let avoid_break_before = child_style.break_before.is_avoid()
+                    || prev_break_after_avoids;
                 if avoid_break_inside
+                    && !avoid_break_before
                     && col_remaining.raw() < total_child_space.raw()
                     && col_block_offset > LayoutUnit::zero()
                     && (child_margin_top + child_height).raw() <= column_height.raw()
@@ -2850,17 +2857,22 @@ fn layout_multicol(
                 }
 
                 // Recalculate margin for potentially new column context.
+                // CSS Fragmentation §3.5: truncate at non-first column top.
                 let actual_margin = if col_block_offset > LayoutUnit::zero() {
                     prev_margin_bottom.max_of(child_margin_top)
-                } else {
+                } else if col_idx == 0 {
                     child_margin_top
+                } else {
+                    LayoutUnit::zero()
                 };
                 let needed = actual_margin + child_height;
 
                 // If child doesn't fit and there's content already in this column,
-                // move to next column first.
+                // move to next column first — but NOT if break-before:avoid is set
+                // (we should keep the child with the previous sibling).
                 if col_remaining.raw() < needed.raw() && col_block_offset > LayoutUnit::zero()
                     && col_idx + 1 < positions.len()
+                    && !avoid_break_before
                 {
                     max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
@@ -2870,13 +2882,20 @@ fn layout_multicol(
                 }
 
                 prev_break_after_forces = child_style.break_after.is_forced();
+                prev_break_after_avoids = child_style.break_after.is_avoid();
 
                 // Final margin for positioning.
+                // CSS Fragmentation §3.5: margins adjacent to a fragmentation
+                // break are truncated. At the top of a non-first column,
+                // top margin is discarded.
                 let pos_margin = if col_block_offset > LayoutUnit::zero() {
                     prev_margin_bottom.max_of(child_margin_top)
-                } else {
-                    // First item in column: apply top margin as offset.
+                } else if col_idx == 0 {
+                    // First item in first column: keep full margin.
                     child_margin_top
+                } else {
+                    // First item in a non-first column: truncate top margin.
+                    LayoutUnit::zero()
                 };
                 // Reset prev_margin_bottom for recalculation later (set after placement).
                 // We use `child_margin_bottom` at the end.

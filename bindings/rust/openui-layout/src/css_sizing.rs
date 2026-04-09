@@ -438,6 +438,14 @@ fn resolve_min_value(
             // fit-content for min-size: use max-content as upper bound
             intrinsic.max
         }
+        LengthType::Stretch => {
+            // min-height: stretch → available size (clamped to 0)
+            if containing_block_size.is_indefinite() {
+                LayoutUnit::zero()
+            } else {
+                containing_block_size.clamp_negative_to_zero()
+            }
+        }
         // auto / none → 0 (default automatic minimum)
         _ => LayoutUnit::zero(),
     }
@@ -463,6 +471,14 @@ fn resolve_max_value(
         LengthType::FitContent => {
             // fit-content for max-size: use max-content as upper bound
             intrinsic.max
+        }
+        LengthType::Stretch => {
+            // max-height: stretch → available size
+            if containing_block_size.is_indefinite() {
+                LayoutUnit::max()
+            } else {
+                containing_block_size.clamp_negative_to_zero()
+            }
         }
         // none → unconstrained
         LengthType::None => LayoutUnit::max(),
