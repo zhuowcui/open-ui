@@ -66,10 +66,11 @@ fn overflow_auto_creates_new_bfc() {
 }
 
 #[test]
-fn overflow_clip_creates_new_bfc() {
+fn overflow_clip_does_not_create_new_bfc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut style = ComputedStyle::initial();
     style.overflow_x = Overflow::Clip;
-    assert!(creates_new_formatting_context(&style, false));
+    assert!(!creates_new_formatting_context(&style, false));
 }
 
 #[test]

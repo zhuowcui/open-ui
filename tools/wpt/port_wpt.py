@@ -129,8 +129,8 @@ IGNORED_PROPERTIES = {
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
     'resize', 'outline', 'box-shadow', 'text-overflow',
-    'vertical-align', 'line-height', 'visibility',
-    'opacity', 'z-index', 'isolation',
+    'vertical-align', 'line-height',
+    'isolation',
     # Background details that don't affect layout
     'background-image', 'background-repeat', 'background-size',
     'background-position', 'background-clip', 'background-origin',
@@ -1218,6 +1218,18 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val in mapping:
             return f"{s}.justify_content = {mapping[val]};"
+        # Handle "safe <pos>" / "unsafe <pos>" modifiers
+        parts = val.split()
+        if len(parts) == 2 and parts[0] in ('safe', 'unsafe'):
+            overflow = 'OverflowAlignment::Safe' if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
+            pos_map = {
+                'flex-start': 'ContentPosition::FlexStart', 'start': 'ContentPosition::Start',
+                'flex-end': 'ContentPosition::FlexEnd', 'end': 'ContentPosition::End',
+                'center': 'ContentPosition::Center', 'left': 'ContentPosition::Left',
+                'right': 'ContentPosition::Right',
+            }
+            if parts[1] in pos_map:
+                return f"{s}.justify_content = ContentAlignment {{ position: {pos_map[parts[1]]}, distribution: ContentDistribution::Default, overflow: {overflow} }};"
 
     if prop == 'align-items':
         mapping = {
@@ -1234,6 +1246,18 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val in mapping:
             return f"{s}.align_items = {mapping[val]};"
+        parts = val.split()
+        if len(parts) == 2 and parts[0] in ('safe', 'unsafe'):
+            overflow = 'OverflowAlignment::Safe' if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
+            pos_map = {
+                'flex-start': 'ItemPosition::FlexStart', 'start': 'ItemPosition::Start',
+                'flex-end': 'ItemPosition::FlexEnd', 'end': 'ItemPosition::End',
+                'center': 'ItemPosition::Center', 'stretch': 'ItemPosition::Stretch',
+                'baseline': 'ItemPosition::Baseline', 'self-start': 'ItemPosition::SelfStart',
+                'self-end': 'ItemPosition::SelfEnd',
+            }
+            if parts[1] in pos_map:
+                return f"{s}.align_items = ItemAlignment::with_overflow({pos_map[parts[1]]}, {overflow});"
 
     if prop == 'align-self':
         mapping = {
@@ -1251,6 +1275,18 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val in mapping:
             return f"{s}.align_self = {mapping[val]};"
+        parts = val.split()
+        if len(parts) == 2 and parts[0] in ('safe', 'unsafe'):
+            overflow = 'OverflowAlignment::Safe' if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
+            pos_map = {
+                'flex-start': 'ItemPosition::FlexStart', 'start': 'ItemPosition::Start',
+                'flex-end': 'ItemPosition::FlexEnd', 'end': 'ItemPosition::End',
+                'center': 'ItemPosition::Center', 'stretch': 'ItemPosition::Stretch',
+                'baseline': 'ItemPosition::Baseline', 'self-start': 'ItemPosition::SelfStart',
+                'self-end': 'ItemPosition::SelfEnd',
+            }
+            if parts[1] in pos_map:
+                return f"{s}.align_self = ItemAlignment::with_overflow({pos_map[parts[1]]}, {overflow});"
 
     if prop == 'align-content':
         mapping = {
@@ -1268,6 +1304,16 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val in mapping:
             return f"{s}.align_content = {mapping[val]};"
+        parts = val.split()
+        if len(parts) == 2 and parts[0] in ('safe', 'unsafe'):
+            overflow = 'OverflowAlignment::Safe' if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
+            pos_map = {
+                'flex-start': 'ContentPosition::FlexStart', 'start': 'ContentPosition::Start',
+                'flex-end': 'ContentPosition::FlexEnd', 'end': 'ContentPosition::End',
+                'center': 'ContentPosition::Center',
+            }
+            if parts[1] in pos_map:
+                return f"{s}.align_content = ContentAlignment {{ position: {pos_map[parts[1]]}, distribution: ContentDistribution::Default, overflow: {overflow} }};"
 
     if prop in ('flex-grow', 'flex-shrink'):
         try:
@@ -1740,6 +1786,13 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
                 g = float(parts[0])
                 sh = float(parts[1])
                 basis = parse_length(parts[2], font_size)
+                if not basis:
+                    # Unitless number as flex-basis → treat as px (browser compat)
+                    try:
+                        bv = float(parts[2])
+                        basis = f'Length::px({bv})'
+                    except ValueError:
+                        pass
                 if basis:
                     return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = {basis};"]
             except ValueError:

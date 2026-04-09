@@ -3437,11 +3437,12 @@ fn bfc_overflow_scroll_creates_new_fc() {
 }
 
 #[test]
-fn bfc_overflow_clip_creates_new_fc() {
+fn bfc_overflow_clip_does_not_create_fc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
 }
 
 #[test]
@@ -3472,10 +3473,11 @@ fn bfc_overflow_x_scroll_creates_fc() {
 }
 
 #[test]
-fn bfc_overflow_x_clip_creates_fc() {
+fn bfc_overflow_x_clip_does_not_create_fc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
 }
 
 #[test]
@@ -3500,10 +3502,11 @@ fn bfc_overflow_y_scroll_creates_fc() {
 }
 
 #[test]
-fn bfc_overflow_y_clip_creates_fc() {
+fn bfc_overflow_y_clip_does_not_create_fc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
 }
 
 #[test]
@@ -3628,6 +3631,7 @@ fn bfc_combined_flow_root_auto() {
 #[test]
 fn bfc_combined_flex_clip() {
     let mut s = ComputedStyle::initial();
+    // Flex display creates a new FC regardless of overflow
     s.display = Display::Flex; s.overflow_x = Overflow::Clip; s.overflow_y = Overflow::Clip;
     assert!(establishes_new_fc(&s));
 }
@@ -3655,7 +3659,7 @@ fn bfc_parametric_3() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3691,7 +3695,7 @@ fn bfc_parametric_7() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3727,7 +3731,7 @@ fn bfc_parametric_11() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3763,7 +3767,7 @@ fn bfc_parametric_15() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3799,7 +3803,7 @@ fn bfc_parametric_19() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3835,7 +3839,7 @@ fn bfc_parametric_23() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3871,7 +3875,7 @@ fn bfc_parametric_27() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3907,7 +3911,7 @@ fn bfc_parametric_31() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3943,7 +3947,7 @@ fn bfc_parametric_35() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3979,7 +3983,7 @@ fn bfc_parametric_39() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 

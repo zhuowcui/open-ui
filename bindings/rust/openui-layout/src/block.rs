@@ -14,7 +14,7 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
+use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, Length, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
 use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction};
 use openui_dom::{Document, NodeId};
 
@@ -1995,7 +1995,15 @@ fn resolve_inline_size(
 
     // Apply min-width / max-width constraints
     let min = if style.min_width.is_auto() {
-        LayoutUnit::zero() // min-width: auto → 0 for block elements
+        // CSS Sizing 4 §5.1: For elements with a preferred aspect ratio,
+        // min-width: auto resolves to the min-content contribution (not 0).
+        // This ensures the element can't shrink below its content size
+        // even when aspect-ratio would produce a smaller width.
+        if style.aspect_ratio.is_some() {
+            resolve_intrinsic_inline(doc, node_id, &Length::min_content(), available, border_padding)
+        } else {
+            LayoutUnit::zero() // min-width: auto → 0 for regular block elements
+        }
     } else if style.min_width.is_content_or_intrinsic() {
         resolve_intrinsic_inline(doc, node_id, &style.min_width, available, border_padding)
     } else if style.min_width.is_stretch() {

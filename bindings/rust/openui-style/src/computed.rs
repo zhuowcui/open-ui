@@ -754,10 +754,11 @@ impl ComputedStyle {
     pub fn creates_new_formatting_context(&self) -> bool {
         // Flex/grid containers, inline-block, flow-root, overflow != visible,
         // absolutely positioned, floated — all create new BFC.
+        // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
         self.display.is_new_formatting_context()
             || self.position.is_absolutely_positioned()
             || self.float != Float::None
-            || (self.overflow_x != Overflow::Visible || self.overflow_y != Overflow::Visible)
+            || self.is_scroll_container()
     }
 
     /// True if this element is in the normal flow (not floated, not abs-pos).
