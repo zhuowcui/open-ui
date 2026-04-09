@@ -1326,14 +1326,28 @@ fn resolve_cross_size(
             if ratio.0 > 0.0 && ratio.1 > 0.0 {
                 let main_size = item.flexed_border_box_size();
                 if !main_size.is_indefinite() && main_size > LayoutUnit::zero() {
-                    let cross_val = if is_column {
+                    // AR applies to content-box dimensions. Convert the border-box
+                    // main size to content-box before applying the ratio.
+                    let main_bp = if is_column {
+                        // Column: main=block → block border+padding
+                        let b = crate::block::resolve_border(child_style);
+                        let p = crate::block::resolve_padding(child_style, child_percentage_inline);
+                        b.block_sum() + p.block_sum()
+                    } else {
+                        // Row: main=inline → inline border+padding
+                        let b = crate::block::resolve_border(child_style);
+                        let p = crate::block::resolve_padding(child_style, child_percentage_inline);
+                        b.inline_sum() + p.inline_sum()
+                    };
+                    let main_content = (main_size - main_bp).clamp_negative_to_zero();
+                    let cross_content = if is_column {
                         // Column: main=block, cross=inline. cross = main * (w/h)
-                        LayoutUnit::from_f32(main_size.to_f32() * ratio.0 / ratio.1)
+                        LayoutUnit::from_f32(main_content.to_f32() * ratio.0 / ratio.1)
                     } else {
                         // Row: main=inline, cross=block. cross = main * (h/w)
-                        LayoutUnit::from_f32(main_size.to_f32() * ratio.1 / ratio.0)
+                        LayoutUnit::from_f32(main_content.to_f32() * ratio.1 / ratio.0)
                     };
-                    return (cross_val - cross_border_padding).clamp_negative_to_zero();
+                    return cross_content;
                 }
             }
         }

@@ -410,6 +410,46 @@ fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> Int
     let max_block_size = apply_size_override_block(child_style, child_intrinsic.max_content_block_size);
     let max_block_size = apply_min_max_block(child_style, max_block_size);
 
+    // CSS Sizing 4 §5.1: When height is auto and the element has aspect-ratio,
+    // the intrinsic block size is the transferred size from the resolved inline
+    // size. apply_size_override_block only handles Fixed width; when width is
+    // auto/intrinsic, derive block sizes from the already-resolved inline sizes.
+    let (min_block_size, max_block_size) = if child_style.height.is_auto()
+        && !child_style.width.is_fixed()
+    {
+        if let Some(ref ar) = child_style.aspect_ratio {
+            if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                let b = resolve_border(child_style);
+                let p = resolve_padding(child_style, LayoutUnit::zero());
+                let bp_inline = b.left + b.right + p.left + p.right;
+                let bp_block = b.top + b.bottom + p.top + p.bottom;
+
+                // min_inline / max_inline are border-box; convert to content-box.
+                let content_min_w = (min_inline - bp_inline).clamp_negative_to_zero();
+                let content_max_w = (max_inline - bp_inline).clamp_negative_to_zero();
+
+                let transferred_min = LayoutUnit::from_f32(
+                    content_min_w.to_f32() * ar.ratio.1 / ar.ratio.0,
+                ) + bp_block;
+                let transferred_max = LayoutUnit::from_f32(
+                    content_max_w.to_f32() * ar.ratio.1 / ar.ratio.0,
+                ) + bp_block;
+
+                // Transferred size replaces content-based size, then clamp.
+                (
+                    apply_min_max_block(child_style, transferred_min),
+                    apply_min_max_block(child_style, transferred_max),
+                )
+            } else {
+                (min_block_size, max_block_size)
+            }
+        } else {
+            (min_block_size, max_block_size)
+        }
+    } else {
+        (min_block_size, max_block_size)
+    };
+
     IntrinsicSizes {
         min_content_inline_size: min_inline + margin_inline,
         max_content_inline_size: max_inline + margin_inline,
@@ -623,6 +663,24 @@ pub fn compute_replaced_intrinsic_sizes(style: &ComputedStyle) -> IntrinsicSizes
     let default_width = LayoutUnit::from_i32(300);
     let default_height = LayoutUnit::from_i32(150);
 
+    // Determine the effective aspect ratio for deriving the missing dimension.
+    // CSS Sizing 4: If a CSS `aspect-ratio` is specified (without `auto`), it
+    // overrides the natural ratio. With `auto <ratio>`, the natural ratio
+    // (from the element's intrinsic dimensions) takes priority.
+    let (ratio_w, ratio_h) = if let Some(ref ar) = style.aspect_ratio {
+        if ar.auto_flag {
+            // `auto <ratio>`: prefer the natural ratio (default 2:1).
+            (default_width, default_height)
+        } else if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+            // Bare `<ratio>`: override natural ratio with specified one.
+            (LayoutUnit::from_f32(ar.ratio.0), LayoutUnit::from_f32(ar.ratio.1))
+        } else {
+            (default_width, default_height)
+        }
+    } else {
+        (default_width, default_height)
+    };
+
     let has_width = style.width.length_type() == openui_geometry::LengthType::Fixed;
     let has_height = style.height.length_type() == openui_geometry::LengthType::Fixed;
 
@@ -634,18 +692,21 @@ pub fn compute_replaced_intrinsic_sizes(style: &ComputedStyle) -> IntrinsicSizes
         }
         (true, false) => {
             let w = LayoutUnit::from_f32(style.width.value());
-            // Derive height from aspect ratio (default 2:1 → 300:150).
-            let h = apply_aspect_ratio(w, default_width, default_height);
+            // Derive height from aspect ratio.
+            let h = apply_aspect_ratio(w, ratio_w, ratio_h);
             (w, h)
         }
         (false, true) => {
             let h = LayoutUnit::from_f32(style.height.value());
             // Derive width from aspect ratio.
-            let w = apply_aspect_ratio_inverse(h, default_width, default_height);
+            let w = apply_aspect_ratio_inverse(h, ratio_w, ratio_h);
             (w, h)
         }
         (false, false) => {
-            (default_width, default_height)
+            // No explicit dimensions. Use natural width with the effective
+            // ratio to derive height, ensuring they're consistent.
+            let h = apply_aspect_ratio(default_width, ratio_w, ratio_h);
+            (default_width, h)
         }
     };
 
