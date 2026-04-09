@@ -2102,6 +2102,9 @@ fn resolve_inline_size(
                     max
                 };
 
+                // CSS Sizing 4 §5.2: Transferred min must not exceed explicit max.
+                let transferred_min = transferred_min.min_of(transferred_max);
+
                 (transferred_min, transferred_max)
             }
         } else {
@@ -2419,6 +2422,9 @@ fn resolve_block_size(
             } else {
                 max
             };
+
+            // CSS Sizing 4 §5.2: Transferred min must not exceed explicit max.
+            let transferred_min = transferred_min.min_of(transferred_max);
 
             (transferred_min, transferred_max)
             }
