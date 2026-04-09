@@ -216,8 +216,11 @@ def parse_color(value: str) -> str | None:
     return None
 
 
-def parse_length(value: str) -> str | None:
-    """Convert a CSS length value to Rust Length expression."""
+def parse_length(value: str, font_size: float = 16.0) -> str | None:
+    """Convert a CSS length value to Rust Length expression.
+    
+    font_size: current font-size in pixels for em resolution (default 16px).
+    """
     value = value.strip()
     if value == '0' or value == '0px':
         return 'Length::px(0.0)'
@@ -231,12 +234,12 @@ def parse_length(value: str) -> str | None:
     m = re.match(r'^(-?[\d.]+)%$', value)
     if m:
         return f'Length::percent({float(m.group(1))})'
-    # em → convert to px assuming 16px base font-size (our default)
+    # em → convert to px using current font-size context
     m = re.match(r'^(-?[\d.]+)em$', value)
     if m:
-        px_val = float(m.group(1)) * 16.0
+        px_val = float(m.group(1)) * font_size
         return f'Length::px({px_val})'
-    # rem → same as em for root element (base 16px)
+    # rem → always relative to root font-size (16px)
     m = re.match(r'^(-?[\d.]+)rem$', value)
     if m:
         px_val = float(m.group(1)) * 16.0
@@ -261,6 +264,31 @@ def parse_length(value: str) -> str | None:
     if m:
         px_val = float(m.group(1)) * 6.0  # 600px viewport
         return f'Length::px({px_val})'
+    # calc() — pre-evaluate pure-px expressions
+    m = re.match(r'^calc\((.+)\)$', value)
+    if m:
+        return _try_eval_calc(m.group(1))
+    return None
+
+
+def _try_eval_calc(expr: str) -> str | None:
+    """Try to pre-evaluate a calc() expression to a Length.
+    Handles pure-px arithmetic and simple percentage+px combos."""
+    expr = expr.strip()
+    # Replace units with just numbers for evaluation
+    # First check if it contains var() — can't handle
+    if 'var(' in expr:
+        return None
+    # Try pure-px evaluation: replace px units and evaluate
+    px_only = expr
+    px_only = re.sub(r'(\d+\.?\d*)px', r'\1', px_only)
+    # If no % remains, try to evaluate as pure number
+    if '%' not in px_only and 'em' not in px_only and 'vw' not in px_only and 'vh' not in px_only:
+        try:
+            result = eval(px_only, {"__builtins__": {}}, {})
+            return f'Length::px({float(result):.6f})'
+        except:
+            return None
     return None
 
 
@@ -816,20 +844,65 @@ def sanitize_fn_name(name: str) -> str:
     return name
 
 
-def generate_style_code(styles: dict, var_name: str) -> list[str]:
-    """Generate Rust code lines to set style properties on a node."""
+def generate_style_code(styles: dict, var_name: str, inherited_font_size: float = 16.0) -> list[str]:
+    """Generate Rust code lines to set style properties on a node.
+    
+    inherited_font_size: font-size in px inherited from parent for em resolution.
+    """
     lines = []
     s = f"doc.node_mut({var_name}).style"
 
+    # Determine the effective font-size for this node (used for em resolution).
+    # Process font-size first so other properties can use the correct em base.
+    font_size = inherited_font_size
+    fs_val = styles.get('font-size', '')
+    if fs_val:
+        fs_val = fs_val.strip().rstrip(';').strip()
+        m = re.match(r'^(-?[\d.]+)px$', fs_val)
+        if m:
+            font_size = float(m.group(1))
+        else:
+            m = re.match(r'^(-?[\d.]+)em$', fs_val)
+            if m:
+                font_size = float(m.group(1)) * inherited_font_size
+            else:
+                m = re.match(r'^(-?[\d.]+)rem$', fs_val)
+                if m:
+                    font_size = float(m.group(1)) * 16.0
+                elif fs_val in ('small',):
+                    font_size = 13.333
+                elif fs_val in ('smaller',):
+                    font_size = inherited_font_size * 0.833
+                elif fs_val in ('larger',):
+                    font_size = inherited_font_size * 1.2
+                elif fs_val in ('large',):
+                    font_size = 18.0
+                elif fs_val in ('x-large',):
+                    font_size = 24.0
+                elif fs_val in ('xx-large',):
+                    font_size = 32.0
+                elif fs_val in ('x-small',):
+                    font_size = 10.0
+                elif fs_val in ('xx-small',):
+                    font_size = 9.0
+                else:
+                    m = re.match(r'^(-?[\d.]+)pt$', fs_val)
+                    if m:
+                        font_size = float(m.group(1)) * 4.0 / 3.0
+                    else:
+                        m = re.match(r'^(-?[\d.]+)%$', fs_val)
+                        if m:
+                            font_size = float(m.group(1)) / 100.0 * inherited_font_size
+
     for prop, val in styles.items():
-        code = generate_single_style(prop, val, s)
+        code = generate_single_style(prop, val, s, font_size)
         if code:
             lines.extend(code if isinstance(code, list) else [code])
 
-    return lines
+    return lines, font_size
 
 
-def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None:
+def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) -> list[str] | str | None:
     """Generate Rust code for a single CSS property:value."""
     val = val.strip().rstrip(';').strip()
 
@@ -876,7 +949,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── top/right/bottom/left ──
     if prop in ('top', 'right', 'bottom', 'left'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return f"{s}.{prop} = {length};"
 
@@ -891,7 +964,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── width/height ──
     if prop in ('width', 'height', 'min-width', 'max-width', 'min-height', 'max-height'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {length};"
@@ -902,7 +975,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── margin sides ──
     if prop in ('margin-top', 'margin-right', 'margin-bottom', 'margin-left'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {length};"
@@ -913,7 +986,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── padding sides ──
     if prop in ('padding-top', 'padding-right', 'padding-bottom', 'padding-left'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {length};"
@@ -1153,7 +1226,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
             pass
 
     if prop == 'flex-basis':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return f"{s}.flex_basis = {length};"
 
@@ -1164,7 +1237,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
             pass
 
     if prop in ('gap', 'row-gap', 'column-gap'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             if prop == 'gap':
                 return [
@@ -1189,7 +1262,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop == 'column-width':
         if val == 'auto':
             return f"{s}.column_width = None;"
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return f"{s}.column_width = Some({length});"
 
@@ -1272,7 +1345,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
             if m:
                 lines.append(f"{s}.column_count = Some({int(m.group(1))});")
                 continue
-            length = parse_length(part)
+            length = parse_length(part, font_size)
             if length:
                 lines.append(f"{s}.column_width = Some({length});")
         return lines if lines else None
@@ -1311,13 +1384,13 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── logical properties: block-size/inline-size → height/width (horizontal writing mode) ──
     if prop in ('block-size', 'min-block-size', 'max-block-size'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             physical = prop.replace('block-size', 'height').replace('-', '_')
             return f"{s}.{physical} = {length};"
 
     if prop in ('inline-size', 'min-inline-size', 'max-inline-size'):
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             physical = prop.replace('inline-size', 'width').replace('-', '_')
             return f"{s}.{physical} = {length};"
@@ -1327,26 +1400,26 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         parts = val.split()
         props = ['top', 'right', 'bottom', 'left']
         if len(parts) == 1:
-            length = parse_length(parts[0])
+            length = parse_length(parts[0], font_size)
             if length:
                 return [f"{s}.{p} = {length};" for p in props]
         elif len(parts) == 2:
-            tb, lr = parse_length(parts[0]), parse_length(parts[1])
+            tb, lr = parse_length(parts[0], font_size), parse_length(parts[1], font_size)
             if tb and lr:
                 return [f"{s}.top = {tb};", f"{s}.right = {lr};", f"{s}.bottom = {tb};", f"{s}.left = {lr};"]
         elif len(parts) == 4:
-            lengths = [parse_length(p) for p in parts]
+            lengths = [parse_length(p, font_size) for p in parts]
             if all(lengths):
                 return [f"{s}.{props[i]} = {lengths[i]};" for i in range(4)]
 
     # ── inset-block / inset-inline (logical shorthands) ──
     if prop == 'inset-block':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return [f"{s}.top = {length};", f"{s}.bottom = {length};"]
 
     if prop == 'inset-inline':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return [f"{s}.left = {length};", f"{s}.right = {length};"]
 
@@ -1356,7 +1429,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         'inset-inline-start': 'left', 'inset-inline-end': 'right',
     }
     if prop in _inset_logical_map:
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             physical = _inset_logical_map[prop]
             return f"{s}.{physical} = {length};"
@@ -1365,24 +1438,24 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop == 'margin-block':
         parts = val.split()
         if len(parts) == 1:
-            length = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            length = parse_length(parts[0], font_size) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
             if length:
                 return [f"{s}.margin_top = {length};", f"{s}.margin_bottom = {length};"]
         elif len(parts) == 2:
-            start = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
-            end = parse_length(parts[1]) if parts[1] != 'auto' else 'LengthPercentageAuto::Auto'
+            start = parse_length(parts[0], font_size) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            end = parse_length(parts[1], font_size) if parts[1] != 'auto' else 'LengthPercentageAuto::Auto'
             if start and end:
                 return [f"{s}.margin_top = {start};", f"{s}.margin_bottom = {end};"]
 
     if prop == 'margin-inline':
         parts = val.split()
         if len(parts) == 1:
-            length = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            length = parse_length(parts[0], font_size) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
             if length:
                 return [f"{s}.margin_left = {length};", f"{s}.margin_right = {length};"]
         elif len(parts) == 2:
-            start = parse_length(parts[0]) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
-            end = parse_length(parts[1]) if parts[1] != 'auto' else 'LengthPercentageAuto::Auto'
+            start = parse_length(parts[0], font_size) if parts[0] != 'auto' else 'LengthPercentageAuto::Auto'
+            end = parse_length(parts[1], font_size) if parts[1] != 'auto' else 'LengthPercentageAuto::Auto'
             if start and end:
                 return [f"{s}.margin_left = {start};", f"{s}.margin_right = {end};"]
 
@@ -1395,7 +1468,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         physical = _margin_logical_map[prop]
         if val.strip() == 'auto':
             return f"{s}.{physical} = LengthPercentageAuto::Auto;"
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return f"{s}.{physical} = {length};"
 
@@ -1403,22 +1476,22 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
     if prop == 'padding-block':
         parts = val.split()
         if len(parts) == 1:
-            length = parse_length(parts[0])
+            length = parse_length(parts[0], font_size)
             if length:
                 return [f"{s}.padding_top = {length};", f"{s}.padding_bottom = {length};"]
         elif len(parts) == 2:
-            start, end = parse_length(parts[0]), parse_length(parts[1])
+            start, end = parse_length(parts[0], font_size), parse_length(parts[1], font_size)
             if start and end:
                 return [f"{s}.padding_top = {start};", f"{s}.padding_bottom = {end};"]
 
     if prop == 'padding-inline':
         parts = val.split()
         if len(parts) == 1:
-            length = parse_length(parts[0])
+            length = parse_length(parts[0], font_size)
             if length:
                 return [f"{s}.padding_left = {length};", f"{s}.padding_right = {length};"]
         elif len(parts) == 2:
-            start, end = parse_length(parts[0]), parse_length(parts[1])
+            start, end = parse_length(parts[0], font_size), parse_length(parts[1], font_size)
             if start and end:
                 return [f"{s}.padding_left = {start};", f"{s}.padding_right = {end};"]
 
@@ -1428,7 +1501,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
         'padding-inline-start': 'padding_left', 'padding-inline-end': 'padding_right',
     }
     if prop in _padding_logical_map:
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             physical = _padding_logical_map[prop]
             return f"{s}.{physical} = {length};"
@@ -1520,23 +1593,23 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
 
     # ── margin-block / margin-inline (logical) ──
     if prop == 'margin-block':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return [f"{s}.margin_top = {length};", f"{s}.margin_bottom = {length};"]
 
     if prop == 'margin-inline':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return [f"{s}.margin_left = {length};", f"{s}.margin_right = {length};"]
 
     # ── padding-block / padding-inline (logical) ──
     if prop == 'padding-block':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return [f"{s}.padding_top = {length};", f"{s}.padding_bottom = {length};"]
 
     if prop == 'padding-inline':
-        length = parse_length(val)
+        length = parse_length(val, font_size)
         if length:
             return [f"{s}.padding_left = {length};", f"{s}.padding_right = {length};"]
 
@@ -1596,7 +1669,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
                     return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = Length::px(0.0);"]
                 except ValueError:
                     # Second is basis
-                    basis = parse_length(parts[1])
+                    basis = parse_length(parts[1], font_size)
                     if basis:
                         return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = {basis};"]
             except ValueError:
@@ -1606,7 +1679,7 @@ def generate_single_style(prop: str, val: str, s: str) -> list[str] | str | None
             try:
                 g = float(parts[0])
                 sh = float(parts[1])
-                basis = parse_length(parts[2])
+                basis = parse_length(parts[2], font_size)
                 if basis:
                     return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = {basis};"]
             except ValueError:
@@ -1773,7 +1846,7 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
 
     counter = [0]
 
-    def gen_node(node: DomNode, parent_var: str, indent: int):
+    def gen_node(node: DomNode, parent_var: str, indent: int, parent_font_size: float = 16.0):
         if node.is_text:
             # Skip text nodes — we're comparing layout only
             return
@@ -1810,25 +1883,26 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
 
         # Generate style code
-        style_lines = generate_style_code(node.styles, var)
+        style_lines, node_font_size = generate_style_code(node.styles, var, parent_font_size)
         for sl in style_lines:
             lines.append(f"{ws}{sl}")
 
         lines.append(f"{ws}doc.append_child({parent_var}, {var});")
 
-        # Process children
+        # Process children (inherit font_size)
         for child in node.children:
-            gen_node(child, var, indent + 1)
+            gen_node(child, var, indent + 1, node_font_size)
 
     # Process body children
     # Apply body-level styles if any
+    root_font_size = 16.0
     if root.styles:
-        body_styles = generate_style_code(root.styles, 'vp')
+        body_styles, root_font_size = generate_style_code(root.styles, 'vp')
         for sl in body_styles:
             lines.append(f"    {sl}")
 
     for child in root.children:
-        gen_node(child, 'vp', 1)
+        gen_node(child, 'vp', 1, root_font_size)
 
     lines.append("    doc")
     lines.append("}")
