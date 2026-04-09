@@ -2073,10 +2073,13 @@ fn resolve_inline_size(
     // CSS Sizing 4 §5.2: Transferred min/max through aspect-ratio.
     // min-height/max-height transfer to the inline axis via the ratio.
     //
-    // Transferred sizes only apply when the inline size is auto (the
-    // dimension could be influenced by AR). When width is explicit, the
-    // author's specified width takes precedence over transferred constraints.
-    let (min, max) = if style.width.is_auto() || style.width.is_stretch() {
+    // Transferred sizes apply when the inline size is not an explicit
+    // length — i.e. auto, stretch, or intrinsic keywords (min-content,
+    // max-content, fit-content). An explicit length like `width: 200px`
+    // takes precedence over transferred constraints.
+    let (min, max) = if style.width.is_auto() || style.width.is_stretch()
+        || style.width.is_content_or_intrinsic()
+    {
         if let Some(ar) = &style.aspect_ratio {
             let ratio = ar.ratio;
             if ratio.0 == 0.0 || ratio.1 == 0.0 {
@@ -2634,6 +2637,8 @@ fn layout_multicol(
             let mut col_block_offset = LayoutUnit::zero();
             let mut col_remaining = column_height;
             let mut prev_break_after_forces = false;
+            // Track actual tallest column content for auto-height containers.
+            let mut max_col_content = LayoutUnit::zero();
 
             for (i, child_frag) in col_fragments.into_iter().enumerate() {
                 let child_height = col_block_sizes[i];
@@ -2646,6 +2651,7 @@ fn layout_multicol(
                     || prev_break_after_forces;
 
                 if forced_break && col_block_offset > LayoutUnit::zero() && col_idx + 1 < positions.len() {
+                    max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
@@ -2667,6 +2673,7 @@ fn layout_multicol(
                     && child_height.raw() <= column_height.raw()
                     && col_idx + 1 < positions.len()
                 {
+                    max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
@@ -2677,6 +2684,7 @@ fn layout_multicol(
                 if col_remaining.raw() < child_height.raw() && col_block_offset > LayoutUnit::zero()
                     && col_idx + 1 < positions.len()
                 {
+                    max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
@@ -2737,6 +2745,7 @@ fn layout_multicol(
 
                         // Move to next column if this one is full and there's more content
                         if consumed.raw() < child_height.raw() && col_idx + 1 < positions.len() {
+                            max_col_content = max_col_content.max_of(col_block_offset);
                             col_idx += 1;
                             col_block_offset = LayoutUnit::zero();
                             col_remaining = column_height;
@@ -2747,6 +2756,15 @@ fn layout_multicol(
                 }
             }
 
+            // Finalize: include the last column's content height.
+            max_col_content = max_col_content.max_of(col_block_offset);
+            // For auto-height containers, use actual content height (capped by column_height).
+            let actual_group_height = if style.height.is_auto() {
+                max_col_content.min_of(column_height)
+            } else {
+                column_height
+            };
+
             // Column rules for this group.
             if let Some(ref rule) = algo.column_rule {
                 let rule_positions = compute_column_rule_positions(
@@ -2754,7 +2772,7 @@ fn layout_multicol(
                 );
                 for rp in &rule_positions {
                     let mut rule_frag = Fragment::new_box(node_id,
-                        PhysicalSize::new(rule.width, column_height));
+                        PhysicalSize::new(rule.width, actual_group_height));
                     rule_frag.offset = PhysicalOffset::new(
                         content_edge_x + *rp - rule.width / LayoutUnit::from_i32(2),
                         content_edge_y + total_block_offset,
@@ -2764,7 +2782,7 @@ fn layout_multicol(
                 }
             }
 
-            total_block_offset = total_block_offset + column_height;
+            total_block_offset = total_block_offset + actual_group_height;
         }
 
         // Handle spanner (if current item is one).
