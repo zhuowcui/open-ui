@@ -479,4 +479,49 @@ mod tests {
         assert_eq!(items[0].flexed_content_size, LayoutUnit::from_i32(150));
         assert_eq!(items[1].flexed_content_size, LayoutUnit::from_i32(150));
     }
+
+    #[test]
+    fn max_constraint_freezes_item() {
+        // CSS Flexbox §9.7: items hitting max-width should be frozen and
+        // remaining space redistributed to other items.
+        let mut items = vec![
+            make_test_item(0, 0, 1.0, 1.0),
+            make_test_item(1, 0, 1.0, 1.0),
+        ];
+        items[0].main_axis_min_max.max = LayoutUnit::from_i32(100);
+        let indices = vec![0, 1];
+        let container_size = LayoutUnit::from_i32(400);
+        let sum_hyp = LayoutUnit::zero();
+
+        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        flexer.run();
+
+        // Item 0 frozen at max=100, Item 1 gets remaining 300
+        assert_eq!(items[0].flexed_content_size, LayoutUnit::from_i32(100));
+        assert_eq!(items[1].flexed_content_size, LayoutUnit::from_i32(300));
+    }
+
+    #[test]
+    fn multiple_max_constraints() {
+        // Multiple items hitting max constraints in successive rounds
+        let mut items = vec![
+            make_test_item(0, 0, 1.0, 1.0),
+            make_test_item(1, 0, 1.0, 1.0),
+            make_test_item(2, 0, 1.0, 1.0),
+        ];
+        items[0].main_axis_min_max.max = LayoutUnit::from_i32(50);
+        items[1].main_axis_min_max.max = LayoutUnit::from_i32(100);
+        let indices = vec![0, 1, 2];
+        let container_size = LayoutUnit::from_i32(600);
+        let sum_hyp = LayoutUnit::zero();
+
+        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        flexer.run();
+
+        // Round 1: each gets 200. Item 0 clamped to 50, Item 1 clamped to 100.
+        // Both frozen, remaining = 600 - 50 - 100 = 450 → Item 2 = 450
+        assert_eq!(items[0].flexed_content_size, LayoutUnit::from_i32(50));
+        assert_eq!(items[1].flexed_content_size, LayoutUnit::from_i32(100));
+        assert_eq!(items[2].flexed_content_size, LayoutUnit::from_i32(450));
+    }
 }

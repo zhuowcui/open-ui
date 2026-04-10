@@ -280,6 +280,52 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         doc, node_id, style, space, intrinsic_block_size, border_padding_block,
     );
 
+    // ── Fix: Recalculate main-axis free space for column flex ────────
+    // When the main axis was initially indefinite (auto-height column),
+    // items were frozen at hypothetical sizes with free_space=0. But
+    // total_block_size may be larger than intrinsic_block_size (due to
+    // min-height, stretch from parent, etc.). Recalculate so that
+    // justify-content and column-reverse positioning use the real free space.
+    // Blink: LayoutColumnReverse() recalculates offsets using the resolved size.
+    if is_column && main_axis_inner_size.is_indefinite() {
+        let resolved_main = (total_block_size - border_padding_block).clamp_negative_to_zero();
+        for line in &mut flex_lines {
+            let num_gaps = if line.item_count() > 1 { line.item_count() as i32 - 1 } else { 0 };
+            let total_gap = gap_between_items * num_gaps;
+            line.main_axis_free_space = resolved_main - line.main_axis_used_size - total_gap;
+        }
+    }
+
+    // ── Step 5b: Stretch cross-axis lines BEFORE reversal ────────────
+    // Blink performs align-content:stretch before reversing lines, so
+    // remainder pixels go to the first lines in original order.
+    let content_cross_size = if is_column {
+        content_inline_size
+    } else {
+        total_block_size - border_padding_block
+    };
+    {
+        let total_line_cross: LayoutUnit = flex_lines.iter()
+            .map(|l| l.line_cross_size)
+            .fold(LayoutUnit::zero(), |acc, s| acc + s);
+        let num_line_gaps = if flex_lines.len() > 1 { flex_lines.len() as i32 - 1 } else { 0 };
+        let total_line_gap = gap_between_lines * num_line_gaps;
+        let cross_free_space = content_cross_size - total_line_cross - total_line_gap;
+
+        let should_stretch_lines = style.align_content.distribution == ContentDistribution::Stretch
+            || (style.align_content.distribution == ContentDistribution::Default
+                && style.align_content.position == ContentPosition::Normal);
+        if should_stretch_lines && cross_free_space > LayoutUnit::zero() && flex_lines.len() > 0 {
+            let n = flex_lines.len() as i32;
+            let extra_per_line = LayoutUnit::from_raw(cross_free_space.raw() / n);
+            let remainder = cross_free_space.raw() % n;
+            for (i, line) in flex_lines.iter_mut().enumerate() {
+                let bonus = if (i as i32) < remainder { LayoutUnit::from_raw(1) } else { LayoutUnit::zero() };
+                line.line_cross_size = line.line_cross_size + extra_per_line + bonus;
+            }
+        }
+    }
+
     // ── Step 6: Apply reversals (Blink line 1265) ────────────────────
     if is_wrap_reverse {
         flex_lines.reverse();
@@ -289,13 +335,6 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             line.item_indices.reverse();
         }
     }
-
-    // ── Step 7: Final positioning (Blink line 1271) ──────────────────
-    let content_cross_size = if is_column {
-        content_inline_size
-    } else {
-        total_block_size - border_padding_block
-    };
 
     let children = give_items_final_position(
         doc,
@@ -1480,35 +1519,16 @@ fn give_items_final_position(
     let content_offset_y = border.top + padding.top;
 
     // ── Resolve align-content (cross-axis line offsets) ──────────────
+    // NOTE: Line stretching (align-content:stretch/normal) was already
+    // performed before reversals in flex_layout(), so lines are already
+    // at their final cross sizes here. Just compute remaining free space.
     let total_line_cross: LayoutUnit = lines.iter()
         .map(|l| l.line_cross_size)
         .fold(LayoutUnit::zero(), |acc, s| acc + s);
 
     let num_line_gaps = if lines.len() > 1 { lines.len() as i32 - 1 } else { 0 };
     let total_line_gap = gap_between_lines * num_line_gaps;
-    let cross_free_space = content_cross_size - total_line_cross - total_line_gap;
-
-    // Stretch lines if align-content: stretch or normal (CSS Flexbox §9.4)
-    // In flex context, align-content: normal behaves like stretch for multi-line.
-    let should_stretch_lines = align_content.distribution == ContentDistribution::Stretch
-        || (align_content.distribution == ContentDistribution::Default
-            && align_content.position == ContentPosition::Normal);
-    if should_stretch_lines && cross_free_space > LayoutUnit::zero() && lines.len() > 0 {
-        let n = lines.len() as i32;
-        let extra_per_line = LayoutUnit::from_raw(cross_free_space.raw() / n);
-        let remainder = cross_free_space.raw() % n;
-        for (i, line) in lines.iter_mut().enumerate() {
-            // Distribute remainder pixels to first lines for pixel-perfect accuracy
-            let bonus = if (i as i32) < remainder { LayoutUnit::from_raw(1) } else { LayoutUnit::zero() };
-            line.line_cross_size = line.line_cross_size + extra_per_line + bonus;
-        }
-    }
-
-    // Recalculate cross free space after stretch
-    let total_line_cross_after: LayoutUnit = lines.iter()
-        .map(|l| l.line_cross_size)
-        .fold(LayoutUnit::zero(), |acc, s| acc + s);
-    let cross_free_after = content_cross_size - total_line_cross_after - total_line_gap;
+    let cross_free_after = content_cross_size - total_line_cross - total_line_gap;
 
     let cross_align = resolve_content_alignment(
         align_content,
