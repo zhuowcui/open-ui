@@ -1115,6 +1115,8 @@ def generate_style_code(styles: dict, var_name: str, inherited_font_size: float 
                         m = re.match(r'^(-?[\d.]+)%$', fs_val)
                         if m:
                             font_size = float(m.group(1)) / 100.0 * inherited_font_size
+                        elif fs_val == '0':
+                            font_size = 0.0
 
     for prop, val in styles.items():
         code = generate_single_style(prop, val, s, font_size)
@@ -1256,21 +1258,38 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     # ── border-radius ──
     if prop == 'border-radius':
-        m = re.match(r'^(-?[\d.]+)(px|em|rem|%)$', val.strip())
-        if m:
-            num = float(m.group(1))
-            unit = m.group(2)
-            if unit == 'em' or unit == 'rem':
-                num = num * 16.0
-            elif unit == '%':
-                pass  # stored as-is, layout resolves
-            v = num
-            return [
-                f"{s}.border_top_left_radius = ({v}_f32, {v}_f32);",
-                f"{s}.border_top_right_radius = ({v}_f32, {v}_f32);",
-                f"{s}.border_bottom_left_radius = ({v}_f32, {v}_f32);",
-                f"{s}.border_bottom_right_radius = ({v}_f32, {v}_f32);",
-            ]
+        def _parse_br(token):
+            m2 = re.match(r'^(-?[\d.]+)(px|em|rem|%)$', token)
+            if not m2:
+                return None
+            num2 = float(m2.group(1))
+            unit2 = m2.group(2)
+            if unit2 in ('em', 'rem'):
+                num2 = num2 * font_size
+            return num2
+        # Handle slash syntax (horizontal / vertical) — take horizontal only for now
+        horiz = val.strip().split('/')[0].strip()
+        parts = horiz.split()
+        values = [_parse_br(p) for p in parts]
+        if all(v is not None for v in values):
+            if len(values) == 1:
+                tl = tr = br = bl = values[0]
+            elif len(values) == 2:
+                tl = br = values[0]
+                tr = bl = values[1]
+            elif len(values) == 3:
+                tl = values[0]; tr = bl = values[1]; br = values[2]
+            elif len(values) == 4:
+                tl, tr, br, bl = values
+            else:
+                tl = tr = br = bl = None
+            if tl is not None:
+                return [
+                    f"{s}.border_top_left_radius = ({tl}_f32, {tl}_f32);",
+                    f"{s}.border_top_right_radius = ({tr}_f32, {tr}_f32);",
+                    f"{s}.border_bottom_right_radius = ({br}_f32, {br}_f32);",
+                    f"{s}.border_bottom_left_radius = ({bl}_f32, {bl}_f32);",
+                ]
 
     if prop in ('border-top-left-radius', 'border-top-right-radius',
                 'border-bottom-left-radius', 'border-bottom-right-radius'):
@@ -1433,10 +1452,10 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
             'space-between': 'ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)',
             'space-around': 'ContentAlignment::with_distribution(ContentDistribution::SpaceAround)',
             'space-evenly': 'ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly)',
+            'stretch': 'ContentAlignment::with_distribution(ContentDistribution::Stretch)',
         }
         if val in mapping:
             return f"{s}.justify_content = {mapping[val]};"
-        # Handle "safe <pos>" / "unsafe <pos>" modifiers
         parts = val.split()
         if len(parts) == 2 and parts[0] in ('safe', 'unsafe'):
             overflow = 'OverflowAlignment::Safe' if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
@@ -1628,6 +1647,9 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         m = re.match(r'^(-?[\d.]+)px$', val.strip())
         if m:
             return f"{s}.line_height = LineHeight::Length({float(m.group(1))});"
+        m = re.match(r'^(-?[\d.]+)(em|rem)$', val.strip())
+        if m:
+            return f"{s}.line_height = LineHeight::Length({float(m.group(1)) * font_size});"
         m = re.match(r'^(-?[\d.]+)%$', val.strip())
         if m:
             return f"{s}.line_height = LineHeight::Percentage({float(m.group(1))});"
@@ -1915,6 +1937,8 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
     # ── font-size ──
     if prop == 'font-size':
         v = val.strip()
+        if v == '0':
+            return f"{s}.font_size = 0.0;"
         m = re.match(r'^(-?[\d.]+)px$', v)
         if m:
             return f"{s}.font_size = {float(m.group(1))};"
@@ -2169,6 +2193,17 @@ def generate_border_width_shorthand(val: str, s: str) -> list[str] | None:
                 f"{s}.border_bottom_width = {tb};",
                 f"{s}.border_left_width = {lr};",
             ]
+    elif len(parts) == 3:
+        top = parse_border_width(parts[0])
+        lr = parse_border_width(parts[1])
+        bottom = parse_border_width(parts[2])
+        if top is not None and lr is not None and bottom is not None:
+            return [
+                f"{s}.border_top_width = {top};",
+                f"{s}.border_right_width = {lr};",
+                f"{s}.border_bottom_width = {bottom};",
+                f"{s}.border_left_width = {lr};",
+            ]
     elif len(parts) == 4:
         ws = [parse_border_width(p) for p in parts]
         if all(w is not None for w in ws):
@@ -2180,25 +2215,66 @@ def generate_border_width_shorthand(val: str, s: str) -> list[str] | None:
 def generate_border_style_shorthand(val: str, s: str) -> list[str] | None:
     """Parse 'border-style: solid dashed' shorthand."""
     parts = val.split()
+    sides = ['top', 'right', 'bottom', 'left']
     if len(parts) == 1:
         code = border_style_to_rust(parts[0])
         if code:
-            return [f"{s}.border_{side}_style = {code};" for side in ['top', 'right', 'bottom', 'left']]
+            return [f"{s}.border_{side}_style = {code};" for side in sides]
+    elif len(parts) == 2:
+        codes = [border_style_to_rust(p) for p in parts]
+        if all(codes):
+            return [
+                f"{s}.border_top_style = {codes[0]};",
+                f"{s}.border_right_style = {codes[1]};",
+                f"{s}.border_bottom_style = {codes[0]};",
+                f"{s}.border_left_style = {codes[1]};",
+            ]
+    elif len(parts) == 3:
+        codes = [border_style_to_rust(p) for p in parts]
+        if all(codes):
+            return [
+                f"{s}.border_top_style = {codes[0]};",
+                f"{s}.border_right_style = {codes[1]};",
+                f"{s}.border_bottom_style = {codes[2]};",
+                f"{s}.border_left_style = {codes[1]};",
+            ]
+    elif len(parts) == 4:
+        codes = [border_style_to_rust(p) for p in parts]
+        if all(codes):
+            return [f"{s}.border_{sides[i]}_style = {codes[i]};" for i in range(4)]
     return None
 
 
 def generate_border_color_shorthand(val: str, s: str) -> list[str] | None:
     """Parse 'border-color: red blue green yellow' shorthand."""
     parts = val.split()
+    sides = ['top', 'right', 'bottom', 'left']
     if len(parts) == 1:
         color = parse_color(parts[0])
         if color:
-            return [f"{s}.border_{side}_color = StyleColor::Resolved({color});" for side in ['top', 'right', 'bottom', 'left']]
+            return [f"{s}.border_{side}_color = StyleColor::Resolved({color});" for side in sides]
+    elif len(parts) == 2:
+        colors = [parse_color(p) for p in parts]
+        if all(colors):
+            return [
+                f"{s}.border_top_color = StyleColor::Resolved({colors[0]});",
+                f"{s}.border_right_color = StyleColor::Resolved({colors[1]});",
+                f"{s}.border_bottom_color = StyleColor::Resolved({colors[0]});",
+                f"{s}.border_left_color = StyleColor::Resolved({colors[1]});",
+            ]
+    elif len(parts) == 3:
+        colors = [parse_color(p) for p in parts]
+        if all(colors):
+            return [
+                f"{s}.border_top_color = StyleColor::Resolved({colors[0]});",
+                f"{s}.border_right_color = StyleColor::Resolved({colors[1]});",
+                f"{s}.border_bottom_color = StyleColor::Resolved({colors[2]});",
+                f"{s}.border_left_color = StyleColor::Resolved({colors[1]});",
+            ]
     elif len(parts) == 4:
         colors = [parse_color(p) for p in parts]
         if all(colors):
-            sides = ['top', 'right', 'bottom', 'left']
-            return [f"{s}.border_{side}_color = StyleColor::Resolved({colors[i]});" for i, side in enumerate(sides)]
+            return [f"{s}.border_{sides[i]}_color = StyleColor::Resolved({colors[i]});" for i in range(4)]
     return None
 
 

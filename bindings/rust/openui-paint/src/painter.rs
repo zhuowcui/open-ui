@@ -411,10 +411,39 @@ fn paint_box_decoration_background(
 
     let border_box_rect = Rect::from_xywh(x, y, w, h);
 
+    // When border-radius is set AND borders are uniform solid, use saveLayer
+    // so bg+border composite as one unit, then clip by the outer rrect.
+    // This prevents background color from bleeding through at the border's
+    // AA curve edges (matching Chromium). Only apply for uniform borders
+    // since non-uniform (trapezoid) borders handle corners differently.
+    let has_radius = style.has_border_radius();
+    let bt = style.effective_border_top() as f32;
+    let br_bw = style.effective_border_right() as f32;
+    let bb_bw = style.effective_border_bottom() as f32;
+    let bl_bw = style.effective_border_left() as f32;
+    let uniform_border = bt == br_bw && br_bw == bb_bw && bb_bw == bl_bw
+        && style.border_top_style == style.border_right_style
+        && style.border_right_style == style.border_bottom_style
+        && style.border_bottom_style == style.border_left_style
+        && style.border_top_color == style.border_right_color
+        && style.border_right_color == style.border_bottom_color
+        && style.border_bottom_color == style.border_left_color
+        && style.border_top_style == BorderStyle::Solid;
+    let use_layer = has_radius && uniform_border;
+    if use_layer {
+        let outer_radii = [
+            Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
+            Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
+            Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
+            Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
+        ];
+        let outer_rrect = RRect::new_rect_radii(border_box_rect, &outer_radii);
+        canvas.save();
+        canvas.clip_rrect(outer_rrect, ClipOp::Intersect, true);
+        canvas.save_layer_alpha_f(Rect::from_xywh(x, y, w, h), 1.0);
+    }
+
     // ── 1. Background color ──────────────────────────────────────────
-    // Blink: box_painter_base.cc:1279 — PaintFillLayerBackground
-    // → context.FillRect(background_rect, info.color, ...)
-    // → canvas->drawRect(rect, paint) with kFill_Style
     if !style.background_color.is_transparent() {
         let mut paint = Paint::default();
         paint.set_style(PaintStyle::Fill);
@@ -422,8 +451,6 @@ fn paint_box_decoration_background(
         let c = &style.background_color;
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
-        // Compute background painting area based on background-clip.
-        // CSS Backgrounds §3.5: border-box (default), padding-box, content-box.
         let bg_rect = match style.background_clip {
             BackgroundClip::BorderBox => border_box_rect,
             BackgroundClip::PaddingBox => {
@@ -450,17 +477,57 @@ fn paint_box_decoration_background(
             }
         };
 
-        if style.has_border_radius() {
-            // Clip background to the rounded rect using unadjusted radii.
-            let radii = [
+        if has_radius && !use_layer {
+            // Non-uniform borders with radius: clip background to outer rrect
+            let outer_radii = [
                 Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
                 Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
                 Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
                 Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
             ];
-            let rrect = RRect::new_rect_radii(bg_rect, &radii);
+            let clip_rrect = RRect::new_rect_radii(bg_rect, &outer_radii);
             canvas.save();
-            canvas.clip_rrect(rrect, ClipOp::Intersect, true);
+            canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
+            canvas.draw_rect(bg_rect, &paint);
+            canvas.restore();
+        } else if has_radius && style.background_clip != BackgroundClip::BorderBox {
+            let clip_radii = match style.background_clip {
+                BackgroundClip::PaddingBox => {
+                    let bt = style.effective_border_top() as f32;
+                    let br_w = style.effective_border_right() as f32;
+                    let bb = style.effective_border_bottom() as f32;
+                    let bl = style.effective_border_left() as f32;
+                    [
+                        Point::new((style.border_top_left_radius.0 - bl).max(0.0),
+                                   (style.border_top_left_radius.1 - bt).max(0.0)),
+                        Point::new((style.border_top_right_radius.0 - br_w).max(0.0),
+                                   (style.border_top_right_radius.1 - bt).max(0.0)),
+                        Point::new((style.border_bottom_right_radius.0 - br_w).max(0.0),
+                                   (style.border_bottom_right_radius.1 - bb).max(0.0)),
+                        Point::new((style.border_bottom_left_radius.0 - bl).max(0.0),
+                                   (style.border_bottom_left_radius.1 - bb).max(0.0)),
+                    ]
+                }
+                _ => {
+                    let bt = style.effective_border_top() as f32 + fragment.padding.top.round().to_f32();
+                    let br_w = style.effective_border_right() as f32 + fragment.padding.right.round().to_f32();
+                    let bb = style.effective_border_bottom() as f32 + fragment.padding.bottom.round().to_f32();
+                    let bl = style.effective_border_left() as f32 + fragment.padding.left.round().to_f32();
+                    [
+                        Point::new((style.border_top_left_radius.0 - bl).max(0.0),
+                                   (style.border_top_left_radius.1 - bt).max(0.0)),
+                        Point::new((style.border_top_right_radius.0 - br_w).max(0.0),
+                                   (style.border_top_right_radius.1 - bt).max(0.0)),
+                        Point::new((style.border_bottom_right_radius.0 - br_w).max(0.0),
+                                   (style.border_bottom_right_radius.1 - bb).max(0.0)),
+                        Point::new((style.border_bottom_left_radius.0 - bl).max(0.0),
+                                   (style.border_bottom_left_radius.1 - bb).max(0.0)),
+                    ]
+                }
+            };
+            let clip_rrect = RRect::new_rect_radii(bg_rect, &clip_radii);
+            canvas.save();
+            canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
             canvas.draw_rect(bg_rect, &paint);
             canvas.restore();
         } else {
@@ -469,13 +536,12 @@ fn paint_box_decoration_background(
     }
 
     // ── 2. Borders ───────────────────────────────────────────────────
-    // Blink renders borders differently based on complexity:
-    // - Uniform solid border with same color: single stroke rect
-    // - Different colors/widths per side: four separate trapezoids
-    //
-    // For SP9 we implement both the simple uniform case and the
-    // per-side case.
     paint_borders(canvas, fragment, style, x, y, w, h);
+
+    if use_layer {
+        canvas.restore(); // pops saveLayer
+        canvas.restore(); // pops outer rrect clip
+    }
 }
 
 /// Paint borders around the border-box.
@@ -532,26 +598,14 @@ fn paint_borders(
         );
 
         if style.has_border_radius() {
-            // Fill the border ring between the outer and inner rounded rects.
-            // Uses a single path with outer contour CW and inner contour CCW
-            // (even-odd fill) to avoid AA gaps between separate clip operations.
+            // The outer border-box rrect clip is already set by the caller.
+            // Just fill the border ring by excluding the inner rrect.
             let mut fill_paint = Paint::default();
             fill_paint.set_style(PaintStyle::Fill);
             fill_paint.set_anti_alias(true);
-            let resolved = style.border_top_color.resolve(inherited_color);
             fill_paint.set_color4f(
                 Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
                 None::<&ColorSpace>,
-            );
-
-            let outer_radii = [
-                Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
-                Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
-                Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
-                Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
-            ];
-            let outer_rrect = RRect::new_rect_radii(
-                Rect::from_xywh(x, y, w, h), &outer_radii,
             );
 
             let inner_rect = Rect::from_xywh(
@@ -570,11 +624,10 @@ fn paint_borders(
             ];
             let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
 
-            let mut ring = Path::new();
-            ring.add_rrect(outer_rrect, None);
-            ring.add_rrect(inner_rrect, None);
-            ring.set_fill_type(skia_safe::PathFillType::EvenOdd);
-            canvas.draw_path(&ring, &fill_paint);
+            canvas.save();
+            canvas.clip_rrect(inner_rrect, ClipOp::Difference, true);
+            canvas.draw_rect(Rect::from_xywh(x, y, w, h), &fill_paint);
+            canvas.restore();
         } else {
             canvas.draw_rect(stroke_rect, &paint);
         }
@@ -703,8 +756,8 @@ fn fix_corner_miter_pixels(
     let bb = oy1 - iy1;
     let bl = ix0 - ox0;
 
-    // Top-left corner: fix only if both adjacent sides are solid with different colors.
-    if top_c != left_c && bt > 0.5 && bl > 0.5
+    // Top-left corner: fix if both adjacent sides are solid.
+    if bt > 0.5 && bl > 0.5
         && style.border_top_style == BorderStyle::Solid
         && style.border_left_style == BorderStyle::Solid
     {
@@ -714,7 +767,7 @@ fn fix_corner_miter_pixels(
             &top_c, &left_c);
     }
     // Top-right corner
-    if top_c != right_c && bt > 0.5 && br > 0.5
+    if bt > 0.5 && br > 0.5
         && style.border_top_style == BorderStyle::Solid
         && style.border_right_style == BorderStyle::Solid
     {
@@ -724,7 +777,7 @@ fn fix_corner_miter_pixels(
             &top_c, &right_c);
     }
     // Bottom-right corner
-    if bottom_c != right_c && bb > 0.5 && br > 0.5
+    if bb > 0.5 && br > 0.5
         && style.border_bottom_style == BorderStyle::Solid
         && style.border_right_style == BorderStyle::Solid
     {
@@ -734,7 +787,7 @@ fn fix_corner_miter_pixels(
             &bottom_c, &right_c);
     }
     // Bottom-left corner
-    if bottom_c != left_c && bb > 0.5 && bl > 0.5
+    if bb > 0.5 && bl > 0.5
         && style.border_bottom_style == BorderStyle::Solid
         && style.border_left_style == BorderStyle::Solid
     {
