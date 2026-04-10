@@ -2472,7 +2472,11 @@ fn resolve_block_size(
         ));
     } else if style.min_height.is_stretch() {
         let avail = space.available_block_size;
-        if !avail.is_indefinite() { avail } else { LayoutUnit::zero() }
+        if !avail.is_indefinite() {
+            let margin_block = resolve_margin_or_padding(&style.margin_top, space.available_inline_size)
+                + resolve_margin_or_padding(&style.margin_bottom, space.available_inline_size);
+            (avail - margin_block).clamp_negative_to_zero()
+        } else { LayoutUnit::zero() }
     } else {
         resolve_length(
             &style.min_height,
@@ -2501,7 +2505,11 @@ fn resolve_block_size(
         return resolved.min_of(max_bb).max_of(min);
     } else if style.max_height.is_stretch() {
         let avail = space.available_block_size;
-        if !avail.is_indefinite() { avail } else { LayoutUnit::max() }
+        if !avail.is_indefinite() {
+            let margin_block = resolve_margin_or_padding(&style.margin_top, space.available_inline_size)
+                + resolve_margin_or_padding(&style.margin_bottom, space.available_inline_size);
+            (avail - margin_block).clamp_negative_to_zero()
+        } else { LayoutUnit::max() }
     } else {
         resolve_length(
             &style.max_height,

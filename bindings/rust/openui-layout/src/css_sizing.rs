@@ -218,22 +218,16 @@ pub fn compute_definite_size(
             }
         }
         LengthType::Stretch => {
-            // Stretch is definite inside flex/grid when the container stretches.
-            let is_stretching = if is_inline_axis {
-                space.stretch_inline_size
+            // CSS Sizing L4: `stretch` fills the available space.
+            // In flex/grid, it stretches when the container tells it to.
+            // In normal flow, it resolves against the containing block
+            // when the available size is definite.
+            let avail = if is_inline_axis {
+                space.available_inline_size
             } else {
-                space.stretch_block_size
+                space.available_block_size
             };
-            if is_stretching {
-                let avail = if is_inline_axis {
-                    space.available_inline_size
-                } else {
-                    space.available_block_size
-                };
-                if avail.is_indefinite() { None } else { Some(avail) }
-            } else {
-                None
-            }
+            if avail.is_indefinite() { None } else { Some(avail) }
         }
         LengthType::Auto => {
             // Auto is definite only when the constraint space fixes the size

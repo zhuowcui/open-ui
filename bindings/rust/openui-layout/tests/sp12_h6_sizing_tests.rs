@@ -2124,10 +2124,11 @@ fn stretch_definite_in_flex() {
 }
 
 #[test]
-fn stretch_indefinite_without_flex() {
+fn stretch_resolves_against_available_size() {
+    // CSS Sizing L4: stretch resolves to the available size in any context
     let space = ConstraintSpace::for_root(lu(600), lu(400));
     let result = compute_definite_size(&Length::stretch(), lu(600), &space, true);
-    assert_eq!(result, None);
+    assert_eq!(result, Some(lu(600)));
 }
 
 
