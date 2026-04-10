@@ -2734,7 +2734,10 @@ fn layout_multicol(
         if child_style.display == Display::None {
             continue;
         }
-        if child_style.is_out_of_flow() {
+        // CSS Multicol §3: Floats inside a multicol container are treated
+        // as block-level children for column distribution.  Only truly
+        // absolutely-positioned / fixed elements are out-of-flow here.
+        if child_style.position.is_absolutely_positioned() {
             oof_child_ids.push(child_id);
             continue;
         }
