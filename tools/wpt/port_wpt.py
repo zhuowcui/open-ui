@@ -95,6 +95,9 @@ SUPPORTED_PROPERTIES = {
     'font', 'font-size',
     # No-op properties (safe to accept, no visual effect or default-only)
     'will-change', 'direction',
+    # Visual-only properties that don't affect layout
+    'outline', 'outline-style', 'outline-width', 'outline-color', 'outline-offset',
+    'resize', 'box-shadow', 'isolation',
 }
 
 UNSUPPORTED_FEATURES = {
@@ -130,9 +133,7 @@ IGNORED_PROPERTIES = {
     'white-space', 'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
-    'resize', 'outline', 'box-shadow', 'text-overflow',
-    'vertical-align', 'line-height',
-    'isolation',
+    'text-overflow',
     # Background details that don't affect layout
     'background-image', 'background-repeat', 'background-size',
     'background-position', 'background-origin',
