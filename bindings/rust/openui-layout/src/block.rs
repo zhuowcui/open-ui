@@ -2713,7 +2713,7 @@ fn layout_multicol(
     border_box_inline: LayoutUnit,
 ) -> Fragment {
     use crate::multicol::{resolve_column_count_and_width, compute_column_positions,
-                          balance_columns};
+                          balance_columns, balance_columns_with_margins};
     use openui_style::{ColumnFill, ColumnSpan};
 
     let resolved = resolve_column_count_and_width(
@@ -3105,7 +3105,7 @@ fn layout_multicol(
                 eff
             };
 
-            let mut effective_sizes = compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
+            let mut _effective_sizes = compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
 
             // Determine column height for this group.
             let group_max = if !group_available_block.is_indefinite() {
@@ -3124,11 +3124,11 @@ fn layout_multicol(
             {
                 // Force balance before spanner per §7.2, regardless of
                 // whether the container has a definite height/max-height.
-                balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
+                balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
             } else {
                 match algo.column_fill {
                     ColumnFill::Balance | ColumnFill::BalanceAll => {
-                        balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
+                        balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
                     }
                     ColumnFill::Auto => {
                         if has_explicit_height {
@@ -3147,7 +3147,7 @@ fn layout_multicol(
                             // column-fill:auto with no height/max-height:
                             // CSS Multicol §7.2: auto-height multicol has no
                             // constraint, so column-fill:auto degrades to balance.
-                            balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
+                            balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
                         }
                     }
                 }
@@ -3283,7 +3283,7 @@ fn layout_multicol(
                     }
                 }
 
-                effective_sizes = compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
+                _effective_sizes = compute_effective(&col_block_sizes, &col_margins_top, &col_margins_bottom);
             }
 
             // Distribute children across columns (with fragmentation support).

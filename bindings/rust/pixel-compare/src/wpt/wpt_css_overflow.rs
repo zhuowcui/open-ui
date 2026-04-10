@@ -1044,6 +1044,18 @@ fn css_overflow_overflow_clip_002_crash() -> Document {
 // Source: overflow-clip-cant-scroll-ref.html
 fn css_overflow_overflow_clip_cant_scroll_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n2);
     doc
 }
 
@@ -1332,12 +1344,27 @@ fn css_overflow_overflow_clip_margin_002() -> Document {
 // Source: overflow-clip-margin-003-ref.html
 fn css_overflow_overflow_clip_margin_003_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n1);
     doc
 }
 
 // Source: overflow-clip-margin-003.html
 fn css_overflow_overflow_clip_margin_003() -> Document {
     let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.overflow_x = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_y = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_clip_margin = 1.0;
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -1421,6 +1448,12 @@ fn css_overflow_overflow_clip_margin_005_ref() -> Document {
 // Source: overflow-clip-margin-006-ref.html
 fn css_overflow_overflow_clip_margin_006_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(vp, n1);
     doc
 }
 

@@ -420,34 +420,75 @@ pub fn balance_columns(
     max_height: LayoutUnit,
     forced_break_before: &[bool],
 ) -> LayoutUnit {
-    if column_count <= 1 || child_block_sizes.is_empty() {
-        let total: i32 = child_block_sizes.iter().map(|s| s.raw()).sum();
-        return LayoutUnit::from_raw(total);
+    // Delegate to the margin-aware version with empty margins
+    // (backward-compatible: effective_sizes already include margins).
+    let zeros = vec![LayoutUnit::zero(); child_block_sizes.len()];
+    balance_columns_with_margins(
+        child_block_sizes, &zeros, &zeros,
+        avoid_break_inside, column_count, max_height, forced_break_before,
+    )
+}
+
+/// Margin-aware column balancing. Receives raw child block sizes and separate
+/// margin arrays. Margins at the top of non-first columns are truncated
+/// per CSS Fragmentation §3.5.
+pub fn balance_columns_with_margins(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    avoid_break_inside: &[bool],
+    column_count: u32,
+    max_height: LayoutUnit,
+    forced_break_before: &[bool],
+) -> LayoutUnit {
+    if column_count <= 1 || raw_sizes.is_empty() {
+        // Single column: total is sum of all sizes + collapsed margins.
+        let mut total: i64 = 0;
+        let mut prev_mb = LayoutUnit::zero();
+        for i in 0..raw_sizes.len() {
+            let mt = margins_top[i];
+            let collapsed = if i == 0 { mt } else { prev_mb.max_of(mt) };
+            total += (collapsed + raw_sizes[i]).raw() as i64;
+            prev_mb = margins_bottom[i];
+        }
+        return LayoutUnit::from_raw(total as i32);
     }
 
-    let total_raw: i64 = child_block_sizes.iter().map(|s| s.raw() as i64).sum();
+    // Compute effective sizes (margin-inclusive) for total calculation.
+    let effective_sizes: Vec<LayoutUnit> = {
+        let mut eff = Vec::with_capacity(raw_sizes.len());
+        let mut prev_mb = LayoutUnit::zero();
+        for i in 0..raw_sizes.len() {
+            let mt = margins_top[i];
+            let collapsed = if i == 0 { mt } else { prev_mb.max_of(mt) };
+            eff.push(collapsed + raw_sizes[i]);
+            prev_mb = margins_bottom[i];
+        }
+        eff
+    };
+
+    let total_raw: i64 = effective_sizes.iter().map(|s| s.raw() as i64).sum();
 
     // The minimum column height must accommodate any unsplittable child.
-    let max_unsplittable = child_block_sizes.iter().zip(avoid_break_inside.iter())
+    // For unsplittable children, the minimum height is the raw size (margin
+    // is truncated at column top).
+    let max_unsplittable = raw_sizes.iter().zip(avoid_break_inside.iter())
         .filter(|(_, &avoid)| avoid)
         .map(|(s, _)| s.raw() as i64)
         .max()
         .unwrap_or(0);
 
     // Count how many forced breaks exist (excluding the first child).
-    // Each forced break consumes one column boundary, reducing the number
-    // of columns available for content distribution.
     let forced_count = forced_break_before.iter().enumerate()
         .filter(|&(i, &f)| f && i > 0)
         .count() as u32;
 
     // When there are forced breaks creating more segments than columns,
-    // excess segments are packed into the last column. Compute the minimum
-    // column height considering this packing.
+    // excess segments are packed into the last column.
     let min_forced_height: i64 = if forced_count > 0 {
         let mut segments: Vec<i64> = Vec::new();
         let mut cur_segment: i64 = 0;
-        for (i, &size) in child_block_sizes.iter().enumerate() {
+        for (i, &size) in effective_sizes.iter().enumerate() {
             let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
             if has_forced {
                 segments.push(cur_segment);
@@ -458,23 +499,17 @@ pub fn balance_columns(
         segments.push(cur_segment);
 
         if segments.len() as u32 <= column_count {
-            // Each segment fits in its own column — height is tallest segment.
             segments.iter().copied().max().unwrap_or(0)
         } else {
-            // More segments than columns: pack excess into last column.
             let c = column_count as usize;
             let last_col: i64 = segments[c - 1..].iter().sum();
             let max_first = segments[..c - 1].iter().copied().max().unwrap_or(0);
             max_first.max(last_col)
         }
     } else {
-        0 // No forced breaks — no forced-height constraint.
+        0
     };
 
-    // With fragmentation, children can be split at column boundaries.
-    // The minimum possible column height is ceil(total / count),
-    // but also at least as tall as the tallest unsplittable child,
-    // and at least as tall as the minimum forced-break packing height.
     let min_raw = ((total_raw + column_count as i64 - 1) / column_count as i64)
         .max(max_unsplittable)
         .max(min_forced_height) as i32;
@@ -497,7 +532,11 @@ pub fn balance_columns(
             break;
         }
         let mid = lo + (hi - lo) / 2;
-        let needed = columns_needed_for_height(child_block_sizes, avoid_break_inside, LayoutUnit::from_raw(mid), forced_break_before, column_count);
+        let needed = columns_needed_for_height_with_margins(
+            raw_sizes, margins_top, margins_bottom,
+            avoid_break_inside, LayoutUnit::from_raw(mid),
+            forced_break_before, column_count,
+        );
         if needed <= column_count {
             hi = mid;
         } else {
@@ -520,45 +559,84 @@ fn columns_needed_for_height(
     forced_break_before: &[bool],
     column_count: u32,
 ) -> u32 {
+    // Backward-compatible: effective_sizes already include margins.
+    let zeros = vec![LayoutUnit::zero(); child_block_sizes.len()];
+    columns_needed_for_height_with_margins(
+        child_block_sizes, &zeros, &zeros,
+        avoid_break_inside, height, forced_break_before, column_count,
+    )
+}
+
+/// Margin-aware column counting. Truncates top margins at the start of
+/// non-first columns per CSS Fragmentation §3.5.
+fn columns_needed_for_height_with_margins(
+    raw_sizes: &[LayoutUnit],
+    margins_top: &[LayoutUnit],
+    margins_bottom: &[LayoutUnit],
+    avoid_break_inside: &[bool],
+    height: LayoutUnit,
+    forced_break_before: &[bool],
+    column_count: u32,
+) -> u32 {
     if height.raw() <= 0 {
         return u32::MAX;
     }
     let mut columns = 1u32;
     let mut remaining = height;
+    let mut prev_mb = LayoutUnit::zero();
+    let mut at_column_start = true;
 
-    for (i, &child_size) in child_block_sizes.iter().enumerate() {
-        // CSS Fragmentation §3.1: forced break-before always starts a new
-        // column (ignored on the very first child per §3.4).
-        // Once we've reached column_count, forced breaks are ignored and
-        // content packs into the last column.
+    for (i, &raw_size) in raw_sizes.iter().enumerate() {
         let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
         if has_forced && columns < column_count {
             columns += 1;
             remaining = height;
+            prev_mb = LayoutUnit::zero();
+            at_column_start = true;
         }
+
+        // CSS Fragmentation §3.5: top margin truncated at non-first column start.
+        let margin_space = if at_column_start && columns > 1 {
+            LayoutUnit::zero()
+        } else if at_column_start {
+            margins_top[i]
+        } else {
+            prev_mb.max_of(margins_top[i])
+        };
+        let child_size = margin_space + raw_size;
 
         let avoid = avoid_break_inside.get(i).copied().unwrap_or(false);
         if avoid {
-            // Child cannot be split. If it doesn't fit in remaining space
-            // (and there's already content), move to next column.
-            if child_size.raw() > remaining.raw() && remaining < height {
+            if child_size.raw() > remaining.raw() && !at_column_start {
                 columns += 1;
                 remaining = height;
+                // Re-compute margin for new column (truncated if non-first).
+                let new_margin = if columns > 1 {
+                    LayoutUnit::zero()
+                } else {
+                    margins_top[i]
+                };
+                let new_size = new_margin + raw_size;
+                remaining = remaining - new_size;
+            } else {
+                remaining = remaining - child_size;
             }
-            // Place the whole child (even if it overflows the column)
-            remaining = remaining - child_size;
             if remaining.raw() < 0 {
                 remaining = LayoutUnit::zero();
             }
+            at_column_start = false;
         } else {
             let mut left = child_size;
             while left.raw() > remaining.raw() {
                 left = left - remaining;
                 columns += 1;
                 remaining = height;
+                // After a column break, no margin (truncated per §3.5).
             }
             remaining = remaining - left;
+            at_column_start = false;
         }
+        prev_mb = margins_bottom[i];
     }
 
     columns
