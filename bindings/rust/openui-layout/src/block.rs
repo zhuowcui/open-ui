@@ -2804,14 +2804,13 @@ fn layout_multicol(
             };
 
             // First pass: lay out children to get intrinsic sizes.
-            // For percentage-height children, use the group's available block
-            // as the percentage basis (this is the column height they'll resolve
-            // against per CSS Multicol spec).
-            let first_pass_pct_basis = if !group_available_block.is_indefinite() {
-                group_available_block
-            } else {
-                child_percentage_block_size
-            };
+            // Percentage-height children resolve against the multicol
+            // container's content height (child_percentage_block_size), NOT
+            // the group's remaining available space.  This ensures that
+            // children after a spanner still resolve 100 % → container
+            // height and are then fragmented across columns at the group's
+            // (smaller) column height.
+            let first_pass_pct_basis = child_percentage_block_size;
 
             let mut col_fragments: Vec<Fragment> = Vec::new();
             let mut col_block_sizes: Vec<LayoutUnit> = Vec::new();
@@ -2904,9 +2903,19 @@ fn layout_multicol(
                 }
             };
 
+            // Cap column_height at the group's available block size so that
+            // a group never claims more vertical space than the container
+            // allocated to it.  balance_columns() can return a value
+            // exceeding group_available_block when content overflows.
+            let column_height = if !group_available_block.is_indefinite() {
+                column_height.min_of(group_available_block)
+            } else {
+                column_height
+            };
+
             // Second pass: if column_height differs from first_pass_pct_basis
             // and any child has a percentage-based height, re-lay out those
-            // children with the actual column_height as percentage basis.
+            // children so available_block_size matches the actual column height.
             let needs_relayout = column_height.raw() != first_pass_pct_basis.raw()
                 && !column_height.is_indefinite()
                 && children_info[group_start..group_end].iter().any(|info| {
@@ -2933,7 +2942,7 @@ fn layout_multicol(
                         column_width,
                         column_height,
                         column_width,
-                        column_height,
+                        child_percentage_block_size,
                         false,
                     );
                     let child_frag = block_layout(doc, info.id, &child_space);
