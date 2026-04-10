@@ -160,25 +160,32 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             // hypothetical main size). When an item has a definite main-size
             // property (height for column), its max-content size equals that
             // resolved height, which may exceed the hypothetical size.
+            // BUT: this only applies when flex-basis is auto (§9.2 step A),
+            // since an explicit flex-basis overrides the main-size property.
             for &idx in &line.item_indices {
                 let mut frozen = flex_items[idx].hypothetical_content_size;
 
                 if is_column {
                     let child_style = &doc.node(flex_items[idx].node_id).style;
-                    let height = &child_style.height;
-                    if !height.is_auto() && !height.is_content_or_intrinsic() {
-                        if height.is_fixed() || !child_percentage_block.is_indefinite() {
-                            let resolved = resolve_length(
-                                height, child_percentage_block,
-                                LayoutUnit::zero(), LayoutUnit::zero(),
-                            );
-                            let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                                (resolved - flex_items[idx].main_axis_border_padding).clamp_negative_to_zero()
-                            } else {
-                                resolved
-                            };
-                            let clamped = flex_items[idx].main_axis_min_max.clamp(content);
-                            frozen = frozen.max_of(clamped);
+                    // Only use the height property when flex-basis is auto.
+                    // An explicit flex-basis (e.g. 0%) means the item's main
+                    // size was intentionally set and should not be overridden.
+                    if child_style.flex_basis.is_auto() {
+                        let height = &child_style.height;
+                        if !height.is_auto() && !height.is_content_or_intrinsic() {
+                            if height.is_fixed() || !child_percentage_block.is_indefinite() {
+                                let resolved = resolve_length(
+                                    height, child_percentage_block,
+                                    LayoutUnit::zero(), LayoutUnit::zero(),
+                                );
+                                let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                                    (resolved - flex_items[idx].main_axis_border_padding).clamp_negative_to_zero()
+                                } else {
+                                    resolved
+                                };
+                                let clamped = flex_items[idx].main_axis_min_max.clamp(content);
+                                frozen = frozen.max_of(clamped);
+                            }
                         }
                     }
                 }

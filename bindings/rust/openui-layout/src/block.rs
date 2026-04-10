@@ -3141,11 +3141,10 @@ fn layout_multicol(
                                 mh
                             }
                         } else {
-                            // column-fill:auto with no height/max-height: fill
-                            // columns sequentially. All content goes into as few
-                            // columns as possible (no balancing).
-                            let total: i32 = effective_sizes.iter().map(|s| s.raw()).sum();
-                            LayoutUnit::from_raw(total)
+                            // column-fill:auto with no height/max-height:
+                            // CSS Multicol §7.2: auto-height multicol has no
+                            // constraint, so column-fill:auto degrades to balance.
+                            balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
                         }
                     }
                 }
@@ -3365,10 +3364,9 @@ fn layout_multicol(
                     || child_style.break_before.is_avoid()
                     || prev_break_after_avoids;
                 if avoid_break_inside
-                    && !avoid_break_before
                     && col_remaining.raw() < total_child_space.raw()
                     && col_block_offset > LayoutUnit::zero()
-                    && (child_margin_top + child_height).raw() <= column_height.raw()
+                    && child_height.raw() <= column_height.raw()
                 {
                     max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
