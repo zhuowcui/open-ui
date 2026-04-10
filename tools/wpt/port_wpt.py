@@ -1477,7 +1477,7 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         try:
             v = float(val)
             if v < 0.0:
-                v = 0.0  # CSS spec: non-negative only
+                return None  # CSS spec: negative values make declaration invalid
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {v};"
         except ValueError:

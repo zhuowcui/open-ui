@@ -5921,14 +5921,14 @@ fn css_flexbox_flex_shrink_002() -> Document {
         doc.node_mut(n2).style.display = Display::Block;
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.width = Length::px(100.0);
-        doc.node_mut(n2).style.flex_shrink = 0.0;
+        // flex-shrink: -2 is invalid CSS; property keeps initial value (1.0)
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.width = Length::px(100.0);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n3).style.flex_shrink = 0.0;
+        // flex-shrink: -3 is invalid CSS; property keeps initial value (1.0)
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
