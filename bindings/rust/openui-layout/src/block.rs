@@ -1041,13 +1041,18 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     );
 
     // ── Fixup: percentage-based relative positioning ─────────────────
-    // During child layout, percentage top/bottom in relative positioning
-    // resolved against space.available_block_size. If that was indefinite,
-    // percentage offsets resolved to 0. Now that the final height is known,
-    // re-apply those offsets with the actual container content height.
-    if space.available_block_size.is_indefinite() {
+    // During child layout, percentage top/bottom resolved against
+    // space.available_block_size. Now that the final height is known,
+    // correct any percentage offsets to use the actual content height.
+    // CSS 2.1 §9.4.3: percentage offsets for position:relative resolve
+    // against the containing block's height (= parent content height).
+    {
         let actual_content_height = (resolved_block_size - border_padding_block).clamp_negative_to_zero();
-        if actual_content_height > LayoutUnit::zero() {
+        let old_basis = space.available_block_size;
+        // Only correct if the basis changed (indefinite → definite, or different value)
+        let needs_fixup = old_basis.is_indefinite()
+            || old_basis.raw() != actual_content_height.raw();
+        if needs_fixup {
             for frag in &mut child_fragments {
                 if frag.node_id == openui_dom::NodeId::NONE {
                     continue;
@@ -1064,12 +1069,21 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     continue;
                 }
                 let zero = LayoutUnit::zero();
-                let block_offset = if has_pct_top {
+                // Undo the offset that was applied during layout with the old basis
+                let old_offset = if has_pct_top {
+                    if old_basis.is_indefinite() { zero }
+                    else { resolve_length(&child_style.top, old_basis, zero, zero) }
+                } else {
+                    if old_basis.is_indefinite() { zero }
+                    else { -resolve_length(&child_style.bottom, old_basis, zero, zero) }
+                };
+                // Compute the correct offset with the actual content height
+                let new_offset = if has_pct_top {
                     resolve_length(&child_style.top, actual_content_height, zero, zero)
                 } else {
                     -resolve_length(&child_style.bottom, actual_content_height, zero, zero)
                 };
-                frag.offset.top += block_offset;
+                frag.offset.top = frag.offset.top - old_offset + new_offset;
             }
         }
     }
@@ -3597,8 +3611,10 @@ fn layout_multicol(
 
     // Layout out-of-flow children (absolute/fixed positioned).
     // These are positioned relative to the multicol container's padding box.
+    // CSS 2.1 §10.1: The containing block for abspos is the padding edge of
+    // the nearest positioned ancestor.
     if !oof_child_ids.is_empty() {
-        let cb_height = container_block_size - border.top - border.bottom - padding.top - padding.bottom;
+        let cb_height = container_block_size - border.top - border.bottom;
         let cb_width = child_available_inline + padding.left + padding.right;
         let mut oof_candidates: Vec<crate::out_of_flow::OutOfFlowCandidate> = Vec::new();
         for &child_id in &oof_child_ids {
