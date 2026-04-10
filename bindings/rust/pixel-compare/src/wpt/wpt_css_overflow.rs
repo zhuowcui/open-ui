@@ -1047,6 +1047,91 @@ fn css_overflow_overflow_clip_cant_scroll_ref() -> Document {
     doc
 }
 
+// Source: overflow-clip-content-visual-overflow-ref.html
+fn css_overflow_overflow_clip_content_visual_overflow_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.width = Length::px(200.0);
+    doc.node_mut(n2).style.height = Length::px(200.0);
+    doc.node_mut(n2).style.background_color = Color::WHITE;
+    doc.node_mut(n2).style.position = Position::Absolute;
+    doc.node_mut(n2).style.left = Length::px(100.0);
+    doc.node_mut(n2).style.top = Length::px(0.0);
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(150.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.background_color = Color::BLACK;
+    doc.append_child(vp, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.width = Length::px(200.0);
+    doc.node_mut(n5).style.height = Length::px(200.0);
+    doc.node_mut(n5).style.background_color = Color::WHITE;
+    doc.node_mut(n5).style.position = Position::Absolute;
+    doc.node_mut(n5).style.top = Length::px(350.0);
+    doc.append_child(vp, n5);
+    doc
+}
+
+// Source: overflow-clip-content-visual-overflow.html
+fn css_overflow_overflow_clip_content_visual_overflow() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_y = Overflow::Visible;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(100.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(150.0);
+    doc.append_child(vp, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.overflow_x = Overflow::Visible;
+    doc.node_mut(n4).style.overflow_y = Overflow::Clip;
+    doc.append_child(vp, n4);
+        let n5 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n5).style.display = Display::Block;
+        doc.node_mut(n5).style.width = Length::px(100.0);
+        doc.node_mut(n5).style.height = Length::px(100.0);
+        doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.append_child(n4, n5);
+    doc
+}
+
 // Source: overflow-clip-margin-001-ref.html
 fn css_overflow_overflow_clip_margin_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -1118,6 +1203,7 @@ fn css_overflow_overflow_clip_margin_001() -> Document {
         doc.node_mut(n5).style.flex_shrink = 0.0;
         doc.node_mut(n5).style.overflow_x = Overflow::Clip;
         doc.node_mut(n5).style.overflow_y = Overflow::Clip;
+        doc.node_mut(n5).style.overflow_clip_margin = 10.0;
         doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -1189,6 +1275,7 @@ fn css_overflow_overflow_clip_margin_002() -> Document {
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.overflow_x = Overflow::Clip;
         doc.node_mut(n2).style.overflow_y = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_clip_margin = 10.0;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1212,6 +1299,7 @@ fn css_overflow_overflow_clip_margin_002() -> Document {
         doc.node_mut(n5).style.height = Length::px(100.0);
         doc.node_mut(n5).style.overflow_x = Overflow::Clip;
         doc.node_mut(n5).style.overflow_y = Overflow::Clip;
+        doc.node_mut(n5).style.overflow_clip_margin = 100.0;
         doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -1235,6 +1323,7 @@ fn css_overflow_overflow_clip_margin_002() -> Document {
         doc.node_mut(n8).style.height = Length::px(100.0);
         doc.node_mut(n8).style.overflow_x = Overflow::Clip;
         doc.node_mut(n8).style.overflow_y = Overflow::Clip;
+        doc.node_mut(n8).style.overflow_clip_margin = 10.0;
         doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n7, n8);
     doc
@@ -1342,6 +1431,7 @@ fn css_overflow_overflow_clip_margin_009_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.overflow_clip_margin = 20.0;
     doc.node_mut(n1).style.overflow_x = Overflow::Clip;
     doc.node_mut(n1).style.overflow_y = Overflow::Clip;
     doc.append_child(vp, n1);
@@ -1359,6 +1449,7 @@ fn css_overflow_overflow_clip_margin_009() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.overflow_clip_margin = 20.0;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -1444,6 +1535,7 @@ fn css_overflow_overflow_clip_margin_010() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
     doc.node_mut(n1).style.overflow_x = Overflow::Clip;
     doc.node_mut(n1).style.overflow_y = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_clip_margin = 20.0;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -1489,6 +1581,7 @@ fn css_overflow_overflow_clip_margin_011() -> Document {
         doc.node_mut(n2).style.top = Length::px(500.0);
         doc.node_mut(n2).style.overflow_x = Overflow::Clip;
         doc.node_mut(n2).style.overflow_y = Overflow::Clip;
+        doc.node_mut(n2).style.overflow_clip_margin = 500.0;
         doc.node_mut(n2).style.z_index = Some(1);
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
@@ -1627,6 +1720,7 @@ fn css_overflow_overflow_clip_margin_border_radius() -> Document {
     doc.node_mut(n1).style.border_top_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.overflow_clip_margin = 100.0;
     doc.node_mut(n1).style.margin_top = Length::px(125.0);
     doc.node_mut(n1).style.margin_right = Length::px(125.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(125.0);
@@ -2899,6 +2993,42 @@ fn css_overflow_overflow_scroll_intrinsic_001_ref() -> Document {
     doc
 }
 
+// Source: overflow-scroll-resize-visibility-hidden.html
+fn css_overflow_overflow_scroll_resize_visibility_hidden() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.visibility = Visibility::Hidden;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.width = Length::px(1000.0);
+        doc.node_mut(n2).style.height = Length::px(1000.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.visibility = Visibility::Visible;
+        doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(n3).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.visibility = Visibility::Hidden;
+    doc.append_child(vp, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(1000.0);
+        doc.node_mut(n4).style.height = Length::px(1000.0);
+        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n4).style.visibility = Visibility::Visible;
+        doc.append_child(n3, n4);
+    doc
+}
+
 // Source: paint-containment-svg-ref.html
 fn css_overflow_paint_containment_svg_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -3412,6 +3542,33 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n11).style.margin_bottom = Length::px(5.0);
             doc.node_mut(n11).style.margin_left = Length::px(5.0);
             doc.append_child(n7, n11);
+    doc
+}
+
+// Source: text-overflow-ellipsis-rtl-001.html
+fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.font_size = 100.0;
+    doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.font_size = 100.0;
+    doc.node_mut(n2).style.width = Length::px(400.0);
+    doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_size = 100.0;
+    doc.node_mut(n3).style.width = Length::px(400.0);
+    doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
+    doc.append_child(vp, n3);
     doc
 }
 
@@ -4298,6 +4455,74 @@ fn css_overflow_scroll_markers_scroll_marker_group_style_remove_ref() -> Documen
     doc
 }
 
+// Source: scroll-markers_scroll-target-group-001-ref.html
+fn css_overflow_scroll_markers_scroll_target_group_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n3).style.color = Color::RED;
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n4).style.color = Color::RED;
+        doc.append_child(n1, n4);
+        let n5 = doc.create_node(ElementTag::Span);
+        doc.node_mut(n5).style.color = Color::RED;
+        doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
+    doc.node_mut(n6).style.overflow_x = Overflow::Auto;
+    doc.node_mut(n6).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n6).style.height = Length::px(130.0);
+    doc.node_mut(n6).style.width = Length::px(100.0);
+    doc.append_child(vp, n6);
+        let n7 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n7).style.display = Display::Block;
+        doc.node_mut(n7).style.width = Length::px(100.0);
+        doc.node_mut(n7).style.height = Length::px(100.0);
+        doc.node_mut(n7).style.background_color = Color::BLUE;
+        doc.node_mut(n7).style.margin_top = Length::px(5.0);
+        doc.node_mut(n7).style.margin_right = Length::px(5.0);
+        doc.node_mut(n7).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n7).style.margin_left = Length::px(5.0);
+        doc.append_child(n6, n7);
+        let n8 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n8).style.display = Display::Block;
+        doc.node_mut(n8).style.width = Length::px(100.0);
+        doc.node_mut(n8).style.height = Length::px(100.0);
+        doc.node_mut(n8).style.background_color = Color::BLUE;
+        doc.node_mut(n8).style.margin_top = Length::px(5.0);
+        doc.node_mut(n8).style.margin_right = Length::px(5.0);
+        doc.node_mut(n8).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n8).style.margin_left = Length::px(5.0);
+        doc.append_child(n6, n8);
+        let n9 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n9).style.display = Display::Block;
+        doc.node_mut(n9).style.width = Length::px(100.0);
+        doc.node_mut(n9).style.height = Length::px(100.0);
+        doc.node_mut(n9).style.background_color = Color::BLUE;
+        doc.node_mut(n9).style.margin_top = Length::px(5.0);
+        doc.node_mut(n9).style.margin_right = Length::px(5.0);
+        doc.node_mut(n9).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n9).style.margin_left = Length::px(5.0);
+        doc.append_child(n6, n9);
+        let n10 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n10).style.display = Display::Block;
+        doc.node_mut(n10).style.width = Length::px(100.0);
+        doc.node_mut(n10).style.height = Length::px(100.0);
+        doc.node_mut(n10).style.background_color = Color::BLUE;
+        doc.node_mut(n10).style.margin_top = Length::px(5.0);
+        doc.node_mut(n10).style.margin_right = Length::px(5.0);
+        doc.node_mut(n10).style.margin_bottom = Length::px(5.0);
+        doc.node_mut(n10).style.margin_left = Length::px(5.0);
+        doc.append_child(n6, n10);
+    doc
+}
+
 // Source: scroll-markers_scroll-target-group-008-ref.html
 fn css_overflow_scroll_markers_scroll_target_group_008_ref() -> Document {
     let (mut doc, vp) = base_doc();
@@ -4409,6 +4634,8 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/overflow-body-propagation-012", css_overflow_overflow_body_propagation_012 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-002-crash", css_overflow_overflow_clip_002_crash as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-cant-scroll-ref", css_overflow_overflow_clip_cant_scroll_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-content-visual-overflow-ref", css_overflow_overflow_clip_content_visual_overflow_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-clip-content-visual-overflow", css_overflow_overflow_clip_content_visual_overflow as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-001-ref", css_overflow_overflow_clip_margin_001_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-001", css_overflow_overflow_clip_margin_001 as fn() -> Document),
         ("wpt/css_overflow/overflow-clip-margin-002-ref", css_overflow_overflow_clip_margin_002_ref as fn() -> Document),
@@ -4450,6 +4677,7 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/overflow-overlay-ref", css_overflow_overflow_overlay_ref as fn() -> Document),
         ("wpt/css_overflow/overflow-overlay", css_overflow_overflow_overlay as fn() -> Document),
         ("wpt/css_overflow/overflow-scroll-intrinsic-001-ref", css_overflow_overflow_scroll_intrinsic_001_ref as fn() -> Document),
+        ("wpt/css_overflow/overflow-scroll-resize-visibility-hidden", css_overflow_overflow_scroll_resize_visibility_hidden as fn() -> Document),
         ("wpt/css_overflow/paint-containment-svg-ref", css_overflow_paint_containment_svg_ref as fn() -> Document),
         ("wpt/css_overflow/rounded-overflow-clip-visible-ref", css_overflow_rounded_overflow_clip_visible_ref as fn() -> Document),
         ("wpt/css_overflow/rounded-overflow-visible-clip-ref", css_overflow_rounded_overflow_visible_clip_ref as fn() -> Document),
@@ -4468,6 +4696,7 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/text-overflow-ellipsis-001", css_overflow_text_overflow_ellipsis_001 as fn() -> Document),
         ("wpt/css_overflow/text-overflow-ellipsis-002", css_overflow_text_overflow_ellipsis_002 as fn() -> Document),
         ("wpt/css_overflow/text-overflow-ellipsis-003-ref", css_overflow_text_overflow_ellipsis_003_ref as fn() -> Document),
+        ("wpt/css_overflow/text-overflow-ellipsis-rtl-001", css_overflow_text_overflow_ellipsis_rtl_001 as fn() -> Document),
         ("wpt/css_overflow/line-clamp_line-clamp-content-height-with-dynamic-change-ref", css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_column-scroll-marker-001-ref", css_overflow_scroll_markers_column_scroll_marker_001_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_column-scroll-marker-counters-ref", css_overflow_scroll_markers_column_scroll_marker_counters_ref as fn() -> Document),
@@ -4486,6 +4715,7 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_overflow/scroll-markers_scroll-marker-group-009-ref", css_overflow_scroll_markers_scroll_marker_group_009_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-marker-group-add-dynamic-001-ref", css_overflow_scroll_markers_scroll_marker_group_add_dynamic_001_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-marker-group-style-remove-ref", css_overflow_scroll_markers_scroll_marker_group_style_remove_ref as fn() -> Document),
+        ("wpt/css_overflow/scroll-markers_scroll-target-group-001-ref", css_overflow_scroll_markers_scroll_target_group_001_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-target-group-008-ref", css_overflow_scroll_markers_scroll_target_group_008_ref as fn() -> Document),
         ("wpt/css_overflow/scroll-markers_scroll-target-group-inline-crash", css_overflow_scroll_markers_scroll_target_group_inline_crash as fn() -> Document),
     ]

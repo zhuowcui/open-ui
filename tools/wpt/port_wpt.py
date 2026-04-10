@@ -93,6 +93,8 @@ SUPPORTED_PROPERTIES = {
     'aspect-ratio',
     # Font (extract font-size)
     'font', 'font-size',
+    # No-op properties (safe to accept, no visual effect or default-only)
+    'will-change', 'direction',
 }
 
 UNSUPPORTED_FEATURES = {
@@ -100,10 +102,10 @@ UNSUPPORTED_FEATURES = {
     'grid', 'grid-template', 'grid-template-columns', 'grid-template-rows',
     'grid-column', 'grid-row', 'grid-area', 'grid-gap',
     # Writing modes — changes coordinate system fundamentally
-    'writing-mode', 'direction', 'unicode-bidi',
+    'writing-mode', 'unicode-bidi',
     # Transforms & animation — out of scope
     'transform', 'rotate', 'scale', 'translate',
-    'animation', 'transition', 'will-change',
+    'animation', 'transition',
     # Shape/mask/filter — out of scope
     'shape-outside', 'shape-margin', 'shape-image-threshold',
     'clip-path', 'mask', 'filter',

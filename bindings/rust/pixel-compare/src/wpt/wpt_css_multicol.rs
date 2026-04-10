@@ -2814,6 +2814,51 @@ fn css_multicol_composited_under_clip_under_multicol_ref() -> Document {
     doc
 }
 
+// Source: composited-under-clip-under-multicol.html
+fn css_multicol_composited_under_clip_under_multicol() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_gap = Some(Length::px(20.0));
+    doc.node_mut(n1).style.width = Length::px(220.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.margin_top = Length::px(-20.0);
+            doc.node_mut(n3).style.margin_left = Length::px(-20.0);
+            doc.node_mut(n3).style.border_top_width = 20;
+            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::RED);
+            doc.node_mut(n3).style.border_right_width = 20;
+            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::RED);
+            doc.node_mut(n3).style.border_bottom_width = 20;
+            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+            doc.node_mut(n3).style.border_left_width = 20;
+            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::RED);
+            doc.node_mut(n3).style.width = Length::px(200.0);
+            doc.node_mut(n3).style.height = Length::px(200.0);
+            doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+            doc.append_child(n2, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.height = Length::px(100.0);
+        doc.node_mut(n4).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n4).style.overflow_y = Overflow::Hidden;
+        doc.append_child(n1, n4);
+    doc
+}
+
 // Source: equal-gap-and-rule.html
 fn css_multicol_equal_gap_and_rule() -> Document {
     let (mut doc, vp) = base_doc();
@@ -21091,6 +21136,7 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css_multicol/column-wrap-no-constraints-002", css_multicol_column_wrap_no_constraints_002 as fn() -> Document),
         ("wpt/css_multicol/columnfill-auto-max-height-003", css_multicol_columnfill_auto_max_height_003 as fn() -> Document),
         ("wpt/css_multicol/composited-under-clip-under-multicol-ref", css_multicol_composited_under_clip_under_multicol_ref as fn() -> Document),
+        ("wpt/css_multicol/composited-under-clip-under-multicol", css_multicol_composited_under_clip_under_multicol as fn() -> Document),
         ("wpt/css_multicol/equal-gap-and-rule", css_multicol_equal_gap_and_rule as fn() -> Document),
         ("wpt/css_multicol/fixed-in-nested-multicol-with-viewport-container", css_multicol_fixed_in_nested_multicol_with_viewport_container as fn() -> Document),
         ("wpt/css_multicol/fixed-size-child-with-overflow", css_multicol_fixed_size_child_with_overflow as fn() -> Document),

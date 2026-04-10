@@ -1309,6 +1309,38 @@ fn css2_floats_floats_placement_006() -> Document {
     doc
 }
 
+// Source: floats-placement-007.html
+fn css2_floats_floats_placement_007() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::InlineBlock;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.float = Float::Left;
+        doc.node_mut(n3).style.width = Length::px(50.0);
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n3);
+        let n4 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n4).style.display = Display::Block;
+        doc.node_mut(n4).style.width = Length::px(30.0);
+        doc.node_mut(n4).style.height = Length::px(50.0);
+        doc.node_mut(n4).style.clear = Clear::Both;
+        doc.node_mut(n4).style.float = Float::Right;
+        doc.append_child(n1, n4);
+    doc
+}
+
 // Source: floats-placement-008.html
 fn css2_floats_floats_placement_008() -> Document {
     let (mut doc, vp) = base_doc();
@@ -2747,6 +2779,33 @@ fn css2_floats_floats_wrap_bfc_with_margin_004() -> Document {
             doc.node_mut(n4).style.display = Display::FlowRoot;
             doc.node_mut(n4).style.height = Length::px(60.0);
             doc.node_mut(n4).style.margin_left = Length::px(51.0);
+            doc.append_child(n2, n4);
+    doc
+}
+
+// Source: floats-wrap-bfc-with-margin-005.html
+fn css2_floats_floats_wrap_bfc_with_margin_005() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::FlowRoot;
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n3).style.display = Display::Block;
+            doc.node_mut(n3).style.float = Float::Left;
+            doc.node_mut(n3).style.width = Length::px(50.0);
+            doc.node_mut(n3).style.height = Length::px(40.0);
+            doc.append_child(n2, n3);
+            let n4 = doc.create_node(ElementTag::Div);
+            doc.node_mut(n4).style.display = Display::FlowRoot;
+            doc.node_mut(n4).style.height = Length::px(60.0);
+            doc.node_mut(n4).style.margin_right = Length::px(51.0);
             doc.append_child(n2, n4);
     doc
 }
@@ -4348,6 +4407,33 @@ fn css2_floats_new_fc_beside_adjoining_float() -> Document {
     doc
 }
 
+// Source: new-fc-beside-float-with-margin-rtl.html
+fn css2_floats_new_fc_beside_float_with_margin_rtl() -> Document {
+    let (mut doc, vp) = base_doc();
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.float = Float::Left;
+        doc.node_mut(n2).style.width = Length::px(50.0);
+        doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n3).style.display = Display::Block;
+        doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
+        doc.node_mut(n3).style.height = Length::px(100.0);
+        doc.node_mut(n3).style.margin_left = Length::px(-20.0);
+        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(n1, n3);
+    doc
+}
+
 // Source: new-fc-beside-float-with-margin.html
 fn css2_floats_new_fc_beside_float_with_margin() -> Document {
     let (mut doc, vp) = base_doc();
@@ -4861,6 +4947,7 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/floats-placement-005-ref", css2_floats_floats_placement_005_ref as fn() -> Document),
         ("wpt/css2_floats/floats-placement-005", css2_floats_floats_placement_005 as fn() -> Document),
         ("wpt/css2_floats/floats-placement-006", css2_floats_floats_placement_006 as fn() -> Document),
+        ("wpt/css2_floats/floats-placement-007", css2_floats_floats_placement_007 as fn() -> Document),
         ("wpt/css2_floats/floats-placement-008", css2_floats_floats_placement_008 as fn() -> Document),
         ("wpt/css2_floats/floats-placement-vertical-001-ref", css2_floats_floats_placement_vertical_001_ref as fn() -> Document),
         ("wpt/css2_floats/floats-placement-vertical-001a", css2_floats_floats_placement_vertical_001a as fn() -> Document),
@@ -4897,6 +4984,7 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/floats-wrap-bfc-005-ref", css2_floats_floats_wrap_bfc_005_ref as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-008", css2_floats_floats_wrap_bfc_008 as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-with-margin-004", css2_floats_floats_wrap_bfc_with_margin_004 as fn() -> Document),
+        ("wpt/css2_floats/floats-wrap-bfc-with-margin-005", css2_floats_floats_wrap_bfc_with_margin_005 as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-with-margin-006.tentative", css2_floats_floats_wrap_bfc_with_margin_006_tentative as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-with-margin-007.tentative", css2_floats_floats_wrap_bfc_with_margin_007_tentative as fn() -> Document),
         ("wpt/css2_floats/floats-wrap-bfc-with-margin-008.tentative", css2_floats_floats_wrap_bfc_with_margin_008_tentative as fn() -> Document),
@@ -4933,6 +5021,7 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/negative-margin-float-positioning", css2_floats_negative_margin_float_positioning as fn() -> Document),
         ("wpt/css2_floats/new-fc-beside-adjoining-float-2", css2_floats_new_fc_beside_adjoining_float_2 as fn() -> Document),
         ("wpt/css2_floats/new-fc-beside-adjoining-float", css2_floats_new_fc_beside_adjoining_float as fn() -> Document),
+        ("wpt/css2_floats/new-fc-beside-float-with-margin-rtl", css2_floats_new_fc_beside_float_with_margin_rtl as fn() -> Document),
         ("wpt/css2_floats/new-fc-beside-float-with-margin", css2_floats_new_fc_beside_float_with_margin as fn() -> Document),
         ("wpt/css2_floats/new-fc-beside-float-with-min-width", css2_floats_new_fc_beside_float_with_min_width as fn() -> Document),
         ("wpt/css2_floats/new-fc-relayout", css2_floats_new_fc_relayout as fn() -> Document),
