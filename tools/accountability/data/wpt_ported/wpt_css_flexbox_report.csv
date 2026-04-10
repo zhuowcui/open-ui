@@ -77,6 +77,7 @@ flex-direction-column-reverse-002-visual,ported,css_flexbox_flex_direction_colum
 flex-direction-column-reverse,ported,css_flexbox_flex_direction_column_reverse,
 flex-direction-column,ported,css_flexbox_flex_direction_column,
 flex-direction-row-001-visual,ported,css_flexbox_flex_direction_row_001_visual,
+flex-direction-row-002-visual,ported,css_flexbox_flex_direction_row_002_visual,
 flex-direction-row-reverse-001-visual,ported,css_flexbox_flex_direction_row_reverse_001_visual,
 flex-direction-row-reverse-002-visual,ported,css_flexbox_flex_direction_row_reverse_002_visual,
 flex-direction-row-reverse,ported,css_flexbox_flex_direction_row_reverse,
@@ -182,8 +183,14 @@ flexbox-align-self-stretch-vert-001,ported,css_flexbox_flexbox_align_self_stretc
 flexbox-align-self-stretch-vert-002-ref,ported,css_flexbox_flexbox_align_self_stretch_vert_002_ref,
 flexbox-align-self-stretch-vert-002,ported,css_flexbox_flexbox_align_self_stretch_vert_002,
 flexbox-align-self-vert-001,ported,css_flexbox_flexbox_align_self_vert_001,
+flexbox-align-self-vert-002,ported,css_flexbox_flexbox_align_self_vert_002,
 flexbox-align-self-vert-003,ported,css_flexbox_flexbox_align_self_vert_003,
 flexbox-align-self-vert-004,ported,css_flexbox_flexbox_align_self_vert_004,
+flexbox-align-self-vert-rtl-001,ported,css_flexbox_flexbox_align_self_vert_rtl_001,
+flexbox-align-self-vert-rtl-002,ported,css_flexbox_flexbox_align_self_vert_rtl_002,
+flexbox-align-self-vert-rtl-003,ported,css_flexbox_flexbox_align_self_vert_rtl_003,
+flexbox-align-self-vert-rtl-004,ported,css_flexbox_flexbox_align_self_vert_rtl_004,
+flexbox-align-self-vert-rtl-005,ported,css_flexbox_flexbox_align_self_vert_rtl_005,
 flexbox-anonymous-items-001-ref,ported,css_flexbox_flexbox_anonymous_items_001_ref,
 flexbox-anonymous-items-001,ported,css_flexbox_flexbox_anonymous_items_001,
 flexbox-baseline-align-self-baseline-horiz-001-ref,ported,css_flexbox_flexbox_baseline_align_self_baseline_horiz_001_ref,
@@ -287,6 +294,7 @@ flexbox-justify-content-horiz-004-ref,ported,css_flexbox_flexbox_justify_content
 flexbox-justify-content-horiz-004,ported,css_flexbox_flexbox_justify_content_horiz_004,
 flexbox-justify-content-horiz-005-ref,ported,css_flexbox_flexbox_justify_content_horiz_005_ref,
 flexbox-justify-content-horiz-005,ported,css_flexbox_flexbox_justify_content_horiz_005,
+flexbox-justify-content-horiz-006-ref,ported,css_flexbox_flexbox_justify_content_horiz_006_ref,
 flexbox-justify-content-horiz-006,ported,css_flexbox_flexbox_justify_content_horiz_006,
 flexbox-justify-content-vert-001-ref,ported,css_flexbox_flexbox_justify_content_vert_001_ref,
 flexbox-justify-content-vert-001a,ported,css_flexbox_flexbox_justify_content_vert_001a,
@@ -309,6 +317,8 @@ flexbox-margin-auto-horiz-002,ported,css_flexbox_flexbox_margin_auto_horiz_002,
 flexbox-mbp-horiz-001-ref,ported,css_flexbox_flexbox_mbp_horiz_001_ref,
 flexbox-mbp-horiz-001-reverse-ref,ported,css_flexbox_flexbox_mbp_horiz_001_reverse_ref,
 flexbox-mbp-horiz-001-reverse,ported,css_flexbox_flexbox_mbp_horiz_001_reverse,
+flexbox-mbp-horiz-001-rtl-reverse,ported,css_flexbox_flexbox_mbp_horiz_001_rtl_reverse,
+flexbox-mbp-horiz-001-rtl,ported,css_flexbox_flexbox_mbp_horiz_001_rtl,
 flexbox-mbp-horiz-001,ported,css_flexbox_flexbox_mbp_horiz_001,
 flexbox-mbp-horiz-002-ref,ported,css_flexbox_flexbox_mbp_horiz_002_ref,
 flexbox-mbp-horiz-002a,ported,css_flexbox_flexbox_mbp_horiz_002a,
@@ -699,9 +709,13 @@ flexbox_order-box,ported,css_flexbox_flexbox_order_box,
 flexbox_order-noninteger-invalid,ported,css_flexbox_flexbox_order_noninteger_invalid,
 flexbox_order-ref,ported,css_flexbox_flexbox_order_ref,
 flexbox_order,ported,css_flexbox_flexbox_order,
+flexbox_rtl-direction,ported,css_flexbox_flexbox_rtl_direction,
 flexbox_rtl-flow-ref,ported,css_flexbox_flexbox_rtl_flow_ref,
 flexbox_rtl-flow-reverse-ref,ported,css_flexbox_flexbox_rtl_flow_reverse_ref,
+flexbox_rtl-flow-reverse,ported,css_flexbox_flexbox_rtl_flow_reverse,
+flexbox_rtl-flow,ported,css_flexbox_flexbox_rtl_flow,
 flexbox_rtl-order-ref,ported,css_flexbox_flexbox_rtl_order_ref,
+flexbox_rtl-order,ported,css_flexbox_flexbox_rtl_order,
 flexbox_stf-abspos,ported,css_flexbox_flexbox_stf_abspos,
 flexbox_stf-fixpos,ported,css_flexbox_flexbox_stf_fixpos,
 flexbox_stf-float,ported,css_flexbox_flexbox_stf_float,
@@ -716,18 +730,32 @@ flexbox_wrap,ported,css_flexbox_flexbox_wrap,
 flexible-order,ported,css_flexbox_flexible_order,
 gap-001-ltr-ref,ported,css_flexbox_gap_001_ltr_ref,
 gap-001-ltr,ported,css_flexbox_gap_001_ltr,
+gap-001-rtl-ref,ported,css_flexbox_gap_001_rtl_ref,
+gap-001-rtl,ported,css_flexbox_gap_001_rtl,
 gap-002-ltr-ref,ported,css_flexbox_gap_002_ltr_ref,
 gap-002-ltr,ported,css_flexbox_gap_002_ltr,
+gap-002-rtl-ref,ported,css_flexbox_gap_002_rtl_ref,
+gap-002-rtl,ported,css_flexbox_gap_002_rtl,
 gap-003-ltr-ref,ported,css_flexbox_gap_003_ltr_ref,
 gap-003-ltr,ported,css_flexbox_gap_003_ltr,
+gap-003-rtl-ref,ported,css_flexbox_gap_003_rtl_ref,
+gap-003-rtl,ported,css_flexbox_gap_003_rtl,
 gap-004-ltr-ref,ported,css_flexbox_gap_004_ltr_ref,
 gap-004-ltr,ported,css_flexbox_gap_004_ltr,
+gap-004-rtl-ref,ported,css_flexbox_gap_004_rtl_ref,
+gap-004-rtl,ported,css_flexbox_gap_004_rtl,
 gap-005-ltr-ref,ported,css_flexbox_gap_005_ltr_ref,
 gap-005-ltr,ported,css_flexbox_gap_005_ltr,
+gap-005-rtl-ref,ported,css_flexbox_gap_005_rtl_ref,
+gap-005-rtl,ported,css_flexbox_gap_005_rtl,
 gap-006-ltr-ref,ported,css_flexbox_gap_006_ltr_ref,
 gap-006-ltr,ported,css_flexbox_gap_006_ltr,
+gap-006-rtl-ref,ported,css_flexbox_gap_006_rtl_ref,
+gap-006-rtl,ported,css_flexbox_gap_006_rtl,
 gap-007-ltr-ref,ported,css_flexbox_gap_007_ltr_ref,
 gap-007-ltr,ported,css_flexbox_gap_007_ltr,
+gap-007-rtl-ref,ported,css_flexbox_gap_007_rtl_ref,
+gap-007-rtl,ported,css_flexbox_gap_007_rtl,
 gap-008-ltr-ref,ported,css_flexbox_gap_008_ltr_ref,
 gap-008-ltr,ported,css_flexbox_gap_008_ltr,
 gap-009-ltr-ref,ported,css_flexbox_gap_009_ltr_ref,
@@ -882,6 +910,7 @@ flex-lines_multi-line-wrap-with-column-reverse-ref,ported,css_flexbox_flex_lines
 flex-lines_multi-line-wrap-with-column-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_with_column_reverse,
 flex-lines_multi-line-wrap-with-row-reverse-ref,ported,css_flexbox_flex_lines_multi_line_wrap_with_row_reverse_ref,
 flex-lines_multi-line-wrap-with-row-reverse,ported,css_flexbox_flex_lines_multi_line_wrap_with_row_reverse,
+alignment_flex-align-baseline-column-rtl-direction,ported,css_flexbox_alignment_flex_align_baseline_column_rtl_direction,
 align-content-horiz-001a,not_portable,,uses_javascript
 align-content-horiz-001b,not_portable,,uses_javascript
 align-content-horiz-002,not_portable,,uses_javascript
@@ -1034,7 +1063,6 @@ flex-container-min-content-001,not_portable,,style_block_unsupported property: g
 flex-container-min-content-002.tentative,not_portable,,uses_javascript
 flex-direction-column-overlap-001,not_portable,,uses_javascript
 flex-direction-modify,not_portable,,uses_javascript
-flex-direction-row-002-visual,not_portable,,style_block_unsupported property: direction
 flex-direction-row-vertical-ref,not_portable,,style_block_unsupported property: writing-mode
 flex-direction-row-vertical,not_portable,,style_block_unsupported property: writing-mode
 flex-direction-with-element-insert,not_portable,,uses_javascript
@@ -1101,23 +1129,30 @@ flexbox-align-self-vert-002-ref,not_portable,,"complex_css_selector: and
            then wrapping that inline-block in a helper-div that has
            ""text-align:center"" set. -->
       .centerParent"
-flexbox-align-self-vert-002,not_portable,,style_block_unsupported property: direction
 flexbox-align-self-vert-003-ref,not_portable,,"complex_css_selector: and
            then wrapping that inline-block in a helper-div that has
            ""text-align:center"" set. For this to work"
 flexbox-align-self-vert-004-ref,not_portable,,"complex_css_selector: and
            then wrapping that inline-block in a helper-div that has
            ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-001-ref,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-001,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-002-ref,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-002,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-003-ref,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-003,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-004-ref,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-004,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-005-ref,not_portable,,style_block_unsupported property: direction
-flexbox-align-self-vert-rtl-005,not_portable,,style_block_unsupported property: direction
+flexbox-align-self-vert-rtl-001-ref,not_portable,,"complex_css_selector: and
+           then wrapping that inline-block in a helper-div that has
+           ""text-align:center"" set. -->
+      .centerParent"
+flexbox-align-self-vert-rtl-002-ref,not_portable,,"complex_css_selector: and
+           then wrapping that inline-block in a helper-div that has
+           ""text-align:center"" set. -->
+      .centerParent"
+flexbox-align-self-vert-rtl-003-ref,not_portable,,"complex_css_selector: and
+           then wrapping that inline-block in a helper-div that has
+           ""text-align:center"" set. For this to work"
+flexbox-align-self-vert-rtl-004-ref,not_portable,,"complex_css_selector: and
+           then wrapping that inline-block in a helper-div that has
+           ""text-align:center"" set. For this to work"
+flexbox-align-self-vert-rtl-005-ref,not_portable,,"complex_css_selector: and
+           then wrapping that inline-block in a helper-div that has
+           ""text-align:center"" set. -->
+      .centerParent"
 flexbox-baseline-nested-001-ref,not_portable,,unsupported element: <input>
 flexbox-baseline-nested-001,not_portable,,unsupported element: <input>
 flexbox-basic-block-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
@@ -1170,13 +1205,10 @@ flexbox-flex-basis-content-004b,not_portable,,unsupported element: <canvas>
 flexbox-flex-wrap-flexing-003,not_portable,,unsupported property: writing-mode
 flexbox-iframe-intrinsic-size-001,not_portable,,unsupported element: <iframe>
 flexbox-ignores-first-letter,not_portable,,uses_javascript
-flexbox-justify-content-horiz-006-ref,not_portable,,style_block_unsupported property: direction
 flexbox-justify-content-wmvert-001,not_portable,,style_block_unsupported property: writing-mode
 flexbox-justify-content-wmvert-002,not_portable,,uses_javascript
 flexbox-justify-content-wmvert-003,not_portable,,uses_javascript
 flexbox-lines-must-be-stretched-by-default,not_portable,,uses_javascript
-flexbox-mbp-horiz-001-rtl-reverse,not_portable,,style_block_unsupported property: direction
-flexbox-mbp-horiz-001-rtl,not_portable,,style_block_unsupported property: direction
 flexbox-mbp-horiz-002v,not_portable,,style_block_unsupported property: writing-mode
 flexbox-mbp-horiz-003v,not_portable,,style_block_unsupported property: writing-mode
 flexbox-min-height-auto-002-ref,not_portable,,unsupported element: <img>
@@ -1204,12 +1236,12 @@ flexbox-with-pseudo-elements-001,not_portable,,complex_css_selector: div.withBef
 flexbox-with-pseudo-elements-002,not_portable,,complex_css_selector: .withBefore::before
 flexbox-with-pseudo-elements-003-ref,not_portable,,style_block_unsupported property: content
 flexbox-with-pseudo-elements-003,not_portable,,complex_css_selector: div.withBefore::before
-flexbox-writing-mode-001,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-002,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-003,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-004,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-005,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-006,not_portable,,style_block_unsupported property: direction
+flexbox-writing-mode-001,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-002,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-003,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-004,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-005,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-006,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-007,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-008,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-009,not_portable,,style_block_unsupported property: writing-mode
@@ -1229,12 +1261,12 @@ flexbox-writing-mode-016-ref,not_portable,,style_block_unsupported property: wri
 flexbox-writing-mode-016,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-slr-row-mix-ref,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-slr-row-mix,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-rtl,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-slr,not_portable,,style_block_unsupported property: direction
+flexbox-writing-mode-slr-rtl,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-slr,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-srl-row-mix-ref,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-srl-row-mix,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-rtl,not_portable,,style_block_unsupported property: direction
-flexbox-writing-mode-srl,not_portable,,style_block_unsupported property: direction
+flexbox-writing-mode-srl-rtl,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-srl,not_portable,,style_block_unsupported property: writing-mode
 flexbox_align-items-center-3,not_portable,,style_block_unsupported property: writing-mode
 flexbox_align-items-stretch-3,not_portable,,style_block_unsupported property: writing-mode
 flexbox_first-letter,not_portable,,uses_javascript
@@ -1253,14 +1285,14 @@ flexbox_item-top-float-ref,not_portable,,complex_css_selector: div::after
 flexbox_item-vertical-align-ref,not_portable,,complex_css_selector: div::after
 flexbox_justifycontent-center-overflow,not_portable,,uses_javascript
 flexbox_justifycontent-end-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end-rtl-ref,not_portable,,style_block_unsupported property: direction
-flexbox_justifycontent-end-rtl,not_portable,,style_block_unsupported property: direction
+flexbox_justifycontent-end-rtl-ref,not_portable,,unsupported display: inline-grid
+flexbox_justifycontent-end-rtl,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-end,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-rtl-001,not_portable,,uses_javascript
 flexbox_justifycontent-rtl-002,not_portable,,uses_javascript
 flexbox_justifycontent-start-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start-rtl-ref,not_portable,,style_block_unsupported property: direction
-flexbox_justifycontent-start-rtl,not_portable,,style_block_unsupported property: direction
+flexbox_justifycontent-start-rtl-ref,not_portable,,unsupported display: inline-grid
+flexbox_justifycontent-start-rtl,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-start,not_portable,,unsupported display: inline-grid
 flexbox_object,not_portable,,unsupported element: <object>
 flexbox_quirks_body,not_portable,,no_layout_content
@@ -1269,10 +1301,6 @@ flexbox_rowspan-overflow,not_portable,,style_block_unsupported property: table-l
 flexbox_rowspan-ref,not_portable,,style_block_unsupported property: table-layout
 flexbox_rowspan,not_portable,,style_block_unsupported property: table-layout
 flexbox_rtl-direction-ref,not_portable,,complex_css_selector: div::after
-flexbox_rtl-direction,not_portable,,style_block_unsupported property: direction
-flexbox_rtl-flow-reverse,not_portable,,style_block_unsupported property: direction
-flexbox_rtl-flow,not_portable,,style_block_unsupported property: direction
-flexbox_rtl-order,not_portable,,style_block_unsupported property: direction
 flexbox_stf-table-caption,not_portable,,unsupported display: table-caption
 flexbox_stf-table-cell,not_portable,,unsupported display: table-cell
 flexbox_stf-table-row-group,not_portable,,unsupported display: table-row-group
@@ -1299,44 +1327,30 @@ gap-001-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-001-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-001-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-001-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-001-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-001-rtl,not_portable,,style_block_unsupported property: direction
 gap-002-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-002-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-002-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-002-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-002-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-002-rtl,not_portable,,style_block_unsupported property: direction
 gap-003-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-003-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-003-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-003-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-003-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-003-rtl,not_portable,,style_block_unsupported property: direction
 gap-004-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-004-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-004-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-004-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-004-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-004-rtl,not_portable,,style_block_unsupported property: direction
 gap-005-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-005-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-005-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-005-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-005-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-005-rtl,not_portable,,style_block_unsupported property: direction
 gap-006-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-006-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-006-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-006-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-006-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-006-rtl,not_portable,,style_block_unsupported property: direction
 gap-007-lr-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-007-lr,not_portable,,style_block_unsupported property: writing-mode
 gap-007-rl-ref,not_portable,,style_block_unsupported property: writing-mode
 gap-007-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-007-rtl-ref,not_portable,,style_block_unsupported property: direction
-gap-007-rtl,not_portable,,style_block_unsupported property: direction
 gap-017,not_portable,,uses_javascript
 gap-018,not_portable,,uses_javascript
 grid-flex-item-001,not_portable,,unsupported property: grid
@@ -1397,7 +1411,7 @@ ortho-table-item-001,not_portable,,unsupported property: writing-mode
 orthogonal-flex-item-crash,not_portable,,uses_javascript
 orthogonal-writing-modes-and-intrinsic-sizing,not_portable,,uses_javascript
 overflow-area-001,not_portable,,no_layout_content
-overflow-area-002,not_portable,,style_block_unsupported property: direction
+overflow-area-002,not_portable,,no_layout_content
 overflow-auto-001,not_portable,,uses_javascript
 overflow-auto-002,not_portable,,uses_javascript
 overflow-auto-003,not_portable,,uses_javascript
@@ -1406,8 +1420,8 @@ overflow-auto-005,not_portable,,uses_javascript
 overflow-auto-006,not_portable,,uses_javascript
 overflow-auto-007,not_portable,,uses_javascript
 overflow-auto-008,not_portable,,uses_javascript
-overflow-top-left-ref,not_portable,,style_block_unsupported property: direction
-overflow-top-left,not_portable,,style_block_unsupported property: direction
+overflow-top-left-ref,not_portable,,style_block_unsupported property: writing-mode
+overflow-top-left,not_portable,,style_block_unsupported property: writing-mode
 percent-height-flex-items-cross-sizes-with-mutations,not_portable,,uses_javascript
 percentage-descendant-of-anonymous-flex-item,not_portable,,unsupported element: <button>
 percentage-heights-000,not_portable,,uses_javascript
@@ -1710,7 +1724,6 @@ alignment_flex-align-baseline-004,not_portable,,uses_javascript
 alignment_flex-align-baseline-005,not_portable,,uses_javascript
 alignment_flex-align-baseline-006,not_portable,,uses_javascript
 alignment_flex-align-baseline-007,not_portable,,uses_javascript
-alignment_flex-align-baseline-column-rtl-direction,not_portable,,style_block_unsupported property: direction
 alignment_flex-align-baseline-column-vert-lr-rtl-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
 alignment_flex-align-baseline-column-vert-rl-rtl-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
 alignment_flex-align-baseline-fieldset-001,not_portable,,uses_javascript

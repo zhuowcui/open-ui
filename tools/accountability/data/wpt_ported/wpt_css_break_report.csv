@@ -258,6 +258,7 @@ out-of-flow-in-multicolumn-070,ported,css_break_out_of_flow_in_multicolumn_070,
 out-of-flow-in-multicolumn-071,ported,css_break_out_of_flow_in_multicolumn_071,
 out-of-flow-in-multicolumn-072,ported,css_break_out_of_flow_in_multicolumn_072,
 out-of-flow-in-multicolumn-074,ported,css_break_out_of_flow_in_multicolumn_074,
+out-of-flow-in-multicolumn-075,ported,css_break_out_of_flow_in_multicolumn_075,
 out-of-flow-in-multicolumn-077,ported,css_break_out_of_flow_in_multicolumn_077,
 out-of-flow-in-multicolumn-078,ported,css_break_out_of_flow_in_multicolumn_078,
 out-of-flow-in-multicolumn-079,ported,css_break_out_of_flow_in_multicolumn_079,
@@ -266,9 +267,15 @@ out-of-flow-in-multicolumn-081,ported,css_break_out_of_flow_in_multicolumn_081,
 out-of-flow-in-multicolumn-082,ported,css_break_out_of_flow_in_multicolumn_082,
 out-of-flow-in-multicolumn-083,ported,css_break_out_of_flow_in_multicolumn_083,
 out-of-flow-in-multicolumn-084,ported,css_break_out_of_flow_in_multicolumn_084,
+out-of-flow-in-multicolumn-100,ported,css_break_out_of_flow_in_multicolumn_100,
+out-of-flow-in-multicolumn-101,ported,css_break_out_of_flow_in_multicolumn_101,
+out-of-flow-in-multicolumn-102,ported,css_break_out_of_flow_in_multicolumn_102,
+out-of-flow-in-multicolumn-103,ported,css_break_out_of_flow_in_multicolumn_103,
 out-of-flow-in-multicolumn-104,ported,css_break_out_of_flow_in_multicolumn_104,
 out-of-flow-in-multicolumn-107,ported,css_break_out_of_flow_in_multicolumn_107,
 out-of-flow-in-multicolumn-109,ported,css_break_out_of_flow_in_multicolumn_109,
+out-of-flow-in-multicolumn-110,ported,css_break_out_of_flow_in_multicolumn_110,
+out-of-flow-in-multicolumn-111,ported,css_break_out_of_flow_in_multicolumn_111,
 out-of-flow-in-multicolumn-112,ported,css_break_out_of_flow_in_multicolumn_112,
 out-of-flow-in-multicolumn-113,ported,css_break_out_of_flow_in_multicolumn_113,
 out-of-flow-in-multicolumn-114,ported,css_break_out_of_flow_in_multicolumn_114,
@@ -725,8 +732,8 @@ chrome-bug-1318455-crash,not_portable,,uses_javascript
 clear-br-in-size-containment-crash,not_portable,,unsupported property: contain
 clear-float-in-size-containment-crash,not_portable,,unsupported property: contain
 clear-past-float-with-oof-twice-crash,not_portable,,unsupported property: contain
-contain-strict-with-opacity-and-oof-ref,not_portable,,unsupported property: will-change
-contain-strict-with-opacity-and-oof,not_portable,,unsupported property: will-change
+contain-strict-with-opacity-and-oof-ref,not_portable,,unsupported property: contain
+contain-strict-with-opacity-and-oof,not_portable,,unsupported property: contain
 empty-fieldset-tall-bottom-padding-crash,not_portable,,unsupported element: <fieldset>
 empty-multicol-at-scrollport-edge,not_portable,,uses_javascript
 fieldset-001-ref,not_portable,,unsupported element: <legend>
@@ -799,7 +806,6 @@ out-of-flow-in-multicolumn-065,not_portable,,style_block_unsupported property: w
 out-of-flow-in-multicolumn-066,not_portable,,style_block_unsupported property: writing-mode
 out-of-flow-in-multicolumn-067,not_portable,,style_block_unsupported property: writing-mode
 out-of-flow-in-multicolumn-073,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-075,not_portable,,unsupported property: will-change
 out-of-flow-in-multicolumn-076,not_portable,,uses_javascript
 out-of-flow-in-multicolumn-085,not_portable,,unsupported property: filter
 out-of-flow-in-multicolumn-086,not_portable,,unsupported property: filter
@@ -817,17 +823,11 @@ out-of-flow-in-multicolumn-096,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-097,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-098,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-099,not_portable,,unsupported property: contain
-out-of-flow-in-multicolumn-100,not_portable,,unsupported property: direction
-out-of-flow-in-multicolumn-101,not_portable,,unsupported property: direction
-out-of-flow-in-multicolumn-102,not_portable,,unsupported property: direction
-out-of-flow-in-multicolumn-103,not_portable,,unsupported property: direction
 out-of-flow-in-multicolumn-105-ref,not_portable,,uses_javascript
 out-of-flow-in-multicolumn-105,not_portable,,uses_javascript
 out-of-flow-in-multicolumn-106-ref,not_portable,,uses_javascript
 out-of-flow-in-multicolumn-106,not_portable,,uses_javascript
 out-of-flow-in-multicolumn-108,not_portable,,uses_javascript
-out-of-flow-in-multicolumn-110,not_portable,,unsupported property: will-change
-out-of-flow-in-multicolumn-111,not_portable,,unsupported property: will-change
 out-of-flow-in-multicolumn-115,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-116,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-118,not_portable,,style_block_unsupported property: writing-mode
@@ -864,16 +864,16 @@ tall-content-inside-constrained-block-004.tentative,not_portable,,unsupported pr
 tall-content-inside-constrained-block-005.tentative,not_portable,,unsupported property: transform
 tall-content-inside-constrained-block-006.tentative,not_portable,,unsupported property: transform
 trailing-child-margin-002,not_portable,,unsupported element: <fieldset>
-transform-000,not_portable,,unsupported property: will-change
+transform-000,not_portable,,unsupported property: transform
 transform-001,not_portable,,unsupported property: writing-mode
 transform-002,not_portable,,unsupported property: writing-mode
-transform-003,not_portable,,unsupported property: will-change
+transform-003,not_portable,,unsupported property: transform
 transform-004,not_portable,,unsupported property: writing-mode
 transform-005,not_portable,,unsupported property: writing-mode
 transform-006-ref,not_portable,,style_block_unsupported property: transform
 transform-006,not_portable,,style_block_unsupported property: transform
-transform-007-ref,not_portable,,style_block_unsupported property: will-change
-transform-007,not_portable,,style_block_unsupported property: will-change
+transform-007-ref,not_portable,,style_block_unsupported property: transform
+transform-007,not_portable,,style_block_unsupported property: transform
 transform-008-ref,not_portable,,style_block_unsupported property: transform
 transform-008,not_portable,,style_block_unsupported property: transform
 transform-009-ref,not_portable,,style_block_unsupported property: transform
@@ -1183,7 +1183,7 @@ table_monolithic-overflow-004.tentative,not_portable,,unsupported property: cont
 table_monolithic-overflow-005,not_portable,,unsupported property: contain
 table_monolithic-overflow-006,not_portable,,unsupported property: contain
 table_oof-in-cell-with-alignment-001,not_portable,,unsupported display: table
-table_oof-in-cell-with-alignment-002,not_portable,,unsupported property: will-change
+table_oof-in-cell-with-alignment-002,not_portable,,unsupported display: table
 table_oof-in-cell-with-alignment-003,not_portable,,unsupported display: table
 table_oof-in-cell-with-alignment-004,not_portable,,unsupported display: table
 table_overflow-scroll-row,not_portable,,unsupported display: table

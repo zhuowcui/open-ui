@@ -694,7 +694,7 @@ background-margin-iframe-root-ref,not_portable,,unsupported element: <iframe>
 background-margin-iframe-root,not_portable,,unsupported element: <iframe>
 background-margin-root,not_portable,,no_layout_content
 background-margin-transformed-root,not_portable,,style_block_unsupported property: transform
-background-margin-will-change-root,not_portable,,style_block_unsupported property: will-change
+background-margin-will-change-root,not_portable,,no_layout_content
 background-origin-001,not_portable,,uses_javascript
 background-position-calc-minmax-001,not_portable,,no_layout_content
 background-position-xy-three-four-values-passthru,not_portable,,uses_javascript

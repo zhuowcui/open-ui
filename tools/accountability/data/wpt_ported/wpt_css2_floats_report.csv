@@ -36,6 +36,7 @@ floats-placement-004,ported,css2_floats_floats_placement_004,
 floats-placement-005-ref,ported,css2_floats_floats_placement_005_ref,
 floats-placement-005,ported,css2_floats_floats_placement_005,
 floats-placement-006,ported,css2_floats_floats_placement_006,
+floats-placement-007,ported,css2_floats_floats_placement_007,
 floats-placement-008,ported,css2_floats_floats_placement_008,
 floats-placement-vertical-001-ref,ported,css2_floats_floats_placement_vertical_001_ref,
 floats-placement-vertical-001a,ported,css2_floats_floats_placement_vertical_001a,
@@ -72,6 +73,7 @@ floats-wrap-bfc-004-ref,ported,css2_floats_floats_wrap_bfc_004_ref,
 floats-wrap-bfc-005-ref,ported,css2_floats_floats_wrap_bfc_005_ref,
 floats-wrap-bfc-008,ported,css2_floats_floats_wrap_bfc_008,
 floats-wrap-bfc-with-margin-004,ported,css2_floats_floats_wrap_bfc_with_margin_004,
+floats-wrap-bfc-with-margin-005,ported,css2_floats_floats_wrap_bfc_with_margin_005,
 floats-wrap-bfc-with-margin-006.tentative,ported,css2_floats_floats_wrap_bfc_with_margin_006_tentative,
 floats-wrap-bfc-with-margin-007.tentative,ported,css2_floats_floats_wrap_bfc_with_margin_007_tentative,
 floats-wrap-bfc-with-margin-008.tentative,ported,css2_floats_floats_wrap_bfc_with_margin_008_tentative,
@@ -108,6 +110,7 @@ negative-block-margin-pushing-float-out-of-block-formatting-context,ported,css2_
 negative-margin-float-positioning,ported,css2_floats_negative_margin_float_positioning,
 new-fc-beside-adjoining-float-2,ported,css2_floats_new_fc_beside_adjoining_float_2,
 new-fc-beside-adjoining-float,ported,css2_floats_new_fc_beside_adjoining_float,
+new-fc-beside-float-with-margin-rtl,ported,css2_floats_new_fc_beside_float_with_margin_rtl,
 new-fc-beside-float-with-margin,ported,css2_floats_new_fc_beside_float_with_margin,
 new-fc-beside-float-with-min-width,ported,css2_floats_new_fc_beside_float_with_min_width,
 new-fc-relayout,ported,css2_floats_new_fc_relayout,
@@ -132,7 +135,6 @@ float-table-align-left-quirk-ref,not_portable,,unsupported element: <table>
 float-table-align-left-quirk,not_portable,,unsupported element: <table>
 floated-table-wider-than-specified,not_portable,,unsupported display: table
 floats-in-table-caption-001,not_portable,,unsupported element: <table>
-floats-placement-007,not_portable,,style_block_unsupported property: direction
 floats-saturated-position-crash,not_portable,,uses_javascript
 floats-wrap-bfc-001-left-overflow,not_portable,,style_block_unsupported property: border-spacing
 floats-wrap-bfc-001-left-table,not_portable,,style_block_unsupported property: border-spacing
@@ -161,7 +163,6 @@ floats-wrap-bfc-with-margin-002-ref,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-002.tentative,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-003-ref,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-003.tentative,not_portable,,uses_javascript
-floats-wrap-bfc-with-margin-005,not_portable,,unsupported property: direction
 hit-test-floats-001,not_portable,,uses_javascript
 hit-test-floats-002,not_portable,,uses_javascript
 hit-test-floats-003,not_portable,,uses_javascript
@@ -169,7 +170,6 @@ hit-test-floats-004,not_portable,,uses_javascript
 hit-test-floats-005,not_portable,,uses_javascript
 inheritance,not_portable,,uses_javascript
 list-item-taller-than-opportunity-001,not_portable,,uses_javascript
-new-fc-beside-float-with-margin-rtl,not_portable,,unsupported property: direction
 remove-block-between-inline-and-float,not_portable,,uses_javascript
 remove-float-in-first-line,not_portable,,uses_javascript
 remove-float-then-abspos-in-inline,not_portable,,uses_javascript

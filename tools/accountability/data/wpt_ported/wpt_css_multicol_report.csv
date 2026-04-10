@@ -79,6 +79,7 @@ column-wrap-no-constraints-001,ported,css_multicol_column_wrap_no_constraints_00
 column-wrap-no-constraints-002,ported,css_multicol_column_wrap_no_constraints_002,
 columnfill-auto-max-height-003,ported,css_multicol_columnfill_auto_max_height_003,
 composited-under-clip-under-multicol-ref,ported,css_multicol_composited_under_clip_under_multicol_ref,
+composited-under-clip-under-multicol,ported,css_multicol_composited_under_clip_under_multicol,
 equal-gap-and-rule,ported,css_multicol_equal_gap_and_rule,
 fixed-in-nested-multicol-with-viewport-container,ported,css_multicol_fixed_in_nested_multicol_with_viewport_container,
 fixed-size-child-with-overflow,ported,css_multicol_fixed_size_child_with_overflow,
@@ -514,7 +515,6 @@ column-rule-001,not_portable,,uses_javascript
 columnfill-auto-max-height-001,not_portable,,no_layout_content
 columnfill-auto-max-height-002,not_portable,,no_layout_content
 columns-shorthand-reset-wrap,not_portable,,uses_javascript
-composited-under-clip-under-multicol,not_portable,,style_block_unsupported property: will-change
 dynamic-become-multicol-add-oof-inside-inline-crash,not_portable,,uses_javascript
 extremely-tall-multicol-with-extremely-tall-child-crash,not_portable,,uses_javascript
 file-control-crash,not_portable,,uses_javascript

@@ -3,6 +3,7 @@ absolute-pos-box-inside-fixed-pos-box-with-changing-height-ref,ported,css_positi
 block-axis-constraint-changes-for-out-of-flow-box-ref,ported,css_position_block_axis_constraint_changes_for_out_of_flow_box_ref,
 containing-block-change-scrollframe-ref,ported,css_position_containing_block_change_scrollframe_ref,
 hypothetical-dynamic-change-001-ref,ported,css_position_hypothetical_dynamic_change_001_ref,
+invalidate-opacity-negative-z-index-ref,ported,css_position_invalidate_opacity_negative_z_index_ref,
 position-absolute-center-001,ported,css_position_position_absolute_center_001,
 position-absolute-center-003,ported,css_position_position_absolute_center_003,
 position-absolute-center-004,ported,css_position_position_absolute_center_004,
@@ -11,6 +12,7 @@ position-absolute-iframe-print-ref,ported,css_position_position_absolute_iframe_
 position-absolute-in-inline-003,ported,css_position_position_absolute_in_inline_003,
 position-absolute-in-inline-004,ported,css_position_position_absolute_in_inline_004,
 position-absolute-large-negative-inset-ref,ported,css_position_position_absolute_large_negative_inset_ref,
+position-absolute-large-negative-inset,ported,css_position_position_absolute_large_negative_inset,
 position-absolute-multicol-001,ported,css_position_position_absolute_multicol_001,
 position-change-ref,ported,css_position_position_change_ref,
 position-fixed-dynamic-transformed-sibling-ref,ported,css_position_position_fixed_dynamic_transformed_sibling_ref,
@@ -23,7 +25,11 @@ position-relative-002,ported,css_position_position_relative_002,
 position-relative-003,ported,css_position_position_relative_003,
 position-relative-006,ported,css_position_position_relative_006,
 position-relative-007,ported,css_position_position_relative_007,
+static-position_htb-ltr-ltr,ported,css_position_static_position_htb_ltr_ltr,
+static-position_htb-ltr-rtl.tentative,ported,css_position_static_position_htb_ltr_rtl_tentative,
 static-position_htb-ref,ported,css_position_static_position_htb_ref,
+static-position_htb-rtl-ltr.tentative,ported,css_position_static_position_htb_rtl_ltr_tentative,
+static-position_htb-rtl-rtl,ported,css_position_static_position_htb_rtl_rtl,
 static-position_inline-level-absolute-in-block-level-context-013,ported,css_position_static_position_inline_level_absolute_in_block_level_context_013,
 static-position_inline-level-absolute-in-block-level-context-014,ported,css_position_static_position_inline_level_absolute_in_block_level_context_014,
 sticky_position-sticky-bottom-004,ported,css_position_sticky_position_sticky_bottom_004,
@@ -61,7 +67,6 @@ hypothetical-dynamic-change-001,not_portable,,uses_javascript
 hypothetical-dynamic-change-002,not_portable,,uses_javascript
 hypothetical-dynamic-change-003,not_portable,,uses_javascript
 inheritance,not_portable,,uses_javascript
-invalidate-opacity-negative-z-index-ref,not_portable,,unsupported property: will-change
 invalidate-opacity-negative-z-index,not_portable,,uses_javascript
 nested-positions-crash,not_portable,,uses_javascript
 position-absolute-abspos-table-dynamic,not_portable,,uses_javascript
@@ -112,7 +117,6 @@ position-absolute-iframe-print-002.sub,not_portable,,unsupported element: <ifram
 position-absolute-in-inline-001,not_portable,,uses_javascript
 position-absolute-in-inline-002,not_portable,,uses_javascript
 position-absolute-in-inline-crash,not_portable,,uses_javascript
-position-absolute-large-negative-inset,not_portable,,style_block_unsupported property: will-change
 position-absolute-margin-auto-001,not_portable,,uses_javascript
 position-absolute-padding-percentage,not_portable,,uses_javascript
 position-absolute-percentage-height,not_portable,,uses_javascript
@@ -180,22 +184,18 @@ replaced-object-backdrop,not_portable,,uses_javascript
 sticky-dialog,not_portable,,uses_javascript
 z-index-blend-will-change-overlapping-layers-ref,not_portable,,uses_javascript
 z-index-blend-will-change-overlapping-layers,not_portable,,uses_javascript
-static-position_htb-ltr-ltr,not_portable,,style_block_unsupported property: direction
-static-position_htb-ltr-rtl.tentative,not_portable,,style_block_unsupported property: direction
-static-position_htb-rtl-ltr.tentative,not_portable,,style_block_unsupported property: direction
-static-position_htb-rtl-rtl,not_portable,,style_block_unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-001,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-002,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-003,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-004,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-005,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-006,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-007,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-008,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-009,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-010,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-011,not_portable,,unsupported property: direction
-static-position_inline-level-absolute-in-block-level-context-012,not_portable,,unsupported property: direction
+static-position_inline-level-absolute-in-block-level-context-001,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-002,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-003,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-004,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-005,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-006,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-007,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-008,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-009,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-010,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-011,not_portable,,unsupported property: transform
+static-position_inline-level-absolute-in-block-level-context-012,not_portable,,unsupported property: transform
 static-position_vlr-ltr-ltr,not_portable,,style_block_unsupported property: writing-mode
 static-position_vlr-ltr-rtl.tentative,not_portable,,style_block_unsupported property: writing-mode
 static-position_vlr-ref,not_portable,,style_block_unsupported property: writing-mode
@@ -308,7 +308,7 @@ sticky_position-sticky-right-003,not_portable,,no_layout_content
 sticky_position-sticky-right,not_portable,,uses_javascript
 sticky_position-sticky-root-scroller,not_portable,,uses_javascript
 sticky_position-sticky-scroll-offset-clamp-crash,not_portable,,uses_javascript
-sticky_position-sticky-scroll-reposition-ref,not_portable,,unsupported property: will-change
+sticky_position-sticky-scroll-reposition-ref,not_portable,,unsupported property: contain
 sticky_position-sticky-scroll-reposition,not_portable,,uses_javascript
 sticky_position-sticky-scroll-with-clip-and-abspos-ref,not_portable,,uses_javascript
 sticky_position-sticky-scroll-with-clip-and-abspos,not_portable,,uses_javascript

@@ -26,6 +26,8 @@ overflow-body-propagation-012-ref,ported,css_overflow_overflow_body_propagation_
 overflow-body-propagation-012,ported,css_overflow_overflow_body_propagation_012,
 overflow-clip-002-crash,ported,css_overflow_overflow_clip_002_crash,
 overflow-clip-cant-scroll-ref,ported,css_overflow_overflow_clip_cant_scroll_ref,
+overflow-clip-content-visual-overflow-ref,ported,css_overflow_overflow_clip_content_visual_overflow_ref,
+overflow-clip-content-visual-overflow,ported,css_overflow_overflow_clip_content_visual_overflow,
 overflow-clip-margin-001-ref,ported,css_overflow_overflow_clip_margin_001_ref,
 overflow-clip-margin-001,ported,css_overflow_overflow_clip_margin_001,
 overflow-clip-margin-002-ref,ported,css_overflow_overflow_clip_margin_002_ref,
@@ -67,6 +69,7 @@ overflow-no-frameset-propagation,ported,css_overflow_overflow_no_frameset_propag
 overflow-overlay-ref,ported,css_overflow_overflow_overlay_ref,
 overflow-overlay,ported,css_overflow_overflow_overlay,
 overflow-scroll-intrinsic-001-ref,ported,css_overflow_overflow_scroll_intrinsic_001_ref,
+overflow-scroll-resize-visibility-hidden,ported,css_overflow_overflow_scroll_resize_visibility_hidden,
 paint-containment-svg-ref,ported,css_overflow_paint_containment_svg_ref,
 rounded-overflow-clip-visible-ref,ported,css_overflow_rounded_overflow_clip_visible_ref,
 rounded-overflow-visible-clip-ref,ported,css_overflow_rounded_overflow_visible_clip_ref,
@@ -85,6 +88,7 @@ scrollbar-large-scale-in-iframe-ref,ported,css_overflow_scrollbar_large_scale_in
 text-overflow-ellipsis-001,ported,css_overflow_text_overflow_ellipsis_001,
 text-overflow-ellipsis-002,ported,css_overflow_text_overflow_ellipsis_002,
 text-overflow-ellipsis-003-ref,ported,css_overflow_text_overflow_ellipsis_003_ref,
+text-overflow-ellipsis-rtl-001,ported,css_overflow_text_overflow_ellipsis_rtl_001,
 line-clamp_line-clamp-content-height-with-dynamic-change-ref,ported,css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref,
 scroll-markers_column-scroll-marker-001-ref,ported,css_overflow_scroll_markers_column_scroll_marker_001_ref,
 scroll-markers_column-scroll-marker-counters-ref,ported,css_overflow_scroll_markers_column_scroll_marker_counters_ref,
@@ -103,6 +107,7 @@ scroll-markers_scroll-marker-group-008-ref,ported,css_overflow_scroll_markers_sc
 scroll-markers_scroll-marker-group-009-ref,ported,css_overflow_scroll_markers_scroll_marker_group_009_ref,
 scroll-markers_scroll-marker-group-add-dynamic-001-ref,ported,css_overflow_scroll_markers_scroll_marker_group_add_dynamic_001_ref,
 scroll-markers_scroll-marker-group-style-remove-ref,ported,css_overflow_scroll_markers_scroll_marker_group_style_remove_ref,
+scroll-markers_scroll-target-group-001-ref,ported,css_overflow_scroll_markers_scroll_target_group_001_ref,
 scroll-markers_scroll-target-group-008-ref,ported,css_overflow_scroll_markers_scroll_target_group_008_ref,
 scroll-markers_scroll-target-group-inline-crash,ported,css_overflow_scroll_markers_scroll_target_group_inline_crash,
 add-scroller-then-scroll-content-into-view,not_portable,,uses_javascript
@@ -182,8 +187,6 @@ overflow-canvas-ref,not_portable,,uses_javascript
 overflow-canvas,not_portable,,uses_javascript
 overflow-clip-001-crash,not_portable,,uses_javascript
 overflow-clip-cant-scroll,not_portable,,uses_javascript
-overflow-clip-content-visual-overflow-ref,not_portable,,style_block_unsupported property: will-change
-overflow-clip-content-visual-overflow,not_portable,,style_block_unsupported property: will-change
 overflow-clip-hit-testing,not_portable,,uses_javascript
 overflow-clip-margin-004,not_portable,,style_block_unsupported property: contain
 overflow-clip-margin-005,not_portable,,style_block_unsupported property: contain
@@ -236,7 +239,6 @@ overflow-scroll-big-border-small-content-ref,not_portable,,uses_javascript
 overflow-scroll-big-border-small-content,not_portable,,uses_javascript
 overflow-scroll-intrinsic-001,not_portable,,unsupported property: writing-mode
 overflow-scroll-resize-visibility-hidden-ref,not_portable,,style_block_unsupported property: filter
-overflow-scroll-resize-visibility-hidden,not_portable,,unsupported property: will-change
 overflow-shorthand-001,not_portable,,uses_javascript
 overflow-shorthand-002,not_portable,,uses_javascript
 overflow-video-ref,not_portable,,uses_javascript
@@ -257,7 +259,7 @@ scrollable-overflow-height-with-flex-item-margin-inline-end-rtl,not_portable,,us
 scrollable-overflow-height-with-flex-item-margin-inline-end,not_portable,,uses_javascript
 scrollable-overflow-input-001-ref,not_portable,,unsupported element: <input>
 scrollable-overflow-input-001,not_portable,,uses_javascript
-scrollable-overflow-input-002-ref,not_portable,,style_block_unsupported property: direction
+scrollable-overflow-input-002-ref,not_portable,,unsupported element: <input>
 scrollable-overflow-input-002,not_portable,,uses_javascript
 scrollable-overflow-padding-inline,not_portable,,uses_javascript
 scrollable-overflow-padding-input,not_portable,,uses_javascript
@@ -340,7 +342,6 @@ text-overflow-ellipsis-003,not_portable,,uses_javascript
 text-overflow-ellipsis-editable-div-with-caret,not_portable,,uses_javascript
 text-overflow-ellipsis-editing-input-ref,not_portable,,unsupported element: <input>
 text-overflow-ellipsis-editing-input,not_portable,,uses_javascript
-text-overflow-ellipsis-rtl-001,not_portable,,style_block_unsupported property: direction
 text-overflow-ellipsis-textarea-with-caret,not_portable,,uses_javascript
 text-overflow-ellipsis-vertical-001,not_portable,,style_block_unsupported property: writing-mode
 text-overflow-ellipsis-vertical-rtl-001,not_portable,,style_block_unsupported property: writing-mode
@@ -709,8 +710,8 @@ scroll-markers_scroll-buttons-disabled-vertical-ltr,not_portable,,uses_javascrip
 scroll-markers_scroll-buttons-disabled,not_portable,,uses_javascript
 scroll-markers_scroll-buttons-dynamic-create-remove,not_portable,,uses_javascript
 scroll-markers_scroll-buttons-enabled-ref,not_portable,,unsupported element: <button>
-scroll-markers_scroll-buttons-enabled-rtl-ref,not_portable,,style_block_unsupported property: direction
-scroll-markers_scroll-buttons-enabled-rtl,not_portable,,style_block_unsupported property: direction
+scroll-markers_scroll-buttons-enabled-rtl-ref,not_portable,,unsupported element: <button>
+scroll-markers_scroll-buttons-enabled-rtl,not_portable,,complex_css_selector: #scroller::scroll-marker-group
 scroll-markers_scroll-buttons-enabled-vertical-ltr-ref,not_portable,,style_block_unsupported property: writing-mode
 scroll-markers_scroll-buttons-enabled-vertical-ltr,not_portable,,style_block_unsupported property: writing-mode
 scroll-markers_scroll-buttons-enabled,not_portable,,complex_css_selector: #scroller::scroll-marker-group
@@ -781,7 +782,7 @@ scroll-markers_scroll-marker-group-add-dynamic-001,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-add-dynamic-002,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-add-dynamic-003,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-add-dynamic-004,not_portable,,uses_javascript
-scroll-markers_scroll-marker-group-keeps-active-in-view-ref,not_portable,,style_block_unsupported property: direction
+scroll-markers_scroll-marker-group-keeps-active-in-view-ref,not_portable,,style_block_unsupported property: grid-auto-flow
 scroll-markers_scroll-marker-group-keeps-active-in-view,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-layout-parent,not_portable,,complex_css_selector: #sc::scroll-marker-group
 scroll-markers_scroll-marker-group-size-container-query-root,not_portable,,uses_javascript
@@ -819,7 +820,6 @@ scroll-markers_scroll-markers-under-content-visibility-auto-ref,not_portable,,co
 scroll-markers_scroll-markers-under-content-visibility-auto,not_portable,,complex_css_selector: #scroller::scroll-marker-group
 scroll-markers_scroll-markers-updated-by-programmatic-scroll,not_portable,,uses_javascript
 scroll-markers_scroll-pseudo-elements-gcs-cq,not_portable,,uses_javascript
-scroll-markers_scroll-target-group-001-ref,not_portable,,complex_css_selector: a:first-of-type
 scroll-markers_scroll-target-group-001,not_portable,,complex_css_selector: a:target-current
 scroll-markers_scroll-target-group-002-ref,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-002,not_portable,,uses_javascript
