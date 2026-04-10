@@ -629,25 +629,57 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     if not selector:
         return False
 
-    # Evaluate :not() pseudo-class
-    for m in re.finditer(r':not\(([^)]+)\)', selector):
+    # Evaluate :not() pseudo-class — handle both simple selectors and
+    # structural pseudo-classes inside :not(). Use regex that handles
+    # one level of nested parens (e.g. :not(:nth-child(2))).
+    for m in re.finditer(r':not\(([^()]*(?:\([^)]*\)[^()]*)*)\)', selector):
         inner = m.group(1).strip()
+        # Check structural pseudo-classes inside :not()
+        if inner == ':first-child':
+            if sibling_index == 1:
+                return False
+            continue
+        if inner in (':last-child', ':last-of-type'):
+            if sibling_index == sibling_count:
+                return False
+            continue
+        if inner in (':first-of-type',):
+            if sibling_index == 1:
+                return False
+            continue
+        if inner == ':only-child':
+            if sibling_count == 1:
+                return False
+            continue
+        nth_m = re.match(r':nth-child\(([^)]+)\)', inner)
+        if nth_m:
+            if _eval_nth_expr(nth_m.group(1), sibling_index):
+                return False
+            continue
+        # Simple selector (tag, class, id)
         if _match_simple_selector(inner, tag, classes, id_val):
             return False
 
-    # Evaluate structural pseudo-classes before stripping
-    if ':first-child' in selector and sibling_index != 1:
+    # Evaluate bare structural pseudo-classes (not inside :not())
+    # Strip :not(...) content first to avoid double-matching
+    bare_selector = re.sub(r':not\([^()]*(?:\([^)]*\)[^()]*)*\)', '', selector)
+    if ':first-child' in bare_selector and sibling_index != 1:
         return False
-    if ':last-child' in selector and sibling_index != sibling_count:
+    if ':last-child' in bare_selector and sibling_index != sibling_count:
         return False
-    if ':only-child' in selector and sibling_count != 1:
+    if ':last-of-type' in bare_selector and sibling_index != sibling_count:
         return False
-    for m in re.finditer(r':nth-child\(([^)]+)\)', selector):
-        if not _eval_nth_expr(m.group(1), sibling_index):
+    if ':first-of-type' in bare_selector and sibling_index != 1:
+        return False
+    if ':only-child' in bare_selector and sibling_count != 1:
+        return False
+    for nth_m in re.finditer(r':nth-child\(([^)]+)\)', bare_selector):
+        if not _eval_nth_expr(nth_m.group(1), sibling_index):
             return False
 
-    # Strip pseudo-classes after evaluation
-    selector = re.sub(r':(?:root|first-child|last-child|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))', '', selector)
+    # Strip pseudo-classes after evaluation (including nested-paren :not())
+    selector = re.sub(r':not\([^()]*(?:\([^)]*\)[^()]*)*\)', '', selector)
+    selector = re.sub(r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty)', '', selector)
     selector = selector.strip()
 
     if not selector:
