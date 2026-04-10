@@ -726,6 +726,7 @@ fn construct_flex_items(
             child_percentage_block,
             base_content_size,
             is_used_flex_basis_indefinite,
+            alignment,
         );
 
         // Hypothetical = clamp base to min/max
@@ -802,16 +803,25 @@ fn resolve_flex_basis(
     if !flex_basis.is_auto() {
         // Handle intrinsic sizing keywords (min-content, max-content, fit-content)
         if flex_basis.is_content_or_intrinsic() {
-            let sizes = compute_intrinsic_block_sizes(doc, child_id);
+            // Use the full intrinsic contribution pipeline which accounts for
+            // the element's own size overrides (width/height, AR, min/max).
+            let contrib = crate::intrinsic_sizing::compute_child_intrinsic_contribution(doc, child_id);
+            // compute_child_intrinsic_contribution includes margins; subtract them.
+            let child_margin = resolve_margins(child_style, LayoutUnit::zero());
+            let margin_main = if is_column {
+                child_margin.top + child_margin.bottom
+            } else {
+                child_margin.left + child_margin.right
+            };
             let intrinsic = if is_column {
                 match flex_basis.length_type() {
-                    LengthType::MinContent => sizes.min_content_block_size,
-                    _ => sizes.max_content_block_size,
+                    LengthType::MinContent => contrib.min_content_block_size - margin_main,
+                    _ => contrib.max_content_block_size - margin_main,
                 }
             } else {
                 match flex_basis.length_type() {
-                    LengthType::MinContent => sizes.min_content_inline_size,
-                    _ => sizes.max_content_inline_size,
+                    LengthType::MinContent => contrib.min_content_inline_size - margin_main,
+                    _ => contrib.max_content_inline_size - margin_main,
                 }
             };
             let content = (intrinsic - main_axis_border_padding).clamp_negative_to_zero();
@@ -917,7 +927,7 @@ fn resolve_content_based_size(
     main_axis_border_padding: LayoutUnit,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
-    space: &ConstraintSpace,
+    _space: &ConstraintSpace,
     resolved_alignment: ItemPosition,
 ) -> LayoutUnit {
     // Check if aspect-ratio can resolve the main-axis size from a known cross-axis size
@@ -932,27 +942,30 @@ fn resolve_content_based_size(
 
             if !cross_prop.is_auto() && (!cross_pct.is_indefinite() || cross_prop.is_fixed()) {
                 let cross_val = resolve_length(cross_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
-                // For border-box, cross_val is the border-box size. We need
-                // content size to apply the ratio, then return content main size.
-                let content_cross = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                // CSS Sizing 4 §5.1: AR applies to content-box or border-box
+                // depending on box-sizing.
+                let main_val = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    // AR on border-box: main_bb = cross_bb × ratio
                     let b = resolve_border(child_style);
                     let p = resolve_padding(child_style, LayoutUnit::zero());
-                    let cross_bp = if is_column {
-                        b.left + b.right + p.left + p.right
+                    let main_bb = if is_column {
+                        LayoutUnit::from_f32(cross_val.to_f32() * ratio.1 / ratio.0)
                     } else {
-                        b.top + b.bottom + p.top + p.bottom
+                        LayoutUnit::from_f32(cross_val.to_f32() * ratio.0 / ratio.1)
                     };
-                    (cross_val - cross_bp).clamp_negative_to_zero()
+                    let main_bp = if is_column {
+                        b.top + b.bottom + p.top + p.bottom
+                    } else {
+                        b.left + b.right + p.left + p.right
+                    };
+                    (main_bb - main_bp).clamp_negative_to_zero()
                 } else {
-                    cross_val
-                };
-                // Derive main-axis content size from cross-axis content size
-                let main_val = if is_column {
-                    // Column: main=block, cross=inline. main = cross * (h/w)
-                    LayoutUnit::from_f32(content_cross.to_f32() * ratio.1 / ratio.0)
-                } else {
-                    // Row: main=inline, cross=block. main = cross * (w/h)
-                    LayoutUnit::from_f32(content_cross.to_f32() * ratio.0 / ratio.1)
+                    // AR on content-box: main = cross × ratio
+                    if is_column {
+                        LayoutUnit::from_f32(cross_val.to_f32() * ratio.1 / ratio.0)
+                    } else {
+                        LayoutUnit::from_f32(cross_val.to_f32() * ratio.0 / ratio.1)
+                    }
                 };
                 return main_val;
             }
@@ -963,15 +976,24 @@ fn resolve_content_based_size(
             // NOTE: Must resolve align-self against parent's align-items, since
             // auto/normal inherit from the parent.
             if cross_prop.is_auto() {
+                // Use the flex container's own resolved cross-axis content size,
+                // not the parent's available size (which may be much larger).
                 let cross_container = if is_column {
-                    space.available_inline_size
+                    child_percentage_inline
                 } else {
-                    space.available_block_size
+                    child_percentage_block
                 };
                 if !cross_container.is_indefinite() {
+                    // CSS Flexbox §9.4: Cross-axis auto margins prevent stretching.
+                    let has_cross_auto_margin = if is_column {
+                        child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
+                    } else {
+                        child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
+                    };
                     // Use the resolved alignment (which already accounts for
                     // parent's align-items when align-self is auto/normal).
-                    let would_stretch = resolved_alignment == ItemPosition::Stretch;
+                    let would_stretch = resolved_alignment == ItemPosition::Stretch
+                        && !has_cross_auto_margin;
                     if would_stretch {
                         let margin = resolve_margins(child_style, LayoutUnit::zero());
                         let cross_margin = if is_column {
@@ -979,21 +1001,36 @@ fn resolve_content_based_size(
                         } else {
                             margin.top + margin.bottom
                         };
-                        let cross_bp = {
-                            let b = resolve_border(child_style);
-                            let p = resolve_padding(child_style, LayoutUnit::zero());
-                            if is_column {
-                                b.left + b.right + p.left + p.right
-                            } else {
-                                b.top + b.bottom + p.top + p.bottom
-                            }
+                        let b = resolve_border(child_style);
+                        let p = resolve_padding(child_style, LayoutUnit::zero());
+                        let cross_bp = if is_column {
+                            b.left + b.right + p.left + p.right
+                        } else {
+                            b.top + b.bottom + p.top + p.bottom
                         };
                         let stretched_bb = (cross_container - cross_margin).clamp_negative_to_zero();
-                        let content_cross = (stretched_bb - cross_bp).clamp_negative_to_zero();
-                        let main_val = if is_column {
-                            LayoutUnit::from_f32(content_cross.to_f32() * ratio.1 / ratio.0)
+                        // CSS Sizing 4 §5.1: AR applies to content-box by default,
+                        // but to border-box when box-sizing: border-box.
+                        let main_val = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                            // AR on border-box: main_bb = cross_bb * ratio
+                            let main_bb = if is_column {
+                                LayoutUnit::from_f32(stretched_bb.to_f32() * ratio.1 / ratio.0)
+                            } else {
+                                LayoutUnit::from_f32(stretched_bb.to_f32() * ratio.0 / ratio.1)
+                            };
+                            let main_bp = if is_column {
+                                b.top + b.bottom + p.top + p.bottom
+                            } else {
+                                b.left + b.right + p.left + p.right
+                            };
+                            (main_bb - main_bp).clamp_negative_to_zero()
                         } else {
-                            LayoutUnit::from_f32(content_cross.to_f32() * ratio.0 / ratio.1)
+                            let content_cross = (stretched_bb - cross_bp).clamp_negative_to_zero();
+                            if is_column {
+                                LayoutUnit::from_f32(content_cross.to_f32() * ratio.1 / ratio.0)
+                            } else {
+                                LayoutUnit::from_f32(content_cross.to_f32() * ratio.0 / ratio.1)
+                            }
                         };
                         return main_val;
                     }
@@ -1009,7 +1046,14 @@ fn resolve_content_based_size(
     // If not stretching, use the item's own cross-axis constraints (max-width
     // for column, max-height for row) to bound the layout, since the item
     // will shrink-wrap to its content.
-    let would_stretch_cross = resolved_alignment == ItemPosition::Stretch;
+    // CSS Flexbox §9.4: Cross-axis auto margins prevent stretching.
+    let has_cross_auto_margin_for_stretch = if is_column {
+        child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
+    } else {
+        child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
+    };
+    let would_stretch_cross = resolved_alignment == ItemPosition::Stretch
+        && !has_cross_auto_margin_for_stretch;
     let child_space = if is_column {
         let cross_inline = if would_stretch_cross {
             child_percentage_inline
@@ -1035,12 +1079,16 @@ fn resolve_content_based_size(
             child_style.creates_new_formatting_context(),
         )
     } else {
-        let cross_block = if would_stretch_cross {
-            space.available_block_size
+        // Use the flex container's own cross-axis content size, not the parent's.
+        let container_cross_block = child_percentage_block;
+        let cross_block = if would_stretch_cross && !container_cross_block.is_indefinite() {
+            container_cross_block
         } else if child_style.aspect_ratio.is_some() && child_style.height.is_auto() {
             LayoutUnit::from_raw(-64)
+        } else if !container_cross_block.is_indefinite() {
+            container_cross_block
         } else {
-            space.available_block_size
+            LayoutUnit::from_raw(-64)
         };
         // Row flex: use indefinite inline size for max-content measurement
         ConstraintSpace::for_block_child(
@@ -1107,6 +1155,185 @@ fn resolve_content_based_size(
     (main_size - main_axis_border_padding).clamp_negative_to_zero()
 }
 
+/// CSS Flexbox §4.5: Compute the "transferred size suggestion" for a flex item.
+///
+/// If the item has an aspect ratio and its flex base size is content-based
+/// (not definite), the transferred size suggestion is the size transferred
+/// through its AR from its definite cross-axis constraint.
+///
+/// Returns `Some(content_box_main_size)` if a transferred suggestion exists.
+fn compute_transferred_size_suggestion(
+    child_style: &openui_style::ComputedStyle,
+    is_column: bool,
+    is_basis_from_content: bool,
+    resolved_alignment: ItemPosition,
+    pct_inline: LayoutUnit,
+    pct_block: LayoutUnit,
+    main_axis_border_padding: LayoutUnit,
+) -> Option<LayoutUnit> {
+    let ar = child_style.aspect_ratio.as_ref()?;
+    if ar.ratio.0 <= 0.0 || ar.ratio.1 <= 0.0 {
+        return None;
+    }
+
+    // Only applies when flex base size is not definite (content-based).
+    if !is_basis_from_content {
+        return None;
+    }
+
+    // Determine the definite cross-axis size.
+    let (cross_prop, cross_pct) = if is_column {
+        (&child_style.width, pct_inline)
+    } else {
+        (&child_style.height, pct_block)
+    };
+
+    let b = resolve_border(child_style);
+    let p = resolve_padding(child_style, LayoutUnit::zero());
+    let cross_bp = if is_column {
+        b.left + b.right + p.left + p.right
+    } else {
+        b.top + b.bottom + p.top + p.bottom
+    };
+    let main_bp = if is_column {
+        b.top + b.bottom + p.top + p.bottom
+    } else {
+        b.left + b.right + p.left + p.right
+    };
+    let is_border_box = child_style.box_sizing == openui_style::BoxSizing::BorderBox;
+
+    // Get the cross-axis border-box size (for AR transfer).
+    let cross_bb = if !cross_prop.is_auto()
+        && (!cross_pct.is_indefinite() || cross_prop.is_fixed())
+    {
+        // Explicit cross-axis property → use it.
+        let resolved = resolve_length(cross_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+        if is_border_box {
+            resolved
+        } else {
+            resolved + cross_bp
+        }
+    } else if cross_prop.is_auto() {
+        // Check if the item would stretch to a definite cross size.
+        let has_cross_auto_margin = if is_column {
+            child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
+        } else {
+            child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
+        };
+        let would_stretch = resolved_alignment == ItemPosition::Stretch
+            && !has_cross_auto_margin;
+        let cross_container = if is_column { pct_inline } else { pct_block };
+        if would_stretch && !cross_container.is_indefinite() {
+            let margin = resolve_margins(child_style, LayoutUnit::zero());
+            let cross_margin = if is_column {
+                margin.left + margin.right
+            } else {
+                margin.top + margin.bottom
+            };
+            (cross_container - cross_margin).clamp_negative_to_zero()
+        } else {
+            return None;
+        }
+    } else {
+        return None;
+    };
+
+    // CSS Sizing 4 §5.1: AR applies to border-box when box-sizing: border-box,
+    // content-box otherwise.
+    let transferred = if is_border_box {
+        // AR on border-box: main_bb = cross_bb × ratio
+        let main_bb = if is_column {
+            LayoutUnit::from_f32(cross_bb.to_f32() * ar.ratio.1 / ar.ratio.0)
+        } else {
+            LayoutUnit::from_f32(cross_bb.to_f32() * ar.ratio.0 / ar.ratio.1)
+        };
+        (main_bb - main_bp).clamp_negative_to_zero()
+    } else {
+        // AR on content-box: convert to content, apply ratio
+        let cross_content = (cross_bb - cross_bp).clamp_negative_to_zero();
+        if is_column {
+            LayoutUnit::from_f32(cross_content.to_f32() * ar.ratio.1 / ar.ratio.0)
+        } else {
+            LayoutUnit::from_f32(cross_content.to_f32() * ar.ratio.0 / ar.ratio.1)
+        }
+    };
+
+    // Clamp by cross-axis min/max transferred through AR.
+    let (cross_min_prop, cross_max_prop) = if is_column {
+        (&child_style.min_width, &child_style.max_width)
+    } else {
+        (&child_style.min_height, &child_style.max_height)
+    };
+    let cross_min = if !cross_min_prop.is_auto() && !cross_min_prop.is_none()
+        && (!cross_pct.is_indefinite() || cross_min_prop.is_fixed())
+    {
+        let r = resolve_length(cross_min_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+        let cross_min_bb = if is_border_box { r } else { r + cross_bp };
+        if is_border_box {
+            let main_min_bb = if is_column {
+                LayoutUnit::from_f32(cross_min_bb.to_f32() * ar.ratio.1 / ar.ratio.0)
+            } else {
+                LayoutUnit::from_f32(cross_min_bb.to_f32() * ar.ratio.0 / ar.ratio.1)
+            };
+            (main_min_bb - main_bp).clamp_negative_to_zero()
+        } else {
+            let content_min = (cross_min_bb - cross_bp).clamp_negative_to_zero();
+            if is_column {
+                LayoutUnit::from_f32(content_min.to_f32() * ar.ratio.1 / ar.ratio.0)
+            } else {
+                LayoutUnit::from_f32(content_min.to_f32() * ar.ratio.0 / ar.ratio.1)
+            }
+        }
+    } else {
+        LayoutUnit::zero()
+    };
+    let cross_max = if !cross_max_prop.is_none()
+        && (!cross_pct.is_indefinite() || cross_max_prop.is_fixed())
+    {
+        let r = resolve_length(cross_max_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
+        let cross_max_bb = if is_border_box { r } else { r + cross_bp };
+        if is_border_box {
+            let main_max_bb = if is_column {
+                LayoutUnit::from_f32(cross_max_bb.to_f32() * ar.ratio.1 / ar.ratio.0)
+            } else {
+                LayoutUnit::from_f32(cross_max_bb.to_f32() * ar.ratio.0 / ar.ratio.1)
+            };
+            (main_max_bb - main_bp).clamp_negative_to_zero()
+        } else {
+            let content_max = (cross_max_bb - cross_bp).clamp_negative_to_zero();
+            if is_column {
+                LayoutUnit::from_f32(content_max.to_f32() * ar.ratio.1 / ar.ratio.0)
+            } else {
+                LayoutUnit::from_f32(content_max.to_f32() * ar.ratio.0 / ar.ratio.1)
+            }
+        }
+    } else {
+        LayoutUnit::from_i32(33554431)
+    };
+
+    // Also clamp by main-axis max if definite.
+    let (main_max_prop, main_pct) = if is_column {
+        (&child_style.max_height, pct_block)
+    } else {
+        (&child_style.max_width, pct_inline)
+    };
+    let main_max = if !main_max_prop.is_none()
+        && (!main_pct.is_indefinite() || main_max_prop.is_fixed())
+    {
+        let r = resolve_length(main_max_prop, main_pct, LayoutUnit::zero(), LayoutUnit::from_i32(33554431));
+        if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+            (r - main_axis_border_padding).clamp_negative_to_zero()
+        } else {
+            r
+        }
+    } else {
+        LayoutUnit::from_i32(33554431)
+    };
+
+    let result = transferred.clamp(cross_min, cross_max).min_of(main_max);
+    Some(result)
+}
+
 /// Resolve min/max constraints on the main axis.
 /// Blink: lines 1034-1157.
 fn resolve_main_axis_min_max(
@@ -1118,7 +1345,8 @@ fn resolve_main_axis_min_max(
     pct_inline: LayoutUnit,
     pct_block: LayoutUnit,
     _base_content_size: LayoutUnit,
-    _is_basis_from_content: bool,
+    is_basis_from_content: bool,
+    resolved_alignment: ItemPosition,
 ) -> MinMaxSizes {
     let (min_prop, max_prop, pct_base) = if is_column {
         (&child_style.min_height, &child_style.max_height, pct_block)
@@ -1171,6 +1399,15 @@ fn resolve_main_axis_min_max(
                     resolved
                 };
                 content_size.min_of(specified)
+            } else if let Some(transferred) = compute_transferred_size_suggestion(
+                child_style, is_column, is_basis_from_content,
+                resolved_alignment, pct_inline, pct_block,
+                main_axis_border_padding,
+            ) {
+                // CSS Flexbox §4.5: Transferred size suggestion.
+                // When there's no specified suggestion but the item has AR and
+                // a definite cross constraint, use the transferred suggestion.
+                transferred
             } else {
                 content_size
             }
@@ -1383,26 +1620,33 @@ fn resolve_cross_size(
             if ratio.0 > 0.0 && ratio.1 > 0.0 {
                 let main_size = item.flexed_border_box_size();
                 if !main_size.is_indefinite() && main_size > LayoutUnit::zero() {
-                    // AR applies to content-box dimensions. Convert the border-box
-                    // main size to content-box before applying the ratio.
-                    let main_bp = if is_column {
-                        // Column: main=block → block border+padding
-                        let b = crate::block::resolve_border(child_style);
-                        let p = crate::block::resolve_padding(child_style, child_percentage_inline);
-                        b.block_sum() + p.block_sum()
+                    // CSS Sizing 4 §5.1: AR applies to content-box or border-box
+                    // depending on box-sizing.
+                    let cross_content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        // AR on border-box: cross_bb = main_bb × ratio
+                        let cross_bb = if is_column {
+                            LayoutUnit::from_f32(main_size.to_f32() * ratio.0 / ratio.1)
+                        } else {
+                            LayoutUnit::from_f32(main_size.to_f32() * ratio.1 / ratio.0)
+                        };
+                        (cross_bb - cross_border_padding).clamp_negative_to_zero()
                     } else {
-                        // Row: main=inline → inline border+padding
-                        let b = crate::block::resolve_border(child_style);
-                        let p = crate::block::resolve_padding(child_style, child_percentage_inline);
-                        b.inline_sum() + p.inline_sum()
-                    };
-                    let main_content = (main_size - main_bp).clamp_negative_to_zero();
-                    let cross_content = if is_column {
-                        // Column: main=block, cross=inline. cross = main * (w/h)
-                        LayoutUnit::from_f32(main_content.to_f32() * ratio.0 / ratio.1)
-                    } else {
-                        // Row: main=inline, cross=block. cross = main * (h/w)
-                        LayoutUnit::from_f32(main_content.to_f32() * ratio.1 / ratio.0)
+                        // AR on content-box
+                        let main_bp = if is_column {
+                            let b = crate::block::resolve_border(child_style);
+                            let p = crate::block::resolve_padding(child_style, child_percentage_inline);
+                            b.block_sum() + p.block_sum()
+                        } else {
+                            let b = crate::block::resolve_border(child_style);
+                            let p = crate::block::resolve_padding(child_style, child_percentage_inline);
+                            b.inline_sum() + p.inline_sum()
+                        };
+                        let main_content = (main_size - main_bp).clamp_negative_to_zero();
+                        if is_column {
+                            LayoutUnit::from_f32(main_content.to_f32() * ratio.0 / ratio.1)
+                        } else {
+                            LayoutUnit::from_f32(main_content.to_f32() * ratio.1 / ratio.0)
+                        }
                     };
                     return cross_content;
                 }
@@ -1621,13 +1865,21 @@ fn give_items_final_position(
             };
 
             // Determine if item should stretch on cross axis
-            // Stretch only applies to items with auto cross size (CSS Flexbox §9.4)
+            // CSS Flexbox §9.4: Stretch only applies to items with auto cross
+            // size AND no cross-axis auto margins.
             let cross_size_is_auto = if is_column {
                 child_style.width.is_auto()
             } else {
                 child_style.height.is_auto()
             };
-            let should_stretch = item.alignment == ItemPosition::Stretch && cross_size_is_auto;
+            let has_cross_auto_margins_for_stretch = if is_column {
+                child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
+            } else {
+                child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
+            };
+            let should_stretch = item.alignment == ItemPosition::Stretch
+                && cross_size_is_auto
+                && !has_cross_auto_margins_for_stretch;
             let cross_size_for_child = if should_stretch {
                 let stretch_size = line.line_cross_size - item.cross_axis_margin_extent();
                 let stretch_size = stretch_size.clamp_negative_to_zero();

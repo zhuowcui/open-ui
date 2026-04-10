@@ -427,7 +427,7 @@ fn compute_flex_intrinsic_sizes(
 ///
 /// This accounts for the child's own intrinsic sizes plus its margin box.
 /// For inline-level children (text, inline), uses inline intrinsic sizing.
-fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> IntrinsicSizes {
+pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) -> IntrinsicSizes {
     let child_style = &doc.node(child_id).style;
     let child_tag = doc.node(child_id).tag;
 
