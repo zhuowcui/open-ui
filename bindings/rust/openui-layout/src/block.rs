@@ -2882,12 +2882,13 @@ fn layout_multicol(
                         raw
                     } else {
                         // Auto height: lay out to determine
+                        let gc_is_new_fc = establishes_new_fc(&doc.node(gc_id).style);
                         let gc_space = ConstraintSpace::for_block_child(
                             child_available_inline,
                             remaining_height,
                             child_available_inline,
                             container_height,
-                            false,
+                            gc_is_new_fc,
                         );
                         let gc_frag = block_layout(doc, gc_id, &gc_space);
                         gc_frag.size.height
@@ -3018,12 +3019,13 @@ fn layout_multicol(
                     let mut wrapper_children: Vec<Fragment> = Vec::new();
                     let mut block_off = c_border_top + c_pad_top;
                     for &gc_id in &split.child_ids {
+                        let gc_is_new_fc = establishes_new_fc(&doc.node(gc_id).style);
                         let gc_space = ConstraintSpace::for_block_child(
                             inner_width,
                             split.portion_height,
                             inner_width,
                             split.portion_height,
-                            false,
+                            gc_is_new_fc,
                         );
                         let mut gc_frag = block_layout(doc, gc_id, &gc_space);
                         gc_frag.offset = PhysicalOffset::new(
@@ -3068,12 +3070,13 @@ fn layout_multicol(
                         &child_style.margin_top, column_width);
                     let child_margin_bottom = resolve_margin_or_padding(
                         &child_style.margin_bottom, column_width);
+                    let child_is_new_fc = establishes_new_fc(child_style);
                     let child_space = ConstraintSpace::for_block_child(
                         column_width,
                         group_available_block,
                         column_width,
                         first_pass_pct_basis,
-                        false,
+                        child_is_new_fc,
                     );
                     let child_frag = block_layout(doc, info.id, &child_space);
                     col_block_sizes.push(child_frag.size.height);
@@ -3211,9 +3214,10 @@ fn layout_multicol(
                         let mut wrapper_children: Vec<Fragment> = Vec::new();
                         let mut block_off = c_border_top + c_pad_top;
                         for &gc_id in &split.child_ids {
+                            let gc_is_new_fc = establishes_new_fc(&doc.node(gc_id).style);
                             let gc_space = ConstraintSpace::for_block_child(
                                 inner_width, split.portion_height,
-                                inner_width, split.portion_height, false,
+                                inner_width, split.portion_height, gc_is_new_fc,
                             );
                             let mut gc_frag = block_layout(doc, gc_id, &gc_space);
                             gc_frag.offset = PhysicalOffset::new(
@@ -3258,12 +3262,13 @@ fn layout_multicol(
                             &child_style.margin_top, column_width);
                         let child_margin_bottom = resolve_margin_or_padding(
                             &child_style.margin_bottom, column_width);
+                        let child_is_new_fc = establishes_new_fc(child_style);
                         let child_space = ConstraintSpace::for_block_child(
                             column_width,
                             column_height,
                             column_width,
                             child_percentage_block_size,
-                            false,
+                            child_is_new_fc,
                         );
                         let child_frag = block_layout(doc, info.id, &child_space);
                         col_block_sizes.push(child_frag.size.height);
