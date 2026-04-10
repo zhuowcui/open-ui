@@ -3324,14 +3324,14 @@ fn layout_multicol(
                     || prev_break_after_forces;
 
                 if forced_break {
-                    if col_block_offset > LayoutUnit::zero() {
-                        // Column has content — advance to next column.
+                    if col_block_offset > LayoutUnit::zero() && col_idx + 1 < resolved.count as usize {
+                        // Column has content and we haven't exceeded column count.
                         max_col_content = max_col_content.max_of(col_block_offset);
                         col_idx += 1;
                         col_block_offset = LayoutUnit::zero();
                         col_remaining = column_height;
                         prev_margin_bottom = LayoutUnit::zero();
-                    } else if i > 0 {
+                    } else if i > 0 && col_idx + 1 < resolved.count as usize {
                         // Column is empty but this isn't the first child overall.
                         // A forced break still moves to the next column.
                         col_idx += 1;
@@ -3339,6 +3339,8 @@ fn layout_multicol(
                         col_remaining = column_height;
                         prev_margin_bottom = LayoutUnit::zero();
                     }
+                    // If col_idx + 1 >= resolved.count, we've exhausted all
+                    // columns — excess content packs into the last column.
                 }
 
                 // Compute collapsed margin between siblings.

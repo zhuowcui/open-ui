@@ -440,32 +440,44 @@ pub fn balance_columns(
     let forced_count = forced_break_before.iter().enumerate()
         .filter(|&(i, &f)| f && i > 0)
         .count() as u32;
-    // The effective column count for content distribution is reduced by
-    // forced breaks (each forced break uses a column boundary), but at
-    // least 1 column per forced-break segment.
-    let effective_columns = column_count.max(forced_count + 1);
 
-    // Compute the tallest forced-break segment: content between consecutive
-    // forced breaks that must all fit in a single column group.
-    let mut max_segment: i64 = 0;
-    let mut cur_segment: i64 = 0;
-    for (i, &size) in child_block_sizes.iter().enumerate() {
-        let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
-        if has_forced {
-            max_segment = max_segment.max(cur_segment);
-            cur_segment = 0;
+    // When there are forced breaks creating more segments than columns,
+    // excess segments are packed into the last column. Compute the minimum
+    // column height considering this packing.
+    let min_forced_height: i64 = if forced_count > 0 {
+        let mut segments: Vec<i64> = Vec::new();
+        let mut cur_segment: i64 = 0;
+        for (i, &size) in child_block_sizes.iter().enumerate() {
+            let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
+            if has_forced {
+                segments.push(cur_segment);
+                cur_segment = 0;
+            }
+            cur_segment += size.raw() as i64;
         }
-        cur_segment += size.raw() as i64;
-    }
-    max_segment = max_segment.max(cur_segment);
+        segments.push(cur_segment);
+
+        if segments.len() as u32 <= column_count {
+            // Each segment fits in its own column — height is tallest segment.
+            segments.iter().copied().max().unwrap_or(0)
+        } else {
+            // More segments than columns: pack excess into last column.
+            let c = column_count as usize;
+            let last_col: i64 = segments[c - 1..].iter().sum();
+            let max_first = segments[..c - 1].iter().copied().max().unwrap_or(0);
+            max_first.max(last_col)
+        }
+    } else {
+        0 // No forced breaks — no forced-height constraint.
+    };
 
     // With fragmentation, children can be split at column boundaries.
     // The minimum possible column height is ceil(total / count),
     // but also at least as tall as the tallest unsplittable child,
-    // and at least ceil(max_segment / columns_in_that_segment).
+    // and at least as tall as the minimum forced-break packing height.
     let min_raw = ((total_raw + column_count as i64 - 1) / column_count as i64)
         .max(max_unsplittable)
-        .max((max_segment + effective_columns as i64 - 1) / effective_columns as i64) as i32;
+        .max(min_forced_height) as i32;
 
     let mut lo = min_raw;
     let mut hi = if max_height.raw() > 0 && max_height.raw() < i32::MAX / 2 {
@@ -485,7 +497,7 @@ pub fn balance_columns(
             break;
         }
         let mid = lo + (hi - lo) / 2;
-        let needed = columns_needed_for_height(child_block_sizes, avoid_break_inside, LayoutUnit::from_raw(mid), forced_break_before);
+        let needed = columns_needed_for_height(child_block_sizes, avoid_break_inside, LayoutUnit::from_raw(mid), forced_break_before, column_count);
         if needed <= column_count {
             hi = mid;
         } else {
@@ -498,12 +510,15 @@ pub fn balance_columns(
 
 /// Count how many columns are needed to fit all children at the given height.
 /// Children with break-inside: avoid are treated as unsplittable units.
-/// Children with forced_break_before always start a new column (except the first).
+/// Children with forced_break_before always start a new column (except the first),
+/// but forced breaks are ignored once column_count is reached — excess content
+/// packs into the last column.
 fn columns_needed_for_height(
     child_block_sizes: &[LayoutUnit],
     avoid_break_inside: &[bool],
     height: LayoutUnit,
     forced_break_before: &[bool],
+    column_count: u32,
 ) -> u32 {
     if height.raw() <= 0 {
         return u32::MAX;
@@ -514,8 +529,10 @@ fn columns_needed_for_height(
     for (i, &child_size) in child_block_sizes.iter().enumerate() {
         // CSS Fragmentation §3.1: forced break-before always starts a new
         // column (ignored on the very first child per §3.4).
+        // Once we've reached column_count, forced breaks are ignored and
+        // content packs into the last column.
         let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
-        if has_forced {
+        if has_forced && columns < column_count {
             columns += 1;
             remaining = height;
         }

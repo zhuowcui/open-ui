@@ -102,8 +102,8 @@ fn css_backgrounds_background_attachment_local_hidden() -> Document {
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(173, 216, 230, 255);
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
@@ -867,8 +867,8 @@ fn css_backgrounds_background_clip_padding_box_with_border_radius() -> Document 
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
         doc.node_mut(n2).style.border_top_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.background_clip = BackgroundClip::PaddingBox;
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.append_child(n1, n2);
@@ -881,8 +881,8 @@ fn css_backgrounds_background_clip_padding_box_with_border_radius() -> Document 
         doc.node_mut(n3).style.width = Length::px(144.0);
         doc.node_mut(n3).style.border_top_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n3).style.border_top_right_radius = (30.0_f32, 30.0_f32);
-        doc.node_mut(n3).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (30.0_f32, 30.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
@@ -904,8 +904,8 @@ fn css_backgrounds_background_clip_padding_box_with_border_radius() -> Document 
         doc.node_mut(n5).style.width = Length::px(140.0);
         doc.node_mut(n5).style.border_top_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n5).style.border_top_right_radius = (30.0_f32, 30.0_f32);
-        doc.node_mut(n5).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n5).style.border_bottom_right_radius = (30.0_f32, 30.0_f32);
+        doc.node_mut(n5).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n5).style.background_color = Color::RED;
         doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Div);
@@ -931,8 +931,8 @@ fn css_backgrounds_background_clip_padding_box_with_border_radius() -> Document 
         doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
         doc.node_mut(n6).style.border_top_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n6).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-        doc.node_mut(n6).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n6).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n6).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n6).style.background_clip = BackgroundClip::PaddingBox;
         doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n6).style.left = Length::px(-2.0);
@@ -1498,8 +1498,8 @@ fn css_backgrounds_background_image_centered_with_border_radius() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
     doc.node_mut(n1).style.border_top_left_radius = (5.0_f32, 5.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (5.0_f32, 5.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (5.0_f32, 5.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.display = Display::InlineBlock;
     doc.node_mut(n1).style.height = Length::px(60.0);
@@ -1659,8 +1659,8 @@ fn css_backgrounds_background_image_with_border_radius_fidelity() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.border_top_left_radius = (8.0_f32, 8.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (8.0_f32, 8.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (8.0_f32, 8.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (8.0_f32, 8.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (8.0_f32, 8.0_f32);
     doc.node_mut(n1).style.width = Length::px(256.0);
     doc.node_mut(n1).style.height = Length::px(256.0);
     doc.append_child(vp, n1);
@@ -2341,6 +2341,10 @@ fn css_backgrounds_background_position_subpixel_at_border_tentative() -> Documen
     doc.node_mut(n2).style.left = Length::px(8.0);
     doc.node_mut(n2).style.width = Length::px(150.0);
     doc.node_mut(n2).style.height = Length::px(37.5);
+    doc.node_mut(n2).style.border_top_width = 0;
+    doc.node_mut(n2).style.border_right_width = 0;
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_left_width = 0;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
@@ -5138,6 +5142,10 @@ fn css_backgrounds_background_size_041() -> Document {
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_width = 40;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.width = Length::px(400.0);
     doc.append_child(vp, n1);
@@ -5158,6 +5166,10 @@ fn css_backgrounds_background_size_042() -> Document {
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_width = 40;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.width = Length::px(400.0);
     doc.append_child(vp, n1);
@@ -5178,6 +5190,10 @@ fn css_backgrounds_background_size_043() -> Document {
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_width = 40;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.width = Length::px(400.0);
     doc.append_child(vp, n1);
@@ -5198,6 +5214,10 @@ fn css_backgrounds_background_size_044() -> Document {
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_width = 40;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.width = Length::px(400.0);
     doc.append_child(vp, n1);
@@ -5547,7 +5567,7 @@ fn css_backgrounds_border_bottom_left_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_bottom_left_radius = (48.0_f32, 28.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (20.0_f32, 20.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5597,7 +5617,7 @@ fn css_backgrounds_border_bottom_left_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_bottom_left_radius = (48.0_f32, 14.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (20.0_f32, 10.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5799,6 +5819,7 @@ fn css_backgrounds_border_bottom_left_radius_014() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_bottom_left_radius = (50.0_f32, -25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -5951,7 +5972,7 @@ fn css_backgrounds_border_bottom_right_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_bottom_right_radius = (48.0_f32, 28.0_f32);
+    doc.node_mut(n1).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -6001,7 +6022,7 @@ fn css_backgrounds_border_bottom_right_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_bottom_right_radius = (48.0_f32, 14.0_f32);
+    doc.node_mut(n1).style.border_bottom_right_radius = (20.0_f32, 10.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -6203,6 +6224,7 @@ fn css_backgrounds_border_bottom_right_radius_014() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_bottom_right_radius = (50.0_f32, -25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -6528,8 +6550,8 @@ fn css_backgrounds_border_image_021() -> Document {
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.border_top_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.append_child(n1, n2);
     doc
 }
@@ -8908,8 +8930,8 @@ fn css_backgrounds_border_radius_002() -> Document {
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.border_top_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n4).style.border_top_right_radius = (25.0_f32, 25.0_f32);
-    doc.node_mut(n4).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n4).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -8930,8 +8952,8 @@ fn css_backgrounds_border_radius_002() -> Document {
     doc.node_mut(n5).style.height = Length::px(100.0);
     doc.node_mut(n5).style.border_top_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n5).style.border_top_right_radius = (25.0_f32, 25.0_f32);
-    doc.node_mut(n5).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n5).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n5).style.border_top_left_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n5).style.border_top_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n5).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
@@ -9077,6 +9099,10 @@ fn css_backgrounds_border_radius_004_ref() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (50.0_f32, 25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9095,6 +9121,10 @@ fn css_backgrounds_border_radius_004_ref() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (50.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9128,6 +9158,10 @@ fn css_backgrounds_border_radius_004() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9146,6 +9180,14 @@ fn css_backgrounds_border_radius_004() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (50.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (50.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9179,6 +9221,10 @@ fn css_backgrounds_border_radius_005_ref() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, 20.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (15.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (40.0_f32, 20.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (15.0_f32, 25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9197,6 +9243,10 @@ fn css_backgrounds_border_radius_005_ref() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 20.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (15.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (40.0_f32, 20.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (15.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9230,6 +9280,10 @@ fn css_backgrounds_border_radius_005() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (15.0_f32, 15.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (15.0_f32, 15.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9248,6 +9302,14 @@ fn css_backgrounds_border_radius_005() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (15.0_f32, 15.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (15.0_f32, 15.0_f32);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 20.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (15.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (40.0_f32, 20.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (15.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9281,6 +9343,10 @@ fn css_backgrounds_border_radius_006_ref() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, 20.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (15.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (50.0_f32, 10.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (15.0_f32, 25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9299,6 +9365,10 @@ fn css_backgrounds_border_radius_006_ref() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 20.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (15.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (50.0_f32, 10.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (15.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9332,6 +9402,10 @@ fn css_backgrounds_border_radius_006() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (15.0_f32, 15.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (15.0_f32, 15.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9350,6 +9424,14 @@ fn css_backgrounds_border_radius_006() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (15.0_f32, 15.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (15.0_f32, 15.0_f32);
+    doc.node_mut(n5).style.border_top_left_radius = (50.0_f32, 20.0_f32);
+    doc.node_mut(n5).style.border_top_right_radius = (15.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (50.0_f32, 10.0_f32);
+    doc.node_mut(n5).style.border_bottom_left_radius = (15.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9536,7 +9618,9 @@ fn css_backgrounds_border_radius_009_ref() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n4).style.border_top_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n4).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
@@ -9556,7 +9640,9 @@ fn css_backgrounds_border_radius_009_ref() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n5).style.border_top_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n5).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
@@ -9565,6 +9651,10 @@ fn css_backgrounds_border_radius_009_ref() -> Document {
 // Source: border-radius-009.html
 fn css_backgrounds_border_radius_009() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.border_top_left_radius = (20.0_f32, 20.0_f32);
+    doc.node_mut(vp).style.border_top_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(vp).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
+    doc.node_mut(vp).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
@@ -9609,7 +9699,9 @@ fn css_backgrounds_border_radius_009() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n5).style.border_top_right_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n5).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n5).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
@@ -9644,6 +9736,7 @@ fn css_backgrounds_border_radius_010_ref() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (20.0_f32, 25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -9662,6 +9755,7 @@ fn css_backgrounds_border_radius_010_ref() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (20.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9669,6 +9763,7 @@ fn css_backgrounds_border_radius_010_ref() -> Document {
 // Source: border-radius-010.html
 fn css_backgrounds_border_radius_010() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.border_top_left_radius = (20.0_f32, 25.0_f32);
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
@@ -9713,6 +9808,7 @@ fn css_backgrounds_border_radius_010() -> Document {
     doc.node_mut(n5).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n5).style.width = Length::px(200.0);
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.border_top_left_radius = (20.0_f32, 25.0_f32);
     doc.append_child(vp, n5);
     doc
 }
@@ -9791,8 +9887,8 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_right_style = BorderStyle::None;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -9810,8 +9906,8 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
         doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n4).style.border_top_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n4).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-        doc.node_mut(n4).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n4).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n4).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n4).style.border_left_style = BorderStyle::None;
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Span);
@@ -9840,8 +9936,8 @@ fn css_backgrounds_border_radius_012() -> Document {
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_top_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.display = Display::InlineBlock;
@@ -9869,8 +9965,8 @@ fn css_backgrounds_border_radius_dynamic_from_no_radius_ref() -> Document {
         doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.border_top_left_radius = (99.0_f32, 99.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (99.0_f32, 99.0_f32);
-        doc.node_mut(n2).style.border_bottom_left_radius = (99.0_f32, 99.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (99.0_f32, 99.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (99.0_f32, 99.0_f32);
         doc.append_child(n1, n2);
     doc
 }
@@ -9909,6 +10005,10 @@ fn css_backgrounds_border_radius_horizontal_value_is_zero() -> Document {
     doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n2).style.border_top_left_radius = (0.0_f32, 0.0_f32);
+    doc.node_mut(n2).style.border_top_right_radius = (0.0_f32, 0.0_f32);
+    doc.node_mut(n2).style.border_bottom_right_radius = (0.0_f32, 0.0_f32);
+    doc.node_mut(n2).style.border_bottom_left_radius = (0.0_f32, 0.0_f32);
     doc.append_child(vp, n2);
     doc
 }
@@ -9925,8 +10025,8 @@ fn css_backgrounds_border_radius_overflow_hidden() -> Document {
         doc.node_mut(n2).style.position = Position::Absolute;
         doc.node_mut(n2).style.border_top_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n2).style.border_top_right_radius = (30.0_f32, 30.0_f32);
-        doc.node_mut(n2).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (30.0_f32, 30.0_f32);
+        doc.node_mut(n2).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n2).style.background_color = Color::RED;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
@@ -9945,8 +10045,8 @@ fn css_backgrounds_border_radius_overflow_hidden() -> Document {
         doc.node_mut(n4).style.position = Position::Absolute;
         doc.node_mut(n4).style.border_top_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n4).style.border_top_right_radius = (30.0_f32, 30.0_f32);
-        doc.node_mut(n4).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n4).style.border_bottom_right_radius = (30.0_f32, 30.0_f32);
+        doc.node_mut(n4).style.border_bottom_left_radius = (30.0_f32, 30.0_f32);
         doc.node_mut(n4).style.width = Length::px(104.0);
         doc.node_mut(n4).style.height = Length::px(104.0);
         doc.node_mut(n4).style.left = Length::px(-2.0);
@@ -9970,6 +10070,10 @@ fn css_backgrounds_border_radius_shorthand_002_ref() -> Document {
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.border_top_left_radius = (29.0_f32, 5.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (43.0_f32, 11.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (13.0_f32, 17.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (19.0_f32, 23.0_f32);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
@@ -9991,6 +10095,10 @@ fn css_backgrounds_border_radius_shorthand_002() -> Document {
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.border_top_left_radius = (29.0_f32, 29.0_f32);
+    doc.node_mut(n4).style.border_top_right_radius = (43.0_f32, 43.0_f32);
+    doc.node_mut(n4).style.border_bottom_right_radius = (19.0_f32, 19.0_f32);
+    doc.node_mut(n4).style.border_bottom_left_radius = (13.0_f32, 13.0_f32);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
@@ -10242,7 +10350,7 @@ fn css_backgrounds_border_top_left_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_top_left_radius = (48.0_f32, 28.0_f32);
+    doc.node_mut(n1).style.border_top_left_radius = (20.0_f32, 20.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10292,7 +10400,7 @@ fn css_backgrounds_border_top_left_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_top_left_radius = (48.0_f32, 14.0_f32);
+    doc.node_mut(n1).style.border_top_left_radius = (20.0_f32, 10.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10494,6 +10602,7 @@ fn css_backgrounds_border_top_left_radius_014() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_left_radius = (50.0_f32, -25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -10646,7 +10755,7 @@ fn css_backgrounds_border_top_right_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_top_right_radius = (48.0_f32, 28.0_f32);
+    doc.node_mut(n1).style.border_top_right_radius = (20.0_f32, 20.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10696,7 +10805,7 @@ fn css_backgrounds_border_top_right_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
-    doc.node_mut(n1).style.border_top_right_radius = (48.0_f32, 14.0_f32);
+    doc.node_mut(n1).style.border_top_right_radius = (20.0_f32, 10.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10898,6 +11007,7 @@ fn css_backgrounds_border_top_right_radius_014() -> Document {
     doc.node_mut(n4).style.background_color = Color::from_rgba8(221, 221, 221, 255);
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.border_top_right_radius = (50.0_f32, -25.0_f32);
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -11469,8 +11579,8 @@ fn css_backgrounds_box_shadow_border_radius_001() -> Document {
     doc.node_mut(n1).style.background_color = Color::BLACK;
     doc.node_mut(n1).style.border_top_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (50.0_f32, 50.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.height = Length::px(2.0);
     doc.node_mut(n1).style.margin_top = Length::px(157.0);
     doc.node_mut(n1).style.margin_right = Length::px(149.0);
@@ -12073,8 +12183,8 @@ fn css_backgrounds_css_border_radius_001() -> Document {
         doc.node_mut(n3).style.height = Length::px(100.0);
         doc.node_mut(n3).style.border_top_left_radius = (50.0_f32, 50.0_f32);
         doc.node_mut(n3).style.border_top_right_radius = (50.0_f32, 50.0_f32);
-        doc.node_mut(n3).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
         doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 255, 0, 255);
         doc.append_child(n1, n3);
     doc
@@ -13051,6 +13161,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break_ref() -
     doc.node_mut(n1).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n1).style.margin_left = Length::px(20.0);
     doc.node_mut(n1).style.font_size = 32.0;
+    doc.node_mut(n1).style.line_height = LineHeight::Length(48.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.border_top_width = 10;
@@ -13074,6 +13185,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break_ref() -
     doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n3).style.margin_left = Length::px(20.0);
     doc.node_mut(n3).style.font_size = 32.0;
+    doc.node_mut(n3).style.line_height = LineHeight::Length(48.0);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.border_top_width = 10;
@@ -13103,6 +13215,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break() -> Do
     doc.node_mut(n1).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n1).style.margin_left = Length::px(20.0);
     doc.node_mut(n1).style.font_size = 32.0;
+    doc.node_mut(n1).style.line_height = LineHeight::Length(48.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.border_top_width = 10;
@@ -13126,6 +13239,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break() -> Do
     doc.node_mut(n3).style.margin_bottom = Length::px(20.0);
     doc.node_mut(n3).style.margin_left = Length::px(20.0);
     doc.node_mut(n3).style.font_size = 32.0;
+    doc.node_mut(n3).style.line_height = LineHeight::Length(48.0);
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.border_top_width = 10;
@@ -13252,8 +13366,8 @@ fn css_backgrounds_background_clip_clip_border_area_ref() -> Document {
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.node_mut(n2).style.border_top_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-    doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::InlineBlock;
@@ -13406,8 +13520,8 @@ fn css_backgrounds_background_clip_clip_border_area() -> Document {
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
     doc.node_mut(n2).style.border_top_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
-    doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::InlineBlock;
@@ -13737,8 +13851,8 @@ fn css_backgrounds_background_clip_clip_border_box_with_radius() -> Document {
         doc.node_mut(n3).style.background_clip = BackgroundClip::BorderBox;
         doc.node_mut(n3).style.border_top_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n3).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-        doc.node_mut(n3).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -13769,8 +13883,8 @@ fn css_backgrounds_background_clip_clip_border_box_with_radius() -> Document {
         doc.node_mut(n4).style.background_clip = BackgroundClip::BorderBox;
         doc.node_mut(n4).style.border_top_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n4).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-        doc.node_mut(n4).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n4).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+        doc.node_mut(n4).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.append_child(n2, n4);
     doc
 }
@@ -14085,8 +14199,8 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
         doc.node_mut(n3).style.background_clip = BackgroundClip::ContentBox;
         doc.node_mut(n3).style.border_top_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n3).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-        doc.node_mut(n3).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -14117,8 +14231,8 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
         doc.node_mut(n4).style.background_clip = BackgroundClip::ContentBox;
         doc.node_mut(n4).style.border_top_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n4).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-        doc.node_mut(n4).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n4).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+        doc.node_mut(n4).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.append_child(n2, n4);
     doc
 }
@@ -14433,8 +14547,8 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
         doc.node_mut(n3).style.background_clip = BackgroundClip::PaddingBox;
         doc.node_mut(n3).style.border_top_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n3).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-        doc.node_mut(n3).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+        doc.node_mut(n3).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -14465,8 +14579,8 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
         doc.node_mut(n4).style.background_clip = BackgroundClip::PaddingBox;
         doc.node_mut(n4).style.border_top_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n4).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-        doc.node_mut(n4).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.node_mut(n4).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+        doc.node_mut(n4).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
         doc.append_child(n2, n4);
     doc
 }
@@ -14744,16 +14858,19 @@ fn css_backgrounds_background_clip_clip_text_text_decorations_ref() -> Document 
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.line_height = LineHeight::Length(80.0);
     doc.node_mut(n1).style.font_size = 40.0;
     doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.line_height = LineHeight::Length(80.0);
     doc.node_mut(n2).style.font_size = 40.0;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.line_height = LineHeight::Length(80.0);
     doc.node_mut(n3).style.font_size = 40.0;
     doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n3);
@@ -14765,18 +14882,21 @@ fn css_backgrounds_background_clip_clip_text_text_decorations() -> Document {
     let (mut doc, vp) = base_doc();
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.line_height = LineHeight::Length(80.0);
     doc.node_mut(n1).style.font_size = 40.0;
     doc.node_mut(n1).style.color = Color::TRANSPARENT;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.line_height = LineHeight::Length(80.0);
     doc.node_mut(n2).style.font_size = 40.0;
     doc.node_mut(n2).style.color = Color::TRANSPARENT;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.line_height = LineHeight::Length(80.0);
     doc.node_mut(n3).style.font_size = 40.0;
     doc.node_mut(n3).style.color = Color::TRANSPARENT;
     doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
@@ -14911,8 +15031,8 @@ fn css_backgrounds_background_origin_origin_border_box_with_radius() -> Document
     doc.node_mut(n1).style.margin_top = Length::px(8.0);
     doc.node_mut(n1).style.border_top_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -14937,8 +15057,8 @@ fn css_backgrounds_background_origin_origin_border_box_with_radius() -> Document
     doc.node_mut(n2).style.margin_top = Length::px(8.0);
     doc.node_mut(n2).style.border_top_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n2).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-    doc.node_mut(n2).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n2).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+    doc.node_mut(n2).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.append_child(vp, n2);
     doc
 }
@@ -15097,8 +15217,8 @@ fn css_backgrounds_background_origin_origin_content_box_with_radius() -> Documen
     doc.node_mut(n1).style.margin_top = Length::px(8.0);
     doc.node_mut(n1).style.border_top_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -15123,8 +15243,8 @@ fn css_backgrounds_background_origin_origin_content_box_with_radius() -> Documen
     doc.node_mut(n2).style.margin_top = Length::px(8.0);
     doc.node_mut(n2).style.border_top_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n2).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-    doc.node_mut(n2).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n2).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+    doc.node_mut(n2).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.append_child(vp, n2);
     doc
 }
@@ -15283,8 +15403,8 @@ fn css_backgrounds_background_origin_origin_padding_box_with_radius() -> Documen
     doc.node_mut(n1).style.margin_top = Length::px(8.0);
     doc.node_mut(n1).style.border_top_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -15309,8 +15429,8 @@ fn css_backgrounds_background_origin_origin_padding_box_with_radius() -> Documen
     doc.node_mut(n2).style.margin_top = Length::px(8.0);
     doc.node_mut(n2).style.border_top_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n2).style.border_top_right_radius = (60.0_f32, 60.0_f32);
-    doc.node_mut(n2).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n2).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
+    doc.node_mut(n2).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
     doc.append_child(vp, n2);
     doc
 }
@@ -15726,8 +15846,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_4
     doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
     doc.node_mut(n1).style.border_top_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (50.0_f32, 50.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -15760,8 +15880,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_6
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.border_top_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (50.0_f32, 50.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -15852,8 +15972,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_image_4
     doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
     doc.node_mut(n1).style.border_top_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (50.0_f32, 50.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -15885,8 +16005,8 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_image_6
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.border_top_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (50.0_f32, 50.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;

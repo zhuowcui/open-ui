@@ -105800,6 +105800,7 @@ fn css_flexbox_flexbox_justifycontent_stretch() -> Document {
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.display = Display::Flex;
+    doc.node_mut(n1).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -107937,8 +107938,8 @@ fn css_flexbox_flexible_order() -> Document {
     doc.node_mut(n1).style.background_color = Color::from_rgba8(204, 204, 204, 255);
     doc.node_mut(n1).style.border_top_left_radius = (5.0_f32, 5.0_f32);
     doc.node_mut(n1).style.border_top_right_radius = (5.0_f32, 5.0_f32);
-    doc.node_mut(n1).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (5.0_f32, 5.0_f32);
+    doc.node_mut(n1).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
     doc.node_mut(n1).style.width = Length::px(600.0);
     doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.flex_direction = FlexDirection::Row;
@@ -114049,6 +114050,7 @@ fn css_flexbox_abspos_flex_abspos_staticpos_fallback_justify_content_001() -> Do
         doc.node_mut(n8).style.float = Float::Left;
         doc.node_mut(n8).style.height = Length::px(10.0);
         doc.node_mut(n8).style.width = Length::px(16.0);
+        doc.node_mut(n8).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -114187,6 +114189,7 @@ fn css_flexbox_abspos_flex_abspos_staticpos_fallback_justify_content_001() -> Do
         doc.node_mut(n17).style.float = Float::Left;
         doc.node_mut(n17).style.height = Length::px(2.0);
         doc.node_mut(n17).style.width = Length::px(4.0);
+        doc.node_mut(n17).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
         doc.append_child(n10, n17);
             let n18 = doc.create_node(ElementTag::Div);
             doc.node_mut(n18).style.display = Display::Block;
