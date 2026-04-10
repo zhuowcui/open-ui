@@ -2977,8 +2977,15 @@ fn layout_multicol(
             let mut col_margins_top: Vec<LayoutUnit> = Vec::new();
             let mut col_margins_bottom: Vec<LayoutUnit> = Vec::new();
             let mut col_avoid_break: Vec<bool> = Vec::new();
+            let mut col_forced_break_before: Vec<bool> = Vec::new();
 
+            let mut prev_break_after_forced_fp = false;
             for info in &children_info[group_start..group_end] {
+                // Compute forced break-before for this child (for balancing).
+                let child_node_id = info.id;
+                let prop_bb = propagated_break_before(doc, child_node_id);
+                let forced = prop_bb.is_forced() || prev_break_after_forced_fp;
+
                 if let Some(ref split) = info.split_portion {
                     // Split portion: lay out the portion's children and
                     // create a wrapper fragment with the container's styling.
@@ -3036,7 +3043,11 @@ fn layout_multicol(
                     col_margins_top.push(child_margin_top);
                     col_margins_bottom.push(child_margin_bottom);
                     col_avoid_break.push(container_style.break_inside.is_avoid());
+                    col_forced_break_before.push(forced);
                     col_fragments.push(wrapper);
+
+                    let prop_ba = propagated_break_after(doc, child_node_id);
+                    prev_break_after_forced_fp = prop_ba.is_forced();
                 } else {
                     let child_style = &doc.node(info.id).style;
                     let child_margin_top = resolve_margin_or_padding(
@@ -3055,7 +3066,11 @@ fn layout_multicol(
                     col_margins_top.push(child_margin_top);
                     col_margins_bottom.push(child_margin_bottom);
                     col_avoid_break.push(doc.node(info.id).style.break_inside.is_avoid());
+                    col_forced_break_before.push(forced);
                     col_fragments.push(child_frag);
+
+                    let prop_ba = propagated_break_after(doc, child_node_id);
+                    prev_break_after_forced_fp = prop_ba.is_forced();
                 }
             }
 
@@ -3093,11 +3108,11 @@ fn layout_multicol(
                 && resolved_max_height.is_none()
             {
                 // Force balance before spanner per §7.2
-                balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max)
+                balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
             } else {
                 match algo.column_fill {
                     ColumnFill::Balance | ColumnFill::BalanceAll => {
-                        balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max)
+                        balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
                     }
                     ColumnFill::Auto => {
                         if has_explicit_height {
@@ -3155,8 +3170,14 @@ fn layout_multicol(
                 col_margins_top.clear();
                 col_margins_bottom.clear();
                 col_avoid_break.clear();
+                col_forced_break_before.clear();
 
+                let mut prev_break_after_forced_rp = false;
                 for info in &children_info[group_start..group_end] {
+                    let child_node_id = info.id;
+                    let prop_bb = propagated_break_before(doc, child_node_id);
+                    let forced = prop_bb.is_forced() || prev_break_after_forced_rp;
+
                     if info.split_portion.is_some() {
                         // Split portions don't need relayout (they have
                         // fixed heights computed during extraction).
@@ -3214,7 +3235,11 @@ fn layout_multicol(
                         col_margins_top.push(child_margin_top);
                         col_margins_bottom.push(child_margin_bottom);
                         col_avoid_break.push(container_style.break_inside.is_avoid());
+                        col_forced_break_before.push(forced);
                         col_fragments.push(wrapper);
+
+                        let prop_ba = propagated_break_after(doc, child_node_id);
+                        prev_break_after_forced_rp = prop_ba.is_forced();
                     } else {
                         let child_style = &doc.node(info.id).style;
                         let child_margin_top = resolve_margin_or_padding(
@@ -3233,7 +3258,11 @@ fn layout_multicol(
                         col_margins_top.push(child_margin_top);
                         col_margins_bottom.push(child_margin_bottom);
                         col_avoid_break.push(doc.node(info.id).style.break_inside.is_avoid());
+                        col_forced_break_before.push(forced);
                         col_fragments.push(child_frag);
+
+                        let prop_ba = propagated_break_after(doc, child_node_id);
+                        prev_break_after_forced_rp = prop_ba.is_forced();
                     }
                 }
 
