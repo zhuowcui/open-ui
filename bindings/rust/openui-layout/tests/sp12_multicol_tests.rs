@@ -134,7 +134,7 @@ fn column_positions_with_gap() {
 #[test]
 fn balance_equal_content() {
     let children = vec![lu(100), lu(100), lu(100)];
-    let h = balance_columns(&children, &vec![false; children.len()], 3, lu(1000));
+    let h = balance_columns(&children, &vec![false; children.len()], 3, lu(1000), &vec![false; children.len()]);
     assert_eq!(h, lu(100));
 }
 
@@ -144,7 +144,7 @@ fn balance_equal_content() {
 fn balance_uneven_content() {
     // Total = 230. 2 columns. With fragmentation-aware balance: 115.
     let children = vec![lu(50), lu(80), lu(60), lu(40)];
-    let h = balance_columns(&children, &vec![false; children.len()], 2, lu(1000));
+    let h = balance_columns(&children, &vec![false; children.len()], 2, lu(1000), &vec![false; children.len()]);
     assert_eq!(h, lu(115));
 }
 
@@ -234,13 +234,13 @@ fn column_rule_positions() {
 fn balance_single_column() {
     // column_count=1: should return total height.
     let children = vec![lu(100), lu(200)];
-    let h = balance_columns(&children, &vec![false; children.len()], 1, lu(1000));
+    let h = balance_columns(&children, &vec![false; children.len()], 1, lu(1000), &vec![false; children.len()]);
     assert_eq!(h, lu(300));
 }
 
 #[test]
 fn balance_empty_content() {
-    let h = balance_columns(&[], &vec![false; 1], 3, lu(1000));
+    let h = balance_columns(&[], &vec![false; 1], 3, lu(1000), &vec![false; 1]);
     assert_eq!(h, lu(0));
 }
 

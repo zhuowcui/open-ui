@@ -3104,10 +3104,9 @@ fn layout_multicol(
 
             let column_height = if has_spanner_after
                 && algo.column_fill == ColumnFill::Auto
-                && !has_explicit_height
-                && resolved_max_height.is_none()
             {
-                // Force balance before spanner per §7.2
+                // Force balance before spanner per §7.2, regardless of
+                // whether the container has a definite height/max-height.
                 balance_columns(&effective_sizes, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
             } else {
                 match algo.column_fill {
@@ -3500,9 +3499,11 @@ fn layout_multicol(
             max_col_content = max_col_content.max_of(col_block_offset);
             // For auto-height containers, use the balanced column_height (which
             // IS the desired visual height) for balanced columns. For
-            // column-fill:auto, use actual content height.
+            // column-fill:auto without a spanner, use actual content height.
+            // §7.2: before a spanner, content is always balanced, so use
+            // the balanced column_height even with column-fill:auto.
             let actual_group_height = if style.height.is_auto() {
-                if algo.column_fill == ColumnFill::Auto {
+                if algo.column_fill == ColumnFill::Auto && !has_spanner_after {
                     max_col_content
                 } else {
                     column_height
