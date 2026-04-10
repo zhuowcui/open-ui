@@ -54,6 +54,11 @@ pub struct ComputedStyle {
     /// CSS `overflow-y`. Initial: `visible`.
     pub overflow_y: Overflow,
 
+    /// CSS `overflow-clip-margin`. Initial: `0.0` (px).
+    /// Specifies how far content may overflow before being clipped when
+    /// `overflow: clip` is used. Only applies to `overflow: clip`.
+    pub overflow_clip_margin: f32,
+
     /// CSS `box-sizing`. Initial: `content-box`.
     pub box_sizing: BoxSizing,
 
@@ -536,6 +541,7 @@ impl ComputedStyle {
             clear: Clear::INITIAL,           // none
             overflow_x: Overflow::INITIAL,   // visible
             overflow_y: Overflow::INITIAL,   // visible
+            overflow_clip_margin: 0.0,
             box_sizing: BoxSizing::INITIAL,  // content-box
             visibility: Visibility::INITIAL, // visible
             direction: Direction::INITIAL,   // ltr
@@ -842,6 +848,7 @@ mod tests {
 
         // Overflow
         assert_eq!(s.overflow_x, Overflow::Visible);
+        assert_eq!(s.overflow_clip_margin, 0.0);
 
         // Flexbox — container properties
         assert_eq!(s.flex_direction, FlexDirection::Row);

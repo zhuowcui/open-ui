@@ -67,7 +67,7 @@ SUPPORTED_PROPERTIES = {
     # Sizing
     'width', 'height', 'min-width', 'max-width', 'min-height', 'max-height',
     # Overflow
-    'overflow', 'overflow-x', 'overflow-y',
+    'overflow', 'overflow-x', 'overflow-y', 'overflow-clip-margin',
     # Visual
     'background', 'background-color', 'background-clip', 'color', 'opacity', 'visibility',
     # Flex
@@ -142,7 +142,6 @@ IGNORED_PROPERTIES = {
     'print-color-adjust', 'image-rendering',
     # Scroll
     'scrollbar-gutter', 'scrollbar-width',
-    'overflow-clip-margin',
     # Ruby
     'ruby-position',
 }
@@ -1313,6 +1312,15 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         if val in mapping:
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {mapping[val]};"
+
+    # ── overflow-clip-margin ──
+    if prop == 'overflow-clip-margin':
+        # Accepts <length> values (e.g. 10px, 20px). Parse to raw f32 pixels.
+        m = re.match(r'^(-?[\d.]+)px$', val)
+        if m:
+            return f"{s}.overflow_clip_margin = {float(m.group(1))};"
+        if val == '0':
+            return f"{s}.overflow_clip_margin = 0.0;"
 
     # ── background-color ──
     if prop == 'background-color':

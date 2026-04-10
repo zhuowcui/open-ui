@@ -221,6 +221,23 @@ fn paint_with_overflow_clip(
     style: &ComputedStyle,
 ) {
     let (clip_x, clip_y, clip_w, clip_h) = compute_clip_rect(fragment, offset);
+
+    // Per CSS Overflow 3, when overflow is `clip`, expand the clip rect
+    // outward by `overflow-clip-margin` on all sides.
+    let margin = style.overflow_clip_margin;
+    let (clip_x, clip_y, clip_w, clip_h) = if margin != 0.0
+        && (style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip)
+    {
+        (
+            clip_x - margin,
+            clip_y - margin,
+            clip_w + margin * 2.0,
+            clip_h + margin * 2.0,
+        )
+    } else {
+        (clip_x, clip_y, clip_w, clip_h)
+    };
+
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
 
     canvas.save();
