@@ -187,6 +187,14 @@ fn layout_out_of_flow_child(
                 style, cb_width, static_left, &border, &padding,
                 known_bb_width, cb_direction, sp_direction,
             )
+        } else if style.width.is_fit_content() && !style.width.is_fit_content_function() {
+            // Bare fit-content keyword: use shrink-to-fit (max-content) as a
+            // known width so auto margins and insets work correctly.
+            let known_bb_width = intrinsic.max_content_inline_size;
+            resolve_horizontal_with_known_width(
+                style, cb_width, static_left, &border, &padding,
+                known_bb_width, cb_direction, sp_direction,
+            )
         } else if style.width.is_fit_content_function() {
             // fit-content(X) functional notation: resolve the argument as a
             // length-percentage, then apply the fit-content formula.
@@ -214,8 +222,10 @@ fn layout_out_of_flow_child(
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
         resolve_vertical(style, cb_width, cb_height, static_top, &border, &padding);
 
-    // Override height for intrinsic keywords (min-content / max-content).
+    // Override height for intrinsic keywords (min-content / max-content / fit-content).
     // These resolve to the element's intrinsic block size (border-box).
+    // Bare fit-content is content-sized (like max-content clamped to available space),
+    // NOT constraint-equation-sized like auto. This ensures margin:auto centering works.
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
         if style.height.is_min_content() || style.height.is_max_content() {
             let known_bb_height = if style.height.is_min_content() {
@@ -223,6 +233,14 @@ fn layout_out_of_flow_child(
             } else {
                 intrinsic.max_content_block_size
             };
+            resolve_vertical_with_known_height(
+                style, cb_width, cb_height, static_top, &border, &padding, known_bb_height,
+            )
+        } else if style.height.is_fit_content() && !style.height.is_fit_content_function() {
+            // Bare fit-content keyword: use max-content size as the known height.
+            // This differs from auto because fit-content doesn't use the constraint
+            // equation even when both top+bottom are specified.
+            let known_bb_height = intrinsic.max_content_block_size;
             resolve_vertical_with_known_height(
                 style, cb_width, cb_height, static_top, &border, &padding, known_bb_height,
             )
