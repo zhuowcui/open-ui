@@ -155,9 +155,35 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             );
             flexer.run();
         } else {
-            // Freeze all items at their hypothetical sizes
+            // CSS Flexbox §9.9.1: For auto-height column flex, each item's
+            // max-content contribution is max(outer max-content size, outer
+            // hypothetical main size). When an item has a definite main-size
+            // property (height for column), its max-content size equals that
+            // resolved height, which may exceed the hypothetical size.
             for &idx in &line.item_indices {
-                flex_items[idx].flexed_content_size = flex_items[idx].hypothetical_content_size;
+                let mut frozen = flex_items[idx].hypothetical_content_size;
+
+                if is_column {
+                    let child_style = &doc.node(flex_items[idx].node_id).style;
+                    let height = &child_style.height;
+                    if !height.is_auto() && !height.is_content_or_intrinsic() {
+                        if height.is_fixed() || !child_percentage_block.is_indefinite() {
+                            let resolved = resolve_length(
+                                height, child_percentage_block,
+                                LayoutUnit::zero(), LayoutUnit::zero(),
+                            );
+                            let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                                (resolved - flex_items[idx].main_axis_border_padding).clamp_negative_to_zero()
+                            } else {
+                                resolved
+                            };
+                            let clamped = flex_items[idx].main_axis_min_max.clamp(content);
+                            frozen = frozen.max_of(clamped);
+                        }
+                    }
+                }
+
+                flex_items[idx].flexed_content_size = frozen;
                 flex_items[idx].state = super::item::FlexerState::Frozen;
             }
         }
