@@ -1040,18 +1040,31 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         is_viewport,
     );
 
-    // ── Fixup: percentage-based relative positioning ─────────────────
+    // -- Fixup: percentage-based relative positioning --
     // During child layout, percentage top/bottom resolved against
-    // space.available_block_size. Now that the final height is known,
-    // correct any percentage offsets to use the actual content height.
-    // CSS 2.1 §9.4.3: percentage offsets for position:relative resolve
-    // against the containing block's height (= parent content height).
+    // space.available_block_size which may differ from the final height.
+    //
+    // CSS 2.1 section 10.8: percentage top/bottom on position:relative resolves
+    // against the containing block's height (content edge per section 10.1).
+    // If the CB height is not explicitly specified (auto), percentage = 0.
     {
         let actual_content_height = (resolved_block_size - border_padding_block).clamp_negative_to_zero();
         let old_basis = space.available_block_size;
-        // Only correct if the basis changed (indefinite → definite, or different value)
-        let needs_fixup = old_basis.is_indefinite()
-            || old_basis.raw() != actual_content_height.raw();
+        let height_is_explicit = has_non_auto_height || is_viewport;
+
+        // Target: explicit height -> actual content height; auto -> INDEFINITE (pct=0)
+        let target_basis = if height_is_explicit {
+            actual_content_height
+        } else {
+            openui_geometry::INDEFINITE_SIZE
+        };
+        let needs_fixup = if height_is_explicit {
+            old_basis.is_indefinite() || old_basis.raw() != target_basis.raw()
+        } else {
+            // Auto height: only need fixup if old basis was definite
+            // (percentage was incorrectly applied against it).
+            !old_basis.is_indefinite()
+        };
         if needs_fixup {
             for frag in &mut child_fragments {
                 if frag.node_id == openui_dom::NodeId::NONE {
@@ -1069,7 +1082,6 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     continue;
                 }
                 let zero = LayoutUnit::zero();
-                // Undo the offset that was applied during layout with the old basis
                 let old_offset = if has_pct_top {
                     if old_basis.is_indefinite() { zero }
                     else { resolve_length(&child_style.top, old_basis, zero, zero) }
@@ -1077,16 +1089,18 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     if old_basis.is_indefinite() { zero }
                     else { -resolve_length(&child_style.bottom, old_basis, zero, zero) }
                 };
-                // Compute the correct offset with the actual content height
                 let new_offset = if has_pct_top {
-                    resolve_length(&child_style.top, actual_content_height, zero, zero)
+                    if target_basis.is_indefinite() { zero }
+                    else { resolve_length(&child_style.top, target_basis, zero, zero) }
                 } else {
-                    -resolve_length(&child_style.bottom, actual_content_height, zero, zero)
+                    if target_basis.is_indefinite() { zero }
+                    else { -resolve_length(&child_style.bottom, target_basis, zero, zero) }
                 };
                 frag.offset.top = frag.offset.top - old_offset + new_offset;
             }
         }
     }
+
 
     // ── Out-of-flow layout ───────────────────────────────────────────
     // Layout absolutely and fixed positioned children that were collected

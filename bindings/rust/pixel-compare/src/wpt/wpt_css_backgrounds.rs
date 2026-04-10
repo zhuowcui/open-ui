@@ -5522,6 +5522,7 @@ fn css_backgrounds_border_bottom_left_radius_004_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_left_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5546,6 +5547,7 @@ fn css_backgrounds_border_bottom_left_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_left_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5570,6 +5572,7 @@ fn css_backgrounds_border_bottom_left_radius_005_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_left_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5594,6 +5597,7 @@ fn css_backgrounds_border_bottom_left_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_left_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5922,6 +5926,7 @@ fn css_backgrounds_border_bottom_right_radius_004_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_right_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5946,6 +5951,7 @@ fn css_backgrounds_border_bottom_right_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_right_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5970,6 +5976,7 @@ fn css_backgrounds_border_bottom_right_radius_005_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_right_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -5994,6 +6001,7 @@ fn css_backgrounds_border_bottom_right_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_bottom_right_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10209,6 +10217,7 @@ fn css_backgrounds_border_top_left_radius_004_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_left_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10233,6 +10242,7 @@ fn css_backgrounds_border_top_left_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_left_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10257,6 +10267,7 @@ fn css_backgrounds_border_top_left_radius_005_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_left_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10281,6 +10292,7 @@ fn css_backgrounds_border_top_left_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_left_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10609,6 +10621,7 @@ fn css_backgrounds_border_top_right_radius_004_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_right_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10633,6 +10646,7 @@ fn css_backgrounds_border_top_right_radius_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_right_radius = (48.0_f32, 28.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10657,6 +10671,7 @@ fn css_backgrounds_border_top_right_radius_005_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_right_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }
@@ -10681,6 +10696,7 @@ fn css_backgrounds_border_top_right_radius_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 128, 255));
+    doc.node_mut(n1).style.border_top_right_radius = (48.0_f32, 14.0_f32);
     doc.append_child(vp, n1);
     doc
 }

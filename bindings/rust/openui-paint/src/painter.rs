@@ -531,7 +531,53 @@ fn paint_borders(
             None::<&ColorSpace>,
         );
 
-        canvas.draw_rect(stroke_rect, &paint);
+        if style.has_border_radius() {
+            // Fill the border ring between the outer and inner rounded rects.
+            // Uses a single path with outer contour CW and inner contour CCW
+            // (even-odd fill) to avoid AA gaps between separate clip operations.
+            let mut fill_paint = Paint::default();
+            fill_paint.set_style(PaintStyle::Fill);
+            fill_paint.set_anti_alias(true);
+            let resolved = style.border_top_color.resolve(inherited_color);
+            fill_paint.set_color4f(
+                Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
+                None::<&ColorSpace>,
+            );
+
+            let outer_radii = [
+                Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
+                Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
+                Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
+                Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
+            ];
+            let outer_rrect = RRect::new_rect_radii(
+                Rect::from_xywh(x, y, w, h), &outer_radii,
+            );
+
+            let inner_rect = Rect::from_xywh(
+                x + bt, y + bt,
+                (w - bt - bt).max(0.0), (h - bt - bt).max(0.0),
+            );
+            let inner_radii = [
+                Point::new((style.border_top_left_radius.0 - bt).max(0.0),
+                           (style.border_top_left_radius.1 - bt).max(0.0)),
+                Point::new((style.border_top_right_radius.0 - bt).max(0.0),
+                           (style.border_top_right_radius.1 - bt).max(0.0)),
+                Point::new((style.border_bottom_right_radius.0 - bt).max(0.0),
+                           (style.border_bottom_right_radius.1 - bt).max(0.0)),
+                Point::new((style.border_bottom_left_radius.0 - bt).max(0.0),
+                           (style.border_bottom_left_radius.1 - bt).max(0.0)),
+            ];
+            let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
+
+            let mut ring = Path::new();
+            ring.add_rrect(outer_rrect, None);
+            ring.add_rrect(inner_rrect, None);
+            ring.set_fill_type(skia_safe::PathFillType::EvenOdd);
+            canvas.draw_path(&ring, &fill_paint);
+        } else {
+            canvas.draw_rect(stroke_rect, &paint);
+        }
     } else {
         // Per-side border painting using trapezoid polygons.
         // Each side is drawn as a 4-point polygon with diagonal corner joins

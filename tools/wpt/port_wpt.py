@@ -1274,11 +1274,28 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     if prop in ('border-top-left-radius', 'border-top-right-radius',
                 'border-bottom-left-radius', 'border-bottom-right-radius'):
-        m = re.match(r'^(-?[\d.]+)px$', val.strip())
-        if m:
-            v = float(m.group(1))
-            rust_prop = prop.replace('-', '_')
-            return f"{s}.{rust_prop} = ({v}_f32, {v}_f32);"
+        parts = val.strip().split()
+        def _parse_radius_component(token):
+            m = re.match(r'^(-?[\d.]+)(px|em|rem|%)$', token)
+            if not m:
+                return None
+            num = float(m.group(1))
+            unit = m.group(2)
+            if unit in ('em', 'rem'):
+                num = num * font_size
+            # For %, store as-is — painter resolves against border-box
+            return num
+        if len(parts) == 1:
+            v = _parse_radius_component(parts[0])
+            if v is not None:
+                rust_prop = prop.replace('-', '_')
+                return f"{s}.{rust_prop} = ({v}_f32, {v}_f32);"
+        elif len(parts) == 2:
+            vx = _parse_radius_component(parts[0])
+            vy = _parse_radius_component(parts[1])
+            if vx is not None and vy is not None:
+                rust_prop = prop.replace('-', '_')
+                return f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);"
 
     # ── box-sizing ──
     if prop == 'box-sizing':
