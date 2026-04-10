@@ -801,8 +801,15 @@ impl<'a> InlineItemsBuilder<'a> {
         self.text.push('\u{FFFC}');
         let end = self.text.len();
 
-        // Compute intrinsic inline size by examining children.
-        let intrinsic = self.compute_intrinsic_inline_size(node_id);
+        // For flex/grid containers, use the proper intrinsic sizing algorithm
+        // which handles aspect-ratio, flex-basis, definite cross sizes, etc.
+        let intrinsic = if style.display.is_flex() {
+            let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
+            let max_w = sizes.max_content_inline_size.to_f32();
+            if max_w > 0.0 { Some(max_w) } else { self.compute_intrinsic_inline_size(node_id) }
+        } else {
+            self.compute_intrinsic_inline_size(node_id)
+        };
 
         self.items.push(InlineItem {
             item_type: InlineItemType::AtomicInline,

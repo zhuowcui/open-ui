@@ -258,6 +258,25 @@ fn compute_flex_intrinsic_sizes(
     let mut max_cross_min = LayoutUnit::zero();
     let mut max_cross_max = LayoutUnit::zero();
 
+    // Resolve the container's definite cross size (if any) for aspect-ratio children.
+    // Row flex: cross = block (height); Column flex: cross = inline (width).
+    let container_definite_cross = {
+        let cross_prop = if is_column { &style.width } else { &style.height };
+        if !cross_prop.is_auto() && cross_prop.is_fixed() {
+            let val = resolve_length(cross_prop, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero());
+            let content_val = if style.box_sizing == BoxSizing::BorderBox {
+                if is_column {
+                    (val - bp_inline).clamp_negative_to_zero()
+                } else {
+                    (val - bp_block).clamp_negative_to_zero()
+                }
+            } else { val };
+            content_val
+        } else {
+            LayoutUnit::zero()
+        }
+    };
+
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
 
@@ -270,13 +289,63 @@ fn compute_flex_intrinsic_sizes(
         let child_sizes = compute_child_intrinsic_contribution(doc, child_id);
 
         // Determine main-axis and cross-axis contributions
-        let (main_min, main_max, cross_min, cross_max) = if is_column {
+        let (mut main_min, mut main_max, cross_min, cross_max) = if is_column {
             (child_sizes.min_content_block_size, child_sizes.max_content_block_size,
              child_sizes.min_content_inline_size, child_sizes.max_content_inline_size)
         } else {
             (child_sizes.min_content_inline_size, child_sizes.max_content_inline_size,
              child_sizes.min_content_block_size, child_sizes.max_content_block_size)
         };
+
+        // CSS Flexbox §9.9.1: When the flex container has a definite cross size
+        // and a child has aspect-ratio with auto main size, the child's main-axis
+        // contribution should be derived from the definite cross size via AR.
+        // This handles cases like `inline-flex; height:100px` with child `aspect-ratio:1/1`.
+        if let Some(ref ar) = child_style.aspect_ratio {
+            if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                let (cross_size_prop, main_size_prop) = if is_column {
+                    (&child_style.width, &child_style.height)
+                } else {
+                    (&child_style.height, &child_style.width)
+                };
+                // Only apply when cross size is definite (from container or child)
+                // and main size is auto
+                if main_size_prop.is_auto() {
+                    let definite_cross = if !cross_size_prop.is_auto() && cross_size_prop.is_fixed() {
+                        Some(resolve_length(cross_size_prop, LayoutUnit::zero(), LayoutUnit::zero(), LayoutUnit::zero()))
+                    } else if container_definite_cross > LayoutUnit::zero() {
+                        // Container's definite cross size (stretch)
+                        Some(container_definite_cross)
+                    } else {
+                        None
+                    };
+                    if let Some(cross_val) = definite_cross {
+                        let child_bp = {
+                            let b = resolve_border(child_style);
+                            let p = resolve_padding(child_style, LayoutUnit::zero());
+                            if is_column {
+                                (b.left + b.right + p.left + p.right,
+                                 b.top + b.bottom + p.top + p.bottom)
+                            } else {
+                                (b.top + b.bottom + p.top + p.bottom,
+                                 b.left + b.right + p.left + p.right)
+                            }
+                        };
+                        let content_cross = (cross_val - child_bp.0).clamp_negative_to_zero();
+                        let transferred = if is_column {
+                            // Column: cross=inline(width), main=block(height)
+                            LayoutUnit::from_f32(content_cross.to_f32() * ar.ratio.1 / ar.ratio.0)
+                        } else {
+                            // Row: cross=block(height), main=inline(width)
+                            LayoutUnit::from_f32(content_cross.to_f32() * ar.ratio.0 / ar.ratio.1)
+                        };
+                        let ar_main = transferred + child_bp.1;
+                        main_min = main_min.max_of(ar_main);
+                        main_max = main_max.max_of(ar_main);
+                    }
+                }
+            }
+        }
 
         // Check for explicit flex-basis
         let flex_basis = &child_style.flex_basis;
