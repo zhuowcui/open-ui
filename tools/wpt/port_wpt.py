@@ -989,7 +989,7 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
 
     # Pseudo-classes/pseudo-elements we can handle
     SAFE_PSEUDO_PATTERN = re.compile(
-        r':(?:root|first-child|last-child|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))'
+        r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))'
     )
 
     # Check CSS rules from <style> blocks for unsupported properties
@@ -2009,10 +2009,13 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
                 sh = float(parts[1])
                 basis = parse_length(parts[2], font_size)
                 if not basis:
-                    # Unitless number as flex-basis → treat as px (browser compat)
+                    # Unitless non-zero number as flex-basis is invalid per CSS spec.
+                    # The entire flex declaration is invalid → skip it.
                     try:
                         bv = float(parts[2])
-                        basis = f'Length::px({bv})'
+                        if bv != 0:
+                            return None  # Invalid declaration
+                        basis = 'Length::px(0.0)'
                     except ValueError:
                         pass
                 if basis:
