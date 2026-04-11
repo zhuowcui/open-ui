@@ -19,10 +19,18 @@ def has_visible_text(html: str) -> bool:
     Uses tag-boundary approach: finds text runs between > and <,
     requires length > 1 and at least one alphanumeric character.
     HTML comments are stripped first to avoid false positives.
+    Also detects <br> tags (line breaks) and <span> (inline elements)
+    which require inline/text layout.
     """
     stripped = strip_style_blocks(html)
     # Strip HTML comments before checking for text
     stripped = re.sub(r"<!--.*?-->", "", stripped, flags=re.DOTALL)
+    # <br> tags require line-break handling (text layout)
+    if re.search(r"<br\s*/?\s*>", stripped, re.IGNORECASE):
+        return True
+    # <span> elements are inline-level and require inline layout
+    if re.search(r"<span[\s>]", stripped, re.IGNORECASE):
+        return True
     for m in re.finditer(r">([^<]+)<", stripped):
         text = m.group(1).strip()
         if text and not text.isspace() and text != "{":
@@ -32,15 +40,21 @@ def has_visible_text(html: str) -> bool:
 
 
 def has_font_metrics(html: str) -> bool:
-    """Detect dependency on font metrics: ch, ex units or font-dependent line-height.
+    """Detect dependency on font metrics: ch, ex units, font shorthand, or
+    font-dependent line-height.
 
     ch and ex genuinely depend on the font's glyph metrics.
+    font: shorthand (e.g., font: 1.25em/1 Ahem) sets both font-size and
+    line-height, requiring font metrics.
     line-height only depends on font metrics when set to 'normal' or a unitless
     number (e.g., '1.5'). Absolute values like '20px' or '0' do NOT depend on
     font metrics.
     """
     # ch/ex units always depend on font glyph metrics
     if re.search(r"[\d.]+(?:ch|ex)\b", html, re.IGNORECASE):
+        return True
+    # font: shorthand sets font-size/family/line-height (requires font metrics)
+    if re.search(r"(?<![a-zA-Z-])font\s*:\s*(?!inherit|initial|unset|revert)", html, re.IGNORECASE):
         return True
     # line-height: normal depends on font metrics
     if re.search(r"line-height\s*:\s*normal", html, re.IGNORECASE):

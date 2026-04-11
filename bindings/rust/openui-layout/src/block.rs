@@ -2773,7 +2773,16 @@ fn layout_multicol(
         portion_height: LayoutUnit,
     }
     let mut children_info: Vec<ChildInfo> = Vec::new();
-    let mut oof_child_ids: Vec<NodeId> = Vec::new();
+    // Track OOF children with their flow index (number of in-flow children
+    // before them) so we can compute correct static positions during column
+    // distribution.  CSS 2.1 §10.3.7: the static position of an abspos
+    // element is where it would have been placed in normal flow.
+    struct OofChild {
+        node_id: NodeId,
+        flow_index: usize,
+    }
+    let mut oof_children: Vec<OofChild> = Vec::new();
+    let mut flow_count: usize = 0;
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.display == Display::None {
@@ -2783,7 +2792,7 @@ fn layout_multicol(
         // as block-level children for column distribution.  Only truly
         // absolutely-positioned / fixed elements are out-of-flow here.
         if child_style.position.is_absolutely_positioned() {
-            oof_child_ids.push(child_id);
+            oof_children.push(OofChild { node_id: child_id, flow_index: flow_count });
             continue;
         }
         if child_style.column_span == ColumnSpan::All {
@@ -2953,6 +2962,10 @@ fn layout_multicol(
 
     // Process children in groups separated by spanners.
     let mut group_start = 0;
+    // Track OOF static positions: for each OOF child, record the column
+    // position where it would have appeared in normal flow.
+    let mut oof_static_positions: Vec<(NodeId, PhysicalOffset)> = Vec::new();
+    let mut global_flow_idx: usize = 0;
     while group_start < children_info.len() {
         // Collect the next group of columnar children (until a spanner or end).
         let mut group_end = group_start;
@@ -3312,6 +3325,17 @@ fn layout_multicol(
             // Track actual tallest column content for auto-height containers.
             let mut max_col_content = LayoutUnit::zero();
 
+            // Record static positions for OOF children that appear before
+            // the first in-flow child in this group.
+            for oof in &oof_children {
+                if oof.flow_index == global_flow_idx {
+                    oof_static_positions.push((oof.node_id, PhysicalOffset::new(
+                        content_edge_x + col_inline_offset_for(0),
+                        content_edge_y + total_block_offset,
+                    )));
+                }
+            }
+
             for (i, child_frag) in col_fragments.into_iter().enumerate() {
                 let child_height = col_block_sizes[i];
                 let child_margin_top = col_margins_top[i];
@@ -3328,14 +3352,18 @@ fn layout_multicol(
                     || prev_break_after_forces;
 
                 if forced_break {
-                    if col_block_offset > LayoutUnit::zero() && col_idx + 1 < resolved.count as usize {
-                        // Column has content and we haven't exceeded column count.
+                    // CSS Multicol §3.4: Forced breaks always create a new
+                    // column, even if that means creating an overflow column
+                    // beyond the declared column-count.  Overflow columns are
+                    // positioned by col_inline_offset_for() which already
+                    // handles indices ≥ positions.len().
+                    if col_block_offset > LayoutUnit::zero() {
                         max_col_content = max_col_content.max_of(col_block_offset);
                         col_idx += 1;
                         col_block_offset = LayoutUnit::zero();
                         col_remaining = column_height;
                         prev_margin_bottom = LayoutUnit::zero();
-                    } else if i > 0 && col_idx + 1 < resolved.count as usize {
+                    } else if i > 0 {
                         // Column is empty but this isn't the first child overall.
                         // A forced break still moves to the next column.
                         col_idx += 1;
@@ -3343,8 +3371,6 @@ fn layout_multicol(
                         col_remaining = column_height;
                         prev_margin_bottom = LayoutUnit::zero();
                     }
-                    // If col_idx + 1 >= resolved.count, we've exhausted all
-                    // columns — excess content packs into the last column.
                 }
 
                 // Compute collapsed margin between siblings.
@@ -3440,6 +3466,13 @@ fn layout_multicol(
                         content_edge_x + col_inline_offset,
                         content_edge_y + total_block_offset + col_block_offset,
                     );
+                    // Apply relative positioning (CSS 2.1 §9.4.3).
+                    crate::relative::apply_relative_offset(
+                        &mut positioned,
+                        child_style,
+                        column_width,
+                        column_height,
+                    );
                     col_block_offset = col_block_offset + child_height;
                     col_remaining = col_remaining - pos_margin - child_height;
                     prev_margin_bottom = child_margin_bottom;
@@ -3488,6 +3521,13 @@ fn layout_multicol(
                                 content_edge_x + col_inline_offset,
                                 content_edge_y + total_block_offset + col_block_offset,
                             );
+                            // Apply relative positioning (CSS 2.1 §9.4.3).
+                            crate::relative::apply_relative_offset(
+                                &mut part,
+                                child_style,
+                                column_width,
+                                column_height,
+                            );
                             // Shift child content up by the amount already consumed
                             if consumed > LayoutUnit::zero() {
                                 for c in &mut part.children {
@@ -3511,6 +3551,18 @@ fn layout_multicol(
                         }
                     }
                     prev_margin_bottom = child_margin_bottom;
+                }
+
+                // After placing this child, record static positions for
+                // any OOF children that appear after it in DOM order.
+                global_flow_idx += 1;
+                for oof in &oof_children {
+                    if oof.flow_index == global_flow_idx {
+                        oof_static_positions.push((oof.node_id, PhysicalOffset::new(
+                            content_edge_x + col_inline_offset_for(col_idx),
+                            content_edge_y + total_block_offset + col_block_offset,
+                        )));
+                    }
                 }
             }
 
@@ -3662,21 +3714,38 @@ fn layout_multicol(
     // These are positioned relative to the multicol container's padding box.
     // CSS 2.1 §10.1: The containing block for abspos is the padding edge of
     // the nearest positioned ancestor.
-    if !oof_child_ids.is_empty() {
+    if !oof_children.is_empty() {
         let cb_height = container_block_size - border.top - border.bottom;
         let cb_width = child_available_inline + padding.left + padding.right;
         let mut oof_candidates: Vec<crate::out_of_flow::OutOfFlowCandidate> = Vec::new();
-        for &child_id in &oof_child_ids {
-            let child_style = doc.node(child_id).style.clone();
+        for (oof_node_id, static_pos) in &oof_static_positions {
+            let child_style = doc.node(*oof_node_id).style.clone();
             oof_candidates.push(crate::out_of_flow::OutOfFlowCandidate {
-                node_id: child_id,
+                node_id: *oof_node_id,
                 style: child_style,
-                static_position: PhysicalOffset::new(content_edge_x, content_edge_y),
+                static_position: *static_pos,
                 containing_block_size: PhysicalSize::new(cb_width, cb_height),
                 containing_block_border: border.clone(),
                 containing_block_direction: style.direction,
                 static_position_direction: style.direction,
             });
+        }
+        // Also handle OOF children that were not matched during distribution
+        // (e.g., the only child is OOF, or OOF appears after all in-flow children
+        // that were in a different group due to spanners).
+        for oof in &oof_children {
+            if !oof_static_positions.iter().any(|(id, _)| *id == oof.node_id) {
+                let child_style = doc.node(oof.node_id).style.clone();
+                oof_candidates.push(crate::out_of_flow::OutOfFlowCandidate {
+                    node_id: oof.node_id,
+                    style: child_style,
+                    static_position: PhysicalOffset::new(content_edge_x, content_edge_y),
+                    containing_block_size: PhysicalSize::new(cb_width, cb_height),
+                    containing_block_border: border.clone(),
+                    containing_block_direction: style.direction,
+                    static_position_direction: style.direction,
+                });
+            }
         }
         let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(doc, &oof_candidates);
         for frag in oof_fragments {
