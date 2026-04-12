@@ -576,16 +576,22 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
                 let bp_inline = b.left + b.right + p.left + p.right;
                 let bp_block = b.top + b.bottom + p.top + p.bottom;
 
-                // min_inline / max_inline are border-box; convert to content-box.
-                let content_min_w = (min_inline - bp_inline).clamp_negative_to_zero();
-                let content_max_w = (max_inline - bp_inline).clamp_negative_to_zero();
-
-                let transferred_min = LayoutUnit::from_f32(
-                    content_min_w.to_f32() * ar.ratio.1 / ar.ratio.0,
-                ) + bp_block;
-                let transferred_max = LayoutUnit::from_f32(
-                    content_max_w.to_f32() * ar.ratio.1 / ar.ratio.0,
-                ) + bp_block;
+                // Transfer inline → block through AR, respecting box-sizing.
+                let (transferred_min, transferred_max) = if child_style.box_sizing == BoxSizing::BorderBox {
+                    // AR applies to border-box: block_bb = inline_bb * h/w
+                    (
+                        LayoutUnit::from_f32(min_inline.to_f32() * ar.ratio.1 / ar.ratio.0),
+                        LayoutUnit::from_f32(max_inline.to_f32() * ar.ratio.1 / ar.ratio.0),
+                    )
+                } else {
+                    // AR applies to content-box: content_h = content_w * h/w, then add bp
+                    let content_min_w = (min_inline - bp_inline).clamp_negative_to_zero();
+                    let content_max_w = (max_inline - bp_inline).clamp_negative_to_zero();
+                    (
+                        LayoutUnit::from_f32(content_min_w.to_f32() * ar.ratio.1 / ar.ratio.0) + bp_block,
+                        LayoutUnit::from_f32(content_max_w.to_f32() * ar.ratio.1 / ar.ratio.0) + bp_block,
+                    )
+                };
 
                 // Transferred size replaces content-based size, then clamp.
                 (
@@ -600,6 +606,42 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
         }
     } else {
         (min_block_size, max_block_size)
+    };
+
+    // CSS Sizing 4 §5.1: Reverse AR transfer — when min-height (or explicit height)
+    // inflates the block size beyond what was derived from inline, transfer back
+    // through AR to inflate inline size. E.g. min-height:100px + AR:1/1 +
+    // box-sizing:border-box → inline border-box should also be 100px.
+    let (min_inline, max_inline) = if let Some(ref ar) = child_style.aspect_ratio {
+        if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 && child_style.width.is_auto() {
+            let b = resolve_border(child_style);
+            let p = resolve_padding(child_style, LayoutUnit::zero());
+            let bp_inline = b.left + b.right + p.left + p.right;
+            let bp_block = b.top + b.bottom + p.top + p.bottom;
+
+            // For box-sizing:border-box, AR operates on border-box dimensions
+            let use_border_box = child_style.box_sizing == BoxSizing::BorderBox;
+
+            let reverse_transfer = |block_bb: LayoutUnit| -> LayoutUnit {
+                if use_border_box {
+                    // AR applies to border-box: inline_bb = block_bb * w/h
+                    LayoutUnit::from_f32(block_bb.to_f32() * ar.ratio.0 / ar.ratio.1)
+                } else {
+                    // AR applies to content-box: content_h → content_w → border-box
+                    let content_h = (block_bb - bp_block).clamp_negative_to_zero();
+                    LayoutUnit::from_f32(content_h.to_f32() * ar.ratio.0 / ar.ratio.1) + bp_inline
+                }
+            };
+
+            let transferred_min = reverse_transfer(min_block_size);
+            let transferred_max = reverse_transfer(max_block_size);
+
+            (min_inline.max_of(transferred_min), max_inline.max_of(transferred_max))
+        } else {
+            (min_inline, max_inline)
+        }
+    } else {
+        (min_inline, max_inline)
     };
 
     IntrinsicSizes {
@@ -1097,15 +1139,18 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
                 &style.min_height, indefinite, zero, zero,
             );
             if min_h_raw > zero && min_bb == zero {
-                let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
-                    (min_h_raw - bp_block).clamp_negative_to_zero()
+                if style.box_sizing == BoxSizing::BorderBox {
+                    // AR applies to border-box: border_box_w = border_box_h * w/h
+                    min_bb = LayoutUnit::from_f32(
+                        min_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
+                    );
                 } else {
-                    min_h_raw
-                };
-                let transferred_min_w = LayoutUnit::from_f32(
-                    content_min_h.to_f32() * ar.ratio.0 / ar.ratio.1,
-                );
-                min_bb = transferred_min_w + bp_val;
+                    // AR applies to content-box: content_w = content_h * w/h, then add bp
+                    let transferred_min_w = LayoutUnit::from_f32(
+                        min_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
+                    );
+                    min_bb = transferred_min_w + bp_val;
+                }
             }
 
             // Transfer max-height → max-width (only if max-width is unconstrained)
@@ -1113,15 +1158,16 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
                 &style.max_height, indefinite, LayoutUnit::max(), LayoutUnit::max(),
             );
             if max_h_raw < LayoutUnit::max() && max_bb == LayoutUnit::max() {
-                let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
-                    (max_h_raw - bp_block).clamp_negative_to_zero()
+                if style.box_sizing == BoxSizing::BorderBox {
+                    max_bb = LayoutUnit::from_f32(
+                        max_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
+                    );
                 } else {
-                    max_h_raw
-                };
-                let transferred_max_w = LayoutUnit::from_f32(
-                    content_max_h.to_f32() * ar.ratio.0 / ar.ratio.1,
-                );
-                max_bb = transferred_max_w + bp_val;
+                    let transferred_max_w = LayoutUnit::from_f32(
+                        max_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
+                    );
+                    max_bb = transferred_max_w + bp_val;
+                }
             }
         }
     }
@@ -1187,15 +1233,17 @@ fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
                 &style.min_width, indefinite, zero, zero,
             );
             if min_w_raw > zero && min_bb == zero {
-                let content_min_w = if style.box_sizing == BoxSizing::BorderBox {
-                    (min_w_raw - bp_inline).clamp_negative_to_zero()
+                if style.box_sizing == BoxSizing::BorderBox {
+                    // AR applies to border-box: border_box_h = border_box_w * h/w
+                    min_bb = LayoutUnit::from_f32(
+                        min_w_raw.to_f32() * ar.ratio.1 / ar.ratio.0,
+                    );
                 } else {
-                    min_w_raw
-                };
-                let transferred_min_h = LayoutUnit::from_f32(
-                    content_min_w.to_f32() * ar.ratio.1 / ar.ratio.0,
-                );
-                min_bb = transferred_min_h + bp_val;
+                    let transferred_min_h = LayoutUnit::from_f32(
+                        min_w_raw.to_f32() * ar.ratio.1 / ar.ratio.0,
+                    );
+                    min_bb = transferred_min_h + bp_val;
+                }
             }
 
             // Transfer max-width → max-height (only if max-height is unconstrained)
@@ -1203,15 +1251,16 @@ fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
                 &style.max_width, indefinite, LayoutUnit::max(), LayoutUnit::max(),
             );
             if max_w_raw < LayoutUnit::max() && max_bb == LayoutUnit::max() {
-                let content_max_w = if style.box_sizing == BoxSizing::BorderBox {
-                    (max_w_raw - bp_inline).clamp_negative_to_zero()
+                if style.box_sizing == BoxSizing::BorderBox {
+                    max_bb = LayoutUnit::from_f32(
+                        max_w_raw.to_f32() * ar.ratio.1 / ar.ratio.0,
+                    );
                 } else {
-                    max_w_raw
-                };
-                let transferred_max_h = LayoutUnit::from_f32(
-                    content_max_w.to_f32() * ar.ratio.1 / ar.ratio.0,
-                );
-                max_bb = transferred_max_h + bp_val;
+                    let transferred_max_h = LayoutUnit::from_f32(
+                        max_w_raw.to_f32() * ar.ratio.1 / ar.ratio.0,
+                    );
+                    max_bb = transferred_max_h + bp_val;
+                }
             }
         }
     }

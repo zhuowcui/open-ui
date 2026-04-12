@@ -1964,12 +1964,9 @@ fn resolve_inline_size(
     let available = space.available_inline_size;
 
     // When flex layout determines the exact inline size, use it directly.
+    // The value from flex is always border-box; convert to content-box.
     if space.is_fixed_inline_size || space.stretch_inline_size {
-        return if style.box_sizing == BoxSizing::BorderBox {
-            available
-        } else {
-            (available - border_padding).clamp_negative_to_zero()
-        };
+        return (available - border_padding).clamp_negative_to_zero();
     }
 
     // Resolve the CSS width property — handle intrinsic sizing keywords

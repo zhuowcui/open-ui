@@ -422,9 +422,12 @@ pub fn base_doc() -> (Document, NodeId) {
     doc.node_mut(viewport).style.background_color = Color::WHITE;
 
     // Body: child of viewport, carries the default body padding.
-    // Margins set by tests will work because body has a parent (viewport).
+    // Use display:flow-root (not overflow:hidden) to establish a BFC.
+    // Per CSS spec, <body>'s overflow is propagated to the viewport, so
+    // the body itself has overflow:visible — it must NOT clip content.
+    // The viewport/canvas clips at 800×600 like Chrome's viewport does.
     let body = doc.create_node(ElementTag::Div);
-    doc.node_mut(body).style.display = Display::Block;
+    doc.node_mut(body).style.display = Display::FlowRoot;
     doc.node_mut(body).style.padding_top = Length::px(20.0);
     doc.node_mut(body).style.padding_right = Length::px(20.0);
     doc.node_mut(body).style.padding_bottom = Length::px(20.0);
@@ -432,8 +435,6 @@ pub fn base_doc() -> (Document, NodeId) {
     doc.node_mut(body).style.font_family = FontFamilyList::single("DejaVu Sans");
     doc.node_mut(body).style.font_size = 16.0;
     doc.node_mut(body).style.color = Color::BLACK;
-    doc.node_mut(body).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(body).style.overflow_y = Overflow::Hidden;
     doc.append_child(viewport, body);
     (doc, body)
 }

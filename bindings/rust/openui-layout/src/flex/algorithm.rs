@@ -1521,10 +1521,61 @@ fn resolve_main_axis_min_max(
             // content-based, which is NOT the right value here.
             let content_size = if is_column {
                 let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
-                (intrinsic.min_content_block_size - main_axis_border_padding).clamp_negative_to_zero()
+                let mut cs = (intrinsic.min_content_block_size - main_axis_border_padding).clamp_negative_to_zero();
+                // CSS Flexbox §4.5: When the item has AR and a definite cross
+                // size, the content size suggestion is clamped by min/max cross
+                // sizes transferred through the AR. Also, if the raw min-content
+                // is zero but the cross size is definite, transfer through AR.
+                if let Some(ref ar) = child_style.aspect_ratio {
+                    if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                        let cross_prop = &child_style.width;
+                        if !cross_prop.is_auto() && cross_prop.is_fixed() {
+                            let cross_raw = resolve_length(cross_prop, pct_inline, LayoutUnit::zero(), LayoutUnit::zero());
+                            let cross_bp = {
+                                let b = resolve_border(child_style);
+                                let p = resolve_padding(child_style, pct_inline);
+                                b.left + b.right + p.left + p.right
+                            };
+                            let content_cross = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                                (cross_raw - cross_bp).clamp_negative_to_zero()
+                            } else {
+                                cross_raw
+                            };
+                            let transferred = LayoutUnit::from_f32(
+                                content_cross.to_f32() * ar.ratio.1 / ar.ratio.0
+                            );
+                            cs = cs.max_of(transferred);
+                        }
+                    }
+                }
+                cs
             } else {
                 let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
-                (min_max.min - main_axis_border_padding).clamp_negative_to_zero()
+                let mut cs = (min_max.min - main_axis_border_padding).clamp_negative_to_zero();
+                // Same AR transfer for row flex (cross = block)
+                if let Some(ref ar) = child_style.aspect_ratio {
+                    if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+                        let cross_prop = &child_style.height;
+                        if !cross_prop.is_auto() && cross_prop.is_fixed() {
+                            let cross_raw = resolve_length(cross_prop, pct_block, LayoutUnit::zero(), LayoutUnit::zero());
+                            let cross_bp = {
+                                let b = resolve_border(child_style);
+                                let p = resolve_padding(child_style, pct_block);
+                                b.top + b.bottom + p.top + p.bottom
+                            };
+                            let content_cross = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                                (cross_raw - cross_bp).clamp_negative_to_zero()
+                            } else {
+                                cross_raw
+                            };
+                            let transferred = LayoutUnit::from_f32(
+                                content_cross.to_f32() * ar.ratio.0 / ar.ratio.1
+                            );
+                            cs = cs.max_of(transferred);
+                        }
+                    }
+                }
+                cs
             };
 
             // Specified size suggestion (CSS Flexbox §4.5):
@@ -1780,12 +1831,12 @@ fn resolve_cross_size(
                     } else {
                         // AR on content-box
                         let main_bp = if is_column {
-                            let b = crate::block::resolve_border(child_style);
-                            let p = crate::block::resolve_padding(child_style, child_percentage_inline);
+                            let b = resolve_border(child_style);
+                            let p = resolve_padding(child_style, child_percentage_inline);
                             b.block_sum() + p.block_sum()
                         } else {
-                            let b = crate::block::resolve_border(child_style);
-                            let p = crate::block::resolve_padding(child_style, child_percentage_inline);
+                            let b = resolve_border(child_style);
+                            let p = resolve_padding(child_style, child_percentage_inline);
                             b.inline_sum() + p.inline_sum()
                         };
                         let main_content = (main_size - main_bp).clamp_negative_to_zero();
