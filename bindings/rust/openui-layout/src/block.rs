@@ -3539,6 +3539,63 @@ fn layout_multicol(
                 }
             }
 
+            // CSS Fragmentation §3.2: Pre-compute avoid groups.
+            // An avoid group is a maximal sequence of children linked by
+            // break-after:avoid / break-before:avoid.  For each child,
+            // `avoid_group_size[i]` gives the total height of the group
+            // it starts (including collapsed margins), or zero if it is
+            // not the first child of its avoid group.
+            let child_count = col_block_sizes.len();
+            let mut avoid_group_size: Vec<LayoutUnit> = vec![LayoutUnit::zero(); child_count];
+            {
+                // Walk backwards to find group starts.
+                // A child i is linked to i+1 if:
+                //   - child i has break-after:avoid (or propagated), OR
+                //   - child i+1 has break-before:avoid (or propagated),
+                //   AND there is no forced break between them.
+                let mut group_end = child_count;
+                let mut i = child_count;
+                while i > 0 {
+                    i -= 1;
+                    let cid = children_info[group_start + i].id;
+                    let cstyle = &doc.node(cid).style;
+                    let has_link_after = if i + 1 < child_count {
+                        let next_id = children_info[group_start + i + 1].id;
+                        let next_style = &doc.node(next_id).style;
+                        let next_prop_bb = propagated_break_before(doc, next_id);
+                        // Forced breaks override avoid constraints.
+                        let forced = cstyle.break_after.is_forced()
+                            || propagated_break_after(doc, cid).is_forced()
+                            || next_style.break_before.is_forced()
+                            || next_prop_bb.is_forced();
+                        !forced && (
+                            cstyle.break_after.is_avoid()
+                            || propagated_break_after(doc, cid).is_avoid()
+                            || next_style.break_before.is_avoid()
+                            || next_prop_bb.is_avoid()
+                        )
+                    } else {
+                        false
+                    };
+                    if !has_link_after {
+                        group_end = i + 1;
+                    }
+                    // If this child starts a multi-child group, compute total.
+                    if i + 1 < group_end {
+                        // This child is the start of a group [i..group_end).
+                        let mut total = col_block_sizes[i];
+                        for j in (i + 1)..group_end {
+                            let collapsed = col_margins_bottom[j - 1]
+                                .max_of(col_margins_top[j]);
+                            total = total + collapsed + col_block_sizes[j];
+                        }
+                        // Include trailing margin of last child.
+                        total = total + col_margins_bottom[group_end - 1];
+                        avoid_group_size[i] = total;
+                    }
+                }
+            }
+
             for (i, mut child_frag) in col_fragments.into_iter().enumerate() {
                 let child_height = col_block_sizes[i];
                 let child_margin_top = col_margins_top[i];
@@ -3594,16 +3651,43 @@ fn layout_multicol(
                 // CSS Fragmentation §3.2: break-inside: avoid —
                 // If the child doesn't fit but would fit in a fresh column,
                 // and break-inside is avoid, move to the next column.
+                // Include margin-bottom in the fit check: the entire margin
+                // box of an unbreakable child must fit in the column.
                 let avoid_break_inside = child_style.break_inside.is_avoid();
                 // CSS Fragmentation §3.1: break-before/after: avoid —
                 // This child or the previous child wants to avoid a break here.
                 let avoid_break_before = prop_break_before.is_avoid()
                     || child_style.break_before.is_avoid()
                     || prev_break_after_avoids;
-                if avoid_break_inside
-                    && col_remaining.raw() < total_child_space.raw()
+
+                // CSS Fragmentation §3.2: Avoid-group handling.
+                // If this child starts an avoid group, the entire group must
+                // fit.  If it doesn't fit in the remaining space but would
+                // fit in a fresh column, advance to the next column NOW
+                // (before placing any group member).
+                let group_total = avoid_group_size[i];
+                if group_total > LayoutUnit::zero()
                     && col_block_offset > LayoutUnit::zero()
-                    && child_height.raw() <= column_height.raw()
+                    && col_remaining.raw() < (margin_space + group_total).raw()
+                    && group_total.raw() <= column_height.raw()
+                    && (algo.column_fill != ColumnFill::Auto
+                        || col_idx + 1 < resolved.count as usize)
+                {
+                    max_col_content = max_col_content.max_of(col_block_offset);
+                    col_idx += 1;
+                    col_block_offset = LayoutUnit::zero();
+                    col_remaining = column_height;
+                    prev_margin_bottom = LayoutUnit::zero();
+                    col_started_by_forced_break = false;
+                }
+
+                let avoid_total = total_child_space + child_margin_bottom;
+                let avoid_fresh = child_height + child_margin_bottom;
+                if avoid_break_inside
+                    && col_remaining.raw() < avoid_total.raw()
+                    && col_block_offset > LayoutUnit::zero()
+                    && avoid_fresh.raw() <= column_height.raw()
+                    && !avoid_break_before
                     && (algo.column_fill != ColumnFill::Auto
                         || col_idx + 1 < resolved.count as usize)
                 {

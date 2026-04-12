@@ -473,11 +473,14 @@ pub fn balance_columns_with_margins(
     let total_raw: i64 = effective_sizes.iter().map(|s| s.raw() as i64).sum();
 
     // The minimum column height must accommodate any unsplittable child.
-    // For unsplittable children, the minimum height is the raw size (margin
-    // is truncated at column top).
-    let max_unsplittable_single = raw_sizes.iter().zip(avoid_break_inside.iter())
-        .filter(|(_, &avoid)| avoid)
-        .map(|(s, _)| s.raw() as i64)
+    // For unsplittable children, the minimum height is the raw size plus
+    // margin-bottom (the entire margin box must fit).  Margin-top is
+    // truncated at column top.
+    let max_unsplittable_single = raw_sizes.iter()
+        .zip(avoid_break_inside.iter())
+        .zip(margins_bottom.iter())
+        .filter(|((_, &avoid), _)| avoid)
+        .map(|((s, _), mb)| s.raw() as i64 + mb.raw() as i64)
         .max()
         .unwrap_or(0);
 
@@ -658,7 +661,10 @@ fn columns_needed_for_height_with_margins(
             false
         };
         if avoid {
-            if child_size.raw() > remaining.raw() && !at_column_start && !prev_avoid_after {
+            // Include margin-bottom in the fit check for unbreakable children:
+            // the entire margin box must fit in the column.
+            let avoid_size = child_size + margins_bottom[i];
+            if avoid_size.raw() > remaining.raw() && !at_column_start && !prev_avoid_after {
                 columns += 1;
                 remaining = height;
                 // Re-compute margin for new column (truncated if non-first).
@@ -667,7 +673,7 @@ fn columns_needed_for_height_with_margins(
                 } else {
                     margins_top[i]
                 };
-                let new_size = new_margin + raw_size;
+                let new_size = new_margin + raw_size + margins_bottom[i];
                 remaining = remaining - new_size;
             } else {
                 remaining = remaining - child_size;
