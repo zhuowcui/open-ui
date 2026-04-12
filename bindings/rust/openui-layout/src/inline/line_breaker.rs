@@ -45,6 +45,8 @@ pub struct LineBreaker<'a> {
     is_finished: bool,
     /// Text alignment from the block container.
     text_align: TextAlign,
+    /// White-space from the block container (controls wrapping for all inline content).
+    container_white_space: WhiteSpace,
     /// Containing block's content-box width for percentage resolution.
     /// Percentages on inline margin/border/padding resolve against this,
     /// not the per-line available width (CSS 2.2 §10.3.3).
@@ -74,6 +76,7 @@ impl<'a> LineBreaker<'a> {
             current_text_offset: 0,
             is_finished: false,
             text_align: TextAlign::Start,
+            container_white_space: WhiteSpace::Normal,
             containing_block_width,
             hyphens: Hyphens::Manual,
             hyphenation: None,
@@ -84,6 +87,10 @@ impl<'a> LineBreaker<'a> {
     /// Set text alignment for produced lines.
     pub fn set_text_align(&mut self, align: TextAlign) {
         self.text_align = align;
+    }
+
+    pub fn set_container_white_space(&mut self, ws: WhiteSpace) {
+        self.container_white_space = ws;
     }
 
     /// Configure hyphenation from computed style properties.
@@ -241,8 +248,8 @@ impl<'a> LineBreaker<'a> {
             return;
         }
 
-        // Check if wrapping is prevented
-        let allows_wrap = allows_line_wrap(style.white_space);
+        // Check if wrapping is prevented — both item and container must allow it
+        let allows_wrap = allows_line_wrap(style.white_space) && allows_line_wrap(self.container_white_space);
 
         // Measure the text
         let text_width = if let Some(ref sr) = item.shape_result {
@@ -505,7 +512,7 @@ impl<'a> LineBreaker<'a> {
         let item = &self.items_data.items[item_index];
         let style = &self.items_data.styles[item.style_index];
         let text_slice = &self.items_data.text[text_start..text_end];
-        let wrappable = allows_line_wrap(style.white_space);
+        let wrappable = allows_line_wrap(style.white_space) && allows_line_wrap(self.container_white_space);
 
         // Find the first newline
         if let Some(nl_pos) = text_slice.find('\n') {
@@ -909,8 +916,9 @@ impl<'a> LineBreaker<'a> {
         // intrinsic sizing of inline-block content).
         let width = resolve_atomic_inline_width(style, self.containing_block_width, item.intrinsic_inline_size);
         let remaining = line.remaining_width();
-        // Respect white-space: nowrap — no line break between atomic inlines.
-        let allows_wrap = allows_line_wrap(style.white_space);
+        // Use the container's white-space for wrapping decisions (CSS inheritance).
+        // The container's nowrap applies to all inline content within.
+        let allows_wrap = allows_line_wrap(self.container_white_space);
 
         if width <= remaining || !line.has_content() || !allows_wrap {
             line.items.push(InlineItemResult {

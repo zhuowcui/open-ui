@@ -444,6 +444,7 @@ pub fn inline_layout_from_items(
     // Create line breaker from the (possibly filtered) items.
     let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
     line_breaker.set_text_align(style.text_align);
+    line_breaker.set_container_white_space(style.white_space);
 
     // Step 3b: Resolve text-indent for the first line.
     let text_indent = crate::length_resolver::resolve_length(
@@ -900,6 +901,7 @@ pub fn inline_layout_for_children(
 
     let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
     line_breaker.set_text_align(style.text_align);
+    line_breaker.set_container_white_space(style.white_space);
 
     let text_indent = crate::length_resolver::resolve_length(
         &style.text_indent,
