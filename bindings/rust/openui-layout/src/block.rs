@@ -1074,6 +1074,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let height_is_effectively_auto = style.height.is_auto()
         || style.height.is_content_or_intrinsic()
         || (style.height.length_type() == openui_geometry::LengthType::Percent
+            && space.percentage_resolution_block_size.is_indefinite())
+        // height: stretch with indefinite containing block falls back to auto
+        || (style.height.is_stretch()
+            && !space.is_fixed_block_size
+            && !space.stretch_block_size
             && space.percentage_resolution_block_size.is_indefinite());
     let has_non_auto_height = !height_is_effectively_auto
         || space.is_fixed_block_size
@@ -1939,9 +1944,13 @@ fn new_fc_min_inline_size(
         + resolve_margin_or_padding(&style.padding_right, containing_inline);
     let bp = bp_left + bp_right;
 
+    // CSS 2.1 §9.5: "The border box of an element that establishes a new BFC
+    // must not overlap the margin box of any floats." Only the start margin
+    // and the border box contribute to the fitting check; the end margin
+    // overflows past the container edge and does not prevent placement.
     if style.width.is_auto() {
-        // Auto-width: can shrink to 0 content, so margins + border + padding
-        margin_start + bp + margin_end
+        // Auto-width: can shrink to 0 content, so start margin + border + padding
+        margin_start + bp
     } else {
         // Explicit width: resolve and compute border-box width
         let w = resolve_length(
@@ -1951,7 +1960,7 @@ fn new_fc_min_inline_size(
             BoxSizing::ContentBox => w + bp,
             BoxSizing::BorderBox => w,
         };
-        margin_start + border_box_w + margin_end
+        margin_start + border_box_w
     }
 }
 
@@ -2465,13 +2474,16 @@ fn resolve_block_size(
             intrinsic_block_size
         }
     } else if style.height.is_stretch() {
-        // CSS Sizing 4: height: stretch
-        // Resolve to available block size minus margins.
-        let avail = space.available_block_size;
-        if !avail.is_indefinite() {
-            let margin_block = resolve_margin_or_padding(&style.margin_top, space.available_inline_size)
-                + resolve_margin_or_padding(&style.margin_bottom, space.available_inline_size);
-            (avail - margin_block).clamp_negative_to_zero()
+        // CSS Sizing 4: height: stretch resolves to the containing block's
+        // content area size. Only stretch when the containing block has a
+        // definite block size (explicit height, externally imposed, or itself
+        // stretched). When the containing block is auto-height, stretch falls
+        // back to intrinsic (auto) sizing — the available_block_size from the
+        // grandparent must NOT be used.
+        if space.is_fixed_block_size || space.stretch_block_size
+            || !space.percentage_resolution_block_size.is_indefinite()
+        {
+            space.available_block_size
         } else {
             intrinsic_block_size
         }
@@ -2628,11 +2640,12 @@ fn resolve_block_size(
             doc, node_id, &style.min_height, intrinsic_block_size, border_padding_block,
         ));
     } else if style.min_height.is_stretch() {
-        let avail = space.available_block_size;
-        if !avail.is_indefinite() {
-            let margin_block = resolve_margin_or_padding(&style.margin_top, space.available_inline_size)
-                + resolve_margin_or_padding(&style.margin_bottom, space.available_inline_size);
-            (avail - margin_block).clamp_negative_to_zero()
+        // Chrome does not subtract margins from min-height: stretch.
+        // Only resolve when containing block has definite height.
+        if space.is_fixed_block_size || space.stretch_block_size
+            || !space.percentage_resolution_block_size.is_indefinite()
+        {
+            space.available_block_size
         } else { LayoutUnit::zero() }
     } else {
         resolve_length(
@@ -2661,11 +2674,11 @@ fn resolve_block_size(
         );
         return resolved.min_of(max_bb).max_of(min);
     } else if style.max_height.is_stretch() {
-        let avail = space.available_block_size;
-        if !avail.is_indefinite() {
-            let margin_block = resolve_margin_or_padding(&style.margin_top, space.available_inline_size)
-                + resolve_margin_or_padding(&style.margin_bottom, space.available_inline_size);
-            (avail - margin_block).clamp_negative_to_zero()
+        // Chrome does not subtract margins from max-height: stretch.
+        if space.is_fixed_block_size || space.stretch_block_size
+            || !space.percentage_resolution_block_size.is_indefinite()
+        {
+            space.available_block_size
         } else { LayoutUnit::max() }
     } else {
         resolve_length(
