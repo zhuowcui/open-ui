@@ -52,7 +52,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // ── Step 2: Resolve width ────────────────────────────────────────
     // Blink: ComputeBlockSizeForFragment / ResolveMainInlineLength
 
-    let content_inline_size = resolve_inline_size(
+    let mut content_inline_size = resolve_inline_size(
         doc,
         node_id,
         style,
@@ -60,6 +60,82 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         border_padding_inline,
         border_padding_block,
     );
+
+    // CSS Sizing 4 §5.1: AR constraint feedback — when the tentative inline
+    // size produces a block size via AR that gets clamped by min/max-height,
+    // re-derive the inline size from the clamped block size.
+    // This applies when height is auto (so AR determines height from width).
+    if let Some(ref ar) = style.aspect_ratio {
+        if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 && style.height.is_auto() {
+            let border_box_w = if style.box_sizing == BoxSizing::BorderBox {
+                content_inline_size.max_of(border_padding_inline)
+            } else {
+                content_inline_size + border_padding_inline
+            };
+
+            // Compute tentative AR-derived height
+            let (content_w, bp_i, bp_b) = if ar.auto_flag || style.box_sizing != BoxSizing::BorderBox {
+                // AR on content-box
+                let cw = if style.box_sizing == BoxSizing::BorderBox {
+                    (border_box_w - border_padding_inline).clamp_negative_to_zero()
+                } else {
+                    content_inline_size
+                };
+                (cw, border_padding_inline, border_padding_block)
+            } else {
+                // AR on border-box
+                (border_box_w, LayoutUnit::zero(), LayoutUnit::zero())
+            };
+
+            let tentative_h = LayoutUnit::from_f32(content_w.to_f32() * ar.ratio.1 / ar.ratio.0) + bp_b;
+
+            // Apply min/max-height
+            let min_h = if style.min_height.is_auto() {
+                LayoutUnit::zero()
+            } else {
+                resolve_length(
+                    &style.min_height,
+                    space.percentage_resolution_block_size,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                )
+            };
+            let max_h = resolve_length(
+                &style.max_height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::max(),
+                LayoutUnit::max(),
+            );
+
+            if max_h < LayoutUnit::max() || min_h > LayoutUnit::zero() {
+                let clamped_h = tentative_h.max_of(min_h).min_of(max_h);
+                if clamped_h != tentative_h {
+                    // Re-derive inline size from clamped block size
+                    let new_content_h = (clamped_h - bp_b).clamp_negative_to_zero();
+                    let new_w = LayoutUnit::from_f32(new_content_h.to_f32() * ar.ratio.0 / ar.ratio.1) + bp_i;
+                    let new_content = if style.box_sizing == BoxSizing::BorderBox {
+                        (new_w - border_padding_inline).clamp_negative_to_zero()
+                    } else {
+                        new_w
+                    };
+                    // Apply min/max-width to the feedback result
+                    let min_w_val = resolve_length(
+                        &style.min_width,
+                        space.percentage_resolution_inline_size,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    );
+                    let max_w_val = resolve_length(
+                        &style.max_width,
+                        space.percentage_resolution_inline_size,
+                        LayoutUnit::max(),
+                        LayoutUnit::max(),
+                    );
+                    content_inline_size = new_content.clamp(min_w_val, max_w_val);
+                }
+            }
+        }
+    }
 
     // The total border-box inline size
     let border_box_inline = if style.box_sizing == BoxSizing::BorderBox {
@@ -2165,18 +2241,39 @@ fn resolve_inline_size(
         )
     };
 
+    // Compute max-width first (needed for auto-min clamping).
+    let max = if style.max_width.is_content_or_intrinsic() {
+        resolve_intrinsic_inline(doc, node_id, &style.max_width, available, border_padding)
+    } else if style.max_width.is_stretch() {
+        available
+    } else {
+        resolve_length(
+            &style.max_width,
+            space.percentage_resolution_inline_size,
+            LayoutUnit::max(), // auto → unconstrained
+            LayoutUnit::max(), // none → unconstrained
+        )
+    };
+
     // Apply min-width / max-width constraints
     let min = if style.min_width.is_auto() {
         // CSS Sizing 4 §5.1: For non-replaced elements with a preferred
         // aspect-ratio (that are not scroll containers), min-width:auto
-        // resolves to the content-based minimum size (min-content width).
+        // resolves to the content-based minimum size (min-content width),
+        // clamped from above by the maximum size (if definite).
         // Without AR, CSS 2.2 §10.4 applies: min-width:auto = 0.
         if style.aspect_ratio.is_some() && !style.is_scroll_container() {
             let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
-            if style.box_sizing == BoxSizing::BorderBox {
+            let auto_min = if style.box_sizing == BoxSizing::BorderBox {
                 intrinsic.min
             } else {
                 (intrinsic.min - border_padding).clamp_negative_to_zero()
+            };
+            // CSS Sizing 4 §5.1: "clamped from above by the maximum size"
+            if max < LayoutUnit::max() {
+                auto_min.min_of(max)
+            } else {
+                auto_min
             }
         } else {
             LayoutUnit::zero()
@@ -2191,19 +2288,6 @@ fn resolve_inline_size(
             space.percentage_resolution_inline_size,
             LayoutUnit::zero(),
             LayoutUnit::zero(),
-        )
-    };
-
-    let max = if style.max_width.is_content_or_intrinsic() {
-        resolve_intrinsic_inline(doc, node_id, &style.max_width, available, border_padding)
-    } else if style.max_width.is_stretch() {
-        available
-    } else {
-        resolve_length(
-            &style.max_width,
-            space.percentage_resolution_inline_size,
-            LayoutUnit::max(), // auto → unconstrained
-            LayoutUnit::max(), // none → unconstrained
         )
     };
 
