@@ -915,12 +915,15 @@ impl<'a> LineBreaker<'a> {
         // fall back to zero (full box layout integration is required for
         // intrinsic sizing of inline-block content).
         let width = resolve_atomic_inline_width(style, self.containing_block_width, item.intrinsic_inline_size);
+        let margin_inline = resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
+            + resolve_margin_or_padding(&style.margin_right, self.containing_block_width);
+        let margin_box_width = width + margin_inline;
         let remaining = line.remaining_width();
         // Use the container's white-space for wrapping decisions (CSS inheritance).
         // The container's nowrap applies to all inline content within.
         let allows_wrap = allows_line_wrap(self.container_white_space);
 
-        if width <= remaining || !line.has_content() || !allows_wrap {
+        if margin_box_width <= remaining || !line.has_content() || !allows_wrap {
             line.items.push(InlineItemResult {
                 item_index,
                 text_range: item.text_range.clone(),
@@ -929,7 +932,7 @@ impl<'a> LineBreaker<'a> {
                 has_forced_break: false,
                 item_type: InlineItemType::AtomicInline,
             });
-            line.used_width = line.used_width + width;
+            line.used_width = line.used_width + margin_box_width;
             self.current_item += 1;
         } else {
             *state = LineState::Done;

@@ -1791,6 +1791,7 @@ fn create_line_box(
 
                 // Apply horizontal margins to offset.
                 let margin_left_lu = resolve_margin_or_padding(&style.margin_left, percentage_base);
+                let margin_right_lu = resolve_margin_or_padding(&style.margin_right, percentage_base);
 
                 // Use the pre-computed block_layout result as the atomic fragment,
                 // preserving its computed size, border, padding, margin, and children.
@@ -1812,7 +1813,9 @@ fn create_line_box(
                 };
 
                 children.push(atomic_fragment);
-                inline_offset = inline_offset + item_result.inline_size;
+                // Advance by the full margin-box inline size so subsequent
+                // items start at the correct position.
+                inline_offset = inline_offset + margin_left_lu + item_result.inline_size + margin_right_lu;
             }
         }
     }

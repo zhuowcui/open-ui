@@ -2008,12 +2008,14 @@ fn give_items_final_position(
     }
 
     // ── Position items within each line ──────────────────────────────
+    // Two-pass approach per line:
+    //   Pass 1: Layout all items, collect fragments and baseline data
+    //   Pass 2: Compute line baseline, then position items
     let mut children = Vec::new();
 
     for line in lines.iter() {
         // Resolve justify-content for this line
         let effective_free = if line.main_axis_auto_margin_count > 0 {
-            // Auto margins consume free space
             LayoutUnit::zero()
         } else {
             line.main_axis_free_space
@@ -2024,12 +2026,25 @@ fn give_items_final_position(
             effective_free,
             line.item_count(),
             is_reverse,
-            is_column, // main axis: row→inline(horizontal), column→block(vertical)
+            is_column,
         );
 
-        let mut main_offset = main_align.initial_offset;
+        // ── Pass 1: Layout all items and collect data ────────────────
+        struct ItemLayoutData {
+            fragment: Fragment,
+            idx: usize,
+            cross_margin_box: LayoutUnit,
+            has_cross_auto_margins: bool,
+            is_start_auto: bool,
+            is_end_auto: bool,
+            baseline: Option<LayoutUnit>,
+            cross_margin_start: LayoutUnit,
+            is_baseline_aligned: bool,
+        }
 
-        for (item_pos, &idx) in line.item_indices.iter().enumerate() {
+        let mut item_data: Vec<ItemLayoutData> = Vec::with_capacity(line.item_count());
+
+        for &idx in line.item_indices.iter() {
             let item = &mut items[idx];
             let child_style = &doc.node(item.node_id).style;
 
@@ -2056,7 +2071,6 @@ fn give_items_final_position(
                     is_end_auto,
                 );
 
-                // Apply auto margins
                 if is_column {
                     item.margin.top = start_margin;
                     item.margin.bottom = end_margin;
@@ -2078,9 +2092,6 @@ fn give_items_final_position(
                 child_border.block_sum() + child_padding.block_sum()
             };
 
-            // Determine if item should stretch on cross axis
-            // CSS Flexbox §9.4: Stretch only applies to items with auto cross
-            // size AND no cross-axis auto margins.
             let cross_size_is_auto = if is_column {
                 child_style.width.is_auto()
             } else {
@@ -2097,8 +2108,6 @@ fn give_items_final_position(
             let cross_size_for_child = if should_stretch {
                 let stretch_size = line.line_cross_size - item.cross_axis_margin_extent();
                 let stretch_size = stretch_size.clamp_negative_to_zero();
-                // Clamp against cross-axis min/max (CSS Flexbox §9.4)
-                // stretch_size is border-box, so convert min/max to border-box for clamping
                 let (cross_min_prop, cross_max_prop) = if is_column {
                     (&child_style.min_width, &child_style.max_width)
                 } else {
@@ -2107,7 +2116,6 @@ fn give_items_final_position(
                 let cross_pct_base = if is_column { child_percentage_inline } else { child_percentage_block };
                 let cross_min_raw = resolve_cross_min_max(doc, item.node_id, cross_min_prop, is_column, cross_pct_base, true);
                 let cross_max_raw = resolve_cross_min_max(doc, item.node_id, cross_max_prop, is_column, cross_pct_base, false);
-                // Convert content-box min/max to border-box for comparison with stretch_size
                 let cross_min = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
                     cross_min_raw
                 } else if cross_min_raw > LayoutUnit::zero() {
@@ -2124,14 +2132,12 @@ fn give_items_final_position(
                 };
                 stretch_size.clamp(cross_min, cross_max)
             } else {
-                // Use child's natural cross size, clamped by min/max constraints
                 let cross_content = resolve_cross_size(
                     doc, item, child_style, is_column,
                     cross_border_padding,
                     child_percentage_inline, child_percentage_block,
                 );
                 let natural_bb = cross_content + cross_border_padding;
-                // Apply cross-axis min/max constraints
                 let (cross_min_prop, cross_max_prop) = if is_column {
                     (&child_style.min_width, &child_style.max_width)
                 } else {
@@ -2157,11 +2163,6 @@ fn give_items_final_position(
                 natural_bb.clamp(cross_min_bb, cross_max_bb)
             };
 
-            // Build final constraint space.
-            // NOTE: We do NOT re-derive main size from AR when the item is
-            // stretched. The flex algorithm has already determined the main
-            // size (via grow/shrink). The stretched cross size is independent.
-            // Chrome: stretched items keep their flexed main size even with AR.
             let final_main = flexed_border_box;
 
             let (inline_size, block_size) = if is_column {
@@ -2170,17 +2171,10 @@ fn give_items_final_position(
                 (final_main, cross_size_for_child)
             };
 
-            // CSS Flexbox §9.8: When a flex item is stretched, its cross size
-            // becomes definite for percentage resolution by its children.
-            // Also, the main size is always definite (set by flex sizing).
             let item_pct_block = if is_column {
-                // Column: main axis is block. Use main axis content size.
                 (final_main - item.main_axis_border_padding).clamp_negative_to_zero()
             } else {
-                // Row: main axis is inline, cross is block.
-                // If item is stretched or has definite cross size, use it.
                 if should_stretch || child_percentage_block.is_indefinite() {
-                    // Compute cross-axis border+padding from style
                     let child_style = &doc.node(item.node_id).style;
                     let bp_cross = {
                         let bp = child_style.border_top_width as i32
@@ -2218,35 +2212,94 @@ fn give_items_final_position(
 
             let child_fragment = crate::block::block_layout(doc, item.node_id, &child_space);
 
-            // ── Compute cross-axis offset (align-self) ───────────────
             let item_cross_margin_box = if is_column {
                 child_fragment.width() + item.cross_axis_margin_extent()
             } else {
                 child_fragment.height() + item.cross_axis_margin_extent()
             };
 
-            let cross_space = line.line_cross_size - item_cross_margin_box;
-
-            // Check for cross-axis auto margins
             let has_cross_auto_margins = if is_column {
                 child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
             } else {
                 child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
             };
 
-            let cross_item_offset = if has_cross_auto_margins {
-                let is_start_auto = if is_column {
-                    child_style.margin_left.is_auto()
+            let is_start_auto = if is_column {
+                child_style.margin_left.is_auto()
+            } else {
+                child_style.margin_top.is_auto()
+            };
+            let is_end_auto = if is_column {
+                child_style.margin_right.is_auto()
+            } else {
+                child_style.margin_bottom.is_auto()
+            };
+
+            let cross_margin_start = if is_column { item.margin.left } else { item.margin.top };
+
+            // Baseline alignment: for row flex, baseline = first_baseline of
+            // the child fragment (distance from cross-start to baseline).
+            // If no baseline from content, synthesize from the cross-end
+            // border edge (CSS Flexbox §9.4).
+            let is_baseline_aligned = matches!(
+                item.alignment,
+                ItemPosition::Baseline | ItemPosition::LastBaseline
+            ) && !has_cross_auto_margins;
+
+            let baseline = if is_baseline_aligned {
+                let frag_baseline = if item.alignment == ItemPosition::LastBaseline {
+                    child_fragment.last_baseline.or(child_fragment.first_baseline)
                 } else {
-                    child_style.margin_top.is_auto()
+                    child_fragment.first_baseline
                 };
-                let is_end_auto = if is_column {
-                    child_style.margin_right.is_auto()
+                // Ascent includes the cross-start margin so baselines align
+                // across items with different margins.
+                let cross_size = if is_column {
+                    child_fragment.width()
                 } else {
-                    child_style.margin_bottom.is_auto()
+                    child_fragment.height()
                 };
-                let (start, _end) = resolve_cross_auto_margins(cross_space, is_start_auto, is_end_auto);
+                Some(cross_margin_start + frag_baseline.unwrap_or(cross_size))
+            } else {
+                None
+            };
+
+            item_data.push(ItemLayoutData {
+                fragment: child_fragment,
+                idx,
+                cross_margin_box: item_cross_margin_box,
+                has_cross_auto_margins,
+                is_start_auto,
+                is_end_auto,
+                baseline,
+                cross_margin_start,
+                is_baseline_aligned,
+            });
+        }
+
+        // ── Compute line baseline (max ascent among baseline-aligned items) ──
+        let line_max_ascent = item_data.iter()
+            .filter_map(|d| d.baseline)
+            .fold(LayoutUnit::zero(), |acc, b| if b > acc { b } else { acc });
+
+        // ── Pass 2: Position items ───────────────────────────────────
+        let mut main_offset = main_align.initial_offset;
+
+        for (item_pos, data) in item_data.into_iter().enumerate() {
+            let item = &items[data.idx];
+            let child_style = &doc.node(item.node_id).style;
+            let cross_space = line.line_cross_size - data.cross_margin_box;
+
+            let cross_item_offset = if data.has_cross_auto_margins {
+                let (start, _end) = resolve_cross_auto_margins(
+                    cross_space, data.is_start_auto, data.is_end_auto,
+                );
                 start
+            } else if data.is_baseline_aligned {
+                // Offset = max_ascent - this_item's_ascent.
+                // This aligns all baselines on the same cross-axis line.
+                let item_ascent = data.baseline.unwrap_or(LayoutUnit::zero());
+                line_max_ascent - item_ascent
             } else {
                 resolve_align_self(
                     item.alignment,
@@ -2256,9 +2309,8 @@ fn give_items_final_position(
                 )
             };
 
-            // ── Compute physical position ────────────────────────────
             let main_margin_start = if is_column { item.margin.top } else { item.margin.left };
-            let cross_margin_start = if is_column { item.margin.left } else { item.margin.top };
+            let cross_margin_start = data.cross_margin_start;
 
             let item_main_pos = main_offset + main_margin_start;
             let item_cross_pos = line.cross_axis_offset + cross_item_offset + cross_margin_start;
@@ -2269,11 +2321,10 @@ fn give_items_final_position(
                 (content_offset_x + item_main_pos, content_offset_y + item_cross_pos)
             };
 
-            let mut positioned = child_fragment;
+            let mut positioned = data.fragment;
             positioned.offset = PhysicalOffset::new(x, y);
             positioned.margin = item.margin.clone();
 
-            // Apply relative positioning offsets (CSS 2.1 §9.4.3).
             crate::relative::apply_relative_offset(
                 &mut positioned,
                 child_style,
@@ -2281,7 +2332,6 @@ fn give_items_final_position(
                 child_percentage_block,
             );
 
-            // Advance main offset (compute before push moves positioned)
             let main_margin_end = if is_column { item.margin.bottom } else { item.margin.right };
             let item_main_size = if is_column {
                 positioned.height()
