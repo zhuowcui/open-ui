@@ -32,8 +32,11 @@ display-contents-shadow-dom-1-ref,ported,css_display_display_contents_shadow_dom
 display-contents-sharing-001-ref,ported,css_display_display_contents_sharing_001_ref,
 display-contents-sharing-001,ported,css_display_display_contents_sharing_001,
 display-contents-state-change-001-ref,ported,css_display_display_contents_state_change_001_ref,
+display-contents-suppression-dynamic-001-ref,ported,css_display_display_contents_suppression_dynamic_001_ref,
 display-contents-text-inherit-ref,ported,css_display_display_contents_text_inherit_ref,
 display-contents-text-inherit,ported,css_display_display_contents_text_inherit,
+display-contents-text-only-001-ref,ported,css_display_display_contents_text_only_001_ref,
+display-contents-text-only-001,ported,css_display_display_contents_text_only_001,
 display-contents-whitespace-inside-inline-ref,ported,css_display_display_contents_whitespace_inside_inline_ref,
 display-contents-whitespace-inside-inline,ported,css_display_display_contents_whitespace_inside_inline,
 display-first-line-002-ref,ported,css_display_display_first_line_002_ref,
@@ -95,7 +98,6 @@ display-contents-shadow-dom-1,not_portable,,uses_javascript
 display-contents-shadow-host-whitespace,not_portable,,uses_javascript
 display-contents-slot-attach-whitespace,not_portable,,uses_javascript
 display-contents-state-change-001,not_portable,,uses_javascript
-display-contents-suppression-dynamic-001-ref,not_portable,,no_layout_content
 display-contents-suppression-dynamic-001,not_portable,,uses_javascript
 display-contents-svg-anchor-child,not_portable,,uses_javascript
 display-contents-svg-elements-ref,not_portable,,unsupported element: <svg>
@@ -107,8 +109,6 @@ display-contents-table-002-ref,not_portable,,unsupported property: border-collap
 display-contents-table-002,not_portable,,unsupported property: border-collapse
 display-contents-td-001,not_portable,,unsupported element: <table>
 display-contents-text-inherit-002,not_portable,,uses_javascript
-display-contents-text-only-001-ref,not_portable,,no_layout_content
-display-contents-text-only-001,not_portable,,no_layout_content
 display-contents-tr-001-ref,not_portable,,unsupported element: <table>
 display-contents-tr-001,not_portable,,unsupported element: <table>
 display-contents-unusual-html-elements-none,not_portable,,unsupported element: <canvas>

@@ -9,7 +9,7 @@ use openui_dom::{Document, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, LengthType, MinMaxSizes, PhysicalOffset, PhysicalSize};
 use openui_style::{
     ContentAlignment, ContentDistribution, ContentPosition,
-    ItemPosition,
+    FlexWrap, ItemPosition,
 };
 use openui_geometry::Length;
 
@@ -61,24 +61,48 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let content_inline_size = container_inline_size - border_padding_inline;
 
     // ── Resolve gaps (Blink line 187-191) ────────────────────────────
-    let percentage_base = content_inline_size;
+    // CSS Box Alignment §8: row-gap % resolves against block size,
+    // column-gap % resolves against inline size.
+    let column_gap_pct_base = content_inline_size;
+    let row_gap_pct_base = if !style.height.is_auto() && !style.height.is_content_or_intrinsic() {
+        let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
+        if style.box_sizing == openui_style::BoxSizing::BorderBox {
+            (raw - border_padding_block).clamp_negative_to_zero()
+        } else {
+            raw
+        }
+    } else if space.is_fixed_block_size || space.stretch_block_size {
+        (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+    } else {
+        // Auto height → percentage gap resolves to 0
+        LayoutUnit::zero()
+    };
     let gap_between_items = resolve_gap(
         if is_column { &style.row_gap } else { &style.column_gap },
-        percentage_base,
+        if is_column { row_gap_pct_base } else { column_gap_pct_base },
     );
     let gap_between_lines = resolve_gap(
         if is_column { &style.column_gap } else { &style.row_gap },
-        percentage_base,
+        if is_column { column_gap_pct_base } else { row_gap_pct_base },
     );
 
     // ── Main axis inner size ─────────────────────────────────────────
     let main_axis_inner_size = if is_column {
         // Column: main axis = block, may be indefinite
-        let resolved = resolve_container_block_size_for_flex(style, space, border_padding_block);
+        let resolved = resolve_container_block_size_for_flex(style, space, border_padding_block, container_inline_size);
         // If resolved to indefinite but parent provided a fixed height, use it for
         // wrapping decisions (CSS Flexbox §9.2: definite size from containing block)
         if resolved.is_indefinite() && (space.is_fixed_block_size || space.stretch_block_size) {
             (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+        } else if resolved.is_indefinite()
+            && style.flex_wrap != FlexWrap::Nowrap
+            && space.fragmentainer_block_size > LayoutUnit::zero()
+        {
+            // Inside a fragmentainer (multicol column) with flex-wrap: use the
+            // column height as the wrapping boundary so items wrap correctly.
+            // Only for wrapping containers — non-wrapping ones should stay
+            // indefinite and be fragmented by the multicol distribution pass.
+            (space.fragmentainer_block_size - border_padding_block).clamp_negative_to_zero()
         } else {
             resolved
         }
@@ -112,6 +136,21 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         // container (e.g. stretch or fixed). Treat it as the percentage base
         // so that percentage-height children resolve correctly.
         (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+    } else if let Some(ar) = &style.aspect_ratio {
+        // Aspect-ratio with definite inline size gives a definite block size
+        // for percentage resolution (CSS Sizing L4).
+        if ar.ratio.0 > 0.0 && ar.ratio.1 > 0.0
+            && container_inline_size.raw() > 0
+            && !container_inline_size.is_indefinite()
+        {
+            let ratio = ar.ratio.0 / ar.ratio.1;
+            let ar_block = LayoutUnit::from_f32(
+                container_inline_size.to_f32() / ratio
+            );
+            (ar_block - border_padding_block).clamp_negative_to_zero()
+        } else {
+            LayoutUnit::from_raw(-64) // indefinite
+        }
     } else {
         // Container height is auto → percentages are indefinite
         LayoutUnit::from_raw(-64) // indefinite
@@ -311,6 +350,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
     let total_block_size = resolve_total_block_size(
         doc, node_id, style, space, intrinsic_block_size, border_padding_block,
+        container_inline_size,
     );
 
     // ── Fix: Recalculate main-axis free space for column flex ────────
@@ -559,6 +599,7 @@ fn resolve_container_block_size_for_flex(
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
     border_padding_block: LayoutUnit,
+    container_inline_size: LayoutUnit,
 ) -> LayoutUnit {
     // When the parent flex has set a definite block size for this container,
     // use it as the main axis size (e.g. nested column flex with stretch).
@@ -570,6 +611,46 @@ fn resolve_container_block_size_for_flex(
     }
 
     if style.height.is_auto() {
+        // CSS Sizing L4 §5.1: When a box has a preferred aspect ratio and
+        // auto height but a definite width, the height is computed from the
+        // width divided by the ratio.  For column flex this provides a
+        // definite main-axis size enabling correct wrapping.
+        if let Some(ar) = &style.aspect_ratio {
+            if ar.ratio.1 > 0.0 && ar.ratio.0 > 0.0 {
+                // container_inline_size is the border-box width of this flex container.
+                // For aspect-ratio, border-box width maps to border-box height:
+                //   border-box-height = border-box-width * (ratio.1 / ratio.0)
+                // Then content-box height = border-box-height - border_padding_block
+                if container_inline_size.raw() > 0 && !container_inline_size.is_indefinite() {
+                    let ratio = ar.ratio.0 / ar.ratio.1;
+                    let border_box_height = LayoutUnit::from_f32(
+                        container_inline_size.to_f32() / ratio
+                    );
+                    let height_from_ar = (border_box_height - border_padding_block)
+                        .clamp_negative_to_zero();
+
+                    // Apply min-height / max-height clamping
+                    let min_h = if !style.min_height.is_auto() {
+                        let raw = resolve_length(&style.min_height,
+                            space.percentage_resolution_block_size,
+                            LayoutUnit::zero(), LayoutUnit::zero());
+                        if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                            (raw - border_padding_block).clamp_negative_to_zero()
+                        } else { raw }
+                    } else { LayoutUnit::zero() };
+                    let max_h = if !style.max_height.is_auto() && !style.max_height.is_none() {
+                        let raw = resolve_length(&style.max_height,
+                            space.percentage_resolution_block_size,
+                            LayoutUnit::zero(), LayoutUnit::zero());
+                        if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                            (raw - border_padding_block).clamp_negative_to_zero()
+                        } else { raw }
+                    } else { LayoutUnit::from_raw(i32::MAX / 2) };
+
+                    return height_from_ar.max_of(min_h).min_of(max_h);
+                }
+            }
+        }
         // Auto height → indefinite main axis for column flex.
         // Items stay at hypothetical sizes; container shrink-wraps.
         // CSS Flexbox §9.2: auto height means intrinsic sizing.
@@ -593,6 +674,7 @@ fn resolve_total_block_size(
     space: &ConstraintSpace,
     intrinsic_block_size: LayoutUnit,
     border_padding_block: LayoutUnit,
+    container_inline_size: LayoutUnit,
 ) -> LayoutUnit {
     let resolved = if space.is_fixed_block_size {
         // Parent (e.g., column flex) has set a definite block size for this child
@@ -601,7 +683,27 @@ fn resolve_total_block_size(
         // Parent flex is stretching this container on the cross axis
         space.available_block_size
     } else if style.height.is_auto() {
-        intrinsic_block_size
+        // When aspect-ratio is set and width is definite, the block size is
+        // determined from the ratio — even if content is smaller.
+        if let Some(ar) = &style.aspect_ratio {
+            if ar.ratio.0 > 0.0 && ar.ratio.1 > 0.0
+                && container_inline_size.raw() > 0
+                && !container_inline_size.is_indefinite()
+            {
+                let ratio = ar.ratio.0 / ar.ratio.1;
+                let ar_block = LayoutUnit::from_f32(
+                    container_inline_size.to_f32() / ratio
+                );
+                // Use the larger of AR-derived and intrinsic: AR provides the
+                // definite size from which wrapping was computed, but content
+                // might overflow (single-line or nowrap).
+                ar_block.max_of(intrinsic_block_size)
+            } else {
+                intrinsic_block_size
+            }
+        } else {
+            intrinsic_block_size
+        }
     } else if style.height.is_content_or_intrinsic() {
         let sizes = compute_intrinsic_block_sizes(doc, node_id);
         match style.height.length_type() {
@@ -689,8 +791,12 @@ fn construct_flex_items(
     let mut children_with_order: Vec<(NodeId, i32)> = Vec::new();
     for child_id in doc.children(container_id) {
         let child_style = &doc.node(child_id).style;
-        // Skip out-of-flow and display:none
-        if child_style.is_out_of_flow() || child_style.display == openui_style::Display::None {
+        // Skip absolutely positioned (OOF) and display:none.
+        // CSS Flexbox §4.1: float is *ignored* on flex items — they still
+        // participate as normal flex items, so we do NOT skip floated children.
+        if child_style.position.is_absolutely_positioned()
+            || child_style.display == openui_style::Display::None
+        {
             continue;
         }
         children_with_order.push((child_id, child_style.order));
@@ -835,30 +941,38 @@ fn resolve_flex_basis(
     // Step 1: If flex-basis is not auto, try to resolve it
     if !flex_basis.is_auto() {
         // Handle intrinsic sizing keywords (min-content, max-content, fit-content)
+        // and the `content` keyword.
         if flex_basis.is_content_or_intrinsic() {
-            // Use the full intrinsic contribution pipeline which accounts for
-            // the element's own size overrides (width/height, AR, min/max).
-            let contrib = crate::intrinsic_sizing::compute_child_intrinsic_contribution(doc, child_id);
-            // compute_child_intrinsic_contribution includes margins; subtract them.
-            let child_margin = resolve_margins(child_style, LayoutUnit::zero());
-            let margin_main = if is_column {
-                child_margin.top + child_margin.bottom
-            } else {
-                child_margin.left + child_margin.right
-            };
-            let intrinsic = if is_column {
-                match flex_basis.length_type() {
-                    LengthType::MinContent => contrib.min_content_block_size - margin_main,
-                    _ => contrib.max_content_block_size - margin_main,
-                }
-            } else {
-                match flex_basis.length_type() {
-                    LengthType::MinContent => contrib.min_content_inline_size - margin_main,
-                    _ => contrib.max_content_inline_size - margin_main,
-                }
-            };
-            let content = (intrinsic - main_axis_border_padding).clamp_negative_to_zero();
-            return (content, false);
+            // First try aspect-ratio transfer: if the item has a definite cross
+            // size and an aspect ratio, derive the main size from it. This is
+            // handled by resolve_content_based_size which already has full AR logic.
+            let ar_size = resolve_content_based_size(
+                doc, child_id, child_style, is_column,
+                main_axis_border_padding,
+                child_percentage_inline, child_percentage_block, space,
+                resolved_alignment,
+            );
+            // resolve_content_based_size returns the AR-derived content size
+            // when applicable, or falls back to layout-based sizing.
+            // For min-content specifically, we need the min-content value.
+            if flex_basis.length_type() == LengthType::MinContent {
+                let contrib = crate::intrinsic_sizing::compute_child_intrinsic_contribution(doc, child_id);
+                let child_margin = resolve_margins(child_style, LayoutUnit::zero());
+                let margin_main = if is_column {
+                    child_margin.top + child_margin.bottom
+                } else {
+                    child_margin.left + child_margin.right
+                };
+                let intrinsic = if is_column {
+                    contrib.min_content_block_size - margin_main
+                } else {
+                    contrib.min_content_inline_size - margin_main
+                };
+                let content = (intrinsic - main_axis_border_padding).clamp_negative_to_zero();
+                // Use the larger of AR-derived and min-content
+                return (content.max_of(ar_size), false);
+            }
+            return (ar_size, false);
         }
 
         // CSS Flexbox §9.2: percentage flex-basis resolves against the flex

@@ -254,12 +254,13 @@ fn clear_both() {
     );
 }
 
-// ── Test 9: Content wrapping — block shrinks beside left float ───────
+// ── Test 9: Non-BFC block overlaps left float (CSS 2.1 §9.5) ────────
 
 #[test]
 fn content_wraps_around_left_float() {
-    // A non-float block child should have its available inline size reduced
-    // by a left float, and be offset to the right.
+    // CSS 2.1 §9.5: Only NEW-FC elements avoid float overlap.
+    // A regular block child's box overlaps the float; only its line boxes
+    // (not tested here) would avoid the float.
     let mut doc = Document::new();
     let vp = doc.root();
 
@@ -272,13 +273,12 @@ fn content_wraps_around_left_float() {
     let cont = &frag.children[0];
 
     let block_child = &cont.children[1];
-    // The block child should be offset to the right by 200px.
-    assert_eq!(block_child.offset.left, lu(200));
-    // Its width should be reduced to 600px (800 - 200).
-    assert_eq!(block_child.size.width, lu(600));
+    // Non-BFC block overlaps float — starts at left edge, full width.
+    assert_eq!(block_child.offset.left, lu(0));
+    assert_eq!(block_child.size.width, lu(800));
 }
 
-// ── Test 10: Content wrapping — block shrinks beside right float ─────
+// ── Test 10: Non-BFC block overlaps right float ──────────────────────
 
 #[test]
 fn content_wraps_around_right_float() {
@@ -294,13 +294,12 @@ fn content_wraps_around_right_float() {
     let cont = &frag.children[0];
 
     let block_child = &cont.children[1];
-    // Block child starts at left edge (no left float).
+    // Non-BFC block overlaps float — full width at left edge.
     assert_eq!(block_child.offset.left, lu(0));
-    // Width reduced by right float: 800 - 200 = 600.
-    assert_eq!(block_child.size.width, lu(600));
+    assert_eq!(block_child.size.width, lu(800));
 }
 
-// ── Test 11: Content wrapping with both floats ───────────────────────
+// ── Test 11: Non-BFC block overlaps both floats ──────────────────────
 
 #[test]
 fn content_wraps_between_both_floats() {
@@ -317,10 +316,9 @@ fn content_wraps_between_both_floats() {
     let cont = &frag.children[0];
 
     let block_child = &cont.children[2];
-    // Offset by left float width.
-    assert_eq!(block_child.offset.left, lu(200));
-    // Width: 800 - 200 (left) - 150 (right) = 450.
-    assert_eq!(block_child.size.width, lu(450));
+    // Non-BFC block overlaps both floats — full width at left edge.
+    assert_eq!(block_child.offset.left, lu(0));
+    assert_eq!(block_child.size.width, lu(800));
 }
 
 // ── Test 12: Float + clear combination ───────────────────────────────
@@ -380,11 +378,11 @@ fn mixed_float_and_non_float_children() {
     assert_eq!(f.offset.top, lu(40));
     assert_eq!(f.offset.left, lu(0));
 
-    // Second block also at block offset 40, wrapping around float.
+    // Second block: non-BFC, overlaps float — full width at left edge.
     let b2 = &cont.children[2];
     assert_eq!(b2.offset.top, lu(40));
-    assert_eq!(b2.offset.left, lu(200));
-    assert_eq!(b2.size.width, lu(600));
+    assert_eq!(b2.offset.left, lu(0));
+    assert_eq!(b2.size.width, lu(800));
 }
 
 // ── Test 14: Float with margins ──────────────────────────────────────
@@ -606,18 +604,19 @@ fn multiple_blocks_wrap_around_same_float() {
     let b1 = &cont.children[1];
     let b2 = &cont.children[2];
 
-    // Both blocks should be offset by the float.
-    assert_eq!(b1.offset.left, lu(200));
-    assert_eq!(b1.size.width, lu(600));
+    // Non-BFC blocks overlap float — full width at left edge.
+    assert_eq!(b1.offset.left, lu(0));
+    assert_eq!(b1.size.width, lu(800));
 
-    assert_eq!(b2.offset.left, lu(200));
-    assert_eq!(b2.size.width, lu(600));
+    assert_eq!(b2.offset.left, lu(0));
+    assert_eq!(b2.size.width, lu(800));
 }
 
 // ── Test 23: Block child with fixed width beside float ───────────────
 
 #[test]
 fn fixed_width_block_beside_float() {
+    // A non-BFC block with fixed width still overlaps the float.
     let mut doc = Document::new();
     let vp = doc.root();
 
@@ -630,8 +629,8 @@ fn fixed_width_block_beside_float() {
     let cont = &frag.children[0];
 
     let block_child = &cont.children[1];
-    // Fixed-width block keeps its width, but is offset past the float.
-    assert_eq!(block_child.offset.left, lu(200));
+    // Non-BFC: starts at left edge, keeps its explicit width.
+    assert_eq!(block_child.offset.left, lu(0));
     assert_eq!(block_child.size.width, lu(300));
 }
 

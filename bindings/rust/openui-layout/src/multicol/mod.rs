@@ -423,9 +423,11 @@ pub fn balance_columns(
     // Delegate to the margin-aware version with empty margins
     // (backward-compatible: effective_sizes already include margins).
     let zeros = vec![LayoutUnit::zero(); child_block_sizes.len()];
+    let no_avoid = vec![false; child_block_sizes.len()];
     balance_columns_with_margins(
         child_block_sizes, &zeros, &zeros,
         avoid_break_inside, column_count, max_height, forced_break_before,
+        &no_avoid,
     )
 }
 
@@ -440,6 +442,7 @@ pub fn balance_columns_with_margins(
     column_count: u32,
     max_height: LayoutUnit,
     forced_break_before: &[bool],
+    avoid_break_after: &[bool],
 ) -> LayoutUnit {
     if column_count <= 1 || raw_sizes.is_empty() {
         // Single column: total is sum of all sizes + collapsed margins.
@@ -472,11 +475,49 @@ pub fn balance_columns_with_margins(
     // The minimum column height must accommodate any unsplittable child.
     // For unsplittable children, the minimum height is the raw size (margin
     // is truncated at column top).
-    let max_unsplittable = raw_sizes.iter().zip(avoid_break_inside.iter())
+    let max_unsplittable_single = raw_sizes.iter().zip(avoid_break_inside.iter())
         .filter(|(_, &avoid)| avoid)
         .map(|(s, _)| s.raw() as i64)
         .max()
         .unwrap_or(0);
+
+    // CSS Fragmentation §3.2: break-after:avoid groups — consecutive children
+    // linked by break-after:avoid (or equivalently break-before:avoid on the
+    // next child) must stay together.  Compute the maximum group size.
+    let max_avoid_group: i64 = {
+        let mut max_group: i64 = 0;
+        let mut group_size: i64 = 0;
+        let mut in_group = false;
+        for i in 0..raw_sizes.len() {
+            let mt = margins_top[i];
+            let margin = if in_group {
+                // Within an avoid group, margins collapse between siblings.
+                let prev_mb = if i > 0 { margins_bottom[i - 1] } else { LayoutUnit::zero() };
+                prev_mb.max_of(mt).raw() as i64
+            } else {
+                0  // First item in group: margin truncated at column top
+            };
+            group_size += margin + raw_sizes[i].raw() as i64;
+
+            let has_avoid_after = avoid_break_after.get(i).copied().unwrap_or(false);
+            if has_avoid_after {
+                in_group = true;
+            } else {
+                if in_group {
+                    max_group = max_group.max(group_size);
+                }
+                group_size = 0;
+                in_group = false;
+            }
+        }
+        if in_group {
+            max_group = max_group.max(group_size);
+        }
+        max_group
+    };
+
+    let max_unsplittable = max_unsplittable_single
+        .max(max_avoid_group);
 
     // Count how many forced breaks exist (excluding the first child).
     let forced_count = forced_break_before.iter().enumerate()
@@ -536,6 +577,7 @@ pub fn balance_columns_with_margins(
             raw_sizes, margins_top, margins_bottom,
             avoid_break_inside, LayoutUnit::from_raw(mid),
             forced_break_before, column_count,
+            avoid_break_after,
         );
         if needed <= column_count {
             hi = mid;
@@ -561,9 +603,11 @@ fn columns_needed_for_height(
 ) -> u32 {
     // Backward-compatible: effective_sizes already include margins.
     let zeros = vec![LayoutUnit::zero(); child_block_sizes.len()];
+    let no_avoid = vec![false; child_block_sizes.len()];
     columns_needed_for_height_with_margins(
         child_block_sizes, &zeros, &zeros,
         avoid_break_inside, height, forced_break_before, column_count,
+        &no_avoid,
     )
 }
 
@@ -577,6 +621,7 @@ fn columns_needed_for_height_with_margins(
     height: LayoutUnit,
     forced_break_before: &[bool],
     column_count: u32,
+    avoid_break_after: &[bool],
 ) -> u32 {
     if height.raw() <= 0 {
         return u32::MAX;
@@ -606,8 +651,14 @@ fn columns_needed_for_height_with_margins(
         let child_size = margin_space + raw_size;
 
         let avoid = avoid_break_inside.get(i).copied().unwrap_or(false);
+        // break-after:avoid on previous child prevents starting a new column here.
+        let prev_avoid_after = if i > 0 {
+            avoid_break_after.get(i - 1).copied().unwrap_or(false)
+        } else {
+            false
+        };
         if avoid {
-            if child_size.raw() > remaining.raw() && !at_column_start {
+            if child_size.raw() > remaining.raw() && !at_column_start && !prev_avoid_after {
                 columns += 1;
                 remaining = height;
                 // Re-compute margin for new column (truncated if non-first).
@@ -626,14 +677,22 @@ fn columns_needed_for_height_with_margins(
             }
             at_column_start = false;
         } else {
-            let mut left = child_size;
-            while left.raw() > remaining.raw() {
-                left = left - remaining;
-                columns += 1;
-                remaining = height;
-                // After a column break, no margin (truncated per §3.5).
+            // break-after:avoid on previous child: don't start a new column.
+            if prev_avoid_after {
+                remaining = remaining - child_size;
+                if remaining.raw() < 0 {
+                    remaining = LayoutUnit::zero();
+                }
+            } else {
+                let mut left = child_size;
+                while left.raw() > remaining.raw() {
+                    left = left - remaining;
+                    columns += 1;
+                    remaining = height;
+                    // After a column break, no margin (truncated per §3.5).
+                }
+                remaining = remaining - left;
             }
-            remaining = remaining - left;
             at_column_start = false;
         }
         prev_mb = margins_bottom[i];

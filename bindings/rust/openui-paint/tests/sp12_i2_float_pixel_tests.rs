@@ -204,6 +204,9 @@ fn add_colored_block(
 ) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
     doc.node_mut(div).style.display = Display::Block;
+    // BFC root so it avoids floats (CSS 2.1 §9.5).
+    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
     if w > 0.0 {
         doc.node_mut(div).style.width = Length::px(w);
     }

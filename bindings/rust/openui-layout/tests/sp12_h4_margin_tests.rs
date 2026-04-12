@@ -943,7 +943,7 @@ fn empty_block_integration_between_content() {
     // B at y = 30 + 15 = 45.
     let mut builder = BlockTestBuilder::new(400, 600);
     builder.add_child().height(30.0).margin(0, 0, 10, 0).done();
-    builder.add_child().margin(5, 0, 5, 0).done(); // empty: no height
+    builder.add_child().margin(5, 0, 5, 0).overflow(Overflow::Visible).done(); // empty: self-collapsing
     builder.add_child().height(30.0).margin(15, 0, 0, 0).done();
     let result = builder.build();
 
@@ -1535,7 +1535,7 @@ fn complex_integration_mixed_children() {
         .height(40.0)
         .margin(10, 0, 20, 0)
         .done();
-    builder.add_child().margin(5, 0, 5, 0).done(); // empty
+    builder.add_child().margin(5, 0, 5, 0).overflow(Overflow::Visible).done(); // empty, self-collapsing
     builder
         .add_child()
         .height(40.0)

@@ -93,10 +93,11 @@ SUPPORTED_PROPERTIES = {
     'aspect-ratio',
     # Font (extract font-size)
     'font', 'font-size',
+    # Outline
+    'outline', 'outline-style', 'outline-width', 'outline-color', 'outline-offset',
     # No-op properties (safe to accept, no visual effect or default-only)
     'will-change', 'direction',
     # Visual-only properties that don't affect layout
-    'outline', 'outline-style', 'outline-width', 'outline-color', 'outline-offset',
     'resize', 'box-shadow', 'isolation',
 }
 
@@ -410,65 +411,144 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
     # calc() — pre-evaluate pure-px expressions
     m = re.match(r'^calc\((.+)\)$', value)
     if m:
-        return _try_eval_calc(m.group(1))
+        return _try_eval_calc(m.group(1), font_size)
     return None
 
 
-def _try_eval_calc(expr: str) -> str | None:
+def _parse_calc_token(tok: str, font_size: float = 16.0):
+    """Parse a single calc token, returning (value, unit) where unit is '%' or 'px'.
+    Returns None if token can't be parsed."""
+    m = re.match(r'^(-?[\d.]+)%$', tok)
+    if m:
+        return (float(m.group(1)), '%')
+    m = re.match(r'^(-?[\d.]+)px$', tok)
+    if m:
+        return (float(m.group(1)), 'px')
+    m = re.match(r'^(-?[\d.]+)rem$', tok)
+    if m:
+        return (float(m.group(1)) * 16.0, 'px')
+    m = re.match(r'^(-?[\d.]+)em$', tok)
+    if m:
+        return (float(m.group(1)) * font_size, 'px')
+    m = re.match(r'^(-?[\d.]+)vw$', tok)
+    if m:
+        return (float(m.group(1)) * 8.0, 'px')
+    m = re.match(r'^(-?[\d.]+)vh$', tok)
+    if m:
+        return (float(m.group(1)) * 6.0, 'px')
+    m = re.match(r'^(-?[\d.]+)$', tok)
+    if m:
+        return (float(m.group(1)), 'num')
+    return None
+
+
+def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
     """Try to pre-evaluate a calc() expression to a Length.
-    Handles pure-px arithmetic and percentage+px combos."""
+    Handles pure-px arithmetic, * / operators, and percentage+px combos."""
     expr = expr.strip()
     if 'var(' in expr:
         return None
-    # Replace units with just numbers for evaluation
-    # Try pure-px evaluation first
-    px_only = re.sub(r'(\d+\.?\d*)px', r'\1', expr)
-    if '%' not in px_only and 'em' not in px_only and 'vw' not in px_only and 'vh' not in px_only:
+    # Try pure-px evaluation first: convert em/rem to px, then evaluate
+    pure = re.sub(r'(\d+\.?\d*)rem', lambda m: str(float(m.group(1)) * 16.0), expr)
+    pure = re.sub(r'(\d+\.?\d*)em', lambda m: str(float(m.group(1)) * font_size), pure)
+    pure = re.sub(r'(\d+\.?\d*)px', r'\1', pure)
+    if '%' not in pure and 'vw' not in pure and 'vh' not in pure:
         try:
-            result = eval(px_only, {"__builtins__": {}}, {})
+            result = eval(pure, {"__builtins__": {}}, {})
             return f'Length::px({float(result):.6f})'
         except:
-            return None
+            pass
 
-    # Try percent+px combo: calc(<percent>% ± <px>px)
-    # Normalize: remove whitespace around operators for parsing
+    # Normalize spacing around +/- operators (but not inside numbers like -5px)
     normalized = re.sub(r'\s*([+\-])\s*', r' \1 ', expr)
-    # Collect all percent and px terms
-    pct_total = 0.0
-    px_total = 0.0
-    # Match terms like "50%", "-10px", "+ 20px", "- 5%"
-    # Split into tokens
+    normalized = re.sub(r'\s*([*/])\s*', r' \1 ', normalized)
     tokens = normalized.split()
+
+    # Phase 1: resolve * and / (higher precedence)
+    # CSS calc spec: * and / must have one dimensionless operand
+    resolved = []
     i = 0
-    sign = 1.0
     while i < len(tokens):
         tok = tokens[i]
-        if tok == '+':
-            sign = 1.0
+        if tok in ('+', '-'):
+            resolved.append(tok)
             i += 1
             continue
-        elif tok == '-':
-            sign = -1.0
-            i += 1
-            continue
-        m_pct = re.match(r'^(-?[\d.]+)%$', tok)
-        m_px = re.match(r'^(-?[\d.]+)px$', tok)
-        if m_pct:
-            pct_total += sign * float(m_pct.group(1))
-            sign = 1.0
-        elif m_px:
-            px_total += sign * float(m_px.group(1))
-            sign = 1.0
-        else:
-            # Unknown unit — can't handle
+        parsed = _parse_calc_token(tok, font_size)
+        if parsed is None:
             return None
+        val, unit = parsed
+        # Look ahead for * or /
+        while i + 2 < len(tokens) and tokens[i + 1] in ('*', '/'):
+            op = tokens[i + 1]
+            next_parsed = _parse_calc_token(tokens[i + 2], font_size)
+            if next_parsed is None:
+                return None
+            nval, nunit = next_parsed
+            if op == '*':
+                if unit == 'num' and nunit != 'num':
+                    val, unit = val * nval, nunit
+                elif nunit == 'num' and unit != 'num':
+                    val = val * nval
+                elif unit == 'num' and nunit == 'num':
+                    val = val * nval
+                else:
+                    return None  # can't multiply two dimensions
+            else:  # /
+                if nunit != 'num' or nval == 0:
+                    return None  # can only divide by dimensionless number
+                val = val / nval
+            i += 2
+        if unit == 'num':
+            unit = 'px'  # bare numbers treated as px
+        resolved.append((val, unit))
         i += 1
+
+    # Phase 2: sum up % and px terms with + and - signs
+    pct_total = 0.0
+    px_total = 0.0
+    sign = 1.0
+    for item in resolved:
+        if item == '+':
+            sign = 1.0
+        elif item == '-':
+            sign = -1.0
+        else:
+            val, unit = item
+            if unit == '%':
+                pct_total += sign * val
+            else:
+                px_total += sign * val
+            sign = 1.0
 
     if pct_total == 0.0:
         return f'Length::px({px_total:.6f})'
     if px_total == 0.0:
         return f'Length::percent({pct_total:.6f})'
     return f'Length::calc_percent_px({pct_total:.6f}, {px_total:.6f})'
+
+
+def _split_respecting_parens(value: str) -> list[str]:
+    """Split a CSS value by top-level whitespace, respecting parentheses."""
+    parts = []
+    current = []
+    depth = 0
+    for ch in value:
+        if ch == '(':
+            depth += 1
+            current.append(ch)
+        elif ch == ')':
+            depth -= 1
+            current.append(ch)
+        elif ch == ' ' and depth == 0:
+            if current:
+                parts.append(''.join(current))
+                current = []
+        else:
+            current.append(ch)
+    if current:
+        parts.append(''.join(current))
+    return parts
 
 
 def parse_border_width(value: str) -> str | None:
@@ -557,6 +637,43 @@ def parse_simple_css_rules(css_text: str) -> list:
                 rules.append((sel, styles))
 
     return rules
+
+
+def compute_specificity(selector: str) -> tuple:
+    """Compute CSS specificity as (ids, classes, elements) tuple.
+
+    * → (0,0,0)
+    tag → (0,0,1)
+    .class → (0,1,0)
+    #id → (1,0,0)
+    Compound/descendant selectors sum their parts.
+    """
+    # Strip pseudo-classes/elements for specificity counting
+    sel = re.sub(r':not\(([^)]*)\)', r' \1 ', selector)
+    sel = re.sub(r'::?[a-zA-Z-]+', '', sel)
+
+    ids = len(re.findall(r'#[a-zA-Z0-9_-]+', sel))
+    classes = len(re.findall(r'\.[a-zA-Z0-9_-]+', sel))
+    # Count tag names — word boundaries that aren't preceded by . or #
+    tags = 0
+    for part in re.findall(r'(?:^|[\s>+~])([a-zA-Z][a-zA-Z0-9]*)', sel):
+        if part.lower() != 'not':
+            tags += 1
+    # Standalone tag at start without combinator
+    m = re.match(r'^([a-zA-Z][a-zA-Z0-9]*)', sel.strip())
+    if m and m.group(1).lower() != 'not':
+        # Already counted if it matched the regex above, avoid double-count
+        pass
+
+    return (ids, classes, tags)
+
+
+# BODY_STYLE rules mirroring run_all_pixel_comparisons.py BODY_STYLE.
+# These provide the same CSS reset + body styling that Chrome sees.
+BODY_STYLE_RULES = parse_simple_css_rules(
+    '* { margin: 0; padding: 0; box-sizing: content-box; } '
+    'body { margin: 0; padding: 20px; }'
+)
 
 
 def _match_simple_selector(selector: str, tag: str, classes: list, id_val: str) -> bool:
@@ -786,14 +903,20 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
     # Save inline styles (highest precedence)
     inline_styles = OrderedDict(node.styles)
 
-    # Apply stylesheet rules in order (later wins)
-    cascade = OrderedDict()
+    # Apply stylesheet rules respecting specificity.
+    # Higher-specificity rules win; within same specificity, later wins.
+    cascade = OrderedDict()       # prop -> value
+    cascade_spec = {}             # prop -> specificity tuple
     for selector, styles in rules:
         if match_selector(selector, node.tag, classes, id_val, ancestors,
                           sibling_index, sibling_count, preceding_siblings):
-            cascade.update(styles)
+            spec = compute_specificity(selector)
+            for prop, val in styles.items():
+                if prop not in cascade_spec or spec >= cascade_spec[prop]:
+                    cascade[prop] = val
+                    cascade_spec[prop] = spec
 
-    # Inline styles override stylesheet rules
+    # Inline styles override stylesheet rules (highest precedence)
     cascade.update(inline_styles)
     node.styles = cascade
 
@@ -944,8 +1067,10 @@ class WptHtmlParser(HTMLParser):
 
     def finalize(self):
         """Apply CSS rules to the DOM tree after parsing.
-        External stylesheet rules are applied first, then inline <style> rules override."""
-        all_rules = self.external_css_rules + self.css_rules
+        BODY_STYLE_RULES come first (matching Chrome's BODY_STYLE wrapper),
+        then external stylesheet rules, then inline <style> rules.
+        Specificity-based cascade ensures body { padding:20px } beats * { padding:0 }."""
+        all_rules = BODY_STYLE_RULES + self.external_css_rules + self.css_rules
         if all_rules:
             apply_css_rules(all_rules, self.root)
             # Re-collect all styles
@@ -1581,17 +1706,18 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     if prop in ('gap', 'row-gap', 'column-gap'):
         if prop == 'gap':
-            parts = val.split()
-            if len(parts) == 2:
-                row_len = parse_length(parts[0], font_size)
-                col_len = parse_length(parts[1], font_size)
+            # Split respecting parentheses (don't split inside calc())
+            gap_parts = _split_respecting_parens(val)
+            if len(gap_parts) == 2:
+                row_len = parse_length(gap_parts[0], font_size)
+                col_len = parse_length(gap_parts[1], font_size)
                 if row_len and col_len:
                     return [
                         f"{s}.row_gap = Some({row_len});",
                         f"{s}.column_gap = Some({col_len});",
                     ]
-            elif len(parts) == 1:
-                length = parse_length(parts[0], font_size)
+            elif len(gap_parts) == 1:
+                length = parse_length(gap_parts[0], font_size)
                 if length:
                     return [
                         f"{s}.row_gap = Some({length});",
@@ -1759,6 +1885,50 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         color = parse_color(val)
         if color:
             return f"{s}.column_rule_color = StyleColor::Resolved({color});"
+
+    # ── outline shorthand ──
+    if prop == 'outline':
+        parts = val.split()
+        lines = []
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+            bstyle = border_style_to_rust(part)
+            if bstyle:
+                lines.append(f"{s}.outline_style = {bstyle};")
+            elif parse_border_width(part) is not None:
+                lines.append(f"{s}.outline_width = {parse_border_width(part)};")
+            elif parse_color(part):
+                lines.append(f"{s}.outline_color = StyleColor::Resolved({parse_color(part)});")
+        return lines if lines else None
+
+    if prop == 'outline-width':
+        px_val = parse_border_width(val)
+        if px_val is not None:
+            return f"{s}.outline_width = {px_val};"
+
+    if prop == 'outline-style':
+        style_code = border_style_to_rust(val)
+        if style_code:
+            return f"{s}.outline_style = {style_code};"
+
+    if prop == 'outline-color':
+        color = parse_color(val)
+        if color:
+            return f"{s}.outline_color = StyleColor::Resolved({color});"
+
+    if prop == 'outline-offset':
+        length = parse_length(val, font_size)
+        if length:
+            # outline-offset is stored as i32 pixels
+            m = re.match(r'^(-?[\d.]+)(px|em|rem)?$', val.strip())
+            if m:
+                num = float(m.group(1))
+                unit = m.group(2) or 'px'
+                if unit in ('em', 'rem'):
+                    num = num * font_size
+                return f"{s}.outline_offset = {int(num)};"
 
     # ── logical properties: block-size/inline-size → height/width (horizontal writing mode) ──
     if prop in ('block-size', 'min-block-size', 'max-block-size'):
@@ -2288,6 +2458,14 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
 
     counter = [0]
 
+    def _has_meaningful_styles(styles):
+        """Check if styles have properties beyond BODY_STYLE * rule defaults."""
+        for prop, val in styles.items():
+            if prop in ('margin', 'padding', 'box-sizing') and val in ('0', 'content-box'):
+                continue
+            return True
+        return False
+
     def gen_node(node: DomNode, parent_var: str, indent: int, parent_font_size: float = 16.0):
         if node.is_text:
             # Skip text nodes — we're comparing layout only
@@ -2299,10 +2477,11 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
             # (reparented to the grandparent). Headings in WPT tests are usually
             # section labels with user-agent styling (margins, bold, font-size) that
             # our engine doesn't replicate. Skipping them avoids mismatches.
+            has_real_styles = _has_meaningful_styles(node.styles)
             skip_self = False
-            if not node.styles and node.tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
+            if not has_real_styles and node.tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
                 skip_self = True
-            if node.tag in ('strong', 'em', 'b', 'i', 'u', 'a') and not node.styles:
+            if node.tag in ('strong', 'em', 'b', 'i', 'u', 'a') and not has_real_styles:
                 skip_self = True
             if skip_self:
                 for child in node.children:

@@ -169,7 +169,7 @@ def main():
 
                 if pr["status"] == "fail":
                     html = templates.get(test_id, "")
-                    category, dep = classify_failure_categories(html)
+                    category, dep = classify_failure_categories(html, test_id=test_id)
                     row["failure_category"] = category
                     row["dependency"] = dep
         else:

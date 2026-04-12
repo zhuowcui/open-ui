@@ -59,7 +59,7 @@ def main() -> None:
     for test_id, html in templates.items():
         if test_id not in fail_map:
             continue
-        deps = classify_dependencies(html)
+        deps = classify_dependencies(html, test_id=test_id)
         if not deps:
             continue
         for d in deps:

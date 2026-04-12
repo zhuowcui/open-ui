@@ -91,42 +91,106 @@ def has_margin_trim(html: str) -> bool:
     return bool(re.search(r"margin-trim\s*:", html, re.IGNORECASE))
 
 
+def has_inline_block(html: str) -> bool:
+    """Detect display:inline-block which requires inline layout (SP11)."""
+    return bool(re.search(r"display\s*:\s*inline-block", html, re.IGNORECASE))
+
+
+def has_box_shadow(html: str) -> bool:
+    """Detect box-shadow property (not yet implemented)."""
+    return bool(re.search(r"box-shadow\s*:", html, re.IGNORECASE))
+
+
+def has_sticky_position(html: str) -> bool:
+    """Detect position:sticky (requires scroll container integration)."""
+    return bool(re.search(r"position\s*:\s*sticky", html, re.IGNORECASE))
+
+
+def has_complex_border_style(html: str) -> bool:
+    """Detect dashed/dotted/double/groove/ridge/inset/outset border styles (paint quality)."""
+    return bool(re.search(
+        r"border(?:-(?:top|right|bottom|left))?-style\s*:\s*(?:dashed|dotted|double|groove|ridge|inset|outset)",
+        html, re.IGNORECASE
+    ))
+
+
+def has_scrollbar_gutter(html: str) -> bool:
+    """Detect scrollbar-gutter property (not implemented)."""
+    return bool(re.search(r"scrollbar-gutter\s*:", html, re.IGNORECASE))
+
+
+def is_print_layout(html: str, test_id: str = "") -> bool:
+    """Detect print-specific layout tests."""
+    return "-print" in test_id.split("/")[-1]
+
+
+def is_reference_test(html: str, test_id: str = "") -> bool:
+    """Detect WPT reference files (-ref suffix) which are comparison targets, not standalone tests."""
+    name = test_id.split("/")[-1] if test_id else ""
+    return "-ref" in name
+
+
 # Ordered list of (key, label, owning_sp, detector)
+# Detectors that need test_id have a special flag.
 DEPENDENCY_DEFS = [
-    ("text_rendering",  "SP11/SP13: Text Rendering",  "SP11,SP13", has_visible_text),
-    ("font_metrics",    "SP11: Font Metrics",          "SP11",      has_font_metrics),
-    ("image_rendering", "SP13: Image Rendering",       "SP13",      has_image_ref),
-    ("css_containment", "Future SP: CSS Containment",  "Future",    has_containment),
-    ("gradient",        "SP13: Gradient Rendering",    "SP13",      has_gradient),
-    ("margin_trim",     "Future SP: margin-trim",      "Future",    has_margin_trim),
+    ("reference_test",     "Reference Test (not standalone)", "N/A",       is_reference_test),
+    ("print_layout",       "Print Layout Test",               "Future",    is_print_layout),
+    ("text_rendering",     "SP11/SP13: Text Rendering",       "SP11,SP13", has_visible_text),
+    ("font_metrics",       "SP11: Font Metrics",              "SP11",      has_font_metrics),
+    ("image_rendering",    "SP13: Image Rendering",           "SP13",      has_image_ref),
+    ("css_containment",    "Future SP: CSS Containment",      "Future",    has_containment),
+    ("gradient",           "SP13: Gradient Rendering",        "SP13",      has_gradient),
+    ("margin_trim",        "Future SP: margin-trim",          "Future",    has_margin_trim),
+    ("inline_block",       "SP11: Inline Block Layout",       "SP11",      has_inline_block),
+    ("box_shadow",         "Future SP: Box Shadow",           "Future",    has_box_shadow),
+    ("sticky_position",    "Future SP: Sticky Position",      "Future",    has_sticky_position),
+    ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
+    ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
 ]
 
 # Category names used in wpt_mapping.csv (maps dependency key → category name)
 CATEGORY_FOR_DEP = {
+    "reference_test": "reference_test",
+    "print_layout": "print_layout",
     "text_rendering": "needs_text",
     "font_metrics": "needs_font_metrics",
     "image_rendering": "needs_image",
     "css_containment": "needs_containment",
     "gradient": "needs_gradient",
     "margin_trim": "needs_margin_trim",
+    "inline_block": "needs_inline_block",
+    "box_shadow": "needs_box_shadow",
+    "sticky_position": "needs_sticky",
+    "complex_border": "needs_complex_border",
+    "scrollbar_gutter": "needs_scrollbar_gutter",
 }
 
 
-def classify_dependencies(html: str) -> list[str]:
+def classify_dependencies(html: str, test_id: str = "") -> list[str]:
     """Return list of dependency keys that apply to this test's HTML.
 
     Multi-label: returns ALL matching dependencies, not just the first.
     """
-    return [key for key, _label, _sp, detector in DEPENDENCY_DEFS if detector(html)]
+    result = []
+    for key, _label, _sp, detector in DEPENDENCY_DEFS:
+        import inspect
+        params = inspect.signature(detector).parameters
+        if 'test_id' in params:
+            if detector(html, test_id=test_id):
+                result.append(key)
+        else:
+            if detector(html):
+                result.append(key)
+    return result
 
 
-def classify_failure_categories(html: str) -> tuple[str, str]:
+def classify_failure_categories(html: str, test_id: str = "") -> tuple[str, str]:
     """Classify a failing test's cross-SP dependencies for wpt_mapping.csv.
 
     Returns (failure_category, dependency) where category may be comma-separated.
     If no cross-SP dependencies detected, returns ("sp12_layout_bug", "").
     """
-    deps = classify_dependencies(html)
+    deps = classify_dependencies(html, test_id=test_id)
     if deps:
         categories = [CATEGORY_FOR_DEP[d] for d in deps]
         labels = []

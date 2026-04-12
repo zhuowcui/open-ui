@@ -146,6 +146,21 @@ pub struct ComputedStyle {
     pub border_bottom_color: StyleColor,
     pub border_left_color: StyleColor,
 
+    // ── Outline (Blink: OutlineValue in surround_data_) ─────────────
+    // Outline is drawn outside the border box. Does NOT affect layout.
+
+    /// CSS `outline-width`. Initial: `3` (medium = 3px, same as border).
+    pub outline_width: i32,
+
+    /// CSS `outline-style`. Initial: `none`.
+    pub outline_style: BorderStyle,
+
+    /// CSS `outline-color`. Initial: `currentColor`.
+    pub outline_color: StyleColor,
+
+    /// CSS `outline-offset`. Initial: `0`.
+    pub outline_offset: i32,
+
     // ── Border radii (Blink: LengthSize stored in SurroundData) ─────
     // Each corner stores horizontal and vertical radii as `f32` pixels.
     // Initial value: `0.0` (no rounding).
@@ -586,6 +601,11 @@ impl ComputedStyle {
             border_bottom_color: StyleColor::default(),
             border_left_color: StyleColor::default(),
 
+            outline_width: 3,                          // medium (3px)
+            outline_style: BorderStyle::INITIAL,       // none
+            outline_color: StyleColor::default(),      // currentColor
+            outline_offset: 0,
+
             border_top_left_radius: (0.0, 0.0),
             border_top_right_radius: (0.0, 0.0),
             border_bottom_right_radius: (0.0, 0.0),
@@ -757,6 +777,18 @@ impl ComputedStyle {
     #[inline]
     pub fn effective_border_left(&self) -> i32 {
         if self.border_left_style.has_visible_border() { self.border_left_width } else { 0 }
+    }
+
+    /// Effective outline width: 0 if outline-style is none/hidden.
+    #[inline]
+    pub fn effective_outline_width(&self) -> i32 {
+        if self.outline_style.has_visible_border() { self.outline_width } else { 0 }
+    }
+
+    /// True if this element has a visible outline.
+    #[inline]
+    pub fn has_outline(&self) -> bool {
+        self.effective_outline_width() > 0
     }
 
     /// True if this element establishes a new formatting context.

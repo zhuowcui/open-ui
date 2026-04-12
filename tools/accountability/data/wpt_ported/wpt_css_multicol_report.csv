@@ -77,6 +77,8 @@ column-rule-002-ref,ported,css_multicol_column_rule_002_ref,
 column-rule-002,ported,css_multicol_column_rule_002,
 column-wrap-no-constraints-001,ported,css_multicol_column_wrap_no_constraints_001,
 column-wrap-no-constraints-002,ported,css_multicol_column_wrap_no_constraints_002,
+columnfill-auto-max-height-001,ported,css_multicol_columnfill_auto_max_height_001,
+columnfill-auto-max-height-002,ported,css_multicol_columnfill_auto_max_height_002,
 columnfill-auto-max-height-003,ported,css_multicol_columnfill_auto_max_height_003,
 composited-under-clip-under-multicol-ref,ported,css_multicol_composited_under_clip_under_multicol_ref,
 composited-under-clip-under-multicol,ported,css_multicol_composited_under_clip_under_multicol,
@@ -512,8 +514,6 @@ column-fill-balance-orthog-block-001,not_portable,,style_block_unsupported prope
 column-height-023,not_portable,,unsupported property: contain
 column-pseudo-background-color,not_portable,,complex_css_selector: @supports not selector(::column)
 column-rule-001,not_portable,,uses_javascript
-columnfill-auto-max-height-001,not_portable,,no_layout_content
-columnfill-auto-max-height-002,not_portable,,no_layout_content
 columns-shorthand-reset-wrap,not_portable,,uses_javascript
 dynamic-become-multicol-add-oof-inside-inline-crash,not_portable,,uses_javascript
 extremely-tall-multicol-with-extremely-tall-child-crash,not_portable,,uses_javascript

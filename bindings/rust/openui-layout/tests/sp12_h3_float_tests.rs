@@ -3872,7 +3872,9 @@ fn margin3_three_blocks_with_floats_interspersed() {
     let r = b.build();
     // Block 1: y=0, height=20, mb=15
     // Block 2: mt=10, collapse(15,10)=15, y=35
-    r.assert_child_position(2, 50, 36); // 1 (border) + 20 + max(15,10) = 36
+    // Child 2 (BFC root, overflow:hidden) is at y=36. Float occupies
+    // BFC [20,30]. At y=35 the float ended → no horizontal avoidance.
+    r.assert_child_position(2, 0, 36);
 }
 
 #[test]

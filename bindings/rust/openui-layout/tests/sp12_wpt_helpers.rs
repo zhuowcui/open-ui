@@ -82,6 +82,12 @@ impl<'a> ChildBuilder<'a> {
     fn new(parent: &'a mut BlockTestBuilder) -> Self {
         let mut style = ComputedStyle::initial();
         style.display = Display::Block;
+        // Default to overflow:hidden so test children establish a new BFC.
+        // CSS 2.1 §9.5: only BFC children avoid float overlap; non-BFC
+        // blocks overlap floats (only their line boxes avoid them).
+        // Tests needing self-collapsing blocks should use .overflow(Visible).
+        style.overflow_x = Overflow::Hidden;
+        style.overflow_y = Overflow::Hidden;
         Self {
             parent,
             style,

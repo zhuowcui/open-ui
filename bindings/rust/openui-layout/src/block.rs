@@ -174,6 +174,38 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         }
     };
 
+    // Compute the available block size to pass to children for `height: stretch`
+    // and similar sizing. When this node has a definite block size (explicit
+    // height, or externally imposed), children should size against that, not
+    // against the grandparent's available_block_size.
+    let children_available_block_size = if space.is_fixed_block_size || space.stretch_block_size {
+        // Externally imposed (viewport, flex cross axis, etc.)
+        (space.available_block_size - border_padding_block).clamp_negative_to_zero()
+    } else if !style.height.is_auto() && !style.height.is_stretch()
+        && !style.height.is_content_or_intrinsic()
+    {
+        // Explicit height (px, %, etc.) — resolve it
+        if style.height.is_percent()
+            && space.percentage_resolution_block_size.is_indefinite()
+        {
+            space.available_block_size // fallback to parent's available
+        } else {
+            let raw = resolve_length(
+                &style.height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            if style.box_sizing == BoxSizing::BorderBox {
+                (raw - border_padding_block).clamp_negative_to_zero()
+            } else {
+                raw
+            }
+        }
+    } else {
+        space.available_block_size // auto height: pass through
+    };
+
     let content_edge = border.top + padding.top;
     let mut block_offset = content_edge;
     let mut margin_strut = MarginStrut::new();
@@ -717,21 +749,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 }
 
                 // Adjust available inline size for float exclusions.
-                // CSS 2.1 §9.5: New-FC children must NOT overlap float margin boxes.
+                // CSS 2.1 §9.5: Only new-FC children must NOT overlap float margin boxes.
+                // Regular (non-FC) block children overlap floats — only their line
+                // boxes avoid floats (handled in inline layout).
                 let child_is_new_fc_caller = establishes_new_fc(child_style);
-                let (float_inline_offset, adjusted_available) = if exclusion_space_mixed.has_floats() {
-                    let (content_block_offset, min_inline_size) = if child_is_new_fc_caller {
-                        let child_top_margin = resolve_margins(child_style, child_available_inline).top;
-                        let mut temp_strut = margin_strut;
-                        temp_strut.append_normal(child_top_margin);
-                        let resolved_offset = block_offset + temp_strut.sum();
-                        let cbo = resolved_offset - content_edge;
-                        let min = new_fc_min_inline_size(child_style, child_available_inline);
-                        (cbo, min)
-                    } else {
-                        let content_block_offset = block_offset - content_edge;
-                        (content_block_offset, LayoutUnit::zero())
-                    };
+                let (float_inline_offset, adjusted_available) = if exclusion_space_mixed.has_floats()
+                    && child_is_new_fc_caller
+                {
+                    let child_top_margin = resolve_margins(child_style, child_available_inline).top;
+                    let mut temp_strut = margin_strut;
+                    temp_strut.append_normal(child_top_margin);
+                    let resolved_offset = block_offset + temp_strut.sum();
+                    let content_block_offset = resolved_offset - content_edge;
+                    let min_inline_size = new_fc_min_inline_size(child_style, child_available_inline);
 
                     let opp = exclusion_space_mixed.find_layout_opportunity(
                         &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
@@ -739,14 +769,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         min_inline_size,
                     );
 
-                    if child_is_new_fc_caller {
-                        let pushed_bfc = opp.rect.block_start_offset();
-                        if pushed_bfc > content_block_offset {
-                            let push_amount = pushed_bfc - content_block_offset;
-                            block_offset = block_offset + push_amount;
-                            margin_strut = MarginStrut::new();
-                            start_margin_resolved = true;
-                        }
+                    let pushed_bfc = opp.rect.block_start_offset();
+                    if pushed_bfc > content_block_offset {
+                        let push_amount = pushed_bfc - content_block_offset;
+                        block_offset = block_offset + push_amount;
+                        margin_strut = MarginStrut::new();
+                        start_margin_resolved = true;
                     }
 
                     (opp.rect.line_start_offset(), opp.inline_size())
@@ -760,6 +788,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 layout_block_child(
                     doc, child_id, space,
                     adjusted_available, child_percentage_block_size,
+                    children_available_block_size,
                     &border, &padding, content_edge,
                     &mut block_offset, &mut margin_strut,
                     &mut intrinsic_block_size, &mut child_fragments,
@@ -882,23 +911,20 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         }
 
         // Adjust available inline size for float exclusions.
-        // CSS 2.1 §9.5: New-FC children must NOT overlap float margin boxes.
-        // Regular children have line boxes avoid floats, not the block box.
+        // CSS 2.1 §9.5: Only new-FC children must NOT overlap float margin boxes.
+        // Regular (non-FC) block children overlap floats — only their line
+        // boxes avoid floats (handled in inline layout).
         let child_is_new_fc_caller = establishes_new_fc(child_style);
-        let (float_inline_offset, adjusted_available) = if exclusion_space.has_floats() {
-            // For new-FC children, use post-margin BFC offset and proper min size.
-            let (content_block_offset, min_inline_size) = if child_is_new_fc_caller {
-                // Tentative BFC block offset including margin collapsing.
-                let child_top_margin = resolve_margins(child_style, child_available_inline).top;
-                let mut temp_strut = margin_strut;
-                temp_strut.append_normal(child_top_margin);
-                let resolved_offset = block_offset + temp_strut.sum();
-                let cbo = resolved_offset - content_edge;
-                let min = new_fc_min_inline_size(child_style, child_available_inline);
-                (cbo, min)
-            } else {
-                (block_offset - content_edge, LayoutUnit::zero())
-            };
+        let (float_inline_offset, adjusted_available) = if exclusion_space.has_floats()
+            && child_is_new_fc_caller
+        {
+            // Tentative BFC block offset including margin collapsing.
+            let child_top_margin = resolve_margins(child_style, child_available_inline).top;
+            let mut temp_strut = margin_strut;
+            temp_strut.append_normal(child_top_margin);
+            let resolved_offset = block_offset + temp_strut.sum();
+            let content_block_offset = resolved_offset - content_edge;
+            let min_inline_size = new_fc_min_inline_size(child_style, child_available_inline);
 
             let opp = exclusion_space.find_layout_opportunity(
                 &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
@@ -906,16 +932,14 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 min_inline_size,
             );
 
-            // Handle push-down for new-FC children: if the layout opportunity
-            // starts below the child's tentative position, push the child down.
-            if child_is_new_fc_caller {
-                let pushed_bfc = opp.rect.block_start_offset();
-                if pushed_bfc > content_block_offset {
-                    let push_amount = pushed_bfc - content_block_offset;
-                    block_offset = block_offset + push_amount;
-                    margin_strut = MarginStrut::new();
-                    start_margin_resolved = true;
-                }
+            // Push-down: if the layout opportunity starts below the child's
+            // tentative position, push the child down.
+            let pushed_bfc = opp.rect.block_start_offset();
+            if pushed_bfc > content_block_offset {
+                let push_amount = pushed_bfc - content_block_offset;
+                block_offset = block_offset + push_amount;
+                margin_strut = MarginStrut::new();
+                start_margin_resolved = true;
             }
 
             (opp.rect.line_start_offset(), opp.inline_size())
@@ -929,6 +953,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         layout_block_child(
             doc, child_id, space,
             adjusted_available, child_percentage_block_size,
+            children_available_block_size,
             &border, &padding, content_edge,
             &mut block_offset, &mut margin_strut,
             &mut intrinsic_block_size, &mut child_fragments,
@@ -1447,6 +1472,7 @@ fn layout_block_child(
     space: &ConstraintSpace,
     child_available_inline: LayoutUnit,
     child_percentage_block_size: LayoutUnit,
+    children_available_block_size: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
     content_edge: LayoutUnit,
@@ -1499,7 +1525,7 @@ fn layout_block_child(
     let child_is_new_fc = establishes_new_fc(child_style);
     let child_space = ConstraintSpace::for_block_child(
         child_constrained_inline,
-        space.available_block_size,
+        children_available_block_size,
         child_available_inline,
         child_percentage_block_size,
         child_is_new_fc,
@@ -2144,18 +2170,19 @@ fn resolve_inline_size(
 
     // Apply min-width / max-width constraints
     let min = if style.min_width.is_auto() {
-        // CSS Sizing 4 §5.1: For elements with a preferred aspect ratio,
-        // min-width: auto resolves to the min-content contribution (not 0).
-        // BUT only when the aspect-ratio is actually used for sizing (i.e.,
-        // width is auto/stretch/intrinsic). When width is an explicit length
-        // (e.g., width: 100px), min-width: auto does NOT consider content.
-        if style.aspect_ratio.is_some()
-            && !style.is_scroll_container()
-            && (style.width.is_auto() || style.width.is_stretch() || style.width.is_content_or_intrinsic())
-        {
-            resolve_intrinsic_inline(doc, node_id, &Length::min_content(), available, border_padding)
+        // CSS Sizing 4 §5.1: For non-replaced elements with a preferred
+        // aspect-ratio (that are not scroll containers), min-width:auto
+        // resolves to the content-based minimum size (min-content width).
+        // Without AR, CSS 2.2 §10.4 applies: min-width:auto = 0.
+        if style.aspect_ratio.is_some() && !style.is_scroll_container() {
+            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
+            if style.box_sizing == BoxSizing::BorderBox {
+                intrinsic.min
+            } else {
+                (intrinsic.min - border_padding).clamp_negative_to_zero()
+            }
         } else {
-            LayoutUnit::zero() // min-width: auto → 0 for regular block elements
+            LayoutUnit::zero()
         }
     } else if style.min_width.is_content_or_intrinsic() {
         resolve_intrinsic_inline(doc, node_id, &style.min_width, available, border_padding)
@@ -2488,8 +2515,23 @@ fn resolve_block_size(
         && style.height.is_auto();
     let min_raw = if style.min_height.is_auto() {
         if apply_automatic_min_size {
-            // Automatic minimum = intrinsic block size (already border-box)
-            intrinsic_block_size
+            // CSS Sizing 4 §5.1: Automatic minimum = intrinsic block size,
+            // clamped from above by the maximum size (max-height).
+            let auto_min = intrinsic_block_size;
+            let max_h_raw = resolve_length(
+                &style.max_height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::max(),
+                LayoutUnit::max(),
+            );
+            let max_h = if max_h_raw == LayoutUnit::max() {
+                max_h_raw
+            } else if style.box_sizing == BoxSizing::ContentBox {
+                max_h_raw + border_padding_block
+            } else {
+                max_h_raw.max_of(border_padding_block)
+            };
+            auto_min.min_of(max_h)
         } else {
             LayoutUnit::zero()
         }
@@ -2734,11 +2776,45 @@ fn layout_multicol(
             LayoutUnit::zero(),
             LayoutUnit::zero(),
         );
-        if style.box_sizing == BoxSizing::BorderBox {
+        let content = if style.box_sizing == BoxSizing::BorderBox {
             (raw - border_padding_block).clamp_negative_to_zero()
         } else {
             raw
+        };
+        // Apply min-height / max-height clamping so that the resolved
+        // container block size reflects the actual usable height for columns.
+        // CSS 2.1 §10.7: min-height wins over max-height when they conflict.
+        // Order: apply max first, then min (so min trumps max).
+        let mut clamped = content;
+        if !style.max_height.is_none() && !style.max_height.is_auto() {
+            let max_raw = resolve_length(
+                &style.max_height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            let max_content = if style.box_sizing == BoxSizing::BorderBox {
+                (max_raw - border_padding_block).clamp_negative_to_zero()
+            } else {
+                max_raw
+            };
+            clamped = clamped.min_of(max_content);
         }
+        if !style.min_height.is_auto() && !style.min_height.is_none() {
+            let min_raw = resolve_length(
+                &style.min_height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            let min_content = if style.box_sizing == BoxSizing::BorderBox {
+                (min_raw - border_padding_block).clamp_negative_to_zero()
+            } else {
+                min_raw
+            };
+            clamped = clamped.max_of(min_content);
+        }
+        clamped
     } else {
         openui_geometry::INDEFINITE_SIZE
     };
@@ -2801,6 +2877,10 @@ fn layout_multicol(
                 is_spanner: true,
                 split_portion: None,
             });
+            // Note: do NOT increment flow_count for spanners. Spanners
+            // create group boundaries but are not in-flow column children.
+            // OOF elements appearing after a spanner should get the same
+            // flow_index as the first in-flow child of the next group.
             continue;
         }
 
@@ -2845,7 +2925,15 @@ fn layout_multicol(
 
             let mut remaining_height = container_height;
             let mut current_group: Vec<NodeId> = Vec::new();
-            let mut current_group_content = LayoutUnit::zero();
+            // Include container's padding-top in the first group's content.
+            // When a container with padding is split at spanner boundaries,
+            // the padding contributes to the column content before/after the spanner.
+            let container_pad_top = resolve_margin_or_padding(&child_style.padding_top, child_available_inline)
+                + LayoutUnit::from_i32(child_style.effective_border_top());
+            let container_pad_bottom = resolve_margin_or_padding(&child_style.padding_bottom, child_available_inline)
+                + LayoutUnit::from_i32(child_style.effective_border_bottom());
+            let mut current_group_content = container_pad_top;
+            let mut is_first_group = true;
 
             for gc_id in doc.children(child_id) {
                 let gc_style = &doc.node(gc_id).style;
@@ -2857,7 +2945,9 @@ fn layout_multicol(
                 }
                 if gc_style.column_span == ColumnSpan::All {
                     // Flush the current group as a split portion.
-                    if !current_group.is_empty() {
+                    // Also flush if group is empty but has padding content
+                    // (container padding-top contributes to pre-spanner space).
+                    if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
                         let portion_h = current_group_content.min_of(remaining_height);
                         remaining_height = (remaining_height - portion_h).clamp_negative_to_zero();
                         children_info.push(ChildInfo {
@@ -2870,6 +2960,7 @@ fn layout_multicol(
                             }),
                         });
                         current_group_content = LayoutUnit::zero();
+                        is_first_group = false;
                     }
                     // Add the nested spanner as a multicol-level spanner.
                     children_info.push(ChildInfo {
@@ -2906,9 +2997,10 @@ fn layout_multicol(
                     current_group_content = current_group_content + gc_h;
                 }
             }
-            // Flush any trailing group.
-            if !current_group.is_empty() {
-                let portion_h = current_group_content.min_of(remaining_height);
+            // Flush any trailing group (add container's padding-bottom).
+            if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
+                let final_content = current_group_content + container_pad_bottom;
+                let portion_h = final_content.min_of(remaining_height);
                 children_info.push(ChildInfo {
                     id: child_id,
                     is_spanner: false,
@@ -2926,6 +3018,7 @@ fn layout_multicol(
                 split_portion: None,
             });
         }
+        flow_count += 1;
     }
 
     let mut result_children: Vec<Fragment> = Vec::new();
@@ -3005,6 +3098,7 @@ fn layout_multicol(
             let mut col_margins_top: Vec<LayoutUnit> = Vec::new();
             let mut col_margins_bottom: Vec<LayoutUnit> = Vec::new();
             let mut col_avoid_break: Vec<bool> = Vec::new();
+            let mut col_avoid_break_after: Vec<bool> = Vec::new();
             let mut col_forced_break_before: Vec<bool> = Vec::new();
 
             let mut prev_break_after_forced_fp = false;
@@ -3072,6 +3166,8 @@ fn layout_multicol(
                     col_margins_top.push(child_margin_top);
                     col_margins_bottom.push(child_margin_bottom);
                     col_avoid_break.push(container_style.break_inside.is_avoid());
+                    col_avoid_break_after.push(propagated_break_after(doc, child_node_id).is_avoid()
+                        || container_style.break_after.is_avoid());
                     col_forced_break_before.push(forced);
                     col_fragments.push(wrapper);
 
@@ -3084,18 +3180,25 @@ fn layout_multicol(
                     let child_margin_bottom = resolve_margin_or_padding(
                         &child_style.margin_bottom, column_width);
                     let child_is_new_fc = establishes_new_fc(child_style);
-                    let child_space = ConstraintSpace::for_block_child(
+                    let mut child_space = ConstraintSpace::for_block_child(
                         column_width,
                         group_available_block,
                         column_width,
                         first_pass_pct_basis,
                         child_is_new_fc,
                     );
+                    // Tell children about the fragmentainer (column) height so
+                    // flex containers know the wrapping boundary.
+                    if !group_available_block.is_indefinite() {
+                        child_space.fragmentainer_block_size = group_available_block;
+                    }
                     let child_frag = block_layout(doc, info.id, &child_space);
                     col_block_sizes.push(child_frag.size.height);
                     col_margins_top.push(child_margin_top);
                     col_margins_bottom.push(child_margin_bottom);
                     col_avoid_break.push(doc.node(info.id).style.break_inside.is_avoid());
+                    col_avoid_break_after.push(propagated_break_after(doc, child_node_id).is_avoid()
+                        || doc.node(info.id).style.break_after.is_avoid());
                     col_forced_break_before.push(forced);
                     col_fragments.push(child_frag);
 
@@ -3137,11 +3240,11 @@ fn layout_multicol(
             {
                 // Force balance before spanner per §7.2, regardless of
                 // whether the container has a definite height/max-height.
-                balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
+                balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before, &col_avoid_break_after)
             } else {
                 match algo.column_fill {
                     ColumnFill::Balance | ColumnFill::BalanceAll => {
-                        balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
+                        balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before, &col_avoid_break_after)
                     }
                     ColumnFill::Auto => {
                         if has_explicit_height {
@@ -3160,7 +3263,7 @@ fn layout_multicol(
                             // column-fill:auto with no height/max-height:
                             // CSS Multicol §7.2: auto-height multicol has no
                             // constraint, so column-fill:auto degrades to balance.
-                            balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before)
+                            balance_columns_with_margins(&col_block_sizes, &col_margins_top, &col_margins_bottom, &col_avoid_break, resolved.count, group_max, &col_forced_break_before, &col_avoid_break_after)
                         }
                     }
                 }
@@ -3198,6 +3301,7 @@ fn layout_multicol(
                 col_margins_top.clear();
                 col_margins_bottom.clear();
                 col_avoid_break.clear();
+                col_avoid_break_after.clear();
                 col_forced_break_before.clear();
 
                 let mut prev_break_after_forced_rp = false;
@@ -3264,6 +3368,8 @@ fn layout_multicol(
                         col_margins_top.push(child_margin_top);
                         col_margins_bottom.push(child_margin_bottom);
                         col_avoid_break.push(container_style.break_inside.is_avoid());
+                        col_avoid_break_after.push(propagated_break_after(doc, child_node_id).is_avoid()
+                            || container_style.break_after.is_avoid());
                         col_forced_break_before.push(forced);
                         col_fragments.push(wrapper);
 
@@ -3276,18 +3382,23 @@ fn layout_multicol(
                         let child_margin_bottom = resolve_margin_or_padding(
                             &child_style.margin_bottom, column_width);
                         let child_is_new_fc = establishes_new_fc(child_style);
-                        let child_space = ConstraintSpace::for_block_child(
+                        let mut child_space = ConstraintSpace::for_block_child(
                             column_width,
                             column_height,
                             column_width,
                             child_percentage_block_size,
                             child_is_new_fc,
                         );
+                        if !column_height.is_indefinite() {
+                            child_space.fragmentainer_block_size = column_height;
+                        }
                         let child_frag = block_layout(doc, info.id, &child_space);
                         col_block_sizes.push(child_frag.size.height);
                         col_margins_top.push(child_margin_top);
                         col_margins_bottom.push(child_margin_bottom);
                         col_avoid_break.push(doc.node(info.id).style.break_inside.is_avoid());
+                        col_avoid_break_after.push(propagated_break_after(doc, child_node_id).is_avoid()
+                            || doc.node(info.id).style.break_after.is_avoid());
                         col_forced_break_before.push(forced);
                         col_fragments.push(child_frag);
 
@@ -3322,6 +3433,10 @@ fn layout_multicol(
             let mut prev_break_after_forces = false;
             let mut prev_break_after_avoids = false;
             let mut prev_margin_bottom = LayoutUnit::zero();
+            // Track whether the current column was started by a forced break.
+            // CSS Fragmentation: margins at the top of a non-first column are
+            // preserved after forced breaks but truncated after unforced breaks.
+            let mut col_started_by_forced_break = false;
             // Track actual tallest column content for auto-height containers.
             let mut max_col_content = LayoutUnit::zero();
 
@@ -3363,6 +3478,7 @@ fn layout_multicol(
                         col_block_offset = LayoutUnit::zero();
                         col_remaining = column_height;
                         prev_margin_bottom = LayoutUnit::zero();
+                        col_started_by_forced_break = true;
                     } else if i > 0 {
                         // Column is empty but this isn't the first child overall.
                         // A forced break still moves to the next column.
@@ -3370,15 +3486,17 @@ fn layout_multicol(
                         col_block_offset = LayoutUnit::zero();
                         col_remaining = column_height;
                         prev_margin_bottom = LayoutUnit::zero();
+                        col_started_by_forced_break = true;
                     }
                 }
 
                 // Compute collapsed margin between siblings.
                 // CSS 2.1 §8.3.1: adjoining margins collapse to max.
-                // CSS Fragmentation §3.5: margin at top of non-first column truncated.
+                // CSS Fragmentation §5.4: margin at top of non-first column
+                // truncated for unforced breaks, preserved for forced breaks.
                 let margin_space = if col_block_offset > LayoutUnit::zero() {
                     prev_margin_bottom.max_of(child_margin_top)
-                } else if col_idx == 0 {
+                } else if col_idx == 0 || col_started_by_forced_break {
                     child_margin_top
                 } else {
                     LayoutUnit::zero()
@@ -3398,38 +3516,51 @@ fn layout_multicol(
                     && col_remaining.raw() < total_child_space.raw()
                     && col_block_offset > LayoutUnit::zero()
                     && child_height.raw() <= column_height.raw()
+                    && (algo.column_fill != ColumnFill::Auto
+                        || col_idx + 1 < resolved.count as usize)
                 {
                     max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
                     prev_margin_bottom = LayoutUnit::zero();
+                    col_started_by_forced_break = false;
                 }
 
                 // Recalculate margin for potentially new column context.
-                // CSS Fragmentation §3.5: truncate at non-first column top.
+                // CSS Fragmentation §5.4: truncate at non-first column top
+                // only for unforced breaks.
                 let actual_margin = if col_block_offset > LayoutUnit::zero() {
                     prev_margin_bottom.max_of(child_margin_top)
-                } else if col_idx == 0 {
+                } else if col_idx == 0 || col_started_by_forced_break {
                     child_margin_top
                 } else {
                     LayoutUnit::zero()
                 };
                 let needed = actual_margin + child_height;
 
-                // If child doesn't fit and there's content already in this column,
-                // move to next column first — but NOT if break-before:avoid is set
-                // (we should keep the child with the previous sibling).
-                // CSS Multicol §3.4: overflow creates additional columns in the
-                // inline direction, so we allow col_idx beyond positions.len().
+                // CSS Fragmentation §4 / CSS Multicol §3.4: When a child
+                // doesn't fit in the remaining column space, move it to the
+                // next column (class C break between siblings).  If the child
+                // is taller than a full column, the fragmentation code below
+                // will split it across columns.
+                //
+                // Do NOT advance when break-before:avoid is set — the child
+                // should stay with the previous sibling.
+                // CSS Multicol §3.4: column-fill:auto caps at column-count;
+                // excess content overflows the last column (no new columns
+                // unless forced by break-before/after).
+                let can_advance_col = algo.column_fill != ColumnFill::Auto
+                    || col_idx + 1 < resolved.count as usize;
                 if col_remaining.raw() < needed.raw() && col_block_offset > LayoutUnit::zero()
-                    && !avoid_break_before
+                    && !avoid_break_before && can_advance_col
                 {
                     max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;
                     col_block_offset = LayoutUnit::zero();
                     col_remaining = column_height;
                     prev_margin_bottom = LayoutUnit::zero();
+                    col_started_by_forced_break = false;
                 }
 
                 let prop_break_after = propagated_break_after(doc, child_node_id);
@@ -3438,16 +3569,20 @@ fn layout_multicol(
                     || child_style.break_after.is_avoid();
 
                 // Final margin for positioning.
-                // CSS Fragmentation §3.5: margins adjacent to a fragmentation
-                // break are truncated. At the top of a non-first column,
-                // top margin is discarded.
+                // CSS Fragmentation §5.4: margins at the top of a non-first
+                // column are truncated for UNFORCED breaks but preserved for
+                // FORCED breaks (break-before/break-after: column).
                 let pos_margin = if col_block_offset > LayoutUnit::zero() {
                     prev_margin_bottom.max_of(child_margin_top)
                 } else if col_idx == 0 {
                     // First item in first column: keep full margin.
                     child_margin_top
+                } else if col_started_by_forced_break {
+                    // First item after a forced break: preserve margin.
+                    child_margin_top
                 } else {
-                    // First item in a non-first column: truncate top margin.
+                    // First item in a non-first column (unforced break):
+                    // truncate top margin.
                     LayoutUnit::zero()
                 };
                 // Reset prev_margin_bottom for recalculation later (set after placement).
@@ -3541,12 +3676,21 @@ fn layout_multicol(
                             col_remaining = col_remaining - part_height;
 
                             // Move to next column if this one is full and there's
-                            // more content. Overflow columns are created as needed.
+                            // more content. Overflow columns are created as needed,
+                            // but column-fill:auto caps at the resolved column count.
                             if consumed.raw() < child_height.raw() {
-                                max_col_content = max_col_content.max_of(col_block_offset);
-                                col_idx += 1;
-                                col_block_offset = LayoutUnit::zero();
-                                col_remaining = column_height;
+                                let can_advance = algo.column_fill != ColumnFill::Auto
+                                    || col_idx + 1 < resolved.count as usize;
+                                if can_advance {
+                                    max_col_content = max_col_content.max_of(col_block_offset);
+                                    col_idx += 1;
+                                    col_block_offset = LayoutUnit::zero();
+                                    col_remaining = column_height;
+                                } else {
+                                    // column-fill:auto at max columns — stop fragmenting,
+                                    // remaining content overflows last column.
+                                    break;
+                                }
                             }
                         }
                     }

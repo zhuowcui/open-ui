@@ -6393,6 +6393,7 @@ fn additional_nested_visible_hidden() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
         .width(200.0).height(100.0)
+        .overflow(Overflow::Visible)
         .add_child().width(200.0).height(80.0).overflow_hidden().done()
         .done();
     let r = b.build();

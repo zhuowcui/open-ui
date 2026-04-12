@@ -95,6 +95,11 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
         paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset);
     }
 
+    // ── Outline (painted after children, outside border box) ──────────
+    if style.visibility == Visibility::Visible && style.has_outline() {
+        paint_outline(canvas, fragment, style, abs_offset);
+    }
+
     if needs_layer {
         canvas.restore();
     }
@@ -228,14 +233,28 @@ fn paint_with_overflow_clip(
     let (clip_x, clip_y, clip_w, clip_h) = if margin != 0.0
         && (style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip)
     {
+        let mx = if style.overflow_x == Overflow::Clip { margin } else { 0.0 };
+        let my = if style.overflow_y == Overflow::Clip { margin } else { 0.0 };
         (
-            clip_x - margin,
-            clip_y - margin,
-            clip_w + margin * 2.0,
-            clip_h + margin * 2.0,
+            clip_x - mx,
+            clip_y - my,
+            clip_w + mx * 2.0,
+            clip_h + my * 2.0,
         )
     } else {
         (clip_x, clip_y, clip_w, clip_h)
+    };
+
+    // CSS Overflow 3: directional overflow. When one axis is `visible` and
+    // the other clips, extend the clip to be effectively unbounded on the
+    // visible axis so children overflow freely in that direction.
+    let big = 100_000.0_f32;
+    let clip_x_visible = style.overflow_x == Overflow::Visible;
+    let clip_y_visible = style.overflow_y == Overflow::Visible;
+    let (clip_x, clip_y, clip_w, clip_h) = match (clip_x_visible, clip_y_visible) {
+        (true, false) => (-big, clip_y, big * 2.0, clip_h),
+        (false, true) => (clip_x, -big, clip_w, big * 2.0),
+        _ => (clip_x, clip_y, clip_w, clip_h),
     };
 
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
@@ -703,6 +722,64 @@ pub enum BorderSide {
 /// Uses the column-rule-color, column-rule-style, and column-rule-width
 /// from the parent style. Supports all CSS border styles (solid, dashed,
 /// dotted, double, groove, ridge, inset, outset).
+/// Paint CSS outline around the border box.
+/// Outline is drawn outside the border edge, offset by outline-offset.
+/// Unlike borders, outline does not affect layout and can overlap other content.
+fn paint_outline(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    abs_offset: PhysicalOffset,
+) {
+    let ow = style.effective_outline_width() as f32;
+    if ow <= 0.0 {
+        return;
+    }
+
+    let offset_px = style.outline_offset as f32;
+
+    // Border box coordinates (pixel-snapped)
+    let bx = abs_offset.left.round().to_f32();
+    let by = abs_offset.top.round().to_f32();
+    let br = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bb = (abs_offset.top + fragment.size.height).round().to_f32();
+
+    // Outline box = border box expanded by (outline-offset + outline-width)
+    let expand = offset_px + ow;
+    let ox = bx - expand;
+    let oy = by - expand;
+    let or = br + expand;
+    let ob = bb + expand;
+    let ow_total = or - ox;
+    let oh_total = ob - oy;
+
+    if ow_total <= 0.0 || oh_total <= 0.0 {
+        return;
+    }
+
+    let color = style.outline_color.resolve(&style.color);
+    let mut paint = skia_safe::Paint::default();
+    paint.set_color(skia_safe::Color::from_argb(
+        (color.a * 255.0) as u8,
+        (color.r * 255.0) as u8,
+        (color.g * 255.0) as u8,
+        (color.b * 255.0) as u8,
+    ));
+    paint.set_anti_alias(false);
+    paint.set_style(skia_safe::paint::Style::Fill);
+
+    // For solid outlines, draw 4 rectangles (top, right, bottom, left)
+    // For other styles, fall back to solid (matches most visual tests)
+    // Top edge
+    canvas.draw_rect(Rect::from_xywh(ox, oy, ow_total, ow), &paint);
+    // Bottom edge
+    canvas.draw_rect(Rect::from_xywh(ox, ob - ow, ow_total, ow), &paint);
+    // Left edge
+    canvas.draw_rect(Rect::from_xywh(ox, oy + ow, ow, oh_total - 2.0 * ow), &paint);
+    // Right edge
+    canvas.draw_rect(Rect::from_xywh(or - ow, oy + ow, ow, oh_total - 2.0 * ow), &paint);
+}
+
 fn paint_column_rule(
     canvas: &Canvas,
     fragment: &Fragment,

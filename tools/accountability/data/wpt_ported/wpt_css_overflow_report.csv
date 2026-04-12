@@ -14,6 +14,7 @@ clip-007,ported,css_overflow_clip_007,
 clip-008,ported,css_overflow_clip_008,
 display-flex-svg-overflow-default-ref,ported,css_overflow_display_flex_svg_overflow_default_ref,
 document-element-overflow-hidden-scroll-ref,ported,css_overflow_document_element_overflow_hidden_scroll_ref,
+margin-block-end-scroll-area-001,ported,css_overflow_margin_block_end_scroll_area_001,
 overflow-body-propagation-007-ref,ported,css_overflow_overflow_body_propagation_007_ref,
 overflow-body-propagation-007,ported,css_overflow_overflow_body_propagation_007,
 overflow-body-propagation-008-ref,ported,css_overflow_overflow_body_propagation_008_ref,
@@ -89,11 +90,17 @@ text-overflow-ellipsis-001,ported,css_overflow_text_overflow_ellipsis_001,
 text-overflow-ellipsis-002,ported,css_overflow_text_overflow_ellipsis_002,
 text-overflow-ellipsis-003-ref,ported,css_overflow_text_overflow_ellipsis_003_ref,
 text-overflow-ellipsis-rtl-001,ported,css_overflow_text_overflow_ellipsis_rtl_001,
+line-clamp_continue-001,ported,css_overflow_line_clamp_continue_001,
 line-clamp_line-clamp-content-height-with-dynamic-change-ref,ported,css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref,
+line-clamp_discard_discard-multicol-001,ported,css_overflow_line_clamp_discard_discard_multicol_001,
+line-clamp_discard_discard-multicol-002,ported,css_overflow_line_clamp_discard_discard_multicol_002,
+line-clamp_discard_discard-multicol-003,ported,css_overflow_line_clamp_discard_discard_multicol_003,
+line-clamp_discard_discard-multicol-004,ported,css_overflow_line_clamp_discard_discard_multicol_004,
 scroll-markers_column-scroll-marker-001-ref,ported,css_overflow_scroll_markers_column_scroll_marker_001_ref,
 scroll-markers_column-scroll-marker-counters-ref,ported,css_overflow_scroll_markers_column_scroll_marker_counters_ref,
 scroll-markers_column-scroll-marker-reattach-target-current-ref,ported,css_overflow_scroll_markers_column_scroll_marker_reattach_target_current_ref,
 scroll-markers_root-scroll-marker-ref,ported,css_overflow_scroll_markers_root_scroll_marker_ref,
+scroll-markers_scroll-buttons-001-ref,ported,css_overflow_scroll_markers_scroll_buttons_001_ref,
 scroll-markers_scroll-marker-001-ref,ported,css_overflow_scroll_markers_scroll_marker_001_ref,
 scroll-markers_scroll-marker-002-ref,ported,css_overflow_scroll_markers_scroll_marker_002_ref,
 scroll-markers_scroll-marker-003-ref,ported,css_overflow_scroll_markers_scroll_marker_003_ref,
@@ -102,6 +109,9 @@ scroll-markers_scroll-marker-010-ref,ported,css_overflow_scroll_markers_scroll_m
 scroll-markers_scroll-marker-011-ref,ported,css_overflow_scroll_markers_scroll_marker_011_ref,
 scroll-markers_scroll-marker-counters-ref,ported,css_overflow_scroll_markers_scroll_marker_counters_ref,
 scroll-markers_scroll-marker-dynamic-ref,ported,css_overflow_scroll_markers_scroll_marker_dynamic_ref,
+scroll-markers_scroll-marker-group-001-ref,ported,css_overflow_scroll_markers_scroll_marker_group_001_ref,
+scroll-markers_scroll-marker-group-005-ref,ported,css_overflow_scroll_markers_scroll_marker_group_005_ref,
+scroll-markers_scroll-marker-group-006-ref,ported,css_overflow_scroll_markers_scroll_marker_group_006_ref,
 scroll-markers_scroll-marker-group-007-ref,ported,css_overflow_scroll_markers_scroll_marker_group_007_ref,
 scroll-markers_scroll-marker-group-008-ref,ported,css_overflow_scroll_markers_scroll_marker_group_008_ref,
 scroll-markers_scroll-marker-group-009-ref,ported,css_overflow_scroll_markers_scroll_marker_group_009_ref,
@@ -135,7 +145,6 @@ inheritance,not_portable,,uses_javascript
 input-scrollable-region-001,not_portable,,unsupported element: <input>
 keyboard-scroll,not_portable,,uses_javascript
 logical-overflow-001,not_portable,,uses_javascript
-margin-block-end-scroll-area-001,not_portable,,no_layout_content
 multicol-in-orthogonal-writing-mode-crash,not_portable,,unsupported property: writing-mode
 no-scrollable-overflow-vertical-rl-2,not_portable,,style_block_unsupported property: writing-mode
 no-scrollable-overflow-vertical-rl,not_portable,,style_block_unsupported property: writing-mode
@@ -387,7 +396,6 @@ line-clamp_block-ellipsis-repaint-001,not_portable,,uses_javascript
 line-clamp_block-ellipsis-repaint-002,not_portable,,uses_javascript
 line-clamp_block-ellipsis-repaint-003,not_portable,,uses_javascript
 line-clamp_block-ellipsis-repaint-004,not_portable,,uses_javascript
-line-clamp_continue-001,not_portable,,no_layout_content
 line-clamp_line-clamp-001,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-002,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-003,not_portable,,style_block_unsupported property: line-clamp
@@ -603,10 +611,6 @@ line-clamp_webkit-line-clamp-bug-1926732-crash,not_portable,,style_block_vendor/
 line-clamp_webkit-line-clamp-dynamic-001,not_portable,,uses_javascript
 line-clamp_webkit-line-clamp-with-line-height,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
 line-clamp_webkit-line-clamp-with-max-height.tentative,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
-line-clamp_discard_discard-multicol-001,not_portable,,no_layout_content
-line-clamp_discard_discard-multicol-002,not_portable,,no_layout_content
-line-clamp_discard_discard-multicol-003,not_portable,,no_layout_content
-line-clamp_discard_discard-multicol-004,not_portable,,no_layout_content
 parsing_block-ellipsis-invalid,not_portable,,uses_javascript
 parsing_block-ellipsis-valid,not_portable,,uses_javascript
 parsing_continue-invalid,not_portable,,uses_javascript
@@ -690,7 +694,6 @@ scroll-markers_scroll-button-hover,not_portable,,uses_javascript
 scroll-markers_scroll-button-on-object-ref,not_portable,,complex_css_selector: #target::scroll-button(block-end)
 scroll-markers_scroll-button-on-object,not_portable,,complex_css_selector: #target::scroll-button(block-end)
 scroll-markers_scroll-button-universal-before,not_portable,,uses_javascript
-scroll-markers_scroll-buttons-001-ref,not_portable,,no_layout_content
 scroll-markers_scroll-buttons-001,not_portable,,complex_css_selector: div::scroll-button(block-end)
 scroll-markers_scroll-buttons-002,not_portable,,uses_javascript
 scroll-markers_scroll-buttons-003,not_portable,,complex_css_selector: div::scroll-button(block-end)
@@ -754,13 +757,10 @@ scroll-markers_scroll-marker-event-target,not_portable,,uses_javascript
 scroll-markers_scroll-marker-focus-scroll-crash,not_portable,,uses_javascript
 scroll-markers_scroll-marker-focus-visible,not_portable,,uses_javascript
 scroll-markers_scroll-marker-focus-within,not_portable,,uses_javascript
-scroll-markers_scroll-marker-group-001-ref,not_portable,,no_layout_content
 scroll-markers_scroll-marker-group-001,not_portable,,complex_css_selector: div::scroll-marker-group
 scroll-markers_scroll-marker-group-002,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-003,not_portable,,uses_javascript
-scroll-markers_scroll-marker-group-005-ref,not_portable,,no_layout_content
 scroll-markers_scroll-marker-group-005,not_portable,,uses_javascript
-scroll-markers_scroll-marker-group-006-ref,not_portable,,no_layout_content
 scroll-markers_scroll-marker-group-006,not_portable,,complex_css_selector: div::scroll-marker-group
 scroll-markers_scroll-marker-group-007,not_portable,,uses_javascript
 scroll-markers_scroll-marker-group-008,not_portable,,uses_javascript

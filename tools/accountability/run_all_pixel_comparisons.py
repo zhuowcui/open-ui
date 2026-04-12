@@ -27,7 +27,7 @@ CHROME_DIRS = [
     os.path.join(PROJECT_ROOT, "chrome"),
 ]
 
-BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }"
+BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; overflow: hidden; }"
 
 # HTML templates for each test pattern.
 # Each template is the inner <body> content.  BODY_STYLE provides the CSS reset

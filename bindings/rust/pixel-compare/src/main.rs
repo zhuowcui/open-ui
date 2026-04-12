@@ -416,17 +416,26 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
 ///   body { margin: 0; padding: 20px; font-family: DejaVu Sans; font-size: 16px; }
 pub fn base_doc() -> (Document, NodeId) {
     let mut doc = Document::new();
-    let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(vp).style.background_color = Color::WHITE;
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("DejaVu Sans");
-    doc.node_mut(vp).style.font_size = 16.0;
-    doc.node_mut(vp).style.color = Color::BLACK;
-    (doc, vp)
+    let viewport = doc.root();
+    // Viewport: no margin/padding, just a container matching screen dimensions
+    doc.node_mut(viewport).style.display = Display::Block;
+    doc.node_mut(viewport).style.background_color = Color::WHITE;
+
+    // Body: child of viewport, carries the default body padding.
+    // Margins set by tests will work because body has a parent (viewport).
+    let body = doc.create_node(ElementTag::Div);
+    doc.node_mut(body).style.display = Display::Block;
+    doc.node_mut(body).style.padding_top = Length::px(20.0);
+    doc.node_mut(body).style.padding_right = Length::px(20.0);
+    doc.node_mut(body).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(body).style.padding_left = Length::px(20.0);
+    doc.node_mut(body).style.font_family = FontFamilyList::single("DejaVu Sans");
+    doc.node_mut(body).style.font_size = 16.0;
+    doc.node_mut(body).style.color = Color::BLACK;
+    doc.node_mut(body).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(body).style.overflow_y = Overflow::Hidden;
+    doc.append_child(viewport, body);
+    (doc, body)
 }
 
 fn add_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {

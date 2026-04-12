@@ -6,6 +6,7 @@ align-content_flex-end,ported,css_flexbox_align_content_flex_end,
 align-content_flex-start,ported,css_flexbox_align_content_flex_start,
 align-content_space-around,ported,css_flexbox_align_content_space_around,
 align-content_space-between,ported,css_flexbox_align_content_space_between,
+align-content_stretch,ported,css_flexbox_align_content_stretch,
 align-items-006,ported,css_flexbox_align_items_006,
 align-items-009,ported,css_flexbox_align_items_009,
 align-items-baseline-overflow-non-visible,ported,css_flexbox_align_items_baseline_overflow_non_visible,
@@ -797,6 +798,8 @@ negative-item-margins-002-crash,ported,css_flexbox_negative_item_margins_002_cra
 negative-item-margins-crash,ported,css_flexbox_negative_item_margins_crash,
 negative-margins-001,ported,css_flexbox_negative_margins_001,
 order-painting,ported,css_flexbox_order_painting,
+overflow-area-001,ported,css_flexbox_overflow_area_001,
+overflow-area-002,ported,css_flexbox_overflow_area_002,
 overflow-area-003,ported,css_flexbox_overflow_area_003,
 padding-overflow,ported,css_flexbox_padding_overflow,
 percentage-heights-002-ref,ported,css_flexbox_percentage_heights_002_ref,
@@ -872,6 +875,8 @@ intrinsic-size_col-wrap-007,ported,css_flexbox_intrinsic_size_col_wrap_007,
 intrinsic-size_col-wrap-008,ported,css_flexbox_intrinsic_size_col_wrap_008,
 intrinsic-size_col-wrap-011,ported,css_flexbox_intrinsic_size_col_wrap_011,
 intrinsic-size_col-wrap-012,ported,css_flexbox_intrinsic_size_col_wrap_012,
+intrinsic-size_col-wrap-013,ported,css_flexbox_intrinsic_size_col_wrap_013,
+intrinsic-size_col-wrap-014,ported,css_flexbox_intrinsic_size_col_wrap_014,
 intrinsic-size_col-wrap-015,ported,css_flexbox_intrinsic_size_col_wrap_015,
 intrinsic-size_col-wrap-016,ported,css_flexbox_intrinsic_size_col_wrap_016,
 intrinsic-size_col-wrap-017,ported,css_flexbox_intrinsic_size_col_wrap_017,
@@ -923,7 +928,6 @@ align-content-wrap-001,not_portable,,uses_javascript
 align-content-wrap-002,not_portable,,uses_javascript
 align-content-wrap-003,not_portable,,uses_javascript
 align-content-wrap-005,not_portable,,uses_javascript
-align-content_stretch,not_portable,,no_layout_content
 align-items-007,not_portable,,unsupported element: <img>
 align-items-008,not_portable,,uses_javascript
 align-items-baseline-column-horz,not_portable,,uses_javascript
@@ -1410,8 +1414,6 @@ order_value,not_portable,,uses_javascript
 ortho-table-item-001,not_portable,,unsupported property: writing-mode
 orthogonal-flex-item-crash,not_portable,,uses_javascript
 orthogonal-writing-modes-and-intrinsic-sizing,not_portable,,uses_javascript
-overflow-area-001,not_portable,,no_layout_content
-overflow-area-002,not_portable,,no_layout_content
 overflow-auto-001,not_portable,,uses_javascript
 overflow-auto-002,not_portable,,uses_javascript
 overflow-auto-003,not_portable,,uses_javascript
@@ -1693,8 +1695,6 @@ intrinsic-size_col-wrap-004,not_portable,,uses_javascript
 intrinsic-size_col-wrap-005,not_portable,,uses_javascript
 intrinsic-size_col-wrap-009,not_portable,,uses_javascript
 intrinsic-size_col-wrap-010,not_portable,,uses_javascript
-intrinsic-size_col-wrap-013,not_portable,,no_layout_content
-intrinsic-size_col-wrap-014,not_portable,,no_layout_content
 intrinsic-size_col-wrap-018,not_portable,,uses_javascript
 intrinsic-size_col-wrap-019,not_portable,,uses_javascript
 intrinsic-size_col-wrap-crash,not_portable,,unsupported property: writing-mode
