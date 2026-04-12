@@ -45221,7 +45221,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n1).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n1).style.width = Length::px(420.0);
     doc.node_mut(n1).style.height = Length::px(50.0);
-    doc.node_mut(n1).style.column_rule_width = 0;
+    doc.node_mut(n1).style.column_rule_width = 1;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -45239,7 +45239,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n2).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n2).style.width = Length::px(420.0);
     doc.node_mut(n2).style.height = Length::px(50.0);
-    doc.node_mut(n2).style.column_rule_width = 0;
+    doc.node_mut(n2).style.column_rule_width = 1;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -45257,7 +45257,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n3).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n3).style.width = Length::px(420.0);
     doc.node_mut(n3).style.height = Length::px(50.0);
-    doc.node_mut(n3).style.column_rule_width = 0;
+    doc.node_mut(n3).style.column_rule_width = 1;
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -45293,7 +45293,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n5).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n5).style.width = Length::px(420.0);
     doc.node_mut(n5).style.height = Length::px(50.0);
-    doc.node_mut(n5).style.column_rule_width = 1;
+    doc.node_mut(n5).style.column_rule_width = 2;
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -45311,7 +45311,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n6).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n6).style.width = Length::px(420.0);
     doc.node_mut(n6).style.height = Length::px(50.0);
-    doc.node_mut(n6).style.column_rule_width = 1;
+    doc.node_mut(n6).style.column_rule_width = 2;
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -45347,7 +45347,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n8).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n8).style.width = Length::px(420.0);
     doc.node_mut(n8).style.height = Length::px(50.0);
-    doc.node_mut(n8).style.column_rule_width = 3;
+    doc.node_mut(n8).style.column_rule_width = 4;
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -45365,7 +45365,7 @@ fn css_multicol_subpixel_column_rule_width_tentative() -> Document {
     doc.node_mut(n9).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n9).style.width = Length::px(420.0);
     doc.node_mut(n9).style.height = Length::px(50.0);
-    doc.node_mut(n9).style.column_rule_width = 3;
+    doc.node_mut(n9).style.column_rule_width = 4;
     doc.append_child(vp, n9);
     doc
 }

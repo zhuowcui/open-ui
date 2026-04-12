@@ -558,7 +558,17 @@ def parse_border_width(value: str) -> str | None:
         return '0'
     m = re.match(r'^(-?[\d.]+)px$', value)
     if m:
-        return str(int(float(m.group(1))))
+        # Chrome snaps border widths to device pixels with standard rounding
+        # (.5 rounds away from zero), minimum 1px for non-zero values.
+        import math
+        raw = float(m.group(1))
+        if raw > 0:
+            rounded = max(1, math.floor(raw + 0.5))
+        elif raw < 0:
+            rounded = min(-1, -math.floor(-raw + 0.5))
+        else:
+            rounded = 0
+        return str(rounded)
     # Named widths
     mapping = {'thin': '1', 'medium': '3', 'thick': '5'}
     if value in mapping:

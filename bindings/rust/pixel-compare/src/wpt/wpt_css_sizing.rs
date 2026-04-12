@@ -36488,7 +36488,7 @@ fn css_sizing_thin_element_render() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.height = Length::px(0.25);
     doc.node_mut(n1).style.width = Length::percent(100.0);
-    doc.node_mut(n1).style.border_top_width = 0;
+    doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
     doc.append_child(vp, n1);
