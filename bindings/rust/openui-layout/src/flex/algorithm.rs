@@ -38,7 +38,14 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
     // ── Axis orientation (Blink constructor, line 170-191) ───────────
     let is_column = style.flex_direction.is_column();
-    let is_reverse = style.flex_direction.is_reverse();
+    let is_rtl = style.direction == openui_style::Direction::Rtl;
+    // CSS Flexbox §4.1: for row flex, direction:rtl reverses the main axis.
+    // This is modeled as XOR with the flex-direction reverse flag.
+    let is_reverse = if !is_column && is_rtl {
+        !style.flex_direction.is_reverse()
+    } else {
+        style.flex_direction.is_reverse()
+    };
     let is_wrap_reverse = style.flex_wrap.is_wrap_reverse();
     let is_multi_line = style.flex_wrap.is_wrap();
 
@@ -417,6 +424,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         is_reverse,
         is_wrap_reverse,
         is_horizontal_flow,
+        is_rtl,
         main_axis_inner_size,
         content_cross_size,
         gap_between_items,
@@ -928,12 +936,11 @@ fn resolve_item_alignment(
         position = ItemPosition::Stretch;
     }
 
-    // Coerce start/end variants to flex-start/flex-end
-    match position {
-        ItemPosition::Start | ItemPosition::SelfStart => ItemPosition::FlexStart,
-        ItemPosition::End | ItemPosition::SelfEnd => ItemPosition::FlexEnd,
-        other => other,
-    }
+    // CSS Box Alignment §4: Start/SelfStart and End/SelfEnd are NOT
+    // equivalent to FlexStart/FlexEnd — they are axis-relative and must
+    // NOT be flipped by flex-wrap:wrap-reverse.  Preserve them so that
+    // resolve_align_self can handle them correctly.
+    position
 }
 
 /// Resolve flex-basis for a flex item.
@@ -1961,6 +1968,7 @@ fn give_items_final_position(
     is_reverse: bool,
     is_wrap_reverse: bool,
     _is_horizontal_flow: bool,
+    is_rtl: bool,
     _main_axis_inner_size: LayoutUnit,
     content_cross_size: LayoutUnit,
     gap_between_items: LayoutUnit,
@@ -2052,11 +2060,15 @@ fn give_items_final_position(
             if item.main_axis_auto_margin_count > 0 && line.main_axis_free_space > LayoutUnit::zero() {
                 let is_start_auto = if is_column {
                     child_style.margin_top.is_auto()
+                } else if is_rtl {
+                    child_style.margin_right.is_auto()
                 } else {
                     child_style.margin_left.is_auto()
                 };
                 let is_end_auto = if is_column {
                     child_style.margin_bottom.is_auto()
+                } else if is_rtl {
+                    child_style.margin_left.is_auto()
                 } else {
                     child_style.margin_right.is_auto()
                 };
@@ -2074,6 +2086,9 @@ fn give_items_final_position(
                 if is_column {
                     item.margin.top = start_margin;
                     item.margin.bottom = end_margin;
+                } else if is_rtl {
+                    item.margin.right = start_margin;
+                    item.margin.left = end_margin;
                 } else {
                     item.margin.left = start_margin;
                     item.margin.right = end_margin;
@@ -2309,7 +2324,14 @@ fn give_items_final_position(
                 )
             };
 
-            let main_margin_start = if is_column { item.margin.top } else { item.margin.left };
+            // For RTL row flex, physical right margin is the main-start margin.
+            let main_margin_start = if is_column {
+                item.margin.top
+            } else if is_rtl {
+                item.margin.right
+            } else {
+                item.margin.left
+            };
             let cross_margin_start = data.cross_margin_start;
 
             let item_main_pos = main_offset + main_margin_start;
@@ -2332,7 +2354,13 @@ fn give_items_final_position(
                 child_percentage_block,
             );
 
-            let main_margin_end = if is_column { item.margin.bottom } else { item.margin.right };
+            let main_margin_end = if is_column {
+                item.margin.bottom
+            } else if is_rtl {
+                item.margin.left
+            } else {
+                item.margin.right
+            };
             let item_main_size = if is_column {
                 positioned.height()
             } else {
