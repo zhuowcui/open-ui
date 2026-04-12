@@ -1046,10 +1046,13 @@ fn paint_border_side(
             canvas.draw_rect(rect, &paint);
         }
         BorderStyle::Dashed => {
-            // Chrome: dash = 2*width, gap adjusted to fit evenly
-            // via SelectBestDashGap (styled_stroke_data.cc).
-            let dash_len = width * 2.0;
-            let desired_gap = width;
+            // Chrome: DashLengthRatio (styled_stroke_data.cc:64-66):
+            //   thickness >= 3 → dash = 2*width
+            //   thickness <  3 → dash = 3*width
+            let dash_ratio = if width >= 3.0 { 2.0 } else { 3.0 };
+            let dash_len = width * dash_ratio;
+            let gap_ratio = if width >= 3.0 { 1.0 } else { 2.0 };
+            let desired_gap = width * gap_ratio;
             let (p0, p1) = border_side_center_line(&rect, width);
             let stroke_length = if rect.width() > rect.height() {
                 rect.width()
