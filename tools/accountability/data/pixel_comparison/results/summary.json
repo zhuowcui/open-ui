@@ -1,85 +1,35 @@
 {
-  "total": 15,
-  "passed": 2,
-  "failed": 13,
+  "total": 5,
+  "passed": 5,
+  "failed": 0,
   "errors": 0,
-  "near_miss_aa": 11,
+  "near_miss_aa": 0,
   "aa_threshold_pct": 0.5,
-  "reference_tests": 6,
-  "reference_tests_pass": 1,
+  "reference_tests": 0,
+  "reference_tests_pass": 0,
   "tests": [
     {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-001-ref",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-001-reverse-ref",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-001-reverse",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-001-rtl-reverse",
-      "status": "fail",
-      "mismatch_pct": 14.769427
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-001-rtl",
-      "status": "fail",
-      "mismatch_pct": 14.769427
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-001",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-002-ref",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-002a",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-002b",
-      "status": "fail",
-      "mismatch_pct": 0.001274
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-003-ref",
-      "status": "fail",
-      "mismatch_pct": 0.079406
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-003-reverse-ref",
-      "status": "fail",
-      "mismatch_pct": 0.079406
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-003-reverse",
-      "status": "fail",
-      "mismatch_pct": 0.079406
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-003",
-      "status": "fail",
-      "mismatch_pct": 0.079406
-    },
-    {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-004-ref",
+      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-001",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_flexbox/flexbox-mbp-horiz-004",
+      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-005",
       "status": "pass",
       "mismatch_pct": 0.0
     }

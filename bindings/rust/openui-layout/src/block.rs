@@ -843,11 +843,47 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     let content_block_offset = resolved_offset - content_edge;
                     let min_inline_size = new_fc_min_inline_size(child_style, child_available_inline);
 
-                    let opp = exclusion_space_mixed.find_layout_opportunity(
-                        &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
-                        child_available_inline,
-                        min_inline_size,
-                    );
+                    // Use height-aware opportunity search for explicit-height BFCs.
+                    let child_block_size = if !child_style.height.is_auto()
+                        && !child_style.height.is_stretch()
+                        && !child_style.height.is_content_or_intrinsic()
+                        && !child_style.height.is_percent()
+                    {
+                        let raw = resolve_length(
+                            &child_style.height,
+                            LayoutUnit::zero(),
+                            LayoutUnit::zero(),
+                            LayoutUnit::zero(),
+                        );
+                        let bp_block = resolve_margin_or_padding(&child_style.padding_top, child_available_inline)
+                            + resolve_margin_or_padding(&child_style.padding_bottom, child_available_inline)
+                            + LayoutUnit::from_raw(child_style.border_top_width as i32 * 64)
+                            + LayoutUnit::from_raw(child_style.border_bottom_width as i32 * 64);
+                        let total = if child_style.box_sizing == BoxSizing::ContentBox {
+                            raw + bp_block
+                        } else {
+                            raw
+                        };
+                        let child_mb = resolve_margin_or_padding(&child_style.margin_bottom, child_available_inline);
+                        total + child_mb
+                    } else {
+                        LayoutUnit::zero()
+                    };
+
+                    let opp = if child_block_size > LayoutUnit::zero() {
+                        exclusion_space_mixed.find_opportunity_for_bfc(
+                            &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                            child_available_inline,
+                            min_inline_size,
+                            child_block_size,
+                        )
+                    } else {
+                        exclusion_space_mixed.find_layout_opportunity(
+                            &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                            child_available_inline,
+                            min_inline_size,
+                        )
+                    };
 
                     let pushed_bfc = opp.rect.block_start_offset();
                     if pushed_bfc > content_block_offset {
@@ -995,7 +1031,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // Regular (non-FC) block children overlap floats — only their line
         // boxes avoid floats (handled in inline layout).
         let child_is_new_fc_caller = establishes_new_fc(child_style);
-        let (float_inline_offset, adjusted_available) = if exclusion_space.has_floats()
+        let (mut float_inline_offset, mut adjusted_available) = if exclusion_space.has_floats()
             && child_is_new_fc_caller
         {
             // Tentative BFC block offset including margin collapsing.
@@ -1006,11 +1042,48 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             let content_block_offset = resolved_offset - content_edge;
             let min_inline_size = new_fc_min_inline_size(child_style, child_available_inline);
 
-            let opp = exclusion_space.find_layout_opportunity(
-                &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
-                child_available_inline,
-                min_inline_size,
-            );
+            // If the child has an explicit block size, use height-aware
+            // opportunity search to avoid overlap across the full BFC extent.
+            let child_block_size = if !child_style.height.is_auto()
+                && !child_style.height.is_stretch()
+                && !child_style.height.is_content_or_intrinsic()
+                && !child_style.height.is_percent()
+            {
+                let raw = resolve_length(
+                    &child_style.height,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                let bp_block = resolve_margin_or_padding(&child_style.padding_top, child_available_inline)
+                    + resolve_margin_or_padding(&child_style.padding_bottom, child_available_inline)
+                    + LayoutUnit::from_raw(child_style.border_top_width as i32 * 64)
+                    + LayoutUnit::from_raw(child_style.border_bottom_width as i32 * 64);
+                let total = if child_style.box_sizing == BoxSizing::ContentBox {
+                    raw + bp_block
+                } else {
+                    raw
+                };
+                let child_mb = resolve_margin_or_padding(&child_style.margin_bottom, child_available_inline);
+                total + child_mb
+            } else {
+                LayoutUnit::zero()
+            };
+
+            let opp = if child_block_size > LayoutUnit::zero() {
+                exclusion_space.find_opportunity_for_bfc(
+                    &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                    child_available_inline,
+                    min_inline_size,
+                    child_block_size,
+                )
+            } else {
+                exclusion_space.find_layout_opportunity(
+                    &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                    child_available_inline,
+                    min_inline_size,
+                )
+            };
 
             // Push-down: if the layout opportunity starts below the child's
             // tentative position, push the child down.
@@ -1044,6 +1117,73 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             style.direction,
             &mut pending_self_collapsing,
         );
+
+        // For auto-height BFC children, verify the laid-out fragment doesn't
+        // overlap floats across its full height. If it does, find the correct
+        // opportunity using the actual height and re-layout.
+        if exclusion_space.has_floats() && child_is_new_fc_caller {
+            if let Some(last_frag) = child_fragments.last() {
+                let frag_block_size = last_frag.size.height;
+                let frag_block_offset = last_frag.offset.top - content_edge;
+                let child_mb = resolve_margin_or_padding(&child_style.margin_bottom, child_available_inline);
+                let total_block = frag_block_size + child_mb;
+                let min_inline_size = new_fc_min_inline_size(child_style, child_available_inline);
+
+                let verified_opp = exclusion_space.find_opportunity_for_bfc(
+                    &BfcOffset::new(LayoutUnit::zero(), frag_block_offset),
+                    child_available_inline,
+                    min_inline_size,
+                    total_block,
+                );
+
+                let verified_start = verified_opp.rect.block_start_offset();
+                let verified_left = verified_opp.rect.line_start_offset();
+                let verified_available = verified_opp.inline_size();
+
+                // Compare verified opportunity against what we initially used.
+                if verified_start > frag_block_offset
+                    || verified_left != float_inline_offset
+                    || verified_available != adjusted_available
+                {
+                    let push_amount = if verified_start > frag_block_offset {
+                        verified_start - frag_block_offset
+                    } else {
+                        LayoutUnit::zero()
+                    };
+
+                    // Remove the previous layout result.
+                    child_fragments.pop();
+                    oof_candidates.truncate(oof_count_before);
+                    bubbled_oof_candidates.truncate(bubbled_count_before);
+
+                    // Revert block_offset to pre-layout state, apply verified push.
+                    block_offset = block_offset - frag_block_size - child_mb + push_amount;
+                    if push_amount > LayoutUnit::zero() {
+                        margin_strut = MarginStrut::new();
+                    }
+
+                    // Re-layout with corrected available width.
+                    layout_block_child(
+                        doc, child_id, space,
+                        verified_available, child_percentage_block_size,
+                        children_available_block_size,
+                        &border, &padding, content_edge,
+                        &mut block_offset, &mut margin_strut,
+                        &mut intrinsic_block_size, &mut child_fragments,
+                        &mut oof_candidates, &mut bubbled_oof_candidates,
+                        establishes_cb_for_abspos, is_root,
+                        &mut start_margin_resolved,
+                        &mut saved_start_strut,
+                        style.direction,
+                        &mut pending_self_collapsing,
+                    );
+
+                    // Update float offset to verified values.
+                    float_inline_offset = verified_left;
+                    adjusted_available = verified_available;
+                }
+            }
+        }
 
         // Offset inline position for left floats.
         // Also shift OOF static positions computed with pre-shift offset.

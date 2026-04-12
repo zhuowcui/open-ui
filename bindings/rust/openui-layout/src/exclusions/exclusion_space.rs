@@ -208,6 +208,124 @@ impl ExclusionSpace {
         }
     }
 
+    /// Find a layout opportunity where a BFC of the given block size fits
+    /// without overlapping any float margin boxes across its full height.
+    ///
+    /// Unlike `find_layout_opportunity` which only checks one shelf level,
+    /// this verifies that sufficient inline space exists at every shelf
+    /// within the BFC's block extent.
+    pub fn find_opportunity_for_bfc(
+        &self,
+        offset: &BfcOffset,
+        available_inline_size: LayoutUnit,
+        min_inline_size: LayoutUnit,
+        bfc_block_size: LayoutUnit,
+    ) -> LayoutOpportunity {
+        let mut block_offset = offset.block_offset;
+
+        // Collect all distinct block offsets where shelves change
+        let mut shelf_edges: Vec<LayoutUnit> = Vec::new();
+        shelf_edges.push(block_offset);
+
+        for f in &self.left_floats {
+            let start = f.rect.block_start_offset();
+            let end = f.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+        for f in &self.right_floats {
+            let start = f.rect.block_start_offset();
+            let end = f.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+
+        shelf_edges.sort_unstable();
+        shelf_edges.dedup();
+
+        // At each candidate shelf, check if the BFC fits for its full height.
+        'outer: for idx in 0..shelf_edges.len() {
+            let shelf_start = shelf_edges[idx];
+            if shelf_start < block_offset {
+                continue;
+            }
+
+            let (left_edge, right_edge) =
+                self.compute_edges_at(shelf_start, offset.line_offset, available_inline_size);
+            let inline_space = right_edge - left_edge;
+
+            if inline_space < min_inline_size {
+                block_offset = shelf_start;
+                continue;
+            }
+
+            // Verify this opportunity holds for the full BFC block extent.
+            // Check every shelf edge within [shelf_start, shelf_start + bfc_block_size).
+            let bfc_block_end = shelf_start + bfc_block_size;
+            let mut narrowest_left = left_edge;
+            let mut narrowest_right = right_edge;
+
+            for &inner_shelf in &shelf_edges[(idx + 1)..] {
+                if inner_shelf >= bfc_block_end {
+                    break;
+                }
+                let (l, r) =
+                    self.compute_edges_at(inner_shelf, offset.line_offset, available_inline_size);
+                if l > narrowest_left {
+                    narrowest_left = l;
+                }
+                if r < narrowest_right {
+                    narrowest_right = r;
+                }
+            }
+
+            let narrowest = narrowest_right - narrowest_left;
+            if narrowest < min_inline_size {
+                // BFC doesn't fit for its full height here; try next shelf.
+                block_offset = shelf_start;
+                continue 'outer;
+            }
+
+            let block_end = self.next_float_start_after(shelf_start);
+            return LayoutOpportunity {
+                rect: BfcRect::new(
+                    BfcOffset::new(narrowest_left, shelf_start),
+                    BfcOffset::new(narrowest_right, block_end),
+                ),
+            };
+        }
+
+        // No floats obstruct — full width available below all floats
+        let max_clear = if self.left_clear_offset > self.right_clear_offset {
+            self.left_clear_offset
+        } else {
+            self.right_clear_offset
+        };
+        let start_block = if max_clear > block_offset {
+            max_clear
+        } else {
+            block_offset
+        };
+
+        LayoutOpportunity {
+            rect: BfcRect::new(
+                BfcOffset::new(offset.line_offset, start_block),
+                BfcOffset::new(
+                    offset.line_offset + available_inline_size,
+                    LayoutUnit::max(),
+                ),
+            ),
+        }
+    }
+
     /// Compute the clearance offset for the given clear type.
     ///
     /// Returns the block offset below which no floats of the specified type exist.
