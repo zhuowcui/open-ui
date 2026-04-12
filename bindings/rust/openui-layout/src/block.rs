@@ -3107,6 +3107,9 @@ fn layout_multicol(
     }
 
     let mut result_children: Vec<Fragment> = Vec::new();
+    // OOF candidates bubbled up from in-flow children inside columns.
+    // Collected during column distribution and processed alongside direct OOF children.
+    let mut bubbled_oof_from_columns: Vec<crate::out_of_flow::OutOfFlowCandidate> = Vec::new();
     let mut total_block_offset = LayoutUnit::zero();
 
     // Remaining available block size tracks how much vertical space is left
@@ -3536,7 +3539,7 @@ fn layout_multicol(
                 }
             }
 
-            for (i, child_frag) in col_fragments.into_iter().enumerate() {
+            for (i, mut child_frag) in col_fragments.into_iter().enumerate() {
                 let child_height = col_block_sizes[i];
                 let child_margin_top = col_margins_top[i];
                 let child_margin_bottom = col_margins_bottom[i];
@@ -3693,6 +3696,14 @@ fn layout_multicol(
                         column_width,
                         column_height,
                     );
+                    // Extract bubbled OOF candidates from this child and translate
+                    // their static positions into multicol container coordinates.
+                    let child_oof = std::mem::take(&mut positioned.oof_candidates);
+                    for mut c in child_oof {
+                        c.static_position.left = c.static_position.left + positioned.offset.left;
+                        c.static_position.top = c.static_position.top + positioned.offset.top;
+                        bubbled_oof_from_columns.push(c);
+                    }
                     col_block_offset = col_block_offset + child_height;
                     col_remaining = col_remaining - pos_margin - child_height;
                     prev_margin_bottom = child_margin_bottom;
@@ -3703,6 +3714,18 @@ fn layout_multicol(
                     // in the inline direction (col_idx may exceed positions.len()).
                     col_block_offset = col_block_offset + pos_margin;
                     col_remaining = col_remaining - pos_margin;
+                    // Extract OOF candidates before fragmenting (they originate
+                    // in the child's first column position).
+                    let frag_child_oof = std::mem::take(&mut child_frag.oof_candidates);
+                    let frag_base_offset = PhysicalOffset::new(
+                        content_edge_x + col_inline_offset_for(col_idx),
+                        content_edge_y + total_block_offset + col_block_offset,
+                    );
+                    for mut c in frag_child_oof {
+                        c.static_position.left = c.static_position.left + frag_base_offset.left;
+                        c.static_position.top = c.static_position.top + frag_base_offset.top;
+                        bubbled_oof_from_columns.push(c);
+                    }
                     let mut consumed = LayoutUnit::zero();
                     // Guard: if column_height is zero or negative, place
                     // everything in the current column to avoid infinite loop.
@@ -3943,7 +3966,7 @@ fn layout_multicol(
     // These are positioned relative to the multicol container's padding box.
     // CSS 2.1 §10.1: The containing block for abspos is the padding edge of
     // the nearest positioned ancestor.
-    if !oof_children.is_empty() {
+    if !oof_children.is_empty() || !bubbled_oof_from_columns.is_empty() {
         let cb_height = container_block_size - border.top - border.bottom;
         let cb_width = child_available_inline + padding.left + padding.right;
         let mut oof_candidates: Vec<crate::out_of_flow::OutOfFlowCandidate> = Vec::new();
@@ -3975,6 +3998,14 @@ fn layout_multicol(
                     static_position_direction: style.direction,
                 });
             }
+        }
+        // Process OOF candidates bubbled from in-flow children inside columns.
+        // These already have translated static positions (column-adjusted).
+        for mut c in bubbled_oof_from_columns {
+            c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
+            c.containing_block_border = border.clone();
+            c.containing_block_direction = style.direction;
+            oof_candidates.push(c);
         }
         let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(doc, &oof_candidates);
         for frag in oof_fragments {
