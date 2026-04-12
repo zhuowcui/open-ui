@@ -1183,8 +1183,8 @@ fn create_line_box(
                 }
             }
             InlineItemType::AtomicInline => {
-                // Atomic inline contributes its actual height to line metrics.
-                // Use the pre-computed block_layout result if available.
+                // Atomic inline contributes its margin-box height to line metrics.
+                // CSS 2.1 §10.8.1: inline-block margin boxes affect line box height.
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
 
@@ -1202,17 +1202,22 @@ fn create_line_box(
                     }
                 };
 
+                // Resolve vertical margins for line box contribution.
+                let margin_top = resolve_margin_or_padding(&style.margin_top, percentage_base).to_f32();
+                let margin_bottom = resolve_margin_or_padding(&style.margin_bottom, percentage_base).to_f32();
+                let margin_box_height = item_height + margin_top + margin_bottom;
+
                 match style.vertical_align {
                     VerticalAlign::Top => {
                         deferred_items.push(DeferredItem {
-                            item_ascent: item_height,
+                            item_ascent: margin_box_height,
                             item_descent: 0.0,
                             is_top: true,
                         });
                     }
                     VerticalAlign::Bottom => {
                         deferred_items.push(DeferredItem {
-                            item_ascent: item_height,
+                            item_ascent: margin_box_height,
                             item_descent: 0.0,
                             is_top: false,
                         });
@@ -1222,14 +1227,14 @@ fn create_line_box(
                         // x-height, not the block's.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         let x_height = parent_metrics.x_height;
-                        let above_baseline = item_height / 2.0 + x_height / 2.0;
-                        let below_baseline = (item_height / 2.0 - x_height / 2.0).max(0.0);
+                        let above_baseline = margin_box_height / 2.0 + x_height / 2.0;
+                        let below_baseline = (margin_box_height / 2.0 - x_height / 2.0).max(0.0);
                         line_ascent = line_ascent.max(above_baseline);
                         line_descent = line_descent.max(below_baseline);
                     }
                     VerticalAlign::Length(px) => {
                         // Shift from baseline by px (negative = down).
-                        let shifted_ascent = (item_height + px).max(0.0);
+                        let shifted_ascent = (margin_box_height + px).max(0.0);
                         let shifted_descent = (-px).max(0.0);
                         line_ascent = line_ascent.max(shifted_ascent);
                         line_descent = line_descent.max(shifted_descent);
@@ -1248,42 +1253,43 @@ fn create_line_box(
                             LineHeight::Percentage(p) => style.font_size * p / 100.0,
                         };
                         let shift = element_line_height * pct / 100.0;
-                        let shifted_ascent = (item_height + shift).max(0.0);
+                        let shifted_ascent = (margin_box_height + shift).max(0.0);
                         let shifted_descent = (-shift).max(0.0);
                         line_ascent = line_ascent.max(shifted_ascent);
                         line_descent = line_descent.max(shifted_descent);
                     }
                     VerticalAlign::TextTop => {
-                        // Item top aligns with parent inline's font ascent line.
+                        // Margin-top of item aligns with parent inline's font ascent.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         let font_ascent = parent_metrics.ascent;
                         line_ascent = line_ascent.max(font_ascent);
                         line_descent =
-                            line_descent.max((item_height - font_ascent).max(0.0));
+                            line_descent.max((margin_box_height - font_ascent).max(0.0));
                     }
                     VerticalAlign::TextBottom => {
-                        // Item bottom aligns with parent inline's font descent line.
+                        // Margin-bottom of item aligns with parent inline's font descent.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         let font_descent = parent_metrics.descent;
                         line_ascent =
-                            line_ascent.max((item_height - font_descent).max(0.0));
+                            line_ascent.max((margin_box_height - font_descent).max(0.0));
                         line_descent = line_descent.max(font_descent);
                     }
                     VerticalAlign::Sub => {
                         // Lowered by sub_offset below the baseline.
                         let sub_offset = style.font_size / 5.0 + 1.0;
                         line_ascent =
-                            line_ascent.max((item_height - sub_offset).max(0.0));
+                            line_ascent.max((margin_box_height - sub_offset).max(0.0));
                         line_descent = line_descent.max(sub_offset);
                     }
                     VerticalAlign::Super => {
                         // Raised by super_offset above the baseline.
                         let super_offset = style.font_size / 3.0 + 1.0;
-                        line_ascent = line_ascent.max(item_height + super_offset);
+                        line_ascent = line_ascent.max(margin_box_height + super_offset);
                     }
                     _ => {
-                        // Baseline-aligned: bottom sits on baseline, full height above.
-                        line_ascent = line_ascent.max(item_height);
+                        // Baseline-aligned: margin-box bottom sits on baseline.
+                        // For empty inline-blocks: baseline = bottom margin edge.
+                        line_ascent = line_ascent.max(margin_box_height);
                     }
                 }
             }
@@ -1713,45 +1719,51 @@ fn create_line_box(
                         }
                     }
                 };
+
+                // Resolve vertical margins (CSS 2.1 §10.8.1: margin box participates in line box).
+                let margin_top_lu = resolve_margin_or_padding(&style.margin_top, percentage_base);
+                let margin_bottom_lu = resolve_margin_or_padding(&style.margin_bottom, percentage_base);
+                let margin_box_height_lu = margin_top_lu + item_height + margin_bottom_lu;
+
                 let atomic_top = match style.vertical_align {
                     VerticalAlign::Top => {
-                        // Flush with top of line box.
-                        LayoutUnit::zero()
+                        // Top margin edge flush with top of line box.
+                        margin_top_lu
                     }
                     VerticalAlign::Bottom => {
-                        // Flush with bottom of line box.
-                        line_height - item_height
+                        // Bottom margin edge flush with bottom of line box.
+                        line_height - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Middle => {
-                        // Centered: baseline - x_height/2 - item_height/2
+                        // Center of margin box at baseline - x_height/2.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         let x_height = LayoutUnit::from_f32(parent_metrics.x_height);
-                        baseline - x_height / LayoutUnit::from_f32(2.0)
-                            - item_height / LayoutUnit::from_f32(2.0)
+                        let two = LayoutUnit::from_f32(2.0);
+                        baseline - x_height / two - margin_box_height_lu / two + margin_top_lu
                     }
                     VerticalAlign::TextTop => {
-                        // Top of item aligns with top of text (ascent above baseline).
+                        // Top margin edge aligns with parent font ascent.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
-                        baseline - LayoutUnit::from_f32_ceil(parent_metrics.ascent)
+                        baseline - LayoutUnit::from_f32_ceil(parent_metrics.ascent) + margin_top_lu
                     }
                     VerticalAlign::TextBottom => {
-                        // Bottom of item aligns with bottom of text (descent below baseline).
+                        // Bottom margin edge aligns with parent font descent.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         baseline + LayoutUnit::from_f32_ceil(parent_metrics.descent)
-                            - item_height
+                            - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Sub => {
                         let shift = LayoutUnit::from_f32(style.font_size / 5.0 + 1.0);
-                        baseline + shift - item_height
+                        baseline + shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Super => {
                         let shift = LayoutUnit::from_f32(style.font_size / 3.0 + 1.0);
-                        baseline - shift - item_height
+                        baseline - shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Length(px) => {
                         // Positive length shifts up from baseline.
                         let shift = LayoutUnit::from_f32(px);
-                        baseline - item_height - shift
+                        baseline - item_height - margin_bottom_lu - shift
                     }
                     VerticalAlign::Percentage(pct) => {
                         // Percentage of the element's own line-height (CSS 2.2 §10.8.1).
@@ -1767,13 +1779,16 @@ fn create_line_box(
                             LineHeight::Percentage(p) => style.font_size * p / 100.0,
                         };
                         let shift = LayoutUnit::from_f32(element_line_height * pct / 100.0);
-                        baseline - item_height - shift
+                        baseline - item_height - margin_bottom_lu - shift
                     }
                     _ => {
-                        // Baseline (default): bottom of item sits on baseline.
-                        baseline - item_height
+                        // Baseline (default): bottom margin edge sits on baseline.
+                        baseline - item_height - margin_bottom_lu
                     }
                 };
+
+                // Apply horizontal margins to offset.
+                let margin_left_lu = resolve_margin_or_padding(&style.margin_left, percentage_base);
 
                 // Use the pre-computed block_layout result as the atomic fragment,
                 // preserving its computed size, border, padding, margin, and children.
@@ -1783,14 +1798,14 @@ fn create_line_box(
                     // Use block_layout's authoritative width; only override height
                     // and position. block_layout already accounts for border+padding.
                     frag.size.height = item_height;
-                    frag.offset = PhysicalOffset::new(inline_offset, atomic_top);
+                    frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
                 } else {
                     let mut frag = Fragment::new_box(
                         item.node_id,
                         PhysicalSize::new(item_width, item_height),
                     );
-                    frag.offset = PhysicalOffset::new(inline_offset, atomic_top);
+                    frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
                 };
 

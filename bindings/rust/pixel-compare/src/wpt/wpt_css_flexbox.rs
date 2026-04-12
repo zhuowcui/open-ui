@@ -141776,6 +141776,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -141831,6 +141832,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n4).style.border_top_width = 1;
     doc.node_mut(n4).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -141886,6 +141888,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(100.0);
+    doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n7).style.border_top_width = 1;
     doc.node_mut(n7).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -141941,6 +141944,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.height = Length::px(100.0);
+    doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n10).style.border_top_width = 1;
     doc.node_mut(n10).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n10).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -141996,6 +142000,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(100.0);
+    doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n13).style.border_top_width = 1;
     doc.node_mut(n13).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n13).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142051,6 +142056,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(100.0);
+    doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n16).style.border_top_width = 1;
     doc.node_mut(n16).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n16).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142106,6 +142112,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(100.0);
+    doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n19).style.border_top_width = 1;
     doc.node_mut(n19).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n19).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142176,6 +142183,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n23).style.padding_left = Length::px(0.0);
     doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n23).style.height = Length::px(100.0);
+    doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n23).style.border_top_width = 1;
     doc.node_mut(n23).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n23).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142246,6 +142254,7 @@ fn css_flexbox_flexbox_whitespace_handling_002_ref() -> Document {
     doc.node_mut(n27).style.padding_left = Length::px(0.0);
     doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n27).style.height = Length::px(100.0);
+    doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n27).style.border_top_width = 1;
     doc.node_mut(n27).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n27).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142331,6 +142340,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142373,6 +142383,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n3).style.padding_left = Length::px(0.0);
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(100.0);
+    doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n3).style.border_top_width = 1;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142415,6 +142426,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n5).style.padding_left = Length::px(0.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(100.0);
+    doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n5).style.border_top_width = 1;
     doc.node_mut(n5).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142457,6 +142469,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(100.0);
+    doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n7).style.border_top_width = 1;
     doc.node_mut(n7).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142499,6 +142512,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n9).style.padding_left = Length::px(0.0);
     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n9).style.height = Length::px(100.0);
+    doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n9).style.border_top_width = 1;
     doc.node_mut(n9).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n9).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142541,6 +142555,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n11).style.padding_left = Length::px(0.0);
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.height = Length::px(100.0);
+    doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n11).style.border_top_width = 1;
     doc.node_mut(n11).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n11).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142583,6 +142598,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(100.0);
+    doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n13).style.border_top_width = 1;
     doc.node_mut(n13).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n13).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142640,6 +142656,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(100.0);
+    doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n16).style.border_top_width = 1;
     doc.node_mut(n16).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n16).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -142697,6 +142714,7 @@ fn css_flexbox_flexbox_whitespace_handling_002() -> Document {
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(100.0);
+    doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n19).style.border_top_width = 1;
     doc.node_mut(n19).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n19).style.border_top_color = StyleColor::Resolved(Color::BLUE);
@@ -155886,6 +155904,7 @@ fn css_flexbox_flexbox_flex_0_0_n_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -156408,6 +156427,7 @@ fn css_flexbox_flexbox_flex_0_0_npercent_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -156832,6 +156852,7 @@ fn css_flexbox_flexbox_flex_0_0_auto_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -161488,6 +161509,7 @@ fn css_flexbox_flexbox_flex_1_0_n_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -161912,6 +161934,7 @@ fn css_flexbox_flexbox_flex_1_0_npercent_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -162336,6 +162359,7 @@ fn css_flexbox_flexbox_flex_1_0_auto_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -166600,6 +166624,7 @@ fn css_flexbox_flexbox_flex_n_0_n_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -167024,6 +167049,7 @@ fn css_flexbox_flexbox_flex_n_0_npercent_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -167448,6 +167474,7 @@ fn css_flexbox_flexbox_flex_n_0_auto_shrink_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -171682,6 +171709,7 @@ fn css_flexbox_flexbox_flex_basis_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.border_top_width = 1;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
@@ -196947,6 +196975,7 @@ fn css_flexbox_whitespace_in_flexitem_001() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.display = Display::Flex;
     doc.node_mut(n1).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -196975,6 +197004,7 @@ fn css_flexbox_whitespace_in_flexitem_001() -> Document {
     doc.node_mut(n3).style.padding_left = Length::px(0.0);
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.display = Display::Flex;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
     doc.append_child(vp, n3);
     doc
 }

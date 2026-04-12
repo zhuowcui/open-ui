@@ -6511,6 +6511,7 @@ fn css_position_sticky_position_sticky_left_002() -> Document {
     doc.node_mut(n1).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.position = Position::Static;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -6616,6 +6617,7 @@ fn css_position_sticky_position_sticky_left_002() -> Document {
     doc.node_mut(n8).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n8).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n8).style.position = Position::Static;
+    doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n8).style.width = Length::px(250.0);
     doc.append_child(vp, n8);
         let n9 = doc.create_node(ElementTag::Div);
@@ -6721,6 +6723,7 @@ fn css_position_sticky_position_sticky_left_002() -> Document {
     doc.node_mut(n15).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n15).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n15).style.position = Position::Static;
+    doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n15).style.width = Length::px(250.0);
     doc.append_child(vp, n15);
         let n16 = doc.create_node(ElementTag::Div);
@@ -6841,6 +6844,7 @@ fn css_position_sticky_position_sticky_left_003() -> Document {
     doc.node_mut(n1).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.position = Position::Static;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -6946,6 +6950,7 @@ fn css_position_sticky_position_sticky_left_003() -> Document {
     doc.node_mut(n8).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n8).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n8).style.position = Position::Static;
+    doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n8).style.width = Length::px(250.0);
     doc.append_child(vp, n8);
         let n9 = doc.create_node(ElementTag::Div);
@@ -7051,6 +7056,7 @@ fn css_position_sticky_position_sticky_left_003() -> Document {
     doc.node_mut(n15).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n15).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n15).style.position = Position::Static;
+    doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n15).style.width = Length::px(250.0);
     doc.append_child(vp, n15);
         let n16 = doc.create_node(ElementTag::Div);
@@ -7530,6 +7536,7 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n1).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.position = Position::Static;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -7635,6 +7642,7 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n8).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n8).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n8).style.position = Position::Static;
+    doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n8).style.width = Length::px(250.0);
     doc.append_child(vp, n8);
         let n9 = doc.create_node(ElementTag::Div);
@@ -7740,6 +7748,7 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n15).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n15).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n15).style.position = Position::Static;
+    doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n15).style.width = Length::px(250.0);
     doc.append_child(vp, n15);
         let n16 = doc.create_node(ElementTag::Div);
@@ -7860,6 +7869,7 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n1).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.position = Position::Static;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.width = Length::px(250.0);
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
@@ -7965,6 +7975,7 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n8).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n8).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n8).style.position = Position::Static;
+    doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n8).style.width = Length::px(250.0);
     doc.append_child(vp, n8);
         let n9 = doc.create_node(ElementTag::Div);
@@ -8070,6 +8081,7 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n15).style.margin_bottom = Length::px(30.0);
     doc.node_mut(n15).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n15).style.position = Position::Static;
+    doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n15).style.width = Length::px(250.0);
     doc.append_child(vp, n15);
         let n16 = doc.create_node(ElementTag::Div);

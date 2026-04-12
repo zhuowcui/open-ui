@@ -5115,6 +5115,7 @@ fn css_display_display_contents_text_inherit() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.append_child(vp, n1);
     doc
 }

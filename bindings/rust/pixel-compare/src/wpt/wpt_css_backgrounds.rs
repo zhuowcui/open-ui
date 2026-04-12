@@ -31330,6 +31330,7 @@ fn css_backgrounds_background_clip_clip_text_ellipsis_ref() -> Document {
     doc.node_mut(n1).style.font_size = 80.0;
     doc.node_mut(n1).style.width = Length::px(320.0);
     doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n1);
@@ -31363,6 +31364,7 @@ fn css_backgrounds_background_clip_clip_text_ellipsis() -> Document {
     doc.node_mut(n1).style.width = Length::px(320.0);
     doc.node_mut(n1).style.color = Color::TRANSPARENT;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n1);

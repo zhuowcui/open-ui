@@ -2713,6 +2713,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -2796,6 +2797,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -2879,6 +2881,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -2962,6 +2965,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -3045,6 +3049,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -3128,6 +3133,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -3211,6 +3217,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -3294,6 +3301,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -3377,6 +3385,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -3460,6 +3469,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -3543,6 +3553,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -3610,6 +3621,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::min_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -3693,6 +3705,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::min_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -3776,6 +3789,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::min_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -3859,6 +3873,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::min_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -3942,6 +3957,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::min_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -4025,6 +4041,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::min_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -4108,6 +4125,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::min_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -4191,6 +4209,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::min_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -4274,6 +4293,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::min_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -4357,6 +4377,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::min_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -4440,6 +4461,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::min_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -6337,6 +6359,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -6420,6 +6443,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -6503,6 +6527,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -6586,6 +6611,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -6669,6 +6695,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -6752,6 +6779,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -6835,6 +6863,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -6918,6 +6947,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -7001,6 +7031,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -7084,6 +7115,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -7167,6 +7199,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -7234,6 +7267,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -7317,6 +7351,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -7400,6 +7435,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -7483,6 +7519,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -7566,6 +7603,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -7649,6 +7687,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -7732,6 +7771,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -7815,6 +7855,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -7898,6 +7939,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -7981,6 +8023,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -8064,6 +8107,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -8149,6 +8193,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -8232,6 +8277,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -8315,6 +8361,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -8398,6 +8445,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -8481,6 +8529,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -8564,6 +8613,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -8647,6 +8697,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -8730,6 +8781,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -8813,6 +8865,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -8896,6 +8949,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -8979,6 +9033,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -9046,6 +9101,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -9129,6 +9185,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -9212,6 +9269,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -9295,6 +9353,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -9378,6 +9437,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -9461,6 +9521,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -9544,6 +9605,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -9627,6 +9689,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -9710,6 +9773,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -9793,6 +9857,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -9876,6 +9941,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -9961,6 +10027,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -10044,6 +10111,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -10127,6 +10195,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -10210,6 +10279,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -10293,6 +10363,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -10376,6 +10447,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -10459,6 +10531,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -10542,6 +10615,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -10625,6 +10699,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -10708,6 +10783,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -10791,6 +10867,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -10858,6 +10935,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -10941,6 +11019,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -11024,6 +11103,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -11107,6 +11187,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -11190,6 +11271,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -11273,6 +11355,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -11356,6 +11439,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -11439,6 +11523,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -11522,6 +11607,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -11605,6 +11691,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -11688,6 +11775,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -11773,6 +11861,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -11856,6 +11945,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -11939,6 +12029,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -12022,6 +12113,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -12105,6 +12197,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -12188,6 +12281,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -12271,6 +12365,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -12354,6 +12449,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -12437,6 +12533,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -12520,6 +12617,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -12603,6 +12701,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -12670,6 +12769,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -12753,6 +12853,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -12836,6 +12937,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -12919,6 +13021,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -13002,6 +13105,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -13085,6 +13189,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -13168,6 +13273,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -13251,6 +13357,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -13334,6 +13441,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -13417,6 +13525,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -13500,6 +13609,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -25271,6 +25381,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -25352,6 +25463,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -25433,6 +25545,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -25514,6 +25627,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -25595,6 +25709,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -25676,6 +25791,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -25757,6 +25873,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -25838,6 +25955,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -25919,6 +26037,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -26000,6 +26119,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -26081,6 +26201,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -26147,6 +26268,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::min_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -26228,6 +26350,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::min_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -26309,6 +26432,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::min_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -26390,6 +26514,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::min_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -26471,6 +26596,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::min_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -26552,6 +26678,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::min_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -26633,6 +26760,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::min_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -26714,6 +26842,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::min_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -26795,6 +26924,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::min_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -26876,6 +27006,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::min_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -26957,6 +27088,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::min_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -28853,6 +28985,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -28934,6 +29067,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -29015,6 +29149,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -29096,6 +29231,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -29177,6 +29313,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -29258,6 +29395,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -29339,6 +29477,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -29420,6 +29559,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -29501,6 +29641,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -29582,6 +29723,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -29663,6 +29805,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -29729,6 +29872,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -29810,6 +29954,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -29891,6 +30036,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -29972,6 +30118,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -30053,6 +30200,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -30134,6 +30282,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -30215,6 +30364,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -30296,6 +30446,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -30377,6 +30528,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -30458,6 +30610,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -30539,6 +30692,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -30623,6 +30777,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -30704,6 +30859,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -30785,6 +30941,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -30866,6 +31023,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -30947,6 +31105,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -31028,6 +31187,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -31109,6 +31269,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -31190,6 +31351,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -31271,6 +31433,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -31352,6 +31515,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -31433,6 +31597,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -31499,6 +31664,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -31580,6 +31746,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -31661,6 +31828,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -31742,6 +31910,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -31823,6 +31992,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -31904,6 +32074,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -31985,6 +32156,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -32066,6 +32238,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -32147,6 +32320,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -32228,6 +32402,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -32309,6 +32484,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -32393,6 +32569,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -32474,6 +32651,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -32555,6 +32733,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -32636,6 +32815,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -32717,6 +32897,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -32798,6 +32979,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -32879,6 +33061,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -32960,6 +33143,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -33041,6 +33225,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -33122,6 +33307,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -33203,6 +33389,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -33269,6 +33456,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -33350,6 +33538,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -33431,6 +33620,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -33512,6 +33702,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -33593,6 +33784,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -33674,6 +33866,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -33755,6 +33948,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -33836,6 +34030,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -33917,6 +34112,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -33998,6 +34194,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -34079,6 +34276,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
@@ -34163,6 +34361,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n2).style.border_left_width = 5;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
@@ -34246,6 +34445,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n5).style.border_left_width = 5;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
@@ -34329,6 +34529,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n8).style.border_left_width = 5;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
@@ -34412,6 +34613,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n11).style.border_left_width = 5;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
@@ -34495,6 +34697,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n14).style.border_left_width = 5;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
@@ -34578,6 +34781,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n17).style.border_left_width = 5;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
@@ -34661,6 +34865,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n20).style.border_left_width = 5;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
@@ -34744,6 +34949,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n23).style.border_left_width = 5;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
@@ -34827,6 +35033,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n26).style.border_left_width = 5;
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
@@ -34910,6 +35117,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n29).style.border_left_width = 5;
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
@@ -34993,6 +35201,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n32).style.border_left_width = 5;
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
@@ -35060,6 +35269,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n35).style.border_left_width = 5;
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
@@ -35143,6 +35353,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n38).style.border_left_width = 5;
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
@@ -35226,6 +35437,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n41).style.border_left_width = 5;
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
@@ -35309,6 +35521,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n44).style.border_left_width = 5;
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
@@ -35392,6 +35605,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n47).style.border_left_width = 5;
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
@@ -35475,6 +35689,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n50).style.border_left_width = 5;
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
@@ -35558,6 +35773,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n53).style.border_left_width = 5;
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
@@ -35641,6 +35857,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n56).style.border_left_width = 5;
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
@@ -35724,6 +35941,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n59).style.border_left_width = 5;
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
@@ -35807,6 +36025,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n62).style.border_left_width = 5;
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
@@ -35890,6 +36109,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n65).style.border_left_width = 5;
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+        doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);

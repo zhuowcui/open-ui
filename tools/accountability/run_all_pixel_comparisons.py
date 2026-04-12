@@ -359,19 +359,36 @@ def find_chrome():
 
 
 def render_chrome(html_file, output_png, chrome_bin, chrome_dir):
-    """Render HTML with Chrome headless."""
+    """Render HTML with Chrome headless.
+
+    Chrome headless reserves 87px for virtual UI, so we use a taller window
+    (800×687) to get an actual 800×600 viewport, then crop to 800×600.
+    """
     env = os.environ.copy()
     if chrome_dir:
         env["LD_LIBRARY_PATH"] = chrome_dir + ":" + env.get("LD_LIBRARY_PATH", "")
+    # Use 687 height so the viewport content area is exactly 600px.
+    raw_png = output_png + ".raw.png"
     cmd = [
         chrome_bin, "--headless", "--disable-gpu", "--no-sandbox",
-        "--force-device-scale-factor=1", "--window-size=800,600",
-        f"--screenshot={output_png}", f"file://{html_file}"
+        "--force-device-scale-factor=1", "--window-size=800,687",
+        f"--screenshot={raw_png}", f"file://{html_file}"
     ]
     try:
         result = subprocess.run(cmd, env=env, capture_output=True, timeout=30)
-        return result.returncode == 0 and os.path.isfile(output_png)
+        if result.returncode != 0 or not os.path.isfile(raw_png):
+            return False
+        # Crop to 800×600 (discard the 87px virtual-toolbar area at the bottom)
+        from PIL import Image
+        img = Image.open(raw_png)
+        if img.size[1] > 600:
+            img = img.crop((0, 0, 800, 600))
+        img.save(output_png)
+        os.remove(raw_png)
+        return True
     except subprocess.TimeoutExpired:
+        return False
+    except Exception:
         return False
 
 

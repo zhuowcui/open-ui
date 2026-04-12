@@ -6552,6 +6552,7 @@ fn css_overflow_text_overflow_ellipsis_001() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 100.0;
     doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n1);
@@ -6568,6 +6569,7 @@ fn css_overflow_text_overflow_ellipsis_001() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.font_size = 100.0;
     doc.node_mut(n2).style.width = Length::px(400.0);
+    doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n2);
@@ -6584,6 +6586,7 @@ fn css_overflow_text_overflow_ellipsis_001() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.font_size = 100.0;
     doc.node_mut(n3).style.width = Length::px(400.0);
+    doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n3);
@@ -6628,6 +6631,7 @@ fn css_overflow_text_overflow_ellipsis_002() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.visibility = Visibility::Hidden;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
         doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
         doc.append_child(n1, n2);
@@ -6682,6 +6686,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
         doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
         doc.node_mut(n2).style.border_top_width = 1;
@@ -6768,6 +6773,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
         doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n7).style.padding_left = Length::px(0.0);
         doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n7).style.overflow_x = Overflow::Hidden;
         doc.node_mut(n7).style.overflow_y = Overflow::Hidden;
         doc.node_mut(n7).style.border_top_width = 1;
@@ -6871,6 +6877,7 @@ fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 100.0;
     doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n1);
@@ -6887,6 +6894,7 @@ fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.font_size = 100.0;
     doc.node_mut(n2).style.width = Length::px(400.0);
+    doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n2);
@@ -6903,6 +6911,7 @@ fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.font_size = 100.0;
     doc.node_mut(n3).style.width = Length::px(400.0);
+    doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
     doc.append_child(vp, n3);
@@ -6932,6 +6941,7 @@ fn css_overflow_line_clamp_continue_001() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.append_child(vp, n1);
     doc
 }

@@ -88,7 +88,7 @@ SUPPORTED_PROPERTIES = {
     'block-size', 'inline-size', 'min-block-size', 'max-block-size',
     'min-inline-size', 'max-inline-size',
     # Text (basic)
-    'line-height', 'vertical-align', 'text-align',
+    'line-height', 'vertical-align', 'text-align', 'white-space',
     # Aspect ratio
     'aspect-ratio',
     # Font (extract font-size)
@@ -131,7 +131,7 @@ IGNORED_PROPERTIES = {
     'text-decoration', 'text-transform', 'text-indent', 'text-shadow',
     'font-family', 'font-weight', 'font-style',
     'font-variant', 'letter-spacing', 'word-spacing',
-    'white-space', 'word-break', 'overflow-wrap', 'hyphens',
+    'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
     'text-overflow',
@@ -1825,6 +1825,16 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val in mapping:
             return f"{s}.text_align = {mapping[val]};"
+
+    # ── white-space ──
+    if prop == 'white-space':
+        mapping = {
+            'normal': 'WhiteSpace::Normal', 'nowrap': 'WhiteSpace::Nowrap',
+            'pre': 'WhiteSpace::Pre', 'pre-wrap': 'WhiteSpace::PreWrap',
+            'pre-line': 'WhiteSpace::PreLine', 'break-spaces': 'WhiteSpace::BreakSpaces',
+        }
+        if val in mapping:
+            return f"{s}.white_space = {mapping[val]};"
 
     # ── vertical-align ──
     if prop == 'vertical-align':

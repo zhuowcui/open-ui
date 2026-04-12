@@ -909,8 +909,10 @@ impl<'a> LineBreaker<'a> {
         // intrinsic sizing of inline-block content).
         let width = resolve_atomic_inline_width(style, self.containing_block_width, item.intrinsic_inline_size);
         let remaining = line.remaining_width();
+        // Respect white-space: nowrap — no line break between atomic inlines.
+        let allows_wrap = allows_line_wrap(style.white_space);
 
-        if width <= remaining || !line.has_content() {
+        if width <= remaining || !line.has_content() || !allows_wrap {
             line.items.push(InlineItemResult {
                 item_index,
                 text_range: item.text_range.clone(),

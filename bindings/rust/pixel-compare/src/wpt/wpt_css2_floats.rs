@@ -584,6 +584,7 @@ fn css2_floats_float_nowrap_1_notref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -624,6 +625,7 @@ fn css2_floats_float_nowrap_1() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -664,6 +666,7 @@ fn css2_floats_float_nowrap_2() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -715,6 +718,7 @@ fn css2_floats_float_nowrap_3_ref() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Span);
         doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -766,6 +770,7 @@ fn css2_floats_float_nowrap_3() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -830,6 +835,7 @@ fn css2_floats_float_nowrap_4_ref() -> Document {
         doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n3).style.padding_left = Length::px(0.0);
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n3);
     doc
 }
@@ -881,6 +887,7 @@ fn css2_floats_float_nowrap_4_ref2() -> Document {
         doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n3).style.padding_left = Length::px(0.0);
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n3);
     doc
 }
@@ -919,6 +926,7 @@ fn css2_floats_float_nowrap_4() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -986,6 +994,7 @@ fn css2_floats_float_nowrap_5() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -1025,6 +1034,7 @@ fn css2_floats_float_nowrap_6() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -1064,6 +1074,7 @@ fn css2_floats_float_nowrap_7() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -1075,6 +1086,7 @@ fn css2_floats_float_nowrap_7() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -1087,6 +1099,7 @@ fn css2_floats_float_nowrap_7() -> Document {
             doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
             doc.node_mut(n3).style.padding_left = Length::px(0.0);
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.node_mut(n3).style.float = Float::Right;
             doc.node_mut(n3).style.background_color = Color::BLUE;
             doc.append_child(n2, n3);
@@ -1127,6 +1140,7 @@ fn css2_floats_float_nowrap_8() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Span);
         doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -1178,6 +1192,7 @@ fn css2_floats_float_nowrap_9() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -1278,6 +1293,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
                 doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n4).style.padding_left = Length::px(0.0);
                 doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n3, n4);
                 let n5 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -1326,6 +1342,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
                 doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n7).style.padding_left = Length::px(0.0);
                 doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n6, n7);
                 let n8 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -1374,6 +1391,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
                 doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n10).style.padding_left = Length::px(0.0);
                 doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n9, n10);
                 let n11 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -1422,6 +1440,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
                 doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n13).style.padding_left = Length::px(0.0);
                 doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n12, n13);
                 let n14 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n14).style.margin_top = Length::px(0.0);
@@ -1535,6 +1554,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
                 doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n5).style.padding_left = Length::px(0.0);
                 doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n3, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -1583,6 +1603,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
                 doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n8).style.padding_left = Length::px(0.0);
                 doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n6, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -1631,6 +1652,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
                 doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n11).style.padding_left = Length::px(0.0);
                 doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n9, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
@@ -1679,6 +1701,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
                 doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n14).style.padding_left = Length::px(0.0);
                 doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n12, n14);
     doc
 }
@@ -1766,6 +1789,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
                 doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n4).style.padding_left = Length::px(0.0);
                 doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n3, n4);
                     let n5 = doc.create_node(ElementTag::Span);
                     doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -1814,6 +1838,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
                 doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n7).style.padding_left = Length::px(0.0);
                 doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n6, n7);
                     let n8 = doc.create_node(ElementTag::Span);
                     doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -1862,6 +1887,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
                 doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n10).style.padding_left = Length::px(0.0);
                 doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n9, n10);
                     let n11 = doc.create_node(ElementTag::Span);
                     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -1910,6 +1936,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
                 doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n13).style.padding_left = Length::px(0.0);
                 doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
                 doc.append_child(n12, n13);
                     let n14 = doc.create_node(ElementTag::Span);
                     doc.node_mut(n14).style.margin_top = Length::px(0.0);
