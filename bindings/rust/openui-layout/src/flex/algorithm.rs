@@ -466,6 +466,22 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let cb_size = PhysicalSize::new(content_width, content_height);
 
     let mut oof_candidates = Vec::new();
+
+    // Collect bubbled OOF candidates from flex item fragments.
+    // These are abspos descendants whose containing block is the flex
+    // container (not a positioned ancestor inside the flex item).
+    for child_frag in &mut fragment.children {
+        let bubbled = std::mem::take(&mut child_frag.oof_candidates);
+        for mut c in bubbled {
+            c.static_position.left = c.static_position.left + child_frag.offset.left;
+            c.static_position.top = c.static_position.top + child_frag.offset.top;
+            c.containing_block_size = cb_size;
+            c.containing_block_border = border.clone();
+            c.containing_block_direction = style.direction;
+            oof_candidates.push(c);
+        }
+    }
+
     for child_id in doc.children(node_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.position.is_absolutely_positioned() {
