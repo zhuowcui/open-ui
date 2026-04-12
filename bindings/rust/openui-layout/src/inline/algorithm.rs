@@ -1287,11 +1287,15 @@ fn create_line_box(
                         // Raised by super_offset above the baseline.
                         let super_offset = style.font_size / 3.0 + 1.0;
                         line_ascent = line_ascent.max(margin_box_height + super_offset);
+                        // Item bottom is at super_offset above baseline → 0 descent.
+                        line_descent = line_descent.max(0.0);
                     }
                     _ => {
                         // Baseline-aligned: margin-box bottom sits on baseline.
                         // For empty inline-blocks: baseline = bottom margin edge.
+                        // Item sits entirely above baseline → 0 descent.
                         line_ascent = line_ascent.max(margin_box_height);
+                        line_descent = line_descent.max(0.0);
                     }
                 }
             }

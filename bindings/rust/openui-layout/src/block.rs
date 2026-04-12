@@ -1917,20 +1917,22 @@ pub fn establishes_new_fc(style: &ComputedStyle) -> bool {
 /// establishes a new block formatting context must not overlap the margin box
 /// of any floats in the same block formatting context."
 ///
-/// The min_inline_size is the start margin + border-box width. The end margin
-/// can extend past the opportunity (it doesn't cause float overlap).
+/// Compute the minimum inline size needed for a new formatting context child
+/// to fit in a layout opportunity next to floats.
 ///
-/// For auto-width: start margin + border + padding (content can shrink to 0).
-/// For explicit width: start margin + border-box width.
+/// CSS 2.1 §9.5: The margin box of a BFC child must not overlap float
+/// margin boxes. Both start AND end margins contribute to the required
+/// opportunity width (the full margin-box inline size).
+///
+/// For auto-width: margins + border + padding (content can shrink to 0).
+/// For explicit width: margins + border-box width.
 fn new_fc_min_inline_size(
     style: &ComputedStyle,
     containing_inline: LayoutUnit,
 ) -> LayoutUnit {
     let margin = resolve_margins(style, containing_inline);
-    // Only the start margin matters — it shifts the border box within the
-    // opportunity. The end margin can overflow past the opportunity edge.
-    // TODO: handle RTL (use margin_right as start margin)
     let margin_start = margin.left;
+    let margin_end = margin.right;
     let bp_left = LayoutUnit::from_i32(style.effective_border_left())
         + resolve_margin_or_padding(&style.padding_left, containing_inline);
     let bp_right = LayoutUnit::from_i32(style.effective_border_right())
@@ -1938,8 +1940,8 @@ fn new_fc_min_inline_size(
     let bp = bp_left + bp_right;
 
     if style.width.is_auto() {
-        // Auto-width: can shrink to 0 content, so just start margin + border + padding
-        margin_start + bp
+        // Auto-width: can shrink to 0 content, so margins + border + padding
+        margin_start + bp + margin_end
     } else {
         // Explicit width: resolve and compute border-box width
         let w = resolve_length(
@@ -1949,7 +1951,7 @@ fn new_fc_min_inline_size(
             BoxSizing::ContentBox => w + bp,
             BoxSizing::BorderBox => w,
         };
-        margin_start + border_box_w
+        margin_start + border_box_w + margin_end
     }
 }
 
