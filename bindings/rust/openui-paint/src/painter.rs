@@ -568,13 +568,15 @@ fn paint_box_decoration_background(
 /// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
 fn paint_borders(
     canvas: &Canvas,
-    _fragment: &Fragment,
+    fragment: &Fragment,
     style: &ComputedStyle,
     x: f32, y: f32, w: f32, h: f32,
 ) {
-    let bt = style.effective_border_top() as f32;
+    // box-decoration-break: slice (default) — suppress block-start border on
+    // non-first fragments and block-end border on non-last fragments.
+    let bt = if fragment.is_first_for_node { style.effective_border_top() as f32 } else { 0.0 };
     let br = style.effective_border_right() as f32;
-    let bb = style.effective_border_bottom() as f32;
+    let bb = if fragment.is_last_for_node { style.effective_border_bottom() as f32 } else { 0.0 };
     let bl = style.effective_border_left() as f32;
 
     // No borders to paint

@@ -3846,6 +3846,15 @@ fn layout_multicol(
                             let mut part = child_frag.clone();
                             part.size.height = part_height;
                             part.has_overflow_clip = true;
+                            // box-decoration-break: slice (default) — suppress
+                            // block-start border on non-first fragments and
+                            // block-end border on non-last fragments.
+                            if consumed > LayoutUnit::zero() {
+                                part.is_first_for_node = false;
+                            }
+                            if consumed + part_height < child_height {
+                                part.is_last_for_node = false;
+                            }
                             part.offset = PhysicalOffset::new(
                                 content_edge_x + col_inline_offset,
                                 content_edge_y + total_block_offset + col_block_offset,
