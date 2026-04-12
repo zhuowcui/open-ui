@@ -64,9 +64,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // CSS Sizing 4 §5.1: AR constraint feedback — when the tentative inline
     // size produces a block size via AR that gets clamped by min/max-height,
     // re-derive the inline size from the clamped block size.
-    // This applies when height is auto (so AR determines height from width).
+    // Only applies when width is NOT an explicit length (auto, stretch, or
+    // content keywords like min-content/max-content/fit-content).
+    // When width is explicit (e.g. 100px), AR violation is accepted.
     if let Some(ref ar) = style.aspect_ratio {
-        if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 && style.height.is_auto() {
+        let width_is_auto_like = style.width.is_auto() || style.width.is_stretch()
+            || style.width.is_content_or_intrinsic();
+        if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 && style.height.is_auto() && width_is_auto_like {
             let border_box_w = if style.box_sizing == BoxSizing::BorderBox {
                 content_inline_size.max_of(border_padding_inline)
             } else {
