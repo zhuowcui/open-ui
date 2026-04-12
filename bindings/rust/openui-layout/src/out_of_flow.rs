@@ -378,6 +378,7 @@ fn layout_out_of_flow_child(
     let height_is_definite = (!style.height.is_auto() && !style.height.is_content_or_intrinsic())
         || style.height.is_min_content()
         || style.height.is_max_content()
+        || style.height.is_fit_content()
         || style.height.is_fit_content_function()
         || height_resolved_from_constraints;
 
