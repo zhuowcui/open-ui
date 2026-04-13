@@ -1762,6 +1762,24 @@ fn layout_block_child(
 
     let mut child_fragment = block_layout(doc, child_id, &child_space);
 
+    // Early self-collapsing check — needed BEFORE float cascade gating.
+    // CSS 2.1 §8.3.1: Empty blocks (no height, no border/padding, no FC,
+    // no in-flow children) collapse through. A float inside an empty block
+    // should NOT break the parent's margin collapsing chain — the margin
+    // group continues through the empty wrapper.
+    let child_bp_block = resolve_border(child_style).block_sum()
+        + resolve_padding(child_style, child_available_inline).block_sum();
+    let child_has_in_flow_content = doc.children(child_id).any(|grandchild_id| {
+        let gs = &doc.node(grandchild_id).style;
+        gs.display != Display::None
+            && !gs.position.is_absolutely_positioned()
+            && gs.float == openui_style::Float::None
+    });
+    let child_is_self_collapsing = child_fragment.size.height == LayoutUnit::zero()
+        && child_bp_block == LayoutUnit::zero()
+        && !child_is_new_fc
+        && !child_has_in_flow_content;
+
     // CSS 2.1 §8.3.1: Absorb child's propagated start margin strut.
     // If the child itself had an unresolved start margin (its first
     // grandchild's margin collapsed through with no border/padding
@@ -1788,7 +1806,14 @@ fn layout_block_child(
     // resolved yet, force resolution now. For non-BFC blocks, save the
     // current strut (margins before the float) for parent propagation,
     // then mark as resolved so subsequent margins become internal.
-    if child_fragment.float_resolved_bfc && !*start_margin_resolved {
+    //
+    // EXCEPTION: Skip the cascade for self-collapsing children. Per CSS 2.1
+    // §8.3.1, an empty block (no height/bp/FC/in-flow content) collapses
+    // through — its margins adjoin with subsequent siblings. A float inside
+    // such a block is positioned within the child's own layout; the parent's
+    // margin chain must continue so margins from later siblings can still
+    // collapse with the parent's start margin.
+    if child_fragment.float_resolved_bfc && !*start_margin_resolved && !child_is_self_collapsing {
         if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
             *block_offset += margin_strut.sum();
             *margin_strut = MarginStrut::new();
@@ -1932,27 +1957,8 @@ fn layout_block_child(
 
     *block_offset += child_fragment.size.height;
 
-    // CSS 2.1 §8.3.1: Determine if this child is self-collapsing.
-    // A box is self-collapsing if:
-    //   - zero computed height (or auto resolving to zero)
-    //   - no top/bottom border or padding
-    //   - does not establish a new BFC
-    //   - does not contain any line boxes or in-flow children
-    // Check the DOM tree for in-flow children (not the fragment, which may
-    // include float fragments). Floats/abspos are out-of-flow and don't
-    // prevent self-collapsing per §8.3.1.
-    let child_bp_block = resolve_border(child_style).block_sum()
-        + resolve_padding(child_style, child_available_inline).block_sum();
-    let child_has_in_flow_content = doc.children(child_id).any(|grandchild_id| {
-        let gs = &doc.node(grandchild_id).style;
-        gs.display != Display::None
-            && !gs.position.is_absolutely_positioned()
-            && gs.float == openui_style::Float::None
-    });
-    let child_is_self_collapsing = child_fragment.size.height == LayoutUnit::zero()
-        && child_bp_block == LayoutUnit::zero()
-        && !child_is_new_fc
-        && !child_has_in_flow_content;
+    // child_is_self_collapsing was computed early (before float cascade)
+    // to gate the cascade. Reuse it here.
 
     // CSS 2.1 §8.3.1: Save the start margin strut before the trailing reset
     // overwrites it. This captures the first child's (and nested first
@@ -1967,48 +1973,27 @@ fn layout_block_child(
         // top margin. Don't reset the strut — append the bottom margin to
         // the existing strut so both top and bottom are preserved.
         //
-        // Exception: if a descendant float forced BFC resolution (cascaded
-        // via float_resolved_bfc), the margin boundary IS known and final.
-        // Don't rollback and don't defer — position is at block_offset.
-        if child_fragment.float_resolved_bfc {
-            // Float cascade resolved the position — it's final.
-            // Start a new strut from this boundary with the child's bottom margin.
-            *margin_strut = MarginStrut::new();
-            margin_strut.append_normal(child_margin.bottom);
-            if !child_fragment.end_margin_strut.is_empty() {
-                let child_end = child_fragment.end_margin_strut;
-                margin_strut.append_normal(child_end.positive_margin);
-                if child_end.negative_margin < LayoutUnit::zero() {
-                    margin_strut.append_normal(child_end.negative_margin);
-                }
-            }
-            // Also flush any previously pending self-collapsing blocks to
-            // the current margin boundary (block_offset before height add).
-            let boundary = child_fragment.offset.top;
-            for &idx in pending_self_collapsing.iter() {
-                child_fragments[idx].offset.top = boundary;
-            }
-            pending_self_collapsing.clear();
-        } else {
-            // Normal self-collapsing handling: rollback tentative resolution.
-            if strut_resolved_this_child {
-                *block_offset = pre_resolve_offset;
-                *margin_strut = pre_resolve_strut;
-            }
-            margin_strut.append_normal(child_margin.bottom);
-            if !child_fragment.end_margin_strut.is_empty() {
-                let child_end = child_fragment.end_margin_strut;
-                margin_strut.append_normal(child_end.positive_margin);
-                if child_end.negative_margin < LayoutUnit::zero() {
-                    margin_strut.append_normal(child_end.negative_margin);
-                }
-            }
-            // Record index for deferred repositioning. The self-collapsing block's
-            // final position is the next collapsed margin boundary, which we only
-            // know when a non-self-collapsing sibling resolves the strut.
-            let idx = child_fragments.len(); // index after push below
-            pending_self_collapsing.push(idx);
+        // This applies uniformly regardless of float_resolved_bfc. A float
+        // inside an empty block is positioned within that child's own layout;
+        // the parent's margin chain must continue so later siblings can
+        // collapse with the parent's start margin (CSS 2.1 §8.3.1).
+        if strut_resolved_this_child {
+            *block_offset = pre_resolve_offset;
+            *margin_strut = pre_resolve_strut;
         }
+        margin_strut.append_normal(child_margin.bottom);
+        if !child_fragment.end_margin_strut.is_empty() {
+            let child_end = child_fragment.end_margin_strut;
+            margin_strut.append_normal(child_end.positive_margin);
+            if child_end.negative_margin < LayoutUnit::zero() {
+                margin_strut.append_normal(child_end.negative_margin);
+            }
+        }
+        // Record index for deferred repositioning. The self-collapsing block's
+        // final position is the next collapsed margin boundary, which we only
+        // know when a non-self-collapsing sibling resolves the strut.
+        let idx = child_fragments.len(); // index after push below
+        pending_self_collapsing.push(idx);
     } else {
         // Non-self-collapsing child: the child occupies space, so margin
         // collapsing ends here. Start a new strut with the bottom margin.
@@ -3178,7 +3163,13 @@ fn layout_multicol(
         // Check for nested spanner extraction: if this non-spanner child
         // is a normal block container (not BFC-triggering), check whether
         // any of its immediate children have column-span: all.
-        let has_nested_spanners = !child_style.overflow_x.is_scrollable()
+        // CSS Multicol §8: "a column spanning element only spans the columns
+        // of its nearest multicol container." If this child is itself a
+        // multicol container, its column-span:all children belong to IT,
+        // not to the outer multicol. Do not extract them.
+        let child_is_multicol = crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some();
+        let has_nested_spanners = !child_is_multicol
+            && !child_style.overflow_x.is_scrollable()
             && !child_style.overflow_y.is_scrollable()
             && child_style.display.is_block_level()
             && doc.children(child_id).any(|gc| {
