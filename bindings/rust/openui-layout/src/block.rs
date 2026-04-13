@@ -2085,12 +2085,14 @@ fn new_fc_min_inline_size(
     let bp = bp_left + bp_right;
 
     // CSS 2.1 §9.5: "The border box of an element that establishes a new BFC
-    // must not overlap the margin box of any floats." Only the start margin
-    // and the border box contribute to the fitting check; the end margin
+    // must not overlap the margin box of any floats." For auto-width BFCs,
+    // at minimum margin_start + margin_end must fit (content can shrink to 0,
+    // but the margin box width cannot be negative — Chrome drops below the
+    // float rather than clamping). For explicit-width BFCs, the end margin
     // overflows past the container edge and does not prevent placement.
     if style.width.is_auto() {
-        // Auto-width: can shrink to 0 content, so start margin + border + padding
-        margin_start + bp
+        // Auto-width: can shrink to 0 content, so margins + border + padding
+        margin_start + bp + margin_end
     } else {
         // Explicit width: resolve and compute border-box width
         let w = resolve_length(
@@ -3879,8 +3881,18 @@ fn layout_multicol(
                 // unless forced by break-before/after).
                 let can_advance_col = algo.column_fill != ColumnFill::Auto
                     || col_idx + 1 < resolved.count as usize;
+                // Advance to next column if the child doesn't fit.  For
+                // oversized children (taller than one column), only advance
+                // when the remaining space can't even hold the block-start
+                // decoration (border-top + padding-top); otherwise start
+                // fragmenting in the remaining space so it isn't wasted.
+                let child_block_start_deco = LayoutUnit::from_i32(child_style.border_top_width)
+                    + resolve_margin_or_padding(&child_style.padding_top, column_width);
+                let should_advance = child_height.raw() <= column_height.raw()
+                    || col_remaining.raw() < child_block_start_deco.raw();
                 if col_remaining.raw() < needed.raw() && col_block_offset > LayoutUnit::zero()
                     && !avoid_break_before && can_advance_col
+                    && should_advance
                 {
                     max_col_content = max_col_content.max_of(col_block_offset);
                     col_idx += 1;

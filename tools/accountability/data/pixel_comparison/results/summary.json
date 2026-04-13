@@ -1,35 +1,115 @@
 {
-  "total": 5,
-  "passed": 5,
-  "failed": 0,
+  "total": 21,
+  "passed": 19,
+  "failed": 2,
   "errors": 0,
   "near_miss_aa": 0,
   "aa_threshold_pct": 0.5,
-  "reference_tests": 0,
-  "reference_tests_pass": 0,
+  "reference_tests": 13,
+  "reference_tests_pass": 13,
   "tests": [
     {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-001",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-left-overflow-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-002",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-left-table-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-003",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-right-overflow-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-004",
+      "id": "wpt/css2_floats/floats-wrap-bfc-001-right-table-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
-      "id": "wpt/css_sizing/margin-collapse-with-indefinite-block-size-005",
+      "id": "wpt/css2_floats/floats-wrap-bfc-002-left-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-002-right-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-left-overflow-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-left-table-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-right-overflow-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-003-right-table-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-004-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-005-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-006.tentative",
+      "status": "fail",
+      "mismatch_pct": 2.388535
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-007.tentative",
+      "status": "fail",
+      "mismatch_pct": 2.919321
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-008.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-009.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-010-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-010",
       "status": "pass",
       "mismatch_pct": 0.0
     }
