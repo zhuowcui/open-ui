@@ -18,10 +18,24 @@
 
 use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, RRect, ColorSpace, ClipOp, Point};
 use openui_geometry::PhysicalOffset;
-use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility, BackgroundClip};
+use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility, BackgroundClip, OverflowClipBox};
 use openui_dom::Document;
 use openui_layout::{Fragment, FragmentKind};
 use openui_text::font::FontMetrics;
+
+/// Resolve a padding/margin Length to f32 pixels.
+/// Percentage values resolve against `container_size`.
+fn resolve_margin_or_padding_f32(len: &openui_geometry::Length, container_size: f32) -> f32 {
+    if len.is_fixed() {
+        len.value()
+    } else if len.is_percent() {
+        len.value() / 100.0 * container_size
+    } else if len.is_calculated() {
+        len.calc_offset() + len.value() / 100.0 * container_size
+    } else {
+        0.0
+    }
+}
 
 /// Paint a fragment tree onto a Skia canvas.
 ///
@@ -225,7 +239,33 @@ fn paint_with_overflow_clip(
     offset: PhysicalOffset,
     style: &ComputedStyle,
 ) {
-    let (clip_x, clip_y, clip_w, clip_h) = compute_clip_rect(fragment, offset);
+    // CSS Overflow 3 §3: overflow-clip-margin <visual-box>? <length>
+    // The visual-box determines which box edge the clip starts from:
+    //   padding-box (default): same as compute_clip_rect
+    //   content-box: inset by padding
+    //   border-box: expand out to border edge
+    let (clip_x, clip_y, clip_w, clip_h) = {
+        let (px, py, pw, ph) = compute_clip_rect(fragment, offset);
+        match style.overflow_clip_box {
+            OverflowClipBox::PaddingBox => (px, py, pw, ph),
+            OverflowClipBox::ContentBox => {
+                // Inset from padding-box by padding amounts
+                let pl = resolve_margin_or_padding_f32(&style.padding_left, pw);
+                let pr = resolve_margin_or_padding_f32(&style.padding_right, pw);
+                let pt = resolve_margin_or_padding_f32(&style.padding_top, ph);
+                let pb = resolve_margin_or_padding_f32(&style.padding_bottom, ph);
+                (px + pl, py + pt, (pw - pl - pr).max(0.0), (ph - pt - pb).max(0.0))
+            }
+            OverflowClipBox::BorderBox => {
+                // Expand from padding-box out to border edge
+                let bl = fragment.border.left.to_f32();
+                let br = fragment.border.right.to_f32();
+                let bt = fragment.border.top.to_f32();
+                let bb = fragment.border.bottom.to_f32();
+                (px - bl, py - bt, pw + bl + br, ph + bt + bb)
+            }
+        }
+    };
 
     // Per CSS Overflow 3, when overflow is `clip`, expand the clip rect
     // outward by `overflow-clip-margin` on all sides.

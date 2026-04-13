@@ -3956,6 +3956,7 @@ fn css_overflow_overflow_clip_margin_mul_column_border_box() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n1).style.overflow_x = Overflow::Clip;
     doc.node_mut(n1).style.overflow_y = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_clip_box = OverflowClipBox::BorderBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -4131,6 +4132,7 @@ fn css_overflow_overflow_clip_margin_mul_column_content_box() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n1).style.overflow_x = Overflow::Clip;
     doc.node_mut(n1).style.overflow_y = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_clip_box = OverflowClipBox::ContentBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -4293,6 +4295,7 @@ fn css_overflow_overflow_clip_margin_mul_column_padding_box() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
     doc.node_mut(n1).style.overflow_x = Overflow::Clip;
     doc.node_mut(n1).style.overflow_y = Overflow::Clip;
+    doc.node_mut(n1).style.overflow_clip_box = OverflowClipBox::PaddingBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -4743,6 +4746,8 @@ fn css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius() -
     doc.node_mut(n1).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (35.0_f32, 35.0_f32);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.overflow_clip_margin = 5.0;
+doc.node_mut(n1).style.overflow_clip_box = OverflowClipBox::BorderBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -4794,6 +4799,8 @@ fn css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius() -
     doc.node_mut(n3).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n3).style.border_bottom_left_radius = (35.0_f32, 35.0_f32);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n3).style.overflow_clip_margin = 5.0;
+doc.node_mut(n3).style.overflow_clip_box = OverflowClipBox::PaddingBox;
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -4845,6 +4852,8 @@ fn css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius() -
     doc.node_mut(n5).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n5).style.border_bottom_left_radius = (35.0_f32, 35.0_f32);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n5).style.overflow_clip_margin = 5.0;
+doc.node_mut(n5).style.overflow_clip_box = OverflowClipBox::ContentBox;
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::Block;
@@ -4907,6 +4916,8 @@ fn css_overflow_overflow_clip_margin_visual_box_and_value() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.overflow_clip_margin = 5.0;
+doc.node_mut(n1).style.overflow_clip_box = OverflowClipBox::BorderBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -4954,6 +4965,8 @@ fn css_overflow_overflow_clip_margin_visual_box_and_value() -> Document {
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n3).style.overflow_clip_margin = 5.0;
+doc.node_mut(n3).style.overflow_clip_box = OverflowClipBox::PaddingBox;
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -5001,6 +5014,8 @@ fn css_overflow_overflow_clip_margin_visual_box_and_value() -> Document {
     doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n5).style.overflow_clip_margin = 5.0;
+doc.node_mut(n5).style.overflow_clip_box = OverflowClipBox::ContentBox;
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::Block;
@@ -5216,6 +5231,7 @@ fn css_overflow_overflow_clip_margin_visual_box() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.overflow_clip_box = OverflowClipBox::BorderBox;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -5263,6 +5279,7 @@ fn css_overflow_overflow_clip_margin_visual_box() -> Document {
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n3).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n3).style.overflow_clip_box = OverflowClipBox::PaddingBox;
     doc.append_child(vp, n3);
         let n4 = doc.create_node(ElementTag::Div);
         doc.node_mut(n4).style.display = Display::Block;
@@ -5310,6 +5327,7 @@ fn css_overflow_overflow_clip_margin_visual_box() -> Document {
     doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n5).style.overflow_clip_box = OverflowClipBox::ContentBox;
     doc.append_child(vp, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::Block;

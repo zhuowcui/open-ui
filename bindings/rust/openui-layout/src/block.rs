@@ -3881,11 +3881,16 @@ fn layout_multicol(
 
                 let avoid_total = total_child_space + child_margin_bottom;
                 let avoid_fresh = child_height + child_margin_bottom;
+                // CSS Fragmentation §3.2: break-inside:avoid takes priority
+                // over break-before/after:avoid.  If the child has
+                // break-inside:avoid and doesn't fit, move it to the next
+                // column even if break-before:avoid wants to keep it with the
+                // previous sibling (we prefer not splitting over not
+                // separating siblings).
                 if avoid_break_inside
                     && col_remaining.raw() < avoid_total.raw()
                     && col_block_offset > LayoutUnit::zero()
                     && avoid_fresh.raw() <= column_height.raw()
-                    && !avoid_break_before
                     && (algo.column_fill != ColumnFill::Auto
                         || col_idx + 1 < resolved.count as usize)
                 {

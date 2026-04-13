@@ -1524,12 +1524,32 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     # ── overflow-clip-margin ──
     if prop == 'overflow-clip-margin':
-        # Accepts <length> values (e.g. 10px, 20px). Parse to raw f32 pixels.
-        m = re.match(r'^(-?[\d.]+)px$', val)
-        if m:
-            return f"{s}.overflow_clip_margin = {float(m.group(1))};"
-        if val == '0':
-            return f"{s}.overflow_clip_margin = 0.0;"
+        # CSS Overflow 3: overflow-clip-margin: <visual-box>? <length>
+        # <visual-box> = content-box | padding-box | border-box
+        parts = val.split()
+        box_val = None
+        length_val = None
+        for p in parts:
+            if p in ('content-box', 'padding-box', 'border-box'):
+                box_val = p
+            else:
+                lm = re.match(r'^(-?[\d.]+)px$', p)
+                if lm:
+                    length_val = float(lm.group(1))
+                elif p == '0':
+                    length_val = 0.0
+        lines = []
+        if length_val is not None:
+            lines.append(f"{s}.overflow_clip_margin = {length_val};")
+        if box_val:
+            box_map = {
+                'content-box': 'OverflowClipBox::ContentBox',
+                'padding-box': 'OverflowClipBox::PaddingBox',
+                'border-box': 'OverflowClipBox::BorderBox',
+            }
+            lines.append(f"{s}.overflow_clip_box = {box_map[box_val]};")
+        if lines:
+            return '\n'.join(lines)
 
     # ── background-color ──
     if prop == 'background-color':

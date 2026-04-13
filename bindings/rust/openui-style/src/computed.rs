@@ -59,6 +59,11 @@ pub struct ComputedStyle {
     /// `overflow: clip` is used. Only applies to `overflow: clip`.
     pub overflow_clip_margin: f32,
 
+    /// CSS `overflow-clip-margin` visual-box reference.
+    /// Determines which box edge the clip margin expands from.
+    /// Initial: `padding-box` (CSS Overflow 3 §3).
+    pub overflow_clip_box: OverflowClipBox,
+
     /// CSS `box-sizing`. Initial: `content-box`.
     pub box_sizing: BoxSizing,
 
@@ -557,6 +562,7 @@ impl ComputedStyle {
             overflow_x: Overflow::INITIAL,   // visible
             overflow_y: Overflow::INITIAL,   // visible
             overflow_clip_margin: 0.0,
+            overflow_clip_box: OverflowClipBox::default(),
             box_sizing: BoxSizing::INITIAL,  // content-box
             visibility: Visibility::INITIAL, // visible
             direction: Direction::INITIAL,   // ltr

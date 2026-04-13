@@ -1639,3 +1639,22 @@ impl Default for BackgroundClip {
         BackgroundClip::BorderBox
     }
 }
+
+/// CSS `overflow-clip-margin` visual box reference.
+/// Determines which box edge the clip-margin expands from.
+/// Default: `padding-box` (CSS Overflow 3 §3).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OverflowClipBox {
+    /// Clip expands from the content-box edge.
+    ContentBox = 0,
+    /// Clip expands from the padding-box edge (default).
+    PaddingBox = 1,
+    /// Clip expands from the border-box edge.
+    BorderBox = 2,
+}
+
+impl Default for OverflowClipBox {
+    fn default() -> Self {
+        OverflowClipBox::PaddingBox
+    }
+}
