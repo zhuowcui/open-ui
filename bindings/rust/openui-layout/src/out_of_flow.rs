@@ -394,8 +394,15 @@ fn layout_out_of_flow_child(
     // When the height is determined by constraints (top+bottom specified, height auto),
     // signal it as fixed so descendants can resolve percentage heights against it.
     // Similarly, when height is explicitly specified, it's a fixed block size.
-    let fixed_block = height_is_definite;
-    let available_block = if fixed_block { resolved_height } else { content_height };
+    //
+    // Exception: when height comes from AR and min-height is auto, the element
+    // can grow to fit content (CSS Sizing 4 §5.1 — non-replaced elements use
+    // content height as a floor). Don't fix the block size so block_layout
+    // returns the actual content extent. block.rs already handles AR-based
+    // percentage resolution for auto-height elements with AR (lines 220-257).
+    let ar_content_floor = height_from_ar && style.min_height.is_auto();
+    let fixed_block = height_is_definite && !ar_content_floor;
+    let available_block = if fixed_block || height_from_ar { resolved_height } else { content_height };
     let mut child_space = ConstraintSpace::for_block_child(
         resolved_width,
         available_block,
@@ -410,20 +417,47 @@ fn layout_out_of_flow_child(
 
     let mut child_fragment = block_layout(doc, candidate.node_id, &child_space);
 
-    // CSS 2.1 §10.3.7: The width is always pre-determined by the constraint
-    // equation before child layout, so the fragment width = resolved border-box.
-    let final_width = resolved_width;
+    // CSS 2.1 §10.3.7: The width is pre-determined by the constraint equation.
+    // Exception: when width comes from AR and min-width is auto, content width
+    // acts as a floor (CSS Sizing 4 §5.1 for non-replaced elements).
+    let ar_content_floor_inline = width_from_ar
+        && style.min_width.is_auto()
+        && style.aspect_ratio.is_some();
+    let final_width = if ar_content_floor_inline && style.width.is_auto() {
+        // Compute content extent from children's border-box positions.
+        // Don't include margin-right: it can be negative due to CSS 2.1 §10.3.3
+        // overconstrained adjustment when child is wider than parent.
+        let content_right = child_fragment.children.iter()
+            .map(|c| c.offset.left + c.size.width)
+            .fold(LayoutUnit::zero(), |a, b| a.max_of(b));
+        let content_extent = content_right + border.right + padding.right;
+        let effective = resolved_width.max_of(content_extent);
+        apply_min_max_inline(doc, candidate.node_id, style, cb_width, cb_height, effective,
+                             &border, &padding, true)
+    } else {
+        resolved_width
+    };
 
     // CSS 2.1 §10.7: For auto-height content-sized abspos, the content height
     // must still be clamped by min-height / max-height constraints.
-    // Skip when height was already determined by AR or constraints — those
-    // paths already applied min/max via apply_min_max_block above.
+    // When height comes from AR with auto min-height, content is a floor.
     let final_height = if (style.height.is_auto() || style.height.is_fit_content())
         && !height_resolved_from_constraints
-        && !height_from_ar
     {
-        let content_height = child_fragment.size.height;
-        apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding, false)
+        if ar_content_floor {
+            // Non-replaced element with AR and min-height:auto — content is a
+            // floor for the AR-derived height (block_layout returned the actual
+            // content extent since is_fixed_block_size was false).
+            let content_h = child_fragment.size.height;
+            let effective = resolved_height.max_of(content_h);
+            apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, effective, &border, &padding, true)
+        } else if height_from_ar {
+            // min-height explicitly set (e.g., 0) — AR height is strict
+            resolved_height
+        } else {
+            let content_height = child_fragment.size.height;
+            apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding, false)
+        }
     } else {
         resolved_height
     };
