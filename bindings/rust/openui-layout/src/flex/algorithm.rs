@@ -1149,7 +1149,29 @@ fn resolve_content_based_size(
             };
 
             if !cross_prop.is_auto() && (!cross_pct.is_indefinite() || cross_prop.is_fixed()) {
-                let cross_val = resolve_length(cross_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+                let mut cross_val = resolve_length(cross_prop, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+                // Clamp by min/max cross-axis constraints before AR transfer.
+                let (min_cross, max_cross) = if is_column {
+                    (&child_style.min_width, &child_style.max_width)
+                } else {
+                    (&child_style.min_height, &child_style.max_height)
+                };
+                if !max_cross.is_none() && !max_cross.is_auto() {
+                    if !max_cross.is_percent() || !cross_pct.is_indefinite() {
+                        let max_v = resolve_length(max_cross, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+                        if cross_val > max_v {
+                            cross_val = max_v;
+                        }
+                    }
+                }
+                if !min_cross.is_auto() && !min_cross.is_none() {
+                    if !min_cross.is_percent() || !cross_pct.is_indefinite() {
+                        let min_v = resolve_length(min_cross, cross_pct, LayoutUnit::zero(), LayoutUnit::zero());
+                        if cross_val < min_v {
+                            cross_val = min_v;
+                        }
+                    }
+                }
                 // CSS Sizing 4 §5.1: AR applies to content-box or border-box
                 // depending on box-sizing.
                 let main_val = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -1591,7 +1613,20 @@ fn resolve_main_axis_min_max(
                     if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
                         let cross_prop = &child_style.width;
                         if !cross_prop.is_auto() && cross_prop.is_fixed() {
-                            let cross_raw = resolve_length(cross_prop, pct_inline, LayoutUnit::zero(), LayoutUnit::zero());
+                            let mut cross_raw = resolve_length(cross_prop, pct_inline, LayoutUnit::zero(), LayoutUnit::zero());
+                            // Clamp by min/max cross constraints before AR transfer
+                            if !child_style.max_width.is_none() && !child_style.max_width.is_auto() {
+                                if child_style.max_width.is_fixed() || !pct_inline.is_indefinite() {
+                                    let max_v = resolve_length(&child_style.max_width, pct_inline, LayoutUnit::zero(), LayoutUnit::zero());
+                                    if cross_raw > max_v { cross_raw = max_v; }
+                                }
+                            }
+                            if !child_style.min_width.is_auto() && !child_style.min_width.is_none() {
+                                if child_style.min_width.is_fixed() || !pct_inline.is_indefinite() {
+                                    let min_v = resolve_length(&child_style.min_width, pct_inline, LayoutUnit::zero(), LayoutUnit::zero());
+                                    if cross_raw < min_v { cross_raw = min_v; }
+                                }
+                            }
                             let cross_bp = {
                                 let b = resolve_border(child_style);
                                 let p = resolve_padding(child_style, pct_inline);
@@ -1618,7 +1653,20 @@ fn resolve_main_axis_min_max(
                     if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
                         let cross_prop = &child_style.height;
                         if !cross_prop.is_auto() && cross_prop.is_fixed() {
-                            let cross_raw = resolve_length(cross_prop, pct_block, LayoutUnit::zero(), LayoutUnit::zero());
+                            let mut cross_raw = resolve_length(cross_prop, pct_block, LayoutUnit::zero(), LayoutUnit::zero());
+                            // Clamp by min/max cross constraints before AR transfer
+                            if !child_style.max_height.is_none() && !child_style.max_height.is_auto() {
+                                if child_style.max_height.is_fixed() || !pct_block.is_indefinite() {
+                                    let max_v = resolve_length(&child_style.max_height, pct_block, LayoutUnit::zero(), LayoutUnit::zero());
+                                    if cross_raw > max_v { cross_raw = max_v; }
+                                }
+                            }
+                            if !child_style.min_height.is_auto() && !child_style.min_height.is_none() {
+                                if child_style.min_height.is_fixed() || !pct_block.is_indefinite() {
+                                    let min_v = resolve_length(&child_style.min_height, pct_block, LayoutUnit::zero(), LayoutUnit::zero());
+                                    if cross_raw < min_v { cross_raw = min_v; }
+                                }
+                            }
                             let cross_bp = {
                                 let b = resolve_border(child_style);
                                 let p = resolve_padding(child_style, pct_block);
