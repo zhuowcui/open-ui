@@ -4077,10 +4077,11 @@ fn layout_multicol(
 
                             let mut part = child_frag.clone();
                             part.size.height = part_height;
-                            // Only clip if the child has overflow style or more
-                            // content continues after this fragment.
-                            let is_last_part = consumed + part_height >= child_height;
-                            part.has_overflow_clip = child_frag.has_overflow_clip || !is_last_part;
+                            // Multicol fragments always need overflow clip —
+                            // content is confined to column boundaries even in
+                            // the last fragment (children may have negative
+                            // offsets from content shifting).
+                            part.has_overflow_clip = true;
 
                             if is_clone {
                                 // box-decoration-break: clone — keep borders on
