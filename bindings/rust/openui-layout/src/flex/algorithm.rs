@@ -138,10 +138,12 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             };
             content
         }
-    } else if space.is_fixed_block_size || space.stretch_block_size {
+    } else if (space.is_fixed_block_size || space.stretch_block_size) && !space.is_initial_block_size_indefinite {
         // CSS Flexbox §9.8: Parent flex has set a definite block size for this
         // container (e.g. stretch or fixed). Treat it as the percentage base
         // so that percentage-height children resolve correctly.
+        // BUT if is_initial_block_size_indefinite is set, the parent determined
+        // its size from content (auto height) so percentages stay indefinite.
         (space.available_block_size - border_padding_block).clamp_negative_to_zero()
     } else if let Some(ar) = &style.aspect_ratio {
         // Aspect-ratio with definite inline size gives a definite block size
@@ -2206,11 +2208,15 @@ fn give_items_final_position(
             // (even if max-height constrains it), percentage heights on
             // flex item children must resolve as auto.
             let item_pct_block = if is_column {
-                if child_percentage_block.is_indefinite() {
-                    // Container main size is not definite → item height
+                if child_percentage_block.is_indefinite() && item.is_used_flex_basis_indefinite {
+                    // CSS Flexbox §9.8: Container main size is not definite
+                    // AND the item has no definite flex-basis → item height
                     // is not definite for percentage purposes.
                     child_percentage_block // indefinite
                 } else {
+                    // Either the container has a definite main size, OR the
+                    // item has a definite flex-basis — treat the post-flexing
+                    // main size as definite for percentage resolution (§9.8).
                     (final_main - item.main_axis_border_padding).clamp_negative_to_zero()
                 }
             } else {
@@ -2242,9 +2248,9 @@ fn give_items_final_position(
                 child_space.is_fixed_block_size = true;
                 // CSS Flexbox §9.8: flex item heights are only definite for
                 // child percentage resolution when the container has a definite
-                // main size. Mark indefinite when container main size came from
-                // max-height rather than explicit height.
-                if child_percentage_block.is_indefinite() {
+                // main size OR the item has a definite flex-basis. Mark
+                // indefinite only when BOTH container AND basis are indefinite.
+                if child_percentage_block.is_indefinite() && item.is_used_flex_basis_indefinite {
                     child_space.is_initial_block_size_indefinite = true;
                 }
                 if should_stretch {

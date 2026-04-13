@@ -1327,9 +1327,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     continue;
                 }
                 let has_pct_top = !child_style.top.is_auto()
-                    && child_style.top.length_type() == openui_geometry::LengthType::Percent;
+                    && (child_style.top.length_type() == openui_geometry::LengthType::Percent
+                        || child_style.top.length_type() == openui_geometry::LengthType::Calculated);
                 let has_pct_bottom = !child_style.bottom.is_auto()
-                    && child_style.bottom.length_type() == openui_geometry::LengthType::Percent;
+                    && (child_style.bottom.length_type() == openui_geometry::LengthType::Percent
+                        || child_style.bottom.length_type() == openui_geometry::LengthType::Calculated);
                 if !has_pct_top && !has_pct_bottom {
                     continue;
                 }
@@ -2459,11 +2461,14 @@ fn resolve_inline_size(
     // Apply min-width / max-width constraints
     let min = if style.min_width.is_auto() {
         // CSS Sizing 4 §5.1: For non-replaced elements with a preferred
-        // aspect-ratio (that are not scroll containers), min-width:auto
-        // resolves to the content-based minimum size (min-content width),
-        // clamped from above by the maximum size (if definite).
-        // Without AR, CSS 2.2 §10.4 applies: min-width:auto = 0.
-        if style.aspect_ratio.is_some() && !style.is_scroll_container() {
+        // aspect-ratio (that are not scroll containers) AND no specified
+        // size in the relevant axis, min-width:auto resolves to the
+        // content-based minimum size (min-content width), clamped from
+        // above by the maximum size (if definite).
+        // When width IS specified, CSS 2.2 §10.4 applies: min-width:auto = 0.
+        if style.aspect_ratio.is_some() && !style.is_scroll_container()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic())
+        {
             let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
             let auto_min = if style.box_sizing == BoxSizing::BorderBox {
                 intrinsic.min
