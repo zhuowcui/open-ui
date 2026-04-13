@@ -102,18 +102,19 @@ fn layout_out_of_flow_child(
     // width from the constraint-equation height (which may be 0 when CB has no height).
     let both_horizontal_insets = !style.left.is_auto() && !style.right.is_auto();
     let ar_width_from_height = if style.width.is_auto() && style.aspect_ratio.is_some() {
+        // CSS Sizing 4 §5.1: AR applies to the box specified by box-sizing.
+        let ar_uses_border_box = style.box_sizing == BoxSizing::BorderBox;
+
         // Height is definite if explicitly specified, or if both top+bottom are set.
-        let definite_height = if !style.height.is_auto() && !style.height.is_fit_content() {
+        // Resolve to the box dimension that AR operates on (content-box or border-box).
+        let ar_input_h = if !style.height.is_auto() && !style.height.is_fit_content() {
             let raw = resolve_length(&style.height, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
-            let content_h = if style.box_sizing == BoxSizing::BorderBox {
-                (raw - border_padding_v).clamp_negative_to_zero()
+            if ar_uses_border_box {
+                Some(raw)  // raw is already border-box
             } else {
-                raw
-            };
-            Some(content_h)
+                Some(raw)  // raw is content-box (no box-sizing adjustment)
+            }
         } else if !style.top.is_auto() && !style.bottom.is_auto() && !both_horizontal_insets {
-            // Height from constraint equation, but only when the horizontal axis
-            // isn't also fully constrained (otherwise width resolves first via AR).
             let top_val = resolve_length(&style.top, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
             let bottom_val = resolve_length(&style.bottom, cb_height, LayoutUnit::zero(), LayoutUnit::zero());
             let mt = if style.margin_top.is_auto() { LayoutUnit::zero() } else {
@@ -122,24 +123,29 @@ fn layout_out_of_flow_child(
             let mb = if style.margin_bottom.is_auto() { LayoutUnit::zero() } else {
                 resolve_margin_or_padding(&style.margin_bottom, cb_width)
             };
-            let content_h = (cb_height - top_val - bottom_val - mt - mb - border_padding_v)
+            // Constraint equation always gives border-box height
+            let border_box_h = (cb_height - top_val - bottom_val - mt - mb)
                 .clamp_negative_to_zero();
-            Some(content_h)
+            if ar_uses_border_box {
+                Some(border_box_h)
+            } else {
+                Some((border_box_h - border_padding_v).clamp_negative_to_zero())
+            }
         } else {
             None
         };
 
-        if let Some(content_h) = definite_height {
+        if let Some(h_input) = ar_input_h {
             let ar = style.aspect_ratio.as_ref().unwrap();
             let (w, _) = crate::css_sizing::apply_aspect_ratio_with_auto(
                 openui_geometry::INDEFINITE_SIZE,
-                content_h,
+                h_input,
                 ar,
                 None,
             );
             if !w.is_indefinite() {
-                // w is content-box; add border+padding for border-box
-                let border_box_w = w + border_padding_h;
+                // w is in the same box as h_input (content-box or border-box)
+                let border_box_w = if ar_uses_border_box { w } else { w + border_padding_h };
                 Some(border_box_w)
             } else {
                 None
@@ -264,21 +270,25 @@ fn layout_out_of_flow_child(
 
     // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
     // compute height from the resolved width using the aspect ratio.
-    // This applies even when both top/bottom insets are specified — AR
-    // takes precedence over the constraint equation (CSS Positioned §5.3).
+    // AR applies to the box specified by box-sizing.
     let resolved_height_raw = if style.height.is_auto()
         && style.aspect_ratio.is_some()
     {
-        let content_w = (resolved_width_raw - border_padding_h).clamp_negative_to_zero();
+        let ar = style.aspect_ratio.as_ref().unwrap();
+        let ar_uses_border_box = style.box_sizing == BoxSizing::BorderBox;
+        let w_input = if ar_uses_border_box {
+            resolved_width_raw  // AR applies to border-box
+        } else {
+            (resolved_width_raw - border_padding_h).clamp_negative_to_zero()
+        };
         let (_, h) = crate::css_sizing::apply_aspect_ratio_with_auto(
-            content_w,
+            w_input,
             openui_geometry::INDEFINITE_SIZE,
-            style.aspect_ratio.as_ref().unwrap(),
+            ar,
             None,
         );
         if !h.is_indefinite() {
-            // h is content-box; always add border+padding for border-box
-            h + border_padding_v
+            if ar_uses_border_box { h } else { h + border_padding_v }
         } else {
             resolved_height_raw
         }
@@ -300,25 +310,27 @@ fn layout_out_of_flow_child(
 
     // CSS Sizing 4 §5.1: When min/max-height clamps the AR-derived height
     // AND width was derived from constraints (not from AR), re-derive width
-    // from the clamped height via AR. This handles the case where inset:0
-    // gives width=CB-width, AR gives height=width, max-height clamps height,
-    // and width must be re-computed from the clamped height.
+    // from the clamped height via AR. AR applies to the box specified by box-sizing.
     let resolved_width = if resolved_height != resolved_height_raw
         && height_from_ar
         && width_from_ar
         && ar_width_from_height.is_none()
     {
         if let Some(ref ar) = style.aspect_ratio {
-            let content_h = (resolved_height - border_padding_v).clamp_negative_to_zero();
+            let ar_uses_border_box = style.box_sizing == BoxSizing::BorderBox;
+            let h_input = if ar_uses_border_box {
+                resolved_height  // AR applies to border-box
+            } else {
+                (resolved_height - border_padding_v).clamp_negative_to_zero()
+            };
             let (w, _) = crate::css_sizing::apply_aspect_ratio_with_auto(
                 openui_geometry::INDEFINITE_SIZE,
-                content_h,
+                h_input,
                 ar,
                 None,
             );
             if !w.is_indefinite() {
-                // w is content-box; add border+padding for border-box
-                let bb_w = w + border_padding_h;
+                let bb_w = if ar_uses_border_box { w } else { w + border_padding_h };
                 apply_min_max_inline(doc, candidate.node_id, style, cb_width, cb_height, bb_w,
                                      &border, &padding, true)
             } else {
