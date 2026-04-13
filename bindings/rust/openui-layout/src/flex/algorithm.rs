@@ -1641,10 +1641,11 @@ fn resolve_main_axis_min_max(
                 resolved_alignment, pct_inline, pct_block,
                 main_axis_border_padding,
             ) {
-                // CSS Flexbox §4.5: Transferred size suggestion.
-                // When there's no specified suggestion but the item has AR and
-                // a definite cross constraint, use the transferred suggestion.
-                transferred
+                // CSS Flexbox §4.5 (CSSWG resolution #6071):
+                // When no specified suggestion exists but the item has AR and
+                // a definite cross constraint, use the LARGER of the content
+                // size suggestion and the transferred size suggestion.
+                content_size.max_of(transferred)
             } else {
                 content_size
             }
