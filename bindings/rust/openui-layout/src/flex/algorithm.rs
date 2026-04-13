@@ -248,7 +248,10 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             .map(|&idx| flex_items[idx].flexed_margin_box_size())
             .fold(LayoutUnit::zero(), |acc, s| acc + s);
 
-        let num_gaps = if line.item_count() > 1 { line.item_count() as i32 - 1 } else { 0 };
+        let num_visible = line.item_indices.iter()
+            .filter(|&&idx| !flex_items[idx].is_collapsed)
+            .count() as i32;
+        let num_gaps = if num_visible > 1 { num_visible - 1 } else { 0 };
         let total_gap = gap_between_items * num_gaps;
         if !main_axis_inner_size.is_indefinite() {
             line.main_axis_free_space = main_axis_inner_size - total_flexed - total_gap;
@@ -372,7 +375,10 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     if is_column && main_axis_inner_size.is_indefinite() {
         let resolved_main = (total_block_size - border_padding_block).clamp_negative_to_zero();
         for line in &mut flex_lines {
-            let num_gaps = if line.item_count() > 1 { line.item_count() as i32 - 1 } else { 0 };
+            let num_vis = line.item_indices.iter()
+                .filter(|&&idx| !flex_items[idx].is_collapsed)
+                .count() as i32;
+            let num_gaps = if num_vis > 1 { num_vis - 1 } else { 0 };
             let total_gap = gap_between_items * num_gaps;
             line.main_axis_free_space = resolved_main - line.main_axis_used_size - total_gap;
         }
@@ -850,9 +856,14 @@ fn construct_flex_items(
     for (item_index, &(child_id, _)) in children_with_order.iter().enumerate() {
         let child_style = &doc.node(child_id).style;
 
+        // CSS Flexbox §4.4: visibility:collapse items participate in layout
+        // but with zero main size. They still contribute to line cross size.
+        let is_collapsed = child_style.visibility == openui_style::Visibility::Collapse;
+
         // Read flex properties — CSS spec requires non-negative values.
-        let flex_grow = child_style.flex_grow.max(0.0);
-        let flex_shrink = child_style.flex_shrink.max(0.0);
+        // Collapsed items don't grow or shrink.
+        let flex_grow = if is_collapsed { 0.0 } else { child_style.flex_grow.max(0.0) };
+        let flex_shrink = if is_collapsed { 0.0 } else { child_style.flex_shrink.max(0.0) };
 
         // Resolve alignment (Blink: ResolvedAlignSelf, line 261)
         let alignment = resolve_item_alignment(child_style, container_style);
@@ -909,7 +920,17 @@ fn construct_flex_items(
         );
 
         // Hypothetical = clamp base to min/max
-        let hypothetical_content_size = main_axis_min_max.clamp(base_content_size);
+        // For collapsed items, main size is 0 (§4.4).
+        let hypothetical_content_size = if is_collapsed {
+            LayoutUnit::zero()
+        } else {
+            main_axis_min_max.clamp(base_content_size)
+        };
+        let base_content_size = if is_collapsed {
+            LayoutUnit::zero()
+        } else {
+            base_content_size
+        };
 
         items.push(FlexItem {
             node_id: child_id,
@@ -928,6 +949,7 @@ fn construct_flex_items(
             free_space_fraction: 0.0,
             is_used_flex_basis_indefinite,
             is_horizontal_flow,
+            is_collapsed,
         });
     }
 
@@ -2046,10 +2068,16 @@ fn give_items_final_position(
             line.main_axis_free_space
         };
 
+        // Count only non-collapsed items for justify-content distribution.
+        // CSS Flexbox §4.4: collapsed items occupy zero main-axis space.
+        let visible_item_count = line.item_indices.iter()
+            .filter(|&&idx| !items[idx].is_collapsed)
+            .count();
+
         let main_align = resolve_content_alignment(
             justify_content,
             effective_free,
-            line.item_count(),
+            visible_item_count,
             is_reverse,
             is_column,
         );
@@ -2415,10 +2443,13 @@ fn give_items_final_position(
 
             children.push(positioned);
 
-            main_offset = main_offset + main_margin_start + item_main_size + main_margin_end;
+            // Collapsed items take zero main-axis space and no gap after them.
+            if !item.is_collapsed {
+                main_offset = main_offset + main_margin_start + item_main_size + main_margin_end;
 
-            if item_pos < line.item_count() - 1 {
-                main_offset = main_offset + gap_between_items + main_align.between_space;
+                if item_pos < line.item_count() - 1 {
+                    main_offset = main_offset + gap_between_items + main_align.between_space;
+                }
             }
         }
     }

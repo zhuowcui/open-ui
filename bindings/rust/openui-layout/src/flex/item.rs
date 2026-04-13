@@ -104,6 +104,10 @@ pub struct FlexItem {
     /// True if the main axis is horizontal (for axis mapping).
     /// Blink: `is_horizontal_flow`.
     pub is_horizontal_flow: bool,
+
+    /// True if `visibility: collapse`. CSS Flexbox §4.4: collapsed items
+    /// have zero main size but still contribute to the line's cross size.
+    pub is_collapsed: bool,
 }
 
 impl FlexItem {
@@ -190,6 +194,7 @@ mod tests {
             free_space_fraction: 0.0,
             is_used_flex_basis_indefinite: false,
             is_horizontal_flow: true,
+            is_collapsed: false,
         }
     }
 

@@ -96,6 +96,7 @@ mod tests {
             free_space_fraction: 0.0,
             is_used_flex_basis_indefinite: false,
             is_horizontal_flow: true,
+            is_collapsed: false,
         }
     }
 
