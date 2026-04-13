@@ -2809,15 +2809,25 @@ def generate_html_template(html_path: str) -> str:
     from html.parser import HTMLParser
     import io
 
+    # Extract tag names targeted by CSS rules in style blocks so that
+    # the TextStripper keeps elements that have stylesheet-based styles
+    # even when they lack inline style/class/id attributes.
+    css_targeted_tags = set()
+    for sb in style_blocks:
+        # Strip the <style> wrapper
+        inner = re.sub(r'<style[^>]*>|</style>', '', sb, flags=re.IGNORECASE)
+        # Find bare tag selectors (e.g.  "p {" or "div {")
+        for m in re.finditer(r'(?:^|[},;])\s*([a-zA-Z][a-zA-Z0-9]*)\s*\{', inner):
+            css_targeted_tags.add(m.group(1).lower())
+
     class TextStripper(HTMLParser):
         """Remove text nodes and unstyled heading/p tags from HTML, preserving element structure."""
         # Tags to skip entirely (including children) when unstyled.
         # These are instructional headings in WPT tests with user-agent
         # default styling that our engine can't replicate.
         SKIP_UNSTYLED = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}
-        # Tags to unwrap (remove tag but keep children) when unstyled.
-        # In Chrome, <p> has default margins; our engine skips unstyled <p>
-        # and reparents children, so we do the same in the HTML template.
+        # Tags to unwrap (remove tag but keep children) when unstyled
+        # AND not targeted by any CSS rule in the stylesheet.
         UNWRAP_UNSTYLED = {'p'}
         def __init__(self):
             super().__init__(convert_charrefs=False)
@@ -2838,8 +2848,9 @@ def generate_html_template(html_path: str) -> str:
             if tag in self.SKIP_UNSTYLED and self._is_unstyled(attrs):
                 self.skip_depth = 1
                 return
-            # Unwrap unstyled <p> — strip the tag, keep children
-            if tag in self.UNWRAP_UNSTYLED and self._is_unstyled(attrs):
+            # Unwrap unstyled <p> only if no CSS rule targets the tag
+            if (tag in self.UNWRAP_UNSTYLED and self._is_unstyled(attrs)
+                    and tag not in css_targeted_tags):
                 self.unwrap_tags.append(tag)
                 return
             attr_str = ''
