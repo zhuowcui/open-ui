@@ -293,7 +293,7 @@ fn layout_out_of_flow_child(
     let width_from_ar = style.width.is_auto() || style.width.is_stretch();
     let height_from_ar = style.height.is_auto()
         && style.aspect_ratio.is_some();
-    let resolved_width = apply_min_max_inline(doc, candidate.node_id, style, cb_width, resolved_width_raw,
+    let resolved_width = apply_min_max_inline(doc, candidate.node_id, style, cb_width, cb_height, resolved_width_raw,
                                               &border, &padding, width_from_ar);
     let resolved_height = apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, resolved_height_raw,
                                               &border, &padding, height_from_ar);
@@ -319,7 +319,7 @@ fn layout_out_of_flow_child(
             if !w.is_indefinite() {
                 // w is content-box; add border+padding for border-box
                 let bb_w = w + border_padding_h;
-                apply_min_max_inline(doc, candidate.node_id, style, cb_width, bb_w,
+                apply_min_max_inline(doc, candidate.node_id, style, cb_width, cb_height, bb_w,
                                      &border, &padding, true)
             } else {
                 resolved_width
@@ -882,6 +882,7 @@ fn apply_min_max_inline(
     node_id: NodeId,
     style: &ComputedStyle,
     cb_width: LayoutUnit,
+    cb_height: LayoutUnit,
     border_box_width: LayoutUnit,
     border: &BoxStrut,
     padding: &BoxStrut,
@@ -947,7 +948,7 @@ fn apply_min_max_inline(
             let h_to_w = ratio.0 / ratio.1;
 
             let transferred_min_bb = if !style.min_height.is_auto() {
-                let min_h_raw = resolve_length(&style.min_height, zero, zero, zero);
+                let min_h_raw = resolve_length(&style.min_height, cb_height, zero, zero);
                 if min_h_raw > zero {
                     let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
                         (min_h_raw - border_padding_v).clamp_negative_to_zero()
@@ -967,7 +968,7 @@ fn apply_min_max_inline(
 
             let transferred_max_bb = if max_raw == LayoutUnit::max() {
                 let max_h_raw = resolve_length(
-                    &style.max_height, zero, LayoutUnit::max(), LayoutUnit::max(),
+                    &style.max_height, cb_height, LayoutUnit::max(), LayoutUnit::max(),
                 );
                 if max_h_raw != LayoutUnit::max() {
                     let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
