@@ -3252,8 +3252,12 @@ fn layout_multicol(
         container_id: NodeId,
         /// Grandchild IDs to include in this portion.
         child_ids: Vec<NodeId>,
-        /// Height allocated to this portion from the container's budget.
+        /// Content height allocated to this portion (excludes border/padding).
         portion_height: LayoutUnit,
+        /// True if this is the first portion of the container (gets top border/padding).
+        is_first: bool,
+        /// True if this is the last portion of the container (gets bottom border/padding).
+        is_last: bool,
     }
     let mut children_info: Vec<ChildInfo> = Vec::new();
     // Track OOF children with their flow index (number of in-flow children
@@ -3346,7 +3350,11 @@ fn layout_multicol(
                 + LayoutUnit::from_i32(child_style.effective_border_bottom());
 
             let mut current_group: Vec<NodeId> = Vec::new();
-            let mut current_group_content = container_pad_top;
+            let mut current_group_content = LayoutUnit::zero();
+            let has_explicit_height = !child_style.height.is_auto();
+            let mut total_content_used = LayoutUnit::zero();
+            let mut spanner_count = 0usize;
+            let mut portion_index = 0usize;
 
             for gc_id in doc.children(child_id) {
                 let gc_style = &doc.node(gc_id).style;
@@ -3357,18 +3365,24 @@ fn layout_multicol(
                     continue;
                 }
                 if gc_style.column_span == ColumnSpan::All {
-                    if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
-                        children_info.push(ChildInfo {
-                            id: child_id,
-                            is_spanner: false,
-                            split_portion: Some(SplitPortion {
-                                container_id: child_id,
-                                child_ids: std::mem::take(&mut current_group),
-                                portion_height: current_group_content,
-                            }),
-                        });
-                        current_group_content = LayoutUnit::zero();
-                    }
+                    // Always create a before-portion, even if empty, so the
+                    // container's explicit height is preserved in columns.
+                    let portion_h = current_group_content;
+                    children_info.push(ChildInfo {
+                        id: child_id,
+                        is_spanner: false,
+                        split_portion: Some(SplitPortion {
+                            container_id: child_id,
+                            child_ids: std::mem::take(&mut current_group),
+                            portion_height: portion_h,
+                            is_first: portion_index == 0,
+                            is_last: false, // a before-spanner portion is never last
+                        }),
+                    });
+                    portion_index += 1;
+                    total_content_used = total_content_used + portion_h;
+                    current_group_content = LayoutUnit::zero();
+                    spanner_count += 1;
                     children_info.push(ChildInfo {
                         id: gc_id,
                         is_spanner: true,
@@ -3398,8 +3412,31 @@ fn layout_multicol(
                     current_group_content = current_group_content + gc_h;
                 }
             }
-            if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
-                let final_content = current_group_content + container_pad_bottom;
+            // Always create an after-portion (may be empty) when spanners exist.
+            // If the container has explicit height, assign remaining height to
+            // the last portion so column distribution respects the full height.
+            if spanner_count > 0 {
+                let natural_content = current_group_content;
+                total_content_used = total_content_used + natural_content;
+                let final_height = if has_explicit_height {
+                    let remaining = (container_height - total_content_used).clamp_negative_to_zero();
+                    natural_content + remaining
+                } else {
+                    natural_content
+                };
+                children_info.push(ChildInfo {
+                    id: child_id,
+                    is_spanner: false,
+                    split_portion: Some(SplitPortion {
+                        container_id: child_id,
+                        child_ids: current_group,
+                        portion_height: final_height,
+                        is_first: portion_index == 0,
+                        is_last: true,
+                    }),
+                });
+            } else if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
+                let final_content = current_group_content;
                 children_info.push(ChildInfo {
                     id: child_id,
                     is_spanner: false,
@@ -3407,6 +3444,8 @@ fn layout_multicol(
                         container_id: child_id,
                         child_ids: current_group,
                         portion_height: final_content,
+                        is_first: true,
+                        is_last: true,
                     }),
                 });
             }
@@ -3513,15 +3552,24 @@ fn layout_multicol(
                 if let Some(ref split) = info.split_portion {
                     // Split portion: lay out the portion's children and
                     // create a wrapper fragment with the container's styling.
+                    // box-decoration-break:slice (default): only first portion
+                    // gets top border/padding, only last gets bottom.
                     let container_style = &doc.node(split.container_id).style;
-                    let c_border_top = LayoutUnit::from_i32(container_style.effective_border_top());
-                    let c_border_bottom = LayoutUnit::from_i32(container_style.effective_border_bottom());
-                    let c_pad_top = resolve_margin_or_padding(&container_style.padding_top, column_width);
-                    let c_pad_bottom = resolve_margin_or_padding(&container_style.padding_bottom, column_width);
+                    let c_border_top_full = LayoutUnit::from_i32(container_style.effective_border_top());
+                    let c_border_bottom_full = LayoutUnit::from_i32(container_style.effective_border_bottom());
+                    let c_pad_top_full = resolve_margin_or_padding(&container_style.padding_top, column_width);
+                    let c_pad_bottom_full = resolve_margin_or_padding(&container_style.padding_bottom, column_width);
                     let c_border_left = LayoutUnit::from_i32(container_style.effective_border_left());
                     let c_border_right = LayoutUnit::from_i32(container_style.effective_border_right());
                     let c_pad_left = resolve_margin_or_padding(&container_style.padding_left, column_width);
                     let c_pad_right = resolve_margin_or_padding(&container_style.padding_right, column_width);
+
+                    // Apply top/bottom border+padding only for first/last portions
+                    let c_border_top = if split.is_first { c_border_top_full } else { LayoutUnit::zero() };
+                    let c_pad_top = if split.is_first { c_pad_top_full } else { LayoutUnit::zero() };
+                    let c_border_bottom = if split.is_last { c_border_bottom_full } else { LayoutUnit::zero() };
+                    let c_pad_bottom = if split.is_last { c_pad_bottom_full } else { LayoutUnit::zero() };
+
                     let inner_width = (column_width - c_border_left - c_border_right
                         - c_pad_left - c_pad_right).clamp_negative_to_zero();
 
@@ -3543,7 +3591,12 @@ fn layout_multicol(
                         wrapper_children.push(gc_frag);
                     }
                     let content_h = block_off - c_border_top - c_pad_top;
-                    let wrapper_h = split.portion_height.min_of(content_h)
+                    // Use the larger of portion_height (explicit budget) and
+                    // content_h (natural content). For explicit-height containers,
+                    // the budget may exceed the content; for auto-height, content
+                    // may exceed the estimate.
+                    let effective_h = split.portion_height.max_of(content_h);
+                    let wrapper_h = effective_h
                         + c_border_top + c_pad_top + c_border_bottom + c_pad_bottom;
                     let mut wrapper = Fragment::new_box(
                         split.container_id,

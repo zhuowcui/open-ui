@@ -622,21 +622,16 @@ fn paint_box_decoration_background(
             }
         };
 
-        if has_radius && !use_layer {
-            // Non-uniform borders with radius: clip background to outer rrect
-            let outer_radii = [
-                Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
-                Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
-                Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
-                Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
-            ];
-            let clip_rrect = RRect::new_rect_radii(bg_rect, &outer_radii);
-            canvas.save();
-            canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
-            canvas.draw_rect(bg_rect, &paint);
-            canvas.restore();
-        } else if has_radius && style.background_clip != BackgroundClip::BorderBox {
+        if has_radius {
+            // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
+            // Inner corner radii = outer radii - inset on each side, clamped to 0.
             let clip_radii = match style.background_clip {
+                BackgroundClip::BorderBox => [
+                    Point::new(style.border_top_left_radius.0, style.border_top_left_radius.1),
+                    Point::new(style.border_top_right_radius.0, style.border_top_right_radius.1),
+                    Point::new(style.border_bottom_right_radius.0, style.border_bottom_right_radius.1),
+                    Point::new(style.border_bottom_left_radius.0, style.border_bottom_left_radius.1),
+                ],
                 BackgroundClip::PaddingBox => {
                     let bt = style.effective_border_top() as f32;
                     let br_w = style.effective_border_right() as f32;
@@ -653,7 +648,7 @@ fn paint_box_decoration_background(
                                    (style.border_bottom_left_radius.1 - bb).max(0.0)),
                     ]
                 }
-                _ => {
+                BackgroundClip::ContentBox => {
                     let bt = style.effective_border_top() as f32 + fragment.padding.top.round().to_f32();
                     let br_w = style.effective_border_right() as f32 + fragment.padding.right.round().to_f32();
                     let bb = style.effective_border_bottom() as f32 + fragment.padding.bottom.round().to_f32();
