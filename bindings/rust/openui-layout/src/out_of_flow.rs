@@ -138,11 +138,8 @@ fn layout_out_of_flow_child(
                 None,
             );
             if !w.is_indefinite() {
-                let border_box_w = if style.box_sizing == BoxSizing::BorderBox {
-                    w.max_of(border_padding_h)
-                } else {
-                    w + border_padding_h
-                };
+                // w is content-box; add border+padding for border-box
+                let border_box_w = w + border_padding_h;
                 Some(border_box_w)
             } else {
                 None
@@ -280,11 +277,8 @@ fn layout_out_of_flow_child(
             None,
         );
         if !h.is_indefinite() {
-            if style.box_sizing == BoxSizing::BorderBox {
-                h.max_of(border_padding_v)
-            } else {
-                h + border_padding_v
-            }
+            // h is content-box; always add border+padding for border-box
+            h + border_padding_v
         } else {
             resolved_height_raw
         }
@@ -323,11 +317,8 @@ fn layout_out_of_flow_child(
                 None,
             );
             if !w.is_indefinite() {
-                let bb_w = if style.box_sizing == BoxSizing::BorderBox {
-                    w.max_of(border_padding_h)
-                } else {
-                    w + border_padding_h
-                };
+                // w is content-box; add border+padding for border-box
+                let bb_w = w + border_padding_h;
                 apply_min_max_inline(doc, candidate.node_id, style, cb_width, bb_w,
                                      &border, &padding, true)
             } else {
@@ -373,14 +364,15 @@ fn layout_out_of_flow_child(
     let height_resolved_from_constraints = style.height.is_auto()
         && !style.top.is_auto() && !style.bottom.is_auto();
     // Height is definite if explicitly specified (not auto/fit-content/intrinsic),
-    // stretch, or from constraints. min-content / max-content are also definite
-    // because we resolved them to concrete intrinsic sizes above.
+    // stretch, from constraints, or derived from aspect-ratio.
+    // CSS Sizing 4 §5.1: AR-derived heights are definite for layout purposes.
     let height_is_definite = (!style.height.is_auto() && !style.height.is_content_or_intrinsic())
         || style.height.is_min_content()
         || style.height.is_max_content()
         || style.height.is_fit_content()
         || style.height.is_fit_content_function()
-        || height_resolved_from_constraints;
+        || height_resolved_from_constraints
+        || height_from_ar;
 
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();
@@ -424,9 +416,14 @@ fn layout_out_of_flow_child(
 
     // CSS 2.1 §10.7: For auto-height content-sized abspos, the content height
     // must still be clamped by min-height / max-height constraints.
-    let final_height = if (style.height.is_auto() || style.height.is_fit_content()) && !height_resolved_from_constraints {
+    // Skip when height was already determined by AR or constraints — those
+    // paths already applied min/max via apply_min_max_block above.
+    let final_height = if (style.height.is_auto() || style.height.is_fit_content())
+        && !height_resolved_from_constraints
+        && !height_from_ar
+    {
         let content_height = child_fragment.size.height;
-        apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding, height_from_ar)
+        apply_min_max_block(doc, candidate.node_id, style, cb_width, cb_height, content_height, &border, &padding, false)
     } else {
         resolved_height
     };
@@ -958,11 +955,8 @@ fn apply_min_max_inline(
                         min_h_raw
                     };
                     let transferred_w = LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
-                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
-                        transferred_w.max_of(border_padding_h)
-                    } else {
-                        transferred_w + border_padding_h
-                    };
+                    // transferred_w is content-box; always add border+padding
+                    let transferred_bb = transferred_w + border_padding_h;
                     min_bb.max_of(transferred_bb)
                 } else {
                     min_bb
@@ -982,11 +976,8 @@ fn apply_min_max_inline(
                         max_h_raw
                     };
                     let transferred_w = LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
-                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
-                        transferred_w.max_of(border_padding_h)
-                    } else {
-                        transferred_w + border_padding_h
-                    };
+                    // transferred_w is content-box; always add border+padding
+                    let transferred_bb = transferred_w + border_padding_h;
                     max_bb.min_of(transferred_bb)
                 } else {
                     max_bb
@@ -1090,11 +1081,8 @@ fn apply_min_max_block(
                         min_w_raw
                     };
                     let transferred_h = LayoutUnit::from_f32(content_min_w.to_f32() * w_to_h);
-                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
-                        transferred_h.max_of(border_padding_v)
-                    } else {
-                        transferred_h + border_padding_v
-                    };
+                    // transferred_h is content-box; always add border+padding
+                    let transferred_bb = transferred_h + border_padding_v;
                     min_bb.max_of(transferred_bb)
                 } else {
                     min_bb
@@ -1114,11 +1102,8 @@ fn apply_min_max_block(
                         max_w_raw
                     };
                     let transferred_h = LayoutUnit::from_f32(content_max_w.to_f32() * w_to_h);
-                    let transferred_bb = if style.box_sizing == BoxSizing::BorderBox {
-                        transferred_h.max_of(border_padding_v)
-                    } else {
-                        transferred_h + border_padding_v
-                    };
+                    // transferred_h is content-box; always add border+padding
+                    let transferred_bb = transferred_h + border_padding_v;
                     max_bb.min_of(transferred_bb)
                 } else {
                     max_bb
