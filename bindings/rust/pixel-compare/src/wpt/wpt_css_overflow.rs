@@ -2239,6 +2239,7 @@ fn css_overflow_overflow_clip_content_visual_overflow_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 50.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -2286,6 +2287,7 @@ fn css_overflow_overflow_clip_content_visual_overflow_ref() -> Document {
     doc.node_mut(n4).style.width = Length::px(100.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.background_color = Color::BLACK;
+    doc.node_mut(n4).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 50.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -2349,6 +2351,7 @@ fn css_overflow_overflow_clip_content_visual_overflow() -> Document {
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 50.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -2394,6 +2397,7 @@ fn css_overflow_overflow_clip_content_visual_overflow() -> Document {
         doc.node_mut(n5).style.width = Length::px(100.0);
         doc.node_mut(n5).style.height = Length::px(100.0);
         doc.node_mut(n5).style.background_color = Color::BLACK;
+        doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 50.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
         doc.append_child(n4, n5);
     doc
 }
@@ -2864,6 +2868,7 @@ fn css_overflow_overflow_clip_margin_003_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n1);
     doc
 }
@@ -2897,6 +2902,7 @@ fn css_overflow_overflow_clip_margin_003() -> Document {
     doc.node_mut(n1).style.overflow_x = Overflow::Clip;
     doc.node_mut(n1).style.overflow_y = Overflow::Clip;
     doc.node_mut(n1).style.overflow_clip_margin = 1.0;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n1);
     doc
 }
@@ -3103,6 +3109,7 @@ fn css_overflow_overflow_clip_margin_006_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n1);
     doc
 }
@@ -3612,6 +3619,7 @@ fn css_overflow_overflow_clip_margin_border_radius_ref() -> Document {
     doc.node_mut(n1).style.border_top_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (25.0_f32, 25.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (25.0_f32, 25.0_f32);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 100.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -3677,6 +3685,7 @@ fn css_overflow_overflow_clip_margin_border_radius() -> Document {
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.height = Length::px(50.0);
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 100.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.background_color = Color::BLACK;
         doc.append_child(n1, n2);
     doc

@@ -18,7 +18,7 @@
 
 use skia_safe::{Canvas, Color4f, Paint, PaintStyle, Path, Rect, RRect, ColorSpace, ClipOp, Point};
 use openui_geometry::PhysicalOffset;
-use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility, BackgroundClip, OverflowClipBox};
+use openui_style::{Color, ComputedStyle, BorderStyle, Overflow, StyleColor, Visibility, BackgroundClip, OverflowClipBox, BoxShadow};
 use openui_dom::Document;
 use openui_layout::{Fragment, FragmentKind};
 use openui_text::font::FontMetrics;
@@ -438,14 +438,97 @@ fn paint_text_fragment(
     );
 }
 
+/// Paint box shadows for a single box fragment.
+///
+/// Extracted from Blink's `BoxPainterBase::PaintNormalBoxShadow()` and
+/// `BoxPainterBase::PaintInsetBoxShadow()` (box_painter_base.cc).
+///
+/// When `inset_only` is false, paints outset shadows (behind the element).
+/// When `inset_only` is true, paints inset shadows (inside the border-box).
+fn paint_box_shadows(
+    canvas: &Canvas,
+    style: &ComputedStyle,
+    border_rect: Rect,
+    inset_only: bool,
+) {
+    for shadow in &style.box_shadow {
+        if shadow.inset != inset_only {
+            continue;
+        }
+
+        let color = Color4f::new(
+            shadow.color.r,
+            shadow.color.g,
+            shadow.color.b,
+            shadow.color.a,
+        );
+        let mut paint = Paint::default();
+        paint.set_color4f(color, None::<&ColorSpace>);
+        paint.set_anti_alias(true);
+        paint.set_style(PaintStyle::Fill);
+
+        if shadow.blur_radius > 0.0 {
+            let sigma = shadow.blur_radius / 2.0;
+            if let Some(filter) =
+                skia_safe::MaskFilter::blur(skia_safe::BlurStyle::Normal, sigma, false)
+            {
+                paint.set_mask_filter(filter);
+            }
+        }
+
+        if shadow.inset {
+            // Inset shadow: clip to border-box, then paint a large rect with
+            // the inner "hole" cut out. The visible shadow is the blurred edge.
+            canvas.save();
+            canvas.clip_rect(border_rect, ClipOp::Intersect, false);
+
+            // The hole is the border-box shrunk by spread and shifted by offset
+            let hole = Rect::from_xywh(
+                border_rect.left + shadow.offset_x + shadow.spread_radius,
+                border_rect.top + shadow.offset_y + shadow.spread_radius,
+                (border_rect.width() - shadow.spread_radius * 2.0).max(0.0),
+                (border_rect.height() - shadow.spread_radius * 2.0).max(0.0),
+            );
+
+            // Outer rect large enough to cover any blur extent
+            let outer = Rect::from_xywh(
+                border_rect.left - 1000.0,
+                border_rect.top - 1000.0,
+                border_rect.width() + 2000.0,
+                border_rect.height() + 2000.0,
+            );
+
+            let mut path = Path::new();
+            path.add_rect(outer, None);
+            if hole.width() > 0.0 && hole.height() > 0.0 {
+                path.add_rect(hole, Some((skia_safe::PathDirection::CCW, 0)));
+            }
+            path.set_fill_type(skia_safe::PathFillType::EvenOdd);
+            canvas.draw_path(&path, &paint);
+            canvas.restore();
+        } else {
+            // Outset shadow: draw behind the element, expanded by spread
+            let shadow_rect = Rect::from_xywh(
+                border_rect.left + shadow.offset_x - shadow.spread_radius,
+                border_rect.top + shadow.offset_y - shadow.spread_radius,
+                border_rect.width() + shadow.spread_radius * 2.0,
+                border_rect.height() + shadow.spread_radius * 2.0,
+            );
+            canvas.draw_rect(shadow_rect, &paint);
+        }
+    }
+}
+
 /// Paint background + border for a single box fragment.
 ///
 /// Extracted from Blink's `BoxFragmentPainter::PaintBoxDecorationBackgroundWithRectImpl()`
 /// (box_fragment_painter.cc:1550).
 ///
 /// Order:
-/// 1. Background color (fill the border-box rect)
-/// 2. Border (stroke the border-box rect)
+/// 1. Box shadows (outset)
+/// 2. Background color (fill the border-box rect)
+/// 3. Box shadows (inset)
+/// 4. Border (stroke the border-box rect)
 fn paint_box_decoration_background(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -469,6 +552,9 @@ fn paint_box_decoration_background(
     }
 
     let border_box_rect = Rect::from_xywh(x, y, w, h);
+
+    // ── 1. Outset box shadows (painted behind everything) ────────────
+    paint_box_shadows(canvas, style, border_box_rect, false);
 
     // When border-radius is set AND borders are uniform solid, use saveLayer
     // so bg+border composite as one unit, then clip by the outer rrect.
@@ -502,7 +588,7 @@ fn paint_box_decoration_background(
         canvas.save_layer_alpha_f(Rect::from_xywh(x, y, w, h), 1.0);
     }
 
-    // ── 1. Background color ──────────────────────────────────────────
+    // ── 2. Background color ──────────────────────────────────────────
     if !style.background_color.is_transparent() {
         let mut paint = Paint::default();
         paint.set_style(PaintStyle::Fill);
@@ -594,7 +680,10 @@ fn paint_box_decoration_background(
         }
     }
 
-    // ── 2. Borders ───────────────────────────────────────────────────
+    // ── 3. Inset box shadows (painted on top of background) ──────────
+    paint_box_shadows(canvas, style, border_box_rect, true);
+
+    // ── 4. Borders ───────────────────────────────────────────────────
     paint_borders(canvas, fragment, style, x, y, w, h);
 
     if use_layer {

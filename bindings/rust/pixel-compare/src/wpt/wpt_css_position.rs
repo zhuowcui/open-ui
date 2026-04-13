@@ -1629,8 +1629,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.display = Display::Inline;
             doc.node_mut(n3).style.position = Position::Absolute;
-            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.direction = Direction::Ltr;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -1700,8 +1700,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n7).style.display = Display::Inline;
             doc.node_mut(n7).style.position = Position::Absolute;
-            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n7).style.direction = Direction::Ltr;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Span);
             doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -1771,8 +1771,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n11).style.padding_left = Length::px(0.0);
             doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n11).style.position = Position::Absolute;
-            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n11).style.direction = Direction::Ltr;
+            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -1842,8 +1842,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n15).style.padding_left = Length::px(0.0);
             doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n15).style.position = Position::Absolute;
-            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n15).style.direction = Direction::Ltr;
+            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -1914,8 +1914,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n19).style.display = Display::Inline;
             doc.node_mut(n19).style.position = Position::Absolute;
-            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n19).style.direction = Direction::Ltr;
+            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n18, n19);
             let n20 = doc.create_node(ElementTag::Span);
             doc.node_mut(n20).style.margin_top = Length::px(0.0);
@@ -1986,8 +1986,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n23).style.display = Display::Inline;
             doc.node_mut(n23).style.position = Position::Absolute;
-            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n23).style.direction = Direction::Ltr;
+            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -2058,8 +2058,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n27).style.padding_left = Length::px(0.0);
             doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n27).style.position = Position::Absolute;
-            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n27).style.direction = Direction::Ltr;
+            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -2130,8 +2130,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
             doc.node_mut(n31).style.padding_left = Length::px(0.0);
             doc.node_mut(n31).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n31).style.position = Position::Absolute;
-            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n31).style.direction = Direction::Ltr;
+            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Span);
             doc.node_mut(n32).style.margin_top = Length::px(0.0);
@@ -2187,8 +2187,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
         doc.node_mut(n34).style.padding_left = Length::px(0.0);
         doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n34).style.position = Position::Relative;
-        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n34).style.direction = Direction::Ltr;
+        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Span);
             doc.node_mut(n35).style.margin_top = Length::px(0.0);
@@ -2215,8 +2215,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
                 doc.node_mut(n36).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n36).style.display = Display::Inline;
                 doc.node_mut(n36).style.position = Position::Absolute;
-                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n36).style.direction = Direction::Ltr;
+                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n35, n36);
                 let n37 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -2272,8 +2272,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
         doc.node_mut(n39).style.padding_left = Length::px(0.0);
         doc.node_mut(n39).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n39).style.position = Position::Relative;
-        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n39).style.direction = Direction::Ltr;
+        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -2300,8 +2300,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
                 doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n41).style.display = Display::Inline;
                 doc.node_mut(n41).style.position = Position::Absolute;
-                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n41).style.direction = Direction::Ltr;
+                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n40, n41);
                 let n42 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -2357,8 +2357,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
         doc.node_mut(n44).style.padding_left = Length::px(0.0);
         doc.node_mut(n44).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n44).style.position = Position::Relative;
-        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n44).style.direction = Direction::Ltr;
+        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n43, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -2385,8 +2385,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
                 doc.node_mut(n46).style.padding_left = Length::px(0.0);
                 doc.node_mut(n46).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n46).style.position = Position::Absolute;
-                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n46).style.direction = Direction::Ltr;
+                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n45, n46);
                 let n47 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n47).style.margin_top = Length::px(0.0);
@@ -2442,8 +2442,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
         doc.node_mut(n49).style.padding_left = Length::px(0.0);
         doc.node_mut(n49).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n49).style.position = Position::Relative;
-        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n49).style.direction = Direction::Ltr;
+        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n48, n49);
             let n50 = doc.create_node(ElementTag::Span);
             doc.node_mut(n50).style.margin_top = Length::px(0.0);
@@ -2470,8 +2470,8 @@ fn css_position_static_position_htb_ltr_ltr() -> Document {
                 doc.node_mut(n51).style.padding_left = Length::px(0.0);
                 doc.node_mut(n51).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n51).style.position = Position::Absolute;
-                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n51).style.direction = Direction::Ltr;
+                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n50, n51);
                 let n52 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -2556,8 +2556,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.display = Display::Inline;
             doc.node_mut(n3).style.position = Position::Absolute;
-            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.direction = Direction::Rtl;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -2627,8 +2627,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n7).style.display = Display::Inline;
             doc.node_mut(n7).style.position = Position::Absolute;
-            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n7).style.direction = Direction::Rtl;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Span);
             doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -2698,8 +2698,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n11).style.padding_left = Length::px(0.0);
             doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n11).style.position = Position::Absolute;
-            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n11).style.direction = Direction::Rtl;
+            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -2769,8 +2769,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n15).style.padding_left = Length::px(0.0);
             doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n15).style.position = Position::Absolute;
-            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n15).style.direction = Direction::Rtl;
+            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -2841,8 +2841,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n19).style.display = Display::Inline;
             doc.node_mut(n19).style.position = Position::Absolute;
-            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n19).style.direction = Direction::Rtl;
+            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n18, n19);
             let n20 = doc.create_node(ElementTag::Span);
             doc.node_mut(n20).style.margin_top = Length::px(0.0);
@@ -2913,8 +2913,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n23).style.display = Display::Inline;
             doc.node_mut(n23).style.position = Position::Absolute;
-            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n23).style.direction = Direction::Rtl;
+            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -2985,8 +2985,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n27).style.padding_left = Length::px(0.0);
             doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n27).style.position = Position::Absolute;
-            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n27).style.direction = Direction::Rtl;
+            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -3057,8 +3057,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
             doc.node_mut(n31).style.padding_left = Length::px(0.0);
             doc.node_mut(n31).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n31).style.position = Position::Absolute;
-            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n31).style.direction = Direction::Rtl;
+            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Span);
             doc.node_mut(n32).style.margin_top = Length::px(0.0);
@@ -3114,8 +3114,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
         doc.node_mut(n34).style.padding_left = Length::px(0.0);
         doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n34).style.position = Position::Relative;
-        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n34).style.direction = Direction::Ltr;
+        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Span);
             doc.node_mut(n35).style.margin_top = Length::px(0.0);
@@ -3142,8 +3142,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
                 doc.node_mut(n36).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n36).style.display = Display::Inline;
                 doc.node_mut(n36).style.position = Position::Absolute;
-                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n36).style.direction = Direction::Rtl;
+                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n35, n36);
                 let n37 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -3199,8 +3199,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
         doc.node_mut(n39).style.padding_left = Length::px(0.0);
         doc.node_mut(n39).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n39).style.position = Position::Relative;
-        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n39).style.direction = Direction::Ltr;
+        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -3227,8 +3227,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
                 doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n41).style.display = Display::Inline;
                 doc.node_mut(n41).style.position = Position::Absolute;
-                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n41).style.direction = Direction::Rtl;
+                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n40, n41);
                 let n42 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -3284,8 +3284,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
         doc.node_mut(n44).style.padding_left = Length::px(0.0);
         doc.node_mut(n44).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n44).style.position = Position::Relative;
-        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n44).style.direction = Direction::Ltr;
+        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n43, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -3312,8 +3312,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
                 doc.node_mut(n46).style.padding_left = Length::px(0.0);
                 doc.node_mut(n46).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n46).style.position = Position::Absolute;
-                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n46).style.direction = Direction::Rtl;
+                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n45, n46);
                 let n47 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n47).style.margin_top = Length::px(0.0);
@@ -3369,8 +3369,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
         doc.node_mut(n49).style.padding_left = Length::px(0.0);
         doc.node_mut(n49).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n49).style.position = Position::Relative;
-        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n49).style.direction = Direction::Ltr;
+        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n48, n49);
             let n50 = doc.create_node(ElementTag::Span);
             doc.node_mut(n50).style.margin_top = Length::px(0.0);
@@ -3397,8 +3397,8 @@ fn css_position_static_position_htb_ltr_rtl_tentative() -> Document {
                 doc.node_mut(n51).style.padding_left = Length::px(0.0);
                 doc.node_mut(n51).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n51).style.position = Position::Absolute;
-                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n51).style.direction = Direction::Rtl;
+                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n50, n51);
                 let n52 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -3822,8 +3822,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.display = Display::Inline;
             doc.node_mut(n3).style.position = Position::Absolute;
-            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.direction = Direction::Ltr;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -3893,8 +3893,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n7).style.display = Display::Inline;
             doc.node_mut(n7).style.position = Position::Absolute;
-            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n7).style.direction = Direction::Ltr;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Span);
             doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -3964,8 +3964,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n11).style.padding_left = Length::px(0.0);
             doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n11).style.position = Position::Absolute;
-            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n11).style.direction = Direction::Ltr;
+            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -4035,8 +4035,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n15).style.padding_left = Length::px(0.0);
             doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n15).style.position = Position::Absolute;
-            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n15).style.direction = Direction::Ltr;
+            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -4107,8 +4107,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n19).style.display = Display::Inline;
             doc.node_mut(n19).style.position = Position::Absolute;
-            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n19).style.direction = Direction::Ltr;
+            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n18, n19);
             let n20 = doc.create_node(ElementTag::Span);
             doc.node_mut(n20).style.margin_top = Length::px(0.0);
@@ -4179,8 +4179,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n23).style.display = Display::Inline;
             doc.node_mut(n23).style.position = Position::Absolute;
-            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n23).style.direction = Direction::Ltr;
+            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -4251,8 +4251,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n27).style.padding_left = Length::px(0.0);
             doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n27).style.position = Position::Absolute;
-            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n27).style.direction = Direction::Ltr;
+            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -4323,8 +4323,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
             doc.node_mut(n31).style.padding_left = Length::px(0.0);
             doc.node_mut(n31).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n31).style.position = Position::Absolute;
-            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n31).style.direction = Direction::Ltr;
+            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Span);
             doc.node_mut(n32).style.margin_top = Length::px(0.0);
@@ -4380,8 +4380,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
         doc.node_mut(n34).style.padding_left = Length::px(0.0);
         doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n34).style.position = Position::Relative;
-        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n34).style.direction = Direction::Rtl;
+        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Span);
             doc.node_mut(n35).style.margin_top = Length::px(0.0);
@@ -4408,8 +4408,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
                 doc.node_mut(n36).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n36).style.display = Display::Inline;
                 doc.node_mut(n36).style.position = Position::Absolute;
-                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n36).style.direction = Direction::Ltr;
+                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n35, n36);
                 let n37 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -4465,8 +4465,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
         doc.node_mut(n39).style.padding_left = Length::px(0.0);
         doc.node_mut(n39).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n39).style.position = Position::Relative;
-        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n39).style.direction = Direction::Rtl;
+        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -4493,8 +4493,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
                 doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n41).style.display = Display::Inline;
                 doc.node_mut(n41).style.position = Position::Absolute;
-                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n41).style.direction = Direction::Ltr;
+                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n40, n41);
                 let n42 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -4550,8 +4550,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
         doc.node_mut(n44).style.padding_left = Length::px(0.0);
         doc.node_mut(n44).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n44).style.position = Position::Relative;
-        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n44).style.direction = Direction::Rtl;
+        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n43, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -4578,8 +4578,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
                 doc.node_mut(n46).style.padding_left = Length::px(0.0);
                 doc.node_mut(n46).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n46).style.position = Position::Absolute;
-                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n46).style.direction = Direction::Ltr;
+                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n45, n46);
                 let n47 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n47).style.margin_top = Length::px(0.0);
@@ -4635,8 +4635,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
         doc.node_mut(n49).style.padding_left = Length::px(0.0);
         doc.node_mut(n49).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n49).style.position = Position::Relative;
-        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n49).style.direction = Direction::Rtl;
+        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n48, n49);
             let n50 = doc.create_node(ElementTag::Span);
             doc.node_mut(n50).style.margin_top = Length::px(0.0);
@@ -4663,8 +4663,8 @@ fn css_position_static_position_htb_rtl_ltr_tentative() -> Document {
                 doc.node_mut(n51).style.padding_left = Length::px(0.0);
                 doc.node_mut(n51).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n51).style.position = Position::Absolute;
-                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n51).style.direction = Direction::Ltr;
+                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n50, n51);
                 let n52 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -4749,8 +4749,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.display = Display::Inline;
             doc.node_mut(n3).style.position = Position::Absolute;
-            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.direction = Direction::Rtl;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -4820,8 +4820,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n7).style.display = Display::Inline;
             doc.node_mut(n7).style.position = Position::Absolute;
-            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n7).style.direction = Direction::Rtl;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n6, n7);
             let n8 = doc.create_node(ElementTag::Span);
             doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -4891,8 +4891,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n11).style.padding_left = Length::px(0.0);
             doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n11).style.position = Position::Absolute;
-            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n11).style.direction = Direction::Rtl;
+            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -4962,8 +4962,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n15).style.padding_left = Length::px(0.0);
             doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n15).style.position = Position::Absolute;
-            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n15).style.direction = Direction::Rtl;
+            doc.node_mut(n15).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -5034,8 +5034,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n19).style.display = Display::Inline;
             doc.node_mut(n19).style.position = Position::Absolute;
-            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n19).style.direction = Direction::Rtl;
+            doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n18, n19);
             let n20 = doc.create_node(ElementTag::Span);
             doc.node_mut(n20).style.margin_top = Length::px(0.0);
@@ -5106,8 +5106,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n23).style.display = Display::Inline;
             doc.node_mut(n23).style.position = Position::Absolute;
-            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n23).style.direction = Direction::Rtl;
+            doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -5178,8 +5178,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n27).style.padding_left = Length::px(0.0);
             doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n27).style.position = Position::Absolute;
-            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n27).style.direction = Direction::Rtl;
+            doc.node_mut(n27).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -5250,8 +5250,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
             doc.node_mut(n31).style.padding_left = Length::px(0.0);
             doc.node_mut(n31).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n31).style.position = Position::Absolute;
-            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n31).style.direction = Direction::Rtl;
+            doc.node_mut(n31).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Span);
             doc.node_mut(n32).style.margin_top = Length::px(0.0);
@@ -5307,8 +5307,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
         doc.node_mut(n34).style.padding_left = Length::px(0.0);
         doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n34).style.position = Position::Relative;
-        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n34).style.direction = Direction::Rtl;
+        doc.node_mut(n34).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Span);
             doc.node_mut(n35).style.margin_top = Length::px(0.0);
@@ -5335,8 +5335,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
                 doc.node_mut(n36).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n36).style.display = Display::Inline;
                 doc.node_mut(n36).style.position = Position::Absolute;
-                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n36).style.direction = Direction::Rtl;
+                doc.node_mut(n36).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n35, n36);
                 let n37 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -5392,8 +5392,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
         doc.node_mut(n39).style.padding_left = Length::px(0.0);
         doc.node_mut(n39).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n39).style.position = Position::Relative;
-        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n39).style.direction = Direction::Rtl;
+        doc.node_mut(n39).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -5420,8 +5420,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
                 doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n41).style.display = Display::Inline;
                 doc.node_mut(n41).style.position = Position::Absolute;
-                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n41).style.direction = Direction::Rtl;
+                doc.node_mut(n41).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n40, n41);
                 let n42 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -5477,8 +5477,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
         doc.node_mut(n44).style.padding_left = Length::px(0.0);
         doc.node_mut(n44).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n44).style.position = Position::Relative;
-        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n44).style.direction = Direction::Rtl;
+        doc.node_mut(n44).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n43, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -5505,8 +5505,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
                 doc.node_mut(n46).style.padding_left = Length::px(0.0);
                 doc.node_mut(n46).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n46).style.position = Position::Absolute;
-                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n46).style.direction = Direction::Rtl;
+                doc.node_mut(n46).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n45, n46);
                 let n47 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n47).style.margin_top = Length::px(0.0);
@@ -5562,8 +5562,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
         doc.node_mut(n49).style.padding_left = Length::px(0.0);
         doc.node_mut(n49).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n49).style.position = Position::Relative;
-        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n49).style.direction = Direction::Rtl;
+        doc.node_mut(n49).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n48, n49);
             let n50 = doc.create_node(ElementTag::Span);
             doc.node_mut(n50).style.margin_top = Length::px(0.0);
@@ -5590,8 +5590,8 @@ fn css_position_static_position_htb_rtl_rtl() -> Document {
                 doc.node_mut(n51).style.padding_left = Length::px(0.0);
                 doc.node_mut(n51).style.box_sizing = BoxSizing::ContentBox;
                 doc.node_mut(n51).style.position = Position::Absolute;
-                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.node_mut(n51).style.direction = Direction::Rtl;
+                doc.node_mut(n51).style.color = Color::from_rgba8(0, 128, 0, 255);
                 doc.append_child(n50, n51);
                 let n52 = doc.create_node(ElementTag::Span);
                 doc.node_mut(n52).style.margin_top = Length::px(0.0);

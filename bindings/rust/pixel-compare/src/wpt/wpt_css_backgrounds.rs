@@ -23262,6 +23262,7 @@ fn css_backgrounds_box_shadow_005() -> Document {
     doc.node_mut(n2).style.position = Position::Absolute;
     doc.node_mut(n2).style.top = Length::px(50.0);
     doc.node_mut(n2).style.left = Length::px(5.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 255, 0, 255), inset: false }];
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 0, 0, 255);
     doc.node_mut(n2).style.width = Length::px(144.0);
     doc.node_mut(n2).style.height = Length::px(144.0);
@@ -23295,6 +23296,7 @@ fn css_backgrounds_box_shadow_029() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.node_mut(n1).style.width = Length::px(0.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 50.0, offset_y: 50.0, blur_radius: 0.0, spread_radius: 50.0, color: Color::from_rgba8(0, 128, 0, 255), inset: false }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -23355,6 +23357,7 @@ fn css_backgrounds_box_shadow_039() -> Document {
     doc.node_mut(n1).style.height = Length::px(36.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n1).style.width = Length::px(36.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 36.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 165, 0, 127), inset: false }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -23383,6 +23386,7 @@ fn css_backgrounds_box_shadow_039() -> Document {
     doc.node_mut(n2).style.height = Length::px(36.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n2).style.width = Length::px(36.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 36.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 18.0, color: Color::from_rgba8(255, 165, 0, 127), inset: false }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -23411,6 +23415,7 @@ fn css_backgrounds_box_shadow_039() -> Document {
     doc.node_mut(n3).style.height = Length::px(36.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n3).style.width = Length::px(36.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 36.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: -18.0, color: Color::from_rgba8(255, 165, 0, 127), inset: false }];
     doc.append_child(vp, n3);
     doc
 }
@@ -23454,6 +23459,7 @@ fn css_backgrounds_box_shadow_040() -> Document {
     doc.node_mut(n1).style.height = Length::px(36.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(54.0);
     doc.node_mut(n1).style.width = Length::px(36.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 36.0, offset_y: 18.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 165, 0, 127), inset: false }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -23482,6 +23488,7 @@ fn css_backgrounds_box_shadow_040() -> Document {
     doc.node_mut(n2).style.height = Length::px(36.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(54.0);
     doc.node_mut(n2).style.width = Length::px(36.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 36.0, offset_y: 18.0, blur_radius: 0.0, spread_radius: 18.0, color: Color::from_rgba8(255, 165, 0, 127), inset: false }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -23510,6 +23517,7 @@ fn css_backgrounds_box_shadow_040() -> Document {
     doc.node_mut(n3).style.height = Length::px(36.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(54.0);
     doc.node_mut(n3).style.width = Length::px(36.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 36.0, offset_y: 18.0, blur_radius: 0.0, spread_radius: -18.0, color: Color::from_rgba8(255, 165, 0, 127), inset: false }];
     doc.append_child(vp, n3);
     doc
 }
@@ -23553,6 +23561,7 @@ fn css_backgrounds_box_shadow_041() -> Document {
     doc.node_mut(n1).style.height = Length::px(36.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n1).style.width = Length::px(36.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 18.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 165, 0, 127), inset: true }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -23581,6 +23590,7 @@ fn css_backgrounds_box_shadow_041() -> Document {
     doc.node_mut(n2).style.height = Length::px(36.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n2).style.width = Length::px(36.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 18.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 12.0, color: Color::from_rgba8(255, 165, 0, 127), inset: true }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -23609,6 +23619,7 @@ fn css_backgrounds_box_shadow_041() -> Document {
     doc.node_mut(n3).style.height = Length::px(36.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n3).style.width = Length::px(36.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 18.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: -6.0, color: Color::from_rgba8(255, 165, 0, 127), inset: true }];
     doc.append_child(vp, n3);
     doc
 }
@@ -23652,6 +23663,7 @@ fn css_backgrounds_box_shadow_042() -> Document {
     doc.node_mut(n1).style.height = Length::px(36.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n1).style.width = Length::px(36.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 18.0, offset_y: 12.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 165, 0, 127), inset: true }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -23680,6 +23692,7 @@ fn css_backgrounds_box_shadow_042() -> Document {
     doc.node_mut(n2).style.height = Length::px(36.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n2).style.width = Length::px(36.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 18.0, offset_y: 12.0, blur_radius: 0.0, spread_radius: 12.0, color: Color::from_rgba8(255, 165, 0, 127), inset: true }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -23708,6 +23721,7 @@ fn css_backgrounds_box_shadow_042() -> Document {
     doc.node_mut(n3).style.height = Length::px(36.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(36.0);
     doc.node_mut(n3).style.width = Length::px(36.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 18.0, offset_y: 12.0, blur_radius: 0.0, spread_radius: -6.0, color: Color::from_rgba8(255, 165, 0, 127), inset: true }];
     doc.append_child(vp, n3);
     doc
 }
@@ -23740,6 +23754,7 @@ fn css_backgrounds_box_shadow_border_radius_001() -> Document {
     doc.node_mut(n1).style.border_top_right_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (50.0_f32, 50.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (50.0_f32, 50.0_f32);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 149.0, color: Color::BLACK, inset: false }];
     doc.node_mut(n1).style.height = Length::px(2.0);
     doc.node_mut(n1).style.width = Length::px(2.0);
     doc.append_child(vp, n1);
@@ -23772,6 +23787,7 @@ fn css_backgrounds_box_shadow_calc_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 43.0, blur_radius: 60.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n1);
     doc
 }
@@ -23853,6 +23869,7 @@ fn css_backgrounds_box_shadow_currentcolor_ref() -> Document {
         doc.node_mut(n2).style.border_left_width = 1;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(50, 205, 50, 255));
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 5.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::from_rgba8(50, 205, 50, 255), inset: false }];
         doc.node_mut(n2).style.color = Color::from_rgba8(50, 205, 50, 255);
         doc.append_child(n1, n2);
     doc
@@ -23882,6 +23899,7 @@ fn css_backgrounds_box_shadow_currentcolor() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(40.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.color = Color::TRANSPARENT;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 5.0, blur_radius: 5.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -23945,6 +23963,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n1).style.height = Length::px(32.0);
     doc.node_mut(n1).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -23972,6 +23991,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -23999,6 +24019,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n3).style.width = Length::px(32.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -24026,6 +24047,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n4).style.width = Length::px(32.0);
+    doc.node_mut(n4).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -24053,6 +24075,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n5).style.height = Length::px(32.0);
     doc.node_mut(n5).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n5).style.width = Length::px(32.0);
+    doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -24080,6 +24103,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n6).style.width = Length::px(32.0);
+    doc.node_mut(n6).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -24107,6 +24131,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n7).style.width = Length::px(32.0);
+    doc.node_mut(n7).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -24134,6 +24159,7 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n8).style.width = Length::px(32.0);
+    doc.node_mut(n8).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n8);
     doc
 }
@@ -24162,6 +24188,7 @@ fn css_backgrounds_box_shadow_invalid_001() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: -100.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }, BoxShadow { offset_x: 100.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }, BoxShadow { offset_x: 0.0, offset_y: 100.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }, BoxShadow { offset_x: -100.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -24195,6 +24222,7 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n1).style.font_size = 50.0;
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.width = Length::px(50.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: -50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(128, 0, 128, 255), inset: false }, BoxShadow { offset_x: 50.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLUE, inset: false }, BoxShadow { offset_x: 0.0, offset_y: 50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 0, 255, 255), inset: false }, BoxShadow { offset_x: -50.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 165, 0, 255), inset: false }];
     doc.node_mut(n1).style.margin_top = Length::px(58.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
@@ -24212,6 +24240,7 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n2).style.font_size = 50.0;
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.width = Length::px(50.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: -50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(128, 0, 128, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: -50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }, BoxShadow { offset_x: 50.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLUE, inset: false }, BoxShadow { offset_x: 50.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }, BoxShadow { offset_x: 0.0, offset_y: 50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 0, 255, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: 50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }, BoxShadow { offset_x: -50.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(255, 165, 0, 255), inset: false }, BoxShadow { offset_x: -50.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -24228,6 +24257,7 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n3).style.font_size = 50.0;
     doc.node_mut(n3).style.height = Length::px(50.0);
     doc.node_mut(n3).style.width = Length::px(50.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: -50.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: -50.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: 50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: 50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 50.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 50.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: -50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }, BoxShadow { offset_x: 0.0, offset_y: -50.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
     doc.append_child(vp, n3);
     doc
 }
@@ -24270,6 +24300,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n1).style.height = Length::px(32.0);
     doc.node_mut(n1).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n1).style.width = Length::px(32.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.margin_top = Length::px(32.0);
@@ -24297,6 +24328,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n2).style.width = Length::px(32.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.margin_top = Length::px(32.0);
@@ -24324,6 +24356,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n3).style.width = Length::px(32.0);
+    doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.margin_top = Length::px(32.0);
@@ -24351,6 +24384,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n4).style.width = Length::px(32.0);
+    doc.node_mut(n4).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.margin_top = Length::px(32.0);
@@ -24378,6 +24412,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n5).style.height = Length::px(32.0);
     doc.node_mut(n5).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n5).style.width = Length::px(32.0);
+    doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.margin_top = Length::px(32.0);
@@ -24405,6 +24440,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n6).style.width = Length::px(32.0);
+    doc.node_mut(n6).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.margin_top = Length::px(32.0);
@@ -24432,6 +24468,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n7).style.width = Length::px(32.0);
+    doc.node_mut(n7).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.margin_top = Length::px(32.0);
@@ -24459,6 +24496,7 @@ fn css_backgrounds_box_shadow_outset_without_border_radius_001() -> Document {
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.vertical_align = VerticalAlign::Top;
     doc.node_mut(n8).style.width = Length::px(32.0);
+    doc.node_mut(n8).style.box_shadow = vec![BoxShadow { offset_x: -10.0, offset_y: -10.0, blur_radius: 0.0, spread_radius: 15.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n8);
     doc
 }
@@ -24502,6 +24540,7 @@ fn css_backgrounds_box_shadow_overlapping_001() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: -300.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
         doc.append_child(n1, n2);
     doc
@@ -24546,6 +24585,7 @@ fn css_backgrounds_box_shadow_overlapping_002() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 300.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }];
         doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
         doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
@@ -24594,6 +24634,7 @@ fn css_backgrounds_box_shadow_overlapping_003() -> Document {
     doc.node_mut(n2).style.float = Float::Left;
     doc.node_mut(n2).style.font_size = 100.0;
     doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: -100.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
     doc.node_mut(n2).style.clear = Clear::Left;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(vp, n2);
@@ -24627,6 +24668,7 @@ fn css_backgrounds_box_shadow_overlapping_004() -> Document {
     doc.node_mut(n1).style.float = Float::Left;
     doc.node_mut(n1).style.font_size = 100.0;
     doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 100.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }];
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -24722,6 +24764,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n3).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n3).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n3).style.top = Length::px(30.0);
         doc.node_mut(n3).style.left = Length::px(30.0);
         doc.node_mut(n3).style.width = Length::px(40.0);
@@ -24756,6 +24799,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n5).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n5).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n5).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n5).style.top = Length::px(30.0);
         doc.node_mut(n5).style.left = Length::px(30.0);
         doc.node_mut(n5).style.width = Length::px(40.0);
@@ -24856,6 +24900,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n9).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n9).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n9).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n9).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n9).style.top = Length::px(25.0);
         doc.node_mut(n9).style.left = Length::px(25.0);
         doc.node_mut(n9).style.width = Length::px(50.0);
@@ -24890,6 +24935,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n11).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n11).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n11).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n11).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n11).style.top = Length::px(25.0);
         doc.node_mut(n11).style.left = Length::px(25.0);
         doc.node_mut(n11).style.width = Length::px(50.0);
@@ -24990,6 +25036,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n15).style.border_top_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n15).style.border_bottom_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n15).style.border_bottom_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n15).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n15).style.top = Length::px(36.0);
         doc.node_mut(n15).style.left = Length::px(36.0);
         doc.node_mut(n15).style.width = Length::px(28.0);
@@ -25024,6 +25071,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n17).style.border_top_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n17).style.border_bottom_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n17).style.border_bottom_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n17).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n17).style.top = Length::px(36.0);
         doc.node_mut(n17).style.left = Length::px(36.0);
         doc.node_mut(n17).style.width = Length::px(28.0);
@@ -25124,6 +25172,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n21).style.border_top_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n21).style.border_bottom_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n21).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n21).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n21).style.top = Length::px(40.0);
         doc.node_mut(n21).style.left = Length::px(40.0);
         doc.node_mut(n21).style.width = Length::px(20.0);
@@ -25158,6 +25207,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n23).style.border_top_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n23).style.border_bottom_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n23).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n23).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n23).style.top = Length::px(40.0);
         doc.node_mut(n23).style.left = Length::px(40.0);
         doc.node_mut(n23).style.width = Length::px(20.0);
@@ -25258,6 +25308,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n27).style.border_top_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n27).style.border_bottom_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n27).style.border_bottom_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n27).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n27).style.top = Length::px(36.0);
         doc.node_mut(n27).style.left = Length::px(36.0);
         doc.node_mut(n27).style.width = Length::px(28.0);
@@ -25292,6 +25343,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         doc.node_mut(n29).style.border_top_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n29).style.border_bottom_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n29).style.border_bottom_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n29).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n29).style.top = Length::px(36.0);
         doc.node_mut(n29).style.left = Length::px(36.0);
         doc.node_mut(n29).style.width = Length::px(28.0);
@@ -25407,6 +25459,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n3).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n3).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n3).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n3).style.top = Length::px(30.0);
         doc.node_mut(n3).style.left = Length::px(30.0);
         doc.node_mut(n3).style.width = Length::px(40.0);
@@ -25441,6 +25494,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n5).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n5).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n5).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n5).style.top = Length::px(30.0);
         doc.node_mut(n5).style.left = Length::px(30.0);
         doc.node_mut(n5).style.width = Length::px(40.0);
@@ -25541,6 +25595,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n9).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n9).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n9).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n9).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n9).style.top = Length::px(25.0);
         doc.node_mut(n9).style.left = Length::px(25.0);
         doc.node_mut(n9).style.width = Length::px(50.0);
@@ -25575,6 +25630,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n11).style.border_top_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n11).style.border_bottom_right_radius = (10.0_f32, 10.0_f32);
         doc.node_mut(n11).style.border_bottom_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n11).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n11).style.top = Length::px(25.0);
         doc.node_mut(n11).style.left = Length::px(25.0);
         doc.node_mut(n11).style.width = Length::px(50.0);
@@ -25675,6 +25731,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n15).style.border_top_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n15).style.border_bottom_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n15).style.border_bottom_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n15).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n15).style.top = Length::px(36.0);
         doc.node_mut(n15).style.left = Length::px(36.0);
         doc.node_mut(n15).style.width = Length::px(28.0);
@@ -25709,6 +25766,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n17).style.border_top_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n17).style.border_bottom_right_radius = (8.0_f32, 8.0_f32);
         doc.node_mut(n17).style.border_bottom_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n17).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n17).style.top = Length::px(36.0);
         doc.node_mut(n17).style.left = Length::px(36.0);
         doc.node_mut(n17).style.width = Length::px(28.0);
@@ -25809,6 +25867,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n21).style.border_top_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n21).style.border_bottom_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n21).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n21).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n21).style.top = Length::px(40.0);
         doc.node_mut(n21).style.left = Length::px(40.0);
         doc.node_mut(n21).style.width = Length::px(20.0);
@@ -25843,6 +25902,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n23).style.border_top_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n23).style.border_bottom_right_radius = (5.0_f32, 5.0_f32);
         doc.node_mut(n23).style.border_bottom_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n23).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n23).style.top = Length::px(40.0);
         doc.node_mut(n23).style.left = Length::px(40.0);
         doc.node_mut(n23).style.width = Length::px(20.0);
@@ -25943,6 +26003,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n27).style.border_top_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n27).style.border_bottom_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n27).style.border_bottom_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n27).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n27).style.top = Length::px(36.0);
         doc.node_mut(n27).style.left = Length::px(36.0);
         doc.node_mut(n27).style.width = Length::px(28.0);
@@ -25977,6 +26038,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         doc.node_mut(n29).style.border_top_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n29).style.border_bottom_right_radius = (2.0_f32, 2.0_f32);
         doc.node_mut(n29).style.border_bottom_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n29).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: false }];
         doc.node_mut(n29).style.top = Length::px(36.0);
         doc.node_mut(n29).style.left = Length::px(36.0);
         doc.node_mut(n29).style.width = Length::px(28.0);
@@ -26090,6 +26152,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n3).style.top = Length::px(20.0);
         doc.node_mut(n3).style.left = Length::px(20.0);
         doc.node_mut(n3).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 0.0, spread_radius: -10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -26121,6 +26184,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n5).style.top = Length::px(20.0);
         doc.node_mut(n5).style.left = Length::px(20.0);
         doc.node_mut(n5).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 0.0, spread_radius: -10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::Block;
@@ -26210,6 +26274,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n9).style.top = Length::px(20.0);
         doc.node_mut(n9).style.left = Length::px(20.0);
         doc.node_mut(n9).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n9).style.box_shadow = vec![BoxShadow { offset_x: 15.0, offset_y: 15.0, blur_radius: 0.0, spread_radius: -5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n7, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -26241,6 +26306,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n11).style.top = Length::px(20.0);
         doc.node_mut(n11).style.left = Length::px(20.0);
         doc.node_mut(n11).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n11).style.box_shadow = vec![BoxShadow { offset_x: 15.0, offset_y: 15.0, blur_radius: 0.0, spread_radius: -5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n10, n11);
         let n12 = doc.create_node(ElementTag::Div);
         doc.node_mut(n12).style.display = Display::Block;
@@ -26330,6 +26396,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n15).style.top = Length::px(20.0);
         doc.node_mut(n15).style.left = Length::px(20.0);
         doc.node_mut(n15).style.border_top_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n15).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n13, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -26361,6 +26428,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n17).style.top = Length::px(20.0);
         doc.node_mut(n17).style.left = Length::px(20.0);
         doc.node_mut(n17).style.border_top_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n17).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n16, n17);
         let n18 = doc.create_node(ElementTag::Div);
         doc.node_mut(n18).style.display = Display::Block;
@@ -26450,6 +26518,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n21).style.top = Length::px(20.0);
         doc.node_mut(n21).style.left = Length::px(20.0);
         doc.node_mut(n21).style.border_top_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n21).style.box_shadow = vec![BoxShadow { offset_x: 30.0, offset_y: 30.0, blur_radius: 0.0, spread_radius: -20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n19, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -26481,6 +26550,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n23).style.top = Length::px(20.0);
         doc.node_mut(n23).style.left = Length::px(20.0);
         doc.node_mut(n23).style.border_top_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n23).style.box_shadow = vec![BoxShadow { offset_x: 30.0, offset_y: 30.0, blur_radius: 0.0, spread_radius: -20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n22, n23);
         let n24 = doc.create_node(ElementTag::Div);
         doc.node_mut(n24).style.display = Display::Block;
@@ -26570,6 +26640,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n27).style.top = Length::px(20.0);
         doc.node_mut(n27).style.left = Length::px(20.0);
         doc.node_mut(n27).style.border_top_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n27).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n25, n27);
     let n28 = doc.create_node(ElementTag::Div);
     doc.node_mut(n28).style.display = Display::Block;
@@ -26601,6 +26672,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         doc.node_mut(n29).style.top = Length::px(20.0);
         doc.node_mut(n29).style.left = Length::px(20.0);
         doc.node_mut(n29).style.border_top_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n29).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n28, n29);
         let n30 = doc.create_node(ElementTag::Div);
         doc.node_mut(n30).style.display = Display::Block;
@@ -26705,6 +26777,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n3).style.top = Length::px(20.0);
         doc.node_mut(n3).style.left = Length::px(20.0);
         doc.node_mut(n3).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n3).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 0.0, spread_radius: -10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -26736,6 +26809,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n5).style.top = Length::px(20.0);
         doc.node_mut(n5).style.left = Length::px(20.0);
         doc.node_mut(n5).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n5).style.box_shadow = vec![BoxShadow { offset_x: 20.0, offset_y: 20.0, blur_radius: 0.0, spread_radius: -10.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Div);
         doc.node_mut(n6).style.display = Display::Block;
@@ -26825,6 +26899,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n9).style.top = Length::px(20.0);
         doc.node_mut(n9).style.left = Length::px(20.0);
         doc.node_mut(n9).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n9).style.box_shadow = vec![BoxShadow { offset_x: 15.0, offset_y: 15.0, blur_radius: 0.0, spread_radius: -5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n7, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -26856,6 +26931,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n11).style.top = Length::px(20.0);
         doc.node_mut(n11).style.left = Length::px(20.0);
         doc.node_mut(n11).style.border_top_left_radius = (10.0_f32, 10.0_f32);
+        doc.node_mut(n11).style.box_shadow = vec![BoxShadow { offset_x: 15.0, offset_y: 15.0, blur_radius: 0.0, spread_radius: -5.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n10, n11);
         let n12 = doc.create_node(ElementTag::Div);
         doc.node_mut(n12).style.display = Display::Block;
@@ -26945,6 +27021,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n15).style.top = Length::px(20.0);
         doc.node_mut(n15).style.left = Length::px(20.0);
         doc.node_mut(n15).style.border_top_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n15).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n13, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -26976,6 +27053,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n17).style.top = Length::px(20.0);
         doc.node_mut(n17).style.left = Length::px(20.0);
         doc.node_mut(n17).style.border_top_left_radius = (8.0_f32, 8.0_f32);
+        doc.node_mut(n17).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n16, n17);
         let n18 = doc.create_node(ElementTag::Div);
         doc.node_mut(n18).style.display = Display::Block;
@@ -27065,6 +27143,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n21).style.top = Length::px(20.0);
         doc.node_mut(n21).style.left = Length::px(20.0);
         doc.node_mut(n21).style.border_top_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n21).style.box_shadow = vec![BoxShadow { offset_x: 30.0, offset_y: 30.0, blur_radius: 0.0, spread_radius: -20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n19, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -27096,6 +27175,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n23).style.top = Length::px(20.0);
         doc.node_mut(n23).style.left = Length::px(20.0);
         doc.node_mut(n23).style.border_top_left_radius = (5.0_f32, 5.0_f32);
+        doc.node_mut(n23).style.box_shadow = vec![BoxShadow { offset_x: 30.0, offset_y: 30.0, blur_radius: 0.0, spread_radius: -20.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n22, n23);
         let n24 = doc.create_node(ElementTag::Div);
         doc.node_mut(n24).style.display = Display::Block;
@@ -27185,6 +27265,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n27).style.top = Length::px(20.0);
         doc.node_mut(n27).style.left = Length::px(20.0);
         doc.node_mut(n27).style.border_top_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n27).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n25, n27);
     let n28 = doc.create_node(ElementTag::Div);
     doc.node_mut(n28).style.display = Display::Block;
@@ -27216,6 +27297,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         doc.node_mut(n29).style.top = Length::px(20.0);
         doc.node_mut(n29).style.left = Length::px(20.0);
         doc.node_mut(n29).style.border_top_left_radius = (2.0_f32, 2.0_f32);
+        doc.node_mut(n29).style.box_shadow = vec![BoxShadow { offset_x: 26.0, offset_y: 26.0, blur_radius: 0.0, spread_radius: -16.0, color: Color::from_rgba8(0, 0, 0, 255), inset: true }];
         doc.append_child(n28, n29);
         let n30 = doc.create_node(ElementTag::Div);
         doc.node_mut(n30).style.display = Display::Block;
@@ -28082,6 +28164,7 @@ fn css_backgrounds_css3_box_shadow() -> Document {
     doc.node_mut(n1).style.width = Length::px(300.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 153, 0, 255);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
     doc.append_child(vp, n1);
     doc
 }
@@ -28111,6 +28194,7 @@ fn css_backgrounds_fieldset_inset_shadow_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::BorderBox;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::BLACK, inset: true }];
     doc.append_child(vp, n1);
     doc
 }
@@ -28293,6 +28377,7 @@ fn css_backgrounds_inset_box_shadow_scroll_ref() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(10.0);
         doc.node_mut(n2).style.padding_left = Length::px(10.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 128, 0, 255), inset: true }];
         doc.node_mut(n2).style.height = Length::px(120.0);
         doc.append_child(n1, n2);
     doc
@@ -28326,6 +28411,7 @@ fn css_backgrounds_inset_box_shadow_scroll() -> Document {
     doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
     doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
     doc.node_mut(n1).style.background_color = Color::WHITE;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 128, 0, 255), inset: true }];
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -28373,6 +28459,7 @@ fn css_backgrounds_inset_box_shadow_stacking_context_scroll() -> Document {
     doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
     doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
     doc.node_mut(n1).style.background_color = Color::WHITE;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow { offset_x: 10.0, offset_y: 10.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::from_rgba8(0, 128, 0, 255), inset: true }];
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -42941,6 +43028,7 @@ fn css_backgrounds_box_shadow_slice_block_fragmentation_001() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 5.0, offset_y: 5.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.height = Length::px(300.0);
         doc.append_child(n1, n2);
     doc
@@ -43092,6 +43180,7 @@ fn css_backgrounds_box_shadow_slice_block_fragmentation_002() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: -5.0, offset_y: -5.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.height = Length::px(300.0);
         doc.append_child(n1, n2);
     doc
@@ -43243,6 +43332,7 @@ fn css_backgrounds_box_shadow_slice_block_fragmentation_003() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 2.0, offset_y: 2.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(300.0);
         doc.append_child(n1, n2);
@@ -43443,6 +43533,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 5.0, offset_y: 5.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
     doc
@@ -43642,6 +43733,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: -5.0, offset_y: -5.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
     doc
@@ -43841,6 +43933,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 2.0, offset_y: 2.0, blur_radius: 0.0, spread_radius: 10.0, color: Color::BLACK, inset: false }];
         doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
     doc

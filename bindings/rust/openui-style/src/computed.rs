@@ -26,6 +26,19 @@ pub struct AspectRatio {
     pub auto_flag: bool,
 }
 
+/// A single box-shadow layer.
+///
+/// CSS syntax: `[inset?] <offset-x> <offset-y> [<blur-radius>] [<spread-radius>] [<color>]`
+#[derive(Debug, Clone)]
+pub struct BoxShadow {
+    pub offset_x: f32,
+    pub offset_y: f32,
+    pub blur_radius: f32,
+    pub spread_radius: f32,
+    pub color: Color,
+    pub inset: bool,
+}
+
 /// The complete resolved style for an element.
 ///
 /// Mirrors Blink's `ComputedStyle`. Only the properties needed for SP9
@@ -193,6 +206,11 @@ pub struct ComputedStyle {
 
     /// CSS `opacity`. Initial: `1.0`.
     pub opacity: f32,
+
+    // ── Box shadows ─────────────────────────────────────────────────
+
+    /// CSS `box-shadow`. Initial: `none` (empty vec).
+    pub box_shadow: Vec<BoxShadow>,
 
     // ── Z-index ──────────────────────────────────────────────────────
 
@@ -621,6 +639,7 @@ impl ComputedStyle {
             background_clip: BackgroundClip::BorderBox,
             color: Color::BLACK,
             opacity: 1.0,
+            box_shadow: Vec::new(),
             z_index: None, // auto
 
             // Flexbox — container properties

@@ -1606,6 +1606,101 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         except ValueError:
             pass
 
+    # ── box-shadow ──
+    if prop == 'box-shadow':
+        if val == 'none':
+            return f"{s}.box_shadow = Vec::new();"
+        # Split by comma for multiple shadows, but respect parentheses (rgb/rgba)
+        shadows_raw = []
+        depth = 0
+        current = []
+        for ch in val:
+            if ch == '(':
+                depth += 1
+                current.append(ch)
+            elif ch == ')':
+                depth -= 1
+                current.append(ch)
+            elif ch == ',' and depth == 0:
+                shadows_raw.append(''.join(current).strip())
+                current = []
+            else:
+                current.append(ch)
+        if current:
+            shadows_raw.append(''.join(current).strip())
+
+        shadow_strs = []
+        for shadow in shadows_raw:
+            tokens = shadow.split()
+            inset = False
+            clean_tokens = []
+            for t in tokens:
+                if t == 'inset':
+                    inset = True
+                else:
+                    clean_tokens.append(t)
+            tokens = clean_tokens
+
+            # Reconstitute tokens to handle multi-word colors like rgb(...)
+            # Try to find color from the end first, then from the start
+            color_str = None
+            numeric_tokens = []
+
+            # Try color from end: take tokens[i:] and check if it's a color
+            found = False
+            for i in range(len(tokens)):
+                test_color_str = ' '.join(tokens[i:])
+                c = parse_color(test_color_str)
+                if c:
+                    color_str = c
+                    numeric_tokens = tokens[:i]
+                    found = True
+                    break
+            if not found:
+                # Try color from start
+                for i in range(len(tokens), 0, -1):
+                    test_color_str = ' '.join(tokens[:i])
+                    c = parse_color(test_color_str)
+                    if c:
+                        color_str = c
+                        numeric_tokens = tokens[i:]
+                        found = True
+                        break
+            if not found:
+                numeric_tokens = tokens
+                color_str = 'Color::from_rgba8(0, 0, 0, 255)'
+
+            # Parse numeric values (offset-x, offset-y, blur, spread)
+            vals = []
+            for t in numeric_tokens:
+                m_px = re.match(r'^(-?[\d.]+)px$', t)
+                if m_px:
+                    vals.append(float(m_px.group(1)))
+                elif t == '0':
+                    vals.append(0.0)
+                else:
+                    m_em = re.match(r'^(-?[\d.]+)em$', t)
+                    if m_em:
+                        vals.append(float(m_em.group(1)) * font_size)
+                    else:
+                        m_rem = re.match(r'^(-?[\d.]+)rem$', t)
+                        if m_rem:
+                            vals.append(float(m_rem.group(1)) * 16.0)
+
+            if len(vals) >= 2:
+                ox, oy = vals[0], vals[1]
+                blur = vals[2] if len(vals) > 2 else 0.0
+                spread = vals[3] if len(vals) > 3 else 0.0
+                inset_str = 'true' if inset else 'false'
+                shadow_strs.append(
+                    f'BoxShadow {{ offset_x: {ox:.1f}, offset_y: {oy:.1f}, '
+                    f'blur_radius: {blur:.1f}, spread_radius: {spread:.1f}, '
+                    f'color: {color_str}, inset: {inset_str} }}'
+                )
+
+        if shadow_strs:
+            return f"{s}.box_shadow = vec![{', '.join(shadow_strs)}];"
+
     # ── visibility ──
     if prop == 'visibility':
         mapping = {'visible': 'Visibility::Visible', 'hidden': 'Visibility::Hidden'}
