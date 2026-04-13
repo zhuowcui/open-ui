@@ -982,12 +982,10 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             }
             continue;
         }
-        if child_style.display.is_inline_level() {
-            continue;
-        }
-
         // Handle floated children — they are positioned in the exclusion
         // space and do not advance the block offset.
+        // CSS 2.1 §9.7: Floats are blockified regardless of display value,
+        // so this check must come BEFORE the inline-level skip below.
         if child_style.float != Float::None {
             // CSS 2.1: Floats force BFC offset resolution.
             if !start_margin_resolved {
@@ -1006,6 +1004,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 establishes_cb_for_abspos, is_root,
                 &mut max_float_bottom,
             );
+            continue;
+        }
+
+        // Skip inline-level non-float children in pure block context.
+        if child_style.display.is_inline_level() {
             continue;
         }
 

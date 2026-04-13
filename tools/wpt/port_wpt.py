@@ -1427,53 +1427,64 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
             return f"{s}.{rust_prop} = StyleColor::Resolved({color});"
 
     # ── border-radius ──
+    # Unit conversion factors to px
+    _UNIT_TO_PX = {
+        'px': 1.0, 'em': None, 'rem': None, '%': None,
+        'in': 96.0, 'cm': 96.0 / 2.54, 'mm': 96.0 / 25.4,
+        'pt': 96.0 / 72.0, 'pc': 96.0 / 6.0,
+    }
+
+    def _parse_radius_component(token, fs=font_size):
+        m = re.match(r'^(-?[\d.]+)(px|em|rem|%|in|cm|mm|pt|pc)$', token)
+        if not m:
+            return None
+        num = float(m.group(1))
+        unit = m.group(2)
+        if unit in ('em', 'rem'):
+            num = num * fs
+        elif unit in _UNIT_TO_PX and _UNIT_TO_PX[unit] is not None:
+            num = num * _UNIT_TO_PX[unit]
+        return num
+
+    def _expand_shorthand(values):
+        """CSS shorthand expansion: 1→all, 2→TL/BR TR/BL, 3→TL TR/BL BR, 4→TL TR BR BL"""
+        if len(values) == 1:
+            return values[0], values[0], values[0], values[0]
+        elif len(values) == 2:
+            return values[0], values[1], values[0], values[1]
+        elif len(values) == 3:
+            return values[0], values[1], values[2], values[1]
+        elif len(values) == 4:
+            return values[0], values[1], values[2], values[3]
+        return None, None, None, None
+
     if prop == 'border-radius':
-        def _parse_br(token):
-            m2 = re.match(r'^(-?[\d.]+)(px|em|rem|%)$', token)
-            if not m2:
-                return None
-            num2 = float(m2.group(1))
-            unit2 = m2.group(2)
-            if unit2 in ('em', 'rem'):
-                num2 = num2 * font_size
-            return num2
-        # Handle slash syntax (horizontal / vertical) — take horizontal only for now
-        horiz = val.strip().split('/')[0].strip()
-        parts = horiz.split()
-        values = [_parse_br(p) for p in parts]
-        if all(v is not None for v in values):
-            if len(values) == 1:
-                tl = tr = br = bl = values[0]
-            elif len(values) == 2:
-                tl = br = values[0]
-                tr = bl = values[1]
-            elif len(values) == 3:
-                tl = values[0]; tr = bl = values[1]; br = values[2]
-            elif len(values) == 4:
-                tl, tr, br, bl = values
-            else:
-                tl = tr = br = bl = None
-            if tl is not None:
+        slash_parts = val.strip().split('/')
+        horiz_tokens = slash_parts[0].strip().split()
+        h_vals = [_parse_radius_component(p) for p in horiz_tokens]
+        if all(v is not None for v in h_vals):
+            htl, htr, hbr, hbl = _expand_shorthand(h_vals)
+            if htl is not None:
+                # Parse vertical radii (after slash) if present
+                if len(slash_parts) > 1:
+                    vert_tokens = slash_parts[1].strip().split()
+                    v_vals = [_parse_radius_component(p) for p in vert_tokens]
+                    if all(v is not None for v in v_vals):
+                        vtl, vtr, vbr, vbl = _expand_shorthand(v_vals)
+                    else:
+                        vtl, vtr, vbr, vbl = htl, htr, hbr, hbl
+                else:
+                    vtl, vtr, vbr, vbl = htl, htr, hbr, hbl
                 return [
-                    f"{s}.border_top_left_radius = ({tl}_f32, {tl}_f32);",
-                    f"{s}.border_top_right_radius = ({tr}_f32, {tr}_f32);",
-                    f"{s}.border_bottom_right_radius = ({br}_f32, {br}_f32);",
-                    f"{s}.border_bottom_left_radius = ({bl}_f32, {bl}_f32);",
+                    f"{s}.border_top_left_radius = ({htl}_f32, {vtl}_f32);",
+                    f"{s}.border_top_right_radius = ({htr}_f32, {vtr}_f32);",
+                    f"{s}.border_bottom_right_radius = ({hbr}_f32, {vbr}_f32);",
+                    f"{s}.border_bottom_left_radius = ({hbl}_f32, {vbl}_f32);",
                 ]
 
     if prop in ('border-top-left-radius', 'border-top-right-radius',
                 'border-bottom-left-radius', 'border-bottom-right-radius'):
         parts = val.strip().split()
-        def _parse_radius_component(token):
-            m = re.match(r'^(-?[\d.]+)(px|em|rem|%)$', token)
-            if not m:
-                return None
-            num = float(m.group(1))
-            unit = m.group(2)
-            if unit in ('em', 'rem'):
-                num = num * font_size
-            # For %, store as-is — painter resolves against border-box
-            return num
         if len(parts) == 1:
             v = _parse_radius_component(parts[0])
             if v is not None:
