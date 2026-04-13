@@ -2260,6 +2260,13 @@ fn give_items_final_position(
                 child_space.is_fixed_inline_size = true;
                 if should_stretch {
                     child_space.stretch_block_size = true;
+                } else if !cross_size_is_auto {
+                    // Row flex: item has explicit cross size (e.g. height + max-height).
+                    // The flex algorithm already resolved the used cross size including
+                    // min/max constraints. Mark as fixed so block.rs uses the constraint
+                    // space value for child percentage resolution instead of re-resolving
+                    // from style.height (which ignores max-height clamping).
+                    child_space.is_fixed_block_size = true;
                 }
             }
 
