@@ -154915,6 +154915,7 @@ fn css_flexbox_flexbox_columns_flexitems_2_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.column_rule_width = 16;
         doc.node_mut(n2).style.column_rule_style = BorderStyle::Solid;
         doc.node_mut(n2).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
         doc.node_mut(n2).style.column_count = Some(2);
@@ -154961,6 +154962,7 @@ fn css_flexbox_flexbox_columns_flexitems_2() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.column_rule_width = 16;
         doc.node_mut(n2).style.column_rule_style = BorderStyle::Solid;
         doc.node_mut(n2).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
         doc.node_mut(n2).style.column_count = Some(2);
@@ -155006,6 +155008,7 @@ fn css_flexbox_flexbox_columns_flexitems_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.column_rule_width = 16;
         doc.node_mut(n2).style.column_rule_style = BorderStyle::Solid;
         doc.node_mut(n2).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
         doc.node_mut(n2).style.column_count = Some(2);
@@ -155052,6 +155055,7 @@ fn css_flexbox_flexbox_columns_flexitems() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+        doc.node_mut(n2).style.column_rule_width = 16;
         doc.node_mut(n2).style.column_rule_style = BorderStyle::Solid;
         doc.node_mut(n2).style.column_rule_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
         doc.node_mut(n2).style.column_count = Some(2);
@@ -212782,6 +212786,7 @@ fn css_flexbox_interactive_flexbox_interactive_break_natural() -> Document {
     doc.node_mut(n2).style.flex_grow = 0.0;
     doc.node_mut(n2).style.flex_shrink = 0.0;
     doc.node_mut(n2).style.flex_basis = Length::auto();
+    doc.node_mut(n2).style.border_top_width = 16;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
     doc.append_child(vp, n2);

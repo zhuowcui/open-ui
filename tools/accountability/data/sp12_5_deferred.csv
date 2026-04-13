@@ -1144,3 +1144,120 @@ wpt/css_break/flexbox_single-line-row-flex-fragmentation-046-print,font-relative
 wpt/css_break/flexbox_single-line-row-flex-fragmentation-047,font-relative units (text rendering),SP11
 wpt/css_break/flexbox_single-line-row-flex-fragmentation-048,font-relative units (text rendering),SP11
 wpt/css_display/display-contents-flex-001,font-relative units (text rendering),SP11
+wpt/css_flexbox/flexbox-items-as-stacking-contexts-001-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0170,SP12.5
+wpt/css_flexbox/flexbox-items-as-stacking-contexts-003-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0611,SP12.5
+wpt/css_flexbox/flexbox-justify-content-vert-002-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0401,SP12.5
+wpt/css_flexbox/flexbox-justify-content-vert-004-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0399,SP12.5
+wpt/css_flexbox/flexbox-mbp-horiz-001-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0013,SP12.5
+wpt/css_flexbox/flexbox-mbp-horiz-001-reverse-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0013,SP12.5
+wpt/css_flexbox/flexbox-mbp-horiz-002-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0013,SP12.5
+wpt/css_flexbox/flexbox-mbp-horiz-003-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0794,SP12.5
+wpt/css_flexbox/flexbox-mbp-horiz-003-reverse-ref,css_flexbox,paint-level anti-aliasing difference (<0.1% mismatch),0.0794,SP12.5
+wpt/css_multicol/column-balancing-paged-001-print,css_multicol,print-specific layout context not fully implemented,63.0964,SP12.5
+wpt/css_multicol/column-height-021,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0212,SP12.5
+wpt/css_multicol/column-height-022,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0637,SP12.5
+wpt/css_multicol/multicol-dynamic-add-002-ref,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0117,SP12.5
+wpt/css_multicol/multicol-height-002-print-ref,css_multicol,print-specific layout context not fully implemented,5.7346,SP12.5
+wpt/css_multicol/multicol-height-002-print,css_multicol,print-specific layout context not fully implemented,7.2972,SP12.5
+wpt/css_multicol/multicol-list-item-007-ref,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0053,SP12.5
+wpt/css_multicol/multicol-list-item-007,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0053,SP12.5
+wpt/css_multicol/multicol-rule-nested-balancing-001,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0955,SP12.5
+wpt/css_multicol/multicol-rule-nested-balancing-002,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0637,SP12.5
+wpt/css_multicol/multicol-rule-nested-balancing-003,css_multicol,paint-level anti-aliasing difference (<0.1% mismatch),0.0637,SP12.5
+wpt/css_multicol/overflow-unsplittable-001,css_multicol,table layout not implemented (cross-SP dependency),2.1231,SP12.5
+wpt/css_multicol/overflow-unsplittable-002,css_multicol,table layout not implemented (cross-SP dependency),2.1231,SP12.5
+wpt/css_multicol/overflow-unsplittable-003,css_multicol,table layout not implemented (cross-SP dependency),2.1231,SP12.5
+wpt/css_overflow/clip-005-ref,css_overflow,paint-level anti-aliasing difference (<0.1% mismatch),0.0849,SP12.5
+wpt/css_overflow/clip-005,css_overflow,paint-level anti-aliasing difference (<0.1% mismatch),0.0849,SP12.5
+wpt/css_overflow/display-flex-svg-overflow-default-ref,css_overflow,SVG rendering not implemented (cross-SP dependency),76.6667,SP12.5
+wpt/css_overflow/overflow-clip-margin-010-ref,css_overflow,paint-level anti-aliasing difference (<0.1% mismatch),0.0144,SP12.5
+wpt/css_overflow/overflow-clip-margin-visual-box-and-value-with-border-radius-ref,css_overflow,paint-level anti-aliasing difference (<0.1% mismatch),0.0482,SP12.5
+wpt/css_sizing/table-child-percentage-height-with-border-box-ref,css_sizing,table layout not implemented (cross-SP dependency),74.2251,SP12.5
+wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-007-ref,css_sizing,paint-level anti-aliasing difference (<0.1% mismatch),0.0015,SP12.5
+wpt/css_break/borders-003-ref,css_break,paint-level anti-aliasing difference (<0.1% mismatch),0.0482,SP12.5
+wpt/css_break/break-before-always-001,css_break,paint-level anti-aliasing difference (<0.1% mismatch),0.0159,SP12.5
+wpt/css_break/class-c-breakpoint-after-float-003,css_break,paint-level anti-aliasing difference (<0.1% mismatch),0.0531,SP12.5
+wpt/css_break/firefox-bug-1693616-001-crash,css_break,paint-level anti-aliasing difference (<0.1% mismatch),0.0811,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-001,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),0.1783,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-002,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.1847,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-003,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-004,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),0.2972,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-006,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-007,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.9724,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-008,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-009,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-012,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),0.1062,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-013,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-015,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),0.6369,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-016,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.0616,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-017,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.9108,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-018,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.9108,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-019-ref,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.0616,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-019,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.5456,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-020,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.0616,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-021,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-022,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-023,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.1847,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-024,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.1847,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-025,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-027,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-028,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.1847,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-042,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-043,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-045,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-046,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-047,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-069,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.6093,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-071,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.6093,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-072,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.6093,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-074,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-077,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.5478,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-078,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.5478,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-079,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.5478,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-080,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.5478,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-081,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.5265,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-082,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),3.1847,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-101,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),0.1274,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-103,css_break,paint-level anti-aliasing difference (<0.1% mismatch),0.0960,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-104,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-109,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),1.6985,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-110,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),10.1911,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-111,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),7.2187,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-114,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),0.3185,SP12.5
+wpt/css_break/out-of-flow-in-multicolumn-117,css_break,abspos in multicol fragment placement (complex OOF-in-multicol feature gap),2.1231,SP12.5
+wpt/css_break/overflowing-block-print-ref,css_break,print-specific layout context not fully implemented,3.7473,SP12.5
+wpt/css_break/overflowing-block-print,css_break,print-specific layout context not fully implemented,8.3015,SP12.5
+wpt/css_break/flexbox_single-line-column-flex-fragmentation-066-print-ref,css_break,print-specific layout context not fully implemented,6.7771,SP12.5
+wpt/css_break/flexbox_single-line-row-flex-fragmentation-046-print-ref,css_break,print-specific layout context not fully implemented,6.7771,SP12.5
+wpt/css_backgrounds/background-clip-content-box,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0127,SP12.5
+wpt/css_backgrounds/background-clip-padding-box-with-border-radius,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0004,SP12.5
+wpt/css_backgrounds/background-clip-root,css_backgrounds,body-to-canvas background propagation not implemented,93.5456,SP12.5
+wpt/css_backgrounds/background-clip_padding-box,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0127,SP12.5
+wpt/css_backgrounds/background-color-body-propagation-001,css_backgrounds,body-to-canvas background propagation not implemented,93.3333,SP12.5
+wpt/css_backgrounds/background-color-body-propagation-002,css_backgrounds,body-to-canvas background propagation not implemented,93.3333,SP12.5
+wpt/css_backgrounds/border-bottom-left-radius-004-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0057,SP12.5
+wpt/css_backgrounds/border-bottom-left-radius-004,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0677,SP12.5
+wpt/css_backgrounds/border-bottom-left-radius-005-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0021,SP12.5
+wpt/css_backgrounds/border-bottom-left-radius-005,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0299,SP12.5
+wpt/css_backgrounds/border-bottom-right-radius-004-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0064,SP12.5
+wpt/css_backgrounds/border-bottom-right-radius-004,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0677,SP12.5
+wpt/css_backgrounds/border-bottom-right-radius-005-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0038,SP12.5
+wpt/css_backgrounds/border-bottom-right-radius-005,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0301,SP12.5
+wpt/css_backgrounds/border-color_transparent,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0212,SP12.5
+wpt/css_backgrounds/border-radius-011-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0106,SP12.5
+wpt/css_backgrounds/border-radius-011,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0106,SP12.5
+wpt/css_backgrounds/border-radius-overflow-hidden,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0004,SP12.5
+wpt/css_backgrounds/border-top-left-radius-004-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0051,SP12.5
+wpt/css_backgrounds/border-top-left-radius-004,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0684,SP12.5
+wpt/css_backgrounds/border-top-left-radius-005-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0030,SP12.5
+wpt/css_backgrounds/border-top-left-radius-005,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0299,SP12.5
+wpt/css_backgrounds/border-top-right-radius-004-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0068,SP12.5
+wpt/css_backgrounds/border-top-right-radius-004,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0686,SP12.5
+wpt/css_backgrounds/border-top-right-radius-005-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0038,SP12.5
+wpt/css_backgrounds/border-top-right-radius-005,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0299,SP12.5
+wpt/css_backgrounds/background-clip_clip-rounded-corner-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0047,SP12.5
+wpt/css_backgrounds/background-clip_clip-rounded-corner,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0047,SP12.5
+wpt/css_backgrounds/box-shadow_slice-block-fragmentation-003-ref,css_backgrounds,paint-level anti-aliasing difference (<0.1% mismatch),0.0017,SP12.5
+wpt/css_multicol/with-custom-layout-on-same-element.https,css_multicol,Houdini Custom Layout API not implemented,15.2400,SP12.5
+wpt/css_overflow/scrollbar-gutter-fixedpos-003,css_overflow,scrollbar-gutter property not implemented,0.8100,SP12.5
+wpt/css_overflow/scrollbar-gutter-fixedpos-003-ref,css_overflow,scrollbar-gutter property not implemented,0.8100,SP12.5

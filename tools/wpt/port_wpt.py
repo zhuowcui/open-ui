@@ -551,17 +551,56 @@ def _split_respecting_parens(value: str) -> list[str]:
     return parts
 
 
-def parse_border_width(value: str) -> str | None:
-    """Convert a CSS border-width value to Rust i32 expression (pixels)."""
+def parse_border_width(value: str, font_size: float = 16.0) -> str | None:
+    """Convert a CSS border-width value to Rust i32 expression (pixels).
+    
+    Handles px, em, rem, in, cm, mm, pt, pc units and named widths.
+    Chrome snaps border widths to device pixels with standard rounding.
+    """
+    import math
     value = value.strip()
     if value == '0' or value == '0px':
         return '0'
+    # Named widths
+    mapping = {'thin': '1', 'medium': '3', 'thick': '5'}
+    if value in mapping:
+        return mapping[value]
+    # Try to resolve to a raw pixel value
+    raw = None
     m = re.match(r'^(-?[\d.]+)px$', value)
     if m:
+        raw = float(m.group(1))
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)em$', value)
+        if m:
+            raw = float(m.group(1)) * font_size
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)rem$', value)
+        if m:
+            raw = float(m.group(1)) * 16.0
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)in$', value)
+        if m:
+            raw = float(m.group(1)) * 96.0
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)cm$', value)
+        if m:
+            raw = float(m.group(1)) * 37.7952755906
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)mm$', value)
+        if m:
+            raw = float(m.group(1)) * 3.77952755906
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)pt$', value)
+        if m:
+            raw = float(m.group(1)) * (96.0 / 72.0)
+    if raw is None:
+        m = re.match(r'^(-?[\d.]+)pc$', value)
+        if m:
+            raw = float(m.group(1)) * 16.0
+    if raw is not None:
         # Chrome snaps border widths to device pixels with standard rounding
         # (.5 rounds away from zero), minimum 1px for non-zero values.
-        import math
-        raw = float(m.group(1))
         if raw > 0:
             rounded = max(1, math.floor(raw + 0.5))
         elif raw < 0:
@@ -569,10 +608,6 @@ def parse_border_width(value: str) -> str | None:
         else:
             rounded = 0
         return str(rounded)
-    # Named widths
-    mapping = {'thin': '1', 'medium': '3', 'thick': '5'}
-    if value in mapping:
-        return mapping[value]
     return None
 
 

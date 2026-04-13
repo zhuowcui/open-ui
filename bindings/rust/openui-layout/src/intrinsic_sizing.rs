@@ -12,7 +12,7 @@
 //!
 //! Source: CSS Sizing 3 §4-5, CSS 2.1 §10.3.5-7, §10.6.7.
 
-use openui_geometry::{LayoutUnit, MinMaxSizes};
+use openui_geometry::{LayoutUnit, LengthType, MinMaxSizes};
 use openui_style::ComputedStyle;
 use openui_style::BoxSizing;
 use openui_dom::{Document, ElementTag, NodeId};
@@ -529,8 +529,12 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
     let max_inline = apply_size_override_inline(child_style, child_intrinsic.max_content_inline_size);
 
     // Apply min-width / max-width clamping.
-    let min_inline = apply_min_max_inline(child_style, min_inline);
-    let max_inline = apply_min_max_inline(child_style, max_inline);
+    // Pass the child's POST-AR intrinsic sizes so that intrinsic keywords like
+    // `max-width: max-content` resolve to the element's actual max-content
+    // (which includes the AR transfer from definite height per CSS Sizing 4 §5.1).
+    let intrinsic_with_ar = (min_inline, max_inline);
+    let min_inline = apply_min_max_inline(child_style, min_inline, intrinsic_with_ar);
+    let max_inline = apply_min_max_inline(child_style, max_inline, intrinsic_with_ar);
 
     // CSS Sizing 4 §5.1: For elements with AR and min-width:auto, the
     // automatic minimum in the ratio-dependent axis is the content-based
@@ -616,6 +620,7 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
     // CSS Sizing 4 §5.1: Reverse AR transfer — when min-height (or explicit height)
     // inflates the block size beyond what was derived from inline, transfer back
     // through AR to inflate inline size.
+    // The transferred values are still subject to the element's explicit max-width.
     let (min_inline, max_inline) = if let Some(ref ar) = child_style.aspect_ratio {
         if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 && child_style.width.is_auto() {
             let b = resolve_border(child_style);
@@ -639,7 +644,36 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
             let transferred_min = reverse_transfer(min_block_size);
             let transferred_max = reverse_transfer(max_block_size);
 
-            (min_inline.max_of(transferred_min), max_inline.max_of(transferred_max))
+            // Clamp transferred sizes by a fixed max-width constraint (not intrinsic
+            // keywords — those are already handled by apply_min_max_inline using the
+            // post-AR intrinsic sizes).
+            let max_w_cap = if !child_style.max_width.is_none()
+                && !child_style.max_width.is_auto()
+                && !child_style.max_width.is_content_or_intrinsic()
+            {
+                let max_w_raw = resolve_length(
+                    &child_style.max_width,
+                    openui_geometry::INDEFINITE_SIZE,
+                    LayoutUnit::max(),
+                    LayoutUnit::max(),
+                );
+                if max_w_raw < LayoutUnit::max() {
+                    if child_style.box_sizing == BoxSizing::ContentBox {
+                        max_w_raw + bp_inline
+                    } else {
+                        max_w_raw.max_of(bp_inline)
+                    }
+                } else {
+                    LayoutUnit::max()
+                }
+            } else {
+                LayoutUnit::max()
+            };
+
+            let clamped_min = min_inline.max_of(transferred_min).min_of(max_w_cap);
+            let clamped_max = max_inline.max_of(transferred_max).min_of(max_w_cap);
+
+            (clamped_min, clamped_max)
         } else {
             (min_inline, max_inline)
         }
@@ -978,7 +1012,7 @@ fn apply_aspect_ratio_inverse(
 /// `compute_intrinsic_block_sizes` include border+padding. Converting the
 /// explicit width to border-box ensures consistent units throughout the
 /// intrinsic sizing pipeline.
-fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
+pub fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
     if style.width.length_type() == openui_geometry::LengthType::Fixed {
         let raw = LayoutUnit::from_f32(style.width.value());
         let bp_val = {
@@ -1107,7 +1141,11 @@ fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> La
 /// or from `compute_intrinsic_block_sizes` which includes border+padding).
 /// Min/max values must be converted to border-box before clamping when
 /// box-sizing is content-box.
-fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
+fn apply_min_max_inline(
+    style: &ComputedStyle,
+    size: LayoutUnit,
+    base_intrinsic: (LayoutUnit, LayoutUnit),  // (min-content, max-content) in border-box
+) -> LayoutUnit {
     let zero = LayoutUnit::zero();
 
     // Percentage min/max resolve against the containing block's inline size.
@@ -1116,16 +1154,34 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
     // percentage sizes against indefinite bases are treated as auto).
     let indefinite = openui_geometry::INDEFINITE_SIZE;
 
-    let min_raw = resolve_length(
-        &style.min_width, indefinite,
-        zero, // auto min-width = 0
-        zero,
-    );
-    let max_raw = resolve_length(
-        &style.max_width, indefinite,
-        LayoutUnit::max(), // auto = unconstrained
-        LayoutUnit::max(), // none = unconstrained
-    );
+    // Resolve min-width, handling intrinsic keywords.
+    let min_raw = if style.min_width.is_content_or_intrinsic() {
+        match style.min_width.length_type() {
+            LengthType::MinContent => base_intrinsic.0,
+            LengthType::MaxContent => base_intrinsic.1,
+            _ => base_intrinsic.0, // fit-content → min-content for min sizing
+        }
+    } else {
+        resolve_length(
+            &style.min_width, indefinite,
+            zero, // auto min-width = 0
+            zero,
+        )
+    };
+    // Resolve max-width, handling intrinsic keywords.
+    let max_raw = if style.max_width.is_content_or_intrinsic() {
+        match style.max_width.length_type() {
+            LengthType::MinContent => base_intrinsic.0,
+            LengthType::MaxContent => base_intrinsic.1,
+            _ => base_intrinsic.1, // fit-content → max-content for max sizing
+        }
+    } else {
+        resolve_length(
+            &style.max_width, indefinite,
+            LayoutUnit::max(), // auto = unconstrained
+            LayoutUnit::max(), // none = unconstrained
+        )
+    };
 
     // Compute border+padding for conversion and floor.
     let bp_val = {

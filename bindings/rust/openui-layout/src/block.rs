@@ -15,7 +15,7 @@
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
 use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, Length, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
-use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction, BreakValue};
+use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction, BreakValue, BoxDecorationBreak};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
@@ -182,7 +182,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Exception: if the constraint space imposes a fixed block size (e.g.,
     // viewport/ICB, or flex/grid definite cross-size), children can resolve
     // percentage heights against that definite size.
-    let child_percentage_block_size = if space.is_fixed_block_size || space.stretch_block_size {
+    let child_percentage_block_size = if (space.is_fixed_block_size || space.stretch_block_size)
+        && !space.is_initial_block_size_indefinite
+    {
         // Definite block size from external constraint — use it directly.
         // Content-box: subtract border+padding.
         (space.available_block_size - border_padding_block).clamp_negative_to_zero()
@@ -2154,19 +2156,58 @@ fn resolve_intrinsic_inline(
     border_padding: LayoutUnit,
 ) -> LayoutUnit {
     let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
-    // Intrinsic sizes include border+padding, convert to content-box
-    let min_content = (intrinsic.min - border_padding).clamp_negative_to_zero();
-    let max_content = (intrinsic.max - border_padding).clamp_negative_to_zero();
+    let style = &doc.node(node_id).style;
+
+    // Apply AR transfer: if the element has aspect-ratio + definite height,
+    // its intrinsic sizes include the AR-derived width (CSS Sizing 4 §5.1).
+    let (min_raw, max_raw) = if let Some(ref ar) = style.aspect_ratio {
+        if style.height.length_type() == openui_geometry::LengthType::Fixed
+            && ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0
+        {
+            let ar_derived = crate::intrinsic_sizing::apply_size_override_inline(
+                style, intrinsic.max,
+            );
+            (intrinsic.min.max_of(ar_derived), intrinsic.max.max_of(ar_derived))
+        } else {
+            (intrinsic.min, intrinsic.max)
+        }
+    } else {
+        (intrinsic.min, intrinsic.max)
+    };
+
+    // Intrinsic sizes include border+padding. Convert to the element's
+    // box-sizing convention: border-box elements keep the full value,
+    // content-box elements subtract border+padding.
+    let to_box_sizing = |v: LayoutUnit| -> LayoutUnit {
+        if style.box_sizing == BoxSizing::BorderBox {
+            v
+        } else {
+            (v - border_padding).clamp_negative_to_zero()
+        }
+    };
+    let min_content = to_box_sizing(min_raw);
+    let max_content = to_box_sizing(max_raw);
     match length.length_type() {
         LengthType::MinContent => min_content,
         LengthType::MaxContent => max_content,
         LengthType::FitContent => {
-            // fit-content = clamp(min-content, available, max-content)
-            let avail = (available - border_padding).clamp_negative_to_zero();
+            let avail = to_box_sizing(available + if style.box_sizing == BoxSizing::BorderBox {
+                border_padding
+            } else {
+                LayoutUnit::zero()
+            });
             avail.clamp(min_content, max_content)
         }
-        LengthType::Stretch => (available - border_padding).clamp_negative_to_zero(),
-        _ => (available - border_padding).clamp_negative_to_zero(), // fallback
+        LengthType::Stretch => to_box_sizing(available + if style.box_sizing == BoxSizing::BorderBox {
+            border_padding
+        } else {
+            LayoutUnit::zero()
+        }),
+        _ => to_box_sizing(available + if style.box_sizing == BoxSizing::BorderBox {
+            border_padding
+        } else {
+            LayoutUnit::zero()
+        }),
     }
 }
 
@@ -3168,17 +3209,17 @@ fn layout_multicol(
                 LayoutUnit::from_raw(i32::MAX / 2)
             };
 
-            let mut remaining_height = container_height;
-            let mut current_group: Vec<NodeId> = Vec::new();
-            // Include container's padding-top in the first group's content.
-            // When a container with padding is split at spanner boundaries,
-            // the padding contributes to the column content before/after the spanner.
+            // Spanner extraction: split container at spanner boundaries.
+            // Each group gets its natural content height as portion_height.
+            // The column balancing algorithm and remaining_available_block
+            // handle the actual height constraint — we don't cap here.
             let container_pad_top = resolve_margin_or_padding(&child_style.padding_top, child_available_inline)
                 + LayoutUnit::from_i32(child_style.effective_border_top());
             let container_pad_bottom = resolve_margin_or_padding(&child_style.padding_bottom, child_available_inline)
                 + LayoutUnit::from_i32(child_style.effective_border_bottom());
+
+            let mut current_group: Vec<NodeId> = Vec::new();
             let mut current_group_content = container_pad_top;
-            let mut is_first_group = true;
 
             for gc_id in doc.children(child_id) {
                 let gc_style = &doc.node(gc_id).style;
@@ -3189,48 +3230,36 @@ fn layout_multicol(
                     continue;
                 }
                 if gc_style.column_span == ColumnSpan::All {
-                    // Flush the current group as a split portion.
-                    // Also flush if group is empty but has padding content
-                    // (container padding-top contributes to pre-spanner space).
                     if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
-                        let portion_h = current_group_content.min_of(remaining_height);
-                        remaining_height = (remaining_height - portion_h).clamp_negative_to_zero();
                         children_info.push(ChildInfo {
                             id: child_id,
                             is_spanner: false,
                             split_portion: Some(SplitPortion {
                                 container_id: child_id,
                                 child_ids: std::mem::take(&mut current_group),
-                                portion_height: portion_h,
+                                portion_height: current_group_content,
                             }),
                         });
                         current_group_content = LayoutUnit::zero();
-                        is_first_group = false;
                     }
-                    // Add the nested spanner as a multicol-level spanner.
                     children_info.push(ChildInfo {
                         id: gc_id,
                         is_spanner: true,
                         split_portion: None,
                     });
-                    // Spanner height doesn't consume the container's budget
-                    // because it's extracted from the container.
                 } else {
-                    // Estimate child height for budget allocation.
                     let gc_h = if !gc_style.height.is_auto() {
-                        let raw = resolve_length(
+                        resolve_length(
                             &gc_style.height,
                             container_height,
                             LayoutUnit::zero(),
                             LayoutUnit::zero(),
-                        );
-                        raw
+                        )
                     } else {
-                        // Auto height: lay out to determine
                         let gc_is_new_fc = establishes_new_fc(&doc.node(gc_id).style);
                         let gc_space = ConstraintSpace::for_block_child(
                             child_available_inline,
-                            remaining_height,
+                            container_height,
                             child_available_inline,
                             container_height,
                             gc_is_new_fc,
@@ -3242,17 +3271,15 @@ fn layout_multicol(
                     current_group_content = current_group_content + gc_h;
                 }
             }
-            // Flush any trailing group (add container's padding-bottom).
             if !current_group.is_empty() || current_group_content > LayoutUnit::zero() {
                 let final_content = current_group_content + container_pad_bottom;
-                let portion_h = final_content.min_of(remaining_height);
                 children_info.push(ChildInfo {
                     id: child_id,
                     is_spanner: false,
                     split_portion: Some(SplitPortion {
                         container_id: child_id,
                         child_ids: current_group,
-                        portion_height: portion_h,
+                        portion_height: final_content,
                     }),
                 });
             }
@@ -3986,7 +4013,8 @@ fn layout_multicol(
                     if column_height.raw() <= 0 {
                         let mut part = child_frag.clone();
                         part.size.height = child_height;
-                        part.has_overflow_clip = true;
+                        // Only clip if the child itself has overflow clipping or content overflows
+                        part.has_overflow_clip = child_frag.has_overflow_clip;
                         part.offset = PhysicalOffset::new(
                             content_edge_x + col_inline_offset_for(col_idx),
                             content_edge_y + total_block_offset + col_block_offset,
@@ -3994,7 +4022,30 @@ fn layout_multicol(
                         result_children.push(part);
                         col_block_offset = col_block_offset + child_height;
                     } else {
-                        while consumed.raw() < child_height.raw() {
+                        // box-decoration-break: clone — borders/padding repeat
+                        // on every fragment. Compute extra block-axis BP to
+                        // account for in each fragment's content area.
+                        let is_clone = child_style.box_decoration_break == BoxDecorationBreak::Clone;
+                        let clone_bp_block = if is_clone {
+                            resolve_margin_or_padding(&child_style.padding_top, column_width)
+                                + resolve_margin_or_padding(&child_style.padding_bottom, column_width)
+                                + LayoutUnit::from_i32(child_style.border_top_width)
+                                + LayoutUnit::from_i32(child_style.border_bottom_width)
+                        } else {
+                            LayoutUnit::zero()
+                        };
+                        // For clone mode, track content consumed separately.
+                        // The child_height includes one set of BP; content is
+                        // child_height minus that BP. Each fragment adds its
+                        // own full BP around the content portion.
+                        let content_height = if is_clone {
+                            (child_height - clone_bp_block).clamp_negative_to_zero()
+                        } else {
+                            child_height
+                        };
+                        let mut content_consumed = LayoutUnit::zero();
+
+                        while content_consumed.raw() < content_height.raw() {
                             let col_inline_offset = col_inline_offset_for(col_idx);
 
                             let avail = if col_block_offset > LayoutUnit::zero() {
@@ -4002,8 +4053,21 @@ fn layout_multicol(
                             } else {
                                 column_height
                             };
-                            let remaining_child = child_height - consumed;
-                            let part_height = avail.min_of(remaining_child);
+
+                            // For clone mode, subtract BP from available space
+                            // to get the content portion that fits.
+                            let content_avail = if is_clone {
+                                (avail - clone_bp_block).clamp_negative_to_zero()
+                            } else {
+                                avail
+                            };
+                            let remaining_content = content_height - content_consumed;
+                            let content_in_part = content_avail.min_of(remaining_content);
+                            let part_height = if is_clone {
+                                content_in_part + clone_bp_block
+                            } else {
+                                content_in_part
+                            };
 
                             // Safety: if part_height is zero, break to avoid
                             // infinite loop (degenerate column height).
@@ -4013,16 +4077,26 @@ fn layout_multicol(
 
                             let mut part = child_frag.clone();
                             part.size.height = part_height;
-                            part.has_overflow_clip = true;
-                            // box-decoration-break: slice (default) — suppress
-                            // block-start border on non-first fragments and
-                            // block-end border on non-last fragments.
-                            if consumed > LayoutUnit::zero() {
-                                part.is_first_for_node = false;
+                            // Only clip if the child has overflow style or more
+                            // content continues after this fragment.
+                            let is_last_part = consumed + part_height >= child_height;
+                            part.has_overflow_clip = child_frag.has_overflow_clip || !is_last_part;
+
+                            if is_clone {
+                                // box-decoration-break: clone — keep borders on
+                                // all fragments (is_first/is_last stay true).
+                            } else {
+                                // box-decoration-break: slice (default) — suppress
+                                // block-start border on non-first fragments and
+                                // block-end border on non-last fragments.
+                                if consumed > LayoutUnit::zero() {
+                                    part.is_first_for_node = false;
+                                }
+                                if consumed + part_height < child_height {
+                                    part.is_last_for_node = false;
+                                }
                             }
-                            if consumed + part_height < child_height {
-                                part.is_last_for_node = false;
-                            }
+
                             part.offset = PhysicalOffset::new(
                                 content_edge_x + col_inline_offset,
                                 content_edge_y + total_block_offset + col_block_offset,
@@ -4034,22 +4108,29 @@ fn layout_multicol(
                                 column_width,
                                 column_height,
                             );
-                            // Shift child content up by the amount already consumed
-                            if consumed > LayoutUnit::zero() {
+                            // Shift child content up by the amount already consumed.
+                            // For clone mode, content_consumed tracks content only;
+                            // children are offset relative to the content box, so
+                            // shifting by content_consumed is correct.
+                            if content_consumed > LayoutUnit::zero() {
                                 for c in &mut part.children {
-                                    c.offset.top = c.offset.top - consumed;
+                                    c.offset.top = c.offset.top - content_consumed;
                                 }
                             }
                             result_children.push(part);
 
-                            consumed = consumed + part_height;
+                            content_consumed = content_consumed + content_in_part;
+                            // For the outer loop's `consumed` tracker (slice mode),
+                            // advance by content_in_part so the while condition
+                            // uses content_height consistently.
+                            consumed = consumed + content_in_part;
                             col_block_offset = col_block_offset + part_height;
                             col_remaining = col_remaining - part_height;
 
                             // Move to next column if this one is full and there's
                             // more content. Overflow columns are created as needed,
                             // but column-fill:auto caps at the resolved column count.
-                            if consumed.raw() < child_height.raw() {
+                            if content_consumed.raw() < content_height.raw() {
                                 let can_advance = algo.column_fill != ColumnFill::Auto
                                     || col_idx + 1 < resolved.count as usize;
                                 if can_advance {

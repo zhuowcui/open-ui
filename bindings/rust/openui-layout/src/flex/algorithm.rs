@@ -675,9 +675,23 @@ fn resolve_container_block_size_for_flex(
                 }
             }
         }
-        // Auto height → indefinite main axis for column flex.
+        // CSS Flexbox §9.7: When the flex container has a definite max main
+        // size (max-height for column), use it as the available space for the
+        // flex algorithm so that flex-shrink can produce negative free space.
+        // Blink: FlexLayoutAlgorithm::ComputeMainAxisAutoFallbackSize().
+        if !style.max_height.is_auto() && !style.max_height.is_none() {
+            let raw = resolve_length(&style.max_height,
+                space.percentage_resolution_block_size,
+                LayoutUnit::zero(), LayoutUnit::zero());
+            let content_max = if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                (raw - border_padding_block).clamp_negative_to_zero()
+            } else { raw };
+            if content_max.raw() > 0 {
+                return content_max;
+            }
+        }
+        // Auto height with no max-height → indefinite main axis.
         // Items stay at hypothetical sizes; container shrink-wraps.
-        // CSS Flexbox §9.2: auto height means intrinsic sizing.
         LayoutUnit::from_raw(-64) // INDEFINITE_SIZE sentinel
     } else {
         let raw = resolve_length(&style.height, space.percentage_resolution_block_size, LayoutUnit::zero(), LayoutUnit::zero());
@@ -2186,8 +2200,19 @@ fn give_items_final_position(
                 (final_main, cross_size_for_child)
             };
 
+            // CSS Flexbox §9.8: flex item sizes are definite for child
+            // percentage resolution only when the flex container has a
+            // definite main size. When the container has auto height
+            // (even if max-height constrains it), percentage heights on
+            // flex item children must resolve as auto.
             let item_pct_block = if is_column {
-                (final_main - item.main_axis_border_padding).clamp_negative_to_zero()
+                if child_percentage_block.is_indefinite() {
+                    // Container main size is not definite → item height
+                    // is not definite for percentage purposes.
+                    child_percentage_block // indefinite
+                } else {
+                    (final_main - item.main_axis_border_padding).clamp_negative_to_zero()
+                }
             } else {
                 if should_stretch || child_percentage_block.is_indefinite() {
                     let child_style = &doc.node(item.node_id).style;
@@ -2215,6 +2240,13 @@ fn give_items_final_position(
 
             if is_column {
                 child_space.is_fixed_block_size = true;
+                // CSS Flexbox §9.8: flex item heights are only definite for
+                // child percentage resolution when the container has a definite
+                // main size. Mark indefinite when container main size came from
+                // max-height rather than explicit height.
+                if child_percentage_block.is_indefinite() {
+                    child_space.is_initial_block_size_indefinite = true;
+                }
                 if should_stretch {
                     child_space.stretch_inline_size = true;
                 }
