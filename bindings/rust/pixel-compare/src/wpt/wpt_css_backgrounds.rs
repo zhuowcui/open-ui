@@ -2948,6 +2948,7 @@ fn css_backgrounds_background_image_gradient_currentcolor_conic_repaint_ref() ->
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -2990,6 +2991,7 @@ fn css_backgrounds_background_image_gradient_currentcolor_linear_repaint_ref() -
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -3032,6 +3034,7 @@ fn css_backgrounds_background_image_gradient_currentcolor_radial_repaint_ref() -
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.width = Length::px(100.0);
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -20199,6 +20202,7 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_right_style = BorderStyle::None;
+        doc.node_mut(n2).style.line_height = LineHeight::Length(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -20212,6 +20216,7 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.display = Display::InlineBlock;
             doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.line_height = LineHeight::Length(100.0);
             doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -20236,6 +20241,7 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
         doc.node_mut(n4).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n4).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n4).style.border_left_style = BorderStyle::None;
+        doc.node_mut(n4).style.line_height = LineHeight::Length(100.0);
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Span);
             doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -20249,6 +20255,7 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
             doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n5).style.display = Display::InlineBlock;
             doc.node_mut(n5).style.width = Length::px(20.0);
+            doc.node_mut(n5).style.line_height = LineHeight::Length(100.0);
             doc.append_child(n4, n5);
     doc
 }
@@ -20301,6 +20308,7 @@ fn css_backgrounds_border_radius_012() -> Document {
         doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
         doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
+        doc.node_mut(n2).style.line_height = LineHeight::Length(100.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -20314,6 +20322,7 @@ fn css_backgrounds_border_radius_012() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.display = Display::InlineBlock;
             doc.node_mut(n3).style.width = Length::px(20.0);
+            doc.node_mut(n3).style.line_height = LineHeight::Length(100.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -20327,6 +20336,7 @@ fn css_backgrounds_border_radius_012() -> Document {
             doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n4).style.display = Display::InlineBlock;
             doc.node_mut(n4).style.width = Length::px(20.0);
+            doc.node_mut(n4).style.line_height = LineHeight::Length(100.0);
             doc.append_child(n2, n4);
     doc
 }
@@ -24472,6 +24482,7 @@ fn css_backgrounds_box_shadow_overlapping_001() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
         doc.append_child(n1, n2);
     doc
 }
@@ -24515,6 +24526,8 @@ fn css_backgrounds_box_shadow_overlapping_002() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -28216,6 +28229,7 @@ fn css_backgrounds_inner_border_non_renderable_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
     doc
 }
@@ -29289,6 +29303,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break_ref() -
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.node_mut(n2).style.line_height = LineHeight::Length(48.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -29327,6 +29342,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break_ref() -
         doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Slice;
+        doc.node_mut(n4).style.line_height = LineHeight::Length(48.0);
         doc.append_child(n3, n4);
     doc
 }
@@ -29380,6 +29396,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break() -> Do
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
         doc.node_mut(n2).style.box_decoration_break = BoxDecorationBreak::Clone;
+        doc.node_mut(n2).style.line_height = LineHeight::Length(48.0);
         doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -29418,6 +29435,7 @@ fn css_backgrounds_background_clip_clip_border_area_box_decoration_break() -> Do
         doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
         doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Slice;
+        doc.node_mut(n4).style.line_height = LineHeight::Length(48.0);
         doc.append_child(n3, n4);
     doc
 }
@@ -31275,6 +31293,7 @@ fn css_backgrounds_background_clip_clip_text_dynamic_2_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.height = Length::px(100.0);
+        doc.node_mut(n2).style.color = Color::TRANSPARENT;
         doc.append_child(n1, n2);
         let n3 = doc.create_node(ElementTag::Div);
         doc.node_mut(n3).style.display = Display::Block;
@@ -31287,6 +31306,7 @@ fn css_backgrounds_background_clip_clip_text_dynamic_2_ref() -> Document {
         doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n3).style.padding_left = Length::px(0.0);
         doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n3).style.color = Color::TRANSPARENT;
         doc.append_child(n1, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -43246,6 +43266,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -43275,6 +43296,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref() -> Document {
             doc.node_mut(n3).style.border_right_width = 0;
             doc.node_mut(n3).style.border_bottom_width = 5;
             doc.node_mut(n3).style.border_left_width = 0;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -43287,6 +43309,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref() -> Document {
         doc.node_mut(n4).style.padding_left = Length::px(0.0);
         doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n4).style.position = Position::Relative;
+        doc.node_mut(n4).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
@@ -43316,6 +43339,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref() -> Document {
             doc.node_mut(n5).style.border_right_width = 0;
             doc.node_mut(n5).style.border_bottom_width = 5;
             doc.node_mut(n5).style.border_left_width = 0;
+            doc.node_mut(n5).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Span);
         doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -43328,6 +43352,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref() -> Document {
         doc.node_mut(n6).style.padding_left = Length::px(0.0);
         doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n6).style.position = Position::Relative;
+        doc.node_mut(n6).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -43357,6 +43382,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001_ref() -> Document {
             doc.node_mut(n7).style.border_right_width = 5;
             doc.node_mut(n7).style.border_bottom_width = 5;
             doc.node_mut(n7).style.border_left_width = 0;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n6, n7);
     doc
 }
@@ -43397,6 +43423,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -43438,6 +43465,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -43467,6 +43495,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref() -> Document {
             doc.node_mut(n3).style.border_right_width = 0;
             doc.node_mut(n3).style.border_bottom_width = 0;
             doc.node_mut(n3).style.border_left_width = 5;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -43479,6 +43508,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref() -> Document {
         doc.node_mut(n4).style.padding_left = Length::px(0.0);
         doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n4).style.position = Position::Relative;
+        doc.node_mut(n4).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
@@ -43508,6 +43538,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref() -> Document {
             doc.node_mut(n5).style.border_right_width = 0;
             doc.node_mut(n5).style.border_bottom_width = 0;
             doc.node_mut(n5).style.border_left_width = 0;
+            doc.node_mut(n5).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Span);
         doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -43520,6 +43551,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref() -> Document {
         doc.node_mut(n6).style.padding_left = Length::px(0.0);
         doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n6).style.position = Position::Relative;
+        doc.node_mut(n6).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -43549,6 +43581,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002_ref() -> Document {
             doc.node_mut(n7).style.border_right_width = 0;
             doc.node_mut(n7).style.border_bottom_width = 0;
             doc.node_mut(n7).style.border_left_width = 0;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n6, n7);
     doc
 }
@@ -43589,6 +43622,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
     doc
 }
@@ -43630,6 +43664,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.position = Position::Relative;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -43659,6 +43694,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref() -> Document {
             doc.node_mut(n3).style.border_right_width = 0;
             doc.node_mut(n3).style.border_bottom_width = 12;
             doc.node_mut(n3).style.border_left_width = 8;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n2, n3);
         let n4 = doc.create_node(ElementTag::Span);
         doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -43671,6 +43707,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref() -> Document {
         doc.node_mut(n4).style.padding_left = Length::px(0.0);
         doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n4).style.position = Position::Relative;
+        doc.node_mut(n4).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.display = Display::Block;
@@ -43700,6 +43737,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref() -> Document {
             doc.node_mut(n5).style.border_right_width = 0;
             doc.node_mut(n5).style.border_bottom_width = 12;
             doc.node_mut(n5).style.border_left_width = 0;
+            doc.node_mut(n5).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n4, n5);
         let n6 = doc.create_node(ElementTag::Span);
         doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -43712,6 +43750,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref() -> Document {
         doc.node_mut(n6).style.padding_left = Length::px(0.0);
         doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n6).style.position = Position::Relative;
+        doc.node_mut(n6).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -43741,6 +43780,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003_ref() -> Document {
             doc.node_mut(n7).style.border_right_width = 12;
             doc.node_mut(n7).style.border_bottom_width = 12;
             doc.node_mut(n7).style.border_left_width = 0;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 255, 255, 255);
             doc.append_child(n6, n7);
     doc
 }
@@ -43781,6 +43821,7 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 255, 255, 255);
         doc.append_child(n1, n2);
     doc
 }

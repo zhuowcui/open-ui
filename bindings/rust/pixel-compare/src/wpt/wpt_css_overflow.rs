@@ -6646,6 +6646,7 @@ fn css_overflow_text_overflow_ellipsis_002() -> Document {
             doc.node_mut(n3).style.padding_left = Length::px(0.0);
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.visibility = Visibility::Visible;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n3);
     doc
 }
@@ -6716,6 +6717,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n3).style.width = Length::px(30.0);
             doc.node_mut(n3).style.height = Length::px(16.0);
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(5.0);
@@ -6731,6 +6733,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n4).style.width = Length::px(30.0);
             doc.node_mut(n4).style.height = Length::px(16.0);
+            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Span);
             doc.node_mut(n5).style.margin_top = Length::px(5.0);
@@ -6746,6 +6749,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n5).style.width = Length::px(30.0);
             doc.node_mut(n5).style.height = Length::px(16.0);
+            doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(5.0);
@@ -6761,6 +6765,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n6).style.width = Length::px(30.0);
             doc.node_mut(n6).style.height = Length::px(16.0);
+            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n6);
         let n7 = doc.create_node(ElementTag::Div);
         doc.node_mut(n7).style.display = Display::Block;
@@ -6803,6 +6808,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n8).style.width = Length::px(30.0);
             doc.node_mut(n8).style.height = Length::px(16.0);
+            doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n7, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(5.0);
@@ -6818,6 +6824,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n9).style.width = Length::px(30.0);
             doc.node_mut(n9).style.height = Length::px(16.0);
+            doc.node_mut(n9).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n7, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(5.0);
@@ -6833,6 +6840,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n10).style.width = Length::px(30.0);
             doc.node_mut(n10).style.height = Length::px(16.0);
+            doc.node_mut(n10).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n7, n10);
             let n11 = doc.create_node(ElementTag::Span);
             doc.node_mut(n11).style.margin_top = Length::px(5.0);
@@ -6848,6 +6856,7 @@ fn css_overflow_text_overflow_ellipsis_003_ref() -> Document {
             doc.node_mut(n11).style.background_color = Color::from_rgba8(0, 128, 0, 255);
             doc.node_mut(n11).style.width = Length::px(30.0);
             doc.node_mut(n11).style.height = Length::px(16.0);
+            doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n7, n11);
     doc
 }
@@ -6880,6 +6889,7 @@ fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
     doc.node_mut(n1).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n1).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n1).style.direction = Direction::Rtl;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6897,6 +6907,7 @@ fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
     doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n2).style.direction = Direction::Rtl;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -6914,6 +6925,7 @@ fn css_overflow_text_overflow_ellipsis_rtl_001() -> Document {
     doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
     doc.node_mut(n3).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n3).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n3).style.direction = Direction::Rtl;
     doc.append_child(vp, n3);
     doc
 }
@@ -7450,6 +7462,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
         doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.line_height = LineHeight::Length(20.0);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -7468,6 +7481,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n3).style.width = Length::px(50.0);
             doc.node_mut(n3).style.height = Length::px(50.0);
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 105, 180, 255);
+            doc.node_mut(n3).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -7486,6 +7500,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n4).style.width = Length::px(50.0);
             doc.node_mut(n4).style.height = Length::px(50.0);
             doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.node_mut(n4).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -7504,6 +7519,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n5).style.width = Length::px(50.0);
             doc.node_mut(n5).style.height = Length::px(50.0);
             doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 105, 180, 255);
+            doc.node_mut(n5).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -7522,6 +7538,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n6).style.width = Length::px(50.0);
             doc.node_mut(n6).style.height = Length::px(50.0);
             doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.node_mut(n6).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -7540,6 +7557,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n7).style.width = Length::px(50.0);
             doc.node_mut(n7).style.height = Length::px(50.0);
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 105, 180, 255);
+            doc.node_mut(n7).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n7);
             let n8 = doc.create_node(ElementTag::Div);
             doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -7558,6 +7576,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n8).style.width = Length::px(50.0);
             doc.node_mut(n8).style.height = Length::px(50.0);
             doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.node_mut(n8).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -7576,6 +7595,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n9).style.width = Length::px(50.0);
             doc.node_mut(n9).style.height = Length::px(50.0);
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 105, 180, 255);
+            doc.node_mut(n9).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n9);
             let n10 = doc.create_node(ElementTag::Div);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -7594,6 +7614,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n10).style.width = Length::px(50.0);
             doc.node_mut(n10).style.height = Length::px(50.0);
             doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+            doc.node_mut(n10).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n10);
             let n11 = doc.create_node(ElementTag::Div);
             doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -7612,6 +7633,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n11).style.width = Length::px(50.0);
             doc.node_mut(n11).style.height = Length::px(50.0);
             doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 105, 180, 255);
+            doc.node_mut(n11).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n2, n11);
         let n12 = doc.create_node(ElementTag::Div);
         doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -7632,6 +7654,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
         doc.node_mut(n12).style.border_bottom_style = BorderStyle::Solid;
         doc.node_mut(n12).style.border_left_width = 15;
         doc.node_mut(n12).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n12).style.line_height = LineHeight::Length(20.0);
         doc.append_child(n1, n12);
             let n13 = doc.create_node(ElementTag::Div);
             doc.node_mut(n13).style.display = Display::Block;
@@ -7648,6 +7671,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n13).style.width = Length::px(140.0);
             doc.node_mut(n13).style.height = Length::px(100.0);
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n13).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n12, n13);
             let n14 = doc.create_node(ElementTag::Div);
             doc.node_mut(n14).style.display = Display::Block;
@@ -7664,6 +7688,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n14).style.width = Length::px(140.0);
             doc.node_mut(n14).style.height = Length::px(100.0);
             doc.node_mut(n14).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n14).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n12, n14);
             let n15 = doc.create_node(ElementTag::Div);
             doc.node_mut(n15).style.display = Display::Block;
@@ -7680,6 +7705,7 @@ fn css_overflow_scroll_markers_column_scroll_marker_001_ref() -> Document {
             doc.node_mut(n15).style.width = Length::px(140.0);
             doc.node_mut(n15).style.height = Length::px(100.0);
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n15).style.line_height = LineHeight::Length(20.0);
             doc.append_child(n12, n15);
     doc
 }

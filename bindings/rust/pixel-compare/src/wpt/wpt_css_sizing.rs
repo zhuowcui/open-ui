@@ -2689,6 +2689,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -2715,6 +2716,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -2744,6 +2746,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -2773,6 +2777,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -2799,6 +2805,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -2828,6 +2835,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -2857,6 +2866,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -2883,6 +2894,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -2912,6 +2924,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -2941,6 +2955,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -2967,6 +2983,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -2996,6 +3013,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -3025,6 +3044,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -3051,6 +3072,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -3080,6 +3102,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -3109,6 +3133,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -3135,6 +3161,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -3164,6 +3191,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -3193,6 +3222,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -3219,6 +3250,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -3248,6 +3280,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -3277,6 +3311,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -3303,6 +3339,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -3332,6 +3369,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -3361,6 +3400,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -3387,6 +3428,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -3416,6 +3458,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -3445,6 +3489,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -3471,6 +3517,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -3500,6 +3547,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -3529,6 +3578,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -3555,6 +3606,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -3584,6 +3636,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Pre;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -3597,6 +3651,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -3623,6 +3678,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -3652,6 +3708,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -3681,6 +3739,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -3707,6 +3767,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -3736,6 +3797,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -3765,6 +3828,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -3791,6 +3856,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -3820,6 +3886,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -3849,6 +3917,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -3875,6 +3945,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -3904,6 +3975,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -3933,6 +4006,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -3959,6 +4034,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -3988,6 +4064,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -4017,6 +4095,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -4043,6 +4123,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -4072,6 +4153,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -4101,6 +4184,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -4127,6 +4212,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -4156,6 +4242,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -4185,6 +4273,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -4211,6 +4301,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -4240,6 +4331,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -4269,6 +4362,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -4295,6 +4390,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -4324,6 +4420,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -4353,6 +4451,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -4379,6 +4479,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -4408,6 +4509,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -4437,6 +4540,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -4463,6 +4568,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -4492,6 +4598,8 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Pre;
             doc.append_child(n65, n66);
     doc
 }
@@ -4523,6 +4631,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -4548,6 +4657,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -4577,6 +4687,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n3).style.color = Color::BLACK;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -4606,6 +4717,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n4).style.color = Color::BLACK;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -4631,6 +4743,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -4660,6 +4773,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n6).style.color = Color::BLACK;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -4689,6 +4803,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n7).style.color = Color::BLACK;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -4714,6 +4829,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -4743,6 +4859,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n9).style.color = Color::BLACK;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -4772,6 +4889,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n10).style.color = Color::BLACK;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -4797,6 +4915,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -4826,6 +4945,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n12).style.color = Color::BLACK;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -4855,6 +4975,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n13).style.color = Color::BLACK;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -4880,6 +5001,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -4909,6 +5031,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n15).style.color = Color::BLACK;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -4938,6 +5061,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n16).style.color = Color::BLACK;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -4963,6 +5087,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -4992,6 +5117,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n18).style.color = Color::BLACK;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -5021,6 +5147,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n19).style.color = Color::BLACK;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -5046,6 +5173,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -5075,6 +5203,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n21).style.color = Color::BLACK;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -5104,6 +5233,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n22).style.color = Color::BLACK;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -5129,6 +5259,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -5158,6 +5289,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n24).style.color = Color::BLACK;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -5187,6 +5319,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n25).style.color = Color::BLACK;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -5212,6 +5345,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -5241,6 +5375,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n27).style.color = Color::BLACK;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -5270,6 +5405,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n28).style.color = Color::BLACK;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -5295,6 +5431,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -5324,6 +5461,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n30).style.color = Color::BLACK;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -5353,6 +5491,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n31).style.color = Color::BLACK;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -5378,6 +5517,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -5407,6 +5547,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n33).style.color = Color::BLACK;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -5420,6 +5561,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -5445,6 +5587,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -5474,6 +5617,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n36).style.color = Color::BLACK;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -5503,6 +5647,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n37).style.color = Color::BLACK;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -5528,6 +5673,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -5557,6 +5703,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n39).style.color = Color::BLACK;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -5586,6 +5733,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n40).style.color = Color::BLACK;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -5611,6 +5759,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -5640,6 +5789,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n42).style.color = Color::BLACK;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -5669,6 +5819,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n43).style.color = Color::BLACK;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -5694,6 +5845,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -5723,6 +5875,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n45).style.color = Color::BLACK;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -5752,6 +5905,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n46).style.color = Color::BLACK;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -5777,6 +5931,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -5806,6 +5961,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n48).style.color = Color::BLACK;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -5835,6 +5991,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n49).style.color = Color::BLACK;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -5860,6 +6017,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -5889,6 +6047,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n51).style.color = Color::BLACK;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -5918,6 +6077,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n52).style.color = Color::BLACK;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -5943,6 +6103,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -5972,6 +6133,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n54).style.color = Color::BLACK;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -6001,6 +6163,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n55).style.color = Color::BLACK;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -6026,6 +6189,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -6055,6 +6219,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n57).style.color = Color::BLACK;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -6084,6 +6249,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n58).style.color = Color::BLACK;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -6109,6 +6275,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -6138,6 +6305,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n60).style.color = Color::BLACK;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -6167,6 +6335,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n61).style.color = Color::BLACK;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -6192,6 +6361,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -6221,6 +6391,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n63).style.color = Color::BLACK;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -6250,6 +6421,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n64).style.color = Color::BLACK;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -6275,6 +6447,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -6304,6 +6477,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n66).style.color = Color::BLACK;
             doc.append_child(n65, n66);
     doc
 }
@@ -6335,6 +6509,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -6361,6 +6536,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -6390,6 +6566,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -6419,6 +6597,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -6445,6 +6625,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -6474,6 +6655,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -6503,6 +6686,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -6529,6 +6714,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -6558,6 +6744,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -6587,6 +6775,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -6613,6 +6803,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -6642,6 +6833,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -6671,6 +6864,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -6697,6 +6892,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -6726,6 +6922,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -6755,6 +6953,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -6781,6 +6981,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -6810,6 +7011,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -6839,6 +7042,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -6865,6 +7070,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -6894,6 +7100,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -6923,6 +7131,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -6949,6 +7159,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -6978,6 +7189,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -7007,6 +7220,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -7033,6 +7248,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -7062,6 +7278,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -7091,6 +7309,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -7117,6 +7337,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -7146,6 +7367,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -7175,6 +7398,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -7201,6 +7426,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -7230,6 +7456,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Pre;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -7243,6 +7471,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -7269,6 +7498,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -7298,6 +7528,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -7327,6 +7559,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -7353,6 +7587,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -7382,6 +7617,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -7411,6 +7648,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -7437,6 +7676,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -7466,6 +7706,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -7495,6 +7737,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -7521,6 +7765,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -7550,6 +7795,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -7579,6 +7826,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -7605,6 +7854,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -7634,6 +7884,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -7663,6 +7915,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -7689,6 +7943,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -7718,6 +7973,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -7747,6 +8004,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -7773,6 +8032,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -7802,6 +8062,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -7831,6 +8093,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -7857,6 +8121,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -7886,6 +8151,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -7915,6 +8182,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -7941,6 +8210,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -7970,6 +8240,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -7999,6 +8271,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -8025,6 +8299,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -8054,6 +8329,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -8083,6 +8360,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -8109,6 +8388,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -8138,6 +8418,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Pre;
             doc.append_child(n65, n66);
     doc
 }
@@ -8169,6 +8451,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -8195,6 +8478,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -8224,6 +8508,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -8253,6 +8539,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -8279,6 +8567,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -8308,6 +8597,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -8337,6 +8628,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -8363,6 +8656,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -8392,6 +8686,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -8421,6 +8717,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -8447,6 +8745,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -8476,6 +8775,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -8505,6 +8806,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -8531,6 +8834,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -8560,6 +8864,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -8589,6 +8895,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -8615,6 +8923,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -8644,6 +8953,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -8673,6 +8984,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -8699,6 +9012,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -8728,6 +9042,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -8757,6 +9073,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -8783,6 +9101,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -8812,6 +9131,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -8841,6 +9162,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -8867,6 +9190,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -8896,6 +9220,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -8925,6 +9251,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -8951,6 +9279,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -8980,6 +9309,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -9009,6 +9340,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -9035,6 +9368,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -9064,6 +9398,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -9077,6 +9413,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -9103,6 +9440,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -9132,6 +9470,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -9161,6 +9501,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -9187,6 +9529,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -9216,6 +9559,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -9245,6 +9590,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -9271,6 +9618,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -9300,6 +9648,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -9329,6 +9679,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -9355,6 +9707,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -9384,6 +9737,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -9413,6 +9768,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -9439,6 +9796,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -9468,6 +9826,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -9497,6 +9857,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -9523,6 +9885,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -9552,6 +9915,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -9581,6 +9946,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -9607,6 +9974,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -9636,6 +10004,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -9665,6 +10035,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -9691,6 +10063,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -9720,6 +10093,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -9749,6 +10124,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -9775,6 +10152,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -9804,6 +10182,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -9833,6 +10213,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -9859,6 +10241,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -9888,6 +10271,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -9917,6 +10302,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -9943,6 +10330,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -9972,6 +10360,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n65, n66);
     doc
 }
@@ -10003,6 +10393,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -10029,6 +10420,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -10058,6 +10450,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -10087,6 +10481,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -10113,6 +10509,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -10142,6 +10539,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -10171,6 +10570,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -10197,6 +10598,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -10226,6 +10628,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -10255,6 +10659,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -10281,6 +10687,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -10310,6 +10717,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -10339,6 +10748,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -10365,6 +10776,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -10394,6 +10806,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -10423,6 +10837,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -10449,6 +10865,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -10478,6 +10895,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -10507,6 +10926,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -10533,6 +10954,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -10562,6 +10984,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -10591,6 +11015,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -10617,6 +11043,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -10646,6 +11073,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -10675,6 +11104,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -10701,6 +11132,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -10730,6 +11162,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -10759,6 +11193,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -10785,6 +11221,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -10814,6 +11251,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -10843,6 +11282,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -10869,6 +11310,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -10898,6 +11340,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Pre;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -10911,6 +11355,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -10937,6 +11382,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -10966,6 +11412,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -10995,6 +11443,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -11021,6 +11471,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -11050,6 +11501,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -11079,6 +11532,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -11105,6 +11560,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -11134,6 +11590,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -11163,6 +11621,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -11189,6 +11649,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -11218,6 +11679,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -11247,6 +11710,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -11273,6 +11738,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -11302,6 +11768,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -11331,6 +11799,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -11357,6 +11827,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -11386,6 +11857,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -11415,6 +11888,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -11441,6 +11916,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -11470,6 +11946,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -11499,6 +11977,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -11525,6 +12005,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -11554,6 +12035,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -11583,6 +12066,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -11609,6 +12094,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -11638,6 +12124,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -11667,6 +12155,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -11693,6 +12183,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -11722,6 +12213,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -11751,6 +12244,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -11777,6 +12272,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -11806,6 +12302,8 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Pre;
             doc.append_child(n65, n66);
     doc
 }
@@ -11837,6 +12335,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -11863,6 +12362,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -11892,6 +12392,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -11921,6 +12423,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -11947,6 +12451,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -11976,6 +12481,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -12005,6 +12512,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -12031,6 +12540,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -12060,6 +12570,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -12089,6 +12601,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -12115,6 +12629,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -12144,6 +12659,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -12173,6 +12690,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -12199,6 +12718,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -12228,6 +12748,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -12257,6 +12779,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -12283,6 +12807,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -12312,6 +12837,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -12341,6 +12868,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -12367,6 +12896,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -12396,6 +12926,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -12425,6 +12957,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -12451,6 +12985,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -12480,6 +13015,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -12509,6 +13046,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -12535,6 +13074,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -12564,6 +13104,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -12593,6 +13135,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -12619,6 +13163,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -12648,6 +13193,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -12677,6 +13224,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -12703,6 +13252,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -12732,6 +13282,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -12745,6 +13297,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -12771,6 +13324,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -12800,6 +13354,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -12829,6 +13385,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -12855,6 +13413,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -12884,6 +13443,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -12913,6 +13474,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -12939,6 +13502,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -12968,6 +13532,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -12997,6 +13563,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -13023,6 +13591,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -13052,6 +13621,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -13081,6 +13652,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -13107,6 +13680,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -13136,6 +13710,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -13165,6 +13741,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -13191,6 +13769,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -13220,6 +13799,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -13249,6 +13830,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -13275,6 +13858,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -13304,6 +13888,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -13333,6 +13919,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -13359,6 +13947,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -13388,6 +13977,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -13417,6 +14008,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -13443,6 +14036,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -13472,6 +14066,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -13501,6 +14097,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -13527,6 +14125,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -13556,6 +14155,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -13585,6 +14186,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -13611,6 +14214,7 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -13640,6 +14244,8 @@ fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Clone;
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n65, n66);
     doc
 }
@@ -17779,6 +18385,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n3).style.border_left_width = 2;
             doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n3).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -17803,6 +18410,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n4).style.border_left_width = 2;
             doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n4).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -17860,6 +18468,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n6).style.height = Length::px(10.0);
+            doc.node_mut(n6).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -17885,6 +18494,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n7).style.height = Length::px(10.0);
+            doc.node_mut(n7).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -17942,6 +18552,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n9).style.height = Length::px(100.0);
+            doc.node_mut(n9).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Div);
             doc.node_mut(n10).style.display = Display::Block;
@@ -17967,6 +18578,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n10).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n10).style.height = Length::px(100.0);
+            doc.node_mut(n10).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -18023,6 +18635,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n12).style.border_left_width = 2;
             doc.node_mut(n12).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n12).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Div);
             doc.node_mut(n13).style.display = Display::Block;
@@ -18047,6 +18660,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n13).style.border_left_width = 2;
             doc.node_mut(n13).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n13).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n13).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.margin_top = Length::px(0.0);
@@ -18104,6 +18718,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n15).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n15).style.height = Length::px(10.0);
+            doc.node_mut(n15).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Div);
             doc.node_mut(n16).style.display = Display::Block;
@@ -18129,6 +18744,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n16).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n16).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n16).style.height = Length::px(10.0);
+            doc.node_mut(n16).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.margin_top = Length::px(0.0);
@@ -18186,6 +18802,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n18).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n18).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n18).style.height = Length::px(100.0);
+            doc.node_mut(n18).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Div);
             doc.node_mut(n19).style.display = Display::Block;
@@ -18211,6 +18828,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n19).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n19).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n19).style.height = Length::px(100.0);
+            doc.node_mut(n19).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n17, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -18279,6 +18897,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n22).style.border_left_width = 2;
             doc.node_mut(n22).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n22).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n22).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n21, n22);
             let n23 = doc.create_node(ElementTag::Div);
             doc.node_mut(n23).style.display = Display::Block;
@@ -18303,6 +18922,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n23).style.border_left_width = 2;
             doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n23).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n21, n23);
         let n24 = doc.create_node(ElementTag::Div);
         doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -18360,6 +18980,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n25).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n25).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n25).style.height = Length::px(10.0);
+            doc.node_mut(n25).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n24, n25);
             let n26 = doc.create_node(ElementTag::Div);
             doc.node_mut(n26).style.display = Display::Block;
@@ -18385,6 +19006,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n26).style.height = Length::px(10.0);
+            doc.node_mut(n26).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n24, n26);
         let n27 = doc.create_node(ElementTag::Div);
         doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -18442,6 +19064,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n28).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n28).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n28).style.height = Length::px(10.0);
+            doc.node_mut(n28).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n27, n28);
             let n29 = doc.create_node(ElementTag::Div);
             doc.node_mut(n29).style.display = Display::Block;
@@ -18467,6 +19090,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n29).style.height = Length::px(10.0);
+            doc.node_mut(n29).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n27, n29);
         let n30 = doc.create_node(ElementTag::Div);
         doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -18524,6 +19148,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n31).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n31).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n31).style.height = Length::px(100.0);
+            doc.node_mut(n31).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Div);
             doc.node_mut(n32).style.display = Display::Block;
@@ -18549,6 +19174,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n32).style.height = Length::px(100.0);
+            doc.node_mut(n32).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n30, n32);
         let n33 = doc.create_node(ElementTag::Div);
         doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -18606,6 +19232,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n34).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n34).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n34).style.height = Length::px(100.0);
+            doc.node_mut(n34).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Div);
             doc.node_mut(n35).style.display = Display::Block;
@@ -18631,6 +19258,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n35).style.height = Length::px(100.0);
+            doc.node_mut(n35).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n33, n35);
     doc
 }
@@ -18715,6 +19343,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n3).style.border_left_width = 2;
             doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n3).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -18739,6 +19368,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n4).style.border_left_width = 2;
             doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n4).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -18797,6 +19427,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n6).style.height = Length::px(10.0);
+            doc.node_mut(n6).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -18822,6 +19453,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n7).style.height = Length::px(10.0);
+            doc.node_mut(n7).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -18880,6 +19512,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n9).style.height = Length::px(100.0);
+            doc.node_mut(n9).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Div);
             doc.node_mut(n10).style.display = Display::Block;
@@ -18905,6 +19538,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n10).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n10).style.height = Length::px(100.0);
+            doc.node_mut(n10).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -18962,6 +19596,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n12).style.border_left_width = 2;
             doc.node_mut(n12).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n12).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Div);
             doc.node_mut(n13).style.display = Display::Block;
@@ -18986,6 +19621,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n13).style.border_left_width = 2;
             doc.node_mut(n13).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n13).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n13).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.margin_top = Length::px(0.0);
@@ -19044,6 +19680,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n15).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n15).style.height = Length::px(10.0);
+            doc.node_mut(n15).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Div);
             doc.node_mut(n16).style.display = Display::Block;
@@ -19069,6 +19706,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n16).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n16).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n16).style.height = Length::px(10.0);
+            doc.node_mut(n16).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.margin_top = Length::px(0.0);
@@ -19127,6 +19765,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n18).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n18).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n18).style.height = Length::px(100.0);
+            doc.node_mut(n18).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Div);
             doc.node_mut(n19).style.display = Display::Block;
@@ -19152,6 +19791,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n19).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n19).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n19).style.height = Length::px(100.0);
+            doc.node_mut(n19).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n17, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -19220,6 +19860,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n22).style.border_left_width = 2;
             doc.node_mut(n22).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n22).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n22).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n21, n22);
             let n23 = doc.create_node(ElementTag::Div);
             doc.node_mut(n23).style.display = Display::Block;
@@ -19244,6 +19885,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n23).style.border_left_width = 2;
             doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n23).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n21, n23);
         let n24 = doc.create_node(ElementTag::Div);
         doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -19302,6 +19944,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n25).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n25).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n25).style.height = Length::px(10.0);
+            doc.node_mut(n25).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n24, n25);
             let n26 = doc.create_node(ElementTag::Div);
             doc.node_mut(n26).style.display = Display::Block;
@@ -19327,6 +19970,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n26).style.height = Length::px(10.0);
+            doc.node_mut(n26).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n24, n26);
         let n27 = doc.create_node(ElementTag::Div);
         doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -19385,6 +20029,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n28).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n28).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n28).style.height = Length::px(10.0);
+            doc.node_mut(n28).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n27, n28);
             let n29 = doc.create_node(ElementTag::Div);
             doc.node_mut(n29).style.display = Display::Block;
@@ -19410,6 +20055,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n29).style.height = Length::px(10.0);
+            doc.node_mut(n29).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n27, n29);
         let n30 = doc.create_node(ElementTag::Div);
         doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -19468,6 +20114,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n31).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n31).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n31).style.height = Length::px(100.0);
+            doc.node_mut(n31).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Div);
             doc.node_mut(n32).style.display = Display::Block;
@@ -19493,6 +20140,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n32).style.height = Length::px(100.0);
+            doc.node_mut(n32).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n30, n32);
         let n33 = doc.create_node(ElementTag::Div);
         doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -19551,6 +20199,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n34).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n34).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n34).style.height = Length::px(100.0);
+            doc.node_mut(n34).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Div);
             doc.node_mut(n35).style.display = Display::Block;
@@ -19576,6 +20225,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n35).style.height = Length::px(100.0);
+            doc.node_mut(n35).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n33, n35);
     doc
 }
@@ -19660,6 +20310,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n3).style.border_left_width = 2;
             doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n3).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.display = Display::Block;
@@ -19684,6 +20335,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n4).style.border_left_width = 2;
             doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n4).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -19742,6 +20394,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n6).style.height = Length::px(10.0);
+            doc.node_mut(n6).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.display = Display::Block;
@@ -19767,6 +20420,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n7).style.height = Length::px(10.0);
+            doc.node_mut(n7).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -19825,6 +20479,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n9).style.height = Length::px(100.0);
+            doc.node_mut(n9).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Div);
             doc.node_mut(n10).style.display = Display::Block;
@@ -19850,6 +20505,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n10).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n10).style.height = Length::px(100.0);
+            doc.node_mut(n10).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -19907,6 +20563,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n12).style.border_left_width = 2;
             doc.node_mut(n12).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n12).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Div);
             doc.node_mut(n13).style.display = Display::Block;
@@ -19931,6 +20588,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n13).style.border_left_width = 2;
             doc.node_mut(n13).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n13).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n13).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.margin_top = Length::px(0.0);
@@ -19989,6 +20647,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n15).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n15).style.height = Length::px(10.0);
+            doc.node_mut(n15).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Div);
             doc.node_mut(n16).style.display = Display::Block;
@@ -20014,6 +20673,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n16).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n16).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n16).style.height = Length::px(10.0);
+            doc.node_mut(n16).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.margin_top = Length::px(0.0);
@@ -20072,6 +20732,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n18).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n18).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n18).style.height = Length::px(100.0);
+            doc.node_mut(n18).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Div);
             doc.node_mut(n19).style.display = Display::Block;
@@ -20097,6 +20758,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n19).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n19).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n19).style.height = Length::px(100.0);
+            doc.node_mut(n19).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n17, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -20165,6 +20827,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n22).style.border_left_width = 2;
             doc.node_mut(n22).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n22).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n22).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n21, n22);
             let n23 = doc.create_node(ElementTag::Div);
             doc.node_mut(n23).style.display = Display::Block;
@@ -20189,6 +20852,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n23).style.border_left_width = 2;
             doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
+            doc.node_mut(n23).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n21, n23);
         let n24 = doc.create_node(ElementTag::Div);
         doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -20247,6 +20911,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n25).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n25).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n25).style.height = Length::px(10.0);
+            doc.node_mut(n25).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n24, n25);
             let n26 = doc.create_node(ElementTag::Div);
             doc.node_mut(n26).style.display = Display::Block;
@@ -20272,6 +20937,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n26).style.height = Length::px(10.0);
+            doc.node_mut(n26).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n24, n26);
         let n27 = doc.create_node(ElementTag::Div);
         doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -20330,6 +20996,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n28).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n28).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n28).style.height = Length::px(10.0);
+            doc.node_mut(n28).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n27, n28);
             let n29 = doc.create_node(ElementTag::Div);
             doc.node_mut(n29).style.display = Display::Block;
@@ -20355,6 +21022,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n29).style.height = Length::px(10.0);
+            doc.node_mut(n29).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n27, n29);
         let n30 = doc.create_node(ElementTag::Div);
         doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -20413,6 +21081,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n31).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n31).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n31).style.height = Length::px(100.0);
+            doc.node_mut(n31).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n30, n31);
             let n32 = doc.create_node(ElementTag::Div);
             doc.node_mut(n32).style.display = Display::Block;
@@ -20438,6 +21107,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n32).style.height = Length::px(100.0);
+            doc.node_mut(n32).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n30, n32);
         let n33 = doc.create_node(ElementTag::Div);
         doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -20496,6 +21166,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n34).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n34).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n34).style.height = Length::px(100.0);
+            doc.node_mut(n34).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n33, n34);
             let n35 = doc.create_node(ElementTag::Div);
             doc.node_mut(n35).style.display = Display::Block;
@@ -20521,6 +21192,7 @@ fn css_sizing_hori_block_size_small_or_larger_than_container_with_min_or_max_con
             doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
             doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255));
             doc.node_mut(n35).style.height = Length::px(100.0);
+            doc.node_mut(n35).style.line_height = LineHeight::Length(13.0);
             doc.append_child(n33, n35);
     doc
 }
@@ -20665,6 +21337,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -20681,6 +21354,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n3).style.width = Length::px(60.0);
+            doc.node_mut(n3).style.color = Color::BLUE;
             doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -20726,6 +21400,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n5).style.color = Color::BLUE;
         doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -20743,6 +21418,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n6).style.width = Length::px(160.0);
             doc.node_mut(n6).style.margin_right = Length::px(-100.0);
+            doc.node_mut(n6).style.color = Color::BLUE;
             doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -20788,6 +21464,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.color = Color::BLUE;
         doc.append_child(n7, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -20804,6 +21481,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n9).style.width = Length::px(160.0);
+            doc.node_mut(n9).style.color = Color::BLUE;
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -20849,6 +21527,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n11).style.color = Color::BLUE;
         doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
@@ -20865,6 +21544,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n12).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n12).style.width = Length::px(160.0);
+            doc.node_mut(n12).style.color = Color::BLUE;
             doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -20910,6 +21590,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n14).style.color = Color::BLUE;
         doc.append_child(n13, n14);
             let n15 = doc.create_node(ElementTag::Div);
             doc.node_mut(n15).style.display = Display::Block;
@@ -20926,6 +21607,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n15).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n15).style.width = Length::px(60.0);
+            doc.node_mut(n15).style.color = Color::BLUE;
             doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -20971,6 +21653,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n17).style.color = Color::BLUE;
         doc.append_child(n16, n17);
             let n18 = doc.create_node(ElementTag::Div);
             doc.node_mut(n18).style.display = Display::Block;
@@ -20988,6 +21671,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n18).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n18).style.width = Length::px(160.0);
             doc.node_mut(n18).style.margin_right = Length::px(-100.0);
+            doc.node_mut(n18).style.color = Color::BLUE;
             doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -21033,6 +21717,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n20).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n20).style.color = Color::BLUE;
         doc.append_child(n19, n20);
             let n21 = doc.create_node(ElementTag::Div);
             doc.node_mut(n21).style.display = Display::Block;
@@ -21049,6 +21734,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n21).style.width = Length::px(160.0);
+            doc.node_mut(n21).style.color = Color::BLUE;
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -21094,6 +21780,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
         doc.node_mut(n23).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n23).style.color = Color::BLUE;
         doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Div);
             doc.node_mut(n24).style.display = Display::Block;
@@ -21110,6 +21797,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001_ref() -> Document {
             doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n24).style.width = Length::px(160.0);
+            doc.node_mut(n24).style.color = Color::BLUE;
             doc.append_child(n23, n24);
     doc
 }
@@ -21170,6 +21858,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -21185,6 +21874,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n3).style.border_right_width = 20;
             doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n3).style.color = Color::BLUE;
             doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -21230,6 +21920,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n5).style.color = Color::BLUE;
         doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -21246,6 +21937,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n6).style.min_width = Length::percent(200.0);
+            doc.node_mut(n6).style.color = Color::BLUE;
             doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -21291,6 +21983,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.color = Color::BLUE;
         doc.append_child(n7, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -21307,6 +22000,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n9).style.min_width = Length::px(160.000000);
+            doc.node_mut(n9).style.color = Color::BLUE;
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -21352,6 +22046,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n11).style.color = Color::BLUE;
         doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
@@ -21368,6 +22063,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n12).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n12).style.min_width = Length::px(160.0);
+            doc.node_mut(n12).style.color = Color::BLUE;
             doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -21413,6 +22109,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n14).style.color = Color::BLUE;
         doc.append_child(n13, n14);
             let n15 = doc.create_node(ElementTag::Div);
             doc.node_mut(n15).style.display = Display::Block;
@@ -21428,6 +22125,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n15).style.border_right_width = 20;
             doc.node_mut(n15).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n15).style.color = Color::BLUE;
             doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -21473,6 +22171,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n17).style.color = Color::BLUE;
         doc.append_child(n16, n17);
             let n18 = doc.create_node(ElementTag::Div);
             doc.node_mut(n18).style.display = Display::Block;
@@ -21489,6 +22188,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n18).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n18).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n18).style.min_width = Length::percent(200.0);
+            doc.node_mut(n18).style.color = Color::BLUE;
             doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -21534,6 +22234,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n20).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n20).style.color = Color::BLUE;
         doc.append_child(n19, n20);
             let n21 = doc.create_node(ElementTag::Div);
             doc.node_mut(n21).style.display = Display::Block;
@@ -21550,6 +22251,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n21).style.min_width = Length::px(160.000000);
+            doc.node_mut(n21).style.color = Color::BLUE;
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -21595,6 +22297,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
         doc.node_mut(n23).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n23).style.color = Color::BLUE;
         doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Div);
             doc.node_mut(n24).style.display = Display::Block;
@@ -21611,6 +22314,7 @@ fn css_sizing_intrinsic_percent_non_replaced_001() -> Document {
             doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n24).style.min_width = Length::px(160.0);
+            doc.node_mut(n24).style.color = Color::BLUE;
             doc.append_child(n23, n24);
     doc
 }
@@ -21671,6 +22375,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -21687,6 +22392,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n3).style.width = Length::px(60.0);
+            doc.node_mut(n3).style.color = Color::BLUE;
             doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -21732,6 +22438,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n5).style.color = Color::BLUE;
         doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -21749,6 +22456,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n6).style.width = Length::px(40.0);
             doc.node_mut(n6).style.margin_right = Length::px(20.0);
+            doc.node_mut(n6).style.color = Color::BLUE;
             doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -21794,6 +22502,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.color = Color::BLUE;
         doc.append_child(n7, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -21811,6 +22520,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n9).style.width = Length::px(40.0);
             doc.node_mut(n9).style.margin_right = Length::px(20.0);
+            doc.node_mut(n9).style.color = Color::BLUE;
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -21856,6 +22566,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n11).style.color = Color::BLUE;
         doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
@@ -21872,6 +22583,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n12).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n12).style.width = Length::px(40.0);
+            doc.node_mut(n12).style.color = Color::BLUE;
             doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -21917,6 +22629,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n14).style.color = Color::BLUE;
         doc.append_child(n13, n14);
             let n15 = doc.create_node(ElementTag::Div);
             doc.node_mut(n15).style.display = Display::Block;
@@ -21933,6 +22646,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n15).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n15).style.width = Length::px(60.0);
+            doc.node_mut(n15).style.color = Color::BLUE;
             doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -21978,6 +22692,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n17).style.color = Color::BLUE;
         doc.append_child(n16, n17);
             let n18 = doc.create_node(ElementTag::Div);
             doc.node_mut(n18).style.display = Display::Block;
@@ -21995,6 +22710,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n18).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n18).style.width = Length::px(40.0);
             doc.node_mut(n18).style.margin_right = Length::px(20.0);
+            doc.node_mut(n18).style.color = Color::BLUE;
             doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -22040,6 +22756,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n20).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n20).style.color = Color::BLUE;
         doc.append_child(n19, n20);
             let n21 = doc.create_node(ElementTag::Div);
             doc.node_mut(n21).style.display = Display::Block;
@@ -22057,6 +22774,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n21).style.width = Length::px(40.0);
             doc.node_mut(n21).style.margin_right = Length::px(20.0);
+            doc.node_mut(n21).style.color = Color::BLUE;
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -22102,6 +22820,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
         doc.node_mut(n23).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n23).style.color = Color::BLUE;
         doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Div);
             doc.node_mut(n24).style.display = Display::Block;
@@ -22118,6 +22837,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002_ref() -> Document {
             doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n24).style.width = Length::px(40.0);
+            doc.node_mut(n24).style.color = Color::BLUE;
             doc.append_child(n23, n24);
     doc
 }
@@ -22178,6 +22898,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -22193,6 +22914,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n3).style.border_right_width = 20;
             doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n3).style.color = Color::BLUE;
             doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -22238,6 +22960,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n5).style.color = Color::BLUE;
         doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -22254,6 +22977,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n6).style.max_width = Length::percent(50.0);
+            doc.node_mut(n6).style.color = Color::BLUE;
             doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -22299,6 +23023,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.color = Color::BLUE;
         doc.append_child(n7, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -22315,6 +23040,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n9).style.max_width = Length::px(40.000000);
+            doc.node_mut(n9).style.color = Color::BLUE;
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -22360,6 +23086,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n11).style.color = Color::BLUE;
         doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
@@ -22376,6 +23103,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n12).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n12).style.max_width = Length::px(40.0);
+            doc.node_mut(n12).style.color = Color::BLUE;
             doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -22421,6 +23149,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n14).style.color = Color::BLUE;
         doc.append_child(n13, n14);
             let n15 = doc.create_node(ElementTag::Div);
             doc.node_mut(n15).style.display = Display::Block;
@@ -22436,6 +23165,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n15).style.border_right_width = 20;
             doc.node_mut(n15).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n15).style.color = Color::BLUE;
             doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -22481,6 +23211,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n17).style.color = Color::BLUE;
         doc.append_child(n16, n17);
             let n18 = doc.create_node(ElementTag::Div);
             doc.node_mut(n18).style.display = Display::Block;
@@ -22497,6 +23228,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n18).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n18).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n18).style.max_width = Length::percent(50.0);
+            doc.node_mut(n18).style.color = Color::BLUE;
             doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -22542,6 +23274,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n20).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n20).style.color = Color::BLUE;
         doc.append_child(n19, n20);
             let n21 = doc.create_node(ElementTag::Div);
             doc.node_mut(n21).style.display = Display::Block;
@@ -22558,6 +23291,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n21).style.max_width = Length::px(40.000000);
+            doc.node_mut(n21).style.color = Color::BLUE;
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -22603,6 +23337,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
         doc.node_mut(n23).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n23).style.color = Color::BLUE;
         doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Div);
             doc.node_mut(n24).style.display = Display::Block;
@@ -22619,6 +23354,7 @@ fn css_sizing_intrinsic_percent_non_replaced_002() -> Document {
             doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n24).style.max_width = Length::px(40.0);
+            doc.node_mut(n24).style.color = Color::BLUE;
             doc.append_child(n23, n24);
     doc
 }
@@ -22679,6 +23415,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n2).style.color = Color::BLUE;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -22694,6 +23431,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n3).style.border_right_width = 20;
             doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n3).style.color = Color::BLUE;
             doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -22739,6 +23477,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n5).style.color = Color::BLUE;
         doc.append_child(n4, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.display = Display::Block;
@@ -22755,6 +23494,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n6).style.width = Length::percent(50.0);
+            doc.node_mut(n6).style.color = Color::BLUE;
             doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -22800,6 +23540,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n8).style.color = Color::BLUE;
         doc.append_child(n7, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.display = Display::Block;
@@ -22816,6 +23557,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n9).style.width = Length::px(40.000000);
+            doc.node_mut(n9).style.color = Color::BLUE;
             doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -22861,6 +23603,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n11).style.color = Color::BLUE;
         doc.append_child(n10, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.display = Display::Block;
@@ -22877,6 +23620,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n12).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n12).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n12).style.width = Length::px(40.0);
+            doc.node_mut(n12).style.color = Color::BLUE;
             doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -22922,6 +23666,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n14).style.color = Color::BLUE;
         doc.append_child(n13, n14);
             let n15 = doc.create_node(ElementTag::Div);
             doc.node_mut(n15).style.display = Display::Block;
@@ -22937,6 +23682,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n15).style.border_right_width = 20;
             doc.node_mut(n15).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n15).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+            doc.node_mut(n15).style.color = Color::BLUE;
             doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -22982,6 +23728,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n17).style.color = Color::BLUE;
         doc.append_child(n16, n17);
             let n18 = doc.create_node(ElementTag::Div);
             doc.node_mut(n18).style.display = Display::Block;
@@ -22998,6 +23745,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n18).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n18).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n18).style.width = Length::percent(50.0);
+            doc.node_mut(n18).style.color = Color::BLUE;
             doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -23043,6 +23791,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n20).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n20).style.color = Color::BLUE;
         doc.append_child(n19, n20);
             let n21 = doc.create_node(ElementTag::Div);
             doc.node_mut(n21).style.display = Display::Block;
@@ -23059,6 +23808,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n21).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n21).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n21).style.width = Length::px(40.000000);
+            doc.node_mut(n21).style.color = Color::BLUE;
             doc.append_child(n20, n21);
     let n22 = doc.create_node(ElementTag::Div);
     doc.node_mut(n22).style.display = Display::Block;
@@ -23104,6 +23854,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
         doc.node_mut(n23).style.border_right_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_bottom_style = BorderStyle::None;
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
+        doc.node_mut(n23).style.color = Color::BLUE;
         doc.append_child(n22, n23);
             let n24 = doc.create_node(ElementTag::Div);
             doc.node_mut(n24).style.display = Display::Block;
@@ -23120,6 +23871,7 @@ fn css_sizing_intrinsic_percent_non_replaced_003() -> Document {
             doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
             doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
             doc.node_mut(n24).style.width = Length::px(40.0);
+            doc.node_mut(n24).style.color = Color::BLUE;
             doc.append_child(n23, n24);
     doc
 }
@@ -25312,6 +26064,7 @@ fn css_sizing_shrink_to_fit_sizing_max_width_min_content() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.float = Float::Right;
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -25326,6 +26079,7 @@ fn css_sizing_shrink_to_fit_sizing_max_width_min_content() -> Document {
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.max_width = Length::min_content();
             doc.node_mut(n3).style.width = Length::px(600.0);
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
     doc
 }
@@ -25357,6 +26111,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -25383,6 +26138,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -25411,6 +26167,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n3).style.border_bottom_width = 0;
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -25439,6 +26197,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n4).style.border_bottom_width = 0;
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -25465,6 +26225,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -25493,6 +26254,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n6).style.border_bottom_width = 0;
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -25521,6 +26284,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n7).style.border_bottom_width = 0;
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -25547,6 +26312,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -25575,6 +26341,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n9).style.border_bottom_width = 0;
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -25603,6 +26371,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n10).style.border_bottom_width = 0;
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -25629,6 +26399,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -25657,6 +26428,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n12).style.border_bottom_width = 0;
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -25685,6 +26458,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n13).style.border_bottom_width = 0;
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -25711,6 +26486,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -25739,6 +26515,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n15).style.border_bottom_width = 0;
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -25767,6 +26545,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n16).style.border_bottom_width = 0;
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -25793,6 +26573,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -25821,6 +26602,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n18).style.border_bottom_width = 0;
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -25849,6 +26632,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n19).style.border_bottom_width = 0;
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -25875,6 +26660,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -25903,6 +26689,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n21).style.border_bottom_width = 0;
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -25931,6 +26719,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n22).style.border_bottom_width = 0;
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -25957,6 +26747,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -25985,6 +26776,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n24).style.border_bottom_width = 0;
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -26013,6 +26806,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n25).style.border_bottom_width = 0;
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -26039,6 +26834,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -26067,6 +26863,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n27).style.border_bottom_width = 0;
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -26095,6 +26893,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n28).style.border_bottom_width = 0;
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -26121,6 +26921,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -26149,6 +26950,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n30).style.border_bottom_width = 0;
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -26177,6 +26980,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n31).style.border_bottom_width = 0;
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -26203,6 +27008,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -26231,6 +27037,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n33).style.border_bottom_width = 0;
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Pre;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -26244,6 +27052,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -26270,6 +27079,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -26298,6 +27108,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n36).style.border_bottom_width = 0;
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -26326,6 +27138,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n37).style.border_bottom_width = 0;
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -26352,6 +27166,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -26380,6 +27195,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n39).style.border_bottom_width = 0;
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -26408,6 +27225,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n40).style.border_bottom_width = 0;
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -26434,6 +27253,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -26462,6 +27282,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n42).style.border_bottom_width = 0;
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -26490,6 +27312,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n43).style.border_bottom_width = 0;
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -26516,6 +27340,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -26544,6 +27369,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n45).style.border_bottom_width = 0;
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -26572,6 +27399,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n46).style.border_bottom_width = 0;
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -26598,6 +27427,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -26626,6 +27456,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n48).style.border_bottom_width = 0;
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -26654,6 +27486,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n49).style.border_bottom_width = 0;
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -26680,6 +27514,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -26708,6 +27543,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n51).style.border_bottom_width = 0;
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -26736,6 +27573,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n52).style.border_bottom_width = 0;
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -26762,6 +27601,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -26790,6 +27630,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n54).style.border_bottom_width = 0;
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -26818,6 +27660,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n55).style.border_bottom_width = 0;
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -26844,6 +27688,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -26872,6 +27717,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n57).style.border_bottom_width = 0;
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -26900,6 +27747,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n58).style.border_bottom_width = 0;
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -26926,6 +27775,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -26954,6 +27804,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n60).style.border_bottom_width = 0;
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -26982,6 +27834,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n61).style.border_bottom_width = 0;
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -27008,6 +27862,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -27036,6 +27891,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n63).style.border_bottom_width = 0;
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -27064,6 +27921,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n64).style.border_bottom_width = 0;
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -27090,6 +27949,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -27118,6 +27978,8 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
             doc.node_mut(n66).style.border_bottom_width = 0;
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Pre;
             doc.append_child(n65, n66);
     doc
 }
@@ -27149,6 +28011,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -27174,6 +28037,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -27203,6 +28067,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n3).style.color = Color::BLACK;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -27232,6 +28097,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n4).style.color = Color::BLACK;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -27257,6 +28123,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -27286,6 +28153,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n6).style.color = Color::BLACK;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -27315,6 +28183,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n7).style.color = Color::BLACK;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -27340,6 +28209,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -27369,6 +28239,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n9).style.color = Color::BLACK;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -27398,6 +28269,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n10).style.color = Color::BLACK;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -27423,6 +28295,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n11).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -27452,6 +28325,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n12).style.color = Color::BLACK;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -27481,6 +28355,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n13).style.color = Color::BLACK;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -27506,6 +28381,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -27535,6 +28411,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n15).style.color = Color::BLACK;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -27564,6 +28441,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n16).style.color = Color::BLACK;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -27589,6 +28467,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -27618,6 +28497,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n18).style.color = Color::BLACK;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -27647,6 +28527,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n19).style.color = Color::BLACK;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -27672,6 +28553,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n20).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -27701,6 +28583,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n21).style.color = Color::BLACK;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -27730,6 +28613,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n22).style.color = Color::BLACK;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -27755,6 +28639,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n23).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -27784,6 +28669,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n24).style.color = Color::BLACK;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -27813,6 +28699,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n25).style.color = Color::BLACK;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -27838,6 +28725,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n26).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -27867,6 +28755,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n27).style.color = Color::BLACK;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -27896,6 +28785,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n28).style.color = Color::BLACK;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -27921,6 +28811,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n29).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -27950,6 +28841,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n30).style.color = Color::BLACK;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -27979,6 +28871,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n31).style.color = Color::BLACK;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -28004,6 +28897,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n32).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -28033,6 +28927,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n33).style.color = Color::BLACK;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -28046,6 +28941,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -28071,6 +28967,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n35).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -28100,6 +28997,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n36).style.color = Color::BLACK;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -28129,6 +29027,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n37).style.color = Color::BLACK;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -28154,6 +29053,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n38).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -28183,6 +29083,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n39).style.color = Color::BLACK;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -28212,6 +29113,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n40).style.color = Color::BLACK;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -28237,6 +29139,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n41).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -28266,6 +29169,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n42).style.color = Color::BLACK;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -28295,6 +29199,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n43).style.color = Color::BLACK;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -28320,6 +29225,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n44).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -28349,6 +29255,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n45).style.color = Color::BLACK;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -28378,6 +29285,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n46).style.color = Color::BLACK;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -28403,6 +29311,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n47).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -28432,6 +29341,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n48).style.color = Color::BLACK;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -28461,6 +29371,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n49).style.color = Color::BLACK;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -28486,6 +29397,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n50).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -28515,6 +29427,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n51).style.color = Color::BLACK;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -28544,6 +29457,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n52).style.color = Color::BLACK;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -28569,6 +29483,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n53).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -28598,6 +29513,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n54).style.color = Color::BLACK;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -28627,6 +29543,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n55).style.color = Color::BLACK;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -28652,6 +29569,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n56).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -28681,6 +29599,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n57).style.color = Color::BLACK;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -28710,6 +29629,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n58).style.color = Color::BLACK;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -28735,6 +29655,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n59).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -28764,6 +29685,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n60).style.color = Color::BLACK;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -28793,6 +29715,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n61).style.color = Color::BLACK;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -28818,6 +29741,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n62).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -28847,6 +29771,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n63).style.color = Color::BLACK;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -28876,6 +29801,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n64).style.color = Color::BLACK;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -28901,6 +29827,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
         doc.node_mut(n65).style.border_left_style = BorderStyle::Solid;
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -28930,6 +29857,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n66).style.color = Color::BLACK;
             doc.append_child(n65, n66);
     doc
 }
@@ -28961,6 +29889,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -28987,6 +29916,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -29015,6 +29945,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n3).style.border_bottom_width = 0;
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -29043,6 +29975,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n4).style.border_bottom_width = 0;
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -29069,6 +30003,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -29097,6 +30032,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n6).style.border_bottom_width = 0;
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -29125,6 +30062,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n7).style.border_bottom_width = 0;
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -29151,6 +30090,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -29179,6 +30119,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n9).style.border_bottom_width = 0;
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -29207,6 +30149,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n10).style.border_bottom_width = 0;
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -29233,6 +30177,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -29261,6 +30206,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n12).style.border_bottom_width = 0;
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -29289,6 +30236,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n13).style.border_bottom_width = 0;
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -29315,6 +30264,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -29343,6 +30293,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n15).style.border_bottom_width = 0;
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -29371,6 +30323,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n16).style.border_bottom_width = 0;
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -29397,6 +30351,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -29425,6 +30380,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n18).style.border_bottom_width = 0;
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -29453,6 +30410,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n19).style.border_bottom_width = 0;
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -29479,6 +30438,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -29507,6 +30467,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n21).style.border_bottom_width = 0;
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -29535,6 +30497,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n22).style.border_bottom_width = 0;
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -29561,6 +30525,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -29589,6 +30554,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n24).style.border_bottom_width = 0;
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -29617,6 +30584,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n25).style.border_bottom_width = 0;
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -29643,6 +30612,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -29671,6 +30641,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n27).style.border_bottom_width = 0;
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -29699,6 +30671,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n28).style.border_bottom_width = 0;
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -29725,6 +30699,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -29753,6 +30728,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n30).style.border_bottom_width = 0;
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -29781,6 +30758,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n31).style.border_bottom_width = 0;
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -29807,6 +30786,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -29835,6 +30815,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n33).style.border_bottom_width = 0;
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Pre;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -29848,6 +30830,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -29874,6 +30857,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -29902,6 +30886,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n36).style.border_bottom_width = 0;
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -29930,6 +30916,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n37).style.border_bottom_width = 0;
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -29956,6 +30944,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -29984,6 +30973,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n39).style.border_bottom_width = 0;
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -30012,6 +31003,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n40).style.border_bottom_width = 0;
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -30038,6 +31031,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -30066,6 +31060,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n42).style.border_bottom_width = 0;
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -30094,6 +31090,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n43).style.border_bottom_width = 0;
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -30120,6 +31118,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -30148,6 +31147,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n45).style.border_bottom_width = 0;
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -30176,6 +31177,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n46).style.border_bottom_width = 0;
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -30202,6 +31205,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -30230,6 +31234,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n48).style.border_bottom_width = 0;
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -30258,6 +31264,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n49).style.border_bottom_width = 0;
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -30284,6 +31292,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -30312,6 +31321,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n51).style.border_bottom_width = 0;
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -30340,6 +31351,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n52).style.border_bottom_width = 0;
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -30366,6 +31379,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -30394,6 +31408,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n54).style.border_bottom_width = 0;
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -30422,6 +31438,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n55).style.border_bottom_width = 0;
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -30448,6 +31466,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -30476,6 +31495,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n57).style.border_bottom_width = 0;
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -30504,6 +31525,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n58).style.border_bottom_width = 0;
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -30530,6 +31553,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -30558,6 +31582,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n60).style.border_bottom_width = 0;
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -30586,6 +31612,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n61).style.border_bottom_width = 0;
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -30612,6 +31640,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -30640,6 +31669,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n63).style.border_bottom_width = 0;
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -30668,6 +31699,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n64).style.border_bottom_width = 0;
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -30694,6 +31727,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -30722,6 +31756,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
             doc.node_mut(n66).style.border_bottom_width = 0;
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Pre;
             doc.append_child(n65, n66);
     doc
 }
@@ -30753,6 +31789,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -30779,6 +31816,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -30807,6 +31845,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n3).style.border_bottom_width = 0;
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -30835,6 +31875,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n4).style.border_bottom_width = 0;
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -30861,6 +31903,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -30889,6 +31932,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n6).style.border_bottom_width = 0;
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -30917,6 +31962,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n7).style.border_bottom_width = 0;
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -30943,6 +31990,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -30971,6 +32019,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n9).style.border_bottom_width = 0;
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -30999,6 +32049,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n10).style.border_bottom_width = 0;
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -31025,6 +32077,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -31053,6 +32106,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n12).style.border_bottom_width = 0;
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -31081,6 +32136,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n13).style.border_bottom_width = 0;
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -31107,6 +32164,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -31135,6 +32193,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n15).style.border_bottom_width = 0;
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -31163,6 +32223,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n16).style.border_bottom_width = 0;
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -31189,6 +32251,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -31217,6 +32280,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n18).style.border_bottom_width = 0;
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -31245,6 +32310,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n19).style.border_bottom_width = 0;
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -31271,6 +32338,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -31299,6 +32367,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n21).style.border_bottom_width = 0;
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -31327,6 +32397,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n22).style.border_bottom_width = 0;
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -31353,6 +32425,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -31381,6 +32454,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n24).style.border_bottom_width = 0;
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -31409,6 +32484,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n25).style.border_bottom_width = 0;
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -31435,6 +32512,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -31463,6 +32541,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n27).style.border_bottom_width = 0;
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -31491,6 +32571,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n28).style.border_bottom_width = 0;
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -31517,6 +32599,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -31545,6 +32628,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n30).style.border_bottom_width = 0;
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -31573,6 +32658,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n31).style.border_bottom_width = 0;
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -31599,6 +32686,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -31627,6 +32715,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n33).style.border_bottom_width = 0;
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -31640,6 +32730,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -31666,6 +32757,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -31694,6 +32786,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n36).style.border_bottom_width = 0;
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -31722,6 +32816,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n37).style.border_bottom_width = 0;
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -31748,6 +32844,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -31776,6 +32873,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n39).style.border_bottom_width = 0;
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -31804,6 +32903,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n40).style.border_bottom_width = 0;
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -31830,6 +32931,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -31858,6 +32960,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n42).style.border_bottom_width = 0;
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -31886,6 +32990,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n43).style.border_bottom_width = 0;
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -31912,6 +33018,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -31940,6 +33047,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n45).style.border_bottom_width = 0;
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -31968,6 +33077,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n46).style.border_bottom_width = 0;
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -31994,6 +33105,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -32022,6 +33134,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n48).style.border_bottom_width = 0;
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -32050,6 +33164,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n49).style.border_bottom_width = 0;
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -32076,6 +33192,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -32104,6 +33221,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n51).style.border_bottom_width = 0;
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -32132,6 +33251,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n52).style.border_bottom_width = 0;
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -32158,6 +33279,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -32186,6 +33308,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n54).style.border_bottom_width = 0;
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -32214,6 +33338,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n55).style.border_bottom_width = 0;
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -32240,6 +33366,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -32268,6 +33395,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n57).style.border_bottom_width = 0;
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -32296,6 +33425,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n58).style.border_bottom_width = 0;
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -32322,6 +33453,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -32350,6 +33482,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n60).style.border_bottom_width = 0;
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -32378,6 +33512,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n61).style.border_bottom_width = 0;
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -32404,6 +33540,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -32432,6 +33569,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n63).style.border_bottom_width = 0;
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -32460,6 +33599,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n64).style.border_bottom_width = 0;
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -32486,6 +33627,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -32514,6 +33656,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
             doc.node_mut(n66).style.border_bottom_width = 0;
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n65, n66);
     doc
 }
@@ -32545,6 +33689,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -32571,6 +33716,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -32599,6 +33745,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n3).style.border_bottom_width = 0;
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -32627,6 +33775,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n4).style.border_bottom_width = 0;
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Pre;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -32653,6 +33803,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -32681,6 +33832,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n6).style.border_bottom_width = 0;
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -32709,6 +33862,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n7).style.border_bottom_width = 0;
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -32735,6 +33890,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -32763,6 +33919,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n9).style.border_bottom_width = 0;
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -32791,6 +33949,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n10).style.border_bottom_width = 0;
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Pre;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -32817,6 +33977,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -32845,6 +34006,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n12).style.border_bottom_width = 0;
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -32873,6 +34036,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n13).style.border_bottom_width = 0;
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -32899,6 +34064,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -32927,6 +34093,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n15).style.border_bottom_width = 0;
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -32955,6 +34123,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n16).style.border_bottom_width = 0;
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Pre;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -32981,6 +34151,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -33009,6 +34180,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n18).style.border_bottom_width = 0;
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -33037,6 +34210,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n19).style.border_bottom_width = 0;
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -33063,6 +34238,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -33091,6 +34267,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n21).style.border_bottom_width = 0;
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -33119,6 +34297,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n22).style.border_bottom_width = 0;
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -33145,6 +34325,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -33173,6 +34354,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n24).style.border_bottom_width = 0;
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -33201,6 +34384,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n25).style.border_bottom_width = 0;
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Pre;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -33227,6 +34412,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -33255,6 +34441,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n27).style.border_bottom_width = 0;
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -33283,6 +34471,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n28).style.border_bottom_width = 0;
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -33309,6 +34499,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -33337,6 +34528,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n30).style.border_bottom_width = 0;
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -33365,6 +34558,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n31).style.border_bottom_width = 0;
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Pre;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -33391,6 +34586,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -33419,6 +34615,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n33).style.border_bottom_width = 0;
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Pre;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -33432,6 +34630,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -33458,6 +34657,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n35).style.width = Length::max_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -33486,6 +34686,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n36).style.border_bottom_width = 0;
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -33514,6 +34716,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n37).style.border_bottom_width = 0;
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Pre;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -33540,6 +34744,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n38).style.width = Length::max_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -33568,6 +34773,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n39).style.border_bottom_width = 0;
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -33596,6 +34803,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n40).style.border_bottom_width = 0;
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Pre;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -33622,6 +34831,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n41).style.width = Length::max_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -33650,6 +34860,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n42).style.border_bottom_width = 0;
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -33678,6 +34890,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n43).style.border_bottom_width = 0;
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Pre;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -33704,6 +34918,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n44).style.width = Length::max_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -33732,6 +34947,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n45).style.border_bottom_width = 0;
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -33760,6 +34977,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n46).style.border_bottom_width = 0;
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Pre;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -33786,6 +35005,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n47).style.width = Length::max_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -33814,6 +35034,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n48).style.border_bottom_width = 0;
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -33842,6 +35064,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n49).style.border_bottom_width = 0;
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Pre;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -33868,6 +35092,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n50).style.width = Length::max_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -33896,6 +35121,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n51).style.border_bottom_width = 0;
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -33924,6 +35151,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n52).style.border_bottom_width = 0;
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Pre;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -33950,6 +35179,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n53).style.width = Length::max_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -33978,6 +35208,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n54).style.border_bottom_width = 0;
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -34006,6 +35238,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n55).style.border_bottom_width = 0;
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Pre;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -34032,6 +35266,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n56).style.width = Length::max_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -34060,6 +35295,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n57).style.border_bottom_width = 0;
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -34088,6 +35325,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n58).style.border_bottom_width = 0;
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Pre;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -34114,6 +35353,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n59).style.width = Length::max_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -34142,6 +35382,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n60).style.border_bottom_width = 0;
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -34170,6 +35412,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n61).style.border_bottom_width = 0;
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Pre;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -34196,6 +35440,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n62).style.width = Length::max_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -34224,6 +35469,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n63).style.border_bottom_width = 0;
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -34252,6 +35499,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n64).style.border_bottom_width = 0;
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Pre;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -34278,6 +35527,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Pre;
         doc.node_mut(n65).style.width = Length::max_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -34306,6 +35556,8 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
             doc.node_mut(n66).style.border_bottom_width = 0;
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Pre;
             doc.append_child(n65, n66);
     doc
 }
@@ -34337,6 +35589,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.margin_right = Length::px(30.0);
     doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.color = Color::BLACK;
     doc.append_child(vp, n1);
         let n2 = doc.create_node(ElementTag::Div);
         doc.node_mut(n2).style.display = Display::Block;
@@ -34363,6 +35616,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n2).style.width = Length::max_content();
+        doc.node_mut(n2).style.color = Color::BLACK;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Span);
             doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -34392,6 +35646,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n3).style.border_left_width = 5;
             doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n3).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n3).style.color = Color::BLACK;
+            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -34421,6 +35677,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n4).style.border_left_width = 5;
             doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n4).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n4).style.color = Color::BLACK;
+            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n2, n4);
         let n5 = doc.create_node(ElementTag::Div);
         doc.node_mut(n5).style.display = Display::Block;
@@ -34447,6 +35705,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n5).style.width = Length::max_content();
+        doc.node_mut(n5).style.color = Color::BLACK;
         doc.append_child(n1, n5);
             let n6 = doc.create_node(ElementTag::Span);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -34476,6 +35735,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n6).style.border_left_width = 5;
             doc.node_mut(n6).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n6).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n6).style.color = Color::BLACK;
+            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n6);
             let n7 = doc.create_node(ElementTag::Span);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -34505,6 +35766,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n7).style.border_left_width = 5;
             doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n7).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n7).style.color = Color::BLACK;
+            doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n5, n7);
         let n8 = doc.create_node(ElementTag::Div);
         doc.node_mut(n8).style.display = Display::Block;
@@ -34531,6 +35794,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n8).style.width = Length::max_content();
+        doc.node_mut(n8).style.color = Color::BLACK;
         doc.append_child(n1, n8);
             let n9 = doc.create_node(ElementTag::Span);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -34560,6 +35824,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n9).style.border_left_width = 5;
             doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n9).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n9).style.color = Color::BLACK;
+            doc.node_mut(n9).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n9);
             let n10 = doc.create_node(ElementTag::Span);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -34589,6 +35855,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n10).style.border_left_width = 5;
             doc.node_mut(n10).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n10).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n10).style.color = Color::BLACK;
+            doc.node_mut(n10).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n8, n10);
         let n11 = doc.create_node(ElementTag::Div);
         doc.node_mut(n11).style.display = Display::Block;
@@ -34615,6 +35883,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n11).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n11).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n11).style.width = Length::max_content();
+        doc.node_mut(n11).style.color = Color::BLACK;
         doc.append_child(n1, n11);
             let n12 = doc.create_node(ElementTag::Span);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -34644,6 +35913,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n12).style.border_left_width = 5;
             doc.node_mut(n12).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n12).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n12).style.color = Color::BLACK;
+            doc.node_mut(n12).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n12);
             let n13 = doc.create_node(ElementTag::Span);
             doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -34673,6 +35944,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n13).style.border_left_width = 5;
             doc.node_mut(n13).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n13).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n13).style.color = Color::BLACK;
+            doc.node_mut(n13).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n11, n13);
         let n14 = doc.create_node(ElementTag::Div);
         doc.node_mut(n14).style.display = Display::Block;
@@ -34699,6 +35972,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n14).style.width = Length::max_content();
+        doc.node_mut(n14).style.color = Color::BLACK;
         doc.append_child(n1, n14);
             let n15 = doc.create_node(ElementTag::Span);
             doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -34728,6 +36002,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n15).style.border_left_width = 5;
             doc.node_mut(n15).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n15).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n15).style.color = Color::BLACK;
+            doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n15);
             let n16 = doc.create_node(ElementTag::Span);
             doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -34757,6 +36033,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n16).style.border_left_width = 5;
             doc.node_mut(n16).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n16).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n16).style.color = Color::BLACK;
+            doc.node_mut(n16).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n14, n16);
         let n17 = doc.create_node(ElementTag::Div);
         doc.node_mut(n17).style.display = Display::Block;
@@ -34783,6 +36061,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n17).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n17).style.width = Length::max_content();
+        doc.node_mut(n17).style.color = Color::BLACK;
         doc.append_child(n1, n17);
             let n18 = doc.create_node(ElementTag::Span);
             doc.node_mut(n18).style.margin_top = Length::px(0.0);
@@ -34812,6 +36091,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n18).style.border_left_width = 5;
             doc.node_mut(n18).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n18).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n18).style.color = Color::BLACK;
+            doc.node_mut(n18).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n18);
             let n19 = doc.create_node(ElementTag::Span);
             doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -34841,6 +36122,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n19).style.border_left_width = 5;
             doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n19).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n19).style.color = Color::BLACK;
+            doc.node_mut(n19).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n17, n19);
         let n20 = doc.create_node(ElementTag::Div);
         doc.node_mut(n20).style.display = Display::Block;
@@ -34867,6 +36150,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n20).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n20).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n20).style.width = Length::max_content();
+        doc.node_mut(n20).style.color = Color::BLACK;
         doc.append_child(n1, n20);
             let n21 = doc.create_node(ElementTag::Span);
             doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -34896,6 +36180,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n21).style.border_left_width = 5;
             doc.node_mut(n21).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n21).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n21).style.color = Color::BLACK;
+            doc.node_mut(n21).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n21);
             let n22 = doc.create_node(ElementTag::Span);
             doc.node_mut(n22).style.margin_top = Length::px(0.0);
@@ -34925,6 +36211,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n22).style.border_left_width = 5;
             doc.node_mut(n22).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n22).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n22).style.color = Color::BLACK;
+            doc.node_mut(n22).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n20, n22);
         let n23 = doc.create_node(ElementTag::Div);
         doc.node_mut(n23).style.display = Display::Block;
@@ -34951,6 +36239,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n23).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n23).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n23).style.width = Length::max_content();
+        doc.node_mut(n23).style.color = Color::BLACK;
         doc.append_child(n1, n23);
             let n24 = doc.create_node(ElementTag::Span);
             doc.node_mut(n24).style.margin_top = Length::px(0.0);
@@ -34980,6 +36269,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n24).style.border_left_width = 5;
             doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n24).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n24).style.color = Color::BLACK;
+            doc.node_mut(n24).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n24);
             let n25 = doc.create_node(ElementTag::Span);
             doc.node_mut(n25).style.margin_top = Length::px(0.0);
@@ -35009,6 +36300,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n25).style.border_left_width = 5;
             doc.node_mut(n25).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n25).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n25).style.color = Color::BLACK;
+            doc.node_mut(n25).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n23, n25);
         let n26 = doc.create_node(ElementTag::Div);
         doc.node_mut(n26).style.display = Display::Block;
@@ -35035,6 +36328,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n26).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n26).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n26).style.width = Length::max_content();
+        doc.node_mut(n26).style.color = Color::BLACK;
         doc.append_child(n1, n26);
             let n27 = doc.create_node(ElementTag::Span);
             doc.node_mut(n27).style.margin_top = Length::px(0.0);
@@ -35064,6 +36358,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n27).style.border_left_width = 5;
             doc.node_mut(n27).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n27).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n27).style.color = Color::BLACK;
+            doc.node_mut(n27).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n27);
             let n28 = doc.create_node(ElementTag::Span);
             doc.node_mut(n28).style.margin_top = Length::px(0.0);
@@ -35093,6 +36389,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n28).style.border_left_width = 5;
             doc.node_mut(n28).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n28).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n28).style.color = Color::BLACK;
+            doc.node_mut(n28).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n26, n28);
         let n29 = doc.create_node(ElementTag::Div);
         doc.node_mut(n29).style.display = Display::Block;
@@ -35119,6 +36417,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n29).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n29).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n29).style.width = Length::max_content();
+        doc.node_mut(n29).style.color = Color::BLACK;
         doc.append_child(n1, n29);
             let n30 = doc.create_node(ElementTag::Span);
             doc.node_mut(n30).style.margin_top = Length::px(0.0);
@@ -35148,6 +36447,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n30).style.border_left_width = 5;
             doc.node_mut(n30).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n30).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n30).style.color = Color::BLACK;
+            doc.node_mut(n30).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n30);
             let n31 = doc.create_node(ElementTag::Span);
             doc.node_mut(n31).style.margin_top = Length::px(0.0);
@@ -35177,6 +36478,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n31).style.border_left_width = 5;
             doc.node_mut(n31).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n31).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n31).style.color = Color::BLACK;
+            doc.node_mut(n31).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n29, n31);
         let n32 = doc.create_node(ElementTag::Div);
         doc.node_mut(n32).style.display = Display::Block;
@@ -35203,6 +36506,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n32).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n32).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n32).style.width = Length::max_content();
+        doc.node_mut(n32).style.color = Color::BLACK;
         doc.append_child(n1, n32);
             let n33 = doc.create_node(ElementTag::Span);
             doc.node_mut(n33).style.margin_top = Length::px(0.0);
@@ -35232,6 +36536,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n33).style.border_left_width = 5;
             doc.node_mut(n33).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n33).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n33).style.color = Color::BLACK;
+            doc.node_mut(n33).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n32, n33);
     let n34 = doc.create_node(ElementTag::Div);
     doc.node_mut(n34).style.margin_top = Length::px(0.0);
@@ -35245,6 +36551,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
     doc.node_mut(n34).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n34).style.margin_right = Length::px(30.0);
     doc.node_mut(n34).style.float = Float::Left;
+    doc.node_mut(n34).style.color = Color::BLACK;
     doc.append_child(vp, n34);
         let n35 = doc.create_node(ElementTag::Div);
         doc.node_mut(n35).style.display = Display::Block;
@@ -35271,6 +36578,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n35).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n35).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n35).style.width = Length::min_content();
+        doc.node_mut(n35).style.color = Color::BLACK;
         doc.append_child(n34, n35);
             let n36 = doc.create_node(ElementTag::Span);
             doc.node_mut(n36).style.margin_top = Length::px(0.0);
@@ -35300,6 +36608,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n36).style.border_left_width = 5;
             doc.node_mut(n36).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n36).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n36).style.color = Color::BLACK;
+            doc.node_mut(n36).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n36);
             let n37 = doc.create_node(ElementTag::Span);
             doc.node_mut(n37).style.margin_top = Length::px(0.0);
@@ -35329,6 +36639,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n37).style.border_left_width = 5;
             doc.node_mut(n37).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n37).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n37).style.color = Color::BLACK;
+            doc.node_mut(n37).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n35, n37);
         let n38 = doc.create_node(ElementTag::Div);
         doc.node_mut(n38).style.display = Display::Block;
@@ -35355,6 +36667,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n38).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n38).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n38).style.width = Length::min_content();
+        doc.node_mut(n38).style.color = Color::BLACK;
         doc.append_child(n34, n38);
             let n39 = doc.create_node(ElementTag::Span);
             doc.node_mut(n39).style.margin_top = Length::px(0.0);
@@ -35384,6 +36697,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n39).style.border_left_width = 5;
             doc.node_mut(n39).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n39).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n39).style.color = Color::BLACK;
+            doc.node_mut(n39).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n39);
             let n40 = doc.create_node(ElementTag::Span);
             doc.node_mut(n40).style.margin_top = Length::px(0.0);
@@ -35413,6 +36728,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n40).style.border_left_width = 5;
             doc.node_mut(n40).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n40).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n40).style.color = Color::BLACK;
+            doc.node_mut(n40).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n38, n40);
         let n41 = doc.create_node(ElementTag::Div);
         doc.node_mut(n41).style.display = Display::Block;
@@ -35439,6 +36756,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n41).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n41).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n41).style.width = Length::min_content();
+        doc.node_mut(n41).style.color = Color::BLACK;
         doc.append_child(n34, n41);
             let n42 = doc.create_node(ElementTag::Span);
             doc.node_mut(n42).style.margin_top = Length::px(0.0);
@@ -35468,6 +36786,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n42).style.border_left_width = 5;
             doc.node_mut(n42).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n42).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n42).style.color = Color::BLACK;
+            doc.node_mut(n42).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n42);
             let n43 = doc.create_node(ElementTag::Span);
             doc.node_mut(n43).style.margin_top = Length::px(0.0);
@@ -35497,6 +36817,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n43).style.border_left_width = 5;
             doc.node_mut(n43).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n43).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n43).style.color = Color::BLACK;
+            doc.node_mut(n43).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n41, n43);
         let n44 = doc.create_node(ElementTag::Div);
         doc.node_mut(n44).style.display = Display::Block;
@@ -35523,6 +36845,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n44).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n44).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n44).style.width = Length::min_content();
+        doc.node_mut(n44).style.color = Color::BLACK;
         doc.append_child(n34, n44);
             let n45 = doc.create_node(ElementTag::Span);
             doc.node_mut(n45).style.margin_top = Length::px(0.0);
@@ -35552,6 +36875,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n45).style.border_left_width = 5;
             doc.node_mut(n45).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n45).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n45).style.color = Color::BLACK;
+            doc.node_mut(n45).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n45);
             let n46 = doc.create_node(ElementTag::Span);
             doc.node_mut(n46).style.margin_top = Length::px(0.0);
@@ -35581,6 +36906,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n46).style.border_left_width = 5;
             doc.node_mut(n46).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n46).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n46).style.color = Color::BLACK;
+            doc.node_mut(n46).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n44, n46);
         let n47 = doc.create_node(ElementTag::Div);
         doc.node_mut(n47).style.display = Display::Block;
@@ -35607,6 +36934,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n47).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n47).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n47).style.width = Length::min_content();
+        doc.node_mut(n47).style.color = Color::BLACK;
         doc.append_child(n34, n47);
             let n48 = doc.create_node(ElementTag::Span);
             doc.node_mut(n48).style.margin_top = Length::px(0.0);
@@ -35636,6 +36964,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n48).style.border_left_width = 5;
             doc.node_mut(n48).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n48).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n48).style.color = Color::BLACK;
+            doc.node_mut(n48).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n48);
             let n49 = doc.create_node(ElementTag::Span);
             doc.node_mut(n49).style.margin_top = Length::px(0.0);
@@ -35665,6 +36995,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n49).style.border_left_width = 5;
             doc.node_mut(n49).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n49).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n49).style.color = Color::BLACK;
+            doc.node_mut(n49).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n47, n49);
         let n50 = doc.create_node(ElementTag::Div);
         doc.node_mut(n50).style.display = Display::Block;
@@ -35691,6 +37023,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n50).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n50).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n50).style.width = Length::min_content();
+        doc.node_mut(n50).style.color = Color::BLACK;
         doc.append_child(n34, n50);
             let n51 = doc.create_node(ElementTag::Span);
             doc.node_mut(n51).style.margin_top = Length::px(0.0);
@@ -35720,6 +37053,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n51).style.border_left_width = 5;
             doc.node_mut(n51).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n51).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n51).style.color = Color::BLACK;
+            doc.node_mut(n51).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n51);
             let n52 = doc.create_node(ElementTag::Span);
             doc.node_mut(n52).style.margin_top = Length::px(0.0);
@@ -35749,6 +37084,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n52).style.border_left_width = 5;
             doc.node_mut(n52).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n52).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n52).style.color = Color::BLACK;
+            doc.node_mut(n52).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n50, n52);
         let n53 = doc.create_node(ElementTag::Div);
         doc.node_mut(n53).style.display = Display::Block;
@@ -35775,6 +37112,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n53).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n53).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n53).style.width = Length::min_content();
+        doc.node_mut(n53).style.color = Color::BLACK;
         doc.append_child(n34, n53);
             let n54 = doc.create_node(ElementTag::Span);
             doc.node_mut(n54).style.margin_top = Length::px(0.0);
@@ -35804,6 +37142,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n54).style.border_left_width = 5;
             doc.node_mut(n54).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n54).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n54).style.color = Color::BLACK;
+            doc.node_mut(n54).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n54);
             let n55 = doc.create_node(ElementTag::Span);
             doc.node_mut(n55).style.margin_top = Length::px(0.0);
@@ -35833,6 +37173,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n55).style.border_left_width = 5;
             doc.node_mut(n55).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n55).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n55).style.color = Color::BLACK;
+            doc.node_mut(n55).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n53, n55);
         let n56 = doc.create_node(ElementTag::Div);
         doc.node_mut(n56).style.display = Display::Block;
@@ -35859,6 +37201,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n56).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n56).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n56).style.width = Length::min_content();
+        doc.node_mut(n56).style.color = Color::BLACK;
         doc.append_child(n34, n56);
             let n57 = doc.create_node(ElementTag::Span);
             doc.node_mut(n57).style.margin_top = Length::px(0.0);
@@ -35888,6 +37231,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n57).style.border_left_width = 5;
             doc.node_mut(n57).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n57).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n57).style.color = Color::BLACK;
+            doc.node_mut(n57).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n57);
             let n58 = doc.create_node(ElementTag::Span);
             doc.node_mut(n58).style.margin_top = Length::px(0.0);
@@ -35917,6 +37262,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n58).style.border_left_width = 5;
             doc.node_mut(n58).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n58).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n58).style.color = Color::BLACK;
+            doc.node_mut(n58).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n56, n58);
         let n59 = doc.create_node(ElementTag::Div);
         doc.node_mut(n59).style.display = Display::Block;
@@ -35943,6 +37290,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n59).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n59).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n59).style.width = Length::min_content();
+        doc.node_mut(n59).style.color = Color::BLACK;
         doc.append_child(n34, n59);
             let n60 = doc.create_node(ElementTag::Span);
             doc.node_mut(n60).style.margin_top = Length::px(0.0);
@@ -35972,6 +37320,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n60).style.border_left_width = 5;
             doc.node_mut(n60).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n60).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n60).style.color = Color::BLACK;
+            doc.node_mut(n60).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n60);
             let n61 = doc.create_node(ElementTag::Span);
             doc.node_mut(n61).style.margin_top = Length::px(0.0);
@@ -36001,6 +37351,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n61).style.border_left_width = 5;
             doc.node_mut(n61).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n61).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n61).style.color = Color::BLACK;
+            doc.node_mut(n61).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n59, n61);
         let n62 = doc.create_node(ElementTag::Div);
         doc.node_mut(n62).style.display = Display::Block;
@@ -36027,6 +37379,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n62).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n62).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n62).style.width = Length::min_content();
+        doc.node_mut(n62).style.color = Color::BLACK;
         doc.append_child(n34, n62);
             let n63 = doc.create_node(ElementTag::Span);
             doc.node_mut(n63).style.margin_top = Length::px(0.0);
@@ -36056,6 +37409,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n63).style.border_left_width = 5;
             doc.node_mut(n63).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n63).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n63).style.color = Color::BLACK;
+            doc.node_mut(n63).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n63);
             let n64 = doc.create_node(ElementTag::Span);
             doc.node_mut(n64).style.margin_top = Length::px(0.0);
@@ -36085,6 +37440,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n64).style.border_left_width = 5;
             doc.node_mut(n64).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n64).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n64).style.color = Color::BLACK;
+            doc.node_mut(n64).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n62, n64);
         let n65 = doc.create_node(ElementTag::Div);
         doc.node_mut(n65).style.display = Display::Block;
@@ -36111,6 +37468,7 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
         doc.node_mut(n65).style.border_left_color = StyleColor::Resolved(Color::BLUE);
         doc.node_mut(n65).style.white_space = WhiteSpace::Nowrap;
         doc.node_mut(n65).style.width = Length::min_content();
+        doc.node_mut(n65).style.color = Color::BLACK;
         doc.append_child(n34, n65);
             let n66 = doc.create_node(ElementTag::Span);
             doc.node_mut(n66).style.margin_top = Length::px(0.0);
@@ -36140,6 +37498,8 @@ fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
             doc.node_mut(n66).style.border_left_width = 5;
             doc.node_mut(n66).style.background_color = Color::from_rgba8(255, 255, 0, 255);
             doc.node_mut(n66).style.box_decoration_break = BoxDecorationBreak::Slice;
+            doc.node_mut(n66).style.color = Color::BLACK;
+            doc.node_mut(n66).style.white_space = WhiteSpace::Nowrap;
             doc.append_child(n65, n66);
     doc
 }
@@ -37469,6 +38829,7 @@ fn css_sizing_stretch_cache_miss_002() -> Document {
                         doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
                         doc.node_mut(n7).style.padding_left = Length::px(0.0);
                         doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+                        doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
                         doc.append_child(n6, n7);
     doc
 }
@@ -38049,6 +39410,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n3).style.height = Length::px(10.0);
             doc.node_mut(n3).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n3).style.display = Display::InlineBlock;
+            doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Div);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -38064,6 +39426,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n4).style.height = Length::px(10.0);
             doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n4).style.display = Display::InlineBlock;
+            doc.node_mut(n4).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n4);
             let n5 = doc.create_node(ElementTag::Div);
             doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -38079,6 +39442,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n5).style.height = Length::px(10.0);
             doc.node_mut(n5).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n5).style.display = Display::InlineBlock;
+            doc.node_mut(n5).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n5);
             let n6 = doc.create_node(ElementTag::Div);
             doc.node_mut(n6).style.margin_top = Length::px(0.0);
@@ -38094,6 +39458,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n6).style.height = Length::px(10.0);
             doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n6).style.display = Display::InlineBlock;
+            doc.node_mut(n6).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n6);
             let n7 = doc.create_node(ElementTag::Div);
             doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -38109,6 +39474,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n7).style.height = Length::px(10.0);
             doc.node_mut(n7).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n7).style.display = Display::InlineBlock;
+            doc.node_mut(n7).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n7);
             let n8 = doc.create_node(ElementTag::Div);
             doc.node_mut(n8).style.margin_top = Length::px(0.0);
@@ -38124,6 +39490,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n8).style.height = Length::px(10.0);
             doc.node_mut(n8).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n8).style.display = Display::InlineBlock;
+            doc.node_mut(n8).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n8);
             let n9 = doc.create_node(ElementTag::Div);
             doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -38139,6 +39506,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n9).style.height = Length::px(10.0);
             doc.node_mut(n9).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n9).style.display = Display::InlineBlock;
+            doc.node_mut(n9).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n9);
             let n10 = doc.create_node(ElementTag::Div);
             doc.node_mut(n10).style.margin_top = Length::px(0.0);
@@ -38154,6 +39522,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n10).style.height = Length::px(10.0);
             doc.node_mut(n10).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n10).style.display = Display::InlineBlock;
+            doc.node_mut(n10).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n10);
             let n11 = doc.create_node(ElementTag::Div);
             doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -38169,6 +39538,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n11).style.height = Length::px(10.0);
             doc.node_mut(n11).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n11).style.display = Display::InlineBlock;
+            doc.node_mut(n11).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n11);
             let n12 = doc.create_node(ElementTag::Div);
             doc.node_mut(n12).style.margin_top = Length::px(0.0);
@@ -38184,6 +39554,7 @@ fn css_sizing_aspect_ratio_abspos_008() -> Document {
             doc.node_mut(n12).style.height = Length::px(10.0);
             doc.node_mut(n12).style.vertical_align = VerticalAlign::Bottom;
             doc.node_mut(n12).style.display = Display::InlineBlock;
+            doc.node_mut(n12).style.color = Color::from_rgba8(0, 128, 0, 255);
             doc.append_child(n2, n12);
     doc
 }

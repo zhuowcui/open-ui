@@ -2090,8 +2090,11 @@ fn new_fc_min_inline_size(
     // but the margin box width cannot be negative — Chrome drops below the
     // float rather than clamping). For explicit-width BFCs, the end margin
     // overflows past the container edge and does not prevent placement.
-    if style.width.is_auto() {
-        // Auto-width: can shrink to 0 content, so margins + border + padding
+    if style.width.is_auto() || style.width.is_stretch()
+        || style.min_width.is_stretch() || style.max_width.is_stretch()
+    {
+        // Auto/stretch width (or stretch min/max): can adapt to available space,
+        // so margins + border + padding is the minimum needed.
         margin_start + bp + margin_end
     } else {
         // Explicit width: resolve and compute border-box width

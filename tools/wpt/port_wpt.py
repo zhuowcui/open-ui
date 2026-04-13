@@ -96,7 +96,7 @@ SUPPORTED_PROPERTIES = {
     # Outline
     'outline', 'outline-style', 'outline-width', 'outline-color', 'outline-offset',
     # No-op properties (safe to accept, no visual effect or default-only)
-    'will-change', 'direction',
+    'will-change',
     # Visual-only properties that don't affect layout
     'resize', 'box-shadow', 'isolation',
 }
@@ -1557,6 +1557,12 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         if val in mapping:
             return f"{s}.visibility = {mapping[val]};"
 
+    # ── direction ──
+    if prop == 'direction':
+        mapping = {'ltr': 'Direction::Ltr', 'rtl': 'Direction::Rtl'}
+        if val in mapping:
+            return f"{s}.direction = {mapping[val]};"
+
     # ── flex properties ──
     if prop == 'flex-direction':
         mapping = {
@@ -2486,7 +2492,15 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
             return True
         return False
 
-    def gen_node(node: DomNode, parent_var: str, indent: int, parent_font_size: float = 16.0):
+    # CSS inherited properties that must propagate to descendants
+    INHERITED_PROPS = {'direction', 'color', 'white-space', 'text-align',
+                       'line-height', 'visibility'}
+
+    def gen_node(node: DomNode, parent_var: str, indent: int,
+                 parent_font_size: float = 16.0, inherited: dict | None = None):
+        if inherited is None:
+            inherited = {}
+
         if node.is_text:
             # Skip text nodes — we're comparing layout only
             return
@@ -2504,8 +2518,13 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
             if node.tag in ('strong', 'em', 'b', 'i', 'u', 'a') and not has_real_styles:
                 skip_self = True
             if skip_self:
+                # Merge any inherited props from this skipped node
+                child_inherited = dict(inherited)
+                for prop in INHERITED_PROPS:
+                    if prop in node.styles:
+                        child_inherited[prop] = node.styles[prop]
                 for child in node.children:
-                    gen_node(child, parent_var, indent, parent_font_size)
+                    gen_node(child, parent_var, indent, parent_font_size, child_inherited)
                 return
 
         if node.tag == 'br':
@@ -2536,22 +2555,44 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
         for sl in style_lines:
             lines.append(f"{ws}{sl}")
 
+        # Apply inherited CSS properties from ancestors that this node doesn't override
+        for prop, val in inherited.items():
+            if prop not in node.styles:
+                s = f"doc.node_mut({var}).style"
+                inh_lines = generate_single_style(prop, val, s, node_font_size)
+                if inh_lines is not None:
+                    if isinstance(inh_lines, str):
+                        inh_lines = [inh_lines]
+                    for il in inh_lines:
+                        lines.append(f"{ws}{il}")
+
         lines.append(f"{ws}doc.append_child({parent_var}, {var});")
 
-        # Process children (inherit font_size)
+        # Build inherited props for children: parent inherited + this node's own
+        child_inherited = dict(inherited)
+        for prop in INHERITED_PROPS:
+            if prop in node.styles:
+                child_inherited[prop] = node.styles[prop]
+
+        # Process children (inherit font_size + CSS inherited props)
         for child in node.children:
-            gen_node(child, var, indent + 1, node_font_size)
+            gen_node(child, var, indent + 1, node_font_size, child_inherited)
 
     # Process body children
     # Apply body-level styles if any
     root_font_size = 16.0
+    body_inherited = {}
     if root.styles:
         body_styles, root_font_size = generate_style_code(root.styles, 'vp')
         for sl in body_styles:
             lines.append(f"    {sl}")
+        # Collect inherited props from body for propagation to children
+        for prop in INHERITED_PROPS:
+            if prop in root.styles:
+                body_inherited[prop] = root.styles[prop]
 
     for child in root.children:
-        gen_node(child, 'vp', 1, root_font_size)
+        gen_node(child, 'vp', 1, root_font_size, body_inherited)
 
     lines.append("    doc")
     lines.append("}")
