@@ -356,6 +356,17 @@ impl ExclusionSpace {
         self.left_floats.len() + self.right_floats.len()
     }
 
+    /// Return all float exclusions (left and right) for propagation through
+    /// non-BFC ancestors. Used to implement CSS 2.1 §9.5: floats participate
+    /// in the nearest BFC's exclusion space, even when nested inside non-BFC
+    /// wrapper blocks.
+    pub fn all_exclusions(&self) -> Vec<ExclusionArea> {
+        let mut result = Vec::with_capacity(self.left_floats.len() + self.right_floats.len());
+        result.extend_from_slice(&self.left_floats);
+        result.extend_from_slice(&self.right_floats);
+        result
+    }
+
     // ── Internal helpers ─────────────────────────────────────────────
 
     /// Compute the left and right edges of available space at a given block offset.

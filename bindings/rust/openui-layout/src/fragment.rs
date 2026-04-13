@@ -11,6 +11,7 @@ use openui_style::ComputedStyle;
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
+use crate::exclusions::ExclusionArea;
 use crate::inline::text_combine::TextCombineLayout;
 
 /// What kind of fragment this is.
@@ -182,6 +183,19 @@ pub struct Fragment {
     /// parent that it should also resolve its own pending margin strut to
     /// prevent incorrect margin-collapse propagation past the float.
     pub float_resolved_bfc: bool,
+
+    /// Float exclusions from this block's layout that need to propagate to
+    /// the nearest BFC ancestor's exclusion space.
+    ///
+    /// CSS 2.1 §9.5: Floats participate in the nearest BFC's formatting
+    /// context, even when nested inside non-BFC wrapper blocks. When a
+    /// non-BFC block contains (directly or transitively) float children,
+    /// this field carries their exclusion areas so the parent can absorb
+    /// them into its own exclusion space. Coordinates are relative to this
+    /// block's content area origin.
+    ///
+    /// Empty for BFC blocks (they consume their own floats).
+    pub float_exclusions: Vec<ExclusionArea>,
 }
 
 impl Fragment {
@@ -212,6 +226,7 @@ impl Fragment {
             is_last_for_node: true,
             break_token: None,
             float_resolved_bfc: false,
+            float_exclusions: Vec::new(),
         }
     }
 
@@ -250,6 +265,7 @@ impl Fragment {
             is_last_for_node: true,
             break_token: None,
             float_resolved_bfc: false,
+            float_exclusions: Vec::new(),
         }
     }
 

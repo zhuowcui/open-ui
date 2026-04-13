@@ -14,12 +14,12 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_geometry::{LayoutUnit, BfcOffset, BoxStrut, Length, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
+use openui_geometry::{LayoutUnit, BfcOffset, BfcRect, BoxStrut, Length, LengthType, PhysicalOffset, PhysicalRect, PhysicalSize, MarginStrut};
 use openui_style::{ComputedStyle, Display, BoxSizing, Overflow, Float, Clear, Position, Direction, BreakValue, BoxDecorationBreak};
 use openui_dom::{Document, NodeId};
 
 use crate::constraint_space::ConstraintSpace;
-use crate::exclusions::{ExclusionSpace, ClearType};
+use crate::exclusions::{ExclusionSpace, ExclusionArea, ClearType};
 use crate::exclusions::float_utils::{UnpositionedFloat, position_float};
 use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
@@ -314,6 +314,10 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // parent — subsequent margins go into internal block_offset instead.
     // Cascaded from child fragments via float_resolved_bfc flag.
     let mut float_resolved_bfc = false;
+
+    // Float exclusions to propagate to the parent (for non-BFC blocks only).
+    // Populated inside the block-children path after the child loop.
+    let mut float_exclusions_result: Vec<ExclusionArea> = Vec::new();
 
     // CSS 2.1 §8.3.1: Self-collapsing blocks are positioned at the final
     // collapsed margin boundary, but that boundary is unknown until the next
@@ -1033,71 +1037,152 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // Regular (non-FC) block children overlap floats — only their line
         // boxes avoid floats (handled in inline layout).
         let child_is_new_fc_caller = establishes_new_fc(child_style);
+
         let (mut float_inline_offset, mut adjusted_available) = if exclusion_space.has_floats()
             && child_is_new_fc_caller
         {
-            // Tentative BFC block offset including margin collapsing.
             let child_top_margin = resolve_margins(child_style, child_available_inline).top;
-            let mut temp_strut = margin_strut;
-            temp_strut.append_normal(child_top_margin);
-            let resolved_offset = block_offset + temp_strut.sum();
-            let content_block_offset = resolved_offset - content_edge;
             let min_inline_size = new_fc_min_inline_size(child_style, child_available_inline);
 
-            // If the child has an explicit block size, use height-aware
-            // opportunity search to avoid overlap across the full BFC extent.
-            let child_block_size = if !child_style.height.is_auto()
-                && !child_style.height.is_stretch()
-                && !child_style.height.is_content_or_intrinsic()
-                && !child_style.height.is_percent()
+            // Chromium two-estimate mechanism (HandleNewFormattingContext):
+            // When the parent's BFC block offset is unresolved (non-FC parent,
+            // no border/padding, start margin not yet resolved), check whether
+            // the new-FC child fits beside adjoining floats at the collapsed
+            // position. If not, the margin "separates" — the child's margin
+            // does NOT collapse with the parent's margin group.
+            let mut margin_got_separated = false;
+
+            if !start_margin_resolved
+                && !space.is_new_formatting_context
+                && content_edge == LayoutUnit::zero()
             {
-                let raw = resolve_length(
-                    &child_style.height,
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
+                let adj_opp = exclusion_space.find_layout_opportunity(
+                    &BfcOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+                    child_available_inline,
+                    min_inline_size,
                 );
-                let bp_block = resolve_margin_or_padding(&child_style.padding_top, child_available_inline)
-                    + resolve_margin_or_padding(&child_style.padding_bottom, child_available_inline)
-                    + LayoutUnit::from_raw(child_style.border_top_width as i32 * 64)
-                    + LayoutUnit::from_raw(child_style.border_bottom_width as i32 * 64);
-                let total = if child_style.box_sizing == BoxSizing::ContentBox {
-                    raw + bp_block
-                } else {
-                    raw
-                };
-                let child_mb = resolve_margin_or_padding(&child_style.margin_bottom, child_available_inline);
-                total + child_mb
-            } else {
-                LayoutUnit::zero()
-            };
-
-            let opp = if child_block_size > LayoutUnit::zero() {
-                exclusion_space.find_opportunity_for_bfc(
-                    &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
-                    child_available_inline,
-                    min_inline_size,
-                    child_block_size,
-                )
-            } else {
-                exclusion_space.find_layout_opportunity(
-                    &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
-                    child_available_inline,
-                    min_inline_size,
-                )
-            };
-
-            // Push-down: if the layout opportunity starts below the child's
-            // tentative position, push the child down.
-            let pushed_bfc = opp.rect.block_start_offset();
-            if pushed_bfc > content_block_offset {
-                let push_amount = pushed_bfc - content_block_offset;
-                block_offset = block_offset + push_amount;
-                margin_strut = MarginStrut::new();
-                start_margin_resolved = true;
+                if adj_opp.rect.block_start_offset() > LayoutUnit::zero() {
+                    margin_got_separated = true;
+                }
             }
 
-            (opp.rect.line_start_offset(), opp.inline_size())
+            if margin_got_separated {
+                // Margin separates: save accumulated margins for parent
+                // propagation, then resolve WITHOUT the child's margin.
+                if saved_start_strut.is_none() {
+                    saved_start_strut = Some(margin_strut);
+                }
+                margin_strut = MarginStrut::new();
+                start_margin_resolved = true;
+
+                // Flush pending self-collapsing blocks at the pre-separation
+                // boundary. Their edges coincide at the current block_offset
+                // (before the push below), not at the post-margin position.
+                for &idx in pending_self_collapsing.iter() {
+                    child_fragments[idx].offset.top = block_offset;
+                }
+                pending_self_collapsing.clear();
+
+                // Find first opportunity below the float.
+                let non_adj_opp = exclusion_space.find_layout_opportunity(
+                    &BfcOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+                    child_available_inline,
+                    min_inline_size,
+                );
+
+                let pushed_block = non_adj_opp.rect.block_start_offset();
+                // Pre-subtract child_top_margin: layout_block_child will
+                // unconditionally add it via the margin strut, restoring
+                // the correct final position at the opportunity.
+                block_offset = content_edge + pushed_block - child_top_margin;
+
+                (non_adj_opp.rect.line_start_offset(), non_adj_opp.inline_size())
+            } else {
+                // Non-separated: the child's margin stays adjoining (or the
+                // parent's margin is already resolved).
+                if !start_margin_resolved {
+                    if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+                        block_offset += margin_strut.sum();
+                        margin_strut = MarginStrut::new();
+                        start_margin_resolved = true;
+                    }
+                    // else: margin propagates through — don't resolve.
+                }
+
+                // Compute the search position in content-area coordinates.
+                // For unresolved margins, the child ends up at block 0
+                // (margin propagates through). For resolved margins, use the
+                // tentative position including collapsed margins.
+                let search_block = if !start_margin_resolved {
+                    LayoutUnit::zero()
+                } else {
+                    let mut temp_strut = margin_strut;
+                    temp_strut.append_normal(child_top_margin);
+                    block_offset + temp_strut.sum() - content_edge
+                };
+
+                // Height-aware opportunity search if child has explicit height.
+                let child_block_size = if !child_style.height.is_auto()
+                    && !child_style.height.is_stretch()
+                    && !child_style.height.is_content_or_intrinsic()
+                    && !child_style.height.is_percent()
+                {
+                    let raw = resolve_length(
+                        &child_style.height,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    );
+                    let bp_block = resolve_margin_or_padding(&child_style.padding_top, child_available_inline)
+                        + resolve_margin_or_padding(&child_style.padding_bottom, child_available_inline)
+                        + LayoutUnit::from_raw(child_style.border_top_width as i32 * 64)
+                        + LayoutUnit::from_raw(child_style.border_bottom_width as i32 * 64);
+                    let total = if child_style.box_sizing == BoxSizing::ContentBox {
+                        raw + bp_block
+                    } else {
+                        raw
+                    };
+                    let child_mb = resolve_margin_or_padding(&child_style.margin_bottom, child_available_inline);
+                    total + child_mb
+                } else {
+                    LayoutUnit::zero()
+                };
+
+                let opp = if child_block_size > LayoutUnit::zero() {
+                    exclusion_space.find_opportunity_for_bfc(
+                        &BfcOffset::new(LayoutUnit::zero(), search_block),
+                        child_available_inline,
+                        min_inline_size,
+                        child_block_size,
+                    )
+                } else {
+                    exclusion_space.find_layout_opportunity(
+                        &BfcOffset::new(LayoutUnit::zero(), search_block),
+                        child_available_inline,
+                        min_inline_size,
+                    )
+                };
+
+                let pushed_bfc = opp.rect.block_start_offset();
+                if pushed_bfc > search_block {
+                    if start_margin_resolved {
+                        // Position at the opportunity, accounting for child's
+                        // margin that layout_block_child will add.
+                        block_offset = content_edge + pushed_bfc - child_top_margin;
+                        margin_strut = MarginStrut::new();
+                    } else {
+                        // Unresolved margin + push: margin must separate.
+                        if saved_start_strut.is_none() {
+                            saved_start_strut = Some(margin_strut);
+                        }
+                        margin_strut = MarginStrut::new();
+                        block_offset = content_edge + pushed_bfc - child_top_margin;
+                        start_margin_resolved = true;
+                    }
+                }
+
+                (opp.rect.line_start_offset(), opp.inline_size())
+            }
         } else {
             (LayoutUnit::zero(), child_available_inline)
         };
@@ -1200,6 +1285,51 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 c.static_position.left = c.static_position.left + float_inline_offset;
             }
         }
+
+        // CSS 2.1 §9.5: Propagate float exclusions from non-BFC children.
+        // Floats inside non-BFC wrapper blocks participate in the nearest
+        // ancestor BFC's exclusion space. After laying out a child, absorb
+        // its float_exclusions (if any) into our exclusion_space, translating
+        // from child's content-area coordinates to our content-area coordinates.
+        if !child_is_new_fc_caller {
+            if let Some(child_frag) = child_fragments.last() {
+                if !child_frag.float_exclusions.is_empty() {
+                    let child_border = &child_frag.border;
+                    let child_padding = &child_frag.padding;
+                    // Translation from child's content area to parent's content area:
+                    // child_frag.offset is in parent's border-box coords.
+                    // Parent's BFC (0,0) = parent's content area = (border.left+padding.left, content_edge).
+                    let block_adj = (child_frag.offset.top - content_edge)
+                        + child_border.top + child_padding.top;
+                    let inline_adj = (child_frag.offset.left - border.left - padding.left)
+                        + child_border.left + child_padding.left;
+
+                    for excl in &child_frag.float_exclusions {
+                        let translated = ExclusionArea {
+                            rect: BfcRect::new(
+                                BfcOffset::new(
+                                    excl.rect.start_offset.line_offset + inline_adj,
+                                    excl.rect.start_offset.block_offset + block_adj,
+                                ),
+                                BfcOffset::new(
+                                    excl.rect.end_offset.line_offset + inline_adj,
+                                    excl.rect.end_offset.block_offset + block_adj,
+                                ),
+                            ),
+                            exclusion_type: excl.exclusion_type,
+                        };
+                        exclusion_space.add(translated);
+                    }
+                }
+            }
+        }
+    }
+
+    // CSS 2.1 §9.5: Floats participate in the nearest BFC's exclusion space.
+    // If this block is NOT a new formatting context, propagate all float
+    // exclusions upward so the parent can absorb them.
+    if !space.is_new_formatting_context && exclusion_space.has_floats() {
+        float_exclusions_result = exclusion_space.all_exclusions();
     }
 
     } // end block children
@@ -1476,6 +1606,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     }
     fragment.end_margin_strut = final_end_margin_strut;
     fragment.float_resolved_bfc = float_resolved_bfc;
+    fragment.float_exclusions = float_exclusions_result;
 
     // ── Baseline propagation ─────────────────────────────────────────
     // CSS Inline 3 §3: The first baseline set of a block container is the
