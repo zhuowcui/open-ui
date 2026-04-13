@@ -4029,7 +4029,14 @@ fn layout_multicol(
                 // and break-inside is avoid, move to the next column.
                 // Include margin-bottom in the fit check: the entire margin
                 // box of an unbreakable child must fit in the column.
-                let avoid_break_inside = child_style.break_inside.is_avoid();
+                // CSS Fragmentation Level 3 §4: monolithic elements (those with
+                // overflow other than visible/clip) cannot be fragmented.
+                let is_monolithic = child_style.overflow_x != Overflow::Visible
+                    && child_style.overflow_x != Overflow::Clip
+                    || child_style.overflow_y != Overflow::Visible
+                    && child_style.overflow_y != Overflow::Clip;
+                let avoid_break_inside = child_style.break_inside.is_avoid()
+                    || is_monolithic;
                 // CSS Fragmentation §3.1: break-before/after: avoid —
                 // This child or the previous child wants to avoid a break here.
                 let avoid_break_before = prop_break_before.is_avoid()
@@ -4153,8 +4160,9 @@ fn layout_multicol(
 
                 let effective_needed = pos_margin + child_height;
 
-                if col_remaining.raw() >= effective_needed.raw() {
-                    // Child fits in current column.
+                if col_remaining.raw() >= effective_needed.raw() || is_monolithic {
+                    // Child fits in current column, or is monolithic and must
+                    // not be fragmented (CSS Fragmentation Level 3 §4).
                     let col_inline_offset = col_inline_offset_for(col_idx);
 
                     col_block_offset = col_block_offset + pos_margin;
