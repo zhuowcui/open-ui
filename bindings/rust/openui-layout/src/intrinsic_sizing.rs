@@ -576,15 +576,20 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
                 let bp_inline = b.left + b.right + p.left + p.right;
                 let bp_block = b.top + b.bottom + p.top + p.bottom;
 
-                // Transfer inline → block through AR, respecting box-sizing.
-                let (transferred_min, transferred_max) = if child_style.box_sizing == BoxSizing::BorderBox {
-                    // AR applies to border-box: block_bb = inline_bb * h/w
+                // Transfer inline → block through AR.
+                // CSS Sizing 4: bare ratio respects box-sizing; auto ratio
+                // maps through content-box.
+                let ar_uses_border_box = !ar.auto_flag
+                    && child_style.box_sizing == BoxSizing::BorderBox;
+
+                let (transferred_min, transferred_max) = if ar_uses_border_box {
+                    // AR maps border-box inline → border-box block
                     (
                         LayoutUnit::from_f32(min_inline.to_f32() * ar.ratio.1 / ar.ratio.0),
                         LayoutUnit::from_f32(max_inline.to_f32() * ar.ratio.1 / ar.ratio.0),
                     )
                 } else {
-                    // AR applies to content-box: content_h = content_w * h/w, then add bp
+                    // AR maps content-box: content_w → content_h, then add bp
                     let content_min_w = (min_inline - bp_inline).clamp_negative_to_zero();
                     let content_max_w = (max_inline - bp_inline).clamp_negative_to_zero();
                     (
@@ -610,8 +615,7 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
 
     // CSS Sizing 4 §5.1: Reverse AR transfer — when min-height (or explicit height)
     // inflates the block size beyond what was derived from inline, transfer back
-    // through AR to inflate inline size. E.g. min-height:100px + AR:1/1 +
-    // box-sizing:border-box → inline border-box should also be 100px.
+    // through AR to inflate inline size.
     let (min_inline, max_inline) = if let Some(ref ar) = child_style.aspect_ratio {
         if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 && child_style.width.is_auto() {
             let b = resolve_border(child_style);
@@ -619,15 +623,14 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
             let bp_inline = b.left + b.right + p.left + p.right;
             let bp_block = b.top + b.bottom + p.top + p.bottom;
 
-            // For box-sizing:border-box, AR operates on border-box dimensions
-            let use_border_box = child_style.box_sizing == BoxSizing::BorderBox;
+            let ar_uses_border_box = !ar.auto_flag
+                && child_style.box_sizing == BoxSizing::BorderBox;
 
             let reverse_transfer = |block_bb: LayoutUnit| -> LayoutUnit {
-                if use_border_box {
-                    // AR applies to border-box: inline_bb = block_bb * w/h
+                if ar_uses_border_box {
+                    // AR maps border-box block → border-box inline
                     LayoutUnit::from_f32(block_bb.to_f32() * ar.ratio.0 / ar.ratio.1)
                 } else {
-                    // AR applies to content-box: content_h → content_w → border-box
                     let content_h = (block_bb - bp_block).clamp_negative_to_zero();
                     LayoutUnit::from_f32(content_h.to_f32() * ar.ratio.0 / ar.ratio.1) + bp_inline
                 }
@@ -1002,16 +1005,43 @@ fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) -> L
                 let bp_inline = b.left + b.right + p.left + p.right;
                 let bp_block = b.top + b.bottom + p.top + p.bottom;
 
+                // CSS Sizing 4: when `auto <ratio>`, AR maps through
+                // content-box. Bare `<ratio>` respects box-sizing.
+                let ar_uses_border_box = !ar.auto_flag
+                    && style.box_sizing == BoxSizing::BorderBox;
+
+                // Get raw height and clamp by min-height / max-height.
                 let h_raw = LayoutUnit::from_f32(style.height.value());
-                let content_h = if style.box_sizing == BoxSizing::BorderBox {
-                    (h_raw - bp_block).clamp_negative_to_zero()
-                } else {
-                    h_raw
-                };
-                let content_w = LayoutUnit::from_f32(
-                    content_h.to_f32() * ar.ratio.0 / ar.ratio.1,
+                let indefinite = openui_geometry::INDEFINITE_SIZE;
+                let min_h = resolve_length(
+                    &style.min_height, indefinite,
+                    LayoutUnit::zero(), LayoutUnit::zero(),
                 );
-                content_w + bp_inline
+                let max_h = resolve_length(
+                    &style.max_height, indefinite,
+                    LayoutUnit::max(), LayoutUnit::max(),
+                );
+                let h_clamped = if style.box_sizing == BoxSizing::BorderBox {
+                    let h_bb = h_raw.max_of(bp_block);
+                    let min_h_bb = if min_h > LayoutUnit::zero() { min_h.max_of(bp_block) } else { LayoutUnit::zero() };
+                    let max_h_bb = if max_h < LayoutUnit::max() { max_h.max_of(bp_block) } else { LayoutUnit::max() };
+                    h_bb.clamp(min_h_bb, max_h_bb)
+                } else {
+                    h_raw.clamp(min_h, max_h)
+                };
+
+                if ar_uses_border_box {
+                    // AR applies to border-box: w_bb = h_bb × ratio
+                    LayoutUnit::from_f32(h_clamped.to_f32() * ar.ratio.0 / ar.ratio.1)
+                } else {
+                    // AR applies to content-box: content_w = content_h × ratio
+                    let content_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (h_clamped - bp_block).clamp_negative_to_zero()
+                    } else {
+                        h_clamped
+                    };
+                    LayoutUnit::from_f32(content_h.to_f32() * ar.ratio.0 / ar.ratio.1) + bp_inline
+                }
             } else {
                 intrinsic
             }
@@ -1134,22 +1164,29 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
                 b.top + b.bottom + p.top + p.bottom
             };
 
+            // CSS Sizing 4: bare ratio respects box-sizing; auto ratio
+            // always maps through content-box.
+            let ar_uses_border_box = !ar.auto_flag
+                && style.box_sizing == BoxSizing::BorderBox;
+
             // Transfer min-height → min-width (only if min-width is auto/0)
             let min_h_raw = resolve_length(
                 &style.min_height, indefinite, zero, zero,
             );
             if min_h_raw > zero && min_bb == zero {
-                if style.box_sizing == BoxSizing::BorderBox {
-                    // AR applies to border-box: border_box_w = border_box_h * w/h
+                if ar_uses_border_box {
                     min_bb = LayoutUnit::from_f32(
                         min_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
                     );
                 } else {
-                    // AR applies to content-box: content_w = content_h * w/h, then add bp
-                    let transferred_min_w = LayoutUnit::from_f32(
-                        min_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
-                    );
-                    min_bb = transferred_min_w + bp_val;
+                    let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (min_h_raw - bp_block).clamp_negative_to_zero()
+                    } else {
+                        min_h_raw
+                    };
+                    min_bb = LayoutUnit::from_f32(
+                        content_min_h.to_f32() * ar.ratio.0 / ar.ratio.1,
+                    ) + bp_val;
                 }
             }
 
@@ -1158,15 +1195,19 @@ fn apply_min_max_inline(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
                 &style.max_height, indefinite, LayoutUnit::max(), LayoutUnit::max(),
             );
             if max_h_raw < LayoutUnit::max() && max_bb == LayoutUnit::max() {
-                if style.box_sizing == BoxSizing::BorderBox {
+                if ar_uses_border_box {
                     max_bb = LayoutUnit::from_f32(
                         max_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
                     );
                 } else {
-                    let transferred_max_w = LayoutUnit::from_f32(
-                        max_h_raw.to_f32() * ar.ratio.0 / ar.ratio.1,
-                    );
-                    max_bb = transferred_max_w + bp_val;
+                    let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
+                        (max_h_raw - bp_block).clamp_negative_to_zero()
+                    } else {
+                        max_h_raw
+                    };
+                    max_bb = LayoutUnit::from_f32(
+                        content_max_h.to_f32() * ar.ratio.0 / ar.ratio.1,
+                    ) + bp_val;
                 }
             }
         }
