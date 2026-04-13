@@ -3804,26 +3804,32 @@ fn layout_multicol(
                     || prev_break_after_forces;
 
                 if forced_break {
-                    // CSS Multicol §3.4: Forced breaks always create a new
-                    // column, even if that means creating an overflow column
-                    // beyond the declared column-count.  Overflow columns are
-                    // positioned by col_inline_offset_for() which already
-                    // handles indices ≥ positions.len().
-                    if col_block_offset > LayoutUnit::zero() {
-                        max_col_content = max_col_content.max_of(col_block_offset);
-                        col_idx += 1;
-                        col_block_offset = LayoutUnit::zero();
-                        col_remaining = column_height;
-                        prev_margin_bottom = LayoutUnit::zero();
-                        col_started_by_forced_break = true;
-                    } else if i > 0 {
-                        // Column is empty but this isn't the first child overall.
-                        // A forced break still moves to the next column.
-                        col_idx += 1;
-                        col_block_offset = LayoutUnit::zero();
-                        col_remaining = column_height;
-                        prev_margin_bottom = LayoutUnit::zero();
-                        col_started_by_forced_break = true;
+                    // CSS Multicol §3.4 + CSS Fragmentation §3.1:
+                    // Forced breaks advance to the next column.
+                    // However, when column-fill is balance, the balance
+                    // algorithm packs excess forced segments into the last
+                    // column.  Match that behavior here: cap col_idx at
+                    // column_count - 1 so excess content stays in the last
+                    // declared column instead of creating overflow columns.
+                    // For column-fill:auto, excess forced breaks DO create
+                    // overflow columns (positioned by col_inline_offset_for).
+                    let can_advance_forced = algo.column_fill == ColumnFill::Auto
+                        || col_idx + 1 < resolved.count as usize;
+                    if can_advance_forced {
+                        if col_block_offset > LayoutUnit::zero() {
+                            max_col_content = max_col_content.max_of(col_block_offset);
+                            col_idx += 1;
+                            col_block_offset = LayoutUnit::zero();
+                            col_remaining = column_height;
+                            prev_margin_bottom = LayoutUnit::zero();
+                            col_started_by_forced_break = true;
+                        } else if i > 0 {
+                            col_idx += 1;
+                            col_block_offset = LayoutUnit::zero();
+                            col_remaining = column_height;
+                            prev_margin_bottom = LayoutUnit::zero();
+                            col_started_by_forced_break = true;
+                        }
                     }
                 }
 
