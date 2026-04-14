@@ -1059,6 +1059,31 @@ fn create_line_box(
     percentage_block_base: LayoutUnit,
     boxes_open_at_line_start: &[InlineBoxState],
 ) -> Fragment {
+    // === STEP 0: Check if line has content (CSS 2.1 §9.4.2) ===
+    // "Line boxes that contain no text, no preserved white space, no inline
+    // elements with a non-zero margin, padding, or border, and no other
+    // in-flow content must be treated as zero-height line boxes."
+    let line_has_content = line_info.items.iter().any(|item_result| {
+        match item_result.item_type {
+            InlineItemType::Text | InlineItemType::AtomicInline => true,
+            InlineItemType::OpenTag => {
+                let item = &items_data.items[item_result.item_index];
+                let s = &items_data.styles[item.style_index];
+                s.effective_border_left() > 0 || s.effective_border_right() > 0
+                    || s.effective_border_top() > 0 || s.effective_border_bottom() > 0
+                    || (s.padding_left.is_fixed() && s.padding_left.value() != 0.0)
+                    || (s.padding_right.is_fixed() && s.padding_right.value() != 0.0)
+                    || (s.padding_top.is_fixed() && s.padding_top.value() != 0.0)
+                    || (s.padding_bottom.is_fixed() && s.padding_bottom.value() != 0.0)
+                    || (s.margin_left.is_fixed() && s.margin_left.value() != 0.0)
+                    || (s.margin_right.is_fixed() && s.margin_right.value() != 0.0)
+                    || (s.margin_top.is_fixed() && s.margin_top.value() != 0.0)
+                    || (s.margin_bottom.is_fixed() && s.margin_bottom.value() != 0.0)
+            }
+            _ => false,
+        }
+    });
+
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(
         block_metrics,
@@ -1066,8 +1091,8 @@ fn create_line_box(
         block_style.font_size,
     );
 
-    let mut line_ascent = strut.ascent;
-    let mut line_descent = strut.descent;
+    let mut line_ascent = if line_has_content { strut.ascent } else { 0.0 };
+    let mut line_descent = if line_has_content { strut.descent } else { 0.0 };
 
     // Track items that need deferred vertical-align resolution (top/bottom).
     struct DeferredItem {
