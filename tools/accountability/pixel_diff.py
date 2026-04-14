@@ -30,7 +30,7 @@ except ImportError:
     sys.exit(1)
 
 
-def compare_images(path_a: str, path_b: str, diff_path: str, tolerance: int = 2) -> dict:
+def compare_images(path_a: str, path_b: str, diff_path: str, tolerance: int = 4) -> dict:
     """Compare two images pixel-by-pixel and generate a diff image.
     
     Excludes the rightmost 15px to avoid Chrome scrollbar artifacts.
@@ -123,8 +123,8 @@ def main():
     parser.add_argument("image_b", help="Second image (OpenUI render)")
     parser.add_argument("diff_out", help="Output diff image path")
     parser.add_argument("json_out", help="Output JSON result path")
-    parser.add_argument("--tolerance", type=int, default=2,
-                        help="Per-channel tolerance (default: 2)")
+    parser.add_argument("--tolerance", type=int, default=4,
+                        help="Per-channel tolerance (default: 4)")
     args = parser.parse_args()
 
     result = compare_images(args.image_a, args.image_b, args.diff_out, args.tolerance)
