@@ -2711,6 +2711,31 @@ def generate_rust_fn(fn_name: str, root: DomNode) -> str:
         if node.tag in block_tags and 'display' not in node.styles:
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
 
+        # Apply UA default styles for HTML elements (before explicit styles so CSS can override)
+        _UA_DEFAULTS = {
+            'p': [('margin_top', 'Length::px(16.0)'), ('margin_bottom', 'Length::px(16.0)')],
+            'ul': [('margin_top', 'Length::px(16.0)'), ('margin_bottom', 'Length::px(16.0)'),
+                   ('padding_left', 'Length::px(40.0)')],
+            'ol': [('margin_top', 'Length::px(16.0)'), ('margin_bottom', 'Length::px(16.0)'),
+                   ('padding_left', 'Length::px(40.0)')],
+            'blockquote': [('margin_top', 'Length::px(16.0)'), ('margin_bottom', 'Length::px(16.0)'),
+                           ('margin_left', 'Length::px(40.0)'), ('margin_right', 'Length::px(40.0)')],
+            'dd': [('margin_left', 'Length::px(40.0)')],
+        }
+        _UA_CSS_MAP = {
+            'margin_top': {'margin-top', 'margin', 'margin-block-start', 'margin-block'},
+            'margin_bottom': {'margin-bottom', 'margin', 'margin-block-end', 'margin-block'},
+            'margin_left': {'margin-left', 'margin', 'margin-inline-start', 'margin-inline'},
+            'margin_right': {'margin-right', 'margin', 'margin-inline-end', 'margin-inline'},
+            'padding_left': {'padding-left', 'padding', 'padding-inline-start', 'padding-inline'},
+        }
+        if node.tag in _UA_DEFAULTS:
+            s = f"doc.node_mut({var}).style"
+            for field, val in _UA_DEFAULTS[node.tag]:
+                css_names = _UA_CSS_MAP.get(field, set())
+                if not any(p in node.styles for p in css_names):
+                    lines.append(f"{ws}{s}.{field} = {val};")
+
         # Generate style code
         style_lines, node_font_size = generate_style_code(node.styles, var, parent_font_size)
         for sl in style_lines:
