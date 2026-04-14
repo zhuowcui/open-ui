@@ -133,8 +133,8 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
             // max-content: all inline items on one line (sum widths).
             min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
             inline_children_max_sum = inline_children_max_sum + child_sizes.max_content_inline_size;
-            min_content_block = min_content_block + child_sizes.min_content_block_size;
-            max_content_block = max_content_block + child_sizes.max_content_block_size;
+            // Block-size for inline children is computed via inline layout below
+            // (not by summing individual contributions, which would double-count).
         } else {
             // CSS Sizing 3 §4.1: non-float block children contribute via max.
             min_inline = min_inline.max_of(child_sizes.min_content_inline_size);

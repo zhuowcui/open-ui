@@ -1353,8 +1353,13 @@ fn resolve_content_based_size(
             }
         }
 
-        let intrinsic = compute_intrinsic_block_sizes(doc, child_id);
-        return (intrinsic.max_content_block_size - main_axis_border_padding).clamp_negative_to_zero();
+        // Lay out child with cross-axis constraint to get content-based height.
+        // block_layout with indefinite block (auto height) computes auto height
+        // from content, accounting for the actual cross-axis width constraint
+        // which affects line breaking of inline children.
+        let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+        let main_size = child_fragment.height().clamp_indefinite_to_zero();
+        return (main_size - main_axis_border_padding).clamp_negative_to_zero();
     }
 
     let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
