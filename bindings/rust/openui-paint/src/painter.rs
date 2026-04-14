@@ -66,6 +66,29 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
         return;
     }
 
+    // Column box fragments are anonymous clipping containers for multicol
+    // columns (CSS Multicol §3.1). They have no decoration but clip children
+    // to the column boundaries.
+    if fragment.kind == FragmentKind::ColumnBox {
+        if fragment.has_overflow_clip {
+            canvas.save();
+            let clip_x = abs_offset.left.round().to_f32();
+            let clip_y = abs_offset.top.round().to_f32();
+            let clip_w = fragment.size.width.round().to_f32();
+            let clip_h = fragment.size.height.round().to_f32();
+            canvas.clip_rect(
+                skia_safe::Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
+                skia_safe::ClipOp::Intersect,
+                true,
+            );
+            paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset);
+            canvas.restore();
+        } else {
+            paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset);
+        }
+        return;
+    }
+
     // Line box fragments (from inline layout) have NodeId::NONE — they are
     // anonymous boxes with no DOM node. Just recurse into children.
     if fragment.node_id.is_none() {
@@ -96,6 +119,9 @@ pub fn paint_fragment(canvas: &Canvas, fragment: &Fragment, doc: &Document, offs
             }
             FragmentKind::ColumnRule => {
                 paint_column_rule(canvas, fragment, style, abs_offset);
+            }
+            FragmentKind::ColumnBox => {
+                // Handled above (early return); unreachable here.
             }
         }
     }

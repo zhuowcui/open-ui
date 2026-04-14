@@ -3897,6 +3897,10 @@ fn layout_multicol(
             let mut col_started_by_forced_break = false;
             // Track actual tallest column content for auto-height containers.
             let mut max_col_content = LayoutUnit::zero();
+            // Per-column children: collected during distribution, then wrapped
+            // in ColumnBox fragments for column-level overflow clipping
+            // (CSS Multicol §3.1: column boxes clip their content).
+            let mut per_col_children: Vec<Vec<Fragment>> = vec![Vec::new()];
 
             // Record static positions for OOF children that appear before
             // the first in-flow child in this group.
@@ -4190,7 +4194,10 @@ fn layout_multicol(
                     col_block_offset = col_block_offset + child_height;
                     col_remaining = col_remaining - pos_margin - child_height;
                     prev_margin_bottom = child_margin_bottom;
-                    result_children.push(positioned);
+                    while per_col_children.len() <= col_idx {
+                        per_col_children.push(Vec::new());
+                    }
+                    per_col_children[col_idx].push(positioned);
                 } else {
                     // Child must be fragmented across multiple columns.
                     // CSS Multicol §3.4: overflow creates additional columns
@@ -4221,7 +4228,10 @@ fn layout_multicol(
                             content_edge_x + col_inline_offset_for(col_idx),
                             content_edge_y + total_block_offset + col_block_offset,
                         );
-                        result_children.push(part);
+                        while per_col_children.len() <= col_idx {
+                            per_col_children.push(Vec::new());
+                        }
+                        per_col_children[col_idx].push(part);
                         col_block_offset = col_block_offset + child_height;
                     } else {
                         // box-decoration-break: clone — borders/padding repeat
@@ -4320,7 +4330,10 @@ fn layout_multicol(
                                     c.offset.top = c.offset.top - content_consumed;
                                 }
                             }
-                            result_children.push(part);
+                            while per_col_children.len() <= col_idx {
+                                per_col_children.push(Vec::new());
+                            }
+                            per_col_children[col_idx].push(part);
 
                             content_consumed = content_consumed + content_in_part;
                             // For the outer loop's `consumed` tracker (slice mode),
@@ -4381,6 +4394,30 @@ fn layout_multicol(
             } else {
                 column_height
             };
+
+            // Wrap each column's children in a ColumnBox fragment for
+            // column-level overflow clipping (CSS Multicol §3.1).
+            for (ci, mut col_children) in per_col_children.into_iter().enumerate() {
+                if col_children.is_empty() {
+                    continue;
+                }
+                let col_offset = PhysicalOffset::new(
+                    content_edge_x + col_inline_offset_for(ci),
+                    content_edge_y + total_block_offset,
+                );
+                // Adjust children's offsets to be relative to the column box.
+                for child in &mut col_children {
+                    child.offset.left = child.offset.left - col_offset.left;
+                    child.offset.top = child.offset.top - col_offset.top;
+                }
+                let mut col_box = Fragment::new_box(NodeId::NONE,
+                    PhysicalSize::new(column_width, actual_group_height));
+                col_box.kind = FragmentKind::ColumnBox;
+                col_box.offset = col_offset;
+                col_box.has_overflow_clip = true;
+                col_box.children = col_children;
+                result_children.push(col_box);
+            }
 
             // Column rules for this group — derive positions from actual
             // per-column positions so that rules stay centered in the gap

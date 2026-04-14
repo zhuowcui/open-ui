@@ -25,6 +25,9 @@ pub enum FragmentKind {
     Viewport,
     /// A column rule between multicol columns.
     ColumnRule,
+    /// An anonymous column box in a multicol container.
+    /// Clips content to column boundaries (CSS Multicol §3.1).
+    ColumnBox,
 }
 
 /// A positioned layout fragment, ready for painting.
