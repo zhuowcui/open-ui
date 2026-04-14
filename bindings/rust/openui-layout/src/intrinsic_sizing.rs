@@ -529,12 +529,20 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
     let max_inline = apply_size_override_inline(child_style, child_intrinsic.max_content_inline_size);
 
     // Apply min-width / max-width clamping.
-    // Pass the child's POST-AR intrinsic sizes so that intrinsic keywords like
-    // `max-width: max-content` resolve to the element's actual max-content
-    // (which includes the AR transfer from definite height per CSS Sizing 4 §5.1).
-    let intrinsic_with_ar = (min_inline, max_inline);
-    let min_inline = apply_min_max_inline(child_style, min_inline, intrinsic_with_ar);
-    let max_inline = apply_min_max_inline(child_style, max_inline, intrinsic_with_ar);
+    // Intrinsic keywords in min/max-width (e.g. `max-width: max-content`) must
+    // resolve against the CONTENT-BASED intrinsic sizes, not the specified width.
+    // CSS Sizing 3 §4: intrinsic sizes are determined by the content.
+    // However, for AR-derived widths (auto width + aspect-ratio + fixed height),
+    // the transferred size IS the intrinsic size per CSS Sizing 4 §5.1.
+    let intrinsic_for_keywords = if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
+        // Explicit width: intrinsic keywords resolve against content-based sizes.
+        (child_intrinsic.min_content_inline_size, child_intrinsic.max_content_inline_size)
+    } else {
+        // Auto/intrinsic width (possibly AR-derived): use post-override values.
+        (min_inline, max_inline)
+    };
+    let min_inline = apply_min_max_inline(child_style, min_inline, intrinsic_for_keywords);
+    let max_inline = apply_min_max_inline(child_style, max_inline, intrinsic_for_keywords);
 
     // CSS Sizing 4 §5.1: For elements with AR and min-width:auto, the
     // automatic minimum in the ratio-dependent axis is the content-based
