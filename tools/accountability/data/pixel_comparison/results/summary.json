@@ -1,8 +1,8 @@
 {
   "total": 3406,
-  "passed": 2273,
-  "failed": 1133,
-  "errors": 0,
+  "passed": 2275,
+  "failed": 1129,
+  "errors": 2,
   "near_miss_aa": 322,
   "aa_threshold_pct": 0.5,
   "reference_tests": 936,
@@ -4111,7 +4111,7 @@
     {
       "id": "wpt/css_flexbox/flexbox_flex-natural-ref",
       "status": "fail",
-      "mismatch_pct": 100.0
+      "mismatch_pct": 22.991083
     },
     {
       "id": "wpt/css_flexbox/flexbox_flex-natural-variable-auto-basis-ref",
@@ -7720,8 +7720,8 @@
     },
     {
       "id": "wpt/css_multicol/multicol-zero-height-003",
-      "status": "fail",
-      "mismatch_pct": 100.0
+      "status": "error",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/named-page",
@@ -10680,8 +10680,8 @@
     },
     {
       "id": "wpt/css_break/firefox-bug-1693616-002-crash",
-      "status": "fail",
-      "mismatch_pct": 100.0
+      "status": "error",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flex-item-padding-block-in-inline-crash",
@@ -13815,13 +13815,13 @@
     },
     {
       "id": "wpt/css_backgrounds/background-color-body-propagation-001",
-      "status": "fail",
-      "mismatch_pct": 93.333333
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/background-color-body-propagation-002",
-      "status": "fail",
-      "mismatch_pct": 93.333333
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/background-color-body-propagation-ref",
@@ -14221,7 +14221,7 @@
     {
       "id": "wpt/css_backgrounds/background-rounded-image-clip-001",
       "status": "fail",
-      "mismatch_pct": 93.85966
+      "mismatch_pct": 6.063907
     },
     {
       "id": "wpt/css_backgrounds/background-size-002",

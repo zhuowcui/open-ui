@@ -1720,6 +1720,7 @@ fn css_backgrounds_background_clip_padding_box() -> Document {
 // Source: background-color-body-propagation-001.html
 fn css_backgrounds_background_color_body_propagation_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1736,6 +1737,7 @@ fn css_backgrounds_background_color_body_propagation_001() -> Document {
 // Source: background-color-body-propagation-002.html
 fn css_backgrounds_background_color_body_propagation_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -8748,6 +8750,7 @@ fn css_backgrounds_background_repeat_space_9() -> Document {
 // Source: background-rounded-image-clip-001.html
 fn css_backgrounds_background_rounded_image_clip_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -24618,8 +24621,8 @@ fn css_backgrounds_box_shadow_overlapping_002() -> Document {
         doc.node_mut(n2).style.padding_left = Length::px(0.0);
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.box_shadow = vec![BoxShadow { offset_x: 300.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 0.0, color: Color::RED, inset: false }];
-        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+        doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
         doc.append_child(n1, n2);
     doc
 }

@@ -525,6 +525,7 @@ fn css_display_display_contents_flex_001() -> Document {
 // Source: display-contents-flex-002-ref.html
 fn css_display_display_contents_flex_002_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1004,6 +1005,7 @@ fn css_display_display_contents_flex_002_ref() -> Document {
 // Source: display-contents-flex-002.html
 fn css_display_display_contents_flex_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1448,6 +1450,7 @@ fn css_display_display_contents_flex_002() -> Document {
 // Source: display-contents-flex-003.html
 fn css_display_display_contents_flex_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -2064,6 +2067,7 @@ fn css_display_display_contents_inline_002() -> Document {
 // Source: display-contents-inline-flex-001-ref.html
 fn css_display_display_contents_inline_flex_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -2375,6 +2379,7 @@ fn css_display_display_contents_inline_flex_001_ref() -> Document {
 // Source: display-contents-inline-flex-001.html
 fn css_display_display_contents_inline_flex_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -2755,6 +2760,7 @@ fn css_display_display_contents_line_height() -> Document {
 // Source: display-contents-list-001-ref.html
 fn css_display_display_contents_list_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3260,6 +3266,7 @@ fn css_display_display_contents_list_001_ref() -> Document {
 // Source: display-contents-list-001.html
 fn css_display_display_contents_list_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3743,6 +3750,7 @@ fn css_display_display_contents_list_001() -> Document {
 // Source: display-contents-multicol-001-ref.html
 fn css_display_display_contents_multicol_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4014,6 +4022,7 @@ fn css_display_display_contents_multicol_001_ref() -> Document {
 // Source: display-contents-multicol-001.html
 fn css_display_display_contents_multicol_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4538,6 +4547,7 @@ fn css_display_display_contents_root_background() -> Document {
 // Source: display-contents-shadow-dom-1-ref.html
 fn css_display_display_contents_shadow_dom_1_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5392,6 +5402,7 @@ fn css_display_display_first_line_002_ref() -> Document {
 // Source: display-flow-root-001.html
 fn css_display_display_flow_root_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5813,6 +5824,7 @@ fn css_display_display_flow_root_dynamic_ref() -> Document {
 // Source: display-flow-root-list-item-001.html
 fn css_display_display_flow_root_list_item_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);

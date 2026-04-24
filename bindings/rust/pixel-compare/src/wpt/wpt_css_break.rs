@@ -3033,6 +3033,7 @@ fn css_break_block_in_inline_015_print() -> Document {
 // Source: block-max-height-001-ref.html
 fn css_break_block_max_height_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3255,6 +3256,7 @@ fn css_break_block_max_height_001_ref() -> Document {
 // Source: block-max-height-001.html
 fn css_break_block_max_height_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3477,6 +3479,7 @@ fn css_break_block_max_height_001() -> Document {
 // Source: block-max-height-001b-ref.html
 fn css_break_block_max_height_001b_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3731,6 +3734,7 @@ fn css_break_block_max_height_001b_ref() -> Document {
 // Source: block-max-height-001b.html
 fn css_break_block_max_height_001b() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3985,6 +3989,7 @@ fn css_break_block_max_height_001b() -> Document {
 // Source: block-max-height-002.html
 fn css_break_block_max_height_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4211,6 +4216,7 @@ fn css_break_block_max_height_002() -> Document {
 // Source: block-max-height-002b.html
 fn css_break_block_max_height_002b() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4469,6 +4475,7 @@ fn css_break_block_max_height_002b() -> Document {
 // Source: block-max-height-003.html
 fn css_break_block_max_height_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4695,6 +4702,7 @@ fn css_break_block_max_height_003() -> Document {
 // Source: block-max-height-003b.html
 fn css_break_block_max_height_003b() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4953,6 +4961,7 @@ fn css_break_block_max_height_003b() -> Document {
 // Source: block-min-height-001-ref.html
 fn css_break_block_min_height_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5175,6 +5184,7 @@ fn css_break_block_min_height_001_ref() -> Document {
 // Source: block-min-height-001.html
 fn css_break_block_min_height_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5397,6 +5407,7 @@ fn css_break_block_min_height_001() -> Document {
 // Source: block-min-height-001b-ref.html
 fn css_break_block_min_height_001b_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5651,6 +5662,7 @@ fn css_break_block_min_height_001b_ref() -> Document {
 // Source: block-min-height-001b.html
 fn css_break_block_min_height_001b() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -11724,6 +11736,7 @@ fn css_break_break_between_force_002() -> Document {
 // Source: break-inside-avoid-min-block-size-1-ref.html
 fn css_break_break_inside_avoid_min_block_size_1_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -12236,6 +12249,7 @@ fn css_break_break_inside_avoid_min_block_size_1_ref() -> Document {
 // Source: break-inside-avoid-min-block-size-1.html
 fn css_break_break_inside_avoid_min_block_size_1() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -25051,8 +25065,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.background_color = Color::RED;
-        doc.node_mut(n2).style.color = Color::RED;
         doc.node_mut(n2).style.text_align = TextAlign::Right;
+        doc.node_mut(n2).style.color = Color::RED;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -25066,8 +25080,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
             doc.node_mut(n3).style.padding_left = Length::px(0.0);
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.height = Length::px(60.0);
-            doc.node_mut(n3).style.color = Color::RED;
             doc.node_mut(n3).style.text_align = TextAlign::Right;
+            doc.node_mut(n3).style.color = Color::RED;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -25080,8 +25094,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
             doc.node_mut(n4).style.padding_left = Length::px(0.0);
             doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n4).style.position = Position::Relative;
-            doc.node_mut(n4).style.color = Color::RED;
             doc.node_mut(n4).style.text_align = TextAlign::Right;
+            doc.node_mut(n4).style.color = Color::RED;
             doc.append_child(n2, n4);
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
@@ -25099,8 +25113,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
                 doc.node_mut(n5).style.height = Length::px(200.0);
                 doc.node_mut(n5).style.top = Length::px(-80.0);
                 doc.node_mut(n5).style.width = Length::px(10.0);
-                doc.node_mut(n5).style.color = Color::RED;
                 doc.node_mut(n5).style.text_align = TextAlign::Right;
+                doc.node_mut(n5).style.color = Color::RED;
                 doc.append_child(n4, n5);
                 let n6 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n6).style.display = Display::Block;
@@ -25119,8 +25133,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
                 doc.node_mut(n6).style.top = Length::px(-80.0);
                 doc.node_mut(n6).style.right = Length::px(0.0);
                 doc.node_mut(n6).style.left = Length::px(0.0);
-                doc.node_mut(n6).style.color = Color::RED;
                 doc.node_mut(n6).style.text_align = TextAlign::Right;
+                doc.node_mut(n6).style.color = Color::RED;
                 doc.append_child(n4, n6);
     doc
 }
@@ -73803,8 +73817,8 @@ fn css_break_table_table_caption_and_cells_fixed_width_ref() -> Document {
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.height = Length::px(32.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
-        doc.node_mut(n2).style.line_height = LineHeight::Length(32.0);
         doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.line_height = LineHeight::Length(32.0);
         doc.append_child(n1, n2);
     doc
 }
@@ -73850,8 +73864,8 @@ fn css_break_table_table_caption_and_cells_ref() -> Document {
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.height = Length::px(32.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
-        doc.node_mut(n2).style.line_height = LineHeight::Length(32.0);
         doc.node_mut(n2).style.text_align = TextAlign::Center;
+        doc.node_mut(n2).style.line_height = LineHeight::Length(32.0);
         doc.append_child(n1, n2);
     doc
 }

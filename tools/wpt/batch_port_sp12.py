@@ -111,7 +111,7 @@ def process_recursive(base_dir: str, module_name: str) -> dict:
                 continue
 
             fn_name = f"{module_name}_{sanitize_fn_name(unique_name)}"
-            rust_code = generate_rust_fn(fn_name, parser.root)
+            rust_code = generate_rust_fn(fn_name, parser.root, parser.html_styles)
             html_template = generate_html_template(html_path)
 
             results['portable'].append((unique_name, fn_name, rust_code, html_template))

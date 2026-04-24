@@ -1007,6 +1007,7 @@ class WptHtmlParser(HTMLParser):
         self.all_styles = []  # all style dicts encountered
         self.ref_path = None
         self.html_dir = ''  # Set by parse_wpt_html for resolving relative paths
+        self.html_styles = OrderedDict()  # styles applied to <html> (root element)
 
     # Void elements that never have closing tags
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
@@ -1037,6 +1038,9 @@ class WptHtmlParser(HTMLParser):
             return
 
         if tag in ('head', 'html', 'body'):
+            if tag == 'html':
+                if 'style' in attrs_dict:
+                    self.html_styles = parse_inline_styles(attrs_dict['style'])
             if tag == 'body':
                 self.in_body = True
                 if 'style' in attrs_dict:
@@ -1118,6 +1122,22 @@ class WptHtmlParser(HTMLParser):
         all_rules = BODY_STYLE_RULES + self.external_css_rules + self.css_rules
         if all_rules:
             apply_css_rules(all_rules, self.root)
+            # Apply html-targeted rules to self.html_styles for body-bg propagation logic.
+            html_cascade = OrderedDict()
+            html_cascade_spec = {}
+            for selector, styles in all_rules:
+                # Match selectors targeting the html root element only.
+                sel = selector.strip().lower()
+                if sel in ('html', ':root', '*'):
+                    spec = compute_specificity(selector)
+                    for prop, val in styles.items():
+                        if prop not in html_cascade_spec or spec >= html_cascade_spec[prop]:
+                            html_cascade[prop] = val
+                            html_cascade_spec[prop] = spec
+            # Inline html styles take highest precedence
+            inline = OrderedDict(self.html_styles)
+            html_cascade.update(inline)
+            self.html_styles = html_cascade
             # Re-collect all styles
             self.all_styles = []
             def collect(node):
@@ -2637,11 +2657,44 @@ def generate_border_color_shorthand(val: str, s: str) -> list[str] | None:
 
 # ─── Document builder generation ──────────────────────────────────────────
 
-def generate_rust_fn(fn_name: str, root: DomNode) -> str:
+def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = None) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
     lines = []
     lines.append(f"fn {fn_name}() -> Document {{")
     lines.append("    let (mut doc, vp) = base_doc();")
+
+    # ── Body-background propagation (CSS Backgrounds §3.11.1) ──
+    # If <html> has a non-transparent background, paint it on the canvas.
+    # Otherwise, if <body> has a non-transparent background, propagate body's
+    # background to the canvas (the "viewport") and let body still paint its
+    # own box (matches Chromium behavior closely enough for solid colors).
+    html_styles = html_styles or {}
+    body_styles_d = root.styles or {}
+
+    def _is_transparent(val: str) -> bool:
+        if not val:
+            return True
+        v = val.strip().lower()
+        return v in ('transparent', 'none', 'rgba(0,0,0,0)', 'rgba(0, 0, 0, 0)')
+
+    html_bg = html_styles.get('background-color', '')
+    html_bg_image = html_styles.get('background-image', '')
+    body_bg = body_styles_d.get('background-color', '')
+    canvas_color_line = None
+    if html_bg and not _is_transparent(html_bg):
+        c = parse_color(html_bg)
+        if c:
+            canvas_color_line = f"    doc.node_mut(doc.root()).style.background_color = {c};"
+    elif (
+        body_bg
+        and not _is_transparent(body_bg)
+        and (not html_bg_image or _is_transparent(html_bg_image))
+    ):
+        c = parse_color(body_bg)
+        if c:
+            canvas_color_line = f"    doc.node_mut(doc.root()).style.background_color = {c};"
+    if canvas_color_line:
+        lines.append(canvas_color_line)
 
     counter = [0]
 
@@ -2986,7 +3039,7 @@ def process_directory(wpt_dir: str, prefix: str = "wpt") -> dict:
                 continue
 
             fn_name = f"{prefix}_{sanitize_fn_name(filename)}"
-            rust_code = generate_rust_fn(fn_name, parser.root)
+            rust_code = generate_rust_fn(fn_name, parser.root, parser.html_styles)
             html_template = generate_html_template(str(html_path))
 
             results['portable'].append((filename, fn_name, rust_code, html_template))

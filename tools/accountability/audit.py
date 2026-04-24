@@ -74,7 +74,7 @@ def check_summary_integrity():
             print(f"         {tid} (×{dupes[tid]})")
 
     # Validate status values
-    valid_statuses = {"pass", "fail"}
+    valid_statuses = {"pass", "fail", "error"}
     invalid_statuses = {t["status"] for t in summary["tests"]} - valid_statuses
     if invalid_statuses:
         issue(f"Invalid status values in summary.json: {invalid_statuses}")
@@ -133,6 +133,7 @@ def check_summary_integrity():
                 if missing_images <= 3:
                     issue(f"Pass claimed but PNG screenshot(s) missing: {test['id']}")
         else:
+            # Both 'fail' and 'error' (render/diff failures) are counted as failures.
             fail_count += 1
 
     if missing_results > 3:
@@ -145,15 +146,17 @@ def check_summary_integrity():
     if missing_results == 0 and proof_failures == 0 and missing_images == 0:
         ok(f"All {pass_count} passes have verified 0.0% mismatch + PNG proof")
 
-    # Verify totals
+    # Verify totals (errors are folded into failed for accounting).
+    error_count = sum(1 for t in summary["tests"] if t["status"] == "error")
+    expected_failed = summary["failed"] + summary.get("errors", 0)
+    if expected_failed != fail_count:
+        issue(f"Summary says {summary['failed']} failed + {summary.get('errors', 0)} errors but found {fail_count}")
     if summary["passed"] != pass_count:
         issue(f"Summary says {summary['passed']} passed but found {pass_count}")
-    if summary["failed"] != fail_count:
-        issue(f"Summary says {summary['failed']} failed but found {fail_count}")
     if summary["total"] != pass_count + fail_count:
         issue(f"Total mismatch: {summary['total']} != {pass_count} + {fail_count}")
     else:
-        ok(f"Totals consistent: {pass_count} pass + {fail_count} fail = {summary['total']}")
+        ok(f"Totals consistent: {pass_count} pass + {fail_count} fail (incl. {error_count} render-error) = {summary['total']}")
 
 
 def check_template_consistency():
@@ -310,17 +313,18 @@ def check_mapping_coverage():
     else:
         ok(f"Accounting: {passing} pass + {failing} fail = {ported} ported")
 
-    # Cross-check with summary (these are now ERRORS, not warnings)
+    # Cross-check with summary (errors are treated as failures in mapping).
     summary_path = os.path.join(RESULTS_DIR, "summary.json")
     if os.path.isfile(summary_path):
         with open(summary_path) as f:
             summary = json.load(f)
+        summary_failed = summary["failed"] + summary.get("errors", 0)
         if ported != summary["total"]:
             issue(f"Mapping says {ported} ported but summary has {summary['total']} tests")
         if passing != summary["passed"]:
             issue(f"Mapping says {passing} passing but summary says {summary['passed']}")
-        if failing != summary["failed"]:
-            issue(f"Mapping says {failing} failing but summary says {summary['failed']}")
+        if failing != summary_failed:
+            issue(f"Mapping says {failing} failing but summary says {summary_failed} (failed+errors)")
         if ported == summary["total"] and passing == summary["passed"]:
             ok(f"Mapping ↔ summary cross-check passed")
 

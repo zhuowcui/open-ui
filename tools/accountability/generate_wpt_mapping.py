@@ -164,10 +164,14 @@ def main():
 
             pr = pixel_results.get(test_id)
             if pr:
-                row["pixel_result"] = pr["status"]
+                # Treat render/diff errors as failures for tracking purposes.
+                status = pr["status"]
+                if status == "error":
+                    status = "fail"
+                row["pixel_result"] = status
                 row["mismatch_pct"] = pr["mismatch_pct"]
 
-                if pr["status"] == "fail":
+                if status == "fail":
                     html = templates.get(test_id, "")
                     category, dep = classify_failure_categories(html, test_id=test_id)
                     row["failure_category"] = category

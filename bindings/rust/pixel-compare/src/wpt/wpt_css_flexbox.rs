@@ -195930,6 +195930,7 @@ fn css_flexbox_stretched_child_in_nested_flexbox_003() -> Document {
 // Source: table-item-flex-percentage-min-width-ref.html
 fn css_flexbox_table_item_flex_percentage_min_width_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -197097,6 +197098,7 @@ fn css_flexbox_table_item_flex_percentage_min_width_ref() -> Document {
 // Source: table-item-flex-percentage-width-ref.html
 fn css_flexbox_table_item_flex_percentage_width_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);

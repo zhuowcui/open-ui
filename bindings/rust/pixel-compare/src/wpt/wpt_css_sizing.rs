@@ -2665,6 +2665,7 @@ fn css_sizing_calc_margins_flex() -> Document {
 // Source: clone-intrinsic-size-ref.html
 fn css_sizing_clone_intrinsic_size_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4607,6 +4608,7 @@ fn css_sizing_clone_intrinsic_size_ref() -> Document {
 // Source: clone-intrinsic-size.html
 fn css_sizing_clone_intrinsic_size() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -6485,6 +6487,7 @@ fn css_sizing_clone_intrinsic_size() -> Document {
 // Source: clone-nowrap-intrinsic-size-bidi-ref.html
 fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -8427,6 +8430,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi_ref() -> Document {
 // Source: clone-nowrap-intrinsic-size-bidi.html
 fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -10369,6 +10373,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_bidi() -> Document {
 // Source: clone-nowrap-intrinsic-size-ref.html
 fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -12311,6 +12316,7 @@ fn css_sizing_clone_nowrap_intrinsic_size_ref() -> Document {
 // Source: clone-nowrap-intrinsic-size.html
 fn css_sizing_clone_nowrap_intrinsic_size() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -26087,6 +26093,7 @@ fn css_sizing_shrink_to_fit_sizing_max_width_min_content() -> Document {
 // Source: slice-intrinsic-size-ref.html
 fn css_sizing_slice_intrinsic_size_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -27987,6 +27994,7 @@ fn css_sizing_slice_intrinsic_size_ref() -> Document {
 // Source: slice-intrinsic-size.html
 fn css_sizing_slice_intrinsic_size() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -29865,6 +29873,7 @@ fn css_sizing_slice_intrinsic_size() -> Document {
 // Source: slice-nowrap-intrinsic-size-bidi-ref.html
 fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -31765,6 +31774,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi_ref() -> Document {
 // Source: slice-nowrap-intrinsic-size-bidi.html
 fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -33665,6 +33675,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_bidi() -> Document {
 // Source: slice-nowrap-intrinsic-size-ref.html
 fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -35565,6 +35576,7 @@ fn css_sizing_slice_nowrap_intrinsic_size_ref() -> Document {
 // Source: slice-nowrap-intrinsic-size.html
 fn css_sizing_slice_nowrap_intrinsic_size() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
