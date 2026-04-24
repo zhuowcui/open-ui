@@ -1,8 +1,8 @@
 {
   "total": 3406,
   "passed": 2273,
-  "failed": 1130,
-  "errors": 3,
+  "failed": 1133,
+  "errors": 0,
   "near_miss_aa": 322,
   "aa_threshold_pct": 0.5,
   "reference_tests": 936,
@@ -4110,8 +4110,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox_flex-natural-ref",
-      "status": "error",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 100.0
     },
     {
       "id": "wpt/css_flexbox/flexbox_flex-natural-variable-auto-basis-ref",
@@ -7720,8 +7720,8 @@
     },
     {
       "id": "wpt/css_multicol/multicol-zero-height-003",
-      "status": "error",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 100.0
     },
     {
       "id": "wpt/css_multicol/named-page",
@@ -10680,8 +10680,8 @@
     },
     {
       "id": "wpt/css_break/firefox-bug-1693616-002-crash",
-      "status": "error",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 100.0
     },
     {
       "id": "wpt/css_break/flex-item-padding-block-in-inline-crash",
