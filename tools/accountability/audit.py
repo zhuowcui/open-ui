@@ -33,7 +33,7 @@ WPT_DIR = os.path.join(PROJECT_ROOT, "bindings", "rust", "pixel-compare", "src",
 sys.path.insert(0, SCRIPT_DIR)
 from shared_detectors import CATEGORY_FOR_DEP
 
-VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "not_ported"}
+VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "sp13_fragmentation_architecture", "not_ported"}
 
 issues = []
 warnings = []
