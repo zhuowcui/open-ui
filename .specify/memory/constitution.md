@@ -1,3 +1,22 @@
+<!--
+Sync Impact Report
+Version change: 1.0.0 → 1.1.0
+Modified principles:
+- III. No Mocks, No Temporary Code, No TODOs → clarified that deferral requires a real dependency/blocker
+- VIII. Agentic Execution Until Exit Conditions → added
+Added sections:
+- Core Principle VIII. Agentic Execution Until Exit Conditions
+- Governance semantic versioning and compliance review expectations
+Removed sections:
+- None
+Templates requiring updates:
+- ✅ .specify/templates/plan-template.md — generic Constitution Check remains aligned
+- ✅ .specify/templates/spec-template.md — no change required; scope examples do not permit agentic refusal
+- ✅ .specify/templates/tasks-template.md — no change required; task generation remains compatible
+- ✅ .specify/templates/commands/*.md — directory not present in this installation
+Follow-up TODOs:
+- None
+-->
 # Open UI Constitution
 
 ## Mission
@@ -43,8 +62,9 @@ implement later" comments, no mock objects standing in for real functionality, n
 scaffolding left behind. Code is either fully implemented or it doesn't exist yet.
 
 **What this means in practice:**
-- If a feature can't be fully implemented yet due to architectural dependencies, it is deferred — not stubbed.
-- Deferred items are documented with clear rationale (e.g., "requires inline layout integration").
+- If a feature can't be fully implemented yet due to a real architectural dependency or external
+  blocker, it is tracked with an owning sprint/category — not stubbed or hidden.
+- Deferral is not allowed for convenience, task size, fatigue, broad scope, or inconvenience.
 - Every function does exactly what its documentation says. No silent no-ops.
 - Dead code is removed, not commented out.
 
@@ -84,7 +104,7 @@ it that way and which CSS specification section governs the behavior.
 - Inline documentation references specific CSS specification sections (e.g., "CSS 2.1 §8.3.1").
 - Architecture decisions are recorded with rationale.
 - Sprint progress, learnings, and technical decisions are preserved as institutional knowledge.
-- New contributors should be able to understand any module by reading its documentation alone.
+- New contributors can understand any module by reading its documentation alone.
 
 ### VII. Modular Architecture with Stable ABI
 
@@ -97,6 +117,26 @@ idiomatic, safe wrappers over the C API.
 - Each library is independently compilable and testable.
 - The C API is the integration boundary — language bindings are built on top.
 - Breaking ABI changes require explicit versioning and migration paths.
+
+### VIII. Agentic Execution Until Exit Conditions — NON-NEGOTIABLE
+
+Open UI is built with an agentic coding agent's power: high-quality autonomous coding work
+without human-style fatigue or rest constraints. No task may be rejected, stopped, or avoided
+because it is too big, too broad, multi-day, inconvenient, or considered out of scope while the
+agent is coding. Every user objective is treated as doable: decompose it into concrete engineering
+steps, implement, validate, and continue until the stated objective and exit conditions are met or
+a real external blocker requires user input.
+
+**What this means in practice:**
+- The agent MUST NOT use task size, breadth, duration, inconvenience, or fatigue as a reason to
+  stop work, defer work, narrow the objective, or declare the task out of scope.
+- Work begins immediately and is completed at production quality: correct implementation,
+  validation evidence, authoritative tracking, and documentation where needed.
+- Active-SP failures MUST either pass 100% Chromium pixel comparison or be assigned to another
+  named SP/tracked owning category with clear rationale. Informal residual buckets such as
+  "too hard", "edge case", "multi-day", or "out of scope" are forbidden.
+- Exit conditions are explicit and binding. Completion requires objective evidence that every
+  stated condition is satisfied.
 
 ## Quality Standards
 
@@ -166,4 +206,14 @@ principles requires:
 3. Documentation of the amendment with before/after comparison
 4. Approval through the dual-model review process
 
-**Version**: 1.0.0 | **Ratified**: 2026-04-06 | **Last Amended**: 2026-04-06
+Versioning follows semantic versioning:
+
+- **MAJOR**: Backward-incompatible governance changes or removal/redefinition of principles
+- **MINOR**: New principles, new sections, or materially expanded governance/guidance
+- **PATCH**: Clarifications, typo fixes, and non-semantic refinements
+
+Compliance with this constitution is reviewed during planning, implementation, testing, and
+dual-model review. `.github/copilot-instructions.md` provides runtime execution guidance and must
+remain consistent with these principles, especially the mandatory Execution standard.
+
+**Version**: 1.1.0 | **Ratified**: 2026-04-06 | **Last Amended**: 2026-04-24
