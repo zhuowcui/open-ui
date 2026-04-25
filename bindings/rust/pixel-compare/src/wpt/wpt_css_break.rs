@@ -25065,8 +25065,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
         doc.node_mut(n2).style.height = Length::px(200.0);
         doc.node_mut(n2).style.width = Length::px(50.0);
         doc.node_mut(n2).style.background_color = Color::RED;
-        doc.node_mut(n2).style.text_align = TextAlign::Right;
         doc.node_mut(n2).style.color = Color::RED;
+        doc.node_mut(n2).style.text_align = TextAlign::Right;
         doc.append_child(n1, n2);
             let n3 = doc.create_node(ElementTag::Div);
             doc.node_mut(n3).style.display = Display::Block;
@@ -25080,8 +25080,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
             doc.node_mut(n3).style.padding_left = Length::px(0.0);
             doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n3).style.height = Length::px(60.0);
-            doc.node_mut(n3).style.text_align = TextAlign::Right;
             doc.node_mut(n3).style.color = Color::RED;
+            doc.node_mut(n3).style.text_align = TextAlign::Right;
             doc.append_child(n2, n3);
             let n4 = doc.create_node(ElementTag::Span);
             doc.node_mut(n4).style.margin_top = Length::px(0.0);
@@ -25094,8 +25094,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
             doc.node_mut(n4).style.padding_left = Length::px(0.0);
             doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
             doc.node_mut(n4).style.position = Position::Relative;
-            doc.node_mut(n4).style.text_align = TextAlign::Right;
             doc.node_mut(n4).style.color = Color::RED;
+            doc.node_mut(n4).style.text_align = TextAlign::Right;
             doc.append_child(n2, n4);
                 let n5 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n5).style.display = Display::Block;
@@ -25113,8 +25113,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
                 doc.node_mut(n5).style.height = Length::px(200.0);
                 doc.node_mut(n5).style.top = Length::px(-80.0);
                 doc.node_mut(n5).style.width = Length::px(10.0);
-                doc.node_mut(n5).style.text_align = TextAlign::Right;
                 doc.node_mut(n5).style.color = Color::RED;
+                doc.node_mut(n5).style.text_align = TextAlign::Right;
                 doc.append_child(n4, n5);
                 let n6 = doc.create_node(ElementTag::Div);
                 doc.node_mut(n6).style.display = Display::Block;
@@ -25133,8 +25133,8 @@ fn css_break_out_of_flow_in_multicolumn_050() -> Document {
                 doc.node_mut(n6).style.top = Length::px(-80.0);
                 doc.node_mut(n6).style.right = Length::px(0.0);
                 doc.node_mut(n6).style.left = Length::px(0.0);
-                doc.node_mut(n6).style.text_align = TextAlign::Right;
                 doc.node_mut(n6).style.color = Color::RED;
+                doc.node_mut(n6).style.text_align = TextAlign::Right;
                 doc.append_child(n4, n6);
     doc
 }
@@ -73817,8 +73817,8 @@ fn css_break_table_table_caption_and_cells_fixed_width_ref() -> Document {
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.height = Length::px(32.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
-        doc.node_mut(n2).style.text_align = TextAlign::Center;
         doc.node_mut(n2).style.line_height = LineHeight::Length(32.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
         doc.append_child(n1, n2);
     doc
 }
@@ -73864,8 +73864,8 @@ fn css_break_table_table_caption_and_cells_ref() -> Document {
         doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
         doc.node_mut(n2).style.height = Length::px(32.0);
         doc.node_mut(n2).style.background_color = Color::BLACK;
-        doc.node_mut(n2).style.text_align = TextAlign::Center;
         doc.node_mut(n2).style.line_height = LineHeight::Length(32.0);
+        doc.node_mut(n2).style.text_align = TextAlign::Center;
         doc.append_child(n1, n2);
     doc
 }

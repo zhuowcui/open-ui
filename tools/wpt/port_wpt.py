@@ -2917,7 +2917,16 @@ def generate_html_template(html_path: str) -> str:
         SKIP_UNSTYLED = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}
         # Tags to unwrap (remove tag but keep children) when unstyled
         # AND not targeted by any CSS rule in the stylesheet.
-        UNWRAP_UNSTYLED = {'p'}
+        # These are instructional elements with UA default block-level
+        # margins (p, ul, ol, dl) or list items (li, dt, dd) — keeping them
+        # introduces a vertical Y-offset mismatch since OpenUI doesn't apply
+        # UA stylesheet defaults.
+        UNWRAP_UNSTYLED = {'p', 'ul', 'ol', 'li', 'dl', 'dt', 'dd'}
+        # Attribute keys that count an element as "styled" for the purposes
+        # of unwrap decisions. Note that id="testdetails" is a documented WPT
+        # convention for instructional elements and is treated as unstyled.
+        STYLED_ATTRS = {'style', 'class', 'id'}
+        UNSTYLED_ID_VALUES = {'testdetails'}
         def __init__(self):
             super().__init__(convert_charrefs=False)
             self.out = io.StringIO()
@@ -2926,8 +2935,15 @@ def generate_html_template(html_path: str) -> str:
             self.unwrap_tags = []  # stack of unwrapped tags (to suppress end tag)
 
         def _is_unstyled(self, attrs):
-            """Check if element has no style, class, or id attributes."""
-            return not any(k in ('style', 'class', 'id') for k, v in attrs)
+            """Check if element has no style or class attributes; an id is OK
+            only if it's in UNSTYLED_ID_VALUES (e.g. id="testdetails").
+            """
+            for k, v in attrs:
+                if k == 'style' or k == 'class':
+                    return False
+                if k == 'id' and (v or '') not in self.UNSTYLED_ID_VALUES:
+                    return False
+            return True
 
         def handle_starttag(self, tag, attrs):
             if self.skip_depth > 0:
