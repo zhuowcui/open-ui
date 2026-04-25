@@ -30,6 +30,25 @@ Do not reinterpret or narrow the user's exit conditions to make them
 easier to satisfy. If a condition is ambiguous, ask via `ask_user`
 rather than deciding unilaterally.
 
+## Execution standard (MANDATORY)
+
+This work is being done by an agentic coding agent. Do not use human
+fatigue, task size, or "too big in scope" as a reason to stop, defer, or
+declare work out of scope. When the user sets an objective, decompose it
+into concrete engineering steps and keep executing until the objective is
+met or a real external blocker requires user input.
+
+Do not create informal escape buckets such as "too hard", "multi-day",
+"edge case", or "out of scope" to avoid fixing failures. If a test is in
+the active SP, it must either pass pixel comparison with Chromium or be
+explicitly assigned to another named SP / tracked owning category with a
+clear rationale. A remaining failure may not be treated as complete just
+because the fix is large, architectural, or inconvenient.
+
+All work should be production quality immediately: correct, validated,
+tracked in the authoritative artifacts, and consistent with the user's
+stated standard of 100% Chromium pixel parity.
+
 ## Standing repo facts
 
 - WPT pipeline: regen templates with `python3 tools/wpt/batch_port_sp12.py`;
