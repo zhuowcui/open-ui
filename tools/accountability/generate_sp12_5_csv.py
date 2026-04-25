@@ -45,10 +45,10 @@ def main() -> None:
     with open(SUMMARY_PATH) as f:
         summary = json.load(f)
 
-    # Build lookup: id -> test record (only failures)
+    # Build lookup: id -> test record (failures + errors are both deferrable)
     fail_map: dict[str, dict] = {}
     for t in summary["tests"]:
-        if t["status"] == "fail":
+        if t["status"] in ("fail", "error"):
             fail_map[t["id"]] = t
 
     # Classify every failing test

@@ -130,6 +130,16 @@ def is_reference_test(html: str, test_id: str = "") -> bool:
     return "-ref" in name
 
 
+def is_fragmentation_area(html: str, test_id: str = "") -> bool:
+    """Detect tests in SP13-owned fragmentation areas (css_break)."""
+    return test_id.startswith("wpt/css_break/")
+
+
+def is_multicol_area(html: str, test_id: str = "") -> bool:
+    """Detect tests in SP13-owned multi-column layout area (css_multicol)."""
+    return test_id.startswith("wpt/css_multicol/")
+
+
 # Ordered list of (key, label, owning_sp, detector)
 # Detectors that need test_id have a special flag.
 DEPENDENCY_DEFS = [
@@ -146,6 +156,8 @@ DEPENDENCY_DEFS = [
     ("sticky_position",    "Future SP: Sticky Position",      "Future",    has_sticky_position),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
+    ("fragmentation",      "SP13: Block Fragmentation",       "SP13",      is_fragmentation_area),
+    ("multicol",           "SP13: Multi-Column Layout",       "SP13",      is_multicol_area),
 ]
 
 # Category names used in wpt_mapping.csv (maps dependency key → category name)
@@ -163,6 +175,8 @@ CATEGORY_FOR_DEP = {
     "sticky_position": "needs_sticky",
     "complex_border": "needs_complex_border",
     "scrollbar_gutter": "needs_scrollbar_gutter",
+    "fragmentation": "sp13_fragmentation",
+    "multicol": "sp13_multicol",
 }
 
 
