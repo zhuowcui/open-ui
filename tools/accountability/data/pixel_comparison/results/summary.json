@@ -1,12 +1,12 @@
 {
   "total": 3406,
-  "passed": 2282,
-  "failed": 1122,
+  "passed": 2377,
+  "failed": 1027,
   "errors": 2,
-  "near_miss_aa": 330,
+  "near_miss_aa": 305,
   "aa_threshold_pct": 0.5,
   "reference_tests": 936,
-  "reference_tests_pass": 693,
+  "reference_tests_pass": 705,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -26,12 +26,12 @@
     {
       "id": "wpt/css2_floats/float-no-content-beside-001-ref",
       "status": "fail",
-      "mismatch_pct": 1.429299
+      "mismatch_pct": 1.286624
     },
     {
       "id": "wpt/css2_floats/float-no-content-beside-001",
       "status": "fail",
-      "mismatch_pct": 1.215287
+      "mismatch_pct": 1.202548
     },
     {
       "id": "wpt/css2_floats/float-nowrap-1-notref",
@@ -186,7 +186,7 @@
     {
       "id": "wpt/css2_floats/floats-placement-005",
       "status": "fail",
-      "mismatch_pct": 0.424628
+      "mismatch_pct": 1.273885
     },
     {
       "id": "wpt/css2_floats/floats-placement-006",
@@ -205,13 +205,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001-ref",
-      "status": "fail",
-      "mismatch_pct": 3.184713
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001a",
-      "status": "fail",
-      "mismatch_pct": 3.184713
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001b",
@@ -225,18 +225,18 @@
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-003-ref",
-      "status": "fail",
-      "mismatch_pct": 0.382166
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-003",
-      "status": "fail",
-      "mismatch_pct": 0.764331
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-004-ref",
       "status": "fail",
-      "mismatch_pct": 1.613588
+      "mismatch_pct": 0.509554
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-004-ref2",
@@ -385,13 +385,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-006.tentative",
-      "status": "fail",
-      "mismatch_pct": 2.388535
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-007.tentative",
-      "status": "fail",
-      "mismatch_pct": 2.919321
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-bfc-with-margin-008.tentative",
@@ -580,8 +580,8 @@
     },
     {
       "id": "wpt/css2_floats/new-fc-relayout",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 1.45966
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float-2",
@@ -590,8 +590,8 @@
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float-3",
-      "status": "fail",
-      "mismatch_pct": 2.972399
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float-4",
@@ -620,8 +620,8 @@
     },
     {
       "id": "wpt/css2_floats/overhanging-float-paint-order",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/zero-available-space-float-positioning",
@@ -630,13 +630,13 @@
     },
     {
       "id": "wpt/css2_floats/zero-width-floats-positioning.tentative",
-      "status": "fail",
-      "mismatch_pct": 0.424628
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/zero-width-floats",
-      "status": "fail",
-      "mismatch_pct": 8.492569
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/absolute-pos-box-inside-fixed-pos-box-with-changing-height-ref",
@@ -666,17 +666,17 @@
     {
       "id": "wpt/css_position/position-absolute-center-001",
       "status": "fail",
-      "mismatch_pct": 0.424628
+      "mismatch_pct": 0.212314
     },
     {
       "id": "wpt/css_position/position-absolute-center-003",
-      "status": "fail",
-      "mismatch_pct": 0.535032
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/position-absolute-center-004",
-      "status": "fail",
-      "mismatch_pct": 0.535032
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/position-absolute-fit-content",
@@ -850,13 +850,13 @@
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-left-002",
-      "status": "fail",
-      "mismatch_pct": 3.184713
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-left-003",
-      "status": "fail",
-      "mismatch_pct": 3.184713
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-margins-002",
@@ -881,12 +881,12 @@
     {
       "id": "wpt/css_position/sticky_position-sticky-right-002",
       "status": "fail",
-      "mismatch_pct": 12.738854
+      "mismatch_pct": 9.55414
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-right-003",
       "status": "fail",
-      "mismatch_pct": 12.738854
+      "mismatch_pct": 9.55414
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-rtl-ref",
@@ -900,8 +900,8 @@
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-stacking-context-002",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-stacking-context-ref",
@@ -1095,8 +1095,8 @@
     },
     {
       "id": "wpt/css_flexbox/aspect-ratio-transferred-max-size",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/auto-height-column-with-border-and-padding",
@@ -1140,8 +1140,8 @@
     },
     {
       "id": "wpt/css_flexbox/content-height-with-scrollbars",
-      "status": "fail",
-      "mismatch_pct": 37.802548
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/css-box-justify-content",
@@ -1175,13 +1175,13 @@
     },
     {
       "id": "wpt/css_flexbox/fit-content-item-001",
-      "status": "fail",
-      "mismatch_pct": 7.006369
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/fixed-table-layout-with-percentage-width-in-flex-item-ref",
-      "status": "fail",
-      "mismatch_pct": 0.659873
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flex-align-content-center",
@@ -1500,8 +1500,8 @@
     },
     {
       "id": "wpt/css_flexbox/flex-item-max-width-min-content-002",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flex-item-min-height-min-content",
@@ -1515,13 +1515,13 @@
     },
     {
       "id": "wpt/css_flexbox/flex-item-position-relative-001",
-      "status": "fail",
-      "mismatch_pct": 0.467091
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flex-item-transferred-sizes-padding-border-sizing",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flex-item-transferred-sizes-padding-content-sizing",
@@ -1615,8 +1615,8 @@
     },
     {
       "id": "wpt/css_flexbox/flex-minimum-height-flex-items-029",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flex-minimum-height-flex-items-030",
@@ -1740,23 +1740,23 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-002-ref",
-      "status": "fail",
-      "mismatch_pct": 3.512527
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-002",
-      "status": "fail",
-      "mismatch_pct": 3.512527
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-003-ref",
-      "status": "fail",
-      "mismatch_pct": 3.512527
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-003",
       "status": "fail",
-      "mismatch_pct": 3.834395
+      "mismatch_pct": 1.57707
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-004-ref",
@@ -1790,8 +1790,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-001-block",
-      "status": "fail",
-      "mismatch_pct": 0.254352
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-001-ref",
@@ -1806,17 +1806,17 @@
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-003",
       "status": "fail",
-      "mismatch_pct": 0.807219
+      "mismatch_pct": 0.762633
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-004-ref",
       "status": "fail",
-      "mismatch_pct": 11.050106
+      "mismatch_pct": 11.047134
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-004",
       "status": "fail",
-      "mismatch_pct": 6.578769
+      "mismatch_pct": 6.514013
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-005-ref",
@@ -1860,13 +1860,13 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-003",
-      "status": "fail",
-      "mismatch_pct": 0.000849
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-004",
       "status": "fail",
-      "mismatch_pct": 0.177919
+      "mismatch_pct": 0.176221
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-001",
@@ -1876,22 +1876,22 @@
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-002",
       "status": "fail",
-      "mismatch_pct": 1.961359
+      "mismatch_pct": 0.076645
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-003",
-      "status": "fail",
-      "mismatch_pct": 0.000849
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-004",
       "status": "fail",
-      "mismatch_pct": 1.728238
+      "mismatch_pct": 0.076645
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-vert-rtl-005",
       "status": "fail",
-      "mismatch_pct": 2.983864
+      "mismatch_pct": 0.106794
     },
     {
       "id": "wpt/css_flexbox/flexbox-anonymous-items-001-ref",
@@ -1935,8 +1935,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-empty-001b",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.023779
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-item-horiz-001-ref",
@@ -1970,8 +1970,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-001-ref",
-      "status": "fail",
-      "mismatch_pct": 0.271762
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-001",
@@ -1980,8 +1980,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-002-ref",
-      "status": "fail",
-      "mismatch_pct": 0.118896
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-002",
@@ -1991,22 +1991,22 @@
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-003-ref",
       "status": "fail",
-      "mismatch_pct": 0.339703
+      "mismatch_pct": 1.358811
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-003",
-      "status": "fail",
-      "mismatch_pct": 0.339703
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-004-ref",
-      "status": "fail",
-      "mismatch_pct": 0.169851
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-004",
-      "status": "fail",
-      "mismatch_pct": 0.169851
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-multi-line-vert-001-ref",
@@ -2040,8 +2040,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-baseline-single-item-001b",
-      "status": "fail",
-      "mismatch_pct": 0.203822
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-basic-block-horiz-001-ref",
@@ -2140,8 +2140,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-collapsed-item-horiz-001",
-      "status": "fail",
-      "mismatch_pct": 1.18896
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-collapsed-item-horiz-002-ref",
@@ -2330,8 +2330,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-items-as-stacking-contexts-001",
-      "status": "fail",
-      "mismatch_pct": 0.016985
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-items-as-stacking-contexts-002-ref",
@@ -2350,8 +2350,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-items-as-stacking-contexts-003",
-      "status": "fail",
-      "mismatch_pct": 0.061146
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-001-ref",
@@ -2371,12 +2371,12 @@
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-002-ref",
       "status": "fail",
-      "mismatch_pct": 0.317197
+      "mismatch_pct": 0.303185
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-002",
       "status": "fail",
-      "mismatch_pct": 0.031847
+      "mismatch_pct": 0.017834
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-003-ref",
@@ -2391,12 +2391,12 @@
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-004-ref",
       "status": "fail",
-      "mismatch_pct": 0.03482
+      "mismatch_pct": 0.020382
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-004",
       "status": "fail",
-      "mismatch_pct": 0.03482
+      "mismatch_pct": 0.020382
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-005-ref",
@@ -2436,12 +2436,12 @@
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-vert-002-ref",
       "status": "fail",
-      "mismatch_pct": 0.040127
+      "mismatch_pct": 0.02293
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-vert-002",
       "status": "fail",
-      "mismatch_pct": 0.040127
+      "mismatch_pct": 0.02293
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-vert-003-ref",
@@ -2456,12 +2456,12 @@
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-vert-004-ref",
       "status": "fail",
-      "mismatch_pct": 0.039915
+      "mismatch_pct": 0.02293
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-vert-004",
       "status": "fail",
-      "mismatch_pct": 0.039915
+      "mismatch_pct": 0.02293
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-vert-005-ref",
@@ -2556,22 +2556,22 @@
     {
       "id": "wpt/css_flexbox/flexbox-mbp-horiz-003-ref",
       "status": "fail",
-      "mismatch_pct": 0.078769
+      "mismatch_pct": 0.007431
     },
     {
       "id": "wpt/css_flexbox/flexbox-mbp-horiz-003-reverse-ref",
       "status": "fail",
-      "mismatch_pct": 0.078769
+      "mismatch_pct": 0.007431
     },
     {
       "id": "wpt/css_flexbox/flexbox-mbp-horiz-003-reverse",
       "status": "fail",
-      "mismatch_pct": 0.078769
+      "mismatch_pct": 0.007431
     },
     {
       "id": "wpt/css_flexbox/flexbox-mbp-horiz-003",
       "status": "fail",
-      "mismatch_pct": 0.078769
+      "mismatch_pct": 0.007431
     },
     {
       "id": "wpt/css_flexbox/flexbox-mbp-horiz-004-ref",
@@ -2590,8 +2590,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-height-auto-001",
-      "status": "fail",
-      "mismatch_pct": 0.112102
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-height-auto-003-ref",
@@ -2605,13 +2605,13 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-height-auto-004-ref",
-      "status": "fail",
-      "mismatch_pct": 1.375796
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-height-auto-004",
-      "status": "fail",
-      "mismatch_pct": 1.50828
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-width-auto-001-ref",
@@ -2620,8 +2620,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-width-auto-001",
-      "status": "fail",
-      "mismatch_pct": 0.112102
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-width-auto-003-ref",
@@ -2635,13 +2635,13 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-width-auto-004-ref",
-      "status": "fail",
-      "mismatch_pct": 1.375796
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-min-width-auto-004",
-      "status": "fail",
-      "mismatch_pct": 1.50828
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-order-from-lowest",
@@ -2800,8 +2800,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-safe-overflow-position-001",
-      "status": "fail",
-      "mismatch_pct": 0.177495
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-safe-overflow-position-002",
@@ -2825,8 +2825,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-single-line-clamp-1",
-      "status": "fail",
-      "mismatch_pct": 0.126964
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-single-line-clamp-2-ref",
@@ -2865,8 +2865,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-sizing-horiz-002",
-      "status": "fail",
-      "mismatch_pct": 0.000212
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-sizing-vert-001-ref",
@@ -2875,18 +2875,18 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-sizing-vert-001",
-      "status": "fail",
-      "mismatch_pct": 1.149045
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-sizing-vert-002-ref",
-      "status": "fail",
-      "mismatch_pct": 0.000849
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-sizing-vert-002",
-      "status": "fail",
-      "mismatch_pct": 0.000425
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-table-fixup-001-ref",
@@ -3260,8 +3260,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox_display",
-      "status": "fail",
-      "mismatch_pct": 5.4862
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox_fbfc-ref",
@@ -4461,7 +4461,7 @@
     {
       "id": "wpt/css_flexbox/flexbox_order-box-ref",
       "status": "fail",
-      "mismatch_pct": 13.40828
+      "mismatch_pct": 12.790021
     },
     {
       "id": "wpt/css_flexbox/flexbox_order-box",
@@ -4515,8 +4515,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox_rtl-order",
-      "status": "fail",
-      "mismatch_pct": 2.608917
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox_stf-abspos",
@@ -4700,23 +4700,23 @@
     },
     {
       "id": "wpt/css_flexbox/gap-007-ltr-ref",
-      "status": "fail",
-      "mismatch_pct": 1.273885
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/gap-007-ltr",
-      "status": "fail",
-      "mismatch_pct": 1.273885
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/gap-007-rtl-ref",
-      "status": "fail",
-      "mismatch_pct": 1.273885
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/gap-007-rtl",
-      "status": "fail",
-      "mismatch_pct": 1.273885
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/gap-008-ltr-ref",
@@ -4810,8 +4810,8 @@
     },
     {
       "id": "wpt/css_flexbox/inline-flexbox-absurd-block-size-crash",
-      "status": "fail",
-      "mismatch_pct": 1.582166
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/item-with-max-height-and-scrollbar",
@@ -4870,8 +4870,8 @@
     },
     {
       "id": "wpt/css_flexbox/min-size-auto-overflow-clip",
-      "status": "fail",
-      "mismatch_pct": 0.530786
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/multiline-column-max-height",
@@ -4881,12 +4881,12 @@
     {
       "id": "wpt/css_flexbox/multiline-reverse-wrap-baseline",
       "status": "fail",
-      "mismatch_pct": 14.012739
+      "mismatch_pct": 10.934183
     },
     {
       "id": "wpt/css_flexbox/multiline-shrink-to-fit",
-      "status": "fail",
-      "mismatch_pct": 3.821656
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/negative-available-size-crash",
@@ -4925,18 +4925,18 @@
     },
     {
       "id": "wpt/css_flexbox/overflow-area-001",
-      "status": "fail",
-      "mismatch_pct": 25.124416
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/overflow-area-002",
-      "status": "fail",
-      "mismatch_pct": 25.251805
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/overflow-area-003",
-      "status": "fail",
-      "mismatch_pct": 16.305732
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/padding-overflow",
@@ -5005,8 +5005,8 @@
     },
     {
       "id": "wpt/css_flexbox/percentage-heights-016",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/percentage-heights-017",
@@ -5045,8 +5045,8 @@
     },
     {
       "id": "wpt/css_flexbox/percentage-padding-002",
-      "status": "fail",
-      "mismatch_pct": 0.29724
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/percentage-padding-005",
@@ -5151,52 +5151,52 @@
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001-ref",
       "status": "fail",
-      "mismatch_pct": 0.100425
+      "mismatch_pct": 0.132484
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001",
       "status": "fail",
-      "mismatch_pct": 0.109766
+      "mismatch_pct": 0.154565
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001-ref",
       "status": "fail",
-      "mismatch_pct": 1.749257
+      "mismatch_pct": 1.467941
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001",
       "status": "fail",
-      "mismatch_pct": 1.749257
+      "mismatch_pct": 1.467941
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001-ref",
       "status": "fail",
-      "mismatch_pct": 1.2862
+      "mismatch_pct": 1.267728
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001",
       "status": "fail",
-      "mismatch_pct": 1.2862
+      "mismatch_pct": 1.267728
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002-ref",
       "status": "fail",
-      "mismatch_pct": 1.283652
+      "mismatch_pct": 1.257537
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002",
       "status": "fail",
-      "mismatch_pct": 1.273673
+      "mismatch_pct": 1.258811
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003-ref",
       "status": "fail",
-      "mismatch_pct": 1.311465
+      "mismatch_pct": 1.26603
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003",
       "status": "fail",
-      "mismatch_pct": 1.297877
+      "mismatch_pct": 1.264756
     },
     {
       "id": "wpt/css_flexbox/abspos_flexbox-abspos-child-001-ref",
@@ -5285,8 +5285,8 @@
     },
     {
       "id": "wpt/css_flexbox/intrinsic-size_col-wrap-006",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/intrinsic-size_col-wrap-007",
@@ -5355,8 +5355,8 @@
     },
     {
       "id": "wpt/css_flexbox/intrinsic-size_row-004",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/intrinsic-size_row-006",
@@ -5395,8 +5395,8 @@
     },
     {
       "id": "wpt/css_flexbox/interactive_flexbox_interactive_break-after-line-order",
-      "status": "fail",
-      "mismatch_pct": 4.348195
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/interactive_flexbox_interactive_break-after-line",
@@ -5405,8 +5405,8 @@
     },
     {
       "id": "wpt/css_flexbox/interactive_flexbox_interactive_break-after-multiline",
-      "status": "fail",
-      "mismatch_pct": 2.174098
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/interactive_flexbox_interactive_break-before-column-firstitem",
@@ -5430,13 +5430,13 @@
     },
     {
       "id": "wpt/css_flexbox/interactive_flexbox_interactive_break-before-multiline",
-      "status": "fail",
-      "mismatch_pct": 2.174098
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/interactive_flexbox_interactive_break-natural",
-      "status": "fail",
-      "mismatch_pct": 2.581741
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/order_order-abs-children-painting-order-different-container",
@@ -5510,8 +5510,8 @@
     },
     {
       "id": "wpt/css_flexbox/alignment_flex-align-baseline-column-rtl-direction",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/abspos-after-spanner-static-pos",
@@ -5930,8 +5930,8 @@
     },
     {
       "id": "wpt/css_multicol/equal-gap-and-rule",
-      "status": "fail",
-      "mismatch_pct": 0.021231
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/fixed-in-nested-multicol-with-viewport-container",
@@ -6005,8 +6005,8 @@
     },
     {
       "id": "wpt/css_multicol/intrinsic-size-005",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/move-with-text-after-paint-ref",
@@ -6536,7 +6536,7 @@
     {
       "id": "wpt/css_multicol/multicol-gap-fraction-002",
       "status": "fail",
-      "mismatch_pct": 0.934183
+      "mismatch_pct": 0.929936
     },
     {
       "id": "wpt/css_multicol/multicol-gap-large-001",
@@ -7315,13 +7315,13 @@
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-children-height-001-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.043312
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-children-height-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.043312
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-children-height-002-ref",
@@ -7430,18 +7430,18 @@
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-001-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.163907
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-002-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.163907
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-003-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.163907
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-004-ref",
@@ -7455,13 +7455,13 @@
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-008-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.163907
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-010-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.163907
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-012-ref",
@@ -7470,8 +7470,8 @@
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-add-014-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.163907
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-remove-001-ref",
@@ -7490,18 +7490,18 @@
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-dynamic-remove-005-ref",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 0.170701
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-list-item-001-ref",
       "status": "fail",
-      "mismatch_pct": 1.484926
+      "mismatch_pct": 1.552017
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-list-item-001",
       "status": "fail",
-      "mismatch_pct": 1.205945
+      "mismatch_pct": 1.400425
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-list-item-002-ref",
@@ -7955,8 +7955,8 @@
     },
     {
       "id": "wpt/css_multicol/with-custom-layout-on-same-element.https",
-      "status": "fail",
-      "mismatch_pct": 15.244161
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/zero-column-width-layout",
@@ -8005,13 +8005,13 @@
     },
     {
       "id": "wpt/css_overflow/clip-003-ref",
-      "status": "fail",
-      "mismatch_pct": 0.127389
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/clip-003",
-      "status": "fail",
-      "mismatch_pct": 0.127389
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/clip-004-ref",
@@ -8025,13 +8025,13 @@
     },
     {
       "id": "wpt/css_overflow/clip-005-ref",
-      "status": "fail",
-      "mismatch_pct": 0.084926
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/clip-005",
-      "status": "fail",
-      "mismatch_pct": 0.084926
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/clip-006",
@@ -8150,8 +8150,8 @@
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-002",
-      "status": "fail",
-      "mismatch_pct": 1.178344
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-003-ref",
@@ -8185,8 +8185,8 @@
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-009",
-      "status": "fail",
-      "mismatch_pct": 0.934183
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-010-ref",
@@ -8196,7 +8196,7 @@
     {
       "id": "wpt/css_overflow/overflow-clip-margin-010",
       "status": "fail",
-      "mismatch_pct": 0.191507
+      "mismatch_pct": 0.007219
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-011-ref",
@@ -8221,7 +8221,7 @@
     {
       "id": "wpt/css_overflow/overflow-clip-margin-border-radius",
       "status": "fail",
-      "mismatch_pct": 2.851592
+      "mismatch_pct": 0.01465
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-invalidation-ref",
@@ -8276,7 +8276,7 @@
     {
       "id": "wpt/css_overflow/overflow-clip-margin-visual-box-and-value-with-border-radius",
       "status": "fail",
-      "mismatch_pct": 0.215924
+      "mismatch_pct": 0.035032
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-visual-box-and-value",
@@ -8895,18 +8895,18 @@
     },
     {
       "id": "wpt/css_sizing/fit-content-block-size-abspos",
-      "status": "fail",
-      "mismatch_pct": 1.464119
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/fit-content-block-size-fixedpos-ref",
-      "status": "fail",
-      "mismatch_pct": 1.464119
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/fit-content-block-size-fixedpos",
-      "status": "fail",
-      "mismatch_pct": 1.464119
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/fit-content-contribution-001",
@@ -9115,13 +9115,13 @@
     },
     {
       "id": "wpt/css_sizing/percentage-width-subpixels.tentative-ref",
-      "status": "fail",
-      "mismatch_pct": 12.174098
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/percentage-width-subpixels.tentative",
-      "status": "fail",
-      "mismatch_pct": 12.174098
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/shrink-to-fit-sizing-max-width-min-content",
@@ -9200,8 +9200,8 @@
     },
     {
       "id": "wpt/css_sizing/stretch_bfc-next-to-float-2",
-      "status": "fail",
-      "mismatch_pct": 0.053079
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/stretch_block-height-003-ref",
@@ -9230,8 +9230,8 @@
     },
     {
       "id": "wpt/css_sizing/stretch_cache-miss-002",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/stretch_flexbox-stretch-minimum-001",
@@ -9250,8 +9250,8 @@
     },
     {
       "id": "wpt/css_sizing/stretch_positioned-non-replaced-1",
-      "status": "fail",
-      "mismatch_pct": 0.934183
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_abspos-001",
@@ -9605,8 +9605,8 @@
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_block-aspect-ratio-with-margin-collapsing-002",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-001",
@@ -9695,13 +9695,13 @@
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-025",
-      "status": "fail",
-      "mismatch_pct": 4.485138
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-026",
-      "status": "fail",
-      "mismatch_pct": 6.024416
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-031",
@@ -9850,8 +9850,8 @@
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-006",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-007",
@@ -9860,8 +9860,8 @@
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-010",
-      "status": "fail",
-      "mismatch_pct": 0.477707
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/aspect-ratio_intrinsic-size-011",
@@ -9985,8 +9985,8 @@
     },
     {
       "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-007-ref",
-      "status": "fail",
-      "mismatch_pct": 0.001274
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-010-ref",
@@ -10196,62 +10196,62 @@
     {
       "id": "wpt/css_break/block-max-height-001-ref",
       "status": "fail",
-      "mismatch_pct": 15.160297
+      "mismatch_pct": 15.129299
     },
     {
       "id": "wpt/css_break/block-max-height-001",
       "status": "fail",
-      "mismatch_pct": 15.160297
+      "mismatch_pct": 15.129299
     },
     {
       "id": "wpt/css_break/block-max-height-001b-ref",
       "status": "fail",
-      "mismatch_pct": 17.43397
+      "mismatch_pct": 17.461359
     },
     {
       "id": "wpt/css_break/block-max-height-001b",
       "status": "fail",
-      "mismatch_pct": 17.43397
+      "mismatch_pct": 17.461359
     },
     {
       "id": "wpt/css_break/block-max-height-002",
       "status": "fail",
-      "mismatch_pct": 15.160297
+      "mismatch_pct": 15.129299
     },
     {
       "id": "wpt/css_break/block-max-height-002b",
       "status": "fail",
-      "mismatch_pct": 17.43397
+      "mismatch_pct": 17.461359
     },
     {
       "id": "wpt/css_break/block-max-height-003",
       "status": "fail",
-      "mismatch_pct": 15.160297
+      "mismatch_pct": 15.129299
     },
     {
       "id": "wpt/css_break/block-max-height-003b",
       "status": "fail",
-      "mismatch_pct": 17.43397
+      "mismatch_pct": 17.461359
     },
     {
       "id": "wpt/css_break/block-min-height-001-ref",
       "status": "fail",
-      "mismatch_pct": 9.205308
+      "mismatch_pct": 9.247983
     },
     {
       "id": "wpt/css_break/block-min-height-001",
       "status": "fail",
-      "mismatch_pct": 9.205308
+      "mismatch_pct": 9.247983
     },
     {
       "id": "wpt/css_break/block-min-height-001b-ref",
       "status": "fail",
-      "mismatch_pct": 9.972824
+      "mismatch_pct": 9.955202
     },
     {
       "id": "wpt/css_break/block-min-height-001b",
       "status": "fail",
-      "mismatch_pct": 9.972824
+      "mismatch_pct": 9.955202
     },
     {
       "id": "wpt/css_break/border-image-000",
@@ -10301,7 +10301,7 @@
     {
       "id": "wpt/css_break/borders-004-ref",
       "status": "fail",
-      "mismatch_pct": 0.496178
+      "mismatch_pct": 0.4138
     },
     {
       "id": "wpt/css_break/borders-004",
@@ -10311,7 +10311,7 @@
     {
       "id": "wpt/css_break/borders-005-ref",
       "status": "fail",
-      "mismatch_pct": 2.081953
+      "mismatch_pct": 1.88535
     },
     {
       "id": "wpt/css_break/borders-005",
@@ -11386,7 +11386,7 @@
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-103",
       "status": "fail",
-      "mismatch_pct": 0.095966
+      "mismatch_pct": 0.093418
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-104",
@@ -11455,8 +11455,8 @@
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-125",
-      "status": "fail",
-      "mismatch_pct": 0.003822
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-126",
@@ -11620,8 +11620,8 @@
     },
     {
       "id": "wpt/css_break/overflowing-block-print-ref",
-      "status": "fail",
-      "mismatch_pct": 3.747346
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/overflowing-block-print",
@@ -11935,33 +11935,33 @@
     },
     {
       "id": "wpt/css_break/flexbox_flex-container-fragmentation-008",
-      "status": "fail",
-      "mismatch_pct": 1.061571
-    },
-    {
-      "id": "wpt/css_break/flexbox_flex-container-fragmentation-009",
-      "status": "fail",
-      "mismatch_pct": 1.061571
-    },
-    {
-      "id": "wpt/css_break/flexbox_flex-container-fragmentation-010",
       "status": "pass",
       "mismatch_pct": 0.0
     },
     {
+      "id": "wpt/css_break/flexbox_flex-container-fragmentation-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/flexbox_flex-container-fragmentation-010",
+      "status": "fail",
+      "mismatch_pct": 1.061571
+    },
+    {
       "id": "wpt/css_break/flexbox_flex-container-fragmentation-011",
       "status": "fail",
-      "mismatch_pct": 0.265393
+      "mismatch_pct": 0.530786
     },
     {
       "id": "wpt/css_break/flexbox_flex-fragmented-with-float-descendant-001-ref",
       "status": "fail",
-      "mismatch_pct": 14.81465
+      "mismatch_pct": 2.919745
     },
     {
       "id": "wpt/css_break/flexbox_flex-fragmented-with-float-descendant-001",
       "status": "fail",
-      "mismatch_pct": 15.066667
+      "mismatch_pct": 2.717622
     },
     {
       "id": "wpt/css_break/flexbox_flex-item-content-overflow-001-ref",
@@ -11971,7 +11971,7 @@
     {
       "id": "wpt/css_break/flexbox_flex-item-content-overflow-001a",
       "status": "fail",
-      "mismatch_pct": 0.912951
+      "mismatch_pct": 0.488323
     },
     {
       "id": "wpt/css_break/flexbox_flex-item-content-overflow-001b",
@@ -11981,7 +11981,7 @@
     {
       "id": "wpt/css_break/flexbox_flex-item-content-overflow-002a",
       "status": "fail",
-      "mismatch_pct": 0.912951
+      "mismatch_pct": 0.488323
     },
     {
       "id": "wpt/css_break/flexbox_flex-item-content-overflow-002b",
@@ -12526,7 +12526,7 @@
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-060",
       "status": "fail",
-      "mismatch_pct": 0.265393
+      "mismatch_pct": 0.477707
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-061",
@@ -12565,23 +12565,23 @@
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-081a-print",
-      "status": "fail",
-      "mismatch_pct": 0.054352
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-081b-print",
-      "status": "fail",
-      "mismatch_pct": 0.054352
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-081c-print",
-      "status": "fail",
-      "mismatch_pct": 0.054352
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-081d-print",
-      "status": "fail",
-      "mismatch_pct": 0.054352
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-082-print-ref",
@@ -12590,23 +12590,23 @@
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-082a-print",
-      "status": "fail",
-      "mismatch_pct": 0.108705
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-082b-print",
-      "status": "fail",
-      "mismatch_pct": 0.108705
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-082c-print",
-      "status": "fail",
-      "mismatch_pct": 0.108705
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-082d-print",
-      "status": "fail",
-      "mismatch_pct": 0.108705
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-083a",
@@ -12631,12 +12631,12 @@
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-089",
       "status": "fail",
-      "mismatch_pct": 0.140127
+      "mismatch_pct": 0.144374
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-090",
       "status": "fail",
-      "mismatch_pct": 0.070064
+      "mismatch_pct": 0.072187
     },
     {
       "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-091",
@@ -12820,8 +12820,8 @@
     },
     {
       "id": "wpt/css_break/flexbox_single-line-column-flex-fragmentation-029",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 1.061571
     },
     {
       "id": "wpt/css_break/flexbox_single-line-column-flex-fragmentation-032",
@@ -12921,7 +12921,7 @@
     {
       "id": "wpt/css_break/flexbox_single-line-column-flex-fragmentation-059",
       "status": "fail",
-      "mismatch_pct": 2.123142
+      "mismatch_pct": 1.061571
     },
     {
       "id": "wpt/css_break/flexbox_single-line-column-flex-fragmentation-061",
@@ -13266,7 +13266,7 @@
     {
       "id": "wpt/css_break/table_table-collapsed-borders-paint-at-boundary-ref",
       "status": "fail",
-      "mismatch_pct": 0.489809
+      "mismatch_pct": 0.488323
     },
     {
       "id": "wpt/css_break/table_table-collapsed-borders-paint-htb-ltr-ref",
@@ -13360,8 +13360,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-block-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 3.227176
     },
     {
       "id": "wpt/css_display/display-contents-block-002-ref",
@@ -13385,8 +13385,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-flex-001",
-      "status": "fail",
-      "mismatch_pct": 0.002548
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_display/display-contents-flex-002-ref",
@@ -13410,8 +13410,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-inline-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 3.227176
     },
     {
       "id": "wpt/css_display/display-contents-inline-002",
@@ -13445,8 +13445,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-list-001",
-      "status": "pass",
-      "mismatch_pct": 0.0
+      "status": "fail",
+      "mismatch_pct": 3.166667
     },
     {
       "id": "wpt/css_display/display-contents-multicol-001-ref",
@@ -13681,7 +13681,7 @@
     {
       "id": "wpt/css_backgrounds/background-attachment-local-hidden",
       "status": "fail",
-      "mismatch_pct": 0.82845
+      "mismatch_pct": 0.000849
     },
     {
       "id": "wpt/css_backgrounds/background-attachment-local",
@@ -13720,8 +13720,8 @@
     },
     {
       "id": "wpt/css_backgrounds/background-clip-006",
-      "status": "fail",
-      "mismatch_pct": 3.312102
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/background-clip-007",
@@ -13771,12 +13771,12 @@
     {
       "id": "wpt/css_backgrounds/background-clip-content-box-with-border-radius-002",
       "status": "fail",
-      "mismatch_pct": 0.490658
+      "mismatch_pct": 0.045223
     },
     {
       "id": "wpt/css_backgrounds/background-clip-content-box-with-border-radius-003",
       "status": "fail",
-      "mismatch_pct": 0.984076
+      "mismatch_pct": 0.01189
     },
     {
       "id": "wpt/css_backgrounds/background-clip-content-box",
@@ -13791,12 +13791,12 @@
     {
       "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius-002",
       "status": "fail",
-      "mismatch_pct": 0.494268
+      "mismatch_pct": 0.049682
     },
     {
       "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius-003",
       "status": "fail",
-      "mismatch_pct": 0.722293
+      "mismatch_pct": 0.017622
     },
     {
       "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius",
@@ -13830,8 +13830,8 @@
     },
     {
       "id": "wpt/css_backgrounds/background-color-clip",
-      "status": "fail",
-      "mismatch_pct": 1.019108
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/background-color-no-body-propagation-ref",
@@ -14376,22 +14376,22 @@
     {
       "id": "wpt/css_backgrounds/background-size-041",
       "status": "fail",
-      "mismatch_pct": 17.019108
+      "mismatch_pct": 17.002123
     },
     {
       "id": "wpt/css_backgrounds/background-size-042",
       "status": "fail",
-      "mismatch_pct": 17.019108
+      "mismatch_pct": 17.002123
     },
     {
       "id": "wpt/css_backgrounds/background-size-043",
       "status": "fail",
-      "mismatch_pct": 0.03397
+      "mismatch_pct": 0.016985
     },
     {
       "id": "wpt/css_backgrounds/background-size-044",
       "status": "fail",
-      "mismatch_pct": 0.03397
+      "mismatch_pct": 0.016985
     },
     {
       "id": "wpt/css_backgrounds/background-size-contain-001",
@@ -14461,7 +14461,7 @@
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-004",
       "status": "fail",
-      "mismatch_pct": 0.067516
+      "mismatch_pct": 0.001274
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-005-ref",
@@ -14471,7 +14471,7 @@
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-005",
       "status": "fail",
-      "mismatch_pct": 0.029936
+      "mismatch_pct": 0.001274
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-010",
@@ -14516,7 +14516,7 @@
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-004",
       "status": "fail",
-      "mismatch_pct": 0.067516
+      "mismatch_pct": 0.003609
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-005-ref",
@@ -14526,7 +14526,7 @@
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-005",
       "status": "fail",
-      "mismatch_pct": 0.029936
+      "mismatch_pct": 0.002548
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-010",
@@ -14571,7 +14571,7 @@
     {
       "id": "wpt/css_backgrounds/border-color_transparent",
       "status": "fail",
-      "mismatch_pct": 0.021231
+      "mismatch_pct": 0.010616
     },
     {
       "id": "wpt/css_backgrounds/border-image-002",
@@ -14921,7 +14921,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-003",
       "status": "fail",
-      "mismatch_pct": 3.803609
+      "mismatch_pct": 3.53949
     },
     {
       "id": "wpt/css_backgrounds/border-radius-004-ref",
@@ -14946,22 +14946,22 @@
     {
       "id": "wpt/css_backgrounds/border-radius-006-ref",
       "status": "fail",
-      "mismatch_pct": 3.513376
+      "mismatch_pct": 3.504459
     },
     {
       "id": "wpt/css_backgrounds/border-radius-006",
       "status": "fail",
-      "mismatch_pct": 3.513376
+      "mismatch_pct": 3.504459
     },
     {
       "id": "wpt/css_backgrounds/border-radius-007-ref",
       "status": "fail",
-      "mismatch_pct": 3.573673
+      "mismatch_pct": 3.524628
     },
     {
       "id": "wpt/css_backgrounds/border-radius-007",
       "status": "fail",
-      "mismatch_pct": 3.573673
+      "mismatch_pct": 3.524628
     },
     {
       "id": "wpt/css_backgrounds/border-radius-008",
@@ -14971,22 +14971,22 @@
     {
       "id": "wpt/css_backgrounds/border-radius-009-ref",
       "status": "fail",
-      "mismatch_pct": 3.595329
+      "mismatch_pct": 3.509766
     },
     {
       "id": "wpt/css_backgrounds/border-radius-009",
       "status": "fail",
-      "mismatch_pct": 3.716561
+      "mismatch_pct": 3.718471
     },
     {
       "id": "wpt/css_backgrounds/border-radius-010-ref",
       "status": "fail",
-      "mismatch_pct": 3.567516
+      "mismatch_pct": 3.497028
     },
     {
       "id": "wpt/css_backgrounds/border-radius-010",
       "status": "fail",
-      "mismatch_pct": 3.671762
+      "mismatch_pct": 3.649469
     },
     {
       "id": "wpt/css_backgrounds/border-radius-011-ref",
@@ -15071,7 +15071,7 @@
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-004",
       "status": "fail",
-      "mismatch_pct": 0.068153
+      "mismatch_pct": 0.002972
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-005-ref",
@@ -15081,7 +15081,7 @@
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-005",
       "status": "fail",
-      "mismatch_pct": 0.029936
+      "mismatch_pct": 0.001699
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-010",
@@ -15126,7 +15126,7 @@
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-004",
       "status": "fail",
-      "mismatch_pct": 0.068365
+      "mismatch_pct": 0.004034
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-005-ref",
@@ -15136,7 +15136,7 @@
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-005",
       "status": "fail",
-      "mismatch_pct": 0.029936
+      "mismatch_pct": 0.002123
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-010",
@@ -15180,8 +15180,8 @@
     },
     {
       "id": "wpt/css_backgrounds/border-width-pixel-snapping-001-a",
-      "status": "fail",
-      "mismatch_pct": 0.171975
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-width-pixel-snapping-001-b",
@@ -15536,7 +15536,7 @@
     {
       "id": "wpt/css_backgrounds/background-clip_clip-border-area-ref",
       "status": "fail",
-      "mismatch_pct": 1.629299
+      "mismatch_pct": 0.364119
     },
     {
       "id": "wpt/css_backgrounds/background-clip_clip-border-area",
@@ -15831,12 +15831,12 @@
     {
       "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-color-4-ref",
       "status": "fail",
-      "mismatch_pct": 5.883439
+      "mismatch_pct": 3.425902
     },
     {
       "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-color-6-ref",
       "status": "fail",
-      "mismatch_pct": 3.306157
+      "mismatch_pct": 2.951168
     },
     {
       "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-1-ref",
@@ -17000,8 +17000,8 @@
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-003-ref",
-      "status": "fail",
-      "mismatch_pct": 0.001699
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-003",
