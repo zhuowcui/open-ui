@@ -675,6 +675,51 @@ fn paint_with_overflow_clip(
         _ => (clip_x, clip_y, clip_w, clip_h),
     };
 
+    // Box-decoration-break:slice correction for fragmented overflow clip.
+    //
+    // When a block is fragmented across multicol columns, border/padding of
+    // the non-rendered sides must not contribute to the overflow clip region:
+    //
+    //   Non-first fragment: block-start border/padding is not painted, so the
+    //   clip must not start below the fragment's own top edge.
+    //
+    //   Non-last fragment: block-end border/padding is not painted, so the
+    //   clip must not extend past the fragment's "pure content" boundary:
+    //   fragment_top + (size.height − all four border/padding widths).
+    let (clip_x, clip_y, clip_w, clip_h) =
+        if !fragment.is_first_for_node || !fragment.is_last_for_node {
+            let frag_top = offset.top.to_f32();
+            let mut cy = clip_y;
+            let mut ch = clip_h;
+
+            if !fragment.is_first_for_node && cy > frag_top {
+                // Expand clip upward to the fragment's top edge, preserving
+                // the existing clip_bottom (the rendered end of the content).
+                let clip_bottom = cy + ch;
+                cy = frag_top;
+                ch = (clip_bottom - cy).max(0.0);
+            }
+
+            if !fragment.is_last_for_node {
+                // Clamp clip_bottom to the pure-content boundary so children
+                // from later fragments are not visible in this column.
+                let bt = fragment.border.top.to_f32();
+                let pt = fragment.padding.top.to_f32();
+                let bb = fragment.border.bottom.to_f32();
+                let pb = fragment.padding.bottom.to_f32();
+                let pure_content_bottom = frag_top
+                    + (fragment.size.height.to_f32() - bt - pt - bb - pb).max(0.0);
+                let clip_bottom = cy + ch;
+                if clip_bottom > pure_content_bottom {
+                    ch = (pure_content_bottom - cy).max(0.0);
+                }
+            }
+
+            (clip_x, cy, clip_w, ch)
+        } else {
+            (clip_x, clip_y, clip_w, clip_h)
+        };
+
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
 
     canvas.save();

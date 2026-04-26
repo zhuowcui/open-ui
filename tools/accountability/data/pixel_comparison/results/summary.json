@@ -1,7 +1,7 @@
 {
   "total": 3406,
-  "passed": 2377,
-  "failed": 1027,
+  "passed": 2382,
+  "failed": 1022,
   "errors": 2,
   "near_miss_aa": 305,
   "aa_threshold_pct": 0.5,
@@ -1755,8 +1755,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-003",
-      "status": "fail",
-      "mismatch_pct": 1.57707
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-004-ref",
@@ -1805,8 +1805,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-003",
-      "status": "fail",
-      "mismatch_pct": 0.762633
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-horiz-004-ref",
@@ -8235,7 +8235,7 @@
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-mul-column-border-box",
-      "status": "fail",
+      "status": "pass",
       "mismatch_pct": 0.382166
     },
     {
@@ -8245,7 +8245,7 @@
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-mul-column-content-box",
-      "status": "fail",
+      "status": "pass",
       "mismatch_pct": 0.305732
     },
     {
@@ -8255,7 +8255,7 @@
     },
     {
       "id": "wpt/css_overflow/overflow-clip-margin-mul-column-padding-box",
-      "status": "fail",
+      "status": "pass",
       "mismatch_pct": 0.348195
     },
     {
