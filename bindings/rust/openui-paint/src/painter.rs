@@ -24,7 +24,10 @@ use openui_style::{
     OverflowClipBox, StyleColor, Visibility,
 };
 use openui_text::font::FontMetrics;
-use skia_safe::{Canvas, ClipOp, Color4f, ColorSpace, Paint, PaintStyle, Path, Point, RRect, Rect};
+use skia_safe::{
+    Canvas, ClipOp, Color4f, ColorSpace, Paint, PaintStyle, Path, PathFillType, Point, RRect,
+    Rect,
+};
 
 use std::cell::RefCell;
 use std::collections::HashSet;
@@ -1455,7 +1458,7 @@ fn paint_box_decoration_background(
     paint_box_shadows(canvas, style, border_box_rect, true);
 
     // ── 4. Borders ───────────────────────────────────────────────────
-    paint_borders(canvas, fragment, style, x, y, w, h);
+    paint_borders(canvas, fragment, style, x, y, w, h, use_layer);
 
     if use_layer {
         canvas.restore(); // pops saveLayer
@@ -1474,6 +1477,7 @@ fn paint_borders(
     y: f32,
     w: f32,
     h: f32,
+    outer_rrect_clipped: bool,
 ) {
     // box-decoration-break: slice (default) — suppress block-start border on
     // non-first fragments and block-end border on non-last fragments.
@@ -1617,10 +1621,23 @@ fn paint_borders(
             ];
             let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
 
-            canvas.save();
-            canvas.clip_rrect(inner_rrect, ClipOp::Difference, true);
-            canvas.draw_rect(Rect::from_xywh(x, y, w, h), &fill_paint);
-            canvas.restore();
+            if outer_rrect_clipped {
+                // The outer rrect clip is already active on the canvas.
+                // Draw the border ring as a path with InverseWinding fill so
+                // that everything outside the inner rrect (within the existing
+                // clip) gets painted. This avoids stacking a second AA clip
+                // on top of the existing one, which would produce subtle
+                // double-AA artifacts at curved corners.
+                let mut border_path = Path::new();
+                border_path.set_fill_type(PathFillType::InverseWinding);
+                border_path.add_rrect(inner_rrect, None);
+                canvas.draw_path(&border_path, &fill_paint);
+            } else {
+                canvas.save();
+                canvas.clip_rrect(inner_rrect, ClipOp::Difference, true);
+                canvas.draw_rect(Rect::from_xywh(x, y, w, h), &fill_paint);
+                canvas.restore();
+            }
         } else {
             canvas.draw_rect(stroke_rect, &paint);
         }
