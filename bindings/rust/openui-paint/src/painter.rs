@@ -1909,11 +1909,16 @@ fn fix_corner_miter_pixels(
     let bb = oy1 - iy1;
     let bl = ix0 - ox0;
 
-    // Top-left corner: fix if both adjacent sides are solid.
+    // Top-left corner: fix if both adjacent sides are solid and opaque.
+    // Skip when either side is transparent — clip-path AA already provides
+    // the correct sub-pixel blend in that case; overwriting it here would
+    // produce the wrong value.
     if bt > 0.5
         && bl > 0.5
         && style.border_top_style == BorderStyle::Solid
         && style.border_left_style == BorderStyle::Solid
+        && top_c.a > 0.01
+        && left_c.a > 0.01
     {
         draw_miter_blend_pixels(
             canvas,
@@ -1930,6 +1935,8 @@ fn fix_corner_miter_pixels(
         && br > 0.5
         && style.border_top_style == BorderStyle::Solid
         && style.border_right_style == BorderStyle::Solid
+        && top_c.a > 0.01
+        && right_c.a > 0.01
     {
         draw_miter_blend_pixels(
             canvas,
@@ -1946,6 +1953,8 @@ fn fix_corner_miter_pixels(
         && br > 0.5
         && style.border_bottom_style == BorderStyle::Solid
         && style.border_right_style == BorderStyle::Solid
+        && bottom_c.a > 0.01
+        && right_c.a > 0.01
     {
         draw_miter_blend_pixels(
             canvas,
@@ -1962,6 +1971,8 @@ fn fix_corner_miter_pixels(
         && bl > 0.5
         && style.border_bottom_style == BorderStyle::Solid
         && style.border_left_style == BorderStyle::Solid
+        && bottom_c.a > 0.01
+        && left_c.a > 0.01
     {
         draw_miter_blend_pixels(
             canvas,
@@ -2069,7 +2080,9 @@ fn paint_border_side_path(
             clip_path.line_to(Point::new(points[2].0, points[2].1));
             clip_path.line_to(Point::new(points[3].0, points[3].1));
             clip_path.close();
-            canvas.clip_path(&clip_path, ClipOp::Intersect, false);
+            // Enable AA on the clip so diagonal edges blend smoothly, matching
+            // Chrome's sub-pixel coverage at trapezoid boundaries (e.g. CSS triangles).
+            canvas.clip_path(&clip_path, ClipOp::Intersect, true);
 
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
