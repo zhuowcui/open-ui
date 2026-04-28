@@ -25,12 +25,21 @@ use openui_style::{
 };
 use openui_text::font::FontMetrics;
 use skia_safe::{
-    Canvas, ClipOp, Color4f, ColorSpace, Paint, PaintStyle, Path, PathFillType, Point, RRect,
-    Rect,
+    Canvas, ClipOp, Color4f, ColorSpace, Paint, PaintStyle, Path, PathFillType, Point, RRect, Rect,
 };
 
 use std::cell::RefCell;
 use std::collections::HashSet;
+
+fn set_paint_css_color(paint: &mut Paint, color: &Color) {
+    let to_u8 = |component: f32| (component.clamp(0.0, 1.0) * 255.0).round() as u8;
+    paint.set_color(skia_safe::Color::from_argb(
+        to_u8(color.a),
+        to_u8(color.r),
+        to_u8(color.g),
+        to_u8(color.b),
+    ));
+}
 
 // Fragments hoisted from in-flow subtrees into the nearest stacking context's
 // non_negative_z list must not be painted a second time during Phase 2
@@ -415,7 +424,13 @@ fn collect_positioned_z_auto_descendants<'a>(
 
         if child.node_id.is_none() {
             // Anonymous box: recurse.
-            collect_positioned_z_auto_descendants(child, doc, frag_offset, non_negative_z, hoisted_ptrs);
+            collect_positioned_z_auto_descendants(
+                child,
+                doc,
+                frag_offset,
+                non_negative_z,
+                hoisted_ptrs,
+            );
             continue;
         }
 
@@ -429,7 +444,11 @@ fn collect_positioned_z_auto_descendants<'a>(
             // Positioned z:auto — hoist this fragment to the nearest SC.
             // Sort key (0, dom_index) ensures document-tree order among peers.
             let ptr = child as *const Fragment as usize;
-            non_negative_z.push((0, child.node_id.index(), StackingEntry::Descendant(child, frag_offset)));
+            non_negative_z.push((
+                0,
+                child.node_id.index(),
+                StackingEntry::Descendant(child, frag_offset),
+            ));
             hoisted_ptrs.push(ptr);
             // Don't recurse: the entire subtree paints as part of this fragment.
         } else if (is_positioned && child_style.z_index.is_some()) || child_style.opacity < 1.0 {
@@ -444,7 +463,13 @@ fn collect_positioned_z_auto_descendants<'a>(
                     && (child_style.overflow_x != Overflow::Visible
                         || child_style.overflow_y != Overflow::Visible));
             if !clips_overflow {
-                collect_positioned_z_auto_descendants(child, doc, frag_offset, non_negative_z, hoisted_ptrs);
+                collect_positioned_z_auto_descendants(
+                    child,
+                    doc,
+                    frag_offset,
+                    non_negative_z,
+                    hoisted_ptrs,
+                );
             }
         }
     }
@@ -710,8 +735,8 @@ fn paint_with_overflow_clip(
                 let pt = fragment.padding.top.to_f32();
                 let bb = fragment.border.bottom.to_f32();
                 let pb = fragment.padding.bottom.to_f32();
-                let pure_content_bottom = frag_top
-                    + (fragment.size.height.to_f32() - bt - pt - bb - pb).max(0.0);
+                let pure_content_bottom =
+                    frag_top + (fragment.size.height.to_f32() - bt - pt - bb - pb).max(0.0);
                 let clip_bottom = cy + ch;
                 if clip_bottom > pure_content_bottom {
                     ch = (pure_content_bottom - cy).max(0.0);
@@ -845,26 +870,7 @@ fn build_clip_rrect(
     RRect::new_rect_radii(*clip_rect, &radii)
 }
 
-fn normalized_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
-    let mut radii = [
-        Point::new(
-            style.border_top_left_radius.0,
-            style.border_top_left_radius.1,
-        ),
-        Point::new(
-            style.border_top_right_radius.0,
-            style.border_top_right_radius.1,
-        ),
-        Point::new(
-            style.border_bottom_right_radius.0,
-            style.border_bottom_right_radius.1,
-        ),
-        Point::new(
-            style.border_bottom_left_radius.0,
-            style.border_bottom_left_radius.1,
-        ),
-    ];
-
+fn normalize_radii_to_rect(mut radii: [Point; 4], rect: &Rect) -> [Point; 4] {
     let width = rect.width();
     let height = rect.height();
     if width <= 0.0 || height <= 0.0 {
@@ -890,6 +896,29 @@ fn normalized_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
         }
     }
     radii
+}
+
+fn normalized_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
+    let radii = [
+        Point::new(
+            style.border_top_left_radius.0,
+            style.border_top_left_radius.1,
+        ),
+        Point::new(
+            style.border_top_right_radius.0,
+            style.border_top_right_radius.1,
+        ),
+        Point::new(
+            style.border_bottom_right_radius.0,
+            style.border_bottom_right_radius.1,
+        ),
+        Point::new(
+            style.border_bottom_left_radius.0,
+            style.border_bottom_left_radius.1,
+        ),
+    ];
+
+    normalize_radii_to_rect(radii, rect)
 }
 
 fn specified_border_radii(style: &ComputedStyle) -> [Point; 4] {
@@ -1005,6 +1034,393 @@ fn clip_css_rounded_rect(canvas: &Canvas, rect: Rect, radii: &[Point; 4]) {
     canvas.clip_path(&path, ClipOp::Intersect, true);
 }
 
+fn clip_nonrenderable_inner_rounded_rect(
+    canvas: &Canvas,
+    outer_rect: Rect,
+    clip_rect: Rect,
+    radii: &[Point; 4],
+) {
+    if radii[0].x > 0.0 || radii[0].y > 0.0 {
+        let corner_rect = Rect::from_ltrb(
+            clip_rect.left,
+            clip_rect.top,
+            outer_rect.right,
+            outer_rect.bottom,
+        );
+        let corner_radii = [
+            radii[0],
+            Point::new(0.0, 0.0),
+            Point::new(0.0, 0.0),
+            Point::new(0.0, 0.0),
+        ];
+        canvas.clip_rrect(
+            RRect::new_rect_radii(corner_rect, &corner_radii),
+            ClipOp::Intersect,
+            true,
+        );
+    }
+
+    if radii[2].x > 0.0 || radii[2].y > 0.0 {
+        let corner_rect = Rect::from_ltrb(
+            outer_rect.left,
+            outer_rect.top,
+            clip_rect.right,
+            clip_rect.bottom,
+        );
+        let corner_radii = [
+            Point::new(0.0, 0.0),
+            Point::new(0.0, 0.0),
+            radii[2],
+            Point::new(0.0, 0.0),
+        ];
+        canvas.clip_rrect(
+            RRect::new_rect_radii(corner_rect, &corner_radii),
+            ClipOp::Intersect,
+            true,
+        );
+    }
+
+    if radii[1].x > 0.0 || radii[1].y > 0.0 {
+        let corner_rect = Rect::from_ltrb(
+            outer_rect.left,
+            clip_rect.top,
+            clip_rect.right,
+            outer_rect.bottom,
+        );
+        let corner_radii = [
+            Point::new(0.0, 0.0),
+            radii[1],
+            Point::new(0.0, 0.0),
+            Point::new(0.0, 0.0),
+        ];
+        canvas.clip_rrect(
+            RRect::new_rect_radii(corner_rect, &corner_radii),
+            ClipOp::Intersect,
+            true,
+        );
+    }
+
+    if radii[3].x > 0.0 || radii[3].y > 0.0 {
+        let corner_rect = Rect::from_ltrb(
+            clip_rect.left,
+            outer_rect.top,
+            outer_rect.right,
+            clip_rect.bottom,
+        );
+        let corner_radii = [
+            Point::new(0.0, 0.0),
+            Point::new(0.0, 0.0),
+            Point::new(0.0, 0.0),
+            radii[3],
+        ];
+        canvas.clip_rrect(
+            RRect::new_rect_radii(corner_rect, &corner_radii),
+            ClipOp::Intersect,
+            true,
+        );
+    }
+}
+
+fn line_intersection(a1: Point, a2: Point, b1: Point, b2: Point) -> Point {
+    let dax = a2.x - a1.x;
+    let day = a2.y - a1.y;
+    let dbx = b2.x - b1.x;
+    let dby = b2.y - b1.y;
+    let denom = dax * dby - day * dbx;
+    if denom.abs() < 0.0001 {
+        return a2;
+    }
+    let t = ((b1.x - a1.x) * dby - (b1.y - a1.y) * dbx) / denom;
+    Point::new(a1.x + t * dax, a1.y + t * day)
+}
+
+fn adjusted_nonrenderable_inner_border_for_side(
+    inner_rect: Rect,
+    mut radii: [Point; 4],
+    side: BorderSide,
+) -> (Rect, [Point; 4]) {
+    let mut rect = inner_rect;
+
+    match side {
+        BorderSide::Top => {
+            let overshoot = radii[0].x + radii[1].x - rect.width();
+            if overshoot > 0.1 {
+                rect.right += overshoot;
+                if radii[0].x == 0.0 {
+                    rect.left -= overshoot;
+                }
+            }
+            radii[2] = Point::new(0.0, 0.0);
+            radii[3] = Point::new(0.0, 0.0);
+            let max_radius = radii[0].y.max(radii[1].y);
+            if max_radius > rect.height() {
+                rect.bottom = rect.top + max_radius;
+            }
+        }
+        BorderSide::Bottom => {
+            let overshoot = radii[3].x + radii[2].x - rect.width();
+            if overshoot > 0.1 {
+                rect.right += overshoot;
+                if radii[3].x == 0.0 {
+                    rect.left -= overshoot;
+                }
+            }
+            radii[0] = Point::new(0.0, 0.0);
+            radii[1] = Point::new(0.0, 0.0);
+            let max_radius = radii[3].y.max(radii[2].y);
+            if max_radius > rect.height() {
+                rect.top = rect.bottom - max_radius;
+            }
+        }
+        BorderSide::Left => {
+            let overshoot = radii[0].y + radii[3].y - rect.height();
+            if overshoot > 0.1 {
+                rect.bottom += overshoot;
+                if radii[0].y == 0.0 {
+                    rect.top -= overshoot;
+                }
+            }
+            radii[1] = Point::new(0.0, 0.0);
+            radii[2] = Point::new(0.0, 0.0);
+            let max_radius = radii[0].x.max(radii[3].x);
+            if max_radius > rect.width() {
+                rect.right = rect.left + max_radius;
+            }
+        }
+        BorderSide::Right => {
+            let overshoot = radii[1].y + radii[2].y - rect.height();
+            if overshoot > 0.1 {
+                rect.bottom += overshoot;
+                if radii[1].y == 0.0 {
+                    rect.top -= overshoot;
+                }
+            }
+            radii[0] = Point::new(0.0, 0.0);
+            radii[3] = Point::new(0.0, 0.0);
+            let max_radius = radii[1].x.max(radii[2].x);
+            if max_radius > rect.width() {
+                rect.left = rect.right - max_radius;
+            }
+        }
+    }
+
+    (rect, radii)
+}
+
+fn nonrenderable_border_side_clip_polygon(
+    border_rect: Rect,
+    inner_rect: Rect,
+    radii: [Point; 4],
+    side: BorderSide,
+) -> Vec<Point> {
+    let inner = [
+        Point::new(inner_rect.left, inner_rect.top),
+        Point::new(inner_rect.right, inner_rect.top),
+        Point::new(inner_rect.right, inner_rect.bottom),
+        Point::new(inner_rect.left, inner_rect.bottom),
+    ];
+    let outer = [
+        Point::new(border_rect.left, border_rect.top),
+        Point::new(border_rect.right, border_rect.top),
+        Point::new(border_rect.right, border_rect.bottom),
+        Point::new(border_rect.left, border_rect.bottom),
+    ];
+    let zero = |p: Point| p.x == 0.0 && p.y == 0.0;
+    let mut q;
+    let mut pentagon: Option<Vec<Point>> = None;
+
+    match side {
+        BorderSide::Top => {
+            q = [outer[0], inner[0], inner[1], outer[1]];
+            if !zero(radii[0]) {
+                q[1] = line_intersection(
+                    q[0],
+                    q[1],
+                    Point::new(q[1].x + radii[0].x, q[1].y),
+                    Point::new(q[1].x, q[1].y + radii[0].y),
+                );
+                if q[1].y > inner[2].y {
+                    q[1] = line_intersection(q[0], q[1], inner[3], inner[2]);
+                }
+                if q[1].x > inner[2].x {
+                    q[1] = line_intersection(q[0], q[1], inner[1], inner[2]);
+                }
+                if q[2].y < q[1].y && q[2].x > q[1].x {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[2].x, q[1].y), q[2], q[3]]);
+                }
+            }
+            if !zero(radii[1]) {
+                q[2] = line_intersection(
+                    q[3],
+                    q[2],
+                    Point::new(q[2].x - radii[1].x, q[2].y),
+                    Point::new(q[2].x, q[2].y + radii[1].y),
+                );
+                if q[2].y > inner[3].y {
+                    q[2] = line_intersection(q[3], q[2], inner[3], inner[2]);
+                }
+                if q[2].x < inner[3].x {
+                    q[2] = line_intersection(q[3], q[2], inner[0], inner[3]);
+                }
+                if q[2].y > q[1].y && q[2].x > q[1].x {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[1].x, q[2].y), q[2], q[3]]);
+                }
+            }
+        }
+        BorderSide::Left => {
+            q = [outer[3], inner[3], inner[0], outer[0]];
+            if !zero(radii[0]) {
+                q[2] = line_intersection(
+                    q[3],
+                    q[2],
+                    Point::new(q[2].x + radii[0].x, q[2].y),
+                    Point::new(q[2].x, q[2].y + radii[0].y),
+                );
+                if q[2].y > inner[2].y {
+                    q[2] = line_intersection(q[3], q[2], inner[3], inner[2]);
+                }
+                if q[2].x > inner[2].x {
+                    q[2] = line_intersection(q[3], q[2], inner[1], inner[2]);
+                }
+                if q[2].y < q[1].y && q[2].x > q[1].x {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[2].x, q[1].y), q[2], q[3]]);
+                }
+            }
+            if !zero(radii[3]) {
+                q[1] = line_intersection(
+                    q[0],
+                    q[1],
+                    Point::new(q[1].x + radii[3].x, q[1].y),
+                    Point::new(q[1].x, q[1].y - radii[3].y),
+                );
+                if q[1].y < inner[1].y {
+                    q[1] = line_intersection(q[0], q[1], inner[0], inner[1]);
+                }
+                if q[1].x > inner[1].x {
+                    q[1] = line_intersection(q[0], q[1], inner[1], inner[2]);
+                }
+                if q[2].y < q[1].y && q[2].x < q[1].x {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[1].x, q[2].y), q[2], q[3]]);
+                }
+            }
+        }
+        BorderSide::Bottom => {
+            q = [outer[2], inner[2], inner[3], outer[3]];
+            if !zero(radii[3]) {
+                q[2] = line_intersection(
+                    q[3],
+                    q[2],
+                    Point::new(q[2].x + radii[3].x, q[2].y),
+                    Point::new(q[2].x, q[2].y - radii[3].y),
+                );
+                if q[2].y < inner[1].y {
+                    q[2] = line_intersection(q[3], q[2], inner[0], inner[1]);
+                }
+                if q[2].x > inner[1].x {
+                    q[2] = line_intersection(q[3], q[2], inner[1], inner[2]);
+                }
+                if q[2].y < q[1].y && q[2].x < q[1].x {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[1].x, q[2].y), q[2], q[3]]);
+                }
+            }
+            if !zero(radii[2]) {
+                q[1] = line_intersection(
+                    q[0],
+                    q[1],
+                    Point::new(q[1].x - radii[2].x, q[1].y),
+                    Point::new(q[1].x, q[1].y - radii[2].y),
+                );
+                if q[1].y < inner[0].y {
+                    q[1] = line_intersection(q[0], q[1], inner[0], inner[1]);
+                }
+                if q[1].x < inner[0].x {
+                    q[1] = line_intersection(q[0], q[1], inner[0], inner[3]);
+                }
+                if q[2].x < q[1].x && q[2].y > q[1].y {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[2].x, q[1].y), q[2], q[3]]);
+                }
+            }
+        }
+        BorderSide::Right => {
+            q = [outer[1], inner[1], inner[2], outer[2]];
+            if !zero(radii[1]) {
+                q[1] = line_intersection(
+                    q[0],
+                    q[1],
+                    Point::new(q[1].x - radii[1].x, q[1].y),
+                    Point::new(q[1].x, q[1].y + radii[1].y),
+                );
+                if q[1].y > inner[3].y {
+                    q[1] = line_intersection(q[0], q[1], inner[3], inner[2]);
+                }
+                if q[1].x < inner[3].x {
+                    q[1] = line_intersection(q[0], q[1], inner[0], inner[3]);
+                }
+                if q[2].y > q[1].y && q[2].x > q[1].x {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[1].x, q[2].y), q[2], q[3]]);
+                }
+            }
+            if !zero(radii[2]) {
+                q[2] = line_intersection(
+                    q[3],
+                    q[2],
+                    Point::new(q[2].x - radii[2].x, q[2].y),
+                    Point::new(q[2].x, q[2].y - radii[2].y),
+                );
+                if q[2].y < inner[0].y {
+                    q[2] = line_intersection(q[3], q[2], inner[0], inner[1]);
+                }
+                if q[2].x < inner[0].x {
+                    q[2] = line_intersection(q[3], q[2], inner[0], inner[3]);
+                }
+                if q[2].x < q[1].x && q[2].y > q[1].y {
+                    pentagon = Some(vec![q[0], q[1], Point::new(q[2].x, q[1].y), q[2], q[3]]);
+                }
+            }
+        }
+    }
+
+    pentagon.unwrap_or_else(|| q.to_vec())
+}
+
+fn draw_nonrenderable_uniform_rounded_border(
+    canvas: &Canvas,
+    border_rect: Rect,
+    inner_rect: Rect,
+    inner_radii: [Point; 4],
+    paint: &Paint,
+) {
+    for side in [
+        BorderSide::Top,
+        BorderSide::Right,
+        BorderSide::Bottom,
+        BorderSide::Left,
+    ] {
+        canvas.save();
+        let polygon =
+            nonrenderable_border_side_clip_polygon(border_rect, inner_rect, inner_radii, side);
+        let mut side_path = Path::new();
+        side_path.move_to(polygon[0]);
+        for point in polygon.iter().skip(1) {
+            side_path.line_to(*point);
+        }
+        side_path.close();
+        canvas.clip_path(&side_path, ClipOp::Intersect, false);
+
+        let (adjusted_rect, adjusted_radii) =
+            adjusted_nonrenderable_inner_border_for_side(inner_rect, inner_radii, side);
+        if adjusted_rect.width() > 0.0 && adjusted_rect.height() > 0.0 {
+            canvas.clip_rrect(
+                RRect::new_rect_radii(adjusted_rect, &adjusted_radii),
+                ClipOp::Difference,
+                true,
+            );
+        }
+        canvas.draw_rect(border_rect, paint);
+        canvas.restore();
+    }
+}
+
 fn descendant_overflows(fragment: &Fragment) -> (bool, bool) {
     let mut overflow_x = false;
     let mut overflow_y = false;
@@ -1047,10 +1463,7 @@ fn paint_scrollbars_if_needed(
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(false);
-    paint.set_color4f(
-        Color4f::new(track_color.r, track_color.g, track_color.b, track_color.a),
-        None::<&ColorSpace>,
-    );
+    set_paint_css_color(&mut paint, &track_color);
 
     let thickness = 15.0_f32.min(clip_rect.width()).min(clip_rect.height());
     if show_y {
@@ -1204,10 +1617,16 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
         }
 
         if shadow.inset {
-            // Inset shadow: clip to border-box, then paint a large rect with
-            // the inner "hole" cut out. The visible shadow is the blurred edge.
+            // Inset shadow: clip to border-box (respecting border-radius), then
+            // paint a large rect with the inner "hole" cut out.
             canvas.save();
-            canvas.clip_rect(border_rect, ClipOp::Intersect, false);
+            if style.has_border_radius() {
+                let element_radii = normalized_border_radii(style, &border_rect);
+                let border_rrect = RRect::new_rect_radii(border_rect, &element_radii);
+                canvas.clip_rrect(border_rrect, ClipOp::Intersect, false);
+            } else {
+                canvas.clip_rect(border_rect, ClipOp::Intersect, false);
+            }
 
             // The hole is the border-box shrunk by spread and shifted by offset
             let hole = Rect::from_xywh(
@@ -1234,14 +1653,28 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
             canvas.draw_path(&path, &paint);
             canvas.restore();
         } else {
-            // Outset shadow: draw behind the element, expanded by spread
+            // Outset shadow: draw behind the element, expanded by spread.
+            // CSS spec §12.2: the shadow shape matches the element's border-radius.
             let shadow_rect = Rect::from_xywh(
                 border_rect.left + shadow.offset_x - shadow.spread_radius,
                 border_rect.top + shadow.offset_y - shadow.spread_radius,
                 border_rect.width() + shadow.spread_radius * 2.0,
                 border_rect.height() + shadow.spread_radius * 2.0,
             );
-            canvas.draw_rect(shadow_rect, &paint);
+            if style.has_border_radius() {
+                let element_radii = normalized_border_radii(style, &border_rect);
+                let shadow_radii: [Point; 4] = std::array::from_fn(|i| {
+                    Point::new(
+                        (element_radii[i].x + shadow.spread_radius).max(0.0),
+                        (element_radii[i].y + shadow.spread_radius).max(0.0),
+                    )
+                });
+                let normalized = normalize_radii_to_rect(shadow_radii, &shadow_rect);
+                let shadow_rrect = RRect::new_rect_radii(shadow_rect, &normalized);
+                canvas.draw_rrect(shadow_rrect, &paint);
+            } else {
+                canvas.draw_rect(shadow_rect, &paint);
+            }
         }
     }
 }
@@ -1304,25 +1737,14 @@ fn paint_box_decoration_background(
         && style.border_bottom_color == style.border_left_color
         && style.border_top_style == BorderStyle::Solid;
     let use_layer = has_radius && uniform_border;
+    let effective_background_clip =
+        if style.background_attachment == BackgroundAttachment::Local {
+            BackgroundClip::PaddingBox
+        } else {
+            style.background_clip
+        };
     if use_layer {
-        let outer_radii = [
-            Point::new(
-                style.border_top_left_radius.0,
-                style.border_top_left_radius.1,
-            ),
-            Point::new(
-                style.border_top_right_radius.0,
-                style.border_top_right_radius.1,
-            ),
-            Point::new(
-                style.border_bottom_right_radius.0,
-                style.border_bottom_right_radius.1,
-            ),
-            Point::new(
-                style.border_bottom_left_radius.0,
-                style.border_bottom_left_radius.1,
-            ),
-        ];
+        let outer_radii = normalized_border_radii(style, &border_box_rect);
         let outer_rrect = RRect::new_rect_radii(border_box_rect, &outer_radii);
         canvas.save();
         canvas.clip_rrect(outer_rrect, ClipOp::Intersect, true);
@@ -1335,14 +1757,7 @@ fn paint_box_decoration_background(
         paint.set_style(PaintStyle::Fill);
         paint.set_anti_alias(true);
         let c = &style.background_color;
-        paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
-
-        let effective_background_clip =
-            if style.background_attachment == BackgroundAttachment::Local {
-                BackgroundClip::PaddingBox
-            } else {
-                style.background_clip
-            };
+        set_paint_css_color(&mut paint, c);
 
         let bg_rect = match effective_background_clip {
             BackgroundClip::BorderBox => border_box_rect,
@@ -1438,11 +1853,15 @@ fn paint_box_decoration_background(
                 }
             };
             canvas.save();
-            if all_effective_borders_transparent(style)
-                && effective_background_clip != BackgroundClip::BorderBox
+            if effective_background_clip != BackgroundClip::BorderBox
                 && radii_exceed_rect(&bg_rect, &clip_radii)
             {
-                clip_css_rounded_rect(canvas, bg_rect, &clip_radii);
+                clip_nonrenderable_inner_rounded_rect(
+                    canvas,
+                    border_box_rect,
+                    bg_rect,
+                    &clip_radii,
+                );
             } else {
                 let clip_rrect = RRect::new_rect_radii(bg_rect, &clip_radii);
                 canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
@@ -1462,7 +1881,7 @@ fn paint_box_decoration_background(
 
     if use_layer {
         canvas.restore(); // pops saveLayer
-        canvas.restore(); // pops outer rrect clip
+        canvas.restore(); // pops save()
     }
 }
 
@@ -1579,10 +1998,7 @@ fn paint_borders(
         paint.set_anti_alias(true);
 
         let resolved = style.border_top_color.resolve(inherited_color);
-        paint.set_color4f(
-            Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
-            None::<&ColorSpace>,
-        );
+        set_paint_css_color(&mut paint, &resolved);
 
         if style.has_border_radius() {
             // The outer border-box rrect clip is already set by the caller.
@@ -1590,10 +2006,7 @@ fn paint_borders(
             let mut fill_paint = Paint::default();
             fill_paint.set_style(PaintStyle::Fill);
             fill_paint.set_anti_alias(true);
-            fill_paint.set_color4f(
-                Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a),
-                None::<&ColorSpace>,
-            );
+            set_paint_css_color(&mut fill_paint, &resolved);
 
             let inner_rect = Rect::from_xywh(
                 x + bt,
@@ -1601,38 +2014,51 @@ fn paint_borders(
                 (w - bt - bt).max(0.0),
                 (h - bt - bt).max(0.0),
             );
+            let outer_radii = normalized_border_radii(style, &Rect::from_xywh(x, y, w, h));
             let inner_radii = [
                 Point::new(
-                    (style.border_top_left_radius.0 - bt).max(0.0),
-                    (style.border_top_left_radius.1 - bt).max(0.0),
+                    (outer_radii[0].x - bt).max(0.0),
+                    (outer_radii[0].y - bt).max(0.0),
                 ),
                 Point::new(
-                    (style.border_top_right_radius.0 - bt).max(0.0),
-                    (style.border_top_right_radius.1 - bt).max(0.0),
+                    (outer_radii[1].x - bt).max(0.0),
+                    (outer_radii[1].y - bt).max(0.0),
                 ),
                 Point::new(
-                    (style.border_bottom_right_radius.0 - bt).max(0.0),
-                    (style.border_bottom_right_radius.1 - bt).max(0.0),
+                    (outer_radii[2].x - bt).max(0.0),
+                    (outer_radii[2].y - bt).max(0.0),
                 ),
                 Point::new(
-                    (style.border_bottom_left_radius.0 - bt).max(0.0),
-                    (style.border_bottom_left_radius.1 - bt).max(0.0),
+                    (outer_radii[3].x - bt).max(0.0),
+                    (outer_radii[3].y - bt).max(0.0),
                 ),
             ];
-            let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
 
-            if outer_rrect_clipped {
+            if outer_rrect_clipped && radii_exceed_rect(&inner_rect, &inner_radii) {
+                let border_rect = Rect::from_xywh(x, y, w, h);
+                draw_nonrenderable_uniform_rounded_border(
+                    canvas,
+                    border_rect,
+                    inner_rect,
+                    inner_radii,
+                    &fill_paint,
+                );
+            } else if outer_rrect_clipped {
                 // The outer rrect clip is already active on the canvas.
                 // Draw the border ring as a path with InverseWinding fill so
                 // that everything outside the inner rrect (within the existing
                 // clip) gets painted. This avoids stacking a second AA clip
                 // on top of the existing one, which would produce subtle
                 // double-AA artifacts at curved corners.
+                let inner_radii = normalize_radii_to_rect(inner_radii, &inner_rect);
+                let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
                 let mut border_path = Path::new();
                 border_path.set_fill_type(PathFillType::InverseWinding);
                 border_path.add_rrect(inner_rrect, None);
                 canvas.draw_path(&border_path, &fill_paint);
             } else {
+                let inner_radii = normalize_radii_to_rect(inner_radii, &inner_rect);
+                let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
                 canvas.save();
                 canvas.clip_rrect(inner_rrect, ClipOp::Difference, true);
                 canvas.draw_rect(Rect::from_xywh(x, y, w, h), &fill_paint);
@@ -1759,10 +2185,7 @@ fn paint_same_color_solid_border(
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(false);
-    paint.set_color4f(
-        Color4f::new(color.r, color.g, color.b, color.a),
-        None::<&ColorSpace>,
-    );
+    set_paint_css_color(&mut paint, &color);
     canvas.draw_path(&path, &paint);
 }
 
@@ -2077,7 +2500,6 @@ fn paint_border_side_path(
     }
 
     let resolved = border_color.resolve(inherited_color);
-    let base_color = Color4f::new(resolved.r, resolved.g, resolved.b, resolved.a);
 
     match border_style {
         BorderStyle::Solid => {
@@ -2104,7 +2526,7 @@ fn paint_border_side_path(
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
             paint.set_anti_alias(false);
-            paint.set_color4f(base_color, None::<&ColorSpace>);
+            set_paint_css_color(&mut paint, &resolved);
             canvas.draw_rect(rect, &paint);
             canvas.restore();
         }
@@ -2179,7 +2601,7 @@ fn paint_border_side(
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
             paint.set_anti_alias(true);
-            paint.set_color4f(base_color, None::<&ColorSpace>);
+            set_paint_css_color(&mut paint, &resolved);
             canvas.draw_rect(rect, &paint);
         }
         BorderStyle::Dashed => {
@@ -2201,17 +2623,28 @@ fn paint_border_side(
                 paint.set_style(PaintStyle::Stroke);
                 paint.set_stroke_width(width);
                 paint.set_anti_alias(true);
-                paint.set_color4f(base_color, None::<&ColorSpace>);
+                set_paint_css_color(&mut paint, &resolved);
                 canvas.draw_line(p0, p1, &paint);
                 return;
             }
             let gap_len = select_best_dash_gap(stroke_length, dash_len, desired_gap);
+            // When stroke_length is between 2*dash and 2*dash+gap (select_best_dash_gap
+            // returned the unchanged gap because min_num_gaps==0), Skia would produce
+            // asymmetric dashes: first dash full length, second dash truncated.
+            // Chrome instead scales both dash and gap proportionally so exactly 2
+            // symmetric dashes fit the stroke length (matching sub-pixel AA output).
+            let (final_dash, final_gap) = if stroke_length < 2.0 * dash_len + desired_gap {
+                let scale = stroke_length / (2.0 * dash_len + desired_gap);
+                (dash_len * scale, desired_gap * scale)
+            } else {
+                (dash_len, gap_len)
+            };
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Stroke);
             paint.set_stroke_width(width);
             paint.set_anti_alias(true);
-            paint.set_color4f(base_color, None::<&ColorSpace>);
-            if let Some(effect) = skia_safe::PathEffect::dash(&[dash_len, gap_len], 0.0) {
+            set_paint_css_color(&mut paint, &resolved);
+            if let Some(effect) = skia_safe::PathEffect::dash(&[final_dash, final_gap], 0.0) {
                 paint.set_path_effect(effect);
             }
             canvas.draw_line(p0, p1, &paint);
@@ -2250,7 +2683,7 @@ fn paint_border_side(
                 paint.set_stroke_width(width);
                 paint.set_stroke_cap(skia_safe::paint::Cap::Round);
                 paint.set_anti_alias(true);
-                paint.set_color4f(base_color, None::<&ColorSpace>);
+                set_paint_css_color(&mut paint, &resolved);
                 let adjusted_p0;
                 let adjusted_p1;
                 if is_horizontal {
@@ -2276,7 +2709,7 @@ fn paint_border_side(
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
             paint.set_anti_alias(true);
-            paint.set_color4f(base_color, None::<&ColorSpace>);
+            set_paint_css_color(&mut paint, &resolved);
             // Outer line.
             let outer_rect = shrink_border_rect(&rect, width, 0.0, line_width);
             canvas.draw_rect(outer_rect, &paint);
