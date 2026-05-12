@@ -11,11 +11,11 @@
 //! the float and returns a [`PositionedFloat`] together with the
 //! [`ExclusionArea`] that the caller should add to the exclusion space.
 
-use openui_geometry::{BfcOffset, BfcRect, BoxStrut, LayoutUnit, PhysicalSize};
 use openui_dom::NodeId;
+use openui_geometry::{BfcOffset, BfcRect, BoxStrut, LayoutUnit, PhysicalSize};
 
-use crate::fragment::Fragment;
 use super::{ExclusionArea, ExclusionSpace, ExclusionType, LayoutOpportunity};
+use crate::fragment::Fragment;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UnpositionedFloat
@@ -50,6 +50,12 @@ pub struct UnpositionedFloat {
 
     /// Border-box block size of the float (height in horizontal-tb).
     pub block_size: LayoutUnit,
+
+    /// Minimum inline size required when searching for a placement opportunity.
+    /// Defaults to the margin-box inline size; non-BFC descendants may override
+    /// this because CSS 2.1 float placement allows their boxes to protrude
+    /// through ancestor block margins while still sharing ancestor exclusions.
+    pub placement_min_inline_size: Option<LayoutUnit>,
 
     /// `true` for `float: left`, `false` for `float: right`.
     pub is_left: bool,
@@ -134,16 +140,18 @@ pub fn position_float(
         ExclusionType::Right
     };
 
-    // Find a layout opportunity wide enough for the float's margin box.
+    // Find a layout opportunity wide enough for the float's placement rules.
+    let placement_min_inline_size = float
+        .placement_min_inline_size
+        .unwrap_or(margin_inline_size);
     let opportunity = exclusion_space.find_layout_opportunity(
         &float.origin_bfc_offset,
         float.available_size,
-        margin_inline_size,
+        placement_min_inline_size,
     );
 
     // Resolve the float's border-box position within the opportunity.
-    let (line_offset, block_offset) =
-        resolve_float_position(float, &opportunity);
+    let (line_offset, block_offset) = resolve_float_position(float, &opportunity);
 
     let bfc_offset = BfcOffset::new(line_offset, block_offset);
 
@@ -208,10 +216,7 @@ fn resolve_float_position(
 /// `(opportunity_start + margin_inline_size, block_end)` for left floats,
 /// and from `(opportunity_end − margin_inline_size, block_start)` to
 /// `(opportunity_end, block_end)` for right floats.
-fn compute_exclusion_rect(
-    float: &UnpositionedFloat,
-    opportunity: &LayoutOpportunity,
-) -> BfcRect {
+fn compute_exclusion_rect(float: &UnpositionedFloat, opportunity: &LayoutOpportunity) -> BfcRect {
     let margin_inline_size = compute_margin_box_inline_size(float);
     let margin_block_size = float.margins.top + float.block_size + float.margins.bottom;
 
@@ -260,6 +265,7 @@ mod tests {
             margins: BoxStrut::zero(),
             inline_size: lu(inline_size),
             block_size: lu(block_size),
+            placement_min_inline_size: None,
             is_left,
         }
     }
@@ -279,6 +285,7 @@ mod tests {
             margins,
             inline_size: lu(inline_size),
             block_size: lu(block_size),
+            placement_min_inline_size: None,
             is_left,
         }
     }
@@ -523,13 +530,7 @@ mod tests {
         // New left float: 100px wide, 50px tall, with 10px margins all around.
         // Margin box = 10+100+10 = 120px inline.
         // Opportunity at line=200 has 600px free — plenty of room.
-        let f = make_float_with_margins(
-            100,
-            50,
-            true,
-            800,
-            BoxStrut::all(lu(10)),
-        );
+        let f = make_float_with_margins(100, 50, true, 800, BoxStrut::all(lu(10)));
         let (pos, excl) = position_float(&f, &space);
 
         // Border box placed at 200 + 10 (left margin) = 210 inline.

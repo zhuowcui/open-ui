@@ -213,11 +213,7 @@ pub(crate) fn free_callback(element_ptr: usize, event_type: &str) {
 
 /// Store a callback in the registry, freeing any previous callback for the
 /// same (element, event_type) pair.
-pub(crate) fn store_callback(
-    element_ptr: usize,
-    event_type: &str,
-    user_data: *mut c_void,
-) {
+pub(crate) fn store_callback(element_ptr: usize, event_type: &str, user_data: *mut c_void) {
     let key = (element_ptr, event_type.to_string());
     let mut map = CALLBACK_REGISTRY.lock().unwrap();
     // Free any previous callback for this key.

@@ -16,9 +16,9 @@
 //! - **`FragmentainerSpace`**: Tracks available space in the current
 //!   fragmentainer column/page.
 
-use openui_geometry::LayoutUnit;
-use openui_style::{BreakValue, BreakInside};
 use crate::layout_result::BreakBetween;
+use openui_geometry::LayoutUnit;
+use openui_style::{BreakInside, BreakValue};
 
 // ── Break Token ─────────────────────────────────────────────────────────
 
@@ -275,7 +275,9 @@ pub fn find_best_break_point(
     let remaining = space.remaining();
 
     // Check if all content fits.
-    let total: LayoutUnit = children.iter().fold(LayoutUnit::zero(), |acc, c| acc + c.block_size);
+    let total: LayoutUnit = children
+        .iter()
+        .fold(LayoutUnit::zero(), |acc, c| acc + c.block_size);
     let all_fits = total <= remaining;
 
     // First pass: check for forced breaks (honoured even when content fits).
@@ -303,10 +305,7 @@ pub fn find_best_break_point(
     for i in 0..children.len() {
         // Check break-before on child i (break between child i-1 and child i).
         if i > 0 {
-            let appeal = appeal_between(
-                &children[i - 1],
-                &children[i],
-            );
+            let appeal = appeal_between(&children[i - 1], &children[i]);
 
             let candidate = BreakPoint {
                 child_index: i,
@@ -327,10 +326,7 @@ pub fn find_best_break_point(
             if best.is_none() {
                 best = Some(BreakPoint {
                     child_index: i,
-                    appeal: appeal_between(
-                        &children[i - 1],
-                        &children[i],
-                    ),
+                    appeal: appeal_between(&children[i - 1], &children[i]),
                 });
             }
             break;
@@ -455,7 +451,11 @@ pub fn join_break_between(a: BreakBetween, b: BreakBetween) -> BreakBetween {
     // Both are avoid-type — take the more specific.
     let a_avoid = break_between_avoid_rank(a);
     let b_avoid = break_between_avoid_rank(b);
-    if a_avoid >= b_avoid { a } else { b }
+    if a_avoid >= b_avoid {
+        a
+    } else {
+        b
+    }
 }
 
 /// Rank forced break values (0 = not forced).

@@ -57,7 +57,7 @@ fn wrapping_text_min_block_size_greater_than_max() {
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some(
-        "This is a longer sentence that should wrap differently at different widths".to_string()
+        "This is a longer sentence that should wrap differently at different widths".to_string(),
     );
     doc.append_child(div, text);
 

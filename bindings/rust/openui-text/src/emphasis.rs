@@ -147,10 +147,11 @@ fn is_space_separator(cp: u32) -> bool {
         0x0020  // SPACE
         | 0x00A0  // NO-BREAK SPACE
         | 0x1680  // OGHAM SPACE MARK
-        | 0x2000..=0x200A  // EN QUAD through HAIR SPACE
+        | 0x2000
+            ..=0x200A  // EN QUAD through HAIR SPACE
         | 0x202F  // NARROW NO-BREAK SPACE
         | 0x205F  // MEDIUM MATHEMATICAL SPACE
-        | 0x3000  // IDEOGRAPHIC SPACE
+        | 0x3000 // IDEOGRAPHIC SPACE
     )
 }
 
@@ -190,22 +191,34 @@ mod tests {
 
     #[test]
     fn filled_dot() {
-        assert_eq!(TextEmphasisMark::Dot.character(TextEmphasisFill::Filled), Some('\u{2022}'));
+        assert_eq!(
+            TextEmphasisMark::Dot.character(TextEmphasisFill::Filled),
+            Some('\u{2022}')
+        );
     }
 
     #[test]
     fn open_dot() {
-        assert_eq!(TextEmphasisMark::Dot.character(TextEmphasisFill::Open), Some('\u{25E6}'));
+        assert_eq!(
+            TextEmphasisMark::Dot.character(TextEmphasisFill::Open),
+            Some('\u{25E6}')
+        );
     }
 
     #[test]
     fn filled_circle() {
-        assert_eq!(TextEmphasisMark::Circle.character(TextEmphasisFill::Filled), Some('\u{25CF}'));
+        assert_eq!(
+            TextEmphasisMark::Circle.character(TextEmphasisFill::Filled),
+            Some('\u{25CF}')
+        );
     }
 
     #[test]
     fn open_circle() {
-        assert_eq!(TextEmphasisMark::Circle.character(TextEmphasisFill::Open), Some('\u{25CB}'));
+        assert_eq!(
+            TextEmphasisMark::Circle.character(TextEmphasisFill::Open),
+            Some('\u{25CB}')
+        );
     }
 
     #[test]
@@ -258,8 +271,14 @@ mod tests {
 
     #[test]
     fn none_returns_none() {
-        assert_eq!(TextEmphasisMark::None.character(TextEmphasisFill::Filled), None);
-        assert_eq!(TextEmphasisMark::None.character(TextEmphasisFill::Open), None);
+        assert_eq!(
+            TextEmphasisMark::None.character(TextEmphasisFill::Filled),
+            None
+        );
+        assert_eq!(
+            TextEmphasisMark::None.character(TextEmphasisFill::Open),
+            None
+        );
     }
 
     #[test]
@@ -282,9 +301,18 @@ mod tests {
         let result = resolve_emphasis_mark(
             TextEmphasisMark::Dot,
             TextEmphasisFill::Filled,
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
         );
-        assert_eq!(result, Some(ResolvedEmphasisMark { character: '\u{2022}', over: true }));
+        assert_eq!(
+            result,
+            Some(ResolvedEmphasisMark {
+                character: '\u{2022}',
+                over: true
+            })
+        );
     }
 
     #[test]
@@ -292,9 +320,18 @@ mod tests {
         let result = resolve_emphasis_mark(
             TextEmphasisMark::Circle,
             TextEmphasisFill::Open,
-            TextEmphasisPosition { over: false, right: true },
+            TextEmphasisPosition {
+                over: false,
+                right: true,
+            },
         );
-        assert_eq!(result, Some(ResolvedEmphasisMark { character: '\u{25CB}', over: false }));
+        assert_eq!(
+            result,
+            Some(ResolvedEmphasisMark {
+                character: '\u{25CB}',
+                over: false
+            })
+        );
     }
 
     #[test]
@@ -466,8 +503,13 @@ mod tests {
             (TextEmphasisMark::Sesame, '\u{FE45}'),
         ];
         for (mark, expected) in fills {
-            assert_eq!(mark.character(TextEmphasisFill::Filled), Some(expected),
-                "filled {:?} should be {:?}", mark, expected);
+            assert_eq!(
+                mark.character(TextEmphasisFill::Filled),
+                Some(expected),
+                "filled {:?} should be {:?}",
+                mark,
+                expected
+            );
         }
     }
 
@@ -481,8 +523,13 @@ mod tests {
             (TextEmphasisMark::Sesame, '\u{FE46}'),
         ];
         for (mark, expected) in opens {
-            assert_eq!(mark.character(TextEmphasisFill::Open), Some(expected),
-                "open {:?} should be {:?}", mark, expected);
+            assert_eq!(
+                mark.character(TextEmphasisFill::Open),
+                Some(expected),
+                "open {:?} should be {:?}",
+                mark,
+                expected
+            );
         }
     }
 }

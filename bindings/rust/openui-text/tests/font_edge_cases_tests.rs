@@ -58,7 +58,10 @@ fn weight_custom_550_resolves() {
     let mut desc = FontDescription::new();
     desc.weight = FontWeight(550.0);
     let font = Font::new(desc);
-    assert!(font.primary_font().is_some(), "Custom weight 550 must resolve");
+    assert!(
+        font.primary_font().is_some(),
+        "Custom weight 550 must resolve"
+    );
     assert_eq!(font.description().weight.0, 550.0);
 }
 
@@ -102,7 +105,10 @@ fn stretch_ultra_condensed_resolves() {
     let mut desc = FontDescription::new();
     desc.stretch = FontStretch::ULTRA_CONDENSED;
     let font = Font::new(desc);
-    assert!(font.primary_font().is_some(), "Ultra-condensed (50%) must resolve");
+    assert!(
+        font.primary_font().is_some(),
+        "Ultra-condensed (50%) must resolve"
+    );
     assert_eq!(font.description().stretch.0, 50.0);
 }
 
@@ -111,7 +117,10 @@ fn stretch_condensed_resolves() {
     let mut desc = FontDescription::new();
     desc.stretch = FontStretch::CONDENSED;
     let font = Font::new(desc);
-    assert!(font.primary_font().is_some(), "Condensed (75%) must resolve");
+    assert!(
+        font.primary_font().is_some(),
+        "Condensed (75%) must resolve"
+    );
     assert_eq!(font.description().stretch.0, 75.0);
 }
 
@@ -120,7 +129,10 @@ fn stretch_expanded_resolves() {
     let mut desc = FontDescription::new();
     desc.stretch = FontStretch::EXPANDED;
     let font = Font::new(desc);
-    assert!(font.primary_font().is_some(), "Expanded (125%) must resolve");
+    assert!(
+        font.primary_font().is_some(),
+        "Expanded (125%) must resolve"
+    );
     assert_eq!(font.description().stretch.0, 125.0);
 }
 
@@ -129,7 +141,10 @@ fn stretch_ultra_expanded_resolves() {
     let mut desc = FontDescription::new();
     desc.stretch = FontStretch::ULTRA_EXPANDED;
     let font = Font::new(desc);
-    assert!(font.primary_font().is_some(), "Ultra-expanded (200%) must resolve");
+    assert!(
+        font.primary_font().is_some(),
+        "Ultra-expanded (200%) must resolve"
+    );
     assert_eq!(font.description().stretch.0, 200.0);
 }
 
@@ -162,7 +177,10 @@ fn fallback_chain_nonexistent_then_generic() {
     };
     let desc = FontDescription::with_family_and_size(family, 16.0);
     let font = Font::new(desc);
-    assert!(font.primary_font().is_some(), "Should resolve via monospace fallback");
+    assert!(
+        font.primary_font().is_some(),
+        "Should resolve via monospace fallback"
+    );
     // Monospace should resolve so we have at least 1 font
     assert!(font.fallback_count() >= 1);
 }
@@ -179,7 +197,10 @@ fn fallback_multiple_nonexistent_families() {
     let desc = FontDescription::with_family_and_size(family, 16.0);
     let font = Font::new(desc);
     // Even with all fake families, sans-serif default kicks in
-    assert!(font.primary_font().is_some(), "Triple-fake must still resolve");
+    assert!(
+        font.primary_font().is_some(),
+        "Triple-fake must still resolve"
+    );
 }
 
 #[test]
@@ -192,7 +213,7 @@ fn fallback_list_direct_construction() {
     assert!(!list.is_empty(), "Serif fallback list must not be empty");
     assert!(list.primary().is_some());
     assert_eq!(list.len(), list.len()); // sanity
-    // get(0) should match primary()
+                                        // get(0) should match primary()
     assert!(Arc::ptr_eq(list.primary().unwrap(), list.get(0).unwrap()));
 }
 
@@ -366,7 +387,11 @@ fn metrics_ascent_positive_descent_non_negative() {
     ));
     let m = font.font_metrics().unwrap();
     assert!(m.ascent > 0.0, "Ascent must be positive, got {}", m.ascent);
-    assert!(m.descent >= 0.0, "Descent must be non-negative, got {}", m.descent);
+    assert!(
+        m.descent >= 0.0,
+        "Descent must be non-negative, got {}",
+        m.descent
+    );
 }
 
 #[test]
@@ -479,14 +504,14 @@ fn description_clone_preserves_all_fields() {
 
 #[test]
 fn description_with_family_and_size_sets_both_sizes() {
-    let desc = FontDescription::with_family_and_size(
-        FontFamilyList::single("Helvetica"),
-        32.0,
-    );
+    let desc = FontDescription::with_family_and_size(FontFamilyList::single("Helvetica"), 32.0);
     assert_eq!(desc.size, 32.0);
     assert_eq!(desc.specified_size, 32.0);
     assert_eq!(desc.family.families.len(), 1);
-    assert_eq!(desc.family.families[0], FontFamily::Named("Helvetica".into()));
+    assert_eq!(
+        desc.family.families[0],
+        FontFamily::Named("Helvetica".into())
+    );
     // Other fields should be defaults
     assert_eq!(desc.weight, FontWeight::NORMAL);
     assert_eq!(desc.stretch, FontStretch::NORMAL);
@@ -523,10 +548,7 @@ fn system_fonts_all_generic_families_resolve() {
         GenericFontFamily::SystemUi,
     ];
     for generic in &generics {
-        let desc = FontDescription::with_family_and_size(
-            FontFamilyList::generic(*generic),
-            16.0,
-        );
+        let desc = FontDescription::with_family_and_size(FontFamilyList::generic(*generic), 16.0);
         let font = Font::new(desc);
         assert!(
             font.primary_font().is_some(),
@@ -539,10 +561,28 @@ fn system_fonts_all_generic_families_resolve() {
 #[test]
 fn system_font_cache_name_mapping() {
     // Verify FontCache maps all required generics to string names
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Serif), "serif");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::SansSerif), "sans-serif");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Monospace), "monospace");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Cursive), "cursive");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Fantasy), "fantasy");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::SystemUi), "system-ui");
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Serif),
+        "serif"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::SansSerif),
+        "sans-serif"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Monospace),
+        "monospace"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Cursive),
+        "cursive"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Fantasy),
+        "fantasy"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::SystemUi),
+        "system-ui"
+    );
 }

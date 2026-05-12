@@ -38,7 +38,12 @@ fn make_span_in_block(
     text: &str,
     padding_left: f32,
     padding_right: f32,
-) -> (Document, openui_dom::NodeId, openui_dom::NodeId, openui_dom::NodeId) {
+) -> (
+    Document,
+    openui_dom::NodeId,
+    openui_dom::NodeId,
+    openui_dom::NodeId,
+) {
     let mut doc = Document::new();
     let vp = doc.root();
 
@@ -77,7 +82,10 @@ fn single_line_span_gets_full_mbp() {
 
     let frag = layout(&doc, vp);
     let div_frag = &frag.children[0];
-    assert!(!div_frag.children.is_empty(), "Should have at least one line box");
+    assert!(
+        !div_frag.children.is_empty(),
+        "Should have at least one line box"
+    );
 
     let line = &div_frag.children[0];
     // The line should have children (text fragments).
@@ -93,8 +101,14 @@ fn single_line_span_gets_full_mbp() {
     );
 
     // Fragment metadata: single-line span → first AND last for node.
-    assert!(first_text.is_first_for_node, "Single-line span text should be first for node");
-    assert!(first_text.is_last_for_node, "Single-line span text should be last for node");
+    assert!(
+        first_text.is_first_for_node,
+        "Single-line span text should be first for node"
+    );
+    assert!(
+        first_text.is_last_for_node,
+        "Single-line span text should be last for node"
+    );
 }
 
 // ── Test 2: Multi-line span first line gets inline-start MBP only ───────
@@ -102,12 +116,7 @@ fn single_line_span_gets_full_mbp() {
 #[test]
 fn multi_line_span_first_line_has_inline_start_mbp() {
     // Use narrow container to force wrapping inside the span.
-    let (doc, vp, _container, _span) = make_span_in_block(
-        80.0,
-        "Hello World Test",
-        10.0,
-        10.0,
-    );
+    let (doc, vp, _container, _span) = make_span_in_block(80.0, "Hello World Test", 10.0, 10.0);
 
     let frag = layout(&doc, vp);
     let div_frag = &frag.children[0];
@@ -133,12 +142,7 @@ fn multi_line_span_first_line_has_inline_start_mbp() {
 
 #[test]
 fn multi_line_span_last_line_has_inline_end_mbp() {
-    let (doc, vp, _container, _span) = make_span_in_block(
-        80.0,
-        "Hello World Test",
-        10.0,
-        10.0,
-    );
+    let (doc, vp, _container, _span) = make_span_in_block(80.0, "Hello World Test", 10.0, 10.0);
 
     let frag = layout(&doc, vp);
     let div_frag = &frag.children[0];
@@ -160,12 +164,8 @@ fn multi_line_span_last_line_has_inline_end_mbp() {
 #[test]
 fn multi_line_span_middle_line_no_inline_mbp() {
     // Use very narrow container to force 3+ lines.
-    let (doc, vp, _container, _span) = make_span_in_block(
-        50.0,
-        "Hello World Test More Text Here",
-        10.0,
-        10.0,
-    );
+    let (doc, vp, _container, _span) =
+        make_span_in_block(50.0, "Hello World Test More Text Here", 10.0, 10.0);
 
     let frag = layout(&doc, vp);
     let div_frag = &frag.children[0];
@@ -347,7 +347,8 @@ fn multiple_spans_same_line_both_get_full_mbp() {
 
     // Both spans fit on one line → one line box.
     assert_eq!(
-        div_frag.children.len(), 1,
+        div_frag.children.len(),
+        1,
         "Two short spans on wide container should produce 1 line"
     );
 
@@ -361,8 +362,14 @@ fn multiple_spans_same_line_both_get_full_mbp() {
 
     // Both text fragments are first and last for their respective inline boxes.
     for child in &line.children {
-        assert!(child.is_first_for_node, "Single-line span text should be is_first_for_node=true");
-        assert!(child.is_last_for_node, "Single-line span text should be is_last_for_node=true");
+        assert!(
+            child.is_first_for_node,
+            "Single-line span text should be is_first_for_node=true"
+        );
+        assert!(
+            child.is_last_for_node,
+            "Single-line span text should be is_last_for_node=true"
+        );
     }
 
     // Second text should be offset further than first (by span1's MBP + text width + span2's MBP).
@@ -371,7 +378,8 @@ fn multiple_spans_same_line_both_get_full_mbp() {
     assert!(
         left2 > left1,
         "Second span text ({}) should be right of first span text ({})",
-        left2, left1
+        left2,
+        left1
     );
 }
 
@@ -406,10 +414,7 @@ fn empty_span_produces_no_crash() {
     // Should not crash. May produce zero or one line.
     // Height should be minimal (strut only).
     let height = div_frag.size.height.to_f32();
-    assert!(
-        height >= 0.0,
-        "Empty span container height should be >= 0"
-    );
+    assert!(height >= 0.0, "Empty span container height should be >= 0");
 }
 
 // ── Test 9: Span with padding and border ────────────────────────────────
@@ -482,7 +487,7 @@ fn rtl_span_multi_line_reverses_inline_start_end() {
         node.style.display = Display::Inline;
         node.style.direction = Direction::Rtl;
         // In RTL, inline-start is the RIGHT side, inline-end is the LEFT side.
-        node.style.padding_left = Length::px(5.0);  // This is inline-end in RTL
+        node.style.padding_left = Length::px(5.0); // This is inline-end in RTL
         node.style.padding_right = Length::px(15.0); // This is inline-start in RTL
     }
     doc.append_child(container, span);
@@ -502,10 +507,7 @@ fn rtl_span_multi_line_reverses_inline_start_end() {
     // In RTL, the inline-start MBP is the right padding (15px).
     // Text should be positioned accounting for RTL direction.
     let line = &div_frag.children[0];
-    assert!(
-        !line.children.is_empty(),
-        "RTL line should have children"
-    );
+    assert!(!line.children.is_empty(), "RTL line should have children");
 }
 
 // ── Test 11: BoxDecorationBreak default is Slice ────────────────────────
@@ -524,13 +526,17 @@ fn box_decoration_break_default_is_slice() {
 
 #[test]
 fn fragment_defaults_are_first_and_last() {
-    use openui_geometry::PhysicalSize;
     use openui_dom::NodeId;
+    use openui_geometry::PhysicalSize;
 
-    let frag = openui_layout::Fragment::new_box(
-        NodeId::NONE,
-        PhysicalSize::new(lu(100.0), lu(50.0)),
+    let frag =
+        openui_layout::Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(100.0), lu(50.0)));
+    assert!(
+        frag.is_first_for_node,
+        "new_box default is_first_for_node should be true"
     );
-    assert!(frag.is_first_for_node, "new_box default is_first_for_node should be true");
-    assert!(frag.is_last_for_node, "new_box default is_last_for_node should be true");
+    assert!(
+        frag.is_last_for_node,
+        "new_box default is_last_for_node should be true"
+    );
 }

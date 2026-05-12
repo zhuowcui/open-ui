@@ -180,8 +180,8 @@ mod tests {
     #[test]
     fn trie_multiple_patterns_max_wins() {
         let mut trie = PatternTrie::new();
-        trie.insert_pattern("ab1c");  // sets position 3 to 1
-        trie.insert_pattern("b2c");   // sets position 3 to 2
+        trie.insert_pattern("ab1c"); // sets position 3 to 1
+        trie.insert_pattern("b2c"); // sets position 3 to 2
 
         let word: Vec<char> = ".abc.".chars().collect();
         let mut result = vec![0u8; word.len() + 1];

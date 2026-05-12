@@ -12,13 +12,11 @@ use skia_safe::{surfaces, Color as SkColor, Surface};
 
 use openui_paint::{decoration_painter, emphasis_painter, text_painter};
 use openui_style::*;
-use openui_text::{
-    Font, FontDescription, FontMetrics, ShapeResult, TextDirection, TextShaper,
-};
 use openui_text::emphasis::{
     default_mark_for_writing_mode, default_position_for_writing_mode, resolve_emphasis_mark,
     should_draw_emphasis_mark, ResolvedEmphasisMark,
 };
+use openui_text::{Font, FontDescription, FontMetrics, ShapeResult, TextDirection, TextShaper};
 
 // ── Test helpers ─────────────────────────────────────────────────────
 
@@ -206,7 +204,10 @@ fn wpt_line_underline_renders() {
     let mut surface = make_surface(400, 100);
     let style = underline_style(|_| {});
     paint_before(&mut surface, &sr, &style, &metrics);
-    assert!(has_non_white_pixels(&mut surface), "underline must produce pixels");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "underline must produce pixels"
+    );
 }
 
 /// WPT: text-decoration-line-overline-001 — overline renders.
@@ -217,7 +218,10 @@ fn wpt_line_overline_renders() {
     let mut surface = make_surface(400, 100);
     let style = overline_style(|_| {});
     paint_before(&mut surface, &sr, &style, &metrics);
-    assert!(has_non_white_pixels(&mut surface), "overline must produce pixels");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "overline must produce pixels"
+    );
 }
 
 /// WPT: text-decoration-line-line-through-001 — line-through renders.
@@ -228,7 +232,10 @@ fn wpt_line_through_renders() {
     let mut surface = make_surface(400, 100);
     let style = line_through_style(|_| {});
     paint_after(&mut surface, &sr, &style, &metrics);
-    assert!(has_non_white_pixels(&mut surface), "line-through must produce pixels");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "line-through must produce pixels"
+    );
 }
 
 /// WPT: text-decoration-line-none-002 — NONE draws nothing.
@@ -240,7 +247,10 @@ fn wpt_line_none_draws_nothing() {
     let style = ComputedStyle::default();
     paint_before(&mut surface, &sr, &style, &metrics);
     paint_after(&mut surface, &sr, &style, &metrics);
-    assert!(!has_non_white_pixels(&mut surface), "NONE must produce no pixels");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "NONE must produce no pixels"
+    );
 }
 
 /// WPT: text-decoration-line-underline-overline-001 — combined.
@@ -250,9 +260,8 @@ fn wpt_line_underline_plus_overline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0,
-    );
+    style.text_decoration_line =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0);
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -264,9 +273,8 @@ fn wpt_line_underline_plus_line_through() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.text_decoration_line =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
     paint_before(&mut surface, &sr, &style, &metrics);
     let before_count = count_non_white_pixels(&mut surface);
     paint_after(&mut surface, &sr, &style, &metrics);
@@ -331,9 +339,8 @@ fn wpt_is_none_method() {
 /// WPT: combined flag introspection.
 #[test]
 fn wpt_combined_flags_introspection() {
-    let combined = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0,
-    );
+    let combined =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0);
     assert!(combined.has_underline());
     assert!(combined.has_overline());
     assert!(!combined.has_line_through());
@@ -540,7 +547,10 @@ fn wpt_color_red_underline() {
         s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255));
     });
     paint_before(&mut surface, &sr, &style, &metrics);
-    assert!(has_non_white_pixels(&mut surface), "red underline must render");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "red underline must render"
+    );
 }
 
 /// WPT: text-decoration-color-blue-001
@@ -553,7 +563,10 @@ fn wpt_color_blue_underline() {
         s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 255, 255));
     });
     paint_before(&mut surface, &sr, &style, &metrics);
-    assert!(has_non_white_pixels(&mut surface), "blue underline must render");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "blue underline must render"
+    );
 }
 
 /// WPT: text-decoration-color-green-overline
@@ -616,7 +629,10 @@ fn wpt_color_transparent_draws_nothing() {
         s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 0, 0));
     });
     paint_before(&mut surface, &sr, &style, &metrics);
-    assert!(!has_non_white_pixels(&mut surface), "transparent decoration must not render");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "transparent decoration must not render"
+    );
 }
 
 /// WPT: semi-transparent color still draws.
@@ -640,7 +656,10 @@ fn wpt_color_semitransparent_draws() {
 #[test]
 fn wpt_thickness_default_is_auto() {
     let style = ComputedStyle::default();
-    assert_eq!(style.text_decoration_thickness, TextDecorationThickness::Auto);
+    assert_eq!(
+        style.text_decoration_thickness,
+        TextDecorationThickness::Auto
+    );
 }
 
 /// WPT: text-decoration-thickness-from-font-001
@@ -809,14 +828,26 @@ fn wpt_skip_ink_none_more_pixels_than_auto() {
     let none_style = underline_style(|s| {
         s.text_decoration_skip_ink = TextDecorationSkipInk::None;
     });
-    paint_before_with_text(&mut none_surface, &sr, &none_style, &metrics, "gypsy jumping quickly");
+    paint_before_with_text(
+        &mut none_surface,
+        &sr,
+        &none_style,
+        &metrics,
+        "gypsy jumping quickly",
+    );
     let none_px = count_non_white_pixels(&mut none_surface);
 
     let mut auto_surface = make_surface(500, 100);
     let auto_style = underline_style(|s| {
         s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
     });
-    paint_before_with_text(&mut auto_surface, &sr, &auto_style, &metrics, "gypsy jumping quickly");
+    paint_before_with_text(
+        &mut auto_surface,
+        &sr,
+        &auto_style,
+        &metrics,
+        "gypsy jumping quickly",
+    );
     let auto_px = count_non_white_pixels(&mut auto_surface);
 
     assert!(
@@ -1059,11 +1090,17 @@ fn wpt_emphasis_resolve_dot_filled() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Dot,
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{2022}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{2022}',
+            over: true
+        })
     );
 }
 
@@ -1073,11 +1110,17 @@ fn wpt_emphasis_resolve_circle_filled() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Circle,
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{25CF}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{25CF}',
+            over: true
+        })
     );
 }
 
@@ -1087,11 +1130,17 @@ fn wpt_emphasis_resolve_double_circle_filled() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::DoubleCircle,
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{25C9}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{25C9}',
+            over: true
+        })
     );
 }
 
@@ -1101,11 +1150,17 @@ fn wpt_emphasis_resolve_triangle_filled() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Triangle,
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{25B2}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{25B2}',
+            over: true
+        })
     );
 }
 
@@ -1115,11 +1170,17 @@ fn wpt_emphasis_resolve_sesame_filled() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Sesame,
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{FE45}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{FE45}',
+            over: true
+        })
     );
 }
 
@@ -1129,11 +1190,17 @@ fn wpt_emphasis_resolve_dot_open() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Dot,
         TextEmphasisFill::Open,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{25E6}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{25E6}',
+            over: true
+        })
     );
 }
 
@@ -1143,11 +1210,17 @@ fn wpt_emphasis_resolve_circle_open() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Circle,
         TextEmphasisFill::Open,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{25CB}', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '\u{25CB}',
+            over: true
+        })
     );
 }
 
@@ -1168,11 +1241,17 @@ fn wpt_emphasis_resolve_custom_char() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Custom('★'),
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '★', over: true })
+        Some(ResolvedEmphasisMark {
+            character: '★',
+            over: true
+        })
     );
 }
 
@@ -1182,14 +1261,23 @@ fn wpt_emphasis_custom_ignores_fill() {
     let filled = resolve_emphasis_mark(
         TextEmphasisMark::Custom('♥'),
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
     let open = resolve_emphasis_mark(
         TextEmphasisMark::Custom('♥'),
         TextEmphasisFill::Open,
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
     );
-    assert_eq!(filled, open, "custom char should be same regardless of fill");
+    assert_eq!(
+        filled, open,
+        "custom char should be same regardless of fill"
+    );
 }
 
 /// WPT: should_draw_emphasis_mark on letters.
@@ -1300,11 +1388,17 @@ fn wpt_emphasis_position_under() {
     let result = resolve_emphasis_mark(
         TextEmphasisMark::Dot,
         TextEmphasisFill::Filled,
-        TextEmphasisPosition { over: false, right: true },
+        TextEmphasisPosition {
+            over: false,
+            right: true,
+        },
     );
     assert_eq!(
         result,
-        Some(ResolvedEmphasisMark { character: '\u{2022}', over: false })
+        Some(ResolvedEmphasisMark {
+            character: '\u{2022}',
+            over: false
+        })
     );
 }
 
@@ -1315,7 +1409,10 @@ fn wpt_emphasis_default_mark_horizontal_vs_vertical() {
     let v_mark = default_mark_for_writing_mode(WritingMode::VerticalRl);
     assert_eq!(h_mark, TextEmphasisMark::Dot);
     assert_eq!(v_mark, TextEmphasisMark::Sesame);
-    assert_ne!(h_mark, v_mark, "horizontal and vertical defaults must differ");
+    assert_ne!(
+        h_mark, v_mark,
+        "horizontal and vertical defaults must differ"
+    );
 }
 
 /// WPT: sideways-rl default mark.
@@ -1344,7 +1441,10 @@ fn wpt_emphasis_painting_dot_renders() {
     let mut style = ComputedStyle::default();
     style.text_emphasis_mark = TextEmphasisMark::Dot;
     style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.text_emphasis_position = TextEmphasisPosition { over: true, right: true };
+    style.text_emphasis_position = TextEmphasisPosition {
+        over: true,
+        right: true,
+    };
     style.color = Color::BLACK;
     style.text_emphasis_color = StyleColor::CurrentColor;
     emphasis_painter::paint_emphasis_marks(
@@ -1354,7 +1454,10 @@ fn wpt_emphasis_painting_dot_renders() {
         &style,
         Some("Hello"),
     );
-    assert!(has_non_white_pixels(&mut surface), "emphasis dots must render");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "emphasis dots must render"
+    );
 }
 
 /// WPT: emphasis mark None draws nothing.
@@ -1371,7 +1474,10 @@ fn wpt_emphasis_painting_none_draws_nothing() {
         &style,
         Some("Hello"),
     );
-    assert!(!has_non_white_pixels(&mut surface), "None emphasis must not render");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "None emphasis must not render"
+    );
 }
 
 /// WPT: emphasis with circle mark renders.
@@ -1382,7 +1488,10 @@ fn wpt_emphasis_painting_circle_renders() {
     let mut style = ComputedStyle::default();
     style.text_emphasis_mark = TextEmphasisMark::Circle;
     style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.text_emphasis_position = TextEmphasisPosition { over: true, right: true };
+    style.text_emphasis_position = TextEmphasisPosition {
+        over: true,
+        right: true,
+    };
     style.color = Color::BLACK;
     style.text_emphasis_color = StyleColor::CurrentColor;
     emphasis_painter::paint_emphasis_marks(
@@ -1405,14 +1514,11 @@ fn wpt_emphasis_painting_empty_text() {
     style.text_emphasis_fill = TextEmphasisFill::Filled;
     style.color = Color::BLACK;
     style.text_emphasis_color = StyleColor::CurrentColor;
-    emphasis_painter::paint_emphasis_marks(
-        surface.canvas(),
-        &sr,
-        (10.0, 50.0),
-        &style,
-        None,
+    emphasis_painter::paint_emphasis_marks(surface.canvas(), &sr, (10.0, 50.0), &style, None);
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "no text content means no marks"
     );
-    assert!(!has_non_white_pixels(&mut surface), "no text content means no marks");
 }
 
 /// WPT: emphasis with under position renders.
@@ -1423,7 +1529,10 @@ fn wpt_emphasis_painting_under_position() {
     let mut style = ComputedStyle::default();
     style.text_emphasis_mark = TextEmphasisMark::Sesame;
     style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.text_emphasis_position = TextEmphasisPosition { over: false, right: true };
+    style.text_emphasis_position = TextEmphasisPosition {
+        over: false,
+        right: true,
+    };
     style.color = Color::BLACK;
     style.text_emphasis_color = StyleColor::CurrentColor;
     emphasis_painter::paint_emphasis_marks(
@@ -1451,10 +1560,8 @@ fn wpt_emphasis_color_default_is_currentcolor() {
 #[test]
 fn wpt_emphasis_color_resolved() {
     let red = Color::from_rgba8(255, 0, 0, 255);
-    let result = emphasis_painter::resolve_emphasis_color(
-        &StyleColor::Resolved(red),
-        &Color::BLACK,
-    );
+    let result =
+        emphasis_painter::resolve_emphasis_color(&StyleColor::Resolved(red), &Color::BLACK);
     assert!((result.r - 1.0).abs() < 0.01);
     assert!(result.g.abs() < 0.01);
     assert!(result.b.abs() < 0.01);
@@ -1464,10 +1571,7 @@ fn wpt_emphasis_color_resolved() {
 #[test]
 fn wpt_emphasis_color_currentcolor_resolves_to_text() {
     let blue = Color::from_rgba8(0, 0, 255, 255);
-    let result = emphasis_painter::resolve_emphasis_color(
-        &StyleColor::CurrentColor,
-        &blue,
-    );
+    let result = emphasis_painter::resolve_emphasis_color(&StyleColor::CurrentColor, &blue);
     assert!(result.r.abs() < 0.01);
     assert!(result.g.abs() < 0.01);
     assert!((result.b - 1.0).abs() < 0.01);
@@ -1481,40 +1585,58 @@ fn wpt_emphasis_color_currentcolor_resolves_to_text() {
 #[test]
 fn wpt_emphasis_offset_over_horizontal() {
     let offset = emphasis_painter::compute_emphasis_offset(
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
         16.0,
         8.0,
         WritingMode::HorizontalTb,
     );
     // Over: should be negative (above baseline).
-    assert!(offset < 0.0, "over position should yield negative offset, got {offset}");
+    assert!(
+        offset < 0.0,
+        "over position should yield negative offset, got {offset}"
+    );
 }
 
 /// WPT: compute_emphasis_offset — under in horizontal mode.
 #[test]
 fn wpt_emphasis_offset_under_horizontal() {
     let offset = emphasis_painter::compute_emphasis_offset(
-        TextEmphasisPosition { over: false, right: true },
+        TextEmphasisPosition {
+            over: false,
+            right: true,
+        },
         16.0,
         8.0,
         WritingMode::HorizontalTb,
     );
     // Under: should be positive (below baseline).
-    assert!(offset > 0.0, "under position should yield positive offset, got {offset}");
+    assert!(
+        offset > 0.0,
+        "under position should yield positive offset, got {offset}"
+    );
 }
 
 /// WPT: compute_emphasis_offset magnitude varies with font size.
 #[test]
 fn wpt_emphasis_offset_scales_with_size() {
     let small_offset = emphasis_painter::compute_emphasis_offset(
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
         12.0,
         6.0,
         WritingMode::HorizontalTb,
     )
     .abs();
     let large_offset = emphasis_painter::compute_emphasis_offset(
-        TextEmphasisPosition { over: true, right: true },
+        TextEmphasisPosition {
+            over: true,
+            right: true,
+        },
         24.0,
         12.0,
         WritingMode::HorizontalTb,
@@ -1551,7 +1673,10 @@ fn wpt_shadow_single_offset_renders() {
         color: Color::from_rgba8(255, 0, 0, 255),
     }];
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(has_non_white_pixels(&mut surface), "shadow must render pixels");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "shadow must render pixels"
+    );
 }
 
 /// WPT: text-shadow-002 no shadow renders no extra pixels.
@@ -1561,7 +1686,10 @@ fn wpt_shadow_none_no_extra_pixels() {
     let mut surface = make_surface(400, 100);
     let style = ComputedStyle::default(); // no shadow
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(!has_non_white_pixels(&mut surface), "no shadow means no pixels");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "no shadow means no pixels"
+    );
 }
 
 /// WPT: text-shadow-003 multiple shadows.
@@ -1603,7 +1731,10 @@ fn wpt_shadow_with_blur() {
         color: Color::from_rgba8(255, 0, 0, 255),
     }];
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(has_non_white_pixels(&mut surface), "blurred shadow must render");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "blurred shadow must render"
+    );
 }
 
 /// WPT: text-shadow-005 zero offset and zero blur still renders at text position.
@@ -1654,7 +1785,10 @@ fn wpt_shadow_transparent_color() {
         color: Color::from_rgba8(0, 0, 0, 0),
     }];
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(!has_non_white_pixels(&mut surface), "transparent shadow must not render");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "transparent shadow must not render"
+    );
 }
 
 /// WPT: shadow with blur produces more pixels than without blur.
@@ -1671,12 +1805,7 @@ fn wpt_shadow_blur_produces_more_pixels() {
         blur_radius: 0.0,
         color: Color::from_rgba8(0, 0, 0, 255),
     }];
-    text_painter::paint_text_shadows(
-        no_blur_surface.canvas(),
-        &sr,
-        (10.0, 50.0),
-        &no_blur_style,
-    );
+    text_painter::paint_text_shadows(no_blur_surface.canvas(), &sr, (10.0, 50.0), &no_blur_style);
     let no_blur_px = count_non_white_pixels(&mut no_blur_surface);
 
     let mut blur_surface = make_surface(400, 100);
@@ -1688,12 +1817,7 @@ fn wpt_shadow_blur_produces_more_pixels() {
         blur_radius: 8.0,
         color: Color::from_rgba8(0, 0, 0, 255),
     }];
-    text_painter::paint_text_shadows(
-        blur_surface.canvas(),
-        &sr,
-        (10.0, 50.0),
-        &blur_style,
-    );
+    text_painter::paint_text_shadows(blur_surface.canvas(), &sr, (10.0, 50.0), &blur_style);
     let blur_px = count_non_white_pixels(&mut blur_surface);
 
     assert!(
@@ -1716,12 +1840,7 @@ fn wpt_shadow_multiple_more_pixels_than_single() {
         blur_radius: 0.0,
         color: Color::from_rgba8(255, 0, 0, 255),
     }];
-    text_painter::paint_text_shadows(
-        single_surface.canvas(),
-        &sr,
-        (10.0, 50.0),
-        &single_style,
-    );
+    text_painter::paint_text_shadows(single_surface.canvas(), &sr, (10.0, 50.0), &single_style);
     let single_px = count_non_white_pixels(&mut single_surface);
 
     let mut multi_surface = make_surface(400, 100);
@@ -1741,12 +1860,7 @@ fn wpt_shadow_multiple_more_pixels_than_single() {
             color: Color::from_rgba8(0, 0, 255, 255),
         },
     ];
-    text_painter::paint_text_shadows(
-        multi_surface.canvas(),
-        &sr,
-        (10.0, 50.0),
-        &multi_style,
-    );
+    text_painter::paint_text_shadows(multi_surface.canvas(), &sr, (10.0, 50.0), &multi_style);
     let multi_px = count_non_white_pixels(&mut multi_surface);
 
     assert!(
@@ -1860,7 +1974,10 @@ fn wpt_metrics_from_shape_result_positive() {
 fn wpt_metrics_underline_thickness_positive() {
     let sr = Arc::new(shape_text("UThick"));
     let m = text_painter::metrics_from_shape_result(&sr);
-    assert!(m.underline_thickness > 0.0, "underline_thickness should be > 0");
+    assert!(
+        m.underline_thickness > 0.0,
+        "underline_thickness should be > 0"
+    );
 }
 
 /// WPT: different font sizes produce different metrics.

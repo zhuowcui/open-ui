@@ -28,6 +28,27 @@ Open UI extracts Chromium's rendering pipeline into a standalone UI framework pr
 
 **Non-goals:** We don't ship a browser. No HTML parser, no JS engine (V8 is used internally by blink but not exposed), no network stack, no DevTools.
 
+### Current Rust WPT Accountability Phase
+
+The current active implementation line is the Rust renderer under `bindings/rust/`
+plus the WPT accountability pipeline under `tools/accountability/`.
+
+Latest verified SP12-scope snapshot:
+
+| Metric | Value |
+|---|---:|
+| Chromium SP12-scope WPT inventory rows | 7673 |
+| Ported/runnable tests | 3406 |
+| Runnable passes | 2430 |
+| Runnable failures | 974 |
+| Runnable render/diff errors | 2 |
+| Unported but explicitly categorized rows | 4267 |
+| Generic `not_ported` category rows | 0 |
+| `sp12_layout_bug` rows | 0 |
+
+Use `docs/progress/current-status.md` for the current handoff status and
+`docs/architecture/rust-wpt-accountability.md` for the accountability architecture.
+
 ## Architecture
 
 ```

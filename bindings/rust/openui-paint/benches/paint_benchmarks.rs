@@ -194,7 +194,11 @@ fn bench_paint_emphasis_dot(c: &mut Criterion) {
                 doc.node_mut(para).style.width = Length::px(600.0);
                 doc.node_mut(para).style.text_emphasis_mark = TextEmphasisMark::Dot;
                 doc.node_mut(para).style.text_emphasis_fill = TextEmphasisFill::Filled;
-                add_text(&mut doc, para, "Text with emphasis dot marks above each character.");
+                add_text(
+                    &mut doc,
+                    para,
+                    "Text with emphasis dot marks above each character.",
+                );
                 doc
             },
             |doc| {
@@ -217,8 +221,7 @@ fn bench_paint_border_solid(c: &mut Criterion) {
                 let vp = doc.root();
                 for _ in 0..5 {
                     let id = add_sized_block(&mut doc, vp, 200.0, 80.0);
-                    doc.node_mut(id).style.background_color =
-                        Color::from_rgba8(240, 240, 255, 255);
+                    doc.node_mut(id).style.background_color = Color::from_rgba8(240, 240, 255, 255);
                     apply_solid_border(&mut doc, id, 2, Color::from_rgba8(0, 80, 200, 255));
                     doc.node_mut(id).style.margin_bottom = Length::px(8.0);
                 }
@@ -240,8 +243,7 @@ fn bench_paint_border_radius(c: &mut Criterion) {
                 let vp = doc.root();
                 for _ in 0..5 {
                     let id = add_sized_block(&mut doc, vp, 200.0, 80.0);
-                    doc.node_mut(id).style.background_color =
-                        Color::from_rgba8(230, 240, 255, 255);
+                    doc.node_mut(id).style.background_color = Color::from_rgba8(230, 240, 255, 255);
                     apply_solid_border(&mut doc, id, 2, Color::from_rgba8(60, 60, 200, 255));
                     // Rounded corners
                     doc.node_mut(id).style.border_top_left_radius = (8.0, 8.0);
@@ -307,8 +309,7 @@ fn bench_paint_full_page(c: &mut Criterion) {
 
                 // Footer
                 let footer = add_sized_block(&mut doc, vp, 800.0, 40.0);
-                doc.node_mut(footer).style.background_color =
-                    Color::from_rgba8(240, 240, 240, 255);
+                doc.node_mut(footer).style.background_color = Color::from_rgba8(240, 240, 240, 255);
                 apply_solid_border(&mut doc, footer, 1, Color::from_rgba8(180, 180, 180, 255));
                 let ftext = add_block(&mut doc, footer);
                 doc.node_mut(ftext).style.font_size = 12.0;
@@ -362,11 +363,7 @@ fn bench_paint_render_to_png(c: &mut Criterion) {
                 // Render to surface AND encode to PNG bytes (not written to disk)
                 let mut surface = render_to_surface(doc, 800, 600).unwrap();
                 let image = surface.image_snapshot();
-                let _data = image.encode(
-                    None,
-                    skia_safe::EncodedImageFormat::PNG,
-                    None,
-                );
+                let _data = image.encode(None, skia_safe::EncodedImageFormat::PNG, None);
             },
             criterion::BatchSize::SmallInput,
         )
@@ -389,10 +386,7 @@ criterion_group!(
     bench_paint_decoration_wavy,
 );
 
-criterion_group!(
-    emphasis_benches,
-    bench_paint_emphasis_dot,
-);
+criterion_group!(emphasis_benches, bench_paint_emphasis_dot,);
 
 criterion_group!(
     border_benches,

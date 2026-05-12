@@ -11,9 +11,7 @@ use std::sync::Arc;
 // ── Helper ──────────────────────────────────────────────────────────────
 
 fn get_test_font_data() -> Arc<openui_text::font::FontPlatformData> {
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE
-        .lock()
-        .unwrap();
+    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
     let desc = openui_text::FontDescription::default();
     cache
         .get_font_platform_data("sans-serif", &desc)
@@ -168,8 +166,8 @@ fn inter_char_justification_duplicate_clusters_no_double_expansion() {
     // Duplicate-cluster glyphs (g0, g1) should not both get extra spacing.
     // 2 gaps (between char 0-1 and char 1-2). extra_per_gap = 5.0.
     let mut sr = make_shape_result_with_clusters(
-        vec![8.0, 4.0, 10.0, 10.0],  // g0=8, g1=4, g2=10, g3=10
-        vec![0, 0, 1, 2],             // g0,g1 share cluster 0
+        vec![8.0, 4.0, 10.0, 10.0], // g0=8, g1=4, g2=10, g3=10
+        vec![0, 0, 1, 2],           // g0,g1 share cluster 0
         3,
     );
     let original_width = sr.width; // 32.0
@@ -198,7 +196,7 @@ fn inter_char_justification_ligature_covering_multiple_chars() {
     // The last glyph (char 3) gets 0 gaps (it's the last char).
     let mut sr = make_shape_result_with_clusters(
         vec![30.0, 10.0],
-        vec![0, 3],  // glyph 0 covers chars [0,3), glyph 1 covers char 3
+        vec![0, 3], // glyph 0 covers chars [0,3), glyph 1 covers char 3
         4,
     );
     let original_width = sr.width; // 40.0
@@ -230,11 +228,7 @@ fn inter_char_justification_ligature_covering_multiple_chars() {
 fn char_advance_sums_duplicate_cluster_glyphs() {
     // 2 glyphs with cluster=0 (advances 8 and 4), 1 glyph with cluster=1 (advance 10).
     // char_advance_for(0) should be (8+4)/1 = 12 (cluster 0 covers 1 char).
-    let sr = make_shape_result_with_clusters(
-        vec![8.0, 4.0, 10.0],
-        vec![0, 0, 1],
-        2,
-    );
+    let sr = make_shape_result_with_clusters(vec![8.0, 4.0, 10.0], vec![0, 0, 1], 2);
     // Verify via width_for_range (which uses character_data built from char_advance_for).
     // char 0 should have advance 12 (8+4 from cluster 0, covering 1 char).
     let w0 = sr.width_for_range(0, 1);
@@ -254,11 +248,7 @@ fn char_advance_sums_three_glyphs_same_cluster() {
     // 3 glyphs all with cluster=0 (decomposed character scenario),
     // 1 glyph with cluster=1.
     // char_advance_for(0) should be (5+3+2)/1 = 10.
-    let sr = make_shape_result_with_clusters(
-        vec![5.0, 3.0, 2.0, 8.0],
-        vec![0, 0, 0, 1],
-        2,
-    );
+    let sr = make_shape_result_with_clusters(vec![5.0, 3.0, 2.0, 8.0], vec![0, 0, 0, 1], 2);
     let w0 = sr.width_for_range(0, 1);
     assert!(
         (w0 - 10.0).abs() < 0.01,

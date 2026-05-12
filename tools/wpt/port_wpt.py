@@ -67,7 +67,7 @@ SUPPORTED_PROPERTIES = {
     # Sizing
     'width', 'height', 'min-width', 'max-width', 'min-height', 'max-height',
     # Overflow
-    'overflow', 'overflow-x', 'overflow-y', 'overflow-clip-margin',
+    'overflow', 'overflow-x', 'overflow-y', 'overflow-clip-margin', 'scrollbar-color',
     # Visual
     'background', 'background-color', 'background-clip', 'color', 'opacity', 'visibility',
     # Flex
@@ -76,8 +76,8 @@ SUPPORTED_PROPERTIES = {
     'flex-grow', 'flex-shrink', 'flex-basis', 'order',
     'gap', 'row-gap', 'column-gap',
     # Multicol
-    'columns', 'column-count', 'column-width', 'column-gap', 'column-rule',
-    'column-rule-width', 'column-rule-style', 'column-rule-color',
+    'columns', 'column-count', 'column-width', 'column-height', 'column-gap', 'column-rule',
+    'column-rule-width', 'column-rule-style', 'column-rule-color', 'column-wrap',
     'column-span', 'column-fill',
     # Break
     'break-before', 'break-after', 'break-inside',
@@ -138,7 +138,6 @@ IGNORED_PROPERTIES = {
     # Background details that don't affect layout
     'background-image', 'background-repeat', 'background-size',
     'background-position', 'background-origin',
-    'background-attachment',
     # Border image (visual only)
     'border-image', 'border-image-source', 'border-image-slice',
     'border-image-width', 'border-image-repeat',
@@ -330,7 +329,7 @@ def parse_color(value: str) -> str | None:
     # rgba(r, g, b, a)
     m = re.match(r'^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$', value)
     if m:
-        a = int(float(m.group(4)) * 255)
+        a = round(float(m.group(4)) * 255)
         return f'Color::from_rgba8({m.group(1)}, {m.group(2)}, {m.group(3)}, {a})'
     return None
 
@@ -528,6 +527,31 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
     return f'Length::calc_percent_px({pct_total:.6f}, {px_total:.6f})'
 
 
+def _resolve_css_vars(value: str, custom_props: dict[str, str]) -> str:
+    """Resolve simple inherited CSS custom properties in generated WPT values."""
+    if 'var(' not in value:
+        return value
+
+    def repl(match: re.Match) -> str:
+        name = match.group(1).strip()
+        fallback = match.group(2)
+        if name in custom_props:
+            return custom_props[name]
+        if fallback is not None:
+            return fallback.strip()
+        return match.group(0)
+
+    previous = None
+    resolved = value
+    # A small fixed point loop handles variables that reference variables.
+    for _ in range(8):
+        if resolved == previous or 'var(' not in resolved:
+            break
+        previous = resolved
+        resolved = re.sub(r'var\(\s*(--[-\w]+)\s*(?:,\s*([^)]+))?\)', repl, resolved)
+    return resolved
+
+
 def _split_respecting_parens(value: str) -> list[str]:
     """Split a CSS value by top-level whitespace, respecting parentheses."""
     parts = []
@@ -555,7 +579,8 @@ def parse_border_width(value: str, font_size: float = 16.0) -> str | None:
     """Convert a CSS border-width value to Rust i32 expression (pixels).
     
     Handles px, em, rem, in, cm, mm, pt, pc units and named widths.
-    Chrome snaps border widths to device pixels with standard rounding.
+    Blink floors fractional positive border widths to used device pixels,
+    with a minimum 1px for non-zero values.
     """
     import math
     value = value.strip()
@@ -599,12 +624,10 @@ def parse_border_width(value: str, font_size: float = 16.0) -> str | None:
         if m:
             raw = float(m.group(1)) * 16.0
     if raw is not None:
-        # Chrome snaps border widths to device pixels with standard rounding
-        # (.5 rounds away from zero), minimum 1px for non-zero values.
         if raw > 0:
-            rounded = max(1, math.floor(raw + 0.5))
+            rounded = max(1, math.floor(raw))
         elif raw < 0:
-            rounded = min(-1, -math.floor(-raw + 0.5))
+            rounded = min(-1, -math.floor(-raw))
         else:
             rounded = 0
         return str(rounded)
@@ -668,6 +691,21 @@ def parse_simple_css_rules(css_text: str) -> list:
     css_text = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
     # Remove CDATA wrapper
     css_text = re.sub(r'<!\[CDATA\[|\]\]>', '', css_text)
+    # The pixel-comparison harness renders screen media. Declarations inside
+    # print/projection media blocks must not affect generated screen styles.
+    while True:
+        m = re.search(r'@media\b[^{]*\{', css_text)
+        if not m:
+            break
+        depth = 1
+        i = m.end()
+        while i < len(css_text) and depth:
+            if css_text[i] == '{':
+                depth += 1
+            elif css_text[i] == '}':
+                depth -= 1
+            i += 1
+        css_text = css_text[:m.start()] + css_text[i:]
 
     # Split into rule blocks
     blocks = re.findall(r'([^{]+)\{([^}]*)\}', css_text)
@@ -790,6 +828,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     preceding_siblings: list of (tag, classes, id_val) for preceding element siblings.
     """
     selector = selector.strip()
+    original_selector = selector
     if not selector:
         return False
 
@@ -844,10 +883,46 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     # Strip pseudo-classes after evaluation (including nested-paren :not())
     selector = re.sub(r':not\([^()]*(?:\([^)]*\)[^()]*)*\)', '', selector)
     selector = re.sub(r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty)', '', selector)
+    stripped_with_combinators = selector
     selector = selector.strip()
 
     if not selector:
         return True
+
+    # Selectors such as ".flexbox > :nth-child(1)" target the current
+    # element solely via a structural pseudo-class. After evaluating and
+    # stripping the pseudo-class above, only the ancestor-side selector remains.
+    # Match that remaining selector against the appropriate ancestor rather than
+    # incorrectly requiring the current element to match ".flexbox".
+    if re.search(r'>\s*$', stripped_with_combinators):
+        prefix = re.sub(r'>\s*$', '', stripped_with_combinators).strip()
+        if not prefix or not ancestors:
+            return False
+        parent_tag, parent_classes, parent_id = ancestors[-1]
+        return match_selector(
+            prefix,
+            parent_tag,
+            parent_classes,
+            parent_id,
+            ancestors[:-1],
+            1,
+            1,
+            [],
+        )
+
+    pseudo_only_descendant = re.match(
+        r'^(.*?)\s+:(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]*\))\s*$',
+        original_selector,
+    )
+    if pseudo_only_descendant:
+        prefix = pseudo_only_descendant.group(1).strip()
+        if not prefix or not ancestors:
+            return False
+        for idx in range(len(ancestors) - 1, -1, -1):
+            anc_tag, anc_classes, anc_id = ancestors[idx]
+            if match_selector(prefix, anc_tag, anc_classes, anc_id, ancestors[:idx], 1, 1, []):
+                return True
+        return False
 
     # Tokenize: split on combinators (>, +, ~, whitespace) preserving type
     tokens = []
@@ -1256,6 +1331,203 @@ def sanitize_fn_name(name: str) -> str:
     return name
 
 
+def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
+    """Resolve fixed CSS lengths to px for static WPT geometry."""
+    value = value.strip()
+    if value in ('0', '0px'):
+        return 0.0
+    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|pt|pc)$', value)
+    if not m:
+        return None
+    num = float(m.group(1))
+    unit = m.group(2)
+    factors = {
+        'px': 1.0,
+        'em': font_size,
+        'rem': 16.0,
+        'in': 96.0,
+        'cm': 96.0 / 2.54,
+        'mm': 96.0 / 25.4,
+        'pt': 96.0 / 72.0,
+        'pc': 16.0,
+    }
+    return num * factors[unit]
+
+
+def _split_css_layers(value: str) -> list[str]:
+    """Split a comma-separated CSS layer list, respecting parentheses."""
+    layers = []
+    depth = 0
+    current = []
+    for ch in value:
+        if ch == '(':
+            depth += 1
+        elif ch == ')' and depth > 0:
+            depth -= 1
+        if ch == ',' and depth == 0:
+            layers.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        layers.append(''.join(current).strip())
+    return layers
+
+
+def _select_background_clip_layer(styles: dict, value: str) -> str:
+    """Choose the background-clip layer that applies to background-color."""
+    clips = _split_css_layers(value)
+    valid_clips = {'border-box', 'padding-box', 'content-box'}
+    if any(clip not in valid_clips for clip in clips):
+        return value.strip()
+    if len(clips) <= 1:
+        return value.strip()
+
+    images = _split_css_layers(styles.get('background-image', ''))
+    image_count = len(images) if images and images[0] else 1
+    index = min(max(image_count - 1, 0), len(clips) - 1)
+    return clips[index]
+
+
+def _edge_lengths_from_styles(styles: dict, prefix: str, font_size: float) -> tuple[float, float, float, float]:
+    """Resolve top/right/bottom/left fixed lengths from CSS shorthand and sides."""
+    top = right = bottom = left = 0.0
+
+    def assign_4(value: str):
+        nonlocal top, right, bottom, left
+        parts = _split_respecting_parens(value)
+        vals = [_css_length_px(p, font_size) for p in parts]
+        if not vals or any(v is None for v in vals):
+            return
+        if len(vals) == 1:
+            top = right = bottom = left = vals[0]
+        elif len(vals) == 2:
+            top = bottom = vals[0]
+            right = left = vals[1]
+        elif len(vals) == 3:
+            top = vals[0]
+            right = left = vals[1]
+            bottom = vals[2]
+        elif len(vals) == 4:
+            top, right, bottom, left = vals
+
+    for prop, val in styles.items():
+        if prop == prefix:
+            assign_4(val)
+        elif prop == f'{prefix}-top':
+            v = _css_length_px(val, font_size)
+            if v is not None:
+                top = v
+        elif prop == f'{prefix}-right':
+            v = _css_length_px(val, font_size)
+            if v is not None:
+                right = v
+        elif prop == f'{prefix}-bottom':
+            v = _css_length_px(val, font_size)
+            if v is not None:
+                bottom = v
+        elif prop == f'{prefix}-left':
+            v = _css_length_px(val, font_size)
+            if v is not None:
+                left = v
+
+    return top, right, bottom, left
+
+
+def _border_widths_from_styles(styles: dict, font_size: float) -> tuple[float, float, float, float]:
+    """Resolve effective static border widths from CSS shorthand and sides."""
+    widths = {'top': 0.0, 'right': 0.0, 'bottom': 0.0, 'left': 0.0}
+    styles_by_side = {'top': None, 'right': None, 'bottom': None, 'left': None}
+
+    def parse_bw(v: str) -> float | None:
+        bw = parse_border_width(v, font_size)
+        return float(bw) if bw is not None else None
+
+    def assign_width_4(value: str):
+        parts = _split_respecting_parens(value)
+        vals = [parse_bw(p) for p in parts]
+        if not vals or any(v is None for v in vals):
+            return
+        if len(vals) == 1:
+            for side in widths:
+                widths[side] = vals[0]
+        elif len(vals) == 2:
+            widths['top'] = widths['bottom'] = vals[0]
+            widths['right'] = widths['left'] = vals[1]
+        elif len(vals) == 3:
+            widths['top'] = vals[0]
+            widths['right'] = widths['left'] = vals[1]
+            widths['bottom'] = vals[2]
+        elif len(vals) == 4:
+            for side, val in zip(['top', 'right', 'bottom', 'left'], vals):
+                widths[side] = val
+
+    def apply_border_shorthand(value: str, sides: list[str]):
+        parts = _split_respecting_parens(value)
+        width = None
+        style = None
+        for part in parts:
+            if width is None:
+                width = parse_bw(part)
+            if style is None and border_style_to_rust(part):
+                style = part.strip()
+        for side in sides:
+            if width is not None:
+                widths[side] = width
+            if style is not None:
+                styles_by_side[side] = style
+
+    for prop, val in styles.items():
+        if prop == 'border':
+            apply_border_shorthand(val, ['top', 'right', 'bottom', 'left'])
+        elif prop in ('border-top', 'border-right', 'border-bottom', 'border-left'):
+            apply_border_shorthand(val, [prop.split('-')[1]])
+        elif prop == 'border-width':
+            assign_width_4(val)
+        elif prop in ('border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'):
+            side = prop.split('-')[1]
+            width = parse_bw(val)
+            if width is not None:
+                widths[side] = width
+        elif prop == 'border-style':
+            parts = _split_respecting_parens(val)
+            if len(parts) == 1:
+                sides_vals = [parts[0]] * 4
+            elif len(parts) == 2:
+                sides_vals = [parts[0], parts[1], parts[0], parts[1]]
+            elif len(parts) == 3:
+                sides_vals = [parts[0], parts[1], parts[2], parts[1]]
+            elif len(parts) == 4:
+                sides_vals = parts
+            else:
+                sides_vals = []
+            for side, style in zip(['top', 'right', 'bottom', 'left'], sides_vals):
+                styles_by_side[side] = style
+        elif prop in ('border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'):
+            styles_by_side[prop.split('-')[1]] = val.strip()
+
+    for side in widths:
+        if styles_by_side[side] in (None, 'none', 'hidden'):
+            widths[side] = 0.0
+
+    return widths['top'], widths['right'], widths['bottom'], widths['left']
+
+
+def _border_radius_basis(styles: dict, font_size: float) -> tuple[float, float] | None:
+    """Return border-box width/height for resolving percentage border radii."""
+    width = _css_length_px(styles.get('width', ''), font_size)
+    height = _css_length_px(styles.get('height', ''), font_size)
+    if width is None or height is None:
+        return None
+
+    if styles.get('box-sizing', '').strip() == 'border-box':
+        return width, height
+
+    pt, pr, pb, pl = _edge_lengths_from_styles(styles, 'padding', font_size)
+    bt, br, bb, bl = _border_widths_from_styles(styles, font_size)
+    return width + pl + pr + bl + br, height + pt + pb + bt + bb
+
+
 def generate_style_code(styles: dict, var_name: str, inherited_font_size: float = 16.0) -> list[str]:
     """Generate Rust code lines to set style properties on a node.
     
@@ -1308,15 +1580,25 @@ def generate_style_code(styles: dict, var_name: str, inherited_font_size: float 
                         elif fs_val == '0':
                             font_size = 0.0
 
+    radius_basis = _border_radius_basis(styles, font_size)
+
     for prop, val in styles.items():
-        code = generate_single_style(prop, val, s, font_size)
+        if prop == 'background-clip':
+            val = _select_background_clip_layer(styles, val)
+        code = generate_single_style(prop, val, s, font_size, radius_basis)
         if code:
             lines.extend(code if isinstance(code, list) else [code])
 
     return lines, font_size
 
 
-def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) -> list[str] | str | None:
+def generate_single_style(
+    prop: str,
+    val: str,
+    s: str,
+    font_size: float = 16.0,
+    radius_basis: tuple[float, float] | None = None,
+) -> list[str] | str | None:
     """Generate Rust code for a single CSS property:value."""
     val = val.strip().rstrip(';').strip()
 
@@ -1328,11 +1610,21 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
             'inline-block': 'Display::InlineBlock',
             'none': 'Display::None',
             'flow-root': 'Display::FlowRoot',
+            'contents': 'Display::Contents',
+            'list-item': 'Display::ListItem',
             'flex': 'Display::Flex',
             'inline-flex': 'Display::InlineFlex',
         }
         if val in mapping:
             return f"{s}.display = {mapping[val]};"
+
+    if prop == 'list-style-position':
+        mapping = {
+            'outside': 'ListStylePosition::Outside',
+            'inside': 'ListStylePosition::Inside',
+        }
+        if val in mapping:
+            return f"{s}.list_style_position = {mapping[val]};"
 
     # ── position ──
     if prop == 'position':
@@ -1345,6 +1637,10 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val in mapping:
             return f"{s}.position = {mapping[val]};"
+
+    if prop == 'will-change':
+        if any(part.strip() == 'transform' for part in val.split(',')):
+            return f"{s}.establishes_transform_containing_block = true;"
 
     # ── float ──
     if prop == 'float':
@@ -1454,7 +1750,9 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         'pt': 96.0 / 72.0, 'pc': 96.0 / 6.0,
     }
 
-    def _parse_radius_component(token, fs=font_size):
+    def _parse_radius_component(token, axis: str, fs=font_size):
+        if token == '0':
+            return 0.0
         m = re.match(r'^(-?[\d.]+)(px|em|rem|%|in|cm|mm|pt|pc)$', token)
         if not m:
             return None
@@ -1462,6 +1760,10 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         unit = m.group(2)
         if unit in ('em', 'rem'):
             num = num * fs
+        elif unit == '%':
+            if radius_basis is not None:
+                basis = radius_basis[0] if axis == 'x' else radius_basis[1]
+                num = num / 100.0 * basis
         elif unit in _UNIT_TO_PX and _UNIT_TO_PX[unit] is not None:
             num = num * _UNIT_TO_PX[unit]
         return num
@@ -1481,20 +1783,24 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
     if prop == 'border-radius':
         slash_parts = val.strip().split('/')
         horiz_tokens = slash_parts[0].strip().split()
-        h_vals = [_parse_radius_component(p) for p in horiz_tokens]
+        h_vals = [_parse_radius_component(p, 'x') for p in horiz_tokens]
         if all(v is not None for v in h_vals):
             htl, htr, hbr, hbl = _expand_shorthand(h_vals)
             if htl is not None:
                 # Parse vertical radii (after slash) if present
                 if len(slash_parts) > 1:
                     vert_tokens = slash_parts[1].strip().split()
-                    v_vals = [_parse_radius_component(p) for p in vert_tokens]
+                    v_vals = [_parse_radius_component(p, 'y') for p in vert_tokens]
+                    if all(v is not None for v in v_vals):
+                        vtl, vtr, vbr, vbl = _expand_shorthand(v_vals)
+                    else:
+                        vtl, vtr, vbr, vbl = [_parse_radius_component(p, 'y') for p in horiz_tokens]
+                else:
+                    v_vals = [_parse_radius_component(p, 'y') for p in horiz_tokens]
                     if all(v is not None for v in v_vals):
                         vtl, vtr, vbr, vbl = _expand_shorthand(v_vals)
                     else:
                         vtl, vtr, vbr, vbl = htl, htr, hbr, hbl
-                else:
-                    vtl, vtr, vbr, vbl = htl, htr, hbr, hbl
                 return [
                     f"{s}.border_top_left_radius = ({htl}_f32, {vtl}_f32);",
                     f"{s}.border_top_right_radius = ({htr}_f32, {vtr}_f32);",
@@ -1506,13 +1812,14 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
                 'border-bottom-left-radius', 'border-bottom-right-radius'):
         parts = val.strip().split()
         if len(parts) == 1:
-            v = _parse_radius_component(parts[0])
-            if v is not None:
+            vx = _parse_radius_component(parts[0], 'x')
+            vy = _parse_radius_component(parts[0], 'y')
+            if vx is not None and vy is not None:
                 rust_prop = prop.replace('-', '_')
-                return f"{s}.{rust_prop} = ({v}_f32, {v}_f32);"
+                return f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);"
         elif len(parts) == 2:
-            vx = _parse_radius_component(parts[0])
-            vy = _parse_radius_component(parts[1])
+            vx = _parse_radius_component(parts[0], 'x')
+            vy = _parse_radius_component(parts[1], 'y')
             if vx is not None and vy is not None:
                 rust_prop = prop.replace('-', '_')
                 return f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);"
@@ -1582,6 +1889,18 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         if lines:
             return '\n'.join(lines)
 
+    # ── scrollbar-color ──
+    if prop == 'scrollbar-color':
+        parts = val.split()
+        if len(parts) >= 2 and parts[0] != 'auto':
+            thumb = parse_color(parts[0])
+            track = parse_color(parts[1])
+            if thumb and track:
+                return [
+                    f"{s}.scrollbar_thumb_color = Some({thumb});",
+                    f"{s}.scrollbar_track_color = Some({track});",
+                ]
+
     # ── background-color ──
     if prop == 'background-color':
         color = parse_color(val)
@@ -1597,6 +1916,15 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         }
         if val.strip() in mapping:
             return f"{s}.background_clip = {mapping[val.strip()]};"
+
+    if prop == 'background-attachment':
+        mapping = {
+            'scroll': 'BackgroundAttachment::Scroll',
+            'fixed': 'BackgroundAttachment::Fixed',
+            'local': 'BackgroundAttachment::Local',
+        }
+        if val.strip() in mapping:
+            return f"{s}.background_attachment = {mapping[val.strip()]};"
 
     # ── background shorthand — extract color component ──
     if prop == 'background':
@@ -1734,7 +2062,7 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     # ── visibility ──
     if prop == 'visibility':
-        mapping = {'visible': 'Visibility::Visible', 'hidden': 'Visibility::Hidden'}
+        mapping = {'visible': 'Visibility::Visible', 'hidden': 'Visibility::Hidden', 'collapse': 'Visibility::Collapse'}
         if val in mapping:
             return f"{s}.visibility = {mapping[val]};"
 
@@ -1952,10 +2280,22 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
         if length:
             return f"{s}.column_width = Some({length});"
 
+    if prop == 'column-height':
+        if val == 'auto':
+            return f"{s}.column_height = None;"
+        length = parse_length(val, font_size)
+        if length:
+            return f"{s}.column_height = Some({length});"
+
     if prop == 'column-fill':
         mapping = {'balance': 'ColumnFill::Balance', 'auto': 'ColumnFill::Auto'}
         if val in mapping:
             return f"{s}.column_fill = {mapping[val]};"
+
+    if prop == 'column-wrap':
+        mapping = {'auto': 'ColumnWrap::Auto', 'wrap': 'ColumnWrap::Wrap', 'nowrap': 'ColumnWrap::NoWrap'}
+        if val in mapping:
+            return f"{s}.column_wrap = {mapping[val]};"
 
     if prop == 'column-span':
         mapping = {'none': 'ColumnSpan::None', 'all': 'ColumnSpan::All'}
@@ -2046,15 +2386,25 @@ def generate_single_style(prop: str, val: str, s: str, font_size: float = 16.0) 
 
     # ── columns shorthand (column-count + column-width) ──
     if prop == 'columns':
-        parts = val.split()
         lines = []
+        if '/' in val:
+            before, after = val.split('/', 1)
+            height = parse_length(after.strip(), font_size)
+            if height:
+                lines.append(f"{s}.column_height = Some({height});")
+            val = before.strip()
+        parts = val.split()
         for part in parts:
             part = part.strip()
             if part == 'auto':
                 continue
             m = re.match(r'^(\d+)$', part)
             if m:
-                lines.append(f"{s}.column_count = Some({int(m.group(1))});")
+                v = int(m.group(1))
+                if v == 0:
+                    lines.append(f"{s}.column_width = Some(Length::px(0.0));")
+                else:
+                    lines.append(f"{s}.column_count = Some({v});")
                 continue
             length = parse_length(part, font_size)
             if length:
@@ -2708,12 +3058,18 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
 
     # CSS inherited properties that must propagate to descendants
     INHERITED_PROPS = {'direction', 'color', 'white-space', 'text-align',
-                       'line-height', 'visibility'}
+                       'font-size', 'line-height', 'visibility'}
+    # CSS-wide `inherit` can apply to any property; keep explicit parent
+    # values for non-inherited properties that WPT coverage exercises.
+    EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {'background-clip'}
 
     def gen_node(node: DomNode, parent_var: str, indent: int,
-                 parent_font_size: float = 16.0, inherited: dict | None = None):
+                 parent_font_size: float = 16.0, inherited: dict | None = None,
+                 custom_props: dict[str, str] | None = None):
         if inherited is None:
             inherited = {}
+        if custom_props is None:
+            custom_props = {}
 
         if node.is_text:
             # Skip text nodes — we're comparing layout only
@@ -2734,14 +3090,18 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
             if skip_self:
                 # Merge any inherited props from this skipped node
                 child_inherited = dict(inherited)
-                for prop in INHERITED_PROPS:
+                for prop in EXPLICIT_INHERIT_PROPS:
                     if prop in node.styles:
                         child_inherited[prop] = node.styles[prop]
+                child_custom_props = dict(custom_props)
+                for prop, val in node.styles.items():
+                    if prop.startswith('--'):
+                        child_custom_props[prop] = val
                 for child in node.children:
-                    gen_node(child, parent_var, indent, parent_font_size, child_inherited)
+                    gen_node(child, parent_var, indent, parent_font_size, child_inherited, child_custom_props)
                 return
 
-        if node.tag == 'br':
+        if node.tag == 'br' and node.styles.get('clear', 'none') == 'none':
             return
 
         counter[0] += 1
@@ -2755,13 +3115,27 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         else:
             element_tag = "ElementTag::Div"
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
+        if node.tag == 'br':
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+            lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px(19.0);")
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
                       'details', 'summary', 'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                      'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'hr', 'table'}
-        if node.tag in block_tags and 'display' not in node.styles:
+                      'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'hr', 'table', 'br'}
+        supported_display_values = {
+            'block', 'inline', 'inline-block', 'none', 'flow-root',
+            'contents', 'list-item', 'flex', 'inline-flex',
+        }
+        display_value = node.styles.get('display', '').strip()
+        if node.tag == 'li' and (
+            'display' not in node.styles or display_value not in supported_display_values
+        ):
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::ListItem;")
+        elif node.tag in block_tags and (
+            'display' not in node.styles or display_value not in supported_display_values
+        ):
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
 
         # Apply UA default styles for HTML elements (before explicit styles so CSS can override)
@@ -2789,14 +3163,34 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 if not any(p in node.styles for p in css_names):
                     lines.append(f"{ws}{s}.{field} = {val};")
 
+        # Resolve explicit CSS-wide `inherit` before generating style code.
+        effective_styles = OrderedDict(node.styles)
+        for prop, val in list(effective_styles.items()):
+            if isinstance(val, str) and val.strip() == 'inherit' and prop in inherited:
+                effective_styles[prop] = inherited[prop]
+        node_custom_props = dict(custom_props)
+        for prop, val in effective_styles.items():
+            if prop.startswith('--'):
+                node_custom_props[prop] = val
+        for prop, val in list(effective_styles.items()):
+            if isinstance(val, str) and not prop.startswith('--'):
+                effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
+
         # Generate style code
-        style_lines, node_font_size = generate_style_code(node.styles, var, parent_font_size)
+        style_lines, node_font_size = generate_style_code(effective_styles, var, parent_font_size)
         for sl in style_lines:
             lines.append(f"{ws}{sl}")
 
+        if node.styles.get('overflow-clip-margin') == 'inherit':
+            lines.append(f"{ws}let {var}_inherited_overflow_clip_margin = doc.node({parent_var}).style.overflow_clip_margin;")
+            lines.append(f"{ws}let {var}_inherited_overflow_clip_box = doc.node({parent_var}).style.overflow_clip_box;")
+            lines.append(f"{ws}doc.node_mut({var}).style.overflow_clip_margin = {var}_inherited_overflow_clip_margin;")
+            lines.append(f"{ws}doc.node_mut({var}).style.overflow_clip_box = {var}_inherited_overflow_clip_box;")
+
         # Apply inherited CSS properties from ancestors that this node doesn't override
-        for prop, val in inherited.items():
-            if prop not in node.styles:
+        for prop in INHERITED_PROPS:
+            if prop in inherited and prop not in effective_styles:
+                val = inherited[prop]
                 s = f"doc.node_mut({var}).style"
                 inh_lines = generate_single_style(prop, val, s, node_font_size)
                 if inh_lines is not None:
@@ -2809,29 +3203,33 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
 
         # Build inherited props for children: parent inherited + this node's own
         child_inherited = dict(inherited)
-        for prop in INHERITED_PROPS:
-            if prop in node.styles:
-                child_inherited[prop] = node.styles[prop]
+        for prop in EXPLICIT_INHERIT_PROPS:
+            if prop in effective_styles:
+                child_inherited[prop] = effective_styles[prop]
 
         # Process children (inherit font_size + CSS inherited props)
         for child in node.children:
-            gen_node(child, var, indent + 1, node_font_size, child_inherited)
+            gen_node(child, var, indent + 1, node_font_size, child_inherited, node_custom_props)
 
     # Process body children
     # Apply body-level styles if any
     root_font_size = 16.0
     body_inherited = {}
+    body_custom_props = {}
     if root.styles:
+        for prop, val in root.styles.items():
+            if prop.startswith('--'):
+                body_custom_props[prop] = val
         body_styles, root_font_size = generate_style_code(root.styles, 'vp')
         for sl in body_styles:
             lines.append(f"    {sl}")
         # Collect inherited props from body for propagation to children
-        for prop in INHERITED_PROPS:
+        for prop in EXPLICIT_INHERIT_PROPS:
             if prop in root.styles:
                 body_inherited[prop] = root.styles[prop]
 
     for child in root.children:
-        gen_node(child, 'vp', 1, root_font_size, body_inherited)
+        gen_node(child, 'vp', 1, root_font_size, body_inherited, body_custom_props)
 
     lines.append("    doc")
     lines.append("}")
@@ -2852,6 +3250,15 @@ def generate_html_template(html_path: str) -> str:
 
     # Extract <style> blocks from anywhere in the document (head or body)
     style_blocks = re.findall(r'<style[^>]*>.*?</style>', content, re.DOTALL | re.IGNORECASE)
+
+    # Preserve inline <body style="..."> declarations in the Chrome template.
+    # The Rust generator applies parsed body styles to `vp`; without this,
+    # Chromium comparisons silently use the harness default body style instead.
+    body_open = re.search(r'<body\b([^>]*)>', content, re.IGNORECASE)
+    if body_open:
+        style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_open.group(1), re.IGNORECASE)
+        if style_attr:
+            style_blocks.append(f"<style>body {{{style_attr.group(1)}}}</style>")
 
     # Inline external stylesheets referenced by <link rel="stylesheet">
     for m in re.finditer(r'<link[^>]*rel=["\']?stylesheet["\']?[^>]*>', content, re.IGNORECASE):
@@ -2949,8 +3356,9 @@ def generate_html_template(html_path: str) -> str:
             if self.skip_depth > 0:
                 self.skip_depth += 1
                 return
-            # Fully skip unstyled headings (and all their children)
-            if tag in self.SKIP_UNSTYLED and self._is_unstyled(attrs):
+            # Fully skip unstyled instructional headings, but preserve headings
+            # that are actually targeted by the test stylesheet.
+            if tag in self.SKIP_UNSTYLED and self._is_unstyled(attrs) and tag not in css_targeted_tags:
                 self.skip_depth = 1
                 return
             # Unwrap unstyled <p> only if no CSS rule targets the tag

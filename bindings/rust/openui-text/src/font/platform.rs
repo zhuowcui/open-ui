@@ -98,11 +98,7 @@ impl FontPlatformData {
     /// - Skia's ascent is NEGATIVE (distance above baseline as negative Y).
     ///   We store it as POSITIVE.
     /// - underline/strikeout values use Optional accessors in skia-safe.
-    fn convert_metrics(
-        sk: &SkFontMetrics,
-        typeface: &Typeface,
-        sk_font: &SkFont,
-    ) -> FontMetrics {
+    fn convert_metrics(sk: &SkFontMetrics, typeface: &Typeface, sk_font: &SkFont) -> FontMetrics {
         let ascent = -sk.ascent; // Make positive
         let descent = sk.descent; // Already positive in Skia
         let line_gap = sk.leading;
@@ -114,10 +110,7 @@ impl FontPlatformData {
         };
 
         // Units per em from the font's head table
-        let units_per_em = typeface
-            .units_per_em()
-            .map(|u| u as u16)
-            .unwrap_or(1000);
+        let units_per_em = typeface.units_per_em().map(|u| u as u16).unwrap_or(1000);
 
         FontMetrics {
             ascent,
@@ -160,15 +153,15 @@ impl FontPlatformData {
     /// Mapping based on CSS Fonts spec § 3.3.
     fn stretch_to_sk_width(stretch: f32) -> i32 {
         match stretch.round() as i32 {
-            ..=62 => 1,      // UltraCondensed (50%)
-            63..=74 => 2,    // ExtraCondensed (62.5%)
-            75..=86 => 3,    // Condensed (75%)
-            87..=93 => 4,    // SemiCondensed (87.5%)
-            94..=106 => 5,   // Normal (100%)
-            107..=118 => 6,  // SemiExpanded (112.5%)
-            119..=137 => 7,  // Expanded (125%)
-            138..=174 => 8,  // ExtraExpanded (150%)
-            _ => 9,          // UltraExpanded (200%)
+            ..=62 => 1,     // UltraCondensed (50%)
+            63..=74 => 2,   // ExtraCondensed (62.5%)
+            75..=86 => 3,   // Condensed (75%)
+            87..=93 => 4,   // SemiCondensed (87.5%)
+            94..=106 => 5,  // Normal (100%)
+            107..=118 => 6, // SemiExpanded (112.5%)
+            119..=137 => 7, // Expanded (125%)
+            138..=174 => 8, // ExtraExpanded (150%)
+            _ => 9,         // UltraExpanded (200%)
         }
     }
 }
@@ -199,15 +192,15 @@ mod tests {
 
     #[test]
     fn stretch_keyword_values_map_correctly() {
-        assert_eq!(FontPlatformData::stretch_to_sk_width(50.0), 1);   // UltraCondensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(62.5), 2);   // ExtraCondensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(75.0), 3);   // Condensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4);   // SemiCondensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(100.0), 5);  // Normal
-        assert_eq!(FontPlatformData::stretch_to_sk_width(112.5), 6);  // SemiExpanded
-        assert_eq!(FontPlatformData::stretch_to_sk_width(125.0), 7);  // Expanded
-        assert_eq!(FontPlatformData::stretch_to_sk_width(150.0), 8);  // ExtraExpanded
-        assert_eq!(FontPlatformData::stretch_to_sk_width(200.0), 9);  // UltraExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(50.0), 1); // UltraCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(62.5), 2); // ExtraCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(75.0), 3); // Condensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4); // SemiCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(100.0), 5); // Normal
+        assert_eq!(FontPlatformData::stretch_to_sk_width(112.5), 6); // SemiExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(125.0), 7); // Expanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(150.0), 8); // ExtraExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(200.0), 9); // UltraExpanded
     }
 
     #[test]

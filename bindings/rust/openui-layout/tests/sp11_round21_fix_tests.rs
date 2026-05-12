@@ -6,9 +6,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_layout::inline::items::InlineItemType;
 use openui_layout::inline::items_builder::InlineItemsBuilder;
-use openui_style::{
-    ComputedStyle, Display, TextAlign, TextAlignLast, TextJustify,
-};
+use openui_style::{ComputedStyle, Display, TextAlign, TextAlignLast, TextJustify};
 
 // ── Issue 3: Half-leading floor/ceil LayoutUnit snap ─────────────────────
 
@@ -18,11 +16,11 @@ fn half_leading_floor_ceil_snap_total_equals_line_height() {
     // distribution should still sum to the computed leading exactly.
     let grid = 1.0 / 64.0;
     let test_cases: Vec<(f32, f32, f32)> = vec![
-        (12.0, 4.0, 24.0),  // leading = 8.0
-        (10.0, 3.0, 20.0),  // leading = 7.0
-        (11.5, 3.5, 18.0),  // leading = 3.0
-        (14.0, 6.0, 30.0),  // leading = 10.0
-        (10.0, 4.0, 15.0),  // leading = 1.0 (odd)
+        (12.0, 4.0, 24.0), // leading = 8.0
+        (10.0, 3.0, 20.0), // leading = 7.0
+        (11.5, 3.5, 18.0), // leading = 3.0
+        (14.0, 6.0, 30.0), // leading = 10.0
+        (10.0, 4.0, 15.0), // leading = 1.0 (odd)
     ];
 
     for (ascent, descent, computed_lh) in test_cases {
@@ -34,7 +32,10 @@ fn half_leading_floor_ceil_snap_total_equals_line_height() {
         assert!(
             (total - leading).abs() < 1e-6,
             "Half-leading split must sum to leading: {} + {} = {} vs {}",
-            ascent_half, descent_half, total, leading
+            ascent_half,
+            descent_half,
+            total,
+            leading
         );
     }
 }
@@ -50,8 +51,10 @@ fn half_leading_ascent_uses_floor() {
     let descent_half = leading - ascent_half;
 
     assert_eq!(ascent_half, 0.0, "floor of half a LayoutUnit should be 0");
-    assert!((descent_half - leading).abs() < 1e-6,
-        "descent_half should get the full unit");
+    assert!(
+        (descent_half - leading).abs() < 1e-6,
+        "descent_half should get the full unit"
+    );
 
     // Larger test: leading = 3 LayoutUnits
     let leading2: f32 = 3.0 / 64.0;
@@ -82,11 +85,23 @@ fn div_display_inline_creates_inline_box_not_atomic() {
 
     let items_data = InlineItemsBuilder::collect(&doc, block);
 
-    let has_atomic = items_data.items.iter().any(|item| item.item_type == InlineItemType::AtomicInline);
-    assert!(!has_atomic, "div with display:inline should NOT produce AtomicInline items");
+    let has_atomic = items_data
+        .items
+        .iter()
+        .any(|item| item.item_type == InlineItemType::AtomicInline);
+    assert!(
+        !has_atomic,
+        "div with display:inline should NOT produce AtomicInline items"
+    );
 
-    let has_open = items_data.items.iter().any(|item| item.item_type == InlineItemType::OpenTag);
-    let has_close = items_data.items.iter().any(|item| item.item_type == InlineItemType::CloseTag);
+    let has_open = items_data
+        .items
+        .iter()
+        .any(|item| item.item_type == InlineItemType::OpenTag);
+    let has_close = items_data
+        .items
+        .iter()
+        .any(|item| item.item_type == InlineItemType::CloseTag);
     assert!(has_open, "div with display:inline should produce OpenTag");
     assert!(has_close, "div with display:inline should produce CloseTag");
 }
@@ -109,8 +124,14 @@ fn div_display_inline_block_still_atomic() {
 
     let items_data = InlineItemsBuilder::collect(&doc, block);
 
-    let has_atomic = items_data.items.iter().any(|item| item.item_type == InlineItemType::AtomicInline);
-    assert!(has_atomic, "div with display:inline-block should produce AtomicInline");
+    let has_atomic = items_data
+        .items
+        .iter()
+        .any(|item| item.item_type == InlineItemType::AtomicInline);
+    assert!(
+        has_atomic,
+        "div with display:inline-block should produce AtomicInline"
+    );
 }
 
 // ── Issue 7: Atomic inline percentage/auto widths ────────────────────────
@@ -141,8 +162,16 @@ fn atomic_inline_max_width_clamps() {
     let mut style = ComputedStyle::default();
     style.width = Length::px(300.0);
     style.max_width = Length::px(200.0);
-    let w = if style.width.is_fixed() { style.width.value() } else { 0.0 };
-    let max = if style.max_width.is_fixed() { style.max_width.value() } else { f32::INFINITY };
+    let w = if style.width.is_fixed() {
+        style.width.value()
+    } else {
+        0.0
+    };
+    let max = if style.max_width.is_fixed() {
+        style.max_width.value()
+    } else {
+        f32::INFINITY
+    };
     let clamped = w.min(max);
     assert_eq!(clamped, 200.0);
 }

@@ -37,14 +37,18 @@ fn main() {
                 println!("Root node has {} children", children.len());
                 for (i, &child) in children.iter().enumerate() {
                     let style = &doc.node(child).style;
-                    println!("  child[{}]: display={:?} w={:?} h={:?} bg={:?}",
-                        i, style.display, style.width, style.height, style.background_color);
+                    println!(
+                        "  child[{}]: display={:?} w={:?} h={:?} bg={:?}",
+                        i, style.display, style.width, style.height, style.background_color
+                    );
                     let grandchildren: Vec<_> = doc.children(child).collect();
                     println!("    {} grandchildren", grandchildren.len());
                     for (j, &gc) in grandchildren.iter().enumerate().take(3) {
                         let gs = &doc.node(gc).style;
-                        println!("    gc[{}]: display={:?} float={:?} w={:?} h={:?} bg={:?}",
-                            j, gs.display, gs.float, gs.width, gs.height, gs.background_color);
+                        println!(
+                            "    gc[{}]: display={:?} float={:?} w={:?} h={:?} bg={:?}",
+                            j, gs.display, gs.float, gs.width, gs.height, gs.background_color
+                        );
                     }
                 }
                 // Also do layout and check fragment
@@ -56,8 +60,15 @@ fn main() {
                 println!("Fragment size: {:?}", fragment.size);
                 fn dump_frag(f: &openui_layout::Fragment, depth: usize) {
                     let indent = "  ".repeat(depth);
-                    println!("{}frag: offset={:?} size={:?} kind={:?} node={:?} children={}",
-                        indent, f.offset, f.size, f.kind, f.node_id, f.children.len());
+                    println!(
+                        "{}frag: offset={:?} size={:?} kind={:?} node={:?} children={}",
+                        indent,
+                        f.offset,
+                        f.size,
+                        f.kind,
+                        f.node_id,
+                        f.children.len()
+                    );
                     for child in &f.children {
                         dump_frag(child, depth + 1);
                     }
@@ -68,12 +79,18 @@ fn main() {
             }
         }
         Some("render") => {
-            let test_id = args.get(2).expect("Usage: pixel_compare render <test_id> <output.png>");
-            let output = args.get(3).expect("Usage: pixel_compare render <test_id> <output.png>");
+            let test_id = args
+                .get(2)
+                .expect("Usage: pixel_compare render <test_id> <output.png>");
+            let output = args
+                .get(3)
+                .expect("Usage: pixel_compare render <test_id> <output.png>");
             render_test(test_id, output);
         }
         Some("render-all") => {
-            let dir = args.get(2).expect("Usage: pixel_compare render-all <output_dir>");
+            let dir = args
+                .get(2)
+                .expect("Usage: pixel_compare render-all <output_dir>");
             std::fs::create_dir_all(dir).unwrap();
             for (id, _) in registry() {
                 let path = format!("{}/{}.png", dir, id);
@@ -107,18 +124,22 @@ type TestBuilder = fn() -> Document;
 fn registry() -> Vec<(&'static str, TestBuilder)> {
     let mut tests = vec![
         // ── SP12 Display ─────────────────────────────────────────────
-        ("sp12/display_outer_block", sp12_display_outer_block as TestBuilder),
+        (
+            "sp12/display_outer_block",
+            sp12_display_outer_block as TestBuilder,
+        ),
         ("sp12/display_outer_inline", sp12_display_outer_inline),
-        ("sp12/display_outer_inline_block", sp12_display_outer_inline_block),
+        (
+            "sp12/display_outer_inline_block",
+            sp12_display_outer_inline_block,
+        ),
         ("sp12/display_outer_none", sp12_display_outer_none),
         ("sp12/display_inner_flow_root", sp12_display_inner_flow_root),
-
         // ── SP12 Position ────────────────────────────────────────────
         ("sp12/position_static", sp12_position_static),
         ("sp12/position_relative", sp12_position_relative),
         ("sp12/position_absolute", sp12_position_absolute),
         ("sp12/position_fixed", sp12_position_fixed),
-
         // ── SP12 Float ───────────────────────────────────────────────
         ("sp12/float_left", sp12_float_left),
         ("sp12/float_right", sp12_float_right),
@@ -126,17 +147,18 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
         ("sp12/clear_left", sp12_clear_left),
         ("sp12/clear_right", sp12_clear_right),
         ("sp12/clear_both", sp12_clear_both),
-
         // ── SP12 Box Model ───────────────────────────────────────────
         ("sp12/margin_positive", sp12_margin_positive),
         ("sp12/margin_negative", sp12_margin_negative),
         ("sp12/margin_auto", sp12_margin_auto),
-        ("sp12/margin_collapsing_siblings", sp12_margin_collapsing_siblings),
+        (
+            "sp12/margin_collapsing_siblings",
+            sp12_margin_collapsing_siblings,
+        ),
         ("sp12/padding_basic", sp12_padding_basic),
         ("sp12/border_basic", sp12_border_basic),
         ("sp12/box_sizing_content_box", sp12_box_sizing_content_box),
         ("sp12/box_sizing_border_box", sp12_box_sizing_border_box),
-
         // ── SP12 Sizing ──────────────────────────────────────────────
         ("sp12/width_fixed_px", sp12_width_fixed_px),
         ("sp12/height_fixed_px", sp12_height_fixed_px),
@@ -145,156 +167,204 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
         ("sp12/max_width", sp12_max_width),
         ("sp12/min_height", sp12_min_height),
         ("sp12/max_height", sp12_max_height),
-
         // ── SP12 Overflow ────────────────────────────────────────────
         ("sp12/overflow_visible", sp12_overflow_visible),
         ("sp12/overflow_hidden", sp12_overflow_hidden),
-
         // ── SP12 Flexbox ─────────────────────────────────────────────
         ("sp12/flex_direction_row", sp12_flex_direction_row),
         ("sp12/flex_direction_column", sp12_flex_direction_column),
         ("sp12/flex_justify_start", sp12_flex_justify_start),
         ("sp12/flex_justify_center", sp12_flex_justify_center),
-        ("sp12/flex_justify_space_between", sp12_flex_justify_space_between),
+        (
+            "sp12/flex_justify_space_between",
+            sp12_flex_justify_space_between,
+        ),
         ("sp12/flex_align_center", sp12_flex_align_center),
         ("sp12/flex_align_stretch", sp12_flex_align_stretch),
         ("sp12/flex_wrap_basic", sp12_flex_wrap_basic),
         ("sp12/flex_grow_equal", sp12_flex_grow_equal),
         ("sp12/flex_gap", sp12_flex_gap),
-
         // ── SP12 Visual / Stacking ───────────────────────────────────
         ("sp12/z_index_stacking", sp12_z_index_stacking),
         ("sp12/opacity_basic", sp12_opacity_basic),
         ("sp12/border_radius", sp12_border_radius),
         ("sp12/visibility_hidden", sp12_visibility_hidden),
         ("sp12/nested_blocks", sp12_nested_blocks),
-
-
         // ── SP12 Sticky Positioning ──────────────────────────────────────
         ("sp12/position_sticky_top", sp12_position_sticky_top),
         ("sp12/position_sticky_bottom", sp12_position_sticky_bottom),
-
         // ── SP12 Multicol ────────────────────────────────────────────────
         ("sp12/multicol_2_columns", sp12_multicol_2_columns),
         ("sp12/multicol_column_width", sp12_multicol_column_width),
         ("sp12/multicol_column_gap", sp12_multicol_column_gap),
-
         // ── SP12 Flex Advanced ───────────────────────────────────────────
-        ("sp12/flex_direction_row_reverse", sp12_flex_direction_row_reverse),
-        ("sp12/flex_direction_column_reverse", sp12_flex_direction_column_reverse),
+        (
+            "sp12/flex_direction_row_reverse",
+            sp12_flex_direction_row_reverse,
+        ),
+        (
+            "sp12/flex_direction_column_reverse",
+            sp12_flex_direction_column_reverse,
+        ),
         ("sp12/flex_wrap_reverse", sp12_flex_wrap_reverse),
-        ("sp12/flex_justify_space_around", sp12_flex_justify_space_around),
-        ("sp12/flex_justify_space_evenly", sp12_flex_justify_space_evenly),
-
+        (
+            "sp12/flex_justify_space_around",
+            sp12_flex_justify_space_around,
+        ),
+        (
+            "sp12/flex_justify_space_evenly",
+            sp12_flex_justify_space_evenly,
+        ),
         // ── SP12 Margin Collapsing Advanced ──────────────────────────────
-        ("sp12/margin_collapsing_parent_child", sp12_margin_collapsing_parent_child),
-        ("sp12/margin_collapsing_through_empty", sp12_margin_collapsing_through_empty),
-
+        (
+            "sp12/margin_collapsing_parent_child",
+            sp12_margin_collapsing_parent_child,
+        ),
+        (
+            "sp12/margin_collapsing_through_empty",
+            sp12_margin_collapsing_through_empty,
+        ),
         // ── SP12 Overflow Axes ───────────────────────────────────────────
         ("sp12/overflow_scroll", sp12_overflow_scroll),
         ("sp12/overflow_auto", sp12_overflow_auto),
-
         // ── SP12 Aspect Ratio ────────────────────────────────────────────
         ("sp12/aspect_ratio_basic", sp12_aspect_ratio_basic),
         // ── SP11 Text Decoration ─────────────────────────────────────
-        ("sp11/text_decoration_underline", sp11_text_decoration_underline),
-        ("sp11/text_decoration_overline", sp11_text_decoration_overline),
-        ("sp11/text_decoration_line_through", sp11_text_decoration_line_through),
-        ("sp11/text_decoration_combined", sp11_text_decoration_combined),
-
+        (
+            "sp11/text_decoration_underline",
+            sp11_text_decoration_underline,
+        ),
+        (
+            "sp11/text_decoration_overline",
+            sp11_text_decoration_overline,
+        ),
+        (
+            "sp11/text_decoration_line_through",
+            sp11_text_decoration_line_through,
+        ),
+        (
+            "sp11/text_decoration_combined",
+            sp11_text_decoration_combined,
+        ),
         // ── SP11 Font Weight & Style ─────────────────────────────────
         ("sp11/font_weight_normal", sp11_font_weight_normal),
         ("sp11/font_weight_bold", sp11_font_weight_bold),
         ("sp11/font_style_normal", sp11_font_style_normal),
         ("sp11/font_style_italic", sp11_font_style_italic),
-
         // ── SP11 Font Size ───────────────────────────────────────────
         ("sp11/font_size_small", sp11_font_size_small),
         ("sp11/font_size_medium", sp11_font_size_medium),
         ("sp11/font_size_large", sp11_font_size_large),
         ("sp11/font_size_xlarge", sp11_font_size_xlarge),
-
         // ── SP11 Text Align ──────────────────────────────────────────
         ("sp11/text_align_left", sp11_text_align_left),
         ("sp11/text_align_center", sp11_text_align_center),
         ("sp11/text_align_right", sp11_text_align_right),
         ("sp11/text_align_justify", sp11_text_align_justify),
-
         // ── SP11 Text Transform ──────────────────────────────────────
-        ("sp11/text_transform_uppercase", sp11_text_transform_uppercase),
-        ("sp11/text_transform_lowercase", sp11_text_transform_lowercase),
-        ("sp11/text_transform_capitalize", sp11_text_transform_capitalize),
-
+        (
+            "sp11/text_transform_uppercase",
+            sp11_text_transform_uppercase,
+        ),
+        (
+            "sp11/text_transform_lowercase",
+            sp11_text_transform_lowercase,
+        ),
+        (
+            "sp11/text_transform_capitalize",
+            sp11_text_transform_capitalize,
+        ),
         // ── SP11 Text Indent ─────────────────────────────────────────
         ("sp11/text_indent_positive", sp11_text_indent_positive),
         ("sp11/text_indent_negative", sp11_text_indent_negative),
-
         // ── SP11 Letter & Word Spacing ───────────────────────────────
         ("sp11/letter_spacing_positive", sp11_letter_spacing_positive),
         ("sp11/letter_spacing_negative", sp11_letter_spacing_negative),
         ("sp11/word_spacing_positive", sp11_word_spacing_positive),
-
         // ── SP11 Line Height ─────────────────────────────────────────
         ("sp11/line_height_normal", sp11_line_height_normal),
         ("sp11/line_height_number", sp11_line_height_number),
         ("sp11/line_height_length", sp11_line_height_length),
-
         // ── SP11 White Space ─────────────────────────────────────────
         ("sp11/white_space_normal", sp11_white_space_normal),
         ("sp11/white_space_nowrap", sp11_white_space_nowrap),
         ("sp11/white_space_pre", sp11_white_space_pre),
         ("sp11/white_space_pre_wrap", sp11_white_space_pre_wrap),
         ("sp11/white_space_pre_line", sp11_white_space_pre_line),
-
         // ── SP11 Color ───────────────────────────────────────────────
         ("sp11/color_red", sp11_color_red),
         ("sp11/color_blue", sp11_color_blue),
         ("sp11/color_green", sp11_color_green),
         ("sp11/color_custom", sp11_color_custom),
-
         // ── SP11 Text Shadow & Overflow ──────────────────────────────
         ("sp11/text_shadow_basic", sp11_text_shadow_basic),
         ("sp11/text_overflow_ellipsis", sp11_text_overflow_ellipsis),
-
         // ── SP11 Text Decoration Style ──────────────────────────────
-        ("sp11/text_decoration_style_solid", sp11_text_decoration_style_solid),
-        ("sp11/text_decoration_style_double", sp11_text_decoration_style_double),
-        ("sp11/text_decoration_style_dotted", sp11_text_decoration_style_dotted),
-        ("sp11/text_decoration_style_dashed", sp11_text_decoration_style_dashed),
-        ("sp11/text_decoration_style_wavy", sp11_text_decoration_style_wavy),
-
+        (
+            "sp11/text_decoration_style_solid",
+            sp11_text_decoration_style_solid,
+        ),
+        (
+            "sp11/text_decoration_style_double",
+            sp11_text_decoration_style_double,
+        ),
+        (
+            "sp11/text_decoration_style_dotted",
+            sp11_text_decoration_style_dotted,
+        ),
+        (
+            "sp11/text_decoration_style_dashed",
+            sp11_text_decoration_style_dashed,
+        ),
+        (
+            "sp11/text_decoration_style_wavy",
+            sp11_text_decoration_style_wavy,
+        ),
         // ── SP11 Text Decoration Skip-Ink ───────────────────────────
-        ("sp11/text_decoration_skip_ink_auto", sp11_text_decoration_skip_ink_auto),
-        ("sp11/text_decoration_skip_ink_none", sp11_text_decoration_skip_ink_none),
-
+        (
+            "sp11/text_decoration_skip_ink_auto",
+            sp11_text_decoration_skip_ink_auto,
+        ),
+        (
+            "sp11/text_decoration_skip_ink_none",
+            sp11_text_decoration_skip_ink_none,
+        ),
         // ── SP11 Text Decoration Metrics ────────────────────────────
-        ("sp11/text_decoration_color_red", sp11_text_decoration_color_red),
-        ("sp11/text_decoration_thickness_3px", sp11_text_decoration_thickness_3px),
-        ("sp11/text_underline_offset_5px", sp11_text_underline_offset_5px),
-
+        (
+            "sp11/text_decoration_color_red",
+            sp11_text_decoration_color_red,
+        ),
+        (
+            "sp11/text_decoration_thickness_3px",
+            sp11_text_decoration_thickness_3px,
+        ),
+        (
+            "sp11/text_underline_offset_5px",
+            sp11_text_underline_offset_5px,
+        ),
         // ── SP11 Font Family ────────────────────────────────────────
         ("sp11/font_family_serif", sp11_font_family_serif),
         ("sp11/font_family_monospace", sp11_font_family_monospace),
-
         // ── SP11 Word Spacing Negative ──────────────────────────────
         ("sp11/word_spacing_negative", sp11_word_spacing_negative),
-
         // ── SP11 Line Height Percentage ─────────────────────────────
         ("sp11/line_height_percentage", sp11_line_height_percentage),
-
         // ── SP11 Text Shadow Offset ─────────────────────────────────
         ("sp11/text_shadow_offset", sp11_text_shadow_offset),
-
         // ── SP13 Inline Basic ────────────────────────────────────────
         ("sp13/inline_single_span", sp13_inline_single_span),
         ("sp13/inline_multiple_spans", sp13_inline_multiple_spans),
         ("sp13/inline_nested_spans", sp13_inline_nested_spans),
-
         // ── SP13 Line Breaking ───────────────────────────────────────
-        ("sp13/line_breaking_normal_wrap", sp13_line_breaking_normal_wrap),
+        (
+            "sp13/line_breaking_normal_wrap",
+            sp13_line_breaking_normal_wrap,
+        ),
         ("sp13/line_breaking_nowrap", sp13_line_breaking_nowrap),
-        ("sp13/line_breaking_break_word", sp13_line_breaking_break_word),
-
+        (
+            "sp13/line_breaking_break_word",
+            sp13_line_breaking_break_word,
+        ),
         // ── SP13 Vertical Align ──────────────────────────────────────
         ("sp13/vertical_align_baseline", sp13_vertical_align_baseline),
         ("sp13/vertical_align_middle", sp13_vertical_align_middle),
@@ -302,92 +372,118 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
         ("sp13/vertical_align_bottom", sp13_vertical_align_bottom),
         ("sp13/vertical_align_super", sp13_vertical_align_super),
         ("sp13/vertical_align_sub", sp13_vertical_align_sub),
-
         // ── SP13 Inline Block ────────────────────────────────────────
         ("sp13/inline_block_basic", sp13_inline_block_basic),
-        ("sp13/inline_block_vertical_align", sp13_inline_block_vertical_align),
-
+        (
+            "sp13/inline_block_vertical_align",
+            sp13_inline_block_vertical_align,
+        ),
         // ── SP13 Mixed Content ───────────────────────────────────────
         ("sp13/mixed_block_inline", sp13_mixed_block_inline),
-
         // ── SP13 White Space Handling ────────────────────────────────
         ("sp13/white_space_collapsing", sp13_white_space_collapsing),
         ("sp13/white_space_preserving", sp13_white_space_preserving),
-
         // ── SP13 Inline Decoration ───────────────────────────────────
         ("sp13/inline_background_color", sp13_inline_background_color),
         ("sp13/inline_padding", sp13_inline_padding),
         ("sp13/inline_border", sp13_inline_border),
-
         // ── SP13 First-Letter / First-Line ─────────────────────────────
         ("sp13/first_letter_basic", sp13_first_letter_basic),
         ("sp13/first_line_basic", sp13_first_line_basic),
-
         // ── SP13 Word Break ────────────────────────────────────────────
         ("sp13/word_break_break_all", sp13_word_break_break_all),
-        ("sp13/overflow_wrap_break_word", sp13_overflow_wrap_break_word),
-
+        (
+            "sp13/overflow_wrap_break_word",
+            sp13_overflow_wrap_break_word,
+        ),
         // ── SP13 Vertical Align Extended ───────────────────────────────
         ("sp13/vertical_align_text_top", sp13_vertical_align_text_top),
-        ("sp13/vertical_align_text_bottom", sp13_vertical_align_text_bottom),
-
+        (
+            "sp13/vertical_align_text_bottom",
+            sp13_vertical_align_text_bottom,
+        ),
         // ── SP13 Line Breaking Extended ────────────────────────────────
-        ("sp13/line_breaking_overflow_wrap", sp13_line_breaking_overflow_wrap),
-        ("sp13/line_breaking_hyphens_auto", sp13_line_breaking_hyphens_auto),
-
+        (
+            "sp13/line_breaking_overflow_wrap",
+            sp13_line_breaking_overflow_wrap,
+        ),
+        (
+            "sp13/line_breaking_hyphens_auto",
+            sp13_line_breaking_hyphens_auto,
+        ),
         // ── SP13 Box Decoration Break ──────────────────────────────────
         ("sp13/inline_box_multiline", sp13_inline_box_multiline),
-
         // ── SP13 Float Interaction ─────────────────────────────────────
         ("sp13/inline_with_float", sp13_inline_with_float),
-
         // ── SP12 Sticky Positioning Extended ───────────────────────────────
         ("sp12/position_sticky_left", sp12_position_sticky_left),
         ("sp12/position_sticky_right", sp12_position_sticky_right),
-
         // ── SP12 Multicol Extended ──────────────────────────────────────────
         ("sp12/multicol_column_rule", sp12_multicol_column_rule),
         ("sp12/multicol_column_span", sp12_multicol_column_span),
-        ("sp12/multicol_column_fill_auto", sp12_multicol_column_fill_auto),
-        ("sp12/multicol_column_fill_balance", sp12_multicol_column_fill_balance),
-
+        (
+            "sp12/multicol_column_fill_auto",
+            sp12_multicol_column_fill_auto,
+        ),
+        (
+            "sp12/multicol_column_fill_balance",
+            sp12_multicol_column_fill_balance,
+        ),
         // ── SP12 Position Offsets ───────────────────────────────────────────
-        ("sp12/position_absolute_top_left", sp12_position_absolute_top_left),
-        ("sp12/position_absolute_bottom_right", sp12_position_absolute_bottom_right),
-        ("sp12/position_relative_top_left", sp12_position_relative_top_left),
-        ("sp12/position_absolute_percent", sp12_position_absolute_percent),
-
+        (
+            "sp12/position_absolute_top_left",
+            sp12_position_absolute_top_left,
+        ),
+        (
+            "sp12/position_absolute_bottom_right",
+            sp12_position_absolute_bottom_right,
+        ),
+        (
+            "sp12/position_relative_top_left",
+            sp12_position_relative_top_left,
+        ),
+        (
+            "sp12/position_absolute_percent",
+            sp12_position_absolute_percent,
+        ),
         // ── SP12 Overflow Axis ──────────────────────────────────────────────
         ("sp12/overflow_x_hidden", sp12_overflow_x_hidden),
         ("sp12/overflow_y_hidden", sp12_overflow_y_hidden),
         ("sp12/overflow_x_scroll", sp12_overflow_x_scroll),
         ("sp12/overflow_y_scroll", sp12_overflow_y_scroll),
-
         // ── SP12 Flex Alignment Extended ────────────────────────────────────
         ("sp12/flex_align_self_start", sp12_flex_align_self_start),
         ("sp12/flex_align_self_end", sp12_flex_align_self_end),
         ("sp12/flex_align_self_center", sp12_flex_align_self_center),
-        ("sp12/flex_align_content_center", sp12_flex_align_content_center),
-        ("sp12/flex_align_content_space_between", sp12_flex_align_content_space_between),
+        (
+            "sp12/flex_align_content_center",
+            sp12_flex_align_content_center,
+        ),
+        (
+            "sp12/flex_align_content_space_between",
+            sp12_flex_align_content_space_between,
+        ),
         ("sp12/flex_order", sp12_flex_order),
         ("sp12/flex_basis_100px", sp12_flex_basis_100px),
         ("sp12/flex_shrink_basic", sp12_flex_shrink_basic),
-
         // ── SP12 Border Variants ────────────────────────────────────────────
         ("sp12/border_style_dashed", sp12_border_style_dashed),
         ("sp12/border_style_dotted", sp12_border_style_dotted),
         ("sp12/border_color_per_side", sp12_border_color_per_side),
-
         // ── SP12 Fragmentation ──────────────────────────────────────────────
-        ("sp12/fragmentation_break_before_column", sp12_fragmentation_break_before_column),
-        ("sp12/fragmentation_break_inside_avoid", sp12_fragmentation_break_inside_avoid),
-
+        (
+            "sp12/fragmentation_break_before_column",
+            sp12_fragmentation_break_before_column,
+        ),
+        (
+            "sp12/fragmentation_break_inside_avoid",
+            sp12_fragmentation_break_inside_avoid,
+        ),
         // ── SP13 First-Letter / First-Line Extended ─────────────────────────
         ("sp13/first_letter_color", sp13_first_letter_color),
         ("sp13/first_letter_font_size", sp13_first_letter_font_size),
         ("sp13/first_line_font_weight", sp13_first_line_font_weight),
         ("sp13/first_line_color", sp13_first_line_color),
-
         // ── SP13 Inline Advanced ─────────────────────────────────────────────
         ("sp13/initial_letter_basic", sp13_initial_letter_basic),
         ("sp13/ruby_basic", sp13_ruby_basic),
@@ -395,11 +491,13 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
         ("sp13/inline_direction_rtl", sp13_inline_direction_rtl),
         ("sp13/tab_size_4", sp13_tab_size_4),
         ("sp13/text_align_last_center", sp13_text_align_last_center),
-
         // ── SP11 Text Emphasis ───────────────────────────────────────────────
         ("sp11/text_emphasis_dot", sp11_text_emphasis_dot),
         ("sp11/text_emphasis_circle", sp11_text_emphasis_circle),
-        ("sp11/text_emphasis_position_over", sp11_text_emphasis_position_over),
+        (
+            "sp11/text_emphasis_position_over",
+            sp11_text_emphasis_position_over,
+        ),
         ("sp11/text_emphasis_color_red", sp11_text_emphasis_color_red),
     ];
     // Extend with auto-generated WPT tests
@@ -549,7 +647,13 @@ fn sp12_position_fixed() -> Document {
 
 fn sp12_float_left() -> Document {
     let (mut doc, vp) = base_doc();
-    let f = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(0, 128, 0, 255));
+    let f = add_block(
+        &mut doc,
+        vp,
+        100.0,
+        100.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc.node_mut(f).style.float = Float::Left;
     // BFC companion (overflow:hidden) next to float — displaced correctly by both engines
     let companion = doc.create_node(ElementTag::Div);
@@ -564,7 +668,13 @@ fn sp12_float_left() -> Document {
 
 fn sp12_float_right() -> Document {
     let (mut doc, vp) = base_doc();
-    let f = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(0, 128, 0, 255));
+    let f = add_block(
+        &mut doc,
+        vp,
+        100.0,
+        100.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc.node_mut(f).style.float = Float::Right;
     // BFC companion (overflow:hidden) next to float — displaced correctly by both engines
     let companion = doc.create_node(ElementTag::Div);
@@ -579,7 +689,13 @@ fn sp12_float_right() -> Document {
 
 fn sp12_float_none() -> Document {
     let (mut doc, vp) = base_doc();
-    let f = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(0, 128, 0, 255));
+    let f = add_block(
+        &mut doc,
+        vp,
+        100.0,
+        100.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc.node_mut(f).style.float = Float::None;
     doc
 }
@@ -671,7 +787,13 @@ fn sp12_padding_basic() -> Document {
 
 fn sp12_border_basic() -> Document {
     let (mut doc, vp) = base_doc();
-    let div = add_block(&mut doc, vp, 150.0, 100.0, Color::from_rgba8(240, 240, 240, 255));
+    let div = add_block(
+        &mut doc,
+        vp,
+        150.0,
+        100.0,
+        Color::from_rgba8(240, 240, 240, 255),
+    );
     doc.node_mut(div).style.border_top_width = 3.0 as i32;
     doc.node_mut(div).style.border_right_width = 3.0 as i32;
     doc.node_mut(div).style.border_bottom_width = 3.0 as i32;
@@ -857,7 +979,13 @@ fn sp12_flex_direction_row() -> Document {
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 80.0, 60.0, Color::RED);
     add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -872,7 +1000,13 @@ fn sp12_flex_direction_column() -> Document {
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 80.0, 60.0, Color::RED);
     add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -908,14 +1042,21 @@ fn sp12_flex_justify_space_between() -> Document {
     let (mut doc, vp) = base_doc();
     let flex = doc.create_node(ElementTag::Div);
     doc.node_mut(flex).style.display = Display::Flex;
-    doc.node_mut(flex).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+    doc.node_mut(flex).style.justify_content =
+        ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
     doc.node_mut(flex).style.width = Length::px(400.0);
     doc.node_mut(flex).style.height = Length::px(80.0);
     doc.node_mut(flex).style.background_color = Color::from_rgba8(220, 220, 220, 255);
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 60.0, 60.0, Color::RED);
     add_block(&mut doc, flex, 60.0, 60.0, Color::BLUE);
-    add_block(&mut doc, flex, 60.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -930,7 +1071,13 @@ fn sp12_flex_align_center() -> Document {
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 80.0, 40.0, Color::RED);
     add_block(&mut doc, flex, 80.0, 80.0, Color::BLUE);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -968,8 +1115,20 @@ fn sp12_flex_wrap_basic() -> Document {
     // Four 80px items in 200px container → wraps after 2
     add_block(&mut doc, flex, 80.0, 50.0, Color::RED);
     add_block(&mut doc, flex, 80.0, 50.0, Color::BLUE);
-    add_block(&mut doc, flex, 80.0, 50.0, Color::from_rgba8(0, 128, 0, 255));
-    add_block(&mut doc, flex, 80.0, 50.0, Color::from_rgba8(255, 165, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        50.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        50.0,
+        Color::from_rgba8(255, 165, 0, 255),
+    );
     doc
 }
 
@@ -1004,7 +1163,13 @@ fn sp12_flex_gap() -> Document {
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 80.0, 60.0, Color::RED);
     add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -1095,7 +1260,13 @@ fn sp12_position_sticky_top() -> Document {
     doc.node_mut(container).style.height = Length::px(300.0);
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let child = add_block(&mut doc, container, 100.0, 30.0, Color::from_rgba8(76, 175, 80, 255));
+    let child = add_block(
+        &mut doc,
+        container,
+        100.0,
+        30.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
     doc.node_mut(child).style.position = Position::Sticky;
     doc.node_mut(child).style.top = Length::px(10.0);
     doc
@@ -1109,7 +1280,13 @@ fn sp12_position_sticky_bottom() -> Document {
     doc.node_mut(container).style.height = Length::px(300.0);
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let child = add_block(&mut doc, container, 100.0, 30.0, Color::from_rgba8(76, 175, 80, 255));
+    let child = add_block(
+        &mut doc,
+        container,
+        100.0,
+        30.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
     doc.node_mut(child).style.position = Position::Sticky;
     doc.node_mut(child).style.bottom = Length::px(10.0);
     doc
@@ -1128,10 +1305,34 @@ fn sp12_multicol_2_columns() -> Document {
     doc.node_mut(container).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(255, 152, 0, 255));
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(255, 152, 0, 255),
+    );
     doc
 }
 
@@ -1143,10 +1344,34 @@ fn sp12_multicol_column_width() -> Document {
     doc.node_mut(container).style.column_width = Some(Length::px(150.0));
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 140.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 140.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, container, 140.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
-    add_block(&mut doc, container, 140.0, 50.0, Color::from_rgba8(255, 152, 0, 255));
+    add_block(
+        &mut doc,
+        container,
+        140.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        140.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        140.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        140.0,
+        50.0,
+        Color::from_rgba8(255, 152, 0, 255),
+    );
     doc
 }
 
@@ -1159,10 +1384,34 @@ fn sp12_multicol_column_gap() -> Document {
     doc.node_mut(container).style.column_gap = Some(Length::px(40.0));
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 170.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 170.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, container, 170.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
-    add_block(&mut doc, container, 170.0, 50.0, Color::from_rgba8(255, 152, 0, 255));
+    add_block(
+        &mut doc,
+        container,
+        170.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        170.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        170.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        170.0,
+        50.0,
+        Color::from_rgba8(255, 152, 0, 255),
+    );
     doc
 }
 
@@ -1179,9 +1428,27 @@ fn sp12_flex_direction_row_reverse() -> Document {
     doc.node_mut(flex).style.height = Length::px(100.0);
     doc.node_mut(flex).style.background_color = Color::from_rgba8(220, 220, 220, 255);
     doc.append_child(vp, flex);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
@@ -1194,9 +1461,27 @@ fn sp12_flex_direction_column_reverse() -> Document {
     doc.node_mut(flex).style.height = Length::px(300.0);
     doc.node_mut(flex).style.background_color = Color::from_rgba8(220, 220, 220, 255);
     doc.append_child(vp, flex);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
@@ -1208,10 +1493,34 @@ fn sp12_flex_wrap_reverse() -> Document {
     doc.node_mut(flex).style.width = Length::px(200.0);
     doc.node_mut(flex).style.background_color = Color::from_rgba8(220, 220, 220, 255);
     doc.append_child(vp, flex);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(33, 150, 243, 255));
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(255, 152, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(255, 152, 0, 255),
+    );
     doc
 }
 
@@ -1219,14 +1528,33 @@ fn sp12_flex_justify_space_around() -> Document {
     let (mut doc, vp) = base_doc();
     let flex = doc.create_node(ElementTag::Div);
     doc.node_mut(flex).style.display = Display::Flex;
-    doc.node_mut(flex).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+    doc.node_mut(flex).style.justify_content =
+        ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
     doc.node_mut(flex).style.width = Length::px(400.0);
     doc.node_mut(flex).style.height = Length::px(80.0);
     doc.node_mut(flex).style.background_color = Color::from_rgba8(220, 220, 220, 255);
     doc.append_child(vp, flex);
-    add_block(&mut doc, flex, 60.0, 40.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, flex, 60.0, 40.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, flex, 60.0, 40.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        40.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        40.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        40.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
@@ -1234,14 +1562,33 @@ fn sp12_flex_justify_space_evenly() -> Document {
     let (mut doc, vp) = base_doc();
     let flex = doc.create_node(ElementTag::Div);
     doc.node_mut(flex).style.display = Display::Flex;
-    doc.node_mut(flex).style.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+    doc.node_mut(flex).style.justify_content =
+        ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
     doc.node_mut(flex).style.width = Length::px(400.0);
     doc.node_mut(flex).style.height = Length::px(80.0);
     doc.node_mut(flex).style.background_color = Color::from_rgba8(220, 220, 220, 255);
     doc.append_child(vp, flex);
-    add_block(&mut doc, flex, 60.0, 40.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, flex, 60.0, 40.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, flex, 60.0, 40.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        40.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        40.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        60.0,
+        40.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
@@ -1257,17 +1604,35 @@ fn sp12_margin_collapsing_parent_child() -> Document {
     doc.node_mut(parent).style.width = Length::px(200.0);
     doc.node_mut(parent).style.background_color = Color::from_rgba8(200, 200, 200, 255);
     doc.append_child(vp, parent);
-    let child = add_block(&mut doc, parent, 100.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
+    let child = add_block(
+        &mut doc,
+        parent,
+        100.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
     doc.node_mut(child).style.margin_top = Length::px(30.0);
     // Reference block below to visualize the gap
-    add_block(&mut doc, vp, 200.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        vp,
+        200.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
 fn sp12_margin_collapsing_through_empty() -> Document {
     let (mut doc, vp) = base_doc();
     // First sibling with margin-bottom
-    let a = add_block(&mut doc, vp, 200.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
+    let a = add_block(
+        &mut doc,
+        vp,
+        200.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
     doc.node_mut(a).style.margin_bottom = Length::px(20.0);
     // Empty block between — its own margins collapse through
     let empty = doc.create_node(ElementTag::Div);
@@ -1276,7 +1641,13 @@ fn sp12_margin_collapsing_through_empty() -> Document {
     doc.node_mut(empty).style.margin_bottom = Length::px(25.0);
     doc.append_child(vp, empty);
     // Second sibling with margin-top
-    let b = add_block(&mut doc, vp, 200.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
+    let b = add_block(
+        &mut doc,
+        vp,
+        200.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc.node_mut(b).style.margin_top = Length::px(10.0);
     doc
 }
@@ -1295,7 +1666,13 @@ fn sp12_overflow_scroll() -> Document {
     doc.node_mut(outer).style.overflow_y = Overflow::Scroll;
     doc.node_mut(outer).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, outer);
-    add_block(&mut doc, outer, 180.0, 200.0, Color::from_rgba8(244, 67, 54, 255));
+    add_block(
+        &mut doc,
+        outer,
+        180.0,
+        200.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
     doc
 }
 
@@ -1309,7 +1686,13 @@ fn sp12_overflow_auto() -> Document {
     doc.node_mut(outer).style.overflow_y = Overflow::Auto;
     doc.node_mut(outer).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, outer);
-    add_block(&mut doc, outer, 180.0, 200.0, Color::from_rgba8(244, 67, 54, 255));
+    add_block(
+        &mut doc,
+        outer,
+        180.0,
+        200.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
     doc
 }
 
@@ -1322,7 +1705,10 @@ fn sp12_aspect_ratio_basic() -> Document {
     let div = doc.create_node(ElementTag::Div);
     doc.node_mut(div).style.display = Display::Block;
     doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.aspect_ratio = Some(AspectRatio { ratio: (2.0, 1.0), auto_flag: false });
+    doc.node_mut(div).style.aspect_ratio = Some(AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: false,
+    });
     doc.node_mut(div).style.background_color = Color::from_rgba8(156, 39, 176, 255);
     doc.append_child(vp, div);
     doc
@@ -1365,9 +1751,15 @@ fn sp11_text_decoration_line_through() -> Document {
 
 fn sp11_text_decoration_combined() -> Document {
     let (mut doc, vp) = base_doc();
-    let t = add_text_block(&mut doc, vp, "This text has underline + overline + line-through");
+    let t = add_text_block(
+        &mut doc,
+        vp,
+        "This text has underline + overline + line-through",
+    );
     doc.node_mut(t).style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
+        TextDecorationLine::UNDERLINE.0
+            | TextDecorationLine::OVERLINE.0
+            | TextDecorationLine::LINE_THROUGH.0,
     );
     doc
 }
@@ -1702,7 +2094,11 @@ fn sp11_color_green() -> Document {
 
 fn sp11_color_custom() -> Document {
     let (mut doc, vp) = base_doc();
-    let t = add_text_block(&mut doc, vp, "This text is rendered in custom purple (#8B008B)");
+    let t = add_text_block(
+        &mut doc,
+        vp,
+        "This text is rendered in custom purple (#8B008B)",
+    );
     doc.node_mut(t).style.color = Color::from_rgba8(139, 0, 139, 255);
     doc
 }
@@ -1976,7 +2372,8 @@ fn sp13_line_breaking_nowrap() -> Document {
 
     let span = doc.create_node(ElementTag::Span);
     doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).text = Some("This text should not wrap and may be clipped by overflow hidden".to_string());
+    doc.node_mut(span).text =
+        Some("This text should not wrap and may be clipped by overflow hidden".to_string());
     doc.append_child(div, span);
     doc
 }
@@ -1992,7 +2389,8 @@ fn sp13_line_breaking_break_word() -> Document {
 
     let span = doc.create_node(ElementTag::Span);
     doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).text = Some("Supercalifragilisticexpialidocious should break mid-word".to_string());
+    doc.node_mut(span).text =
+        Some("Supercalifragilisticexpialidocious should break mid-word".to_string());
     doc.append_child(div, span);
     doc
 }
@@ -2109,7 +2507,13 @@ fn sp13_inline_block_vertical_align() -> Document {
 fn sp13_mixed_block_inline() -> Document {
     let (mut doc, vp) = base_doc();
     // Block element
-    let blk = add_block(&mut doc, vp, 300.0, 40.0, Color::from_rgba8(200, 220, 255, 255));
+    let blk = add_block(
+        &mut doc,
+        vp,
+        300.0,
+        40.0,
+        Color::from_rgba8(200, 220, 255, 255),
+    );
     let blk_txt = doc.create_node(ElementTag::Span);
     doc.node_mut(blk_txt).style.display = Display::Inline;
     doc.node_mut(blk_txt).text = Some("Block element with text".to_string());
@@ -2123,7 +2527,13 @@ fn sp13_mixed_block_inline() -> Document {
     doc.append_child(vp, span);
 
     // Another block
-    add_block(&mut doc, vp, 300.0, 40.0, Color::from_rgba8(220, 255, 200, 255));
+    add_block(
+        &mut doc,
+        vp,
+        300.0,
+        40.0,
+        Color::from_rgba8(220, 255, 200, 255),
+    );
     doc
 }
 
@@ -2298,7 +2708,9 @@ fn sp13_first_line_basic() -> Document {
 
     let rest = doc.create_node(ElementTag::Span);
     doc.node_mut(rest).style.display = Display::Inline;
-    doc.node_mut(rest).text = Some(" and the remaining text uses the default paragraph style for subsequent lines".to_string());
+    doc.node_mut(rest).text = Some(
+        " and the remaining text uses the default paragraph style for subsequent lines".to_string(),
+    );
     doc.append_child(para, rest);
     doc
 }
@@ -2354,9 +2766,8 @@ fn sp13_line_breaking_overflow_wrap() -> Document {
     doc.node_mut(div).style.width = Length::px(150.0);
     doc.node_mut(div).style.overflow_wrap = OverflowWrap::Anywhere;
     doc.node_mut(div).style.background_color = Color::from_rgba8(230, 230, 230, 255);
-    doc.node_mut(div).text = Some(
-        "https://example.com/very/long/path/to/resource/that/should/break".to_string(),
-    );
+    doc.node_mut(div).text =
+        Some("https://example.com/very/long/path/to/resource/that/should/break".to_string());
     doc.append_child(vp, div);
     doc
 }
@@ -2368,9 +2779,8 @@ fn sp13_line_breaking_hyphens_auto() -> Document {
     doc.node_mut(div).style.width = Length::px(120.0);
     doc.node_mut(div).style.hyphens = Hyphens::Auto;
     doc.node_mut(div).style.background_color = Color::from_rgba8(230, 230, 230, 255);
-    doc.node_mut(div).text = Some(
-        "Incomprehensibilities and internationalization are long words".to_string(),
-    );
+    doc.node_mut(div).text =
+        Some("Incomprehensibilities and internationalization are long words".to_string());
     doc.append_child(vp, div);
     doc
 }
@@ -2394,9 +2804,8 @@ fn sp13_inline_box_multiline() -> Document {
     doc.node_mut(span).style.padding_bottom = Length::px(4.0);
     doc.node_mut(span).style.padding_left = Length::px(8.0);
     doc.node_mut(span).style.box_decoration_break = BoxDecorationBreak::Clone;
-    doc.node_mut(span).text = Some(
-        "This inline span has background and padding and wraps to multiple lines".to_string(),
-    );
+    doc.node_mut(span).text =
+        Some("This inline span has background and padding and wraps to multiple lines".to_string());
     doc.append_child(div, span);
     doc
 }
@@ -2419,7 +2828,13 @@ fn sp12_position_sticky_left() -> Document {
     doc.node_mut(container).style.height = Length::px(300.0);
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let child = add_block(&mut doc, container, 50.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
+    let child = add_block(
+        &mut doc,
+        container,
+        50.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
     doc.node_mut(child).style.position = Position::Sticky;
     doc.node_mut(child).style.left = Length::px(20.0);
     doc
@@ -2433,7 +2848,13 @@ fn sp12_position_sticky_right() -> Document {
     doc.node_mut(container).style.height = Length::px(300.0);
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let child = add_block(&mut doc, container, 50.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
+    let child = add_block(
+        &mut doc,
+        container,
+        50.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
     doc.node_mut(child).style.position = Position::Sticky;
     doc.node_mut(child).style.right = Length::px(20.0);
     doc
@@ -2455,10 +2876,34 @@ fn sp12_multicol_column_rule() -> Document {
     doc.node_mut(container).style.column_rule_color = StyleColor::Resolved(Color::RED);
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(255, 152, 0, 255));
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(255, 152, 0, 255),
+    );
     doc
 }
 
@@ -2471,10 +2916,28 @@ fn sp12_multicol_column_span() -> Document {
     doc.node_mut(container).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let span_el = add_block(&mut doc, container, 380.0, 20.0, Color::from_rgba8(33, 150, 243, 255));
+    let span_el = add_block(
+        &mut doc,
+        container,
+        380.0,
+        20.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc.node_mut(span_el).style.column_span = ColumnSpan::All;
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
     doc
 }
 
@@ -2488,9 +2951,27 @@ fn sp12_multicol_column_fill_auto() -> Document {
     doc.node_mut(container).style.column_fill = ColumnFill::Auto;
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
@@ -2503,9 +2984,27 @@ fn sp12_multicol_column_fill_balance() -> Document {
     doc.node_mut(container).style.column_fill = ColumnFill::Balance;
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(76, 175, 80, 255));
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc
 }
 
@@ -2542,7 +3041,13 @@ fn sp12_position_absolute_bottom_right() -> Document {
 
 fn sp12_position_relative_top_left() -> Document {
     let (mut doc, vp) = base_doc();
-    let div = add_block(&mut doc, vp, 100.0, 100.0, Color::from_rgba8(76, 175, 80, 255));
+    let div = add_block(
+        &mut doc,
+        vp,
+        100.0,
+        100.0,
+        Color::from_rgba8(76, 175, 80, 255),
+    );
     doc.node_mut(div).style.position = Position::Relative;
     doc.node_mut(div).style.top = Length::px(10.0);
     doc.node_mut(div).style.left = Length::px(10.0);
@@ -2559,7 +3064,13 @@ fn sp12_position_absolute_percent() -> Document {
     doc.node_mut(container).style.height = Length::px(300.0);
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let div = add_block(&mut doc, container, 100.0, 100.0, Color::from_rgba8(156, 39, 176, 255));
+    let div = add_block(
+        &mut doc,
+        container,
+        100.0,
+        100.0,
+        Color::from_rgba8(156, 39, 176, 255),
+    );
     doc.node_mut(div).style.position = Position::Absolute;
     doc.node_mut(div).style.top = Length::percent(10.0);
     doc.node_mut(div).style.left = Length::percent(10.0);
@@ -2637,7 +3148,13 @@ fn sp12_flex_align_self_start() -> Document {
     add_block(&mut doc, flex, 80.0, 60.0, Color::RED);
     let item = add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
     doc.node_mut(item).style.align_self = ItemAlignment::new(ItemPosition::FlexStart);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -2652,7 +3169,13 @@ fn sp12_flex_align_self_end() -> Document {
     add_block(&mut doc, flex, 80.0, 60.0, Color::RED);
     let item = add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
     doc.node_mut(item).style.align_self = ItemAlignment::new(ItemPosition::FlexEnd);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -2667,7 +3190,13 @@ fn sp12_flex_align_self_center() -> Document {
     add_block(&mut doc, flex, 80.0, 60.0, Color::RED);
     let item = add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
     doc.node_mut(item).style.align_self = ItemAlignment::new(ItemPosition::Center);
-    add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc
 }
 
@@ -2683,8 +3212,20 @@ fn sp12_flex_align_content_center() -> Document {
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 100.0, 50.0, Color::RED);
     add_block(&mut doc, flex, 100.0, 50.0, Color::BLUE);
-    add_block(&mut doc, flex, 100.0, 50.0, Color::from_rgba8(0, 128, 0, 255));
-    add_block(&mut doc, flex, 100.0, 50.0, Color::from_rgba8(255, 165, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        100.0,
+        50.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        100.0,
+        50.0,
+        Color::from_rgba8(255, 165, 0, 255),
+    );
     doc
 }
 
@@ -2701,8 +3242,20 @@ fn sp12_flex_align_content_space_between() -> Document {
     doc.append_child(vp, flex);
     add_block(&mut doc, flex, 100.0, 50.0, Color::RED);
     add_block(&mut doc, flex, 100.0, 50.0, Color::BLUE);
-    add_block(&mut doc, flex, 100.0, 50.0, Color::from_rgba8(0, 128, 0, 255));
-    add_block(&mut doc, flex, 100.0, 50.0, Color::from_rgba8(255, 165, 0, 255));
+    add_block(
+        &mut doc,
+        flex,
+        100.0,
+        50.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
+    add_block(
+        &mut doc,
+        flex,
+        100.0,
+        50.0,
+        Color::from_rgba8(255, 165, 0, 255),
+    );
     doc
 }
 
@@ -2719,7 +3272,13 @@ fn sp12_flex_order() -> Document {
     doc.node_mut(red).style.order = 3;
     let blue = add_block(&mut doc, flex, 80.0, 60.0, Color::BLUE);
     doc.node_mut(blue).style.order = 2;
-    let green = add_block(&mut doc, flex, 80.0, 60.0, Color::from_rgba8(0, 128, 0, 255));
+    let green = add_block(
+        &mut doc,
+        flex,
+        80.0,
+        60.0,
+        Color::from_rgba8(0, 128, 0, 255),
+    );
     doc.node_mut(green).style.order = 1;
     doc
 }
@@ -2773,7 +3332,13 @@ fn sp12_flex_shrink_basic() -> Document {
 
 fn sp12_border_style_dashed() -> Document {
     let (mut doc, vp) = base_doc();
-    let div = add_block(&mut doc, vp, 200.0, 100.0, Color::from_rgba8(240, 240, 240, 255));
+    let div = add_block(
+        &mut doc,
+        vp,
+        200.0,
+        100.0,
+        Color::from_rgba8(240, 240, 240, 255),
+    );
     doc.node_mut(div).style.border_top_width = 3;
     doc.node_mut(div).style.border_right_width = 3;
     doc.node_mut(div).style.border_bottom_width = 3;
@@ -2791,7 +3356,13 @@ fn sp12_border_style_dashed() -> Document {
 
 fn sp12_border_style_dotted() -> Document {
     let (mut doc, vp) = base_doc();
-    let div = add_block(&mut doc, vp, 200.0, 100.0, Color::from_rgba8(240, 240, 240, 255));
+    let div = add_block(
+        &mut doc,
+        vp,
+        200.0,
+        100.0,
+        Color::from_rgba8(240, 240, 240, 255),
+    );
     doc.node_mut(div).style.border_top_width = 3;
     doc.node_mut(div).style.border_right_width = 3;
     doc.node_mut(div).style.border_bottom_width = 3;
@@ -2840,8 +3411,20 @@ fn sp12_fragmentation_break_before_column() -> Document {
     doc.node_mut(container).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
-    let b = add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
+    add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
+    let b = add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc.node_mut(b).style.break_before = BreakValue::Column;
     doc
 }
@@ -2856,9 +3439,21 @@ fn sp12_fragmentation_break_inside_avoid() -> Document {
     doc.node_mut(container).style.column_gap = Some(Length::px(20.0));
     doc.node_mut(container).style.background_color = Color::from_rgba8(240, 240, 240, 255);
     doc.append_child(vp, container);
-    let a = add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(244, 67, 54, 255));
+    let a = add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(244, 67, 54, 255),
+    );
     doc.node_mut(a).style.break_inside = BreakInside::Avoid;
-    let b = add_block(&mut doc, container, 180.0, 50.0, Color::from_rgba8(33, 150, 243, 255));
+    let b = add_block(
+        &mut doc,
+        container,
+        180.0,
+        50.0,
+        Color::from_rgba8(33, 150, 243, 255),
+    );
     doc.node_mut(b).style.break_inside = BreakInside::Avoid;
     doc
 }
@@ -2933,8 +3528,9 @@ fn sp13_first_line_color() -> Document {
     doc.append_child(div, first);
     let rest = doc.create_node(ElementTag::Span);
     doc.node_mut(rest).style.display = Display::Inline;
-    doc.node_mut(rest).text =
-        Some(" and the remaining text is the default black color for subsequent lines.".to_string());
+    doc.node_mut(rest).text = Some(
+        " and the remaining text is the default black color for subsequent lines.".to_string(),
+    );
     doc.append_child(div, rest);
     doc
 }
@@ -2959,7 +3555,8 @@ fn sp13_initial_letter_basic() -> Document {
     doc.append_child(div, letter);
     let rest = doc.create_node(ElementTag::Span);
     doc.node_mut(rest).style.display = Display::Inline;
-    doc.node_mut(rest).text = Some("orem ipsum dolor sit amet, consectetur adipiscing elit.".to_string());
+    doc.node_mut(rest).text =
+        Some("orem ipsum dolor sit amet, consectetur adipiscing elit.".to_string());
     doc.append_child(div, rest);
     doc
 }
@@ -3056,7 +3653,10 @@ fn sp11_text_emphasis_position_over() -> Document {
     let div = add_text_block(&mut doc, vp, "Hello World");
     doc.node_mut(div).style.text_emphasis_mark = TextEmphasisMark::Dot;
     doc.node_mut(div).style.text_emphasis_fill = TextEmphasisFill::Filled;
-    doc.node_mut(div).style.text_emphasis_position = TextEmphasisPosition { over: true, right: true };
+    doc.node_mut(div).style.text_emphasis_position = TextEmphasisPosition {
+        over: true,
+        right: true,
+    };
     doc
 }
 

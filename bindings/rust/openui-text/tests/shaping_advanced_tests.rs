@@ -3,9 +3,7 @@
 //! script segmenter edge cases.
 
 use openui_text::font::{Font, FontDescription};
-use openui_text::shaping::{
-    RunSegmenter, Script, ShapeResult, TextDirection, TextShaper,
-};
+use openui_text::shaping::{RunSegmenter, Script, ShapeResult, TextDirection, TextShaper};
 
 // ═══════════════════════════════════════════════════════════════════════
 // Helpers
@@ -141,7 +139,10 @@ fn kern_effect_at_reasonable_font_size() {
 fn multi_script_arabic_only_shapes_with_positive_width() {
     // Pure Arabic text shaped LTR should still produce output.
     let result = shape_text("مرحبا");
-    assert!(result.width() > 0.0, "Arabic text should have positive width");
+    assert!(
+        result.width() > 0.0,
+        "Arabic text should have positive width"
+    );
     assert!(result.num_characters > 0);
 }
 
@@ -216,7 +217,10 @@ fn emoji_flag_does_not_crash() {
     // Flag emoji: U+1F1FA U+1F1F8 (🇺🇸). May or may not be supported as a
     // single glyph; the test just verifies no crash and some output.
     let result = shape_text("\u{1F1FA}\u{1F1F8}");
-    assert!(result.width() > 0.0, "Flag emoji should have positive width");
+    assert!(
+        result.width() > 0.0,
+        "Flag emoji should have positive width"
+    );
     assert!(result.num_characters > 0);
 }
 
@@ -224,8 +228,14 @@ fn emoji_flag_does_not_crash() {
 fn emoji_zwj_sequence_does_not_crash() {
     // Family emoji: 👨‍👩‍👧 (U+1F468 ZWJ U+1F469 ZWJ U+1F467)
     let result = shape_text("\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}");
-    assert!(result.width() > 0.0, "ZWJ sequence should have positive width");
-    assert!(result.num_glyphs() >= 1, "ZWJ sequence should produce glyphs");
+    assert!(
+        result.width() > 0.0,
+        "ZWJ sequence should have positive width"
+    );
+    assert!(
+        result.num_glyphs() >= 1,
+        "ZWJ sequence should produce glyphs"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -248,7 +258,11 @@ fn whitespace_space_has_positive_advance() {
 fn whitespace_tab_has_advance() {
     let result = shape_text("\t");
     // Tab should have non-negative width (may be zero in some shapers).
-    assert!(result.width() >= 0.0, "Tab width should be non-negative: {}", result.width());
+    assert!(
+        result.width() >= 0.0,
+        "Tab width should be non-negative: {}",
+        result.width()
+    );
     assert_eq!(result.num_characters, 1);
 }
 
@@ -346,7 +360,10 @@ fn shape_result_advances_sum_near_total_width() {
 fn shape_result_to_text_blob_some_for_nonempty() {
     let result = shape_text("Test blob");
     let blob = result.to_text_blob();
-    assert!(blob.is_some(), "Non-empty ShapeResult should produce a TextBlob");
+    assert!(
+        blob.is_some(),
+        "Non-empty ShapeResult should produce a TextBlob"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -378,7 +395,10 @@ fn edge_single_char_one_glyph_one_character() {
 fn edge_very_long_string_completes() {
     let long = "a".repeat(5000);
     let result = shape_text(&long);
-    assert!(result.width() > 0.0, "5000-char string should have positive width");
+    assert!(
+        result.width() > 0.0,
+        "5000-char string should have positive width"
+    );
     assert_eq!(result.num_characters, 5000);
     assert!(result.num_glyphs() >= 5000);
 }
@@ -471,7 +491,10 @@ fn segmenter_punctuation_between_latin_single_segment() {
 #[test]
 fn segmenter_empty_string_no_segments() {
     let segments = RunSegmenter::segment("");
-    assert!(segments.is_empty(), "Empty string should produce no segments");
+    assert!(
+        segments.is_empty(),
+        "Empty string should produce no segments"
+    );
 }
 
 #[test]

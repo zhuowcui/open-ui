@@ -7,9 +7,7 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    Color, Display, Overflow, TextOverflow, VerticalAlign, WhiteSpace,
-};
+use openui_style::{Color, Display, Overflow, TextOverflow, VerticalAlign, WhiteSpace};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
@@ -39,13 +37,8 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
 
 fn layout_text(texts: &[&str], width: i32) -> Fragment {
     let (doc, block) = make_text_block(texts, width);
-    let sp = ConstraintSpace::for_block_child(
-        lu_i(width),
-        lu_i(600),
-        lu_i(width),
-        lu_i(600),
-        false,
-    );
+    let sp =
+        ConstraintSpace::for_block_child(lu_i(width), lu_i(600), lu_i(width), lu_i(600), false);
     inline_layout(&doc, block, &sp)
 }
 
@@ -79,7 +72,11 @@ fn trailing_space_non_ascii_cafe() {
     // for non-ASCII text by counting characters, not bytes.
     let frag = layout_text(&["café more words here"], 50);
     let line_count = count_line_boxes(&frag);
-    assert!(line_count >= 2, "Expected wrapping, got {} lines", line_count);
+    assert!(
+        line_count >= 2,
+        "Expected wrapping, got {} lines",
+        line_count
+    );
 
     // Verify text fragments on the first line don't exceed container width
     if let Some(first_line) = frag.children.first() {
@@ -155,10 +152,13 @@ fn ellipsis_inherits_parent_text_color() {
 
     // The ellipsis should have an inherited_style with the red color
     let ef = ellipsis_frags[0];
-    let inherited = ef.inherited_style.as_ref()
+    let inherited = ef
+        .inherited_style
+        .as_ref()
         .expect("Ellipsis fragment should have inherited_style set");
     assert_eq!(
-        inherited.color, Color::RED,
+        inherited.color,
+        Color::RED,
         "Ellipsis should inherit parent's text color (red), got {:?}",
         inherited.color
     );

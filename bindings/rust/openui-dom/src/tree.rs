@@ -14,10 +14,14 @@ impl NodeId {
     pub const NONE: Self = Self(u32::MAX);
 
     #[inline]
-    pub fn is_none(self) -> bool { self.0 == u32::MAX }
+    pub fn is_none(self) -> bool {
+        self.0 == u32::MAX
+    }
 
     #[inline]
-    pub fn index(self) -> usize { self.0 as usize }
+    pub fn index(self) -> usize {
+        self.0 as usize
+    }
 }
 
 /// What kind of element this node represents.
@@ -36,7 +40,9 @@ pub enum ElementTag {
 }
 
 impl Default for ElementTag {
-    fn default() -> Self { Self::Div }
+    fn default() -> Self {
+        Self::Div
+    }
 }
 
 /// Data stored for each node in the tree.
@@ -105,7 +111,9 @@ impl Document {
 
     /// The root viewport node.
     #[inline]
-    pub fn root(&self) -> NodeId { self.root }
+    pub fn root(&self) -> NodeId {
+        self.root
+    }
 
     /// Create a new detached node (not yet in the tree).
     pub fn create_node(&mut self, tag: ElementTag) -> NodeId {
@@ -120,16 +128,23 @@ impl Document {
     /// Panics if `child` already has a parent, if `child == parent`,
     /// or if `parent` is a descendant of `child` (would create a cycle).
     pub fn append_child(&mut self, parent: NodeId, child: NodeId) {
-        assert!(self.nodes[child.index()].parent.is_none(),
-            "append_child: node already has a parent — detach it first");
-        assert!(child != parent, "append_child: cannot append a node to itself");
+        assert!(
+            self.nodes[child.index()].parent.is_none(),
+            "append_child: node already has a parent — detach it first"
+        );
+        assert!(
+            child != parent,
+            "append_child: cannot append a node to itself"
+        );
         // Walk ancestors of parent to ensure child is not among them.
         // This prevents ancestor→descendant cycles.
         {
             let mut ancestor = parent;
             while !ancestor.is_none() {
-                assert!(ancestor != child,
-                    "append_child: parent is a descendant of child — would create cycle");
+                assert!(
+                    ancestor != child,
+                    "append_child: parent is a descendant of child — would create cycle"
+                );
                 ancestor = self.nodes[ancestor.index()].parent;
             }
         }
@@ -177,7 +192,9 @@ impl Document {
 }
 
 impl Default for Document {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 /// Iterator over children of a node.
@@ -271,6 +288,9 @@ mod tests {
         doc.node_mut(node).style.background_color = openui_style::Color::RED;
 
         assert_eq!(doc.node(node).style.display, openui_style::Display::Block);
-        assert_eq!(doc.node(node).style.width, openui_geometry::Length::px(100.0));
+        assert_eq!(
+            doc.node(node).style.width,
+            openui_geometry::Length::px(100.0)
+        );
     }
 }

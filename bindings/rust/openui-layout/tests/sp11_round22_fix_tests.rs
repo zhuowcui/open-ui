@@ -7,9 +7,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::LayoutUnit;
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    Direction, Display, TextAlign, TextAlignLast, TextJustify,
-};
+use openui_style::{Direction, Display, TextAlign, TextAlignLast, TextJustify};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
@@ -214,13 +212,13 @@ fn text_align_last_mapping_logic_comprehensive() {
     // Verify the mapping for every TextAlignLast variant when text-align is Left.
     // Per CSS Text Level 3 §7.3, text-align-last should override regardless of text-align.
     let test_cases = vec![
-        (TextAlignLast::Auto, TextAlign::Left, TextAlign::Left),      // auto → use text-align
-        (TextAlignLast::Start, TextAlign::Left, TextAlign::Start),    // start
-        (TextAlignLast::End, TextAlign::Left, TextAlign::End),        // end
-        (TextAlignLast::Center, TextAlign::Left, TextAlign::Center),  // center
-        (TextAlignLast::Right, TextAlign::Left, TextAlign::Right),    // right
-        (TextAlignLast::Justify, TextAlign::Left, TextAlign::Justify),// justify
-        (TextAlignLast::Left, TextAlign::Left, TextAlign::Left),      // left
+        (TextAlignLast::Auto, TextAlign::Left, TextAlign::Left), // auto → use text-align
+        (TextAlignLast::Start, TextAlign::Left, TextAlign::Start), // start
+        (TextAlignLast::End, TextAlign::Left, TextAlign::End),   // end
+        (TextAlignLast::Center, TextAlign::Left, TextAlign::Center), // center
+        (TextAlignLast::Right, TextAlign::Left, TextAlign::Right), // right
+        (TextAlignLast::Justify, TextAlign::Left, TextAlign::Justify), // justify
+        (TextAlignLast::Left, TextAlign::Left, TextAlign::Left), // left
         // Auto with justify falls back to start
         (TextAlignLast::Auto, TextAlign::Justify, TextAlign::Start),
     ];

@@ -5,8 +5,8 @@
 //! painting. The fragment tree mirrors the element tree but with concrete
 //! sizes and offsets.
 
-use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, BoxStrut};
 use openui_dom::NodeId;
+use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
 use openui_style::ComputedStyle;
 use openui_text::ShapeResult;
 use std::sync::Arc;
@@ -101,6 +101,18 @@ pub struct Fragment {
     /// `visible`. The paint system uses this flag to apply a clip rect before
     /// painting children.
     pub has_overflow_clip: bool,
+
+    /// Multicol fragmentainers clip fragmented content in the block axis while
+    /// still allowing inline overflow to paint into column gaps.
+    pub block_axis_clip_only: bool,
+
+    /// Optional block-axis limit for this fragment's own decorations
+    /// (background/border/shadow), while leaving children free to overflow.
+    pub decoration_paint_block_size: Option<LayoutUnit>,
+
+    /// Allows selected zero-height fragments to paint outlines when their
+    /// formatting context keeps the outline visible.
+    pub paint_zero_block_outline: bool,
 
     /// Out-of-flow candidates that couldn't be resolved at this level.
     ///
@@ -220,6 +232,9 @@ impl Fragment {
             text_combine: None,
             overflow_rect: None,
             has_overflow_clip: false,
+            block_axis_clip_only: false,
+            decoration_paint_block_size: None,
+            paint_zero_block_outline: false,
             oof_candidates: Vec::new(),
             end_margin_strut: openui_geometry::MarginStrut::new(),
             start_margin_strut: openui_geometry::MarginStrut::new(),
@@ -259,6 +274,9 @@ impl Fragment {
             text_combine: None,
             overflow_rect: None,
             has_overflow_clip: false,
+            block_axis_clip_only: false,
+            decoration_paint_block_size: None,
+            paint_zero_block_outline: false,
             oof_candidates: Vec::new(),
             end_margin_strut: openui_geometry::MarginStrut::new(),
             start_margin_strut: openui_geometry::MarginStrut::new(),
@@ -283,10 +301,16 @@ impl Fragment {
     /// The content box size.
     pub fn content_size(&self) -> PhysicalSize {
         PhysicalSize::new(
-            self.size.width - self.border.left - self.border.right
-                - self.padding.left - self.padding.right,
-            self.size.height - self.border.top - self.border.bottom
-                - self.padding.top - self.padding.bottom,
+            self.size.width
+                - self.border.left
+                - self.border.right
+                - self.padding.left
+                - self.padding.right,
+            self.size.height
+                - self.border.top
+                - self.border.bottom
+                - self.padding.top
+                - self.padding.bottom,
         )
     }
 
@@ -300,11 +324,15 @@ impl Fragment {
 
     /// Width of the border-box.
     #[inline]
-    pub fn width(&self) -> LayoutUnit { self.size.width }
+    pub fn width(&self) -> LayoutUnit {
+        self.size.width
+    }
 
     /// Height of the border-box.
     #[inline]
-    pub fn height(&self) -> LayoutUnit { self.size.height }
+    pub fn height(&self) -> LayoutUnit {
+        self.size.height
+    }
 
     /// Set whether this fragment clips overflowing content.
     pub fn set_overflow_clip(&mut self, clip: bool) {
@@ -318,9 +346,8 @@ impl Fragment {
     ///
     /// Mirrors Blink's `PhysicalBoxFragment::ScrollableOverflow()`.
     pub fn scrollable_overflow(&self) -> PhysicalRect {
-        self.overflow_rect.unwrap_or_else(|| {
-            PhysicalRect::new(PhysicalOffset::zero(), self.size)
-        })
+        self.overflow_rect
+            .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 
     /// The border-box rect with offset at zero (local coordinates).

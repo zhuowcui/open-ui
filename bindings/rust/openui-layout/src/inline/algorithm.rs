@@ -11,7 +11,10 @@
 
 use openui_dom::{Document, NodeId};
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
-use openui_style::{BoxDecorationBreak, ComputedStyle, Direction, Display, LineHeight, TextAlign, TextAlignLast, TextJustify, VerticalAlign};
+use openui_style::{
+    BoxDecorationBreak, ComputedStyle, Direction, Display, LineHeight, TextAlign, TextAlignLast,
+    TextJustify, VerticalAlign,
+};
 use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
 use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
@@ -22,7 +25,7 @@ use crate::length_resolver::resolve_margin_or_padding;
 use crate::out_of_flow::OutOfFlowCandidate;
 
 use super::items::{InlineItemResult, InlineItemType};
-use super::items_builder::{style_to_font_description, InlineItemsData, InlineItemsBuilder};
+use super::items_builder::{style_to_font_description, InlineItemsBuilder, InlineItemsData};
 use super::line_breaker::{byte_to_char_offset, LineBreaker};
 use super::line_info::LineInfo;
 use super::line_width::compute_line_availability;
@@ -122,15 +125,9 @@ fn compute_baseline_shift(
         VerticalAlign::Baseline => 0.0,
         VerticalAlign::Sub => font_size / 5.0 + 1.0,
         VerticalAlign::Super => -(font_size / 3.0 + 1.0),
-        VerticalAlign::Middle => {
-            (item_ascent - item_descent) / 2.0 - parent_x_height / 2.0
-        }
-        VerticalAlign::TextTop => {
-            item_ascent - parent_ascent
-        }
-        VerticalAlign::TextBottom => {
-            parent_descent - item_descent
-        }
+        VerticalAlign::Middle => (item_ascent - item_descent) / 2.0 - parent_x_height / 2.0,
+        VerticalAlign::TextTop => item_ascent - parent_ascent,
+        VerticalAlign::TextBottom => parent_descent - item_descent,
         VerticalAlign::Length(px) => -px,
         VerticalAlign::Percentage(pct) => {
             // CSS 2.2 §10.8.1: percentage is of the element's own line-height.
@@ -250,7 +247,10 @@ fn count_expansion_opportunities(line_info: &LineInfo, items_data: &InlineItemsD
 /// Only counts boundaries between text items that are logically adjacent
 /// (separated only by OpenTag/CloseTag). AtomicInline or Control items
 /// break the adjacency, so no boundary gap is counted across them.
-fn count_inter_character_opportunities(line_info: &LineInfo, items_data: &InlineItemsData) -> usize {
+fn count_inter_character_opportunities(
+    line_info: &LineInfo,
+    items_data: &InlineItemsData,
+) -> usize {
     // Collect character counts per contiguous text segment, where segments
     // are separated by AtomicInline or Control items.
     let mut segments: Vec<usize> = Vec::new();
@@ -264,7 +264,9 @@ fn count_inter_character_opportunities(line_info: &LineInfo, items_data: &Inline
             InlineItemType::OpenTag | InlineItemType::CloseTag => {
                 // Tags don't break adjacency — continue accumulating.
             }
-            InlineItemType::AtomicInline | InlineItemType::Control | InlineItemType::BlockInInline => {
+            InlineItemType::AtomicInline
+            | InlineItemType::Control
+            | InlineItemType::BlockInInline => {
                 // Non-text items break adjacency.
                 if current_segment_chars > 0 {
                     segments.push(current_segment_chars);
@@ -382,11 +384,7 @@ fn resolve_inline_end(style: &ComputedStyle, percentage_base: LayoutUnit) -> Lay
 /// Returns a Fragment containing line box fragments as children.
 ///
 /// Blink: `InlineLayoutAlgorithm::Layout()` in `inline_layout_algorithm.cc`.
-pub fn inline_layout(
-    doc: &Document,
-    node_id: NodeId,
-    space: &ConstraintSpace,
-) -> Fragment {
+pub fn inline_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
     let mut items_data = InlineItemsBuilder::collect(doc, node_id);
     let style = &doc.node(node_id).style;
     let base_direction = if style.direction == Direction::Rtl {
@@ -430,7 +428,9 @@ pub fn inline_layout_from_items(
         let mut filtered = items_data.clone();
         filtered.items = items_data.items[item_start..item_end].to_vec();
         // Re-index item indices for OOF children within this range.
-        filtered.oof_children = items_data.oof_children.iter()
+        filtered.oof_children = items_data
+            .oof_children
+            .iter()
             .filter(|o| o.item_index >= item_start && o.item_index < item_end)
             .map(|o| super::items_builder::OofPlaceholder {
                 node_id: o.node_id,
@@ -457,10 +457,7 @@ pub fn inline_layout_from_items(
     // Get block's font metrics for the strut.
     let block_font_desc = style_to_font_description(style);
     let block_font = Font::new(block_font_desc);
-    let block_metrics = block_font
-        .font_metrics()
-        .copied()
-        .unwrap_or_default();
+    let block_metrics = block_font.font_metrics().copied().unwrap_or_default();
 
     // Step 4: Layout each line.
     // Line offsets are relative to the content box (0-based). The caller
@@ -509,7 +506,12 @@ pub fn inline_layout_from_items(
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
                 && style.overflow_x == openui_style::Overflow::Hidden
             {
-                apply_text_overflow_ellipsis(&mut line_info, line_available, &working_items_data, style);
+                apply_text_overflow_ellipsis(
+                    &mut line_info,
+                    line_available,
+                    &working_items_data,
+                    style,
+                );
             }
 
             let line_fragment = create_line_box(
@@ -521,7 +523,11 @@ pub fn inline_layout_from_items(
                 style,
                 &block_metrics,
                 space.percentage_resolution_inline_size,
-                if is_first_line { text_indent } else { LayoutUnit::zero() },
+                if is_first_line {
+                    text_indent
+                } else {
+                    LayoutUnit::zero()
+                },
                 space.percentage_resolution_block_size,
                 &boxes_open_at_line_start,
             );
@@ -552,8 +558,7 @@ pub fn inline_layout_from_items(
             // Offset the line box inline-start when floats intrude from the left.
             let mut positioned_line = line_fragment;
             if line_avail.inline_start > LayoutUnit::zero() {
-                positioned_line.offset.left =
-                    positioned_line.offset.left + line_avail.inline_start;
+                positioned_line.offset.left = positioned_line.offset.left + line_avail.inline_start;
             }
 
             block_offset = block_offset + positioned_line.size.height;
@@ -569,8 +574,12 @@ pub fn inline_layout_from_items(
     // content is the baseline of its first line box. The last baseline is
     // the baseline of its last line box.
     // Blink: InlineLayoutAlgorithm::Layout() — first/last_baseline computation.
-    let first_baseline = line_fragments.first().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
-    let last_baseline = line_fragments.last().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    let first_baseline = line_fragments
+        .first()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    let last_baseline = line_fragments
+        .last()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
 
     // Build the container fragment.
     let border_box_inline = space.available_inline_size;
@@ -632,8 +641,7 @@ fn find_static_block_for_item_index(
         return line_fragments[0].offset.top;
     }
     // Map item_index to a line index proportionally.
-    let line_idx = (item_index * line_fragments.len() / total_items)
-        .min(line_fragments.len() - 1);
+    let line_idx = (item_index * line_fragments.len() / total_items).min(line_fragments.len() - 1);
     line_fragments[line_idx].offset.top
 }
 /// Apply inline fragmentation to a laid-out inline formatting context.
@@ -775,9 +783,13 @@ pub fn apply_inline_fragmentation(
     fragment.size.height = consumed_block_size;
 
     // Update baselines for the truncated set.
-    fragment.first_baseline = fragment.children.first()
+    fragment.first_baseline = fragment
+        .children
+        .first()
         .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
-    fragment.last_baseline = fragment.children.last()
+    fragment.last_baseline = fragment
+        .children
+        .last()
         .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
 
     // Produce break token so the next fragmentainer can resume.
@@ -816,17 +828,19 @@ pub fn resume_inline_from_break_token(
 
     if lines_to_skip >= total_lines {
         // All lines consumed — return empty fragment.
-        let mut empty = Fragment::new_box(full_fragment.node_id, PhysicalSize::new(
-            full_fragment.size.width,
-            LayoutUnit::zero(),
-        ));
+        let mut empty = Fragment::new_box(
+            full_fragment.node_id,
+            PhysicalSize::new(full_fragment.size.width, LayoutUnit::zero()),
+        );
         empty.first_baseline = None;
         empty.last_baseline = None;
         return empty;
     }
 
     // Take the remaining lines and re-offset them to start from 0.
-    let remaining_children: Vec<Fragment> = full_fragment.children.into_iter()
+    let remaining_children: Vec<Fragment> = full_fragment
+        .children
+        .into_iter()
         .skip(lines_to_skip)
         .collect();
 
@@ -836,7 +850,8 @@ pub fn resume_inline_from_break_token(
         LayoutUnit::zero()
     };
 
-    let adjusted_children: Vec<Fragment> = remaining_children.into_iter()
+    let adjusted_children: Vec<Fragment> = remaining_children
+        .into_iter()
         .map(|mut f| {
             f.offset.top = f.offset.top - first_offset;
             f
@@ -857,9 +872,13 @@ pub fn resume_inline_from_break_token(
     resumed_fragment.children = adjusted_children;
 
     // Update baselines.
-    resumed_fragment.first_baseline = resumed_fragment.children.first()
+    resumed_fragment.first_baseline = resumed_fragment
+        .children
+        .first()
         .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
-    resumed_fragment.last_baseline = resumed_fragment.children.last()
+    resumed_fragment.last_baseline = resumed_fragment
+        .children
+        .last()
         .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
 
     // Apply fragmentation again if this fragmentainer also can't hold
@@ -912,10 +931,7 @@ pub fn inline_layout_for_children(
 
     let block_font_desc = style_to_font_description(style);
     let block_font = Font::new(block_font_desc);
-    let block_metrics = block_font
-        .font_metrics()
-        .copied()
-        .unwrap_or_default();
+    let block_metrics = block_font.font_metrics().copied().unwrap_or_default();
 
     let mut line_fragments: Vec<Fragment> = Vec::new();
     let mut block_offset = LayoutUnit::zero();
@@ -962,7 +978,11 @@ pub fn inline_layout_for_children(
                 style,
                 &block_metrics,
                 space.percentage_resolution_inline_size,
-                if is_first_line { text_indent } else { LayoutUnit::zero() },
+                if is_first_line {
+                    text_indent
+                } else {
+                    LayoutUnit::zero()
+                },
                 space.percentage_resolution_block_size,
                 &boxes_open_at_line_start,
             );
@@ -991,8 +1011,7 @@ pub fn inline_layout_for_children(
             // Offset the line box inline-start when floats intrude from the left.
             let mut positioned_line = line_fragment;
             if line_avail.inline_start > LayoutUnit::zero() {
-                positioned_line.offset.left =
-                    positioned_line.offset.left + line_avail.inline_start;
+                positioned_line.offset.left = positioned_line.offset.left + line_avail.inline_start;
             }
 
             block_offset = block_offset + positioned_line.size.height;
@@ -1003,8 +1022,12 @@ pub fn inline_layout_for_children(
 
     let intrinsic_block_size = block_offset;
 
-    let first_baseline = line_fragments.first().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
-    let last_baseline = line_fragments.last().map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    let first_baseline = line_fragments
+        .first()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
+    let last_baseline = line_fragments
+        .last()
+        .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
 
     let border_box_inline = space.available_inline_size;
     let border_box_size = PhysicalSize::new(border_box_inline, intrinsic_block_size);
@@ -1063,14 +1086,18 @@ fn create_line_box(
     // "Line boxes that contain no text, no preserved white space, no inline
     // elements with a non-zero margin, padding, or border, and no other
     // in-flow content must be treated as zero-height line boxes."
-    let line_has_content = line_info.items.iter().any(|item_result| {
-        match item_result.item_type {
+    let line_has_content = line_info
+        .items
+        .iter()
+        .any(|item_result| match item_result.item_type {
             InlineItemType::Text | InlineItemType::AtomicInline => true,
             InlineItemType::OpenTag => {
                 let item = &items_data.items[item_result.item_index];
                 let s = &items_data.styles[item.style_index];
-                s.effective_border_left() > 0 || s.effective_border_right() > 0
-                    || s.effective_border_top() > 0 || s.effective_border_bottom() > 0
+                s.effective_border_left() > 0
+                    || s.effective_border_right() > 0
+                    || s.effective_border_top() > 0
+                    || s.effective_border_bottom() > 0
                     || (s.padding_left.is_fixed() && s.padding_left.value() != 0.0)
                     || (s.padding_right.is_fixed() && s.padding_right.value() != 0.0)
                     || (s.padding_top.is_fixed() && s.padding_top.value() != 0.0)
@@ -1081,8 +1108,7 @@ fn create_line_box(
                     || (s.margin_bottom.is_fixed() && s.margin_bottom.value() != 0.0)
             }
             _ => false,
-        }
-    });
+        });
 
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(
@@ -1113,7 +1139,8 @@ fn create_line_box(
     // Per CSS 2.1 §10.6.1, inline-block/inline-flex/inline-grid establish a new
     // block formatting context. We pre-compute their layout so the result's
     // dimensions are authoritative for both line metrics and fragment creation.
-    let mut atomic_layout_results: Vec<Option<Fragment>> = (0..line_info.items.len()).map(|_| None).collect();
+    let mut atomic_layout_results: Vec<Option<Fragment>> =
+        (0..line_info.items.len()).map(|_| None).collect();
     for (idx, item_result) in line_info.items.iter().enumerate() {
         if item_result.item_type == InlineItemType::AtomicInline {
             let item = &items_data.items[item_result.item_index];
@@ -1160,11 +1187,8 @@ fn create_line_box(
                 let font_desc = style_to_font_description(style);
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
-                let item_lh = compute_line_height_metrics(
-                    &metrics,
-                    &style.line_height,
-                    style.font_size,
-                );
+                let item_lh =
+                    compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
 
                 let element_line_height = match style.line_height {
                     LineHeight::Normal => metrics.int_line_spacing(),
@@ -1230,9 +1254,15 @@ fn create_line_box(
                 };
 
                 // Resolve vertical margins for line box contribution.
-                let margin_top = resolve_margin_or_padding(&style.margin_top, percentage_base).to_f32();
-                let margin_bottom = resolve_margin_or_padding(&style.margin_bottom, percentage_base).to_f32();
+                let margin_top =
+                    resolve_margin_or_padding(&style.margin_top, percentage_base).to_f32();
+                let margin_bottom =
+                    resolve_margin_or_padding(&style.margin_bottom, percentage_base).to_f32();
                 let margin_box_height = item_height + margin_top + margin_bottom;
+                let baseline_from_top = atomic_layout_results[step2_idx]
+                    .as_ref()
+                    .and_then(|result| result.first_baseline)
+                    .map(|baseline| baseline.to_f32());
 
                 match style.vertical_align {
                     VerticalAlign::Top => {
@@ -1290,22 +1320,19 @@ fn create_line_box(
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         let font_ascent = parent_metrics.ascent;
                         line_ascent = line_ascent.max(font_ascent);
-                        line_descent =
-                            line_descent.max((margin_box_height - font_ascent).max(0.0));
+                        line_descent = line_descent.max((margin_box_height - font_ascent).max(0.0));
                     }
                     VerticalAlign::TextBottom => {
                         // Margin-bottom of item aligns with parent inline's font descent.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         let font_descent = parent_metrics.descent;
-                        line_ascent =
-                            line_ascent.max((margin_box_height - font_descent).max(0.0));
+                        line_ascent = line_ascent.max((margin_box_height - font_descent).max(0.0));
                         line_descent = line_descent.max(font_descent);
                     }
                     VerticalAlign::Sub => {
                         // Lowered by sub_offset below the baseline.
                         let sub_offset = style.font_size / 5.0 + 1.0;
-                        line_ascent =
-                            line_ascent.max((margin_box_height - sub_offset).max(0.0));
+                        line_ascent = line_ascent.max((margin_box_height - sub_offset).max(0.0));
                         line_descent = line_descent.max(sub_offset);
                     }
                     VerticalAlign::Super => {
@@ -1316,11 +1343,16 @@ fn create_line_box(
                         line_descent = line_descent.max(0.0);
                     }
                     _ => {
-                        // Baseline-aligned: margin-box bottom sits on baseline.
-                        // For empty inline-blocks: baseline = bottom margin edge.
-                        // Item sits entirely above baseline → 0 descent.
-                        line_ascent = line_ascent.max(margin_box_height);
-                        line_descent = line_descent.max(0.0);
+                        if let Some(baseline) = baseline_from_top {
+                            line_ascent = line_ascent.max(margin_top + baseline);
+                            line_descent =
+                                line_descent.max((item_height - baseline).max(0.0) + margin_bottom);
+                        } else {
+                            // Baseline-aligned: margin-box bottom sits on baseline.
+                            // For empty inline-blocks: baseline = bottom margin edge.
+                            line_ascent = line_ascent.max(margin_box_height);
+                            line_descent = line_descent.max(0.0);
+                        }
                     }
                 }
             }
@@ -1340,8 +1372,7 @@ fn create_line_box(
             }
             // Control: forced breaks have no height contribution.
             // BlockInInline: handled separately in block layout.
-            InlineItemType::Control
-            | InlineItemType::BlockInInline => {}
+            InlineItemType::Control | InlineItemType::BlockInInline => {}
         }
     }
 
@@ -1369,7 +1400,9 @@ fn create_line_box(
 
     // Pre-shape hyphen to include its width in alignment calculations.
     let hyphen_shape_data = if line_info.has_forced_hyphen && !line_info.has_ellipsis {
-        let last_style = line_info.items.last()
+        let last_style = line_info
+            .items
+            .last()
             .map(|r| &items_data.styles[items_data.items[r.item_index].style_index])
             .unwrap_or(block_style);
         let hyphen_font_desc = style_to_font_description(last_style);
@@ -1383,7 +1416,8 @@ fn create_line_box(
         None
     };
 
-    let hyphen_extra_width = hyphen_shape_data.as_ref()
+    let hyphen_extra_width = hyphen_shape_data
+        .as_ref()
         .map(|(_, w, _)| *w)
         .unwrap_or(LayoutUnit::zero());
 
@@ -1533,11 +1567,8 @@ fn create_line_box(
                 // Compute half-leading-adjusted metrics for baseline shift
                 // (CSS 2.2 §10.8.1: text-top/text-bottom/middle use the inline
                 // box, not the content area).
-                let item_lh = compute_line_height_metrics(
-                    &metrics,
-                    &style.line_height,
-                    style.font_size,
-                );
+                let item_lh =
+                    compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
 
                 // Use parent inline's metrics if inside a nested inline.
                 let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
@@ -1567,8 +1598,8 @@ fn create_line_box(
                 };
 
                 // Text top = baseline position - font ascent, adjusted for shift.
-                let text_top = baseline
-                    - LayoutUnit::from_f32_ceil(metrics.ascent - effective_shift);
+                let text_top =
+                    baseline - LayoutUnit::from_f32_ceil(metrics.ascent - effective_shift);
 
                 // Compute sub-range shape result for the line portion.
                 // When text wraps, the item_result's text_range may be a subset
@@ -1595,7 +1626,8 @@ fn create_line_box(
                 // Compute item width, adding justification if applicable.
                 let mut item_width = item_result.inline_size;
                 let mut justified_shape: Option<Arc<ShapeResult>> = None;
-                if should_justify && (justification_per_space > 0.0 || justification_per_char > 0.0) {
+                if should_justify && (justification_per_space > 0.0 || justification_per_char > 0.0)
+                {
                     let text = &items_data.text[item_result.text_range.clone()];
                     // In pre-wrap mode, the last text item's trailing spaces
                     // hang and must not receive justification expansion.
@@ -1606,9 +1638,9 @@ fn create_line_box(
                     let trailing_spaces = if is_last_text
                         && matches!(
                             style_for_item.white_space,
-                            openui_style::WhiteSpace::PreWrap | openui_style::WhiteSpace::BreakSpaces
-                        )
-                    {
+                            openui_style::WhiteSpace::PreWrap
+                                | openui_style::WhiteSpace::BreakSpaces
+                        ) {
                         text.chars().rev().take_while(|c| *c == ' ').count()
                     } else {
                         0
@@ -1622,7 +1654,11 @@ fn create_line_box(
                         // Boundary gap: if there are characters before this item,
                         // add one gap for the boundary between the previous text
                         // item's last char and this item's first char (Issue 4 fix).
-                        let boundary_gap = if inter_char_chars_before > 0 && char_count > 0 { 1 } else { 0 };
+                        let boundary_gap = if inter_char_chars_before > 0 && char_count > 0 {
+                            1
+                        } else {
+                            0
+                        };
                         let total_item_gaps = internal_gaps + boundary_gap;
                         if total_item_gaps > 0 {
                             let extra = justification_per_char * total_item_gaps as f32;
@@ -1641,9 +1677,8 @@ fn create_line_box(
                             // Create justified shape result with modified glyph advances.
                             if let Some(ref sr) = line_shape_result {
                                 let mut justified_sr = sr.sub_range(0, sr.num_characters);
-                                justified_sr.apply_inter_character_justification(
-                                    justification_per_char,
-                                );
+                                justified_sr
+                                    .apply_inter_character_justification(justification_per_char);
                                 justified_shape = Some(Arc::new(justified_sr));
                             }
                         }
@@ -1663,7 +1698,9 @@ fn create_line_box(
                             if let Some(ref sr) = line_shape_result {
                                 let mut justified_sr = sr.sub_range(0, sr.num_characters);
                                 justified_sr.apply_justification(
-                                    justification_per_space, text, trailing_spaces,
+                                    justification_per_space,
+                                    text,
+                                    trailing_spaces,
                                 );
                                 justified_shape = Some(Arc::new(justified_sr));
                             }
@@ -1673,21 +1710,17 @@ fn create_line_box(
 
                 let text_height = LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent);
 
-                let mut text_fragment = Fragment::new_box(item.node_id, PhysicalSize::new(
-                    item_width,
-                    text_height,
-                ));
+                let mut text_fragment =
+                    Fragment::new_box(item.node_id, PhysicalSize::new(item_width, text_height));
                 text_fragment.kind = FragmentKind::Text;
                 // Populate text_content so paint pipeline can use it for
                 // emphasis marks and skip-ink CJK filtering.
-                text_fragment.text_content = Some(
-                    items_data.text[item_result.text_range.clone()].to_string()
-                );
+                text_fragment.text_content =
+                    Some(items_data.text[item_result.text_range.clone()].to_string());
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
                 // Store the baseline offset (distance from fragment top to baseline)
                 // so paint can use it directly instead of recomputing from metrics.
-                text_fragment.baseline_offset =
-                    (baseline - text_top).to_f32();
+                text_fragment.baseline_offset = (baseline - text_top).to_f32();
                 // Use justified shape result if justification was applied,
                 // otherwise use the sub-range shape result for this line portion.
                 text_fragment.shape_result = justified_shape.or(line_shape_result);
@@ -1697,8 +1730,7 @@ fn create_line_box(
                 // it's on the first/last line of that box.
                 if let Some(&(style_idx, is_first)) = inline_box_stack.last() {
                     text_fragment.is_first_for_node = is_first;
-                    text_fragment.is_last_for_node =
-                        !boxes_open_at_line_end.contains(&style_idx);
+                    text_fragment.is_last_for_node = !boxes_open_at_line_end.contains(&style_idx);
                 }
 
                 children.push(text_fragment);
@@ -1753,8 +1785,12 @@ fn create_line_box(
 
                 // Resolve vertical margins (CSS 2.1 §10.8.1: margin box participates in line box).
                 let margin_top_lu = resolve_margin_or_padding(&style.margin_top, percentage_base);
-                let margin_bottom_lu = resolve_margin_or_padding(&style.margin_bottom, percentage_base);
+                let margin_bottom_lu =
+                    resolve_margin_or_padding(&style.margin_bottom, percentage_base);
                 let margin_box_height_lu = margin_top_lu + item_height + margin_bottom_lu;
+                let baseline_from_top = atomic_layout_results[step4_idx]
+                    .as_ref()
+                    .and_then(|result| result.first_baseline);
 
                 let atomic_top = match style.vertical_align {
                     VerticalAlign::Top => {
@@ -1781,7 +1817,8 @@ fn create_line_box(
                         // Bottom margin edge aligns with parent font descent.
                         let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
                         baseline + LayoutUnit::from_f32_ceil(parent_metrics.descent)
-                            - item_height - margin_bottom_lu
+                            - item_height
+                            - margin_bottom_lu
                     }
                     VerticalAlign::Sub => {
                         let shift = LayoutUnit::from_f32(style.font_size / 5.0 + 1.0);
@@ -1813,19 +1850,27 @@ fn create_line_box(
                         baseline - item_height - margin_bottom_lu - shift
                     }
                     _ => {
-                        // Baseline (default): bottom margin edge sits on baseline.
-                        baseline - item_height - margin_bottom_lu
+                        // Baseline (default): align the atomic inline's exported
+                        // baseline when it has one; otherwise fall back to the
+                        // CSS inline-block synthesized bottom-margin baseline.
+                        if let Some(item_baseline) = baseline_from_top {
+                            baseline - item_baseline
+                        } else {
+                            baseline - item_height - margin_bottom_lu
+                        }
                     }
                 };
 
                 // Apply horizontal margins to offset.
                 let margin_left_lu = resolve_margin_or_padding(&style.margin_left, percentage_base);
-                let margin_right_lu = resolve_margin_or_padding(&style.margin_right, percentage_base);
+                let margin_right_lu =
+                    resolve_margin_or_padding(&style.margin_right, percentage_base);
 
                 // Use the pre-computed block_layout result as the atomic fragment,
                 // preserving its computed size, border, padding, margin, and children.
                 // Only fall back to a new empty box when block_layout was not run.
-                let atomic_fragment = if let Some(result) = atomic_layout_results[step4_idx].take() {
+                let atomic_fragment = if let Some(result) = atomic_layout_results[step4_idx].take()
+                {
                     let mut frag = result;
                     // Use block_layout's authoritative width; only override height
                     // and position. block_layout already accounts for border+padding.
@@ -1833,10 +1878,8 @@ fn create_line_box(
                     frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
                 } else {
-                    let mut frag = Fragment::new_box(
-                        item.node_id,
-                        PhysicalSize::new(item_width, item_height),
-                    );
+                    let mut frag =
+                        Fragment::new_box(item.node_id, PhysicalSize::new(item_width, item_height));
                     frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
                 };
@@ -1844,7 +1887,8 @@ fn create_line_box(
                 children.push(atomic_fragment);
                 // Advance by the full margin-box inline size so subsequent
                 // items start at the correct position.
-                inline_offset = inline_offset + margin_left_lu + item_result.inline_size + margin_right_lu;
+                inline_offset =
+                    inline_offset + margin_left_lu + item_result.inline_size + margin_right_lu;
             }
         }
     }
@@ -1865,9 +1909,8 @@ fn create_line_box(
             let hyphen_font = Font::new(hyphen_font_desc);
             hyphen_font.font_metrics().copied().unwrap_or_default()
         };
-        let hyphen_height = LayoutUnit::from_f32_ceil(
-            hyphen_metrics.ascent + hyphen_metrics.descent,
-        );
+        let hyphen_height =
+            LayoutUnit::from_f32_ceil(hyphen_metrics.ascent + hyphen_metrics.descent);
         let hyphen_top = baseline - LayoutUnit::from_f32_ceil(hyphen_metrics.ascent);
 
         let mut hyphen_fragment = Fragment::new_text(
@@ -1882,15 +1925,11 @@ fn create_line_box(
         if block_style.direction == Direction::Rtl {
             // RTL: place hyphen at visual start (left of content), shift content right.
             for child in &mut children {
-                child.offset = PhysicalOffset::new(
-                    child.offset.left + hyphen_width,
-                    child.offset.top,
-                );
+                child.offset =
+                    PhysicalOffset::new(child.offset.left + hyphen_width, child.offset.top);
             }
-            hyphen_fragment.offset = PhysicalOffset::new(
-                text_align_offset + text_indent,
-                hyphen_top,
-            );
+            hyphen_fragment.offset =
+                PhysicalOffset::new(text_align_offset + text_indent, hyphen_top);
             children.insert(0, hyphen_fragment);
         } else {
             hyphen_fragment.offset = PhysicalOffset::new(inline_offset, hyphen_top);
@@ -1913,19 +1952,15 @@ fn create_line_box(
         );
         let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
         let ellipsis_metrics = ellipsis_font.font_metrics().copied().unwrap_or_default();
-        let ellipsis_height = LayoutUnit::from_f32_ceil(
-            ellipsis_metrics.ascent + ellipsis_metrics.descent,
-        );
-        let ellipsis_top = baseline
-            - LayoutUnit::from_f32_ceil(ellipsis_metrics.ascent);
+        let ellipsis_height =
+            LayoutUnit::from_f32_ceil(ellipsis_metrics.ascent + ellipsis_metrics.descent);
+        let ellipsis_top = baseline - LayoutUnit::from_f32_ceil(ellipsis_metrics.ascent);
 
         if line_info.ellipsis_at_start {
             // RTL: place ellipsis at the left edge, shift content right.
             for child in &mut children {
-                child.offset = PhysicalOffset::new(
-                    child.offset.left + ellipsis_width,
-                    child.offset.top,
-                );
+                child.offset =
+                    PhysicalOffset::new(child.offset.left + ellipsis_width, child.offset.top);
             }
             let mut ellipsis_fragment = Fragment::new_text(
                 NodeId::NONE,
@@ -1933,10 +1968,8 @@ fn create_line_box(
                 Arc::new(ellipsis_sr),
                 ellipsis_text.to_string(),
             );
-            ellipsis_fragment.offset = PhysicalOffset::new(
-                text_align_offset + text_indent,
-                ellipsis_top,
-            );
+            ellipsis_fragment.offset =
+                PhysicalOffset::new(text_align_offset + text_indent, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             children.insert(0, ellipsis_fragment);
@@ -1956,10 +1989,10 @@ fn create_line_box(
     }
 
     // Build the line box fragment.
-    let mut line_fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::new(
-        available_width,
-        line_height,
-    ));
+    let mut line_fragment = Fragment::new_box(
+        NodeId::NONE,
+        PhysicalSize::new(available_width, line_height),
+    );
     line_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), block_offset);
     line_fragment.baseline_offset = baseline.to_f32();
     line_fragment.children = children;
@@ -2046,11 +2079,7 @@ fn apply_text_overflow_ellipsis(
     let block_font_desc = style_to_font_description(block_style);
     let block_font = Font::new(block_font_desc);
     let shaper = TextShaper::new();
-    let ellipsis_sr = shaper.shape(
-        "\u{2026}",
-        &block_font,
-        openui_text::TextDirection::Ltr,
-    );
+    let ellipsis_sr = shaper.shape("\u{2026}", &block_font, openui_text::TextDirection::Ltr);
     let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
 
     let target_width = available_width - ellipsis_width;
@@ -2087,18 +2116,12 @@ fn apply_text_overflow_ellipsis(
                 let item = &items_data.items[line_info.items[0].item_index];
                 if let Some(ref sr) = item.shape_result {
                     let line_text = &items_data.text[line_info.items[0].text_range.clone()];
-                    let item_char_start = byte_to_char_offset(
-                        &items_data.text,
-                        item.text_range.start,
-                    );
-                    let portion_char_start = byte_to_char_offset(
-                        &items_data.text,
-                        line_info.items[0].text_range.start,
-                    );
-                    let portion_char_end = byte_to_char_offset(
-                        &items_data.text,
-                        line_info.items[0].text_range.end,
-                    );
+                    let item_char_start =
+                        byte_to_char_offset(&items_data.text, item.text_range.start);
+                    let portion_char_start =
+                        byte_to_char_offset(&items_data.text, line_info.items[0].text_range.start);
+                    let portion_char_end =
+                        byte_to_char_offset(&items_data.text, line_info.items[0].text_range.end);
                     let local_start = portion_char_start - item_char_start;
                     let local_end = portion_char_end - item_char_start;
                     let total_chars = local_end - local_start;
@@ -2115,9 +2138,8 @@ fn apply_text_overflow_ellipsis(
                         if !sr.safe_to_break_before(local_trim) {
                             continue;
                         }
-                        let remaining_width = LayoutUnit::from_f32(
-                            sr.width_for_range(local_trim, local_end),
-                        );
+                        let remaining_width =
+                            LayoutUnit::from_f32(sr.width_for_range(local_trim, local_end));
                         if remaining_width <= item_target {
                             trim_chars = char_count;
                             trim_byte_offset = byte_offset;
@@ -2155,9 +2177,7 @@ fn apply_text_overflow_ellipsis(
         while line_info.used_width > target_width && !line_info.items.is_empty() {
             if let Some(last) = line_info.items.last() {
                 let last_size = last.inline_size;
-                if last_size <= LayoutUnit::zero()
-                    && last.item_type != InlineItemType::Text
-                {
+                if last_size <= LayoutUnit::zero() && last.item_type != InlineItemType::Text {
                     line_info.items.pop();
                     continue;
                 }
@@ -2168,14 +2188,10 @@ fn apply_text_overflow_ellipsis(
                     let item = &items_data.items[last.item_index];
                     if let Some(ref sr) = item.shape_result {
                         let line_text = &items_data.text[last.text_range.clone()];
-                        let item_char_start = byte_to_char_offset(
-                            &items_data.text,
-                            item.text_range.start,
-                        );
-                        let portion_char_start = byte_to_char_offset(
-                            &items_data.text,
-                            last.text_range.start,
-                        );
+                        let item_char_start =
+                            byte_to_char_offset(&items_data.text, item.text_range.start);
+                        let portion_char_start =
+                            byte_to_char_offset(&items_data.text, last.text_range.start);
                         let local_start = portion_char_start - item_char_start;
 
                         // Walk grapheme boundaries from end to find the
@@ -2193,9 +2209,8 @@ fn apply_text_overflow_ellipsis(
                             if !sr.safe_to_break_before(local_trim) {
                                 continue;
                             }
-                            let w = LayoutUnit::from_f32(
-                                sr.width_for_range(local_start, local_trim),
-                            );
+                            let w =
+                                LayoutUnit::from_f32(sr.width_for_range(local_start, local_trim));
                             if w <= item_target {
                                 fit_chars = char_count;
                                 fit_byte_end = byte_offset;
@@ -2210,7 +2225,9 @@ fn apply_text_overflow_ellipsis(
                             let new_text_end = last.text_range.start + fit_byte_end;
                             let old_size = last_size;
 
-                            let last_mut = line_info.items.last_mut()
+                            let last_mut = line_info
+                                .items
+                                .last_mut()
                                 .expect("non-empty: guarded by while-loop condition above");
                             last_mut.inline_size = trimmed_width;
                             last_mut.text_range = last_mut.text_range.start..new_text_end;
@@ -2282,7 +2299,7 @@ mod tests {
         let m = compute_line_height_metrics(
             &metrics,
             &LineHeight::Normal,
-            16.0,  // font_size
+            16.0, // font_size
         );
         // leading = 16 - 14 = 2, half_leading = 1, rest = 1
         assert_eq!(m.ascent, 11.0);
@@ -2296,7 +2313,7 @@ mod tests {
         let m = compute_line_height_metrics(
             &metrics,
             &LineHeight::Number(2.0),
-            16.0,  // font_size
+            16.0, // font_size
         );
         // computed = 16 * 2 = 32, leading = 32 - 14 = 18
         // half_leading = 9, rest = 9
@@ -2307,11 +2324,7 @@ mod tests {
     #[test]
     fn line_height_metrics_length() {
         let metrics = test_metrics(10.0, 4.0, 2.0);
-        let m = compute_line_height_metrics(
-            &metrics,
-            &LineHeight::Length(24.0),
-            16.0,
-        );
+        let m = compute_line_height_metrics(&metrics, &LineHeight::Length(24.0), 16.0);
         // leading = 24 - 14 = 10, half = 5, rest = 5
         assert_eq!(m.ascent, 15.0);
         assert_eq!(m.descent, 9.0);
@@ -2320,11 +2333,7 @@ mod tests {
     #[test]
     fn line_height_metrics_percentage() {
         let metrics = test_metrics(10.0, 4.0, 2.0);
-        let m = compute_line_height_metrics(
-            &metrics,
-            &LineHeight::Percentage(150.0),
-            16.0,
-        );
+        let m = compute_line_height_metrics(&metrics, &LineHeight::Percentage(150.0), 16.0);
         // computed = 16 * 150 / 100 = 24, leading = 10
         assert_eq!(m.ascent, 15.0);
         assert_eq!(m.descent, 9.0);
@@ -2334,11 +2343,7 @@ mod tests {
     fn line_height_half_leading_odd() {
         // Odd leading: sub-pixel precision preserved (no floor/ceil rounding)
         let metrics = test_metrics(10.0, 4.0, 2.0);
-        let m = compute_line_height_metrics(
-            &metrics,
-            &LineHeight::Length(25.0),
-            16.0,
-        );
+        let m = compute_line_height_metrics(&metrics, &LineHeight::Length(25.0), 16.0);
         // leading = 25 - 14 = 11, half = 5.5, rest = 5.5
         assert_eq!(m.ascent, 15.5);
         assert_eq!(m.descent, 9.5);
@@ -2348,26 +2353,28 @@ mod tests {
     fn baseline_shift_baseline() {
         let shift = compute_baseline_shift(
             &VerticalAlign::Baseline,
-            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0,
+            16.0,
+            10.0,
+            4.0,
+            8.0,
+            10.0,
+            4.0,
+            16.0,
         );
         assert_eq!(shift, 0.0);
     }
 
     #[test]
     fn baseline_shift_sub() {
-        let shift = compute_baseline_shift(
-            &VerticalAlign::Sub,
-            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0,
-        );
+        let shift =
+            compute_baseline_shift(&VerticalAlign::Sub, 16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0);
         assert_eq!(shift, 16.0 / 5.0 + 1.0);
     }
 
     #[test]
     fn baseline_shift_super() {
-        let shift = compute_baseline_shift(
-            &VerticalAlign::Super,
-            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0,
-        );
+        let shift =
+            compute_baseline_shift(&VerticalAlign::Super, 16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0);
         assert_eq!(shift, -(16.0 / 3.0 + 1.0));
     }
 
@@ -2377,7 +2384,13 @@ mod tests {
         // element_line_height = 40px, 50% => shift = -(40 * 50 / 100) = -20
         let shift = compute_baseline_shift(
             &VerticalAlign::Percentage(50.0),
-            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 40.0,
+            16.0,
+            10.0,
+            4.0,
+            8.0,
+            10.0,
+            4.0,
+            40.0,
         );
         assert_eq!(shift, -20.0);
     }
@@ -2388,7 +2401,13 @@ mod tests {
         // Use line_spacing = 18.0, 50% => shift = -(18 * 50 / 100) = -9
         let shift = compute_baseline_shift(
             &VerticalAlign::Percentage(50.0),
-            16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 18.0,
+            16.0,
+            10.0,
+            4.0,
+            8.0,
+            10.0,
+            4.0,
+            18.0,
         );
         assert_eq!(shift, -9.0);
     }
@@ -2396,49 +2415,84 @@ mod tests {
     #[test]
     fn text_align_left() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Left, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::zero());
     }
 
     #[test]
     fn text_align_right() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Right, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::from_i32(40));
     }
 
     #[test]
     fn text_align_center() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Center, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset.to_i32(), 20);
     }
 
     #[test]
     fn text_align_start_ltr() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Start, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::zero());
     }
 
     #[test]
     fn text_align_start_rtl() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::Start, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Rtl, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Rtl,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::from_i32(40));
     }
 
     #[test]
     fn text_align_end_ltr() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::End, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::from_i32(40));
     }
 
     #[test]
     fn text_align_end_rtl() {
         let line = make_test_line_info(100.0, 60.0, TextAlign::End, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Rtl, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Rtl,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::zero());
     }
 
@@ -2447,7 +2501,12 @@ mod tests {
         // Justify on the last line falls back to start alignment.
         let mut line = make_test_line_info(100.0, 60.0, TextAlign::Justify, false);
         line.is_last_line = true;
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::zero());
     }
 
@@ -2455,7 +2514,12 @@ mod tests {
     fn text_align_overflow_no_offset() {
         // When content overflows, offset should be 0.
         let line = make_test_line_info(100.0, 150.0, TextAlign::Right, false);
-        let offset = compute_text_align_offset(&line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
+        );
         assert_eq!(offset, LayoutUnit::zero());
     }
 
@@ -2506,12 +2570,7 @@ mod tests {
 
     // ── Helper ───────────────────────────────────────────────────────────
 
-    fn make_test_line_info(
-        available: f32,
-        used: f32,
-        align: TextAlign,
-        is_last: bool,
-    ) -> LineInfo {
+    fn make_test_line_info(available: f32, used: f32, align: TextAlign, is_last: bool) -> LineInfo {
         let mut info = LineInfo::new(LayoutUnit::from_f32(available));
         info.used_width = LayoutUnit::from_f32(used);
         info.text_align = align;
@@ -2530,11 +2589,7 @@ mod tests {
         let shaper = TextShaper::new();
 
         // Measure the ellipsis width with the block font.
-        let ellipsis_sr = shaper.shape(
-            "\u{2026}",
-            &block_font,
-            openui_text::TextDirection::Ltr,
-        );
+        let ellipsis_sr = shaper.shape("\u{2026}", &block_font, openui_text::TextDirection::Ltr);
         let expected_width = LayoutUnit::from_f32(ellipsis_sr.width);
 
         // The ellipsis width should be a positive, reasonable value.
@@ -2550,7 +2605,7 @@ mod tests {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
-        oof_children: Vec::new(),
+            oof_children: Vec::new(),
             block_in_inline: Vec::new(),
         };
 
@@ -2585,12 +2640,12 @@ mod tests {
         let shift_with_half_leading = compute_baseline_shift(
             &VerticalAlign::TextTop,
             16.0,
-            10.0,  // parent_ascent
-            4.0,   // parent_descent
-            8.0,   // parent_x_height
-            15.0,  // item_ascent (half-leading adjusted)
-            9.0,   // item_descent (half-leading adjusted)
-            24.0,  // element_line_height
+            10.0, // parent_ascent
+            4.0,  // parent_descent
+            8.0,  // parent_x_height
+            15.0, // item_ascent (half-leading adjusted)
+            9.0,  // item_descent (half-leading adjusted)
+            24.0, // element_line_height
         );
         // text-top: item_ascent - parent_ascent = 15 - 10 = 5
         assert_eq!(shift_with_half_leading, 5.0);
@@ -2598,7 +2653,9 @@ mod tests {
         let shift_with_raw = compute_baseline_shift(
             &VerticalAlign::TextTop,
             16.0,
-            10.0, 4.0, 8.0,
+            10.0,
+            4.0,
+            8.0,
             10.0, // raw ascent
             4.0,  // raw descent
             24.0,
@@ -2627,7 +2684,7 @@ mod tests {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
-        oof_children: Vec::new(),
+            oof_children: Vec::new(),
             block_in_inline: Vec::new(),
         };
 
@@ -2657,7 +2714,7 @@ mod tests {
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
-        oof_children: Vec::new(),
+            oof_children: Vec::new(),
             block_in_inline: Vec::new(),
         };
 
@@ -2693,10 +2750,7 @@ mod tests {
         doc.node_mut(text).text = Some("Hello".to_string());
         doc.append_child(div, text);
 
-        let space = ConstraintSpace::for_root(
-            LayoutUnit::from_i32(800),
-            LayoutUnit::from_i32(600),
-        );
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
         let fragment = crate::block::block_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
 
@@ -2724,12 +2778,12 @@ mod tests {
         let shift_parent = compute_baseline_shift(
             &VerticalAlign::TextTop,
             12.0,
-            25.0,  // parent inline ascent (larger font)
-            8.0,   // parent inline descent
-            10.0,  // parent inline x_height
-            10.0,  // item ascent
-            3.0,   // item descent
-            14.0,  // element_line_height
+            25.0, // parent inline ascent (larger font)
+            8.0,  // parent inline descent
+            10.0, // parent inline x_height
+            10.0, // item ascent
+            3.0,  // item descent
+            14.0, // element_line_height
         );
         // text-top: item_ascent - parent_ascent = 10 - 25 = -15
         assert_eq!(shift_parent, -15.0);
@@ -2737,7 +2791,7 @@ mod tests {
         let shift_block = compute_baseline_shift(
             &VerticalAlign::TextTop,
             12.0,
-            12.0,  // block ascent (smaller)
+            12.0, // block ascent (smaller)
             4.0,
             6.0,
             10.0,
@@ -2748,8 +2802,10 @@ mod tests {
         assert_eq!(shift_block, -2.0);
 
         // The shift differs when using parent inline vs block metrics.
-        assert_ne!(shift_parent, shift_block,
-            "text-top shift should differ between parent inline (30px) and block (16px)");
+        assert_ne!(
+            shift_parent, shift_block,
+            "text-top shift should differ between parent inline (30px) and block (16px)"
+        );
     }
 
     #[test]
@@ -2759,11 +2815,11 @@ mod tests {
         let shift = compute_baseline_shift(
             &VerticalAlign::Middle,
             12.0,
-            20.0,  // parent ascent
-            5.0,   // parent descent
-            10.0,  // parent x_height
-            8.0,   // item ascent
-            3.0,   // item descent
+            20.0, // parent ascent
+            5.0,  // parent descent
+            10.0, // parent x_height
+            8.0,  // item ascent
+            3.0,  // item descent
             14.0,
         );
         // middle: (8 - 3)/2 - 10/2 = 2.5 - 5.0 = -2.5
@@ -2802,10 +2858,7 @@ mod tests {
         doc.node_mut(inner_text).style.vertical_align = VerticalAlign::TextTop;
         doc.append_child(outer_span, inner_text);
 
-        let space = ConstraintSpace::for_root(
-            LayoutUnit::from_i32(800),
-            LayoutUnit::from_i32(600),
-        );
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
         let fragment = crate::block::block_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "Should have line boxes");
@@ -2879,15 +2932,15 @@ mod tests {
         doc.node_mut(inline_block).style.height = openui_geometry::Length::px(30.0);
         doc.append_child(div, inline_block);
 
-        let space = ConstraintSpace::for_root(
-            LayoutUnit::from_i32(400),
-            LayoutUnit::from_i32(600),
-        );
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
         let fragment = crate::block::block_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "should have line boxes");
         let line = &div_frag.children[0];
-        assert!(!line.children.is_empty(), "line should have atomic inline child");
+        assert!(
+            !line.children.is_empty(),
+            "line should have atomic inline child"
+        );
         let atomic = &line.children[0];
         // Width should be 80px from block_layout, not overridden.
         assert!(
@@ -2921,10 +2974,7 @@ mod tests {
         doc.node_mut(inline_block).style.border_right_style = openui_style::BorderStyle::Solid;
         doc.append_child(div, inline_block);
 
-        let space = ConstraintSpace::for_root(
-            LayoutUnit::from_i32(400),
-            LayoutUnit::from_i32(600),
-        );
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
         let fragment = crate::block::block_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         let line = &div_frag.children[0];
@@ -2959,15 +3009,15 @@ mod tests {
         doc.node_mut(inline_block).style.height = openui_geometry::Length::percent(50.0);
         doc.append_child(div, inline_block);
 
-        let space = ConstraintSpace::for_root(
-            LayoutUnit::from_i32(400),
-            LayoutUnit::from_i32(600),
-        );
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
         let fragment = crate::block::block_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "should have line boxes");
         let line = &div_frag.children[0];
-        assert!(!line.children.is_empty(), "line should have the inline-block");
+        assert!(
+            !line.children.is_empty(),
+            "line should have the inline-block"
+        );
         let atomic = &line.children[0];
         // Height should be 50% of 200 = 100px.
         let h = atomic.size.height.to_f32();
@@ -2998,16 +3048,16 @@ mod tests {
         doc.node_mut(inline_block).style.height = openui_geometry::Length::percent(50.0);
         doc.append_child(div, inline_block);
 
-        let space = ConstraintSpace::for_root(
-            LayoutUnit::from_i32(400),
-            LayoutUnit::max(),
-        );
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::max());
         let fragment = crate::block::block_layout(&doc, vp, &space);
         let div_frag = &fragment.children[0];
         assert!(!div_frag.children.is_empty(), "should have line boxes");
         // Just verify it doesn't crash/panic with indefinite containing block.
         let line = &div_frag.children[0];
-        assert!(!line.children.is_empty(), "line should have the inline-block");
+        assert!(
+            !line.children.is_empty(),
+            "line should have the inline-block"
+        );
     }
 
     // ── Hang width + alignment tests ─────────────────────────────────
@@ -3023,11 +3073,17 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(20.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Ltr,
+            TextAlignLast::Auto,
         );
         // remaining = 200 - 100 = 100 → right-align offset = 100
-        assert_eq!(offset, LayoutUnit::from_i32(100),
-            "right-align should use used_width (not used_width + hang_width)");
+        assert_eq!(
+            offset,
+            LayoutUnit::from_i32(100),
+            "right-align should use used_width (not used_width + hang_width)"
+        );
     }
 
     #[test]
@@ -3036,11 +3092,17 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(10.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Ltr,
+            TextAlignLast::Auto,
         );
         // remaining = 200 - 80 = 120 → center offset = 60
-        assert_eq!(offset.to_i32(), 60,
-            "center-align should use used_width (excluding hang_width)");
+        assert_eq!(
+            offset.to_i32(),
+            60,
+            "center-align should use used_width (excluding hang_width)"
+        );
     }
 
     #[test]
@@ -3049,10 +3111,16 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(30.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Ltr,
+            TextAlignLast::Auto,
         );
-        assert_eq!(offset, LayoutUnit::zero(),
-            "left-align offset is always 0 regardless of hang_width");
+        assert_eq!(
+            offset,
+            LayoutUnit::zero(),
+            "left-align offset is always 0 regardless of hang_width"
+        );
     }
 
     #[test]
@@ -3061,11 +3129,17 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(15.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Rtl, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Rtl,
+            TextAlignLast::Auto,
         );
         // RTL start = right-align: remaining = 200 - 100 = 100
-        assert_eq!(offset, LayoutUnit::from_i32(100),
-            "RTL start-align with hang_width");
+        assert_eq!(
+            offset,
+            LayoutUnit::from_i32(100),
+            "RTL start-align with hang_width"
+        );
     }
 
     #[test]
@@ -3074,11 +3148,17 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(25.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Ltr,
+            TextAlignLast::Auto,
         );
         // LTR end = right-align: remaining = 200 - 100 = 100
-        assert_eq!(offset, LayoutUnit::from_i32(100),
-            "LTR end-align with hang_width");
+        assert_eq!(
+            offset,
+            LayoutUnit::from_i32(100),
+            "LTR end-align with hang_width"
+        );
     }
 
     #[test]
@@ -3087,11 +3167,17 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(20.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Ltr,
+            TextAlignLast::Auto,
         );
         // Justify offset is always 0 (justification done by space expansion).
-        assert_eq!(offset, LayoutUnit::zero(),
-            "justify offset is 0 regardless of hang_width");
+        assert_eq!(
+            offset,
+            LayoutUnit::zero(),
+            "justify offset is 0 regardless of hang_width"
+        );
     }
 
     #[test]
@@ -3101,11 +3187,17 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(10.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(200), Direction::Ltr, TextAlignLast::Center,
+            &line,
+            LayoutUnit::from_i32(200),
+            Direction::Ltr,
+            TextAlignLast::Center,
         );
         // Last line with text-align-last: center; remaining = 200 - 80 = 120; offset = 60
-        assert_eq!(offset.to_i32(), 60,
-            "text-align-last: center with hang_width on last line");
+        assert_eq!(
+            offset.to_i32(),
+            60,
+            "text-align-last: center with hang_width on last line"
+        );
     }
 
     #[test]
@@ -3116,10 +3208,16 @@ mod tests {
         line.hang_width = LayoutUnit::from_f32(20.0);
 
         let offset = compute_text_align_offset(
-            &line, LayoutUnit::from_i32(100), Direction::Ltr, TextAlignLast::Auto,
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Ltr,
+            TextAlignLast::Auto,
         );
         // remaining = 100 - 90 = 10 → still positive → offset = 10
-        assert_eq!(offset, LayoutUnit::from_i32(10),
-            "hang_width overflow should not affect alignment");
+        assert_eq!(
+            offset,
+            LayoutUnit::from_i32(10),
+            "hang_width overflow should not affect alignment"
+        );
     }
 }

@@ -29,13 +29,8 @@ fn space(width: i32, height: i32) -> ConstraintSpace {
 
 fn layout_text(texts: &[&str], width: i32) -> Fragment {
     let (doc, block) = make_text_block(&texts, width);
-    let sp = ConstraintSpace::for_block_child(
-        lu_i(width),
-        lu_i(600),
-        lu_i(width),
-        lu_i(600),
-        false,
-    );
+    let sp =
+        ConstraintSpace::for_block_child(lu_i(width), lu_i(600), lu_i(width), lu_i(600), false);
     inline_layout(&doc, block, &sp)
 }
 
@@ -152,13 +147,8 @@ fn layout_text_with_block_style(
         doc.append_child(block, t);
     }
 
-    let sp = ConstraintSpace::for_block_child(
-        lu_i(width),
-        lu_i(600),
-        lu_i(width),
-        lu_i(600),
-        false,
-    );
+    let sp =
+        ConstraintSpace::for_block_child(lu_i(width), lu_i(600), lu_i(width), lu_i(600), false);
     inline_layout(&doc, block, &sp)
 }
 
@@ -182,13 +172,8 @@ fn layout_text_with_text_style(
         doc.append_child(block, t);
     }
 
-    let sp = ConstraintSpace::for_block_child(
-        lu_i(width),
-        lu_i(600),
-        lu_i(width),
-        lu_i(600),
-        false,
-    );
+    let sp =
+        ConstraintSpace::for_block_child(lu_i(width), lu_i(600), lu_i(width), lu_i(600), false);
     inline_layout(&doc, block, &sp)
 }
 
@@ -654,11 +639,7 @@ fn adv_multi_line_three_lines_y_increases() {
         .iter()
         .filter(|c| c.kind == FragmentKind::Box)
         .collect();
-    assert!(
-        lines.len() >= 3,
-        "Expected >= 3 lines, got {}",
-        lines.len()
-    );
+    assert!(lines.len() >= 3, "Expected >= 3 lines, got {}", lines.len());
     for i in 1..lines.len() {
         assert!(
             lines[i].offset.top > lines[i - 1].offset.top,
@@ -699,10 +680,7 @@ fn adv_multi_line_adjacent_lines() {
 #[test]
 fn adv_multi_line_same_height_same_font() {
     // All lines with the same font should have identical heights.
-    let frag = layout_text(
-        &["Hello world this text wraps to many lines nicely"],
-        60,
-    );
+    let frag = layout_text(&["Hello world this text wraps to many lines nicely"], 60);
     let heights: Vec<_> = frag
         .children
         .iter()
@@ -741,10 +719,7 @@ fn adv_multi_line_text_fragments_on_different_lines() {
 #[test]
 fn adv_multi_line_count_matches_expected() {
     // Long text in a narrow container should produce multiple lines.
-    let frag = layout_text(
-        &["Hello world this is a long sentence with many words"],
-        80,
-    );
+    let frag = layout_text(&["Hello world this is a long sentence with many words"], 80);
     let lines = count_line_boxes(&frag);
     assert!(
         lines >= 3,
@@ -1045,8 +1020,7 @@ fn adv_text_indent_with_center_alignment() {
     assert_ne!(
         t1[0].offset.left, t2[0].offset.left,
         "Center+indent ({:?}) should differ from center-only ({:?})",
-        t2[0].offset.left,
-        t1[0].offset.left
+        t2[0].offset.left, t1[0].offset.left
     );
 }
 

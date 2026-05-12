@@ -17,6 +17,7 @@
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalSize};
 use openui_layout::block::block_layout;
+use openui_layout::fragmentation::{BreakToken, InlineBreakToken};
 use openui_layout::inline::algorithm::{
     apply_inline_fragmentation, inline_layout, resume_inline_from_break_token,
 };
@@ -33,10 +34,9 @@ use openui_layout::inline::initial_letter::{
     create_initial_letter_style, line_in_exclusion_zone, validate_initial_letter,
 };
 use openui_layout::inline::score_line_breaker::{
-    balance_score, candidates_from_word_widths, requires_scoring, score_line_break,
-    BreakCandidate, FitnessClass,
+    balance_score, candidates_from_word_widths, requires_scoring, score_line_break, BreakCandidate,
+    FitnessClass,
 };
-use openui_layout::fragmentation::{BreakToken, InlineBreakToken};
 use openui_layout::intrinsic_sizing::compute_intrinsic_block_sizes;
 use openui_layout::ConstraintSpace;
 use openui_layout::Fragment;
@@ -323,10 +323,7 @@ fn wpt_float_tall_pushes_text_below() {
     let frag = block_layout(&doc, vp, &space(200, 400));
     let container = &frag.children[0];
     // Float takes nearly all width; text should be pushed alongside or below
-    assert!(
-        container.children.len() >= 2,
-        "Float + text fragment(s)"
-    );
+    assert!(container.children.len() >= 2, "Float + text fragment(s)");
 }
 
 #[test]
@@ -516,12 +513,18 @@ fn wpt_multi_line_span_first_not_last() {
     if div_frag.children.len() >= 2 {
         let first_line = &div_frag.children[0];
         if let Some(t) = first_line.children.first() {
-            assert!(t.is_first_for_node, "First line text should be is_first_for_node");
+            assert!(
+                t.is_first_for_node,
+                "First line text should be is_first_for_node"
+            );
         }
         let last_idx = div_frag.children.len() - 1;
         let last_line = &div_frag.children[last_idx];
         if let Some(t) = last_line.children.last() {
-            assert!(t.is_last_for_node, "Last line text should be is_last_for_node");
+            assert!(
+                t.is_last_for_node,
+                "Last line text should be is_last_for_node"
+            );
         }
     }
 }
@@ -879,7 +882,11 @@ fn wpt_multiple_oof_in_inline_all_placed() {
         .iter()
         .filter(|c| c.node_id == abs1 || c.node_id == abs2)
         .count();
-    assert!(oof_count >= 2, "Both OOF should be placed, got {}", oof_count);
+    assert!(
+        oof_count >= 2,
+        "Both OOF should be placed, got {}",
+        oof_count
+    );
 }
 
 #[test]
@@ -1324,7 +1331,11 @@ fn wpt_intrinsic_wrapping_min_ge_max() {
     doc.node_mut(div).style.display = Display::Block;
     doc.node_mut(div).style.font_size = 16.0;
     doc.append_child(vp, div);
-    add_text(&mut doc, div, "This sentence wraps at different widths producing different heights");
+    add_text(
+        &mut doc,
+        div,
+        "This sentence wraps at different widths producing different heights",
+    );
     let sizes = compute_intrinsic_block_sizes(&doc, div);
     assert!(
         sizes.min_content_block_size >= sizes.max_content_block_size,
@@ -1556,7 +1567,10 @@ fn wpt_first_letter_cjk() {
 #[test]
 fn wpt_first_letter_metrics() {
     let m = FirstLetterMetrics::from_font_size(36.0);
-    assert!((m.height - (m.ascent + m.descent)).abs() < 0.01, "height = ascent + descent");
+    assert!(
+        (m.height - (m.ascent + m.descent)).abs() < 0.01,
+        "height = ascent + descent"
+    );
     assert!(m.ascent > 0.0);
     assert!(m.width > 0.0);
 }
@@ -1654,7 +1668,10 @@ fn wpt_text_wrap_enum_methods() {
 
 #[test]
 fn wpt_drop_cap_3_lines() {
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
     assert_eq!(layout.letter_height, lu(60.0));
     assert_eq!(layout.computed_font_size, 48.0);
@@ -1666,7 +1683,10 @@ fn wpt_drop_cap_3_lines() {
 
 #[test]
 fn wpt_raised_cap_3_lines_sink_1() {
-    let il = InitialLetter { size: 3.0, sink: Some(1.0) };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: Some(1.0),
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
     assert_eq!(layout.letter_height, lu(60.0));
     assert_eq!(layout.block_offset, lu(-40.0));
@@ -1676,7 +1696,10 @@ fn wpt_raised_cap_3_lines_sink_1() {
 
 #[test]
 fn wpt_drop_cap_2_lines() {
-    let il = InitialLetter { size: 2.0, sink: None };
+    let il = InitialLetter {
+        size: 2.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 24.0, 16.0);
     assert_eq!(layout.letter_height, lu(48.0));
     assert_eq!(layout.computed_font_size, 32.0);
@@ -1686,7 +1709,10 @@ fn wpt_drop_cap_2_lines() {
 
 #[test]
 fn wpt_initial_letter_exclusion_rect() {
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
     let margin = lu(4.0);
     let (start, end, bstart, bend) = compute_exclusion_rect(&layout, margin);
@@ -1699,13 +1725,26 @@ fn wpt_initial_letter_exclusion_rect() {
 #[test]
 fn wpt_initial_letter_line_exclusion_detection() {
     assert!(line_in_exclusion_zone(lu(0.0), lu(20.0), lu(0.0), lu(60.0)));
-    assert!(line_in_exclusion_zone(lu(40.0), lu(20.0), lu(0.0), lu(60.0)));
-    assert!(!line_in_exclusion_zone(lu(60.0), lu(20.0), lu(0.0), lu(60.0)));
+    assert!(line_in_exclusion_zone(
+        lu(40.0),
+        lu(20.0),
+        lu(0.0),
+        lu(60.0)
+    ));
+    assert!(!line_in_exclusion_zone(
+        lu(60.0),
+        lu(20.0),
+        lu(0.0),
+        lu(60.0)
+    ));
 }
 
 #[test]
 fn wpt_initial_letter_available_width() {
-    assert_eq!(available_width_with_exclusion(lu(300.0), lu(50.0)), lu(250.0));
+    assert_eq!(
+        available_width_with_exclusion(lu(300.0), lu(50.0)),
+        lu(250.0)
+    );
     assert_eq!(
         available_width_with_exclusion(lu(30.0), lu(50.0)),
         lu(0.0),
@@ -1730,16 +1769,25 @@ fn wpt_initial_letter_style_default_none() {
 
 #[test]
 fn wpt_initial_letter_effective_sink() {
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     assert_eq!(il.effective_sink(), 3.0);
-    let il2 = InitialLetter { size: 3.0, sink: Some(2.0) };
+    let il2 = InitialLetter {
+        size: 3.0,
+        sink: Some(2.0),
+    };
     assert_eq!(il2.effective_sink(), 2.0);
 }
 
 #[test]
 fn wpt_initial_letter_create_style() {
     let base = ComputedStyle::initial();
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
     let style = create_initial_letter_style(&base, &layout);
     assert_eq!(style.font_size, 48.0);
@@ -1814,7 +1862,8 @@ fn wpt_integration_break_token_inline_variant() {
 fn wpt_integration_multi_fragmentainer() {
     let frag = make_fake_lines(8, 20.0, 200.0);
     // First fragmentainer: 60px → 3 lines
-    let first = apply_inline_fragmentation(clone_frag(&frag), lu(60.0), LayoutUnit::zero(), 0, 1, 1);
+    let first =
+        apply_inline_fragmentation(clone_frag(&frag), lu(60.0), LayoutUnit::zero(), 0, 1, 1);
     assert_eq!(first.children.len(), 3);
     let tok1 = match &first.break_token {
         Some(BreakToken::Inline(t)) => t.clone(),

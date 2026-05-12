@@ -23,25 +23,70 @@ tools/accountability/
 ## Quick Start
 
 ```bash
-# Generate the honest status report
-python3 tools/accountability/report.py
+# Build the renderer used by WPT comparison
+cd bindings/rust
+cargo build --release --package pixel-compare
+cd ../..
 
-# Detailed breakdown by area
-python3 tools/accountability/report.py --area sp11
-python3 tools/accountability/report.py --area sp12
-python3 tools/accountability/report.py --area sp13
+# Run the full WPT comparison set
+LD_LIBRARY_PATH="$PWD/chrome/linux-147.0.7727.50/chrome-linux64" \
+  python3 -u tools/accountability/run_all_pixel_comparisons.py 'wpt/'
 
-# List what's not implemented
-python3 tools/accountability/report.py --not-implemented
+# Regenerate tracking artifacts
+python3 tools/accountability/generate_wpt_mapping.py
+python3 tools/accountability/generate_sp12_5_csv.py
 
-# List what hasn't been pixel-compared
-python3 tools/accountability/report.py --not-compared
-
-# Machine-readable CSV output
-python3 tools/accountability/report.py --csv
+# Verify all accountability invariants
+python3 tools/accountability/audit.py
 ```
 
+Current verified snapshot:
+
+| Metric | Value |
+|---|---:|
+| Chromium SP12-scope inventory rows | 7673 |
+| Ported/runnable WPT tests | 3406 |
+| Runnable passes | 2430 |
+| Runnable failures | 974 |
+| Runnable render/diff errors | 2 |
+| Unported but explicitly categorized rows | 4267 |
+| Generic `not_ported` bucket rows | 0 |
+| `sp12_layout_bug` rows | 0 |
+
 ## Data Files
+
+### WPT Mapping (`data/wpt_mapping.csv`)
+
+Full Chromium SP12-scope inventory. Each row is one Chromium WPT file, whether or
+not it has a runnable Rust port.
+
+| Column | Description |
+|--------|-------------|
+| `chromium_test_path` | Path relative to Chromium's external WPT CSS directory |
+| `test_name` | Flattened test name used by the Rust WPT registry |
+| `sp_area` | Area such as `css_flexbox`, `css_backgrounds`, or `css_overflow` |
+| `ported` | `yes` for runnable Rust tests, `no` for explicitly deferred tests |
+| `our_test_id` | `wpt/...` test id for ported rows |
+| `pixel_result` | `pass` or `fail` for ported rows |
+| `mismatch_pct` | Pixel mismatch percentage for ported rows |
+| `failure_category` | Explicit owning category for failing or unported rows |
+| `dependency` | Human-readable dependency label |
+| `notes` | Porter rejection reason or additional tracking note |
+
+`not_ported` is not an acceptable long-term category. Unported rows must be assigned
+to named categories such as `needs_javascript`, `needs_text`, `sp13_fragmentation`,
+`needs_grid`, or `needs_table_layout`.
+
+### Pixel Summary (`data/pixel_comparison/results/summary.json`)
+
+Authoritative status for the runnable generated Rust WPT tests. Focused runs overwrite
+this file, so save and restore it when probing a subset.
+
+### Deferred Runnable Tests (`data/sp12_5_deferred.csv`)
+
+Generated list of failing runnable tests whose remaining dependencies are owned by
+another SP/future feature. This CSV intentionally excludes unported rows because they
+do not have runnable pixel results yet.
 
 ### Chromium Test Inventory (`data/chromium_tests/*.csv`)
 
@@ -86,20 +131,22 @@ One CSV per sprint area. Each row = one testable CSS feature variant.
 ## Pixel Comparison Pipeline
 
 ```bash
-# Run pixel comparison for all HTML test files
-./tools/accountability/run_pixel_comparison.sh --all
+# Full run
+LD_LIBRARY_PATH="$PWD/chrome/linux-147.0.7727.50/chrome-linux64" \
+  python3 -u tools/accountability/run_all_pixel_comparisons.py 'wpt/'
 
-# Run and update feature CSVs automatically
-./tools/accountability/run_pixel_comparison.sh --update-csv
-
-# Compare a single HTML file
-./tools/accountability/run_pixel_comparison.sh data/pixel_comparison/html_tests/sp11/text-decoration-line_underline.html
+# Focused prefix run; remember this overwrites summary.json
+cp tools/accountability/data/pixel_comparison/results/summary.json /tmp/summary.json
+rm -f tools/accountability/data/pixel_comparison/results/<test-id>/result.json
+LD_LIBRARY_PATH="$PWD/chrome/linux-147.0.7727.50/chrome-linux64" \
+  python3 -u tools/accountability/run_all_pixel_comparisons.py '<prefix>'
+cp /tmp/summary.json tools/accountability/data/pixel_comparison/results/summary.json
 ```
 
 **Requirements:**
 - Chrome binary (set `CHROME_BIN` env var or build from `~/chromium/src/`)
 - Pillow: `pip install Pillow`
-- Our render binary: `cd bindings/rust && cargo build --bin pixel_compare`
+- Our render binary: `cd bindings/rust && cargo build --release --package pixel-compare`
 
 ## How It Prevents False Claims
 
@@ -108,6 +155,8 @@ One CSV per sprint area. Each row = one testable CSS feature variant.
 3. **Pixel comparison requires actual PNGs** — pass/fail is computed, not self-reported
 4. **Report reads CSVs directly** — no way to claim progress without data backing it
 5. **All data is version-controlled** — audit trail in git history
+6. **Generic buckets fail review** — unported tests need named dependency categories
+7. **Audit is the gate** — pass/fail claims are not accepted without `audit.py`
 
 ## Regenerating Data
 
@@ -115,5 +164,7 @@ One CSV per sprint area. Each row = one testable CSS feature variant.
 # Re-extract Chromium test lists (if Chromium source updated)
 ./tools/accountability/extract_chromium_tests.sh
 
-# Feature matrices are manually maintained — edit CSVs directly
+# Regenerate WPT mapping and deferred docs from current summary/templates
+python3 tools/accountability/generate_wpt_mapping.py
+python3 tools/accountability/generate_sp12_5_csv.py
 ```

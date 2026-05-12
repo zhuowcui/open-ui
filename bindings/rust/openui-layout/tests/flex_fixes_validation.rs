@@ -10,15 +10,17 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::{flex_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    BoxSizing, ContentAlignment, ContentDistribution, ContentPosition, Display,
-    FlexDirection, FlexWrap, ItemAlignment, ItemPosition, Overflow,
+    BoxSizing, ContentAlignment, ContentDistribution, ContentPosition, Display, FlexDirection,
+    FlexWrap, ItemAlignment, ItemPosition, Overflow,
 };
 
 // ═══════════════════════════════════════════════════════════════
 // Helpers
 // ═══════════════════════════════════════════════════════════════
 
-fn lu(v: i32) -> LayoutUnit { LayoutUnit::from_i32(v) }
+fn lu(v: i32) -> LayoutUnit {
+    LayoutUnit::from_i32(v)
+}
 
 fn make_flex(doc: &mut Document, w: i32, h: i32) -> NodeId {
     let c = doc.create_node(ElementTag::Div);
@@ -245,7 +247,7 @@ fn align_stretch_fills_line_cross_size() {
     let c = make_flex(&mut doc, 300, 100);
     // Auto-height item (default stretch)
     let _item = add_h(&mut doc, c, 0); // auto height by giving 0 explicitly
-    // Actually, let's use a truly auto-height item
+                                       // Actually, let's use a truly auto-height item
     let item = doc.create_node(ElementTag::Div);
     {
         let s = doc.node_mut(item).style_mut();
@@ -444,9 +446,9 @@ fn column_wrap_line_cross_offset() {
     }
     doc.append_child(doc.root(), c);
 
-    add(&mut doc, c, 50, 60);  // col 1
-    add(&mut doc, c, 60, 60);  // col 1 (50+60=110 > 100, wraps) → col 2
-    add(&mut doc, c, 70, 60);  // col 3
+    add(&mut doc, c, 50, 60); // col 1
+    add(&mut doc, c, 60, 60); // col 1 (50+60=110 > 100, wraps) → col 2
+    add(&mut doc, c, 70, 60); // col 3
 
     let f = lay(&doc, c, 400, 100);
     // Col 1: item0 (w=50), cross_offset=0
@@ -723,7 +725,7 @@ fn gap_with_wrap_both_gaps() {
     // 90+10+90=190 <= 200 → items 0,1 on line 1. Item 2 wraps.
     assert_eq!(f.children[0].offset.left, lu(0));
     assert_eq!(f.children[1].offset.left, lu(100)); // 90 + 10 gap
-    // Row gap between lines
+                                                    // Row gap between lines
     assert_eq!(f.children[2].offset.top, lu(55)); // 50 + 5 gap
 }
 

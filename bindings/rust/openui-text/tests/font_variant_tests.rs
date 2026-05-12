@@ -31,7 +31,10 @@ fn lacks(features: &[FontFeature], tag: &[u8; 4]) -> bool {
 #[test]
 fn t01_default_description_produces_no_features() {
     let features = features_for(|_| {});
-    assert!(features.is_empty(), "Default description should emit no features");
+    assert!(
+        features.is_empty(),
+        "Default description should emit no features"
+    );
 }
 
 // ── 2–13. font-variant-ligatures ────────────────────────────────────────
@@ -359,7 +362,10 @@ fn t44_alternates_normal_no_features() {
 #[test]
 fn t45_explicit_feature_settings_appended() {
     let f = features_for(|d| {
-        d.feature_settings.push(FontFeature { tag: *b"kern", value: 0 });
+        d.feature_settings.push(FontFeature {
+            tag: *b"kern",
+            value: 0,
+        });
     });
     assert!(has(&f, b"kern", 0));
     assert_eq!(f.len(), 1);
@@ -369,10 +375,14 @@ fn t45_explicit_feature_settings_appended() {
 fn t46_explicit_settings_override_variant_last_wins() {
     let f = features_for(|d| {
         d.variant_caps = FontVariantCaps::SmallCaps; // emits "smcp" on
-        d.feature_settings.push(FontFeature { tag: *b"smcp", value: 0 }); // overrides off
+        d.feature_settings.push(FontFeature {
+            tag: *b"smcp",
+            value: 0,
+        }); // overrides off
     });
     // Both present; explicit comes after variant (HarfBuzz last-wins).
-    let smcp_entries: Vec<_> = f.iter()
+    let smcp_entries: Vec<_> = f
+        .iter()
         .enumerate()
         .filter(|(_, feat)| &feat.tag == b"smcp")
         .collect();
@@ -385,9 +395,18 @@ fn t46_explicit_settings_override_variant_last_wins() {
 #[test]
 fn t47_multiple_explicit_features() {
     let f = features_for(|d| {
-        d.feature_settings.push(FontFeature { tag: *b"liga", value: 0 });
-        d.feature_settings.push(FontFeature { tag: *b"kern", value: 1 });
-        d.feature_settings.push(FontFeature { tag: *b"smcp", value: 1 });
+        d.feature_settings.push(FontFeature {
+            tag: *b"liga",
+            value: 0,
+        });
+        d.feature_settings.push(FontFeature {
+            tag: *b"kern",
+            value: 1,
+        });
+        d.feature_settings.push(FontFeature {
+            tag: *b"smcp",
+            value: 1,
+        });
     });
     assert_eq!(f.len(), 3);
     assert!(has(&f, b"liga", 0));
@@ -507,7 +526,10 @@ fn t52_feature_order_ligatures_caps_numeric_eastasian_position_alternates_explic
         d.variant_east_asian.ruby = true;
         d.variant_position = FontVariantPosition::Sub;
         d.variant_alternates = FontVariantAlternates::HistoricalForms;
-        d.feature_settings.push(FontFeature { tag: *b"kern", value: 1 });
+        d.feature_settings.push(FontFeature {
+            tag: *b"kern",
+            value: 1,
+        });
     });
     let tags: Vec<[u8; 4]> = f.iter().map(|feat| feat.tag).collect();
     assert_eq!(
@@ -521,7 +543,10 @@ fn t53_ligatures_none_plus_explicit_liga_on() {
     // font-variant-ligatures: none + font-feature-settings: "liga" 1
     let f = features_for(|d| {
         d.variant_ligatures = FontVariantLigatures::none();
-        d.feature_settings.push(FontFeature { tag: *b"liga", value: 1 });
+        d.feature_settings.push(FontFeature {
+            tag: *b"liga",
+            value: 1,
+        });
     });
     // The variant disables liga (0), but explicit re-enables it (1).
     // Both present; explicit comes last.
@@ -535,7 +560,10 @@ fn t53_ligatures_none_plus_explicit_liga_on() {
 
 #[test]
 fn t54_ligatures_default_is_normal() {
-    assert_eq!(FontVariantLigatures::default(), FontVariantLigatures::NORMAL);
+    assert_eq!(
+        FontVariantLigatures::default(),
+        FontVariantLigatures::NORMAL
+    );
 }
 
 #[test]
@@ -545,7 +573,10 @@ fn t55_numeric_default_is_normal() {
 
 #[test]
 fn t56_east_asian_default_is_normal() {
-    assert_eq!(FontVariantEastAsian::default(), FontVariantEastAsian::NORMAL);
+    assert_eq!(
+        FontVariantEastAsian::default(),
+        FontVariantEastAsian::NORMAL
+    );
 }
 
 #[test]
@@ -555,7 +586,10 @@ fn t57_position_default_is_normal() {
 
 #[test]
 fn t58_alternates_default_is_normal() {
-    assert_eq!(FontVariantAlternates::default(), FontVariantAlternates::Normal);
+    assert_eq!(
+        FontVariantAlternates::default(),
+        FontVariantAlternates::Normal
+    );
 }
 
 // ── 59–60. tag_to_u32 conversion ────────────────────────────────────────

@@ -36,6 +36,12 @@ pub enum Display {
     Contents = 11,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ListStylePosition {
+    Outside,
+    Inside,
+}
+
 impl Display {
     /// Blink's initial value: `kInline`.
     pub const INITIAL: Self = Self::Inline;
@@ -43,13 +49,19 @@ impl Display {
     /// True if this display creates a block-level box.
     #[inline]
     pub fn is_block_level(self) -> bool {
-        matches!(self, Self::Block | Self::Flex | Self::Grid | Self::FlowRoot | Self::Table | Self::ListItem)
+        matches!(
+            self,
+            Self::Block | Self::Flex | Self::Grid | Self::FlowRoot | Self::Table | Self::ListItem
+        )
     }
 
     /// True if this display creates an inline-level box.
     #[inline]
     pub fn is_inline_level(self) -> bool {
-        matches!(self, Self::Inline | Self::InlineBlock | Self::InlineFlex | Self::InlineGrid)
+        matches!(
+            self,
+            Self::Inline | Self::InlineBlock | Self::InlineFlex | Self::InlineGrid
+        )
     }
 
     /// True if this is a flex container.
@@ -67,13 +79,23 @@ impl Display {
     /// True if this creates a new formatting context (BFC, FFC, or GFC).
     #[inline]
     pub fn is_new_formatting_context(self) -> bool {
-        matches!(self, Self::Flex | Self::Grid | Self::InlineFlex | Self::InlineGrid |
-                 Self::InlineBlock | Self::FlowRoot | Self::Table)
+        matches!(
+            self,
+            Self::Flex
+                | Self::Grid
+                | Self::InlineFlex
+                | Self::InlineGrid
+                | Self::InlineBlock
+                | Self::FlowRoot
+                | Self::Table
+        )
     }
 }
 
 impl Default for Display {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `position` property.
@@ -108,7 +130,9 @@ impl Position {
 }
 
 impl Default for Position {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `overflow` property values.
@@ -138,7 +162,9 @@ impl Overflow {
 }
 
 impl Default for Overflow {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `box-sizing` property.
@@ -155,7 +181,9 @@ impl BoxSizing {
 }
 
 impl Default for BoxSizing {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `float` property.
@@ -173,7 +201,9 @@ impl Float {
 }
 
 impl Default for Float {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `clear` property.
@@ -192,7 +222,9 @@ impl Clear {
 }
 
 impl Default for Clear {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `border-style` property.
@@ -223,7 +255,9 @@ impl BorderStyle {
 }
 
 impl Default for BorderStyle {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-align` property.
@@ -243,7 +277,9 @@ impl TextAlign {
 }
 
 impl Default for TextAlign {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `direction` property (inherited).
@@ -259,7 +295,9 @@ impl Direction {
 }
 
 impl Default for Direction {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 impl Direction {
@@ -300,7 +338,9 @@ impl Visibility {
 }
 
 impl Default for Visibility {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `white-space` collapse mode.
@@ -320,7 +360,9 @@ impl WhiteSpace {
 }
 
 impl Default for WhiteSpace {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Flexbox enums (extracted from Blink computed_style_constants.h) ──────
@@ -352,7 +394,9 @@ impl FlexDirection {
 }
 
 impl Default for FlexDirection {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `flex-wrap` property.
@@ -381,7 +425,9 @@ impl FlexWrap {
 }
 
 impl Default for FlexWrap {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// Content position values for `justify-content` and `align-content`.
@@ -406,7 +452,9 @@ impl ContentPosition {
 }
 
 impl Default for ContentPosition {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// Content distribution values for `justify-content` and `align-content`.
@@ -426,7 +474,9 @@ impl ContentDistribution {
 }
 
 impl Default for ContentDistribution {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// Overflow alignment modifier (`safe` / `unsafe`).
@@ -444,7 +494,9 @@ impl OverflowAlignment {
 }
 
 impl Default for OverflowAlignment {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// Per-item alignment position for `align-items`, `align-self`, `justify-self`.
@@ -474,7 +526,9 @@ impl ItemPosition {
 }
 
 impl Default for ItemPosition {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// Compound content-alignment type for `justify-content` and `align-content`.
@@ -515,7 +569,9 @@ impl ContentAlignment {
 }
 
 impl Default for ContentAlignment {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// Compound self-alignment type for `align-items` and `align-self`.
@@ -553,7 +609,9 @@ impl ItemAlignment {
 }
 
 impl Default for ItemAlignment {
-    fn default() -> Self { Self::INITIAL_ITEMS }
+    fn default() -> Self {
+        Self::INITIAL_ITEMS
+    }
 }
 
 // ── Text layout enums (extracted from Blink computed_style_constants.h) ──
@@ -573,7 +631,9 @@ pub enum LineHeight {
 }
 
 impl Default for LineHeight {
-    fn default() -> Self { Self::Normal }
+    fn default() -> Self {
+        Self::Normal
+    }
 }
 
 /// CSS `text-align-last` property.
@@ -595,7 +655,9 @@ impl TextAlignLast {
 }
 
 impl Default for TextAlignLast {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-justify` property.
@@ -614,7 +676,9 @@ impl TextJustify {
 }
 
 impl Default for TextJustify {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `word-break` property.
@@ -633,7 +697,9 @@ impl WordBreak {
 }
 
 impl Default for WordBreak {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `overflow-wrap` property (was `word-wrap`).
@@ -651,7 +717,9 @@ impl OverflowWrap {
 }
 
 impl Default for OverflowWrap {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `line-break` property.
@@ -691,7 +759,9 @@ impl LineBreak {
 }
 
 impl Default for LineBreak {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `hyphens` property.
@@ -709,7 +779,9 @@ impl Hyphens {
 }
 
 impl Default for Hyphens {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-decoration-line` — bitflag set.
@@ -724,17 +796,27 @@ impl TextDecorationLine {
     pub const LINE_THROUGH: Self = Self(4);
 
     #[inline]
-    pub fn has_underline(self) -> bool { self.0 & 1 != 0 }
+    pub fn has_underline(self) -> bool {
+        self.0 & 1 != 0
+    }
     #[inline]
-    pub fn has_overline(self) -> bool { self.0 & 2 != 0 }
+    pub fn has_overline(self) -> bool {
+        self.0 & 2 != 0
+    }
     #[inline]
-    pub fn has_line_through(self) -> bool { self.0 & 4 != 0 }
+    pub fn has_line_through(self) -> bool {
+        self.0 & 4 != 0
+    }
     #[inline]
-    pub fn is_none(self) -> bool { self.0 == 0 }
+    pub fn is_none(self) -> bool {
+        self.0 == 0
+    }
 }
 
 impl Default for TextDecorationLine {
-    fn default() -> Self { Self::NONE }
+    fn default() -> Self {
+        Self::NONE
+    }
 }
 
 /// CSS `text-decoration-style` property.
@@ -754,7 +836,9 @@ impl TextDecorationStyle {
 }
 
 impl Default for TextDecorationStyle {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-decoration-thickness` computed value.
@@ -767,7 +851,9 @@ pub enum TextDecorationThickness {
 }
 
 impl Default for TextDecorationThickness {
-    fn default() -> Self { Self::Auto }
+    fn default() -> Self {
+        Self::Auto
+    }
 }
 
 /// CSS `text-decoration-skip-ink` property.
@@ -797,7 +883,9 @@ impl TextDecorationSkipInk {
 }
 
 impl Default for TextDecorationSkipInk {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-underline-position` property.
@@ -816,7 +904,9 @@ impl TextUnderlinePosition {
 }
 
 impl Default for TextUnderlinePosition {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-transform` property.
@@ -837,7 +927,9 @@ impl TextTransform {
 }
 
 impl Default for TextTransform {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-overflow` property.
@@ -854,7 +946,9 @@ impl TextOverflow {
 }
 
 impl Default for TextOverflow {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `vertical-align` computed value.
@@ -876,7 +970,9 @@ pub enum VerticalAlign {
 }
 
 impl Default for VerticalAlign {
-    fn default() -> Self { Self::Baseline }
+    fn default() -> Self {
+        Self::Baseline
+    }
 }
 
 /// CSS `unicode-bidi` property.
@@ -897,7 +993,9 @@ impl UnicodeBidi {
 }
 
 impl Default for UnicodeBidi {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `writing-mode` property.
@@ -950,7 +1048,9 @@ impl WritingMode {
 }
 
 impl Default for WritingMode {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-orientation` property.
@@ -968,7 +1068,9 @@ impl TextOrientation {
 }
 
 impl Default for TextOrientation {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-shadow` value.
@@ -992,7 +1094,9 @@ pub enum TabSize {
 }
 
 impl Default for TabSize {
-    fn default() -> Self { Self::Spaces(8) }
+    fn default() -> Self {
+        Self::Spaces(8)
+    }
 }
 
 /// CSS `hanging-punctuation` property (CSS Text Module Level 3 §9).
@@ -1031,7 +1135,9 @@ impl HangingPunctuation {
 }
 
 impl Default for HangingPunctuation {
-    fn default() -> Self { Self::NONE }
+    fn default() -> Self {
+        Self::NONE
+    }
 }
 
 // ── Text Emphasis (CSS Text Decoration Module Level 3 §3) ───────────────
@@ -1070,23 +1176,25 @@ impl TextEmphasisMark {
     pub fn character(self, fill: TextEmphasisFill) -> Option<char> {
         match (self, fill) {
             (Self::None, _) => None,
-            (Self::Dot, TextEmphasisFill::Filled) => Some('\u{2022}'),       // •
-            (Self::Dot, TextEmphasisFill::Open) => Some('\u{25E6}'),         // ◦
-            (Self::Circle, TextEmphasisFill::Filled) => Some('\u{25CF}'),    // ●
-            (Self::Circle, TextEmphasisFill::Open) => Some('\u{25CB}'),      // ○
+            (Self::Dot, TextEmphasisFill::Filled) => Some('\u{2022}'), // •
+            (Self::Dot, TextEmphasisFill::Open) => Some('\u{25E6}'),   // ◦
+            (Self::Circle, TextEmphasisFill::Filled) => Some('\u{25CF}'), // ●
+            (Self::Circle, TextEmphasisFill::Open) => Some('\u{25CB}'), // ○
             (Self::DoubleCircle, TextEmphasisFill::Filled) => Some('\u{25C9}'), // ◉
-            (Self::DoubleCircle, TextEmphasisFill::Open) => Some('\u{25CE}'),   // ◎
-            (Self::Triangle, TextEmphasisFill::Filled) => Some('\u{25B2}'),  // ▲
-            (Self::Triangle, TextEmphasisFill::Open) => Some('\u{25B3}'),    // △
-            (Self::Sesame, TextEmphasisFill::Filled) => Some('\u{FE45}'),    // ﹅
-            (Self::Sesame, TextEmphasisFill::Open) => Some('\u{FE46}'),      // ﹆
+            (Self::DoubleCircle, TextEmphasisFill::Open) => Some('\u{25CE}'), // ◎
+            (Self::Triangle, TextEmphasisFill::Filled) => Some('\u{25B2}'), // ▲
+            (Self::Triangle, TextEmphasisFill::Open) => Some('\u{25B3}'), // △
+            (Self::Sesame, TextEmphasisFill::Filled) => Some('\u{FE45}'), // ﹅
+            (Self::Sesame, TextEmphasisFill::Open) => Some('\u{FE46}'), // ﹆
             (Self::Custom(ch), _) => Some(ch),
         }
     }
 }
 
 impl Default for TextEmphasisMark {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-emphasis-style` fill mode — filled or open marks.
@@ -1109,7 +1217,9 @@ impl TextEmphasisFill {
 }
 
 impl Default for TextEmphasisFill {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `text-emphasis-position` — placement of emphasis marks.
@@ -1131,11 +1241,16 @@ pub struct TextEmphasisPosition {
 
 impl TextEmphasisPosition {
     /// Initial value: `over right` per CSS spec.
-    pub const INITIAL: Self = Self { over: true, right: true };
+    pub const INITIAL: Self = Self {
+        over: true,
+        right: true,
+    };
 }
 
 impl Default for TextEmphasisPosition {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Text Combine Upright (CSS Writing Modes Level 3 §9.1) ───────────────
@@ -1162,7 +1277,9 @@ impl TextCombineUpright {
 }
 
 impl Default for TextCombineUpright {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Font Palette ────────────────────────────────────────────────────────
@@ -1201,7 +1318,9 @@ impl FontPalette {
 }
 
 impl Default for FontPalette {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Font Orientation (from WritingMode + TextOrientation) ───────────────
@@ -1250,17 +1369,25 @@ impl FontOrientation {
 }
 
 impl Default for FontOrientation {
-    fn default() -> Self { Self::Horizontal }
+    fn default() -> Self {
+        Self::Horizontal
+    }
 }
 
 /// Derive the font orientation from CSS `writing-mode` and `text-orientation`.
 ///
 /// Blink: `ComputedStyleUtils::ResolvedFontOrientation` and
 /// `FontOrientation` constructor logic in `font_description.h`.
-pub fn font_orientation(writing_mode: WritingMode, text_orientation: TextOrientation) -> FontOrientation {
+pub fn font_orientation(
+    writing_mode: WritingMode,
+    text_orientation: TextOrientation,
+) -> FontOrientation {
     if writing_mode.is_horizontal() {
         FontOrientation::Horizontal
-    } else if matches!(writing_mode, WritingMode::SidewaysRl | WritingMode::SidewaysLr) {
+    } else if matches!(
+        writing_mode,
+        WritingMode::SidewaysRl | WritingMode::SidewaysLr
+    ) {
         // CSS Writing Modes Level 4 §7.2: text-orientation has no effect in
         // sideways-rl / sideways-lr — all glyphs are rotated.
         FontOrientation::VerticalRotated
@@ -1311,7 +1438,9 @@ impl RubyPosition {
 }
 
 impl Default for RubyPosition {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `ruby-align` property.
@@ -1345,7 +1474,9 @@ impl RubyAlign {
 }
 
 impl Default for RubyAlign {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Fragmentation enums (extracted from Blink computed_style_constants.h) ──
@@ -1376,7 +1507,10 @@ impl BreakValue {
     /// True if this value forces a break.
     #[inline]
     pub fn is_forced(self) -> bool {
-        matches!(self, Self::Always | Self::Page | Self::Column | Self::Left | Self::Right)
+        matches!(
+            self,
+            Self::Always | Self::Page | Self::Column | Self::Left | Self::Right
+        )
     }
 
     /// True if this value requests avoiding a break.
@@ -1401,7 +1535,9 @@ impl BreakValue {
 }
 
 impl Default for BreakValue {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `break-inside` computed value.
@@ -1438,7 +1574,9 @@ impl BreakInside {
 }
 
 impl Default for BreakInside {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Multicol enums (CSS Multi-column Layout Module Level 1) ───────────
@@ -1463,7 +1601,31 @@ impl ColumnFill {
 }
 
 impl Default for ColumnFill {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
+}
+
+/// CSS `column-wrap` property.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ColumnWrap {
+    /// Use the UA's automatic overflow behavior.
+    Auto = 0,
+    /// Create additional rows/pages of columns when content overflows.
+    Wrap = 1,
+    /// Create overflow columns in the inline direction.
+    NoWrap = 2,
+}
+
+impl ColumnWrap {
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for ColumnWrap {
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 /// CSS `column-span` property.
@@ -1483,7 +1645,9 @@ impl ColumnSpan {
 }
 
 impl Default for ColumnSpan {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Box Decoration Break (CSS Fragmentation Module Level 3) ───────────
@@ -1512,7 +1676,9 @@ impl BoxDecorationBreak {
 }
 
 impl Default for BoxDecorationBreak {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Text Wrap (CSS Text Module Level 4) ─────────────────────────────────
@@ -1560,7 +1726,9 @@ impl TextWrap {
 }
 
 impl Default for TextWrap {
-    fn default() -> Self { Self::INITIAL }
+    fn default() -> Self {
+        Self::INITIAL
+    }
 }
 
 // ── Initial Letter (CSS Inline Level 3 §5) ──────────────────────────────
@@ -1637,6 +1805,21 @@ pub enum BackgroundClip {
 impl Default for BackgroundClip {
     fn default() -> Self {
         BackgroundClip::BorderBox
+    }
+}
+
+/// CSS `background-attachment` property.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum BackgroundAttachment {
+    Scroll = 0,
+    Fixed = 1,
+    Local = 2,
+}
+
+impl Default for BackgroundAttachment {
+    fn default() -> Self {
+        BackgroundAttachment::Scroll
     }
 }
 

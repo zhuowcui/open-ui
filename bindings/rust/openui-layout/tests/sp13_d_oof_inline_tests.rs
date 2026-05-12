@@ -162,7 +162,9 @@ fn multiple_oof_in_inline() {
     let div_frag = &frag.children[0];
 
     // Both OOF children should be present in the fragment tree
-    let oof_count = div_frag.children.iter()
+    let oof_count = div_frag
+        .children
+        .iter()
         .filter(|c| c.node_id == abs1 || c.node_id == abs2)
         .count();
     assert!(

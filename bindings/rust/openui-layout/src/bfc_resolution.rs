@@ -16,8 +16,8 @@
 
 use openui_geometry::{BfcOffset, BoxStrut, LayoutUnit, MarginStrut};
 
-use crate::exclusions::{ExclusionSpace, ClearType};
-use crate::exclusions::float_utils::{UnpositionedFloat, PositionedFloat, position_float};
+use crate::exclusions::float_utils::{position_float, PositionedFloat, UnpositionedFloat};
+use crate::exclusions::{ClearType, ExclusionSpace};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BfcBlockOffsetState
@@ -98,9 +98,7 @@ pub struct PendingFloats {
 
 impl PendingFloats {
     pub fn new() -> Self {
-        Self {
-            floats: Vec::new(),
-        }
+        Self { floats: Vec::new() }
     }
 
     /// Queue a float for later positioning.
@@ -383,7 +381,12 @@ mod tests {
     #[test]
     fn should_resolve_border_padding() {
         let bp = BoxStrut::new(lu(1), lu(0), lu(0), lu(0));
-        assert!(should_resolve_bfc_offset(&bp, false, ClearType::None, false));
+        assert!(should_resolve_bfc_offset(
+            &bp,
+            false,
+            ClearType::None,
+            false
+        ));
     }
 
     #[test]
@@ -395,9 +398,24 @@ mod tests {
     #[test]
     fn should_resolve_clear() {
         let bp = BoxStrut::zero();
-        assert!(should_resolve_bfc_offset(&bp, false, ClearType::Left, false));
-        assert!(should_resolve_bfc_offset(&bp, false, ClearType::Right, false));
-        assert!(should_resolve_bfc_offset(&bp, false, ClearType::Both, false));
+        assert!(should_resolve_bfc_offset(
+            &bp,
+            false,
+            ClearType::Left,
+            false
+        ));
+        assert!(should_resolve_bfc_offset(
+            &bp,
+            false,
+            ClearType::Right,
+            false
+        ));
+        assert!(should_resolve_bfc_offset(
+            &bp,
+            false,
+            ClearType::Both,
+            false
+        ));
     }
 
     #[test]
@@ -409,7 +427,12 @@ mod tests {
     #[test]
     fn should_not_resolve_when_none_apply() {
         let bp = BoxStrut::zero();
-        assert!(!should_resolve_bfc_offset(&bp, false, ClearType::None, false));
+        assert!(!should_resolve_bfc_offset(
+            &bp,
+            false,
+            ClearType::None,
+            false
+        ));
     }
 
     #[test]
@@ -447,6 +470,7 @@ mod tests {
             margins: BoxStrut::zero(),
             inline_size: lu(100),
             block_size: lu(50),
+            placement_min_inline_size: None,
             is_left,
         }
     }

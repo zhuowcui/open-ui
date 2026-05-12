@@ -69,8 +69,8 @@ fn int_line_spacing_zero_gap() {
 
 #[test]
 fn justify_exclude_trailing_spaces() {
-    use openui_text::shaping::{TextDirection, TextShaper};
     use openui_text::font::{Font, FontDescription};
+    use openui_text::shaping::{TextDirection, TextShaper};
 
     let shaper = TextShaper::new();
     let font = Font::new(FontDescription::new());
@@ -90,8 +90,8 @@ fn justify_exclude_trailing_spaces() {
 
 #[test]
 fn justify_exclude_all_trailing() {
-    use openui_text::shaping::{TextDirection, TextShaper};
     use openui_text::font::{Font, FontDescription};
+    use openui_text::shaping::{TextDirection, TextShaper};
 
     let shaper = TextShaper::new();
     let font = Font::new(FontDescription::new());
@@ -248,8 +248,8 @@ fn capitalize_armenian_ligature() {
 
 #[test]
 fn justify_accumulator_precision_no_drift() {
-    use openui_text::shaping::{TextDirection, TextShaper};
     use openui_text::font::{Font, FontDescription};
+    use openui_text::shaping::{TextDirection, TextShaper};
 
     let shaper = TextShaper::new();
     let font = Font::new(FontDescription::new());

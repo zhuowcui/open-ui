@@ -4976,7 +4976,10 @@ mod tests {
 
     #[test]
     fn pattern_count() {
-        let count = EN_US_PATTERNS.lines().filter(|l| !l.trim().is_empty()).count();
+        let count = EN_US_PATTERNS
+            .lines()
+            .filter(|l| !l.trim().is_empty())
+            .count();
         // The en-US pattern set has ~4900+ patterns
         assert!(count > 4000, "expected > 4000 patterns, got {}", count);
     }

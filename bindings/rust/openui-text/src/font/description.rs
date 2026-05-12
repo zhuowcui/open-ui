@@ -5,10 +5,10 @@
 //! needed to select and configure a typeface.
 
 use openui_style::{
-    FontFamilyList, FontOpticalSizing, FontOrientation, FontSmoothing, FontStretch, FontStyleEnum,
-    FontSynthesis, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian,
-    FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontWeight, TextRendering,
-    FontFeature, FontVariation,
+    FontFamilyList, FontFeature, FontOpticalSizing, FontOrientation, FontSmoothing, FontStretch,
+    FontStyleEnum, FontSynthesis, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian,
+    FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontVariation, FontWeight,
+    TextRendering,
 };
 
 /// Complete description of desired font properties, derived from CSS.

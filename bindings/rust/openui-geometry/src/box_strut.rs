@@ -20,13 +20,28 @@ pub struct BoxStrut {
 
 impl BoxStrut {
     #[inline]
-    pub const fn new(top: LayoutUnit, right: LayoutUnit, bottom: LayoutUnit, left: LayoutUnit) -> Self {
-        Self { top, right, bottom, left }
+    pub const fn new(
+        top: LayoutUnit,
+        right: LayoutUnit,
+        bottom: LayoutUnit,
+        left: LayoutUnit,
+    ) -> Self {
+        Self {
+            top,
+            right,
+            bottom,
+            left,
+        }
     }
 
     #[inline]
     pub const fn all(value: LayoutUnit) -> Self {
-        Self { top: value, right: value, bottom: value, left: value }
+        Self {
+            top: value,
+            right: value,
+            bottom: value,
+            left: value,
+        }
     }
 
     #[inline]

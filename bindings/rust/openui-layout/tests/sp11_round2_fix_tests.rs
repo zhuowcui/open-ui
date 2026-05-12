@@ -8,9 +8,7 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    Display, Overflow, TextAlign, TextOverflow, WhiteSpace,
-};
+use openui_style::{Display, Overflow, TextAlign, TextOverflow, WhiteSpace};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
@@ -29,13 +27,8 @@ fn _space(width: i32, height: i32) -> ConstraintSpace {
 /// Create a block container with text children and perform inline layout.
 fn layout_text(texts: &[&str], width: i32) -> Fragment {
     let (doc, block) = make_text_block(texts, width);
-    let sp = ConstraintSpace::for_block_child(
-        lu_i(width),
-        lu_i(600),
-        lu_i(width),
-        lu_i(600),
-        false,
-    );
+    let sp =
+        ConstraintSpace::for_block_child(lu_i(width), lu_i(600), lu_i(width), lu_i(600), false);
     inline_layout(&doc, block, &sp)
 }
 
@@ -123,7 +116,8 @@ fn bidi_rtl_text_shaped_with_rtl_direction() {
     // The shape result should have RTL direction
     let sr = text_item.shape_result.as_ref().expect("should be shaped");
     assert_eq!(
-        sr.direction, TextDirection::Rtl,
+        sr.direction,
+        TextDirection::Rtl,
         "Arabic text should be shaped with RTL direction"
     );
 }
@@ -149,10 +143,18 @@ fn bidi_ltr_text_remains_ltr_shaped() {
     items_data.shape_text();
 
     let text_item = &items_data.items[0];
-    assert_eq!(text_item.bidi_level % 2, 0, "English text should have even bidi level (LTR)");
+    assert_eq!(
+        text_item.bidi_level % 2,
+        0,
+        "English text should have even bidi level (LTR)"
+    );
 
     let sr = text_item.shape_result.as_ref().expect("should be shaped");
-    assert_eq!(sr.direction, TextDirection::Ltr, "English text shaped as LTR");
+    assert_eq!(
+        sr.direction,
+        TextDirection::Ltr,
+        "English text shaped as LTR"
+    );
 }
 
 #[test]
@@ -188,7 +190,10 @@ fn bidi_mixed_text_items_split_and_shaped_correctly() {
         if item.item_type == openui_layout::inline::items::InlineItemType::Text
             && !item.text_range.is_empty()
         {
-            assert!(item.shape_result.is_some(), "All text items should be shaped");
+            assert!(
+                item.shape_result.is_some(),
+                "All text items should be shaped"
+            );
         }
     }
 }
@@ -207,7 +212,11 @@ fn trailing_space_mid_item_strip_reduces_width() {
 
     // Should produce multiple lines
     let line_count = count_line_boxes(&frag);
-    assert!(line_count >= 2, "Expected wrapping, got {} lines", line_count);
+    assert!(
+        line_count >= 2,
+        "Expected wrapping, got {} lines",
+        line_count
+    );
 
     // Each line's text fragments should not exceed the available width
     for line_box in &frag.children {
@@ -246,7 +255,10 @@ fn trailing_space_strip_wrapping_consistency() {
     let narrow_lines = count_line_boxes(&narrow_frag);
     let wide_lines = count_line_boxes(&wide_frag);
 
-    assert!(narrow_lines > wide_lines, "Narrow container should have more lines");
+    assert!(
+        narrow_lines > wide_lines,
+        "Narrow container should have more lines"
+    );
     // Total text content should still be laid out
     let narrow_texts = collect_text_fragments(&narrow_frag);
     let wide_texts = collect_text_fragments(&wide_frag);
@@ -297,7 +309,10 @@ fn ellipsis_fragment_exists_when_overflow() {
         ef.shape_result.is_some(),
         "Ellipsis fragment should have a shape result"
     );
-    assert!(ef.size.width > lu(0.0), "Ellipsis should have positive width");
+    assert!(
+        ef.size.width > lu(0.0),
+        "Ellipsis should have positive width"
+    );
 }
 
 #[test]
@@ -403,7 +418,11 @@ fn ellipsis_total_width_within_available() {
 
     let available = 120;
     let sp = ConstraintSpace::for_block_child(
-        lu_i(available), lu_i(600), lu_i(available), lu_i(600), false,
+        lu_i(available),
+        lu_i(600),
+        lu_i(available),
+        lu_i(600),
+        false,
     );
     let frag = inline_layout(&doc, block, &sp);
 
@@ -492,10 +511,7 @@ fn atomic_inline_produces_box_fragment() {
 
     // Find box fragments with node_id == atomic in the line box children
     let box_frags = collect_box_fragments(&frag);
-    let atomic_frags: Vec<_> = box_frags
-        .iter()
-        .filter(|f| f.node_id == atomic)
-        .collect();
+    let atomic_frags: Vec<_> = box_frags.iter().filter(|f| f.node_id == atomic).collect();
 
     assert!(
         !atomic_frags.is_empty(),
@@ -521,12 +537,12 @@ fn atomic_inline_has_correct_width() {
     let frag = inline_layout(&doc, block, &sp);
 
     let box_frags = collect_box_fragments(&frag);
-    let atomic_frags: Vec<_> = box_frags
-        .iter()
-        .filter(|f| f.node_id == atomic)
-        .collect();
+    let atomic_frags: Vec<_> = box_frags.iter().filter(|f| f.node_id == atomic).collect();
 
-    assert!(!atomic_frags.is_empty(), "Should have atomic inline fragment");
+    assert!(
+        !atomic_frags.is_empty(),
+        "Should have atomic inline fragment"
+    );
     assert_eq!(
         atomic_frags[0].size.width,
         lu(75.0),
@@ -552,12 +568,12 @@ fn atomic_inline_has_correct_height() {
     let frag = inline_layout(&doc, block, &sp);
 
     let box_frags = collect_box_fragments(&frag);
-    let atomic_frags: Vec<_> = box_frags
-        .iter()
-        .filter(|f| f.node_id == atomic)
-        .collect();
+    let atomic_frags: Vec<_> = box_frags.iter().filter(|f| f.node_id == atomic).collect();
 
-    assert!(!atomic_frags.is_empty(), "Should have atomic inline fragment");
+    assert!(
+        !atomic_frags.is_empty(),
+        "Should have atomic inline fragment"
+    );
     assert_eq!(
         atomic_frags[0].size.height,
         lu(25.0),
@@ -589,7 +605,11 @@ fn justification_text_aligns_to_edges() {
 
     // Should have multiple lines for justification to apply
     let line_count = count_line_boxes(&frag);
-    assert!(line_count >= 2, "Need multiple lines for justify, got {}", line_count);
+    assert!(
+        line_count >= 2,
+        "Need multiple lines for justify, got {}",
+        line_count
+    );
 }
 
 #[test]
@@ -612,7 +632,11 @@ fn justification_excludes_trailing_space_from_expansion() {
 
     let available = 150;
     let sp = ConstraintSpace::for_block_child(
-        lu_i(available), lu_i(600), lu_i(available), lu_i(600), false,
+        lu_i(available),
+        lu_i(600),
+        lu_i(available),
+        lu_i(600),
+        false,
     );
     let frag = inline_layout(&doc, block, &sp);
 

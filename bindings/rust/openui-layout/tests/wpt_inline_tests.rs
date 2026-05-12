@@ -958,9 +958,7 @@ mod baseline_alignment {
     fn line_box_is_box_kind() {
         let frag = layout_text(&["Hello"], 800);
         assert!(
-            frag.children
-                .iter()
-                .all(|c| c.kind == FragmentKind::Box),
+            frag.children.iter().all(|c| c.kind == FragmentKind::Box),
             "All direct children of inline layout should be Box (line boxes)"
         );
     }

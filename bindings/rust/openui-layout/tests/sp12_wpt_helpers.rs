@@ -511,9 +511,7 @@ impl BlockTestBuilder {
         let space = root_space(self.container_width, self.container_height);
         let root_fragment = block_layout(&doc, vp, &space);
 
-        LayoutTestResult {
-            root_fragment,
-        }
+        LayoutTestResult { root_fragment }
     }
 }
 

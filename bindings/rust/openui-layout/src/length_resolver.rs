@@ -84,28 +84,48 @@ mod tests {
     #[test]
     fn resolve_fixed() {
         let l = Length::px(100.0);
-        let result = resolve_length(&l, LayoutUnit::from_i32(500), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(500),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 100);
     }
 
     #[test]
     fn resolve_percent() {
         let l = Length::percent(50.0);
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 200);
     }
 
     #[test]
     fn resolve_auto() {
         let l = Length::auto();
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::from_i32(999), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::from_i32(999),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 999);
     }
 
     #[test]
     fn resolve_none() {
         let l = Length::none();
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result, LayoutUnit::max());
     }
 
@@ -122,7 +142,12 @@ mod tests {
     fn resolve_calc_percent_px() {
         // calc(50% - 10px) against 400px → 200 - 10 = 190
         let l = Length::calc_percent_px(50.0, -10.0);
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 190);
     }
 
@@ -130,7 +155,12 @@ mod tests {
     fn resolve_calc_percent_px_positive_offset() {
         // calc(25% + 20px) against 200px → 50 + 20 = 70
         let l = Length::calc_percent_px(25.0, 20.0);
-        let result = resolve_length(&l, LayoutUnit::from_i32(200), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(200),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 70);
     }
 

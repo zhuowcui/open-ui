@@ -71,7 +71,10 @@ fn atomic_inline_valign_top_at_line_top() {
 
     let boxes = collect_box_fragments(&frag);
     let atomic_frags: Vec<_> = boxes.iter().filter(|f| f.node_id == atomic).collect();
-    assert!(!atomic_frags.is_empty(), "Should have atomic inline fragment");
+    assert!(
+        !atomic_frags.is_empty(),
+        "Should have atomic inline fragment"
+    );
 
     let top = atomic_frags[0].offset.top.to_f32();
     assert!(
@@ -89,7 +92,10 @@ fn atomic_inline_valign_bottom_at_line_bottom() {
     let line_box = &frag.children[0];
     let boxes = collect_box_fragments(&frag);
     let atomic_frags: Vec<_> = boxes.iter().filter(|f| f.node_id == atomic).collect();
-    assert!(!atomic_frags.is_empty(), "Should have atomic inline fragment");
+    assert!(
+        !atomic_frags.is_empty(),
+        "Should have atomic inline fragment"
+    );
 
     let atomic_bottom = atomic_frags[0].offset.top + atomic_frags[0].size.height;
     let diff = (line_box.size.height - atomic_bottom).to_f32().abs();
@@ -110,7 +116,10 @@ fn atomic_inline_valign_middle_centered_around_baseline() {
         make_atomic_inline_block(50.0, 10.0, VerticalAlign::Middle);
     let frag_mid = do_layout(&doc_mid, block_mid);
     let boxes_mid = collect_box_fragments(&frag_mid);
-    let mid_frag: Vec<_> = boxes_mid.iter().filter(|f| f.node_id == atomic_mid).collect();
+    let mid_frag: Vec<_> = boxes_mid
+        .iter()
+        .filter(|f| f.node_id == atomic_mid)
+        .collect();
 
     let (doc_bl, block_bl, atomic_bl) =
         make_atomic_inline_block(50.0, 10.0, VerticalAlign::Baseline);

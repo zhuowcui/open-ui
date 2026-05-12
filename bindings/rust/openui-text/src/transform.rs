@@ -89,11 +89,7 @@ fn classify_locale(locale: Option<&str>) -> LocaleCategory {
 /// * `text`      — input string
 /// * `transform` — CSS `text-transform` value
 /// * `locale`    — optional BCP 47 locale tag (e.g. `"tr"`, `"el"`, `"nl-NL"`)
-pub fn apply_text_transform(
-    text: &str,
-    transform: TextTransform,
-    locale: Option<&str>,
-) -> String {
+pub fn apply_text_transform(text: &str, transform: TextTransform, locale: Option<&str>) -> String {
     match transform {
         TextTransform::None => text.to_string(),
         TextTransform::Uppercase => locale_uppercase(text, locale),
@@ -125,8 +121,8 @@ fn turkish_to_upper(text: &str) -> String {
     let mut result = String::with_capacity(text.len());
     for ch in text.chars() {
         match ch {
-            'i' => result.push('\u{0130}'),  // i → İ
-            '\u{0131}' => result.push('I'),  // ı → I
+            'i' => result.push('\u{0130}'), // i → İ
+            '\u{0131}' => result.push('I'), // ı → I
             _ => {
                 for c in ch.to_uppercase() {
                     result.push(c);
@@ -153,18 +149,47 @@ fn greek_to_upper(text: &str) -> String {
     for ch in text.chars() {
         match ch {
             // Precomposed vowels with tonos → uppercase without accent.
-            '\u{03AC}' => { result.push('\u{0391}'); prev_base_greek = true; } // ά → Α
-            '\u{03AD}' => { result.push('\u{0395}'); prev_base_greek = true; } // έ → Ε
-            '\u{03AE}' => { result.push('\u{0397}'); prev_base_greek = true; } // ή → Η
-            '\u{03AF}' => { result.push('\u{0399}'); prev_base_greek = true; } // ί → Ι
-            '\u{03CC}' => { result.push('\u{039F}'); prev_base_greek = true; } // ό → Ο
-            '\u{03CD}' => { result.push('\u{03A5}'); prev_base_greek = true; } // ύ → Υ
-            '\u{03CE}' => { result.push('\u{03A9}'); prev_base_greek = true; } // ώ → Ω
+            '\u{03AC}' => {
+                result.push('\u{0391}');
+                prev_base_greek = true;
+            } // ά → Α
+            '\u{03AD}' => {
+                result.push('\u{0395}');
+                prev_base_greek = true;
+            } // έ → Ε
+            '\u{03AE}' => {
+                result.push('\u{0397}');
+                prev_base_greek = true;
+            } // ή → Η
+            '\u{03AF}' => {
+                result.push('\u{0399}');
+                prev_base_greek = true;
+            } // ί → Ι
+            '\u{03CC}' => {
+                result.push('\u{039F}');
+                prev_base_greek = true;
+            } // ό → Ο
+            '\u{03CD}' => {
+                result.push('\u{03A5}');
+                prev_base_greek = true;
+            } // ύ → Υ
+            '\u{03CE}' => {
+                result.push('\u{03A9}');
+                prev_base_greek = true;
+            } // ώ → Ω
             // Vowels with dialytika + tonos → keep dialytika, drop tonos.
-            '\u{0390}' => { result.push('\u{03AA}'); prev_base_greek = true; } // ΐ → Ϊ
-            '\u{03B0}' => { result.push('\u{03AB}'); prev_base_greek = true; } // ΰ → Ϋ
+            '\u{0390}' => {
+                result.push('\u{03AA}');
+                prev_base_greek = true;
+            } // ΐ → Ϊ
+            '\u{03B0}' => {
+                result.push('\u{03AB}');
+                prev_base_greek = true;
+            } // ΰ → Ϋ
             // Combining accents: strip after Greek base letter.
-            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0313}' | '\u{0314}' if prev_base_greek => {
+            '\u{0301}' | '\u{0300}' | '\u{0303}' | '\u{0342}' | '\u{0313}' | '\u{0314}'
+                if prev_base_greek =>
+            {
                 // Drop combining tonos / grave / tilde / perispomeni / smooth/rough breathing.
             }
             // U+0344 (dialytika tonos): decompose — keep diaeresis, strip tonos.
@@ -172,7 +197,9 @@ fn greek_to_upper(text: &str) -> String {
                 result.push('\u{0308}');
             }
             // Iota subscript (ypogegrammeni): convert to capital Ι in uppercase context.
-            '\u{0345}' if prev_base_greek => { result.push('\u{0399}'); }
+            '\u{0345}' if prev_base_greek => {
+                result.push('\u{0399}');
+            }
             // Greek Extended block (U+1F00–U+1FFF): uppercase and strip
             // combining accent marks to match CLDR el-Upper behavior.
             // Preserve diaeresis (U+0308) which indicates vowel distinction.
@@ -181,9 +208,9 @@ fn greek_to_upper(text: &str) -> String {
                 for c in upper.chars() {
                     let cp = c as u32;
                     // Strip Greek tonos-class accents but keep diaeresis (U+0308)
-                    if matches!(cp,
-                        0x0300 | 0x0301 | 0x0303 | 0x0342 | 0x0344 | 0x0345 |
-                        0x0313 | 0x0314  // smooth/rough breathing
+                    if matches!(
+                        cp,
+                        0x0300 | 0x0301 | 0x0303 | 0x0342 | 0x0344 | 0x0345 | 0x0313 | 0x0314 // smooth/rough breathing
                     ) {
                         continue;
                     }
@@ -562,20 +589,20 @@ fn to_titlecase(ch: char) -> Vec<char> {
         '\u{01C8}' => vec!['\u{01C8}'], // ǈ → ǈ
         '\u{01CB}' => vec!['\u{01CB}'], // ǋ → ǋ
         // German sharp s: titlecase is Ss (not SS)
-        '\u{00DF}' => vec!['S', 's'],   // ß → Ss
+        '\u{00DF}' => vec!['S', 's'], // ß → Ss
         // Armenian ligature ech-yiwn
         '\u{0587}' => vec!['\u{0535}', '\u{0582}'], // և → Եւ
         // Unicode Latin ligatures — titlecase differs from uppercase
-        '\u{FB00}' => vec!['F', 'f'],       // ﬀ → Ff
-        '\u{FB01}' => vec!['F', 'i'],       // ﬁ → Fi
-        '\u{FB02}' => vec!['F', 'l'],       // ﬂ → Fl
-        '\u{FB03}' => vec!['F', 'f', 'i'],  // ﬃ → Ffi
-        '\u{FB04}' => vec!['F', 'f', 'l'],  // ﬄ → Ffl
-        '\u{FB05}' => vec!['S', 't'],       // ﬅ → St
-        '\u{FB06}' => vec!['S', 't'],       // ﬆ → St
+        '\u{FB00}' => vec!['F', 'f'],      // ﬀ → Ff
+        '\u{FB01}' => vec!['F', 'i'],      // ﬁ → Fi
+        '\u{FB02}' => vec!['F', 'l'],      // ﬂ → Fl
+        '\u{FB03}' => vec!['F', 'f', 'i'], // ﬃ → Ffi
+        '\u{FB04}' => vec!['F', 'f', 'l'], // ﬄ → Ffl
+        '\u{FB05}' => vec!['S', 't'],      // ﬅ → St
+        '\u{FB06}' => vec!['S', 't'],      // ﬆ → St
         // Dutch IJ digraph
-        '\u{0133}' => vec!['\u{0132}'],     // ĳ → Ĳ
-        '\u{0132}' => vec!['\u{0132}'],     // Ĳ → Ĳ (already uppercase)
+        '\u{0133}' => vec!['\u{0132}'], // ĳ → Ĳ
+        '\u{0132}' => vec!['\u{0132}'], // Ĳ → Ĳ (already uppercase)
         _ => ch.to_uppercase().collect(),
     }
 }
@@ -609,16 +636,41 @@ fn to_full_size_kana(text: &str) -> String {
     text.chars()
         .map(|ch| match ch {
             // Small Hiragana → Full-size Hiragana
-            'ぁ' => 'あ', 'ぃ' => 'い', 'ぅ' => 'う', 'ぇ' => 'え', 'ぉ' => 'お',
-            'っ' => 'つ', 'ゃ' => 'や', 'ゅ' => 'ゆ', 'ょ' => 'よ', 'ゎ' => 'わ',
-            'ゕ' => 'か', 'ゖ' => 'け', // U+3095 → U+304B, U+3096 → U+3051
+            'ぁ' => 'あ',
+            'ぃ' => 'い',
+            'ぅ' => 'う',
+            'ぇ' => 'え',
+            'ぉ' => 'お',
+            'っ' => 'つ',
+            'ゃ' => 'や',
+            'ゅ' => 'ゆ',
+            'ょ' => 'よ',
+            'ゎ' => 'わ',
+            'ゕ' => 'か',
+            'ゖ' => 'け', // U+3095 → U+304B, U+3096 → U+3051
             // Small Katakana → Full-size Katakana
-            'ァ' => 'ア', 'ィ' => 'イ', 'ゥ' => 'ウ', 'ェ' => 'エ', 'ォ' => 'オ',
-            'ッ' => 'ツ', 'ャ' => 'ヤ', 'ュ' => 'ユ', 'ョ' => 'ヨ', 'ヮ' => 'ワ',
-            'ヵ' => 'カ', 'ヶ' => 'ケ',
+            'ァ' => 'ア',
+            'ィ' => 'イ',
+            'ゥ' => 'ウ',
+            'ェ' => 'エ',
+            'ォ' => 'オ',
+            'ッ' => 'ツ',
+            'ャ' => 'ヤ',
+            'ュ' => 'ユ',
+            'ョ' => 'ヨ',
+            'ヮ' => 'ワ',
+            'ヵ' => 'カ',
+            'ヶ' => 'ケ',
             // Half-width small Katakana → Full-size Katakana
-            'ｧ' => 'ア', 'ｨ' => 'イ', 'ｩ' => 'ウ', 'ｪ' => 'エ', 'ｫ' => 'オ',
-            'ｯ' => 'ツ', 'ｬ' => 'ヤ', 'ｭ' => 'ユ', 'ｮ' => 'ヨ',
+            'ｧ' => 'ア',
+            'ｨ' => 'イ',
+            'ｩ' => 'ウ',
+            'ｪ' => 'エ',
+            'ｫ' => 'オ',
+            'ｯ' => 'ツ',
+            'ｬ' => 'ヤ',
+            'ｭ' => 'ユ',
+            'ｮ' => 'ヨ',
             _ => ch,
         })
         .collect()
@@ -630,42 +682,66 @@ mod tests {
 
     #[test]
     fn transform_none() {
-        assert_eq!(apply_text_transform("Hello World", TextTransform::None, None), "Hello World");
+        assert_eq!(
+            apply_text_transform("Hello World", TextTransform::None, None),
+            "Hello World"
+        );
     }
 
     #[test]
     fn transform_uppercase() {
-        assert_eq!(apply_text_transform("hello", TextTransform::Uppercase, None), "HELLO");
+        assert_eq!(
+            apply_text_transform("hello", TextTransform::Uppercase, None),
+            "HELLO"
+        );
     }
 
     #[test]
     fn transform_lowercase() {
-        assert_eq!(apply_text_transform("HELLO", TextTransform::Lowercase, None), "hello");
+        assert_eq!(
+            apply_text_transform("HELLO", TextTransform::Lowercase, None),
+            "hello"
+        );
     }
 
     #[test]
     fn transform_capitalize() {
-        assert_eq!(apply_text_transform("hello world", TextTransform::Capitalize, None), "Hello World");
+        assert_eq!(
+            apply_text_transform("hello world", TextTransform::Capitalize, None),
+            "Hello World"
+        );
     }
 
     #[test]
     fn capitalize_after_hyphen() {
-        assert_eq!(apply_text_transform("well-known", TextTransform::Capitalize, None), "Well-Known");
+        assert_eq!(
+            apply_text_transform("well-known", TextTransform::Capitalize, None),
+            "Well-Known"
+        );
     }
 
     #[test]
     fn unicode_uppercase() {
-        assert_eq!(apply_text_transform("café", TextTransform::Uppercase, None), "CAFÉ");
+        assert_eq!(
+            apply_text_transform("café", TextTransform::Uppercase, None),
+            "CAFÉ"
+        );
     }
 
     #[test]
     fn full_width_ascii() {
-        assert_eq!(apply_text_transform("ABC", TextTransform::FullWidth, None), "ＡＢＣ");
+        assert_eq!(
+            apply_text_transform("ABC", TextTransform::FullWidth, None),
+            "ＡＢＣ"
+        );
     }
 
     #[test]
     fn full_width_space() {
-        assert_eq!(apply_text_transform("A B", TextTransform::FullWidth, None), "Ａ\u{3000}Ｂ");
+        assert_eq!(
+            apply_text_transform("A B", TextTransform::FullWidth, None),
+            "Ａ\u{3000}Ｂ"
+        );
     }
 
     #[test]

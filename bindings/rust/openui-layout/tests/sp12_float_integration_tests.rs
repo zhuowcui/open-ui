@@ -555,7 +555,7 @@ fn float_in_container_with_border_padding() {
 
     // Float should be inside the content area: offset by border+padding.
     assert_eq!(f.offset.left, lu(25)); // 5 border + 20 padding
-    assert_eq!(f.offset.top, lu(15));  // 5 border + 10 padding
+    assert_eq!(f.offset.top, lu(15)); // 5 border + 10 padding
 }
 
 // ── Test 21: Float drops below when no room beside existing float ────

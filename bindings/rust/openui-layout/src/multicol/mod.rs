@@ -15,9 +15,9 @@
 //! - **`layout_columns()`**: Lays out content across columns using break tokens.
 //! - **`balance_columns()`**: Binary search for the minimum balanced column height.
 
-use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
 use openui_dom::NodeId;
-use openui_style::{BorderStyle, Color, ColumnFill, ComputedStyle};
+use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
+use openui_style::{BorderStyle, Color, ColumnFill, ColumnWrap, ComputedStyle};
 
 use crate::fragment::Fragment;
 use crate::fragmentation::FragmentainerSpace;
@@ -44,8 +44,11 @@ pub struct ColumnRule {
 pub struct ColumnLayoutAlgorithm {
     pub column_count: u32,
     pub column_width: Option<LayoutUnit>,
+    pub column_height: Option<LayoutUnit>,
     pub column_gap: LayoutUnit,
+    pub row_gap: LayoutUnit,
     pub column_fill: ColumnFill,
+    pub column_wrap: ColumnWrap,
     pub column_rule: Option<ColumnRule>,
 }
 
@@ -114,7 +117,10 @@ pub fn resolve_column_count_and_width(
 
             let used_count = count.min(fitting);
             let used_width = compute_column_width(available, used_count, column_gap);
-            ResolvedColumns { count: used_count, width: used_width }
+            ResolvedColumns {
+                count: used_count,
+                width: used_width,
+            }
         }
 
         // Only count specified; derive width.
@@ -137,16 +143,17 @@ pub fn resolve_column_count_and_width(
             };
             // Redistribute to fill available space.
             let used_width = compute_column_width(available, count, column_gap);
-            ResolvedColumns { count, width: used_width }
+            ResolvedColumns {
+                count,
+                width: used_width,
+            }
         }
 
         // Neither specified: default to 1 column.
-        (None, None) => {
-            ResolvedColumns {
-                count: 1,
-                width: available,
-            }
-        }
+        (None, None) => ResolvedColumns {
+            count: 1,
+            width: available,
+        },
     }
 }
 
@@ -164,10 +171,10 @@ fn compute_column_width(available: LayoutUnit, count: u32, gap: LayoutUnit) -> L
     LayoutUnit::from_raw(remaining.raw() / count as i32)
 }
 
-/// Clamp column-width to at least zero (negative values are invalid per spec).
+/// Clamp column-width to the smallest usable fragmentainer inline size.
 fn clamp_column_width(width: LayoutUnit) -> LayoutUnit {
-    if width.raw() < 0 {
-        LayoutUnit::zero()
+    if width.raw() <= 0 {
+        LayoutUnit::from_i32(1)
     } else {
         width
     }
@@ -259,9 +266,7 @@ pub fn compute_column_rule_positions(
     let stride = column_width + column_gap;
     let half_gap = LayoutUnit::from_raw(column_gap.raw() / 2);
     (0..column_count - 1)
-        .map(|i| {
-            column_width + stride * LayoutUnit::from_i32(i as i32) + half_gap
-        })
+        .map(|i| column_width + stride * LayoutUnit::from_i32(i as i32) + half_gap)
         .collect()
 }
 
@@ -287,16 +292,24 @@ pub fn layout_columns(
     child_block_sizes: &[LayoutUnit],
 ) -> ColumnLayoutResult {
     let resolved = resolve_column_count_and_width(
-        if algo.column_count > 0 { Some(algo.column_count) } else { None },
+        if algo.column_count > 0 {
+            Some(algo.column_count)
+        } else {
+            None
+        },
         algo.column_width,
         available_inline_size,
         algo.column_gap,
     );
 
     let column_height = match algo.column_fill {
-        ColumnFill::Balance | ColumnFill::BalanceAll => {
-            balance_columns(child_block_sizes, &vec![false; child_block_sizes.len()], resolved.count, available_block_size, &vec![false; child_block_sizes.len()])
-        }
+        ColumnFill::Balance | ColumnFill::BalanceAll => balance_columns(
+            child_block_sizes,
+            &vec![false; child_block_sizes.len()],
+            resolved.count,
+            available_block_size,
+            &vec![false; child_block_sizes.len()],
+        ),
         ColumnFill::Auto => {
             if available_block_size.raw() > 0 && available_block_size.raw() < i32::MAX / 2 {
                 available_block_size
@@ -425,8 +438,13 @@ pub fn balance_columns(
     let zeros = vec![LayoutUnit::zero(); child_block_sizes.len()];
     let no_avoid = vec![false; child_block_sizes.len()];
     balance_columns_with_margins(
-        child_block_sizes, &zeros, &zeros,
-        avoid_break_inside, column_count, max_height, forced_break_before,
+        child_block_sizes,
+        &zeros,
+        &zeros,
+        avoid_break_inside,
+        column_count,
+        max_height,
+        forced_break_before,
         &no_avoid,
     )
 }
@@ -476,11 +494,24 @@ pub fn balance_columns_with_margins(
     // For unsplittable children, the minimum height is the raw size plus
     // margin-bottom (the entire margin box must fit).  Margin-top is
     // truncated at column top.
-    let max_unsplittable_single = raw_sizes.iter()
+    let hard_max_height = if max_height.raw() > 0 && max_height.raw() < i32::MAX / 2 {
+        Some(max_height.raw() as i64)
+    } else {
+        None
+    };
+    let max_unsplittable_single = raw_sizes
+        .iter()
         .zip(avoid_break_inside.iter())
         .zip(margins_bottom.iter())
         .filter(|((_, &avoid), _)| avoid)
-        .map(|((s, _), mb)| s.raw() as i64 + mb.raw() as i64)
+        .filter_map(|((s, _), mb)| {
+            let avoid_size = s.raw() as i64 + mb.raw() as i64;
+            if hard_max_height.is_some_and(|max_height| avoid_size > max_height) {
+                None
+            } else {
+                Some(avoid_size)
+            }
+        })
         .max()
         .unwrap_or(0);
 
@@ -495,10 +526,14 @@ pub fn balance_columns_with_margins(
             let mt = margins_top[i];
             let margin = if in_group {
                 // Within an avoid group, margins collapse between siblings.
-                let prev_mb = if i > 0 { margins_bottom[i - 1] } else { LayoutUnit::zero() };
+                let prev_mb = if i > 0 {
+                    margins_bottom[i - 1]
+                } else {
+                    LayoutUnit::zero()
+                };
                 prev_mb.max_of(mt).raw() as i64
             } else {
-                0  // First item in group: margin truncated at column top
+                0 // First item in group: margin truncated at column top
             };
             group_size += margin + raw_sizes[i].raw() as i64;
 
@@ -507,23 +542,28 @@ pub fn balance_columns_with_margins(
                 in_group = true;
             } else {
                 if in_group {
-                    max_group = max_group.max(group_size);
+                    if !hard_max_height.is_some_and(|max_height| group_size > max_height) {
+                        max_group = max_group.max(group_size);
+                    }
                 }
                 group_size = 0;
                 in_group = false;
             }
         }
         if in_group {
-            max_group = max_group.max(group_size);
+            if !hard_max_height.is_some_and(|max_height| group_size > max_height) {
+                max_group = max_group.max(group_size);
+            }
         }
         max_group
     };
 
-    let max_unsplittable = max_unsplittable_single
-        .max(max_avoid_group);
+    let max_unsplittable = max_unsplittable_single.max(max_avoid_group);
 
     // Count how many forced breaks exist (excluding the first child).
-    let forced_count = forced_break_before.iter().enumerate()
+    let forced_count = forced_break_before
+        .iter()
+        .enumerate()
         .filter(|&(i, &f)| f && i > 0)
         .count() as u32;
 
@@ -577,9 +617,13 @@ pub fn balance_columns_with_margins(
         }
         let mid = lo + (hi - lo) / 2;
         let needed = columns_needed_for_height_with_margins(
-            raw_sizes, margins_top, margins_bottom,
-            avoid_break_inside, LayoutUnit::from_raw(mid),
-            forced_break_before, column_count,
+            raw_sizes,
+            margins_top,
+            margins_bottom,
+            avoid_break_inside,
+            LayoutUnit::from_raw(mid),
+            forced_break_before,
+            column_count,
             avoid_break_after,
         );
         if needed <= column_count {
@@ -608,8 +652,13 @@ fn columns_needed_for_height(
     let zeros = vec![LayoutUnit::zero(); child_block_sizes.len()];
     let no_avoid = vec![false; child_block_sizes.len()];
     columns_needed_for_height_with_margins(
-        child_block_sizes, &zeros, &zeros,
-        avoid_break_inside, height, forced_break_before, column_count,
+        child_block_sizes,
+        &zeros,
+        &zeros,
+        avoid_break_inside,
+        height,
+        forced_break_before,
+        column_count,
         &no_avoid,
     )
 }
@@ -644,13 +693,45 @@ fn columns_needed_for_height_with_margins(
         }
 
         // CSS Fragmentation §3.5: top margin truncated at non-first column start.
-        let margin_space = if at_column_start && columns > 1 {
+        let mut margin_space = if at_column_start && columns > 1 {
             LayoutUnit::zero()
         } else if at_column_start {
             margins_top[i]
         } else {
             prev_mb.max_of(margins_top[i])
         };
+
+        let starts_avoid_group = avoid_break_after.get(i).copied().unwrap_or(false)
+            && (i == 0 || !avoid_break_after.get(i - 1).copied().unwrap_or(false));
+        if starts_avoid_group && !at_column_start {
+            let mut group_total = margin_space + raw_size;
+            let mut j = i;
+            while avoid_break_after.get(j).copied().unwrap_or(false) && j + 1 < raw_sizes.len() {
+                group_total =
+                    group_total + margins_bottom[j].max_of(margins_top[j + 1]) + raw_sizes[j + 1];
+                j += 1;
+            }
+            group_total = group_total + margins_bottom[j];
+
+            let mut fresh_group_total = raw_size;
+            let mut fresh_j = i;
+            while avoid_break_after.get(fresh_j).copied().unwrap_or(false)
+                && fresh_j + 1 < raw_sizes.len()
+            {
+                fresh_group_total = fresh_group_total
+                    + margins_bottom[fresh_j].max_of(margins_top[fresh_j + 1])
+                    + raw_sizes[fresh_j + 1];
+                fresh_j += 1;
+            }
+            fresh_group_total = fresh_group_total + margins_bottom[fresh_j];
+
+            if group_total.raw() > remaining.raw() && fresh_group_total.raw() <= height.raw() {
+                columns += 1;
+                remaining = height;
+                at_column_start = true;
+                margin_space = LayoutUnit::zero();
+            }
+        }
         let child_size = margin_space + raw_size;
 
         let avoid = avoid_break_inside.get(i).copied().unwrap_or(false);
@@ -712,11 +793,16 @@ fn columns_needed_for_height_with_margins(
 impl ColumnLayoutAlgorithm {
     /// Build a `ColumnLayoutAlgorithm` from a `ComputedStyle`.
     pub fn from_style(style: &ComputedStyle) -> Option<Self> {
-        // A multicol container must have column-count or column-width set.
+        // A multicol container must have column-count, column-width, or
+        // column-height set. CSS Multicol Level 2 column-height creates a
+        // single-column fragmentainer when count/width are both auto.
         // CSS Multicol §3: column-count values less than 1 are invalid;
         // treat Some(0) the same as None (auto).
         let effective_count = style.column_count.filter(|&c| c >= 1);
-        if effective_count.is_none() && style.column_width.is_none() {
+        if effective_count.is_none()
+            && style.column_width.is_none()
+            && style.column_height.is_none()
+        {
             return None;
         }
 
@@ -745,13 +831,31 @@ impl ColumnLayoutAlgorithm {
             None
         };
 
+        let row_gap = match style.row_gap {
+            Some(ref len) if len.is_fixed() => LayoutUnit::from_f32(len.value()),
+            _ => LayoutUnit::zero(),
+        };
+
         Some(Self {
             column_count: effective_count.unwrap_or(0),
             column_width: style.column_width.as_ref().and_then(|l| {
-                if l.is_fixed() { Some(LayoutUnit::from_f32(l.value())) } else { None }
+                if l.is_fixed() {
+                    Some(LayoutUnit::from_f32(l.value()))
+                } else {
+                    None
+                }
+            }),
+            column_height: style.column_height.as_ref().and_then(|l| {
+                if l.is_fixed() {
+                    Some(LayoutUnit::from_f32(l.value()).clamp_negative_to_zero())
+                } else {
+                    None
+                }
             }),
             column_gap,
+            row_gap,
             column_fill: style.column_fill,
+            column_wrap: style.column_wrap,
             column_rule,
         })
     }
@@ -764,22 +868,23 @@ mod tests {
     #[test]
     fn resolve_only_count() {
         let r = resolve_column_count_and_width(
-            Some(3), None,
+            Some(3),
+            None,
             LayoutUnit::from_i32(900),
             LayoutUnit::from_i32(20),
         );
         assert_eq!(r.count, 3);
         // width = (900 - 2*20) / 3 = 860 / 3 ≈ 286
-        let expected = LayoutUnit::from_raw(
-            (LayoutUnit::from_i32(900) - LayoutUnit::from_i32(40)).raw() / 3,
-        );
+        let expected =
+            LayoutUnit::from_raw((LayoutUnit::from_i32(900) - LayoutUnit::from_i32(40)).raw() / 3);
         assert_eq!(r.width, expected);
     }
 
     #[test]
     fn resolve_only_width() {
         let r = resolve_column_count_and_width(
-            None, Some(LayoutUnit::from_i32(200)),
+            None,
+            Some(LayoutUnit::from_i32(200)),
             LayoutUnit::from_i32(900),
             LayoutUnit::from_i32(20),
         );
@@ -788,9 +893,22 @@ mod tests {
     }
 
     #[test]
+    fn resolve_zero_width_uses_minimum_fragmentainer_width() {
+        let r = resolve_column_count_and_width(
+            None,
+            Some(LayoutUnit::zero()),
+            LayoutUnit::from_i32(50),
+            LayoutUnit::zero(),
+        );
+        assert_eq!(r.count, 50);
+        assert_eq!(r.width, LayoutUnit::from_i32(1));
+    }
+
+    #[test]
     fn resolve_auto_auto() {
         let r = resolve_column_count_and_width(
-            None, None,
+            None,
+            None,
             LayoutUnit::from_i32(600),
             LayoutUnit::from_i32(10),
         );
@@ -805,7 +923,13 @@ mod tests {
             LayoutUnit::from_i32(100),
             LayoutUnit::from_i32(100),
         ];
-        let h = balance_columns(&children, &vec![false; 3], 3, LayoutUnit::from_i32(1000), &vec![false; 3]);
+        let h = balance_columns(
+            &children,
+            &vec![false; 3],
+            3,
+            LayoutUnit::from_i32(1000),
+            &vec![false; 3],
+        );
         assert_eq!(h, LayoutUnit::from_i32(100));
     }
 
@@ -817,7 +941,13 @@ mod tests {
             LayoutUnit::from_i32(60),
             LayoutUnit::from_i32(40),
         ];
-        let h = balance_columns(&children, &vec![false; 4], 2, LayoutUnit::from_i32(1000), &vec![false; 4]);
+        let h = balance_columns(
+            &children,
+            &vec![false; 4],
+            2,
+            LayoutUnit::from_i32(1000),
+            &vec![false; 4],
+        );
         // Total = 230, 2 cols. With fragmentation:
         // col1 = 50 + 65 (first part of 80) = 115
         // col2 = 15 (remainder of 80) + 60 + 40 = 115

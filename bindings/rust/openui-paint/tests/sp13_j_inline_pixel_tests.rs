@@ -60,7 +60,12 @@ fn get_pixel(surface: &mut Surface, x: i32, y: i32) -> (u8, u8, u8, u8) {
         skia_safe::image::CachingHint::Allow,
     );
     let idx = (x as usize) * 4;
-    (pixels[idx], pixels[idx + 1], pixels[idx + 2], pixels[idx + 3])
+    (
+        pixels[idx],
+        pixels[idx + 1],
+        pixels[idx + 2],
+        pixels[idx + 3],
+    )
 }
 
 fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, u8), msg: &str) {
@@ -71,7 +76,18 @@ fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, 
     assert!(
         dr <= TOLERANCE as u16 && dg <= TOLERANCE as u16 && db <= TOLERANCE as u16,
         "{}: pixel ({},{}) = ({},{},{}) expected ~({},{},{}), diff=({},{},{})",
-        msg, x, y, r, g, b, expected.0, expected.1, expected.2, dr, dg, db,
+        msg,
+        x,
+        y,
+        r,
+        g,
+        b,
+        expected.0,
+        expected.1,
+        expected.2,
+        dr,
+        dg,
+        db,
     );
 }
 
@@ -181,13 +197,7 @@ fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: 
     div
 }
 
-fn add_inline_block(
-    doc: &mut Document,
-    parent: NodeId,
-    w: f32,
-    h: f32,
-    color: Color,
-) -> NodeId {
+fn add_inline_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let ib = doc.create_node(ElementTag::Div);
     doc.node_mut(ib).style.display = Display::InlineBlock;
     doc.node_mut(ib).style.width = Length::px(w);
@@ -287,7 +297,10 @@ fn inline_block_single_renders() {
     let vp = setup_viewport(&mut doc);
     add_inline_block(&mut doc, vp, 100.0, 60.0, Color::RED);
     let mut s = render(&doc);
-    assert!(has_visible_content(&mut s), "inline-block should render content");
+    assert!(
+        has_visible_content(&mut s),
+        "inline-block should render content"
+    );
 }
 
 #[test]
@@ -334,8 +347,10 @@ fn inline_block_different_sizes() {
     // Both start from top of line, first is wider/taller
     assert_pixel_color(&mut s, PAD + 60, PAD + 40, RED, "large inline-block center");
     // Second inline-block starts at x=PAD+120
-    assert!(has_non_white_in_region(&mut s, PAD + 120, PAD, 60, 80),
-        "second inline-block region should have content");
+    assert!(
+        has_non_white_in_region(&mut s, PAD + 120, PAD, 60, 80),
+        "second inline-block region should have content"
+    );
 }
 
 #[test]
@@ -345,8 +360,10 @@ fn inline_block_white_after() {
     add_inline_block(&mut doc, vp, 100.0, 60.0, Color::RED);
     let mut s = render(&doc);
     // Area to the right of the inline-block should be white
-    assert!(region_is_white(&mut s, PAD + 110, PAD, 100, 60),
-        "region after inline-block should be white");
+    assert!(
+        region_is_white(&mut s, PAD + 110, PAD, 100, 60),
+        "region after inline-block should be white"
+    );
 }
 
 #[test]
@@ -356,8 +373,10 @@ fn inline_block_white_below() {
     add_inline_block(&mut doc, vp, 100.0, 60.0, Color::RED);
     let mut s = render(&doc);
     // Area below should be white (accounting for possible line-height)
-    assert!(region_is_white(&mut s, PAD, PAD + 80, 100, 60),
-        "region well below inline-block should be white");
+    assert!(
+        region_is_white(&mut s, PAD, PAD + 80, 100, 60),
+        "region well below inline-block should be white"
+    );
 }
 
 #[test]
@@ -366,8 +385,10 @@ fn inline_block_small_box() {
     let vp = setup_viewport(&mut doc);
     add_inline_block(&mut doc, vp, 10.0, 10.0, Color::RED);
     let mut s = render(&doc);
-    assert!(has_non_white_in_region(&mut s, PAD, PAD, 15, 15),
-        "small inline-block should render visible pixels");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD, 15, 15),
+        "small inline-block should render visible pixels"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -452,7 +473,10 @@ fn inline_block_with_border_renders() {
     doc.node_mut(ib).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(ib).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     let mut s = render(&doc);
-    assert!(has_visible_content(&mut s), "bordered inline-block should render");
+    assert!(
+        has_visible_content(&mut s),
+        "bordered inline-block should render"
+    );
 }
 
 #[test]
@@ -465,8 +489,10 @@ fn inline_block_border_top_mid_edge() {
     doc.node_mut(ib).style.border_top_color = StyleColor::Resolved(Color::RED);
     let mut s = render(&doc);
     // Check top border mid-edge (away from corners)
-    assert!(pixel_is_not_white(&mut s, PAD + 50, PAD + 1),
-        "top border mid-edge should have color");
+    assert!(
+        pixel_is_not_white(&mut s, PAD + 50, PAD + 1),
+        "top border mid-edge should have color"
+    );
 }
 
 #[test]
@@ -479,8 +505,10 @@ fn inline_block_border_left_mid_edge() {
     doc.node_mut(ib).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     let mut s = render(&doc);
     // Check left border mid-edge (away from corners)
-    assert!(pixel_is_not_white(&mut s, PAD + 1, PAD + 30),
-        "left border mid-edge should have color");
+    assert!(
+        pixel_is_not_white(&mut s, PAD + 1, PAD + 30),
+        "left border mid-edge should have color"
+    );
 }
 
 #[test]
@@ -493,8 +521,10 @@ fn inline_block_border_bottom_mid_edge() {
     doc.node_mut(ib).style.border_bottom_color = StyleColor::Resolved(Color::GREEN);
     let mut s = render(&doc);
     // Content-box: content is 60px, border is outside at y=PAD+60..PAD+63
-    assert!(pixel_is_not_white(&mut s, PAD + 50, PAD + 61),
-        "bottom border mid-edge should have color");
+    assert!(
+        pixel_is_not_white(&mut s, PAD + 50, PAD + 61),
+        "bottom border mid-edge should have color"
+    );
 }
 
 #[test]
@@ -507,8 +537,10 @@ fn inline_block_border_right_mid_edge() {
     doc.node_mut(ib).style.border_right_color = StyleColor::Resolved(Color::RED);
     let mut s = render(&doc);
     // Content-box: content is 100px, border is outside at x=PAD+100..PAD+103
-    assert!(pixel_is_not_white(&mut s, PAD + 101, PAD + 30),
-        "right border mid-edge should have color");
+    assert!(
+        pixel_is_not_white(&mut s, PAD + 101, PAD + 30),
+        "right border mid-edge should have color"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -544,8 +576,10 @@ fn float_right_with_inline_block() {
     let float_x = PAD + content_w - 50;
     assert_pixel_color(&mut s, float_x, PAD + 40, RED, "right float");
     // Inline-block at left
-    assert!(has_non_white_in_region(&mut s, PAD, PAD, 200, 80),
-        "inline-block should render in available space");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD, 200, 80),
+        "inline-block should render in available space"
+    );
 }
 
 #[test]
@@ -557,7 +591,13 @@ fn float_does_not_overlap_inline_block() {
     let mut s = render(&doc);
     // Float occupies [PAD, PAD+100) × [PAD, PAD+100)
     // Center of float region should be red, not blue
-    assert_pixel_color(&mut s, PAD + 50, PAD + 50, RED, "float region should be red");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 50,
+        RED,
+        "float region should be red",
+    );
 }
 
 #[test]
@@ -573,8 +613,10 @@ fn float_exclusion_inline_block_below_cleared() {
     let mut s = render(&doc);
     // Float is 80px tall, cleared wrapper starts at y >= PAD+80
     assert_pixel_color(&mut s, PAD + 50, PAD + 40, RED, "float area");
-    assert!(has_non_white_in_region(&mut s, PAD, PAD + 80, 200, 60),
-        "cleared inline-block should appear below float");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD + 80, 200, 60),
+        "cleared inline-block should appear below float"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -597,8 +639,10 @@ fn block_in_inline_renders_block() {
     doc.node_mut(block).style.background_color = Color::RED;
     doc.append_child(span, block);
     let mut s = render(&doc);
-    assert!(has_non_white_in_region(&mut s, PAD, PAD, 200, 60),
-        "block-in-inline should produce visible output");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD, 200, 60),
+        "block-in-inline should produce visible output"
+    );
 }
 
 #[test]
@@ -640,7 +684,10 @@ fn block_in_inline_between_text_segments() {
     doc.append_child(span, block);
     add_text(&mut doc, span, " After");
     let mut s = render(&doc);
-    assert!(has_visible_content(&mut s), "block-in-inline with text should render");
+    assert!(
+        has_visible_content(&mut s),
+        "block-in-inline with text should render"
+    );
 }
 
 #[test]
@@ -659,8 +706,10 @@ fn block_in_inline_white_after_block() {
     doc.append_child(span, block);
     let mut s = render(&doc);
     // Right of block should be white
-    assert!(region_is_white(&mut s, PAD + 110, PAD, 100, 50),
-        "area right of block-in-inline should be white");
+    assert!(
+        region_is_white(&mut s, PAD + 110, PAD, 100, 50),
+        "area right of block-in-inline should be white"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -677,9 +726,18 @@ fn inline_block_with_padding_renders() {
     doc.node_mut(ib).style.padding_bottom = Length::px(10.0);
     doc.node_mut(ib).style.padding_left = Length::px(10.0);
     let mut s = render(&doc);
-    assert!(has_visible_content(&mut s), "padded inline-block should render");
+    assert!(
+        has_visible_content(&mut s),
+        "padded inline-block should render"
+    );
     // Content area starts at PAD, the padded inline-block is 120x80 total
-    assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "padding area should have bg color");
+    assert_pixel_color(
+        &mut s,
+        PAD + 5,
+        PAD + 5,
+        RED,
+        "padding area should have bg color",
+    );
 }
 
 #[test]
@@ -719,8 +777,10 @@ fn inline_block_margin_left_offset() {
     doc.node_mut(ib).style.margin_left = Length::px(30.0);
     let mut s = render(&doc);
     // Inline-block renders with margin applied (position depends on IFC)
-    assert!(has_non_white_in_region(&mut s, PAD, PAD, 150, 50),
-        "inline-block with margin-left should render");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD, 150, 50),
+        "inline-block with margin-left should render"
+    );
     assert_pixel_color(&mut s, PAD + 50, PAD + 25, RED, "inline-block center");
 }
 
@@ -735,10 +795,15 @@ fn inline_block_margin_between_two() {
     // First inline-block at PAD
     assert_pixel_color(&mut s, PAD + 40, PAD + 20, RED, "first inline-block");
     // Both should render (second position depends on margin handling in IFC)
-    assert!(has_visible_content(&mut s), "both inline-blocks should render");
+    assert!(
+        has_visible_content(&mut s),
+        "both inline-blocks should render"
+    );
     // Blue inline-block should appear somewhere after the red one
-    assert!(has_non_white_in_region(&mut s, PAD + 80, PAD, 200, 40),
-        "second inline-block should render after the first");
+    assert!(
+        has_non_white_in_region(&mut s, PAD + 80, PAD, 200, 40),
+        "second inline-block should render after the first"
+    );
 }
 
 #[test]
@@ -748,7 +813,10 @@ fn inline_block_margin_top() {
     let ib = add_inline_block(&mut doc, vp, 100.0, 50.0, Color::RED);
     doc.node_mut(ib).style.margin_top = Length::px(20.0);
     let mut s = render(&doc);
-    assert!(has_visible_content(&mut s), "inline-block with margin-top should render");
+    assert!(
+        has_visible_content(&mut s),
+        "inline-block with margin-top should render"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -768,8 +836,10 @@ fn inline_block_after_block_element() {
     let mut s = render(&doc);
     // Block at y=PAD, height=50. Wrapper at y=PAD+50
     assert_pixel_color(&mut s, PAD + 100, PAD + 25, RED, "block");
-    assert!(has_non_white_in_region(&mut s, PAD, PAD + 50, 200, 50),
-        "inline-block below block should render");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD + 50, 200, 50),
+        "inline-block below block should render"
+    );
 }
 
 #[test]
@@ -782,7 +852,10 @@ fn block_after_inline_block_wrapper() {
     add_inline_block(&mut doc, wrapper, 200.0, 50.0, Color::RED);
     add_colored_block(&mut doc, vp, 200.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
-    assert!(has_visible_content(&mut s), "block after inline-block wrapper should render");
+    assert!(
+        has_visible_content(&mut s),
+        "block after inline-block wrapper should render"
+    );
 }
 
 #[test]
@@ -802,10 +875,14 @@ fn stacked_inline_block_wrappers() {
 
     let mut s = render(&doc);
     // First wrapper at y=PAD, second at y ≥ PAD+40
-    assert!(has_non_white_in_region(&mut s, PAD, PAD, 150, 40),
-        "first inline-block");
-    assert!(has_non_white_in_region(&mut s, PAD, PAD + 40, 150, 40),
-        "second inline-block below");
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD, 150, 40),
+        "first inline-block"
+    );
+    assert!(
+        has_non_white_in_region(&mut s, PAD, PAD + 40, 150, 40),
+        "second inline-block below"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -819,7 +896,13 @@ fn inline_block_wide() {
     add_inline_block(&mut doc, vp, 500.0, 30.0, Color::RED);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 250, PAD + 15, RED, "wide inline-block center");
-    assert_pixel_color(&mut s, PAD + 495, PAD + 15, RED, "wide inline-block right edge");
+    assert_pixel_color(
+        &mut s,
+        PAD + 495,
+        PAD + 15,
+        RED,
+        "wide inline-block right edge",
+    );
 }
 
 #[test]
@@ -828,8 +911,20 @@ fn inline_block_tall() {
     let vp = setup_viewport(&mut doc);
     add_inline_block(&mut doc, vp, 60.0, 200.0, Color::BLUE);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 30, PAD + 100, BLUE, "tall inline-block center");
-    assert_pixel_color(&mut s, PAD + 30, PAD + 195, BLUE, "tall inline-block near bottom");
+    assert_pixel_color(
+        &mut s,
+        PAD + 30,
+        PAD + 100,
+        BLUE,
+        "tall inline-block center",
+    );
+    assert_pixel_color(
+        &mut s,
+        PAD + 30,
+        PAD + 195,
+        BLUE,
+        "tall inline-block near bottom",
+    );
 }
 
 #[test]
@@ -838,9 +933,21 @@ fn inline_block_square() {
     let vp = setup_viewport(&mut doc);
     add_inline_block(&mut doc, vp, 100.0, 100.0, Color::GREEN);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD + 50, GREEN, "square inline-block center");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 50,
+        GREEN,
+        "square inline-block center",
+    );
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, GREEN, "square near top-left");
-    assert_pixel_color(&mut s, PAD + 95, PAD + 95, GREEN, "square near bottom-right");
+    assert_pixel_color(
+        &mut s,
+        PAD + 95,
+        PAD + 95,
+        GREEN,
+        "square near bottom-right",
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -860,7 +967,13 @@ fn inline_block_containing_block_child() {
     doc.append_child(ib, child);
     let mut s = render(&doc);
     // Red child inside blue inline-block
-    assert_pixel_color(&mut s, PAD + 50, PAD + 25, RED, "block child inside inline-block");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 25,
+        RED,
+        "block child inside inline-block",
+    );
     assert_pixel_color(&mut s, PAD + 150, PAD + 75, BLUE, "blue parent bg visible");
 }
 
@@ -893,6 +1006,18 @@ fn inline_block_with_multiple_children() {
     doc.node_mut(c2).style.background_color = Color::BLUE;
     doc.append_child(ib, c2);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD + 20, RED, "first child in inline-block");
-    assert_pixel_color(&mut s, PAD + 50, PAD + 60, BLUE, "second child in inline-block");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 20,
+        RED,
+        "first child in inline-block",
+    );
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 60,
+        BLUE,
+        "second child in inline-block",
+    );
 }

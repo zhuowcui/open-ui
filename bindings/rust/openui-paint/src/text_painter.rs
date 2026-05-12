@@ -22,8 +22,8 @@ use skia_safe::{Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point};
 
 use openui_layout::inline::text_combine::TextCombineLayout;
 use openui_style::{Color, ComputedStyle};
-use openui_text::shaping::ShapeResult;
 use openui_text::font::FontMetrics;
+use openui_text::shaping::ShapeResult;
 
 /// Paint shaped text glyphs onto a canvas.
 ///

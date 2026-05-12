@@ -8,8 +8,7 @@
 
 use openui_geometry::LayoutUnit;
 use openui_style::{
-    ContentAlignment, ContentDistribution, ContentPosition, ItemPosition,
-    OverflowAlignment,
+    ContentAlignment, ContentDistribution, ContentPosition, ItemPosition, OverflowAlignment,
 };
 
 /// Result of resolving content alignment (justify-content or align-content).
@@ -150,10 +149,18 @@ fn resolve_position_offset(
 
     match position {
         ContentPosition::FlexStart | ContentPosition::Normal => {
-            if is_reverse { space } else { zero }
+            if is_reverse {
+                space
+            } else {
+                zero
+            }
         }
         ContentPosition::FlexEnd => {
-            if is_reverse { zero } else { space }
+            if is_reverse {
+                zero
+            } else {
+                space
+            }
         }
         ContentPosition::Center => {
             // Blink: free_space / 2
@@ -163,15 +170,27 @@ fn resolve_position_offset(
         ContentPosition::End => space,
         // CSS Box Alignment §5.4: left/right on block axis resolve to start
         ContentPosition::Left => {
-            if is_block_axis { zero } else { zero } // LTR: left = start
+            if is_block_axis {
+                zero
+            } else {
+                zero
+            } // LTR: left = start
         }
         ContentPosition::Right => {
-            if is_block_axis { zero } else { space } // block axis: start; inline axis: end (LTR)
+            if is_block_axis {
+                zero
+            } else {
+                space
+            } // block axis: start; inline axis: end (LTR)
         }
         ContentPosition::Baseline | ContentPosition::LastBaseline => {
             // Baseline alignment for content is complex (SP11+).
             // For now, treat as flex-start.
-            if is_reverse { space } else { zero }
+            if is_reverse {
+                space
+            } else {
+                zero
+            }
         }
     }
 }
@@ -237,7 +256,11 @@ pub fn resolve_align_self(
         ItemPosition::Center => LayoutUnit::from_raw(space.raw() / 2),
         ItemPosition::Stretch => {
             // Stretch: item at start, size expanded (handled elsewhere)
-            if is_wrap_reverse { space } else { zero }
+            if is_wrap_reverse {
+                space
+            } else {
+                zero
+            }
         }
         ItemPosition::Baseline | ItemPosition::LastBaseline => {
             // Baseline alignment offset computed separately from baseline tracking.

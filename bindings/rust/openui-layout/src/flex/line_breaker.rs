@@ -3,9 +3,9 @@
 //! Extracted from Blink's `FlexLineBreaker` (core/layout/flex/flex_line_breaker.cc).
 //! Implements greedy line breaking for `flex-wrap: wrap` and `wrap-reverse`.
 
-use openui_geometry::LayoutUnit;
 use super::item::FlexItem;
 use super::line::FlexLine;
+use openui_geometry::LayoutUnit;
 
 /// Break flex items into lines using the greedy algorithm.
 ///
@@ -72,11 +72,11 @@ pub fn break_into_lines(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use openui_geometry::{BoxStrut, MinMaxSizes};
-    use openui_dom::NodeId;
-    use openui_style::ItemPosition;
     use super::super::item::FlexerState;
+    use super::*;
+    use openui_dom::NodeId;
+    use openui_geometry::{BoxStrut, MinMaxSizes};
+    use openui_style::{ItemPosition, OverflowAlignment};
 
     fn make_item(index: usize, size: i32) -> FlexItem {
         FlexItem {
@@ -91,6 +91,7 @@ mod tests {
             margin: BoxStrut::zero(),
             main_axis_auto_margin_count: 0,
             alignment: ItemPosition::Stretch,
+            alignment_overflow: OverflowAlignment::Default,
             flexed_content_size: LayoutUnit::zero(),
             state: FlexerState::None,
             free_space_fraction: 0.0,
@@ -115,11 +116,7 @@ mod tests {
 
     #[test]
     fn multi_line_wrap() {
-        let items = vec![
-            make_item(0, 100),
-            make_item(1, 100),
-            make_item(2, 100),
-        ];
+        let items = vec![make_item(0, 100), make_item(1, 100), make_item(2, 100)];
         let lines = break_into_lines(
             &items,
             LayoutUnit::from_i32(250),
@@ -133,11 +130,7 @@ mod tests {
 
     #[test]
     fn wrap_with_gap() {
-        let items = vec![
-            make_item(0, 100),
-            make_item(1, 100),
-            make_item(2, 100),
-        ];
+        let items = vec![make_item(0, 100), make_item(1, 100), make_item(2, 100)];
         // 100 + 10 + 100 = 210 > 200, so second item wraps
         let lines = break_into_lines(
             &items,
@@ -154,12 +147,7 @@ mod tests {
     #[test]
     fn empty_items() {
         let items: Vec<FlexItem> = vec![];
-        let lines = break_into_lines(
-            &items,
-            LayoutUnit::from_i32(400),
-            LayoutUnit::zero(),
-            true,
-        );
+        let lines = break_into_lines(&items, LayoutUnit::from_i32(400), LayoutUnit::zero(), true);
         assert_eq!(lines.len(), 1);
         assert_eq!(lines[0].item_count(), 0);
     }
@@ -168,12 +156,7 @@ mod tests {
     fn first_item_always_on_first_line() {
         // Even if a single item exceeds the container, it goes on the first line
         let items = vec![make_item(0, 500)];
-        let lines = break_into_lines(
-            &items,
-            LayoutUnit::from_i32(100),
-            LayoutUnit::zero(),
-            true,
-        );
+        let lines = break_into_lines(&items, LayoutUnit::from_i32(100), LayoutUnit::zero(), true);
         assert_eq!(lines.len(), 1);
         assert_eq!(lines[0].item_indices, vec![0]);
     }

@@ -54,9 +54,8 @@ pub struct FontCache {
 }
 
 /// Global singleton font cache.
-pub static GLOBAL_FONT_CACHE: LazyLock<Mutex<FontCache>> = LazyLock::new(|| {
-    Mutex::new(FontCache::new())
-});
+pub static GLOBAL_FONT_CACHE: LazyLock<Mutex<FontCache>> =
+    LazyLock::new(|| Mutex::new(FontCache::new()));
 
 impl FontCache {
     /// Create a new font cache with the system default font manager.
@@ -95,7 +94,11 @@ impl FontCache {
             _ => 0.0,
         };
 
-        let data = Arc::new(FontPlatformData::with_oblique_angle(typeface, description.size, oblique_angle));
+        let data = Arc::new(FontPlatformData::with_oblique_angle(
+            typeface,
+            description.size,
+            oblique_angle,
+        ));
         self.cache.insert(key, Arc::clone(&data));
         Some(data)
     }
@@ -189,7 +192,11 @@ impl FontCache {
             openui_style::FontStyleEnum::Oblique(angle) => angle,
             _ => 0.0,
         };
-        let data = Arc::new(FontPlatformData::with_oblique_angle(typeface, description.size, oblique_angle));
+        let data = Arc::new(FontPlatformData::with_oblique_angle(
+            typeface,
+            description.size,
+            oblique_angle,
+        ));
         Some(data)
     }
 }

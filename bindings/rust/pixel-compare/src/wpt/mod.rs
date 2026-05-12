@@ -3,15 +3,15 @@
 use openui_dom::Document;
 
 pub mod wpt_css2_floats;
-pub mod wpt_css_position;
+pub mod wpt_css_backgrounds;
+pub mod wpt_css_box;
+pub mod wpt_css_break;
+pub mod wpt_css_display;
 pub mod wpt_css_flexbox;
 pub mod wpt_css_multicol;
 pub mod wpt_css_overflow;
+pub mod wpt_css_position;
 pub mod wpt_css_sizing;
-pub mod wpt_css_break;
-pub mod wpt_css_display;
-pub mod wpt_css_box;
-pub mod wpt_css_backgrounds;
 
 pub fn all_wpt_registry() -> Vec<(&'static str, fn() -> Document)> {
     let mut all = Vec::new();

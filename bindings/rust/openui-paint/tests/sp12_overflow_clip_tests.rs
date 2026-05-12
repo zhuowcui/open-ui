@@ -18,8 +18,8 @@ use openui_text::{Font, FontDescription, TextDirection, TextShaper};
 // ── Helpers ──────────────────────────────────────────────────────────
 
 fn make_surface(width: i32, height: i32) -> Surface {
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .expect("Failed to create Skia surface");
+    let mut surface =
+        surfaces::raster_n32_premul((width, height)).expect("Failed to create Skia surface");
     surface.canvas().clear(SkColor::WHITE);
     surface
 }
@@ -39,7 +39,13 @@ fn has_non_white_pixels(surface: &mut Surface, x: i32, y: i32, w: i32, h: i32) -
     let info = image.image_info();
     let row_bytes = info.min_row_bytes();
     let mut pixels = vec![0u8; info.height() as usize * row_bytes];
-    image.read_pixels(&info, &mut pixels, row_bytes, (0, 0), skia_safe::image::CachingHint::Allow);
+    image.read_pixels(
+        &info,
+        &mut pixels,
+        row_bytes,
+        (0, 0),
+        skia_safe::image::CachingHint::Allow,
+    );
 
     let bpp = 4;
     let img_w = info.width() as i32;
@@ -97,11 +103,7 @@ fn make_box_fragment(
 }
 
 /// Build a text child fragment from shaped text.
-fn make_text_child(
-    doc: &mut Document,
-    parent_node: openui_dom::NodeId,
-    text: &str,
-) -> Fragment {
+fn make_text_child(doc: &mut Document, parent_node: openui_dom::NodeId, text: &str) -> Fragment {
     let sr = Arc::new(shape_text(text));
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let text_node = doc.create_node(ElementTag::Text);
@@ -344,10 +346,7 @@ fn nested_overflow_containers() {
     doc.node_mut(inner_node).style.overflow_x = Overflow::Hidden;
     doc.node_mut(inner_node).style.overflow_y = Overflow::Hidden;
     inner_frag.has_overflow_clip = true;
-    inner_frag.offset = PhysicalOffset::new(
-        LayoutUnit::from_f32(20.0),
-        LayoutUnit::from_f32(20.0),
-    );
+    inner_frag.offset = PhysicalOffset::new(LayoutUnit::from_f32(20.0), LayoutUnit::from_f32(20.0));
 
     // Text that's wider than the inner box (60px)
     let text_frag = make_text_child(&mut doc, inner_node, "XXXXXXXXXXXXXXXXXXXX");
@@ -511,14 +510,23 @@ fn overflow_enum_properties() {
 #[test]
 fn has_border_radius_helper() {
     let mut style = ComputedStyle::initial();
-    assert!(!style.has_border_radius(), "Initial style should have no border-radius");
+    assert!(
+        !style.has_border_radius(),
+        "Initial style should have no border-radius"
+    );
 
     style.border_top_left_radius = (10.0, 10.0);
-    assert!(style.has_border_radius(), "Should detect non-zero top-left radius");
+    assert!(
+        style.has_border_radius(),
+        "Should detect non-zero top-left radius"
+    );
 
     let mut style2 = ComputedStyle::initial();
     style2.border_bottom_right_radius = (5.0, 0.0);
-    assert!(style2.has_border_radius(), "Should detect partial non-zero radius");
+    assert!(
+        style2.has_border_radius(),
+        "Should detect partial non-zero radius"
+    );
 }
 
 /// 15. Save/restore balance with border-radius + opacity layer.

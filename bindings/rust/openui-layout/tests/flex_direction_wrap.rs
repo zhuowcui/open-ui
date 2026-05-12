@@ -1112,8 +1112,7 @@ fn gap_with_space_between() {
     {
         let s = doc.node_mut(c).style_mut();
         s.column_gap = Some(Length::px(10.0));
-        s.justify_content =
-            ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        s.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
     }
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -1519,8 +1518,7 @@ fn auto_margin_overrides_justify_content() {
     // Auto margins consume free space, overriding justify-content.
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::new(ContentPosition::Center);
+    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
     let c1 = add_child(&mut doc, c, 50, 50);
     doc.node_mut(c1).style_mut().margin_left = Length::auto();
     add_child(&mut doc, c, 50, 50);

@@ -215,12 +215,12 @@ def check_rust_code_exists():
                 content = f.read()
             # Strip block comments /* ... */ (handles multi-line)
             content = re.sub(r"/\*.*?\*/", "", content, flags=re.DOTALL)
+            for m in re.finditer(r'"(wpt/[^"]+)"', content):
+                rust_test_ids.add(m.group(1))
             for line in content.splitlines():
                 stripped = line.lstrip()
                 if stripped.startswith("//"):
                     continue
-                for m in re.finditer(r'\("(wpt/[^"]+)"', line):
-                    rust_test_ids.add(m.group(1))
                 # Also collect function definitions
                 m_fn = re.match(r'^fn\s+(\w+)\s*\(', stripped)
                 if m_fn:
@@ -289,8 +289,15 @@ def check_mapping_coverage():
 
     # Validate failure categories (supports comma-separated multi-labels)
     invalid_cats = set()
+    untracked_not_ported = 0
+    unclassified_unported = 0
     for r in rows:
         cat = r.get("failure_category", "").strip()
+        if r["ported"] == "no":
+            if not cat:
+                unclassified_unported += 1
+            if "not_ported" in {p.strip() for p in cat.split(",") if p.strip()}:
+                untracked_not_ported += 1
         if cat:
             for part in cat.split(","):
                 part = part.strip()
@@ -300,6 +307,12 @@ def check_mapping_coverage():
         issue(f"Invalid failure categories: {invalid_cats}")
     else:
         ok("All failure categories are from the valid set")
+    if untracked_not_ported:
+        issue(f"{untracked_not_ported} unported tests still use the generic not_ported bucket")
+    if unclassified_unported:
+        issue(f"{unclassified_unported} unported tests have no explicit dependency category")
+    if not untracked_not_ported and not unclassified_unported:
+        ok(f"All {not_ported} unported tests have explicit dependency categories")
 
     # Accounting identity: ported + not_ported = total
     if ported + not_ported != total:

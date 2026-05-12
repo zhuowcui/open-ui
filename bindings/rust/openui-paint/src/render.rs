@@ -3,12 +3,10 @@
 //! This is the main public API for headless rendering: build a Document,
 //! set styles, call `render_to_png()`, and get a pixel-perfect PNG.
 
-use skia_safe::{
-    surfaces, EncodedImageFormat, Color as SkColor, Surface,
-};
-use openui_geometry::LayoutUnit;
 use openui_dom::Document;
-use openui_layout::{ConstraintSpace, block_layout};
+use openui_geometry::LayoutUnit;
+use openui_layout::{block_layout, ConstraintSpace};
+use skia_safe::{surfaces, Color as SkColor, EncodedImageFormat, Surface};
 
 use crate::painter::paint_fragment;
 
@@ -23,11 +21,11 @@ pub fn render_to_png(doc: &Document, width: i32, height: i32, path: &str) -> Res
 
     // Encode to PNG
     let image = surface.image_snapshot();
-    let data = image.encode(None, EncodedImageFormat::PNG, None)
+    let data = image
+        .encode(None, EncodedImageFormat::PNG, None)
         .ok_or_else(|| "Failed to encode PNG".to_string())?;
 
-    std::fs::write(path, data.as_bytes())
-        .map_err(|e| format!("Failed to write PNG: {}", e))?;
+    std::fs::write(path, data.as_bytes()).map_err(|e| format!("Failed to write PNG: {}", e))?;
 
     Ok(())
 }
@@ -45,10 +43,8 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     surface.canvas().clear(SkColor::WHITE);
 
     // Layout
-    let space = ConstraintSpace::for_root(
-        LayoutUnit::from_i32(width),
-        LayoutUnit::from_i32(height),
-    );
+    let space =
+        ConstraintSpace::for_root(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height));
     let fragment = block_layout(doc, doc.root(), &space);
 
     // Paint
@@ -62,8 +58,8 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
 mod tests {
     use super::*;
     use openui_dom::ElementTag;
-    use openui_style::*;
     use openui_geometry::Length;
+    use openui_style::*;
 
     #[test]
     fn render_simple_red_box() {

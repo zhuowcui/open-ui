@@ -156,7 +156,8 @@ impl Hyphenation {
         // For each starting position in the augmented word, look up all
         // pattern prefixes in the trie and apply their priority values.
         for start in 0..aug_len {
-            self.trie.apply_patterns(&augmented[start..], start, &mut values);
+            self.trie
+                .apply_patterns(&augmented[start..], start, &mut values);
         }
 
         // Extract hyphenation points. The priority values in the augmented word
@@ -306,18 +307,18 @@ mod tests {
     #[test]
     fn should_hyphenate_short_words() {
         let h = Hyphenation::english();
-        assert!(!h.should_hyphenate("the"));   // 3 chars < 5
-        assert!(!h.should_hyphenate("is"));    // 2 chars < 5
-        assert!(!h.should_hyphenate("a"));     // 1 char < 5
-        assert!(!h.should_hyphenate(""));      // empty
-        assert!(!h.should_hyphenate("test"));  // 4 chars < 5
+        assert!(!h.should_hyphenate("the")); // 3 chars < 5
+        assert!(!h.should_hyphenate("is")); // 2 chars < 5
+        assert!(!h.should_hyphenate("a")); // 1 char < 5
+        assert!(!h.should_hyphenate("")); // empty
+        assert!(!h.should_hyphenate("test")); // 4 chars < 5
     }
 
     #[test]
     fn should_hyphenate_long_words() {
         let h = Hyphenation::english();
-        assert!(h.should_hyphenate("hello"));     // 5 chars = 5
-        assert!(h.should_hyphenate("computer"));  // 8 chars > 5
+        assert!(h.should_hyphenate("hello")); // 5 chars = 5
+        assert!(h.should_hyphenate("computer")); // 8 chars > 5
         assert!(h.should_hyphenate("hyphenation")); // 11 chars > 5
     }
 
@@ -362,8 +363,8 @@ mod tests {
     fn hyphenation_respects_min_word() {
         let h = Hyphenation::english_with_limits(2, 2, 8);
         assert!(h.hyphen_locations("hello").is_empty()); // 5 < 8
-        // "computer" has 8 chars, meets threshold
-        // It may or may not have points depending on patterns, but min_word is met
+                                                         // "computer" has 8 chars, meets threshold
+                                                         // It may or may not have points depending on patterns, but min_word is met
     }
 
     #[test]

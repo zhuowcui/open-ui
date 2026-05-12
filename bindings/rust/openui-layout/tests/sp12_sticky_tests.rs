@@ -41,12 +41,7 @@ fn large_cb() -> PhysicalRect {
     rect(0, 0, 800, 2000)
 }
 
-fn make_sticky_style(
-    top: Length,
-    right: Length,
-    bottom: Length,
-    left: Length,
-) -> ComputedStyle {
+fn make_sticky_style(top: Length, right: Length, bottom: Length, left: Length) -> ComputedStyle {
     let mut s = ComputedStyle::initial();
     s.display = Display::Block;
     s.position = Position::Sticky;
@@ -58,10 +53,7 @@ fn make_sticky_style(
 }
 
 fn make_fragment(left: i32, top: i32, w: i32, h: i32) -> openui_layout::Fragment {
-    let mut f = openui_layout::Fragment::new_box(
-        openui_dom::NodeId::NONE,
-        size(w, h),
-    );
+    let mut f = openui_layout::Fragment::new_box(openui_dom::NodeId::NONE, size(w, h));
     f.offset = offset(left, top);
     f
 }
@@ -403,7 +395,7 @@ fn apply_sticky_offset_mutates_fragment() {
     apply_sticky_offset(
         &mut frag,
         &style,
-        offset(0, 300),  // scroll
+        offset(0, 300), // scroll
         viewport(),
         lu(800),
         lu(2000),

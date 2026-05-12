@@ -65,11 +65,10 @@ fn nf_five_children_stack_vertically() {
 
 #[test]
 fn nf_children_with_margins_stack() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child().height(50.0).margin(10, 0, 10, 0).done();
     b.add_child().height(50.0).margin(10, 0, 10, 0).done();
     let r = b.build();
@@ -216,9 +215,7 @@ fn nf_percentage_width_75pct_of_600() {
 #[test]
 fn nf_auto_height_from_single_child() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .add_child().height(80.0).done()
-        .done();
+    b.add_child().add_child().height(80.0).done().done();
     let r = b.build();
     r.assert_child_size(0, 400, 80);
 }
@@ -227,8 +224,12 @@ fn nf_auto_height_from_single_child() {
 fn nf_auto_height_from_multiple_children() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
-        .add_child().height(40.0).done()
-        .add_child().height(60.0).done()
+        .add_child()
+        .height(40.0)
+        .done()
+        .add_child()
+        .height(60.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 100);
@@ -302,7 +303,9 @@ fn nf_child_with_padding_reduces_content_width() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .padding(0, 20, 0, 20)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // outer child = 400 wide, inner content = 400 - 40 = 360
@@ -315,7 +318,9 @@ fn nf_child_with_border_reduces_content_width() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .border(0, 5, 0, 5)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
@@ -328,7 +333,9 @@ fn nf_child_with_border_and_padding() {
     b.add_child()
         .border(2, 2, 2, 2)
         .padding(10, 10, 10, 10)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // content width = 400 - 4 (border) - 20 (padding) = 376
@@ -341,7 +348,9 @@ fn nf_border_padding_position_nested_child() {
     b.add_child()
         .border(3, 3, 3, 3)
         .padding(10, 10, 10, 10)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // nested child position inside parent: left=3+10=13, top=3+10=13
@@ -451,10 +460,7 @@ fn nf_child_at_zero_zero_with_no_margin() {
 #[test]
 fn bm_content_width_minus_padding() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .padding(10, 20, 10, 20)
-        .height(50.0)
-        .done();
+    b.add_child().padding(10, 20, 10, 20).height(50.0).done();
     let r = b.build();
     // Width of fragment includes padding: 400
     // Content area: 400 - 20 - 20 = 360 (tested via nested child)
@@ -464,10 +470,7 @@ fn bm_content_width_minus_padding() {
 #[test]
 fn bm_content_width_minus_border() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(5, 10, 5, 10)
-        .height(50.0)
-        .done();
+    b.add_child().border(5, 10, 5, 10).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 60); // height 50 + 5 + 5 border
 }
@@ -636,16 +639,12 @@ fn bm_negative_margin_right() {
 
 #[test]
 fn bm_negative_margin_top_shifts_up() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child().height(50.0).done();
-    b.add_child()
-        .height(50.0)
-        .margin_top(-10)
-        .done();
+    b.add_child().height(50.0).margin_top(-10).done();
     let r = b.build();
     // second child moves up by 10 from where it would normally be
     // first child at y=1, second at y=1+50-10=41
@@ -750,10 +749,7 @@ fn bm_padding_percent_bottom() {
 #[test]
 fn bm_border_1px_all_sides() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(1, 1, 1, 1)
-        .height(50.0)
-        .done();
+    b.add_child().border(1, 1, 1, 1).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 52); // 50 + 1 + 1
 }
@@ -761,10 +757,7 @@ fn bm_border_1px_all_sides() {
 #[test]
 fn bm_border_5px_all_sides() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(5, 5, 5, 5)
-        .height(50.0)
-        .done();
+    b.add_child().border(5, 5, 5, 5).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 60); // 50 + 5 + 5
 }
@@ -772,10 +765,7 @@ fn bm_border_5px_all_sides() {
 #[test]
 fn bm_border_asymmetric() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(1, 2, 3, 4)
-        .height(50.0)
-        .done();
+    b.add_child().border(1, 2, 3, 4).height(50.0).done();
     let r = b.build();
     // height = 50 + 1 + 3 = 54, width = 400
     r.assert_child_size(0, 400, 54);
@@ -784,10 +774,7 @@ fn bm_border_asymmetric() {
 #[test]
 fn bm_border_top_only() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(10, 0, 0, 0)
-        .height(50.0)
-        .done();
+    b.add_child().border(10, 0, 0, 0).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 60);
 }
@@ -870,10 +857,7 @@ fn bm_border_box_centered_with_auto_margins() {
 #[test]
 fn bm_padding_adds_to_height() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .padding(15, 0, 15, 0)
-        .height(50.0)
-        .done();
+    b.add_child().padding(15, 0, 15, 0).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 80); // 50 + 15 + 15
 }
@@ -908,11 +892,10 @@ fn bm_border_none_style_zero_width() {
 
 #[test]
 fn bm_all_four_margins_different() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child()
         .width(200.0)
         .height(100.0)
@@ -939,10 +922,7 @@ fn bm_zero_padding_and_border() {
 #[test]
 fn bm_large_padding() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .padding(50, 50, 50, 50)
-        .height(100.0)
-        .done();
+    b.add_child().padding(50, 50, 50, 50).height(100.0).done();
     let r = b.build();
     // width 400, height = 100 + 50 + 50 = 200
     r.assert_child_size(0, 400, 200);
@@ -953,7 +933,9 @@ fn bm_padding_left_only() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .padding(0, 0, 0, 30)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_position(0, 0, 30, 0);
@@ -962,11 +944,10 @@ fn bm_padding_left_only() {
 
 #[test]
 fn bm_margin_percentage_top() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child()
         .height(50.0)
         .with_style(|s| {
@@ -985,7 +966,9 @@ fn bm_content_box_nested_child_width() {
         .width(300.0)
         .padding(0, 20, 0, 20)
         .border(0, 5, 0, 5)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // content-box: total width = 300 + 20+20 + 5+5 = 350
@@ -1002,7 +985,9 @@ fn bm_border_box_nested_child_width() {
         .padding(0, 20, 0, 20)
         .border(0, 5, 0, 5)
         .box_sizing_border_box()
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // border-box: total = 300, content = 300 - 40 - 10 = 250
@@ -1122,10 +1107,7 @@ fn dt_flow_root_basic() {
 #[test]
 fn dt_flow_root_fills_width() {
     let mut b = BlockTestBuilder::new(500, 400);
-    b.add_child()
-        .display(Display::FlowRoot)
-        .height(80.0)
-        .done();
+    b.add_child().display(Display::FlowRoot).height(80.0).done();
     let r = b.build();
     r.assert_child_size(0, 500, 80);
 }
@@ -1134,10 +1116,7 @@ fn dt_flow_root_fills_width() {
 fn dt_flow_root_stacks_with_block() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child().height(50.0).done();
-    b.add_child()
-        .display(Display::FlowRoot)
-        .height(70.0)
-        .done();
+    b.add_child().display(Display::FlowRoot).height(70.0).done();
     let r = b.build();
     r.assert_child_position(1, 0, 50);
 }
@@ -1145,15 +1124,11 @@ fn dt_flow_root_stacks_with_block() {
 #[test]
 fn dt_flow_root_does_not_collapse_margins() {
     // flow-root establishes a new BFC; margins should not collapse through it.
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
-    b.add_child()
-        .height(50.0)
-        .margin_bottom(20)
-        .done();
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
+    b.add_child().height(50.0).margin_bottom(20).done();
     b.add_child()
         .display(Display::FlowRoot)
         .height(70.0)
@@ -1198,10 +1173,7 @@ fn dt_inline_block_with_fixed_size() {
 #[test]
 fn dt_flex_container_within_block() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .display(Display::Flex)
-        .height(100.0)
-        .done();
+    b.add_child().display(Display::Flex).height(100.0).done();
     let r = b.build();
     r.assert_child_count(1);
     r.assert_child_size(0, 400, 100);
@@ -1210,10 +1182,7 @@ fn dt_flex_container_within_block() {
 #[test]
 fn dt_flex_container_fills_width() {
     let mut b = BlockTestBuilder::new(500, 400);
-    b.add_child()
-        .display(Display::Flex)
-        .height(80.0)
-        .done();
+    b.add_child().display(Display::Flex).height(80.0).done();
     let r = b.build();
     r.assert_child_size(0, 500, 80);
 }
@@ -1222,10 +1191,7 @@ fn dt_flex_container_fills_width() {
 fn dt_flex_stacks_with_block() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child().height(50.0).done();
-    b.add_child()
-        .display(Display::Flex)
-        .height(60.0)
-        .done();
+    b.add_child().display(Display::Flex).height(60.0).done();
     let r = b.build();
     r.assert_child_position(1, 0, 50);
 }
@@ -1261,10 +1227,7 @@ fn dt_multiple_none_between_blocks() {
 fn dt_flow_root_between_blocks() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child().height(50.0).done();
-    b.add_child()
-        .display(Display::FlowRoot)
-        .height(60.0)
-        .done();
+    b.add_child().display(Display::FlowRoot).height(60.0).done();
     b.add_child().height(70.0).done();
     let r = b.build();
     r.assert_child_count(3);
@@ -1276,10 +1239,7 @@ fn dt_flow_root_between_blocks() {
 #[test]
 fn dt_list_item_acts_as_block() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .display(Display::ListItem)
-        .height(30.0)
-        .done();
+    b.add_child().display(Display::ListItem).height(30.0).done();
     let r = b.build();
     r.assert_child_count(1);
     r.assert_child_size(0, 400, 30);
@@ -1367,7 +1327,9 @@ fn as_auto_height_single_child() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height_auto()
-        .add_child().height(80.0).done()
+        .add_child()
+        .height(80.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 80);
@@ -1378,8 +1340,12 @@ fn as_auto_height_two_children() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height_auto()
-        .add_child().height(40.0).done()
-        .add_child().height(60.0).done()
+        .add_child()
+        .height(40.0)
+        .done()
+        .add_child()
+        .height(60.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 100);
@@ -1390,9 +1356,15 @@ fn as_auto_height_three_children() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height_auto()
-        .add_child().height(30.0).done()
-        .add_child().height(40.0).done()
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(30.0)
+        .done()
+        .add_child()
+        .height(40.0)
+        .done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 120);
@@ -1414,7 +1386,9 @@ fn as_auto_height_with_padding() {
     b.add_child()
         .height_auto()
         .padding(10, 0, 10, 0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // auto height = 50 + 10 + 10 = 70
@@ -1427,7 +1401,9 @@ fn as_auto_height_with_large_padding() {
     b.add_child()
         .height_auto()
         .padding(50, 0, 50, 0)
-        .add_child().height(100.0).done()
+        .add_child()
+        .height(100.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 200);
@@ -1441,7 +1417,9 @@ fn as_auto_height_with_border() {
     b.add_child()
         .height_auto()
         .border(3, 0, 3, 0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 56); // 50 + 3 + 3
@@ -1454,7 +1432,9 @@ fn as_auto_height_with_padding_and_border() {
         .height_auto()
         .padding(5, 0, 5, 0)
         .border(2, 0, 2, 0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // 50 + 5 + 5 + 2 + 2 = 64
@@ -1468,7 +1448,11 @@ fn as_percentage_height_with_definite_parent() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height(200.0)
-        .add_child().with_style(|s| { s.height = Length::percent(50.0); }).done()
+        .add_child()
+        .with_style(|s| {
+            s.height = Length::percent(50.0);
+        })
+        .done()
         .done();
     let r = b.build();
     // 50% of 200 = 100
@@ -1480,7 +1464,11 @@ fn as_percentage_height_100pct() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height(300.0)
-        .add_child().with_style(|s| { s.height = Length::percent(100.0); }).done()
+        .add_child()
+        .with_style(|s| {
+            s.height = Length::percent(100.0);
+        })
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_size(0, 0, 400, 300);
@@ -1491,7 +1479,11 @@ fn as_percentage_height_25pct() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height(400.0)
-        .add_child().with_style(|s| { s.height = Length::percent(25.0); }).done()
+        .add_child()
+        .with_style(|s| {
+            s.height = Length::percent(25.0);
+        })
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_size(0, 0, 400, 100);
@@ -1502,7 +1494,11 @@ fn as_percentage_height_with_auto_parent_treated_as_auto() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height_auto()
-        .add_child().with_style(|s| { s.height = Length::percent(50.0); }).done()
+        .add_child()
+        .with_style(|s| {
+            s.height = Length::percent(50.0);
+        })
+        .done()
         .done();
     let r = b.build();
     // When parent has auto height, percentage height resolves to auto (= 0 with no content)
@@ -1514,9 +1510,7 @@ fn as_percentage_height_with_auto_parent_treated_as_auto() {
 #[test]
 fn as_min_height_constrains_auto() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .min_height(100.0)
-        .done();
+    b.add_child().min_height(100.0).done();
     let r = b.build();
     // auto height = 0 content, but min-height = 100
     r.assert_child_size(0, 400, 100);
@@ -1525,10 +1519,7 @@ fn as_min_height_constrains_auto() {
 #[test]
 fn as_min_height_does_not_shrink() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(200.0)
-        .min_height(100.0)
-        .done();
+    b.add_child().height(200.0).min_height(100.0).done();
     let r = b.build();
     // height 200 > min-height 100 → stays 200
     r.assert_child_size(0, 400, 200);
@@ -1537,10 +1528,7 @@ fn as_min_height_does_not_shrink() {
 #[test]
 fn as_max_height_constrains_fixed() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(300.0)
-        .max_height(150.0)
-        .done();
+    b.add_child().height(300.0).max_height(150.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 150);
 }
@@ -1548,10 +1536,7 @@ fn as_max_height_constrains_fixed() {
 #[test]
 fn as_max_height_does_not_grow() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(100.0)
-        .max_height(200.0)
-        .done();
+    b.add_child().height(100.0).max_height(200.0).done();
     let r = b.build();
     // height 100 < max-height 200 → stays 100
     r.assert_child_size(0, 400, 100);
@@ -1611,10 +1596,7 @@ fn as_min_max_width_together() {
 #[test]
 fn as_auto_width_with_max_width() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(50.0)
-        .max_width(200.0)
-        .done();
+    b.add_child().height(50.0).max_width(200.0).done();
     let r = b.build();
     // auto width = 400 but max-width = 200
     r.assert_child_size(0, 200, 50);
@@ -1623,10 +1605,7 @@ fn as_auto_width_with_max_width() {
 #[test]
 fn as_auto_width_with_min_width() {
     let mut b = BlockTestBuilder::new(100, 600);
-    b.add_child()
-        .height(50.0)
-        .min_width(200.0)
-        .done();
+    b.add_child().height(50.0).min_width(200.0).done();
     let r = b.build();
     // auto width = 100 but min-width = 200
     r.assert_child_size(0, 200, 50);
@@ -1637,7 +1616,9 @@ fn as_auto_height_with_min_height_and_children() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .min_height(200.0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // auto height = 50 from child, but min-height = 200
@@ -1649,8 +1630,12 @@ fn as_auto_height_with_max_height_and_children() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .max_height(80.0)
-        .add_child().height(50.0).done()
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // auto height = 100 from children, max-height = 80
@@ -1697,10 +1682,7 @@ fn ab_inline_then_block() {
         .width(50.0)
         .height(20.0)
         .done();
-    b.add_child()
-        .display(Display::Block)
-        .height(60.0)
-        .done();
+    b.add_child().display(Display::Block).height(60.0).done();
     let r = b.build();
     // Should have at least 2 fragments (anonymous wrapper + block)
     assert!(r.child_count() >= 2);
@@ -1709,10 +1691,7 @@ fn ab_inline_then_block() {
 #[test]
 fn ab_block_then_inline() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .display(Display::Block)
-        .height(50.0)
-        .done();
+    b.add_child().display(Display::Block).height(50.0).done();
     b.add_child()
         .display(Display::Inline)
         .width(30.0)
@@ -1730,10 +1709,7 @@ fn ab_inline_block_inline() {
         .width(40.0)
         .height(15.0)
         .done();
-    b.add_child()
-        .display(Display::Block)
-        .height(50.0)
-        .done();
+    b.add_child().display(Display::Block).height(50.0).done();
     b.add_child()
         .display(Display::Inline)
         .width(40.0)
@@ -1747,9 +1723,21 @@ fn ab_inline_block_inline() {
 #[test]
 fn ab_multiple_inline_children_single_wrapper() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child().display(Display::Inline).width(30.0).height(10.0).done();
-    b.add_child().display(Display::Inline).width(40.0).height(10.0).done();
-    b.add_child().display(Display::Inline).width(50.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(30.0)
+        .height(10.0)
+        .done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(40.0)
+        .height(10.0)
+        .done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(50.0)
+        .height(10.0)
+        .done();
     let r = b.build();
     // All consecutive inlines wrapped in a single anonymous block
     r.assert_child_count(1);
@@ -1797,9 +1785,17 @@ fn ab_five_blocks_stacking() {
 #[test]
 fn ab_inline_children_with_none_between() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child().display(Display::Inline).width(30.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(30.0)
+        .height(10.0)
+        .done();
     b.add_child().display(Display::None).done();
-    b.add_child().display(Display::Inline).width(40.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(40.0)
+        .height(10.0)
+        .done();
     let r = b.build();
     // display:none removed; remaining inlines are consecutive → 1 anonymous block
     r.assert_child_count(1);
@@ -1822,8 +1818,12 @@ fn ab_nested_blocks_all_block() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height(100.0)
-        .add_child().height(40.0).done()
-        .add_child().height(60.0).done()
+        .add_child()
+        .height(40.0)
+        .done()
+        .add_child()
+        .height(60.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_count(1);
@@ -1836,8 +1836,16 @@ fn ab_nested_blocks_all_block() {
 #[test]
 fn ab_two_inline_then_block() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child().display(Display::Inline).width(20.0).height(10.0).done();
-    b.add_child().display(Display::Inline).width(30.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(20.0)
+        .height(10.0)
+        .done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(30.0)
+        .height(10.0)
+        .done();
     b.add_child().display(Display::Block).height(50.0).done();
     let r = b.build();
     // anonymous wrapper for 2 inlines + block = at least 2 children
@@ -1848,8 +1856,16 @@ fn ab_two_inline_then_block() {
 fn ab_block_then_two_inline() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child().display(Display::Block).height(50.0).done();
-    b.add_child().display(Display::Inline).width(20.0).height(10.0).done();
-    b.add_child().display(Display::Inline).width(30.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(20.0)
+        .height(10.0)
+        .done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(30.0)
+        .height(10.0)
+        .done();
     let r = b.build();
     assert!(r.child_count() >= 2);
 }
@@ -1857,9 +1873,17 @@ fn ab_block_then_two_inline() {
 #[test]
 fn ab_alternating_inline_block() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child().display(Display::Inline).width(20.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(20.0)
+        .height(10.0)
+        .done();
     b.add_child().display(Display::Block).height(30.0).done();
-    b.add_child().display(Display::Inline).width(20.0).height(10.0).done();
+    b.add_child()
+        .display(Display::Inline)
+        .width(20.0)
+        .height(10.0)
+        .done();
     b.add_child().display(Display::Block).height(30.0).done();
     let r = b.build();
     // at least 4: anon, block, anon, block
@@ -2002,11 +2026,10 @@ fn re_replaced_positioned_at_origin() {
 
 #[test]
 fn re_replaced_with_margins() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child()
         .fixed_size(200.0, 100.0)
         .margin(10, 20, 10, 20)
@@ -2109,10 +2132,7 @@ fn re_replaced_100x100_centered() {
 #[test]
 fn re_replaced_fills_container_with_100pct() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .width_pct(100.0)
-        .height(100.0)
-        .done();
+    b.add_child().width_pct(100.0).height(100.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 100);
 }
@@ -2194,9 +2214,7 @@ fn ec_zero_size_container() {
 fn ec_deeply_nested_10_levels() {
     // Build nesting via the builder's 2-level support, verify structure
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .add_child().height(50.0).done()
-    .done();
+    b.add_child().add_child().height(50.0).done().done();
     let r = b.build();
     r.assert_child_count(1);
     let outer = r.child(0);
@@ -2207,9 +2225,7 @@ fn ec_deeply_nested_10_levels() {
 #[test]
 fn ec_nested_blocks_auto_height_propagation() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .add_child().height(80.0).done()
-    .done();
+    b.add_child().add_child().height(80.0).done().done();
     let r = b.build();
     // height should propagate upward: auto-height = 80
     r.assert_child_size(0, 400, 80);
@@ -2219,9 +2235,7 @@ fn ec_nested_blocks_auto_height_propagation() {
 #[test]
 fn ec_nested_blocks_auto_width_propagation() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .add_child().height(40.0).done()
-    .done();
+    b.add_child().add_child().height(40.0).done().done();
     let r = b.build();
     r.assert_child_size(0, 400, 40);
     r.assert_nested_child_size(0, 0, 400, 40);
@@ -2232,10 +2246,7 @@ fn ec_nested_blocks_auto_width_propagation() {
 #[test]
 fn ec_large_margin_left() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(50.0)
-        .margin(0, 0, 0, 300)
-        .done();
+    b.add_child().height(50.0).margin(0, 0, 0, 300).done();
     let r = b.build();
     r.assert_child_position(0, 300, 0);
     r.assert_child_size(0, 100, 50);
@@ -2256,15 +2267,11 @@ fn ec_margin_exceeds_container() {
 
 #[test]
 fn ec_large_vertical_margin() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
-    b.add_child()
-        .height(50.0)
-        .margin_top(500)
-        .done();
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
+    b.add_child().height(50.0).margin_top(500).done();
     let r = b.build();
     r.assert_child_position(0, 0, 501); // 1 (border) + 500 (margin)
 }
@@ -2274,10 +2281,7 @@ fn ec_large_vertical_margin() {
 #[test]
 fn ec_zero_padding_explicit() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .padding(0, 0, 0, 0)
-        .height(50.0)
-        .done();
+    b.add_child().padding(0, 0, 0, 0).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
 }
@@ -2286,36 +2290,33 @@ fn ec_zero_padding_explicit() {
 
 #[test]
 fn ec_empty_container_with_padding() {
-    let b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.padding_top = Length::px(20.0);
-            s.padding_bottom = Length::px(20.0);
-        });
+    let b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.padding_top = Length::px(20.0);
+        s.padding_bottom = Length::px(20.0);
+    });
     let r = b.build();
     r.assert_child_count(0);
 }
 
 #[test]
 fn ec_empty_container_with_border() {
-    let b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 5;
-            s.border_bottom_width = 5;
-            s.border_top_style = BorderStyle::Solid;
-            s.border_bottom_style = BorderStyle::Solid;
-        });
+    let b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 5;
+        s.border_bottom_width = 5;
+        s.border_top_style = BorderStyle::Solid;
+        s.border_bottom_style = BorderStyle::Solid;
+    });
     let r = b.build();
     r.assert_child_count(0);
 }
 
 #[test]
 fn ec_container_with_padding_and_single_child() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.padding_top = Length::px(20.0);
-            s.padding_left = Length::px(10.0);
-            s.padding_right = Length::px(10.0);
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.padding_top = Length::px(20.0);
+        s.padding_left = Length::px(10.0);
+        s.padding_right = Length::px(10.0);
+    });
     b.add_child().height(50.0).done();
     let r = b.build();
     // Container width=400 is content-box, so content area = 400.
@@ -2399,10 +2400,7 @@ fn ec_container_1x1() {
 #[test]
 fn ec_child_zero_height_with_border() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(0.0)
-        .border(5, 5, 5, 5)
-        .done();
+    b.add_child().height(0.0).border(5, 5, 5, 5).done();
     let r = b.build();
     // height = 0 + 5 + 5 = 10
     r.assert_child_size(0, 400, 10);
@@ -2411,10 +2409,7 @@ fn ec_child_zero_height_with_border() {
 #[test]
 fn ec_child_zero_height_with_padding() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(0.0)
-        .padding(10, 0, 10, 0)
-        .done();
+    b.add_child().height(0.0).padding(10, 0, 10, 0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 20);
 }
@@ -2465,10 +2460,7 @@ fn ec_border_box_with_zero_content() {
 #[test]
 fn ec_max_height_zero() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(100.0)
-        .max_height(0.0)
-        .done();
+    b.add_child().height(100.0).max_height(0.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 0);
 }
@@ -2541,29 +2533,26 @@ fn ec_auto_margin_with_width_exceeding_container() {
 fn ec_nested_auto_height_chain() {
     // Two levels of auto-height containers
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .add_child().height(42.0).done()
-    .done();
+    b.add_child().add_child().height(42.0).done().done();
     let r = b.build();
     r.assert_child_size(0, 400, 42);
 }
 
 #[test]
 fn ec_container_with_border_and_padding_child() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 2;
-            s.border_bottom_width = 2;
-            s.border_left_width = 3;
-            s.border_right_width = 3;
-            s.border_top_style = BorderStyle::Solid;
-            s.border_bottom_style = BorderStyle::Solid;
-            s.border_left_style = BorderStyle::Solid;
-            s.border_right_style = BorderStyle::Solid;
-            s.padding_top = Length::px(5.0);
-            s.padding_left = Length::px(10.0);
-            s.padding_right = Length::px(10.0);
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 2;
+        s.border_bottom_width = 2;
+        s.border_left_width = 3;
+        s.border_right_width = 3;
+        s.border_top_style = BorderStyle::Solid;
+        s.border_bottom_style = BorderStyle::Solid;
+        s.border_left_style = BorderStyle::Solid;
+        s.border_right_style = BorderStyle::Solid;
+        s.padding_top = Length::px(5.0);
+        s.padding_left = Length::px(10.0);
+        s.padding_right = Length::px(10.0);
+    });
     b.add_child().height(50.0).done();
     let r = b.build();
     // Container width=400 is content-box, so content area = 400.
@@ -2593,11 +2582,10 @@ fn ec_multiple_centered_children() {
 
 #[test]
 fn ec_child_with_all_box_model_properties() {
-    let mut b = BlockTestBuilder::new(800, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child()
         .width(200.0)
         .height(100.0)
@@ -2628,10 +2616,7 @@ fn ec_overflow_hidden_child() {
 #[test]
 fn ec_overflow_hidden_with_auto_width() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .overflow_hidden()
-        .height(100.0)
-        .done();
+    b.add_child().overflow_hidden().height(100.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 100);
 }
@@ -2640,10 +2625,7 @@ fn ec_overflow_hidden_with_auto_width() {
 fn ec_relative_position_does_not_affect_flow() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child().height(50.0).done();
-    b.add_child()
-        .height(60.0)
-        .position_relative()
-        .done();
+    b.add_child().height(60.0).position_relative().done();
     b.add_child().height(70.0).done();
     let r = b.build();
     // relative positioning doesn't affect flow
@@ -2693,7 +2675,9 @@ fn ec_nested_border_box() {
         .padding(10, 10, 10, 10)
         .border(2, 2, 2, 2)
         .box_sizing_border_box()
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 300, 200);
@@ -2709,7 +2693,11 @@ fn ec_percentage_height_in_border_box_parent() {
         .height(200.0)
         .padding(10, 10, 10, 10)
         .box_sizing_border_box()
-        .add_child().with_style(|s| { s.height = Length::percent(50.0); }).done()
+        .add_child()
+        .with_style(|s| {
+            s.height = Length::percent(50.0);
+        })
+        .done()
         .done();
     let r = b.build();
     // parent content height = 200 - 10 - 10 = 180
@@ -2801,10 +2789,7 @@ fn nf_percentage_width_33pct() {
 #[test]
 fn nf_child_auto_width_with_border() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(1, 1, 1, 1)
-        .height(50.0)
-        .done();
+    b.add_child().border(1, 1, 1, 1).height(50.0).done();
     let r = b.build();
     // auto width fills container = 400
     r.assert_child_size(0, 400, 52);
@@ -2812,13 +2797,12 @@ fn nf_child_auto_width_with_border() {
 
 #[test]
 fn nf_container_with_border_children_position() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 5;
-            s.border_left_width = 5;
-            s.border_top_style = BorderStyle::Solid;
-            s.border_left_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 5;
+        s.border_left_width = 5;
+        s.border_top_style = BorderStyle::Solid;
+        s.border_left_style = BorderStyle::Solid;
+    });
     b.add_child().height(50.0).done();
     let r = b.build();
     // child positioned after container's border
@@ -2859,7 +2843,9 @@ fn bm_uniform_padding_10() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .padding(10, 10, 10, 10)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 70); // 50 + 10 + 10
@@ -2872,7 +2858,9 @@ fn bm_uniform_border_3() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .border(3, 3, 3, 3)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 56); // 50 + 3 + 3
@@ -2881,11 +2869,10 @@ fn bm_uniform_border_3() {
 
 #[test]
 fn bm_margin_top_20_first_child() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child().height(50.0).margin_top(20).done();
     let r = b.build();
     r.assert_child_position(0, 0, 21); // 1 (border) + 20 (margin)
@@ -2893,11 +2880,10 @@ fn bm_margin_top_20_first_child() {
 
 #[test]
 fn bm_margin_bottom_between_siblings() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     b.add_child().height(50.0).margin_bottom(30).done();
     b.add_child().height(60.0).done();
     let r = b.build();
@@ -2968,7 +2954,9 @@ fn bm_padding_right_only() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .padding(0, 30, 0, 0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_position(0, 0, 0, 0);
@@ -2980,7 +2968,9 @@ fn bm_padding_top_only() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .padding(25, 0, 0, 0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_position(0, 0, 0, 25);
@@ -2989,10 +2979,7 @@ fn bm_padding_top_only() {
 #[test]
 fn bm_border_bottom_only() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(0, 0, 8, 0)
-        .height(50.0)
-        .done();
+    b.add_child().border(0, 0, 8, 0).height(50.0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 58); // 50 + 8
 }
@@ -3002,7 +2989,9 @@ fn bm_border_left_only() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .border(0, 0, 0, 7)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_position(0, 0, 7, 0);
@@ -3089,10 +3078,7 @@ fn dt_flex_container_with_fixed_width() {
 #[test]
 fn dt_grid_container_basic() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .display(Display::Grid)
-        .height(100.0)
-        .done();
+    b.add_child().display(Display::Grid).height(100.0).done();
     let r = b.build();
     r.assert_child_count(1);
     r.assert_child_size(0, 400, 100);
@@ -3101,10 +3087,7 @@ fn dt_grid_container_basic() {
 #[test]
 fn dt_table_display_basic() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .display(Display::Table)
-        .height(80.0)
-        .done();
+    b.add_child().display(Display::Table).height(80.0).done();
     let r = b.build();
     r.assert_child_count(1);
 }
@@ -3126,11 +3109,21 @@ fn as_auto_height_five_children() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height_auto()
-        .add_child().height(10.0).done()
-        .add_child().height(20.0).done()
-        .add_child().height(30.0).done()
-        .add_child().height(40.0).done()
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(10.0)
+        .done()
+        .add_child()
+        .height(20.0)
+        .done()
+        .add_child()
+        .height(30.0)
+        .done()
+        .add_child()
+        .height(40.0)
+        .done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 150);
@@ -3139,10 +3132,7 @@ fn as_auto_height_five_children() {
 #[test]
 fn as_auto_height_with_border_only() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height_auto()
-        .border(10, 0, 10, 0)
-        .done();
+    b.add_child().height_auto().border(10, 0, 10, 0).done();
     let r = b.build();
     r.assert_child_size(0, 400, 20); // 0 content + 10 + 10
 }
@@ -3152,7 +3142,9 @@ fn as_min_height_200_with_content_50() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .min_height(200.0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 200);
@@ -3163,7 +3155,9 @@ fn as_max_height_50_with_content_100() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .max_height(50.0)
-        .add_child().height(100.0).done()
+        .add_child()
+        .height(100.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
@@ -3189,7 +3183,11 @@ fn as_percentage_height_75pct() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .height(400.0)
-        .add_child().with_style(|s| { s.height = Length::percent(75.0); }).done()
+        .add_child()
+        .with_style(|s| {
+            s.height = Length::percent(75.0);
+        })
+        .done()
         .done();
     let r = b.build();
     // 75% of 400 = 300
@@ -3199,10 +3197,7 @@ fn as_percentage_height_75pct() {
 #[test]
 fn as_min_width_larger_than_auto() {
     let mut b = BlockTestBuilder::new(200, 600);
-    b.add_child()
-        .height(50.0)
-        .min_width(300.0)
-        .done();
+    b.add_child().height(50.0).min_width(300.0).done();
     let r = b.build();
     r.assert_child_size(0, 300, 50);
 }
@@ -3210,10 +3205,7 @@ fn as_min_width_larger_than_auto() {
 #[test]
 fn as_max_width_smaller_than_auto() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(50.0)
-        .max_width(100.0)
-        .done();
+    b.add_child().height(50.0).max_width(100.0).done();
     let r = b.build();
     r.assert_child_size(0, 100, 50);
 }
@@ -3224,7 +3216,10 @@ fn as_auto_height_margin_bottom_child() {
     b.add_child()
         .height_auto()
         .border(1, 0, 1, 0)
-        .add_child().height(50.0).margin(0, 0, 20, 0).done()
+        .add_child()
+        .height(50.0)
+        .margin(0, 0, 20, 0)
+        .done()
         .done();
     let r = b.build();
     // auto height = 1 (border) + 50 + 20 (margin) + 1 (border) = 72
@@ -3290,9 +3285,7 @@ fn re_replaced_percentage_width_25pct() {
 #[test]
 fn ec_child_with_only_padding() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .padding(20, 20, 20, 20)
-        .done();
+    b.add_child().padding(20, 20, 20, 20).done();
     let r = b.build();
     // empty child with padding: 400 wide, 20+0+20 = 40 tall
     r.assert_child_size(0, 400, 40);
@@ -3301,28 +3294,19 @@ fn ec_child_with_only_padding() {
 #[test]
 fn ec_child_with_only_border() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .border(5, 5, 5, 5)
-        .done();
+    b.add_child().border(5, 5, 5, 5).done();
     let r = b.build();
     r.assert_child_size(0, 400, 10); // 0 content + 5 + 5
 }
 
 #[test]
 fn ec_nested_margins_with_border_separator() {
-    let mut b = BlockTestBuilder::new(400, 600)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
-    b.add_child()
-        .height(50.0)
-        .margin(10, 0, 20, 0)
-        .done();
-    b.add_child()
-        .height(60.0)
-        .margin(30, 0, 10, 0)
-        .done();
+    let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
+    b.add_child().height(50.0).margin(10, 0, 20, 0).done();
+    b.add_child().height(60.0).margin(30, 0, 10, 0).done();
     let r = b.build();
     // child0 at y = 1 + 10 = 11
     r.assert_child_position(0, 0, 11);
@@ -3333,11 +3317,10 @@ fn ec_nested_margins_with_border_separator() {
 
 #[test]
 fn ec_many_children_with_margins() {
-    let mut b = BlockTestBuilder::new(400, 2000)
-        .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = BorderStyle::Solid;
-        });
+    let mut b = BlockTestBuilder::new(400, 2000).with_container_style(|s| {
+        s.border_top_width = 1;
+        s.border_top_style = BorderStyle::Solid;
+    });
     for _ in 0..5 {
         b.add_child()
             .height(50.0)
@@ -3378,10 +3361,7 @@ fn ec_border_box_zero_height() {
 #[test]
 fn ec_auto_width_with_large_margin() {
     let mut b = BlockTestBuilder::new(400, 600);
-    b.add_child()
-        .height(50.0)
-        .margin(0, 0, 0, 350)
-        .done();
+    b.add_child().height(50.0).margin(0, 0, 0, 350).done();
     let r = b.build();
     r.assert_child_size(0, 50, 50);
     r.assert_child_position(0, 350, 0);
@@ -3491,7 +3471,9 @@ fn ec_nested_fixed_width() {
     let mut b = BlockTestBuilder::new(400, 600);
     b.add_child()
         .width(300.0)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 300, 50);
@@ -3505,8 +3487,8 @@ fn ec_nested_child_with_margin() {
         .width(300.0)
         .border(1, 0, 1, 0)
         .add_child()
-            .height(50.0)
-            .margin(10, 0, 10, 0)
+        .height(50.0)
+        .margin(10, 0, 10, 0)
         .done()
         .done();
     let r = b.build();
@@ -3520,12 +3502,12 @@ fn ec_nested_child_centered() {
     b.add_child()
         .width(400.0)
         .add_child()
-            .width(200.0)
-            .height(50.0)
-            .with_style(|s| {
-                s.margin_left = Length::auto();
-                s.margin_right = Length::auto();
-            })
+        .width(200.0)
+        .height(50.0)
+        .with_style(|s| {
+            s.margin_left = Length::auto();
+            s.margin_right = Length::auto();
+        })
         .done()
         .done();
     let r = b.build();
@@ -3539,7 +3521,9 @@ fn ec_flow_root_with_padding() {
     b.add_child()
         .display(Display::FlowRoot)
         .padding(15, 15, 15, 15)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 80); // 50 + 15 + 15
@@ -3551,7 +3535,9 @@ fn ec_flow_root_with_border() {
     b.add_child()
         .display(Display::FlowRoot)
         .border(4, 4, 4, 4)
-        .add_child().height(50.0).done()
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 58); // 50 + 4 + 4
@@ -3595,8 +3581,8 @@ fn ec_many_centered_children() {
             .done();
     }
     let r = b.build();
-    r.assert_child_position(0, 150, 0);   // (400-100)/2 = 150
-    r.assert_child_position(1, 100, 25);   // (400-200)/2 = 100
-    r.assert_child_position(2, 50, 50);    // (400-300)/2 = 50
-    r.assert_child_position(3, 0, 75);     // (400-400)/2 = 0
+    r.assert_child_position(0, 150, 0); // (400-100)/2 = 150
+    r.assert_child_position(1, 100, 25); // (400-200)/2 = 100
+    r.assert_child_position(2, 50, 50); // (400-300)/2 = 50
+    r.assert_child_position(3, 0, 75); // (400-400)/2 = 0
 }

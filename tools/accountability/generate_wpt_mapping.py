@@ -15,7 +15,11 @@ from pathlib import Path
 
 # Import shared detectors (single source of truth)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from shared_detectors import classify_failure_categories
+from shared_detectors import (
+    CATEGORY_FOR_DEP,
+    classify_dependencies,
+    classify_failure_categories,
+)
 
 # --- Configuration ---
 
@@ -31,6 +35,7 @@ DATA_DIR = SCRIPT_DIR / "data"
 TEMPLATES_JSON = DATA_DIR / "wpt_ported" / "all_wpt_templates.json"
 SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 OUTPUT_CSV = DATA_DIR / "wpt_mapping.csv"
+PORT_REPORT_DIR = DATA_DIR / "wpt_ported"
 
 # Chromium directory → our area name
 SP12_AREAS = {
@@ -61,6 +66,19 @@ CSV_COLUMNS = [
     "notes",
 ]
 
+REPORT_FILE_FOR_AREA = {
+    "css2_floats": "wpt_css2_floats_report.csv",
+    "css_position": "wpt_css_position_report.csv",
+    "css_flexbox": "wpt_css_flexbox_report.csv",
+    "css_multicol": "wpt_css_multicol_report.csv",
+    "css_overflow": "wpt_css_overflow_report.csv",
+    "css_sizing": "wpt_css_sizing_report.csv",
+    "css_break": "wpt_css_break_report.csv",
+    "css_display": "wpt_css_display_report.csv",
+    "css_box": "wpt_css_box_report.csv",
+    "css_backgrounds": "wpt_css_backgrounds_report.csv",
+}
+
 
 TEST_EXTENSIONS = {".html", ".xht", ".xhtml", ".htm"}
 
@@ -78,6 +96,72 @@ def load_pixel_results() -> dict[str, dict]:
     with open(SUMMARY_JSON) as f:
         data = json.load(f)
     return {t["id"]: t for t in data["tests"]}
+
+
+def load_portability_reasons() -> dict[tuple[str, str], str]:
+    """Load porter rejection reasons by (area, test_name)."""
+    reasons: dict[tuple[str, str], str] = {}
+    for area, filename in REPORT_FILE_FOR_AREA.items():
+        path = PORT_REPORT_DIR / filename
+        if not path.exists():
+            continue
+        with open(path) as f:
+            for row in csv.DictReader(f):
+                if row.get("status") == "ported":
+                    continue
+                reasons[(area, row.get("filename", ""))] = row.get("reason", "")
+    return reasons
+
+
+def dependency_for_portability_reason(reason: str) -> str:
+    """Map porter rejection reasons to a named deferred dependency key."""
+    r = reason.lower()
+    if "javascript" in r:
+        return "javascript"
+    if "line-clamp" in r or "-webkit-box-orient" in r:
+        return "line_clamp"
+    if "grid" in r:
+        return "grid_layout"
+    if "table" in r or "border-collapse" in r or "border-spacing" in r or "caption-side" in r:
+        return "table_layout"
+    if "writing-mode" in r or "unicode-bidi" in r:
+        return "writing_mode"
+    if "margin-trim" in r:
+        return "margin_trim"
+    if "contain" in r:
+        return "css_containment"
+    if "transform" in r or "filter" in r or "clip-path" in r or "mask" in r or "animation" in r or "transition" in r:
+        return "visual_effects"
+    if "img" in r or "image" in r or "iframe" in r or "video" in r:
+        return "image_rendering"
+    if "canvas" in r or "svg" in r:
+        return "canvas_svg"
+    if any(tag in r for tag in ("button", "input", "select", "textarea", "fieldset", "details", "dialog", "audio", "form")):
+        return "form_controls"
+    if "content" in r or "before" in r or "after" in r or "first-letter" in r or "first-line" in r:
+        return "generated_content"
+    if "complex_css_selector" in r:
+        return "advanced_selectors"
+    if "no_layout_content" in r:
+        return "non_visual"
+    return "advanced_selectors"
+
+
+def classify_unported_test(html: str, area: str, name: str, reason: str) -> tuple[str, str]:
+    """Classify an unported Chromium test into explicit owning dependencies."""
+    test_id = f"wpt/{area}/{name}"
+    deps = classify_dependencies(html, test_id=test_id)
+    if not deps:
+        deps = [dependency_for_portability_reason(reason)]
+    categories = [CATEGORY_FOR_DEP[d] for d in deps]
+    labels = []
+    from shared_detectors import DEPENDENCY_DEFS
+    for key in deps:
+        for k, label, _sp, _det in DEPENDENCY_DEFS:
+            if k == key:
+                labels.append(label)
+                break
+    return ",".join(categories), "; ".join(labels)
 
 
 def collect_chromium_tests() -> list[dict]:
@@ -125,6 +209,7 @@ def collect_chromium_tests() -> list[dict]:
 def main():
     templates = load_templates()
     pixel_results = load_pixel_results()
+    portability_reasons = load_portability_reasons()
 
     # Build lookup: test_name → test_id per area
     ported_lookup: dict[tuple[str, str], str] = {}
@@ -178,7 +263,13 @@ def main():
                     row["dependency"] = dep
         else:
             row["ported"] = "no"
-            row["failure_category"] = "not_ported"
+            html_path = CHROMIUM_WPT_BASE / test["chromium_test_path"]
+            html = html_path.read_text(errors="ignore") if html_path.exists() else ""
+            reason = portability_reasons.get((area, name), "")
+            category, dep = classify_unported_test(html, area, name, reason)
+            row["failure_category"] = category
+            row["dependency"] = dep
+            row["notes"] = f"Porter deferred: {reason}" if reason else "Porter deferred: outside current Rust renderer support"
 
         csv_rows.append(row)
 

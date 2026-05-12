@@ -50,15 +50,25 @@ fn single_line_first_and_last_baseline_are_equal() {
     let frag = layout_with_baselines(&doc, vp);
     let div_frag = &frag.children[0];
 
-    assert!(div_frag.first_baseline.is_some(), "first_baseline should be set");
-    assert!(div_frag.last_baseline.is_some(), "last_baseline should be set");
+    assert!(
+        div_frag.first_baseline.is_some(),
+        "first_baseline should be set"
+    );
+    assert!(
+        div_frag.last_baseline.is_some(),
+        "last_baseline should be set"
+    );
     assert_eq!(
         div_frag.first_baseline, div_frag.last_baseline,
         "Single line: first and last baseline should be equal"
     );
 
     let bl = div_frag.first_baseline.unwrap();
-    assert!(bl.to_f32() > 0.0, "Baseline should be positive, got {}", bl.to_f32());
+    assert!(
+        bl.to_f32() > 0.0,
+        "Baseline should be positive, got {}",
+        bl.to_f32()
+    );
 }
 
 #[test]

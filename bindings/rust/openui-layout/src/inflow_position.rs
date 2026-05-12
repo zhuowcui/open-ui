@@ -108,8 +108,14 @@ mod tests {
             MarginStrut::new(),
             BoxStrut::zero(),
         );
-        assert_eq!(data.bfc_offset_estimate.line_offset, LayoutUnit::from_i32(10));
-        assert_eq!(data.bfc_offset_estimate.block_offset, LayoutUnit::from_i32(20));
+        assert_eq!(
+            data.bfc_offset_estimate.line_offset,
+            LayoutUnit::from_i32(10)
+        );
+        assert_eq!(
+            data.bfc_offset_estimate.block_offset,
+            LayoutUnit::from_i32(20)
+        );
         assert!(!data.is_pushed_by_floats);
     }
 }

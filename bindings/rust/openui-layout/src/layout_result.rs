@@ -61,7 +61,6 @@ pub struct LayoutResult {
     pub status: LayoutStatus,
 
     // ── BFC state ────────────────────────────────────────────────────
-
     /// Line offset of this fragment within its BFC.
     pub bfc_line_offset: LayoutUnit,
 
@@ -72,13 +71,11 @@ pub struct LayoutResult {
     pub bfc_block_offset: Option<LayoutUnit>,
 
     // ── Margin collapsing ────────────────────────────────────────────
-
     /// The margin strut at the end of this fragment. The parent uses this
     /// to continue margin collapsing with subsequent siblings.
     pub end_margin_strut: MarginStrut,
 
     // ── Flags ────────────────────────────────────────────────────────
-
     /// True if this fragment is self-collapsing (zero block-size, no
     /// border, no padding, no content that prevents margin collapse-through).
     /// When true, the top and bottom margins of this element collapse together.
@@ -95,7 +92,6 @@ pub struct LayoutResult {
     pub subtree_modified_margin_strut: bool,
 
     // ── Fragmentation ────────────────────────────────────────────────
-
     /// The `break-before` value of the first child, propagated up for the
     /// parent's fragmentation decision.
     pub initial_break_before: BreakBetween,
@@ -111,7 +107,6 @@ pub struct LayoutResult {
     pub block_end_annotation_space: LayoutUnit,
 
     // ── Baselines ────────────────────────────────────────────────────
-
     /// First baseline of this fragment (for alignment by parent).
     pub first_baseline: Option<LayoutUnit>,
 
@@ -212,8 +207,8 @@ impl LayoutResult {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use openui_geometry::PhysicalSize;
     use openui_dom::NodeId;
+    use openui_geometry::PhysicalSize;
 
     fn dummy_fragment() -> Fragment {
         Fragment::new_box(NodeId::NONE, PhysicalSize::zero())
@@ -232,10 +227,7 @@ mod tests {
 
     #[test]
     fn bfc_offset_resolved_status() {
-        let result = LayoutResult::bfc_offset_resolved(
-            dummy_fragment(),
-            LayoutUnit::from_i32(50),
-        );
+        let result = LayoutResult::bfc_offset_resolved(dummy_fragment(), LayoutUnit::from_i32(50));
         assert!(!result.is_success());
         assert_eq!(result.status, LayoutStatus::BfcBlockOffsetResolved);
         assert_eq!(result.bfc_block_offset, Some(LayoutUnit::from_i32(50)));

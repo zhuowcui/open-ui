@@ -58,7 +58,11 @@ fn MetricCard(label: String, value: String, color: String) -> ViewNode {
 #[allow(non_snake_case)]
 #[component]
 fn NavItem(label: String, active: i32) -> ViewNode {
-    let bg = if active != 0 { "#edf2f7" } else { "transparent" };
+    let bg = if active != 0 {
+        "#edf2f7"
+    } else {
+        "transparent"
+    };
     let fw = if active != 0 { "600" } else { "400" };
     view! {
         <div
@@ -106,7 +110,8 @@ fn main() {
         root.set_style("display", "flex").expect("style");
         root.set_style("flex-direction", "column").expect("style");
         root.set_style("min-height", "100vh").expect("style");
-        root.set_style("background-color", "#f7fafc").expect("style");
+        root.set_style("background-color", "#f7fafc")
+            .expect("style");
 
         // ── Header ──────────────────────────────────────────────
         mount_view(
@@ -124,7 +129,9 @@ fn main() {
         // Sidebar navigation
         let sidebar = Element::create(doc, "nav").expect("create sidebar");
         sidebar.set_style("width", "220px").expect("style");
-        sidebar.set_style("background-color", "white").expect("style");
+        sidebar
+            .set_style("background-color", "white")
+            .expect("style");
         sidebar
             .set_style("border-right", "1px solid #e2e8f0")
             .expect("style");
@@ -196,7 +203,9 @@ fn main() {
         activity_section
             .set_style("border-radius", "8px")
             .expect("style");
-        activity_section.set_style("padding", "20px").expect("style");
+        activity_section
+            .set_style("padding", "20px")
+            .expect("style");
         activity_section
             .set_style("border", "1px solid #e2e8f0")
             .expect("style");

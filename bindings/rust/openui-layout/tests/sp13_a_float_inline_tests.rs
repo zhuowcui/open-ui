@@ -29,12 +29,7 @@ fn space(width: i32, height: i32) -> ConstraintSpace {
 /// Container: 400px wide.
 /// Float: `float_w` × `float_h`, float:left.
 /// Text: long string of 'x' characters that wraps to multiple lines.
-fn layout_float_and_text(
-    float_w: i32,
-    float_h: i32,
-    text: &str,
-    container_width: i32,
-) -> Fragment {
+fn layout_float_and_text(float_w: i32, float_h: i32, text: &str, container_width: i32) -> Fragment {
     let mut doc = Document::new();
     let vp = doc.root();
 
@@ -91,19 +86,31 @@ fn left_float_shifts_text_right() {
 
     // The first child should be the float (positioned at left edge).
     let float_frag = &children[0];
-    assert!(float_frag.size.width >= lu(99.0), "float width: {:?}", float_frag.size.width);
+    assert!(
+        float_frag.size.width >= lu(99.0),
+        "float width: {:?}",
+        float_frag.size.width
+    );
 
     // Line boxes should follow. Lines within the float's block range should
     // have their left offset shifted right by the float width (100px).
     // Lines below the float should start at the container's left edge.
-    let line_children: Vec<&Fragment> = children.iter()
-        .filter(|c| c.kind == openui_layout::FragmentKind::Box && (c.size.width < lu(400.0) || c.offset.left > lu(0.0)))
+    let line_children: Vec<&Fragment> = children
+        .iter()
+        .filter(|c| {
+            c.kind == openui_layout::FragmentKind::Box
+                && (c.size.width < lu(400.0) || c.offset.left > lu(0.0))
+        })
         .collect();
 
     // There should be at least one line box.
     // The text "Hello World" fits on one line at 300px available.
     // Just verify the float exists and text content is present.
-    assert!(children.len() >= 2, "Expected float + line(s), got {} children", children.len());
+    assert!(
+        children.len() >= 2,
+        "Expected float + line(s), got {} children",
+        children.len()
+    );
 }
 
 #[test]
@@ -146,7 +153,11 @@ fn right_float_narrows_from_right() {
     let children = get_container_children(&root);
 
     // Should have the float child and at least one line box.
-    assert!(children.len() >= 2, "Expected float + line(s), got {} children", children.len());
+    assert!(
+        children.len() >= 2,
+        "Expected float + line(s), got {} children",
+        children.len()
+    );
 
     // The right float should be positioned at the right side.
     let float_frag = &children[0];
@@ -209,7 +220,11 @@ fn both_floats_narrow_from_both_sides() {
     let children = get_container_children(&root);
 
     // Should have both floats + line box(es).
-    assert!(children.len() >= 3, "Expected 2 floats + line(s), got {} children", children.len());
+    assert!(
+        children.len() >= 3,
+        "Expected 2 floats + line(s), got {} children",
+        children.len()
+    );
 }
 
 #[test]
@@ -240,7 +255,12 @@ fn no_float_uses_full_width() {
     let children = get_container_children(&root);
 
     // Should have exactly one line box for "Hello".
-    assert_eq!(children.len(), 1, "Expected 1 line, got {} children", children.len());
+    assert_eq!(
+        children.len(),
+        1,
+        "Expected 1 line, got {} children",
+        children.len()
+    );
 
     // Line should start at left edge (no float offset).
     let line = &children[0];
@@ -298,7 +318,11 @@ fn mixed_content_float_before_inline_run() {
     let children = get_container_children(&root);
 
     // Should have float + block child + line box(es).
-    assert!(children.len() >= 3, "Expected float + block + line(s), got {} children", children.len());
+    assert!(
+        children.len() >= 3,
+        "Expected float + block + line(s), got {} children",
+        children.len()
+    );
 }
 
 #[test]
@@ -342,7 +366,11 @@ fn float_in_pure_inline_context_is_positioned() {
     let children = get_container_children(&root);
 
     // The float should be rendered.
-    assert!(children.len() >= 2, "Expected float + line(s), got {} children", children.len());
+    assert!(
+        children.len() >= 2,
+        "Expected float + line(s), got {} children",
+        children.len()
+    );
 
     // The float fragment should be positioned.
     let float_frag = &children[0];

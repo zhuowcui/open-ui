@@ -11,7 +11,9 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace};
+use openui_style::{
+    ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace,
+};
 use openui_text::{
     apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
 };
@@ -128,7 +130,8 @@ impl InlineItemsData {
         let mut bidi_text = String::with_capacity(self.text.len() + self.items.len() * 2);
         // Maps each byte in bidi_text back to the corresponding byte in self.text.
         // Control characters map to the tag item's text_range position.
-        let mut bidi_to_orig: Vec<usize> = Vec::with_capacity(self.text.len() + self.items.len() * 2);
+        let mut bidi_to_orig: Vec<usize> =
+            Vec::with_capacity(self.text.len() + self.items.len() * 2);
 
         for item in &self.items {
             match item.item_type {
@@ -213,7 +216,11 @@ impl InlineItemsData {
         // first subsequent Text/AtomicInline; CloseTag inherits the level of
         // the last preceding Text/AtomicInline. This ensures tag items don't
         // break contiguous bidi runs during UAX#9 L2 reordering.
-        let base_level = if base_direction == TextDirection::Rtl { 1 } else { 0 };
+        let base_level = if base_direction == TextDirection::Rtl {
+            1
+        } else {
+            0
+        };
         for i in 0..self.items.len() {
             match self.items[i].item_type {
                 InlineItemType::OpenTag => {
@@ -751,7 +758,11 @@ impl<'a> InlineItemsBuilder<'a> {
             style_index,
             end_collapse_type: end_collapse,
             is_end_collapsible_newline: is_newline,
-            bidi_level: if style.direction == Direction::Rtl { 1 } else { 0 },
+            bidi_level: if style.direction == Direction::Rtl {
+                1
+            } else {
+                0
+            },
             intrinsic_inline_size: None,
         });
     }
@@ -806,7 +817,11 @@ impl<'a> InlineItemsBuilder<'a> {
         let intrinsic = if style.display.is_flex() {
             let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
             let max_w = sizes.max_content_inline_size.to_f32();
-            if max_w > 0.0 { Some(max_w) } else { self.compute_intrinsic_inline_size(node_id) }
+            if max_w > 0.0 {
+                Some(max_w)
+            } else {
+                self.compute_intrinsic_inline_size(node_id)
+            }
         } else {
             self.compute_intrinsic_inline_size(node_id)
         };
@@ -831,7 +846,11 @@ impl<'a> InlineItemsBuilder<'a> {
     /// Inline children sum widths; block children take the max (they stack vertically).
     fn compute_intrinsic_inline_size(&self, node_id: NodeId) -> Option<f32> {
         let (width, has_content) = self.compute_intrinsic_inline_size_recursive(node_id);
-        if has_content { Some(width) } else { None }
+        if has_content {
+            Some(width)
+        } else {
+            None
+        }
     }
 
     /// Recursive helper: returns (accumulated_width, has_content).
@@ -944,9 +963,7 @@ impl<'a> InlineItemsBuilder<'a> {
                         max_width = max_width.max(child_total);
                     } else {
                         // Inline-level children flow horizontally → sum widths.
-                        if child_style.width.length_type()
-                            == openui_geometry::LengthType::Fixed
-                        {
+                        if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
                             has_content = true;
                             current_inline_row += child_style.width.value() + child_bp;
                         } else {
@@ -956,7 +973,11 @@ impl<'a> InlineItemsBuilder<'a> {
                                 has_content = true;
                             }
                             // Always add border+padding; add child_width only if child has content.
-                            let contrib = if child_has_content { child_width + child_bp } else { child_bp };
+                            let contrib = if child_has_content {
+                                child_width + child_bp
+                            } else {
+                                child_bp
+                            };
                             current_inline_row += contrib;
                         }
                     }
@@ -995,7 +1016,10 @@ impl<'a> InlineItemsBuilder<'a> {
 /// Process text according to the CSS `white-space` property.
 /// Returns true if the white-space mode collapses adjacent spaces.
 fn is_collapsible_ws_mode(ws: WhiteSpace) -> bool {
-    matches!(ws, WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine)
+    matches!(
+        ws,
+        WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+    )
 }
 
 /// Apply the same text preprocessing as real inline layout:
@@ -1056,22 +1080,27 @@ pub fn process_white_space(text: &str, white_space: WhiteSpace) -> String {
 /// Tab stops are computed from a running advance width. For non-tab characters,
 /// the `char_width` callback returns the actual shaped advance (or falls back
 /// to `space_advance`), so that proportional fonts produce correct tab stops.
-pub fn expand_tabs<F>(
-    text: &str,
-    tab_size: &TabSize,
-    space_advance: f32,
-    char_width: F,
-) -> String
+pub fn expand_tabs<F>(text: &str, tab_size: &TabSize, space_advance: f32, char_width: F) -> String
 where
     F: Fn(char) -> f32,
 {
     if !text.contains('\t') {
         return text.to_string();
     }
-    let space_adv = if space_advance > 0.0 { space_advance } else { 1.0 };
+    let space_adv = if space_advance > 0.0 {
+        space_advance
+    } else {
+        1.0
+    };
     let tab_interval = match *tab_size {
         TabSize::Spaces(n) => (n.max(1) as f32) * space_adv,
-        TabSize::Length(len) => if len > 0.0 { len } else { 8.0 * space_adv },
+        TabSize::Length(len) => {
+            if len > 0.0 {
+                len
+            } else {
+                8.0 * space_adv
+            }
+        }
     };
     let mut result = String::with_capacity(text.len());
     let mut current_advance = 0.0f32;
@@ -1244,11 +1273,11 @@ mod tests {
         let mut data = InlineItemsBuilder::collect(&doc, container);
         data.apply_bidi(TextDirection::Rtl);
 
-        let atomic = data.items.iter().find(|i| i.item_type == InlineItemType::AtomicInline);
-        assert!(
-            atomic.is_some(),
-            "Should have an AtomicInline item"
-        );
+        let atomic = data
+            .items
+            .iter()
+            .find(|i| i.item_type == InlineItemType::AtomicInline);
+        assert!(atomic.is_some(), "Should have an AtomicInline item");
         let atomic = atomic.unwrap();
         assert!(
             atomic.bidi_level % 2 == 1,
@@ -1290,11 +1319,11 @@ mod tests {
         // The text inside the embed+RTL span should have a non-zero bidi level,
         // indicating the embedding was applied. Exact level depends on UAX#9
         // resolution but should be > 0.
-        let text_item = data.items.iter().find(|i| i.item_type == InlineItemType::Text);
-        assert!(
-            text_item.is_some(),
-            "Should have a Text item"
-        );
+        let text_item = data
+            .items
+            .iter()
+            .find(|i| i.item_type == InlineItemType::Text);
+        assert!(text_item.is_some(), "Should have a Text item");
         let text_item = text_item.unwrap();
         assert!(
             text_item.bidi_level > 0,
@@ -1354,14 +1383,26 @@ mod tests {
     fn unicode_bidi_isolate_override_injects_correct_chars() {
         // IsolateOverride + LTR should inject LRI + LRO on open, PDF + PDI on close.
         let open = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Ltr);
-        assert_eq!(open, vec!['\u{2066}', '\u{202D}'], "LTR isolate-override: LRI + LRO");
+        assert_eq!(
+            open,
+            vec!['\u{2066}', '\u{202D}'],
+            "LTR isolate-override: LRI + LRO"
+        );
 
         let close = bidi_close_chars(UnicodeBidi::IsolateOverride);
-        assert_eq!(close, vec!['\u{202C}', '\u{2069}'], "isolate-override close: PDF + PDI");
+        assert_eq!(
+            close,
+            vec!['\u{202C}', '\u{2069}'],
+            "isolate-override close: PDF + PDI"
+        );
 
         // IsolateOverride + RTL should inject RLI + RLO on open.
         let open_rtl = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Rtl);
-        assert_eq!(open_rtl, vec!['\u{2067}', '\u{202E}'], "RTL isolate-override: RLI + RLO");
+        assert_eq!(
+            open_rtl,
+            vec!['\u{2067}', '\u{202E}'],
+            "RTL isolate-override: RLI + RLO"
+        );
     }
 
     // ── Issue 4 (R26): intrinsic sizing skips out-of-flow & display:none ──
@@ -1385,7 +1426,8 @@ mod tests {
         doc.append_child(container, hidden);
 
         let hidden_text = doc.create_node(ElementTag::Text);
-        doc.node_mut(hidden_text).text = Some("This is hidden and very long text that should not count".to_string());
+        doc.node_mut(hidden_text).text =
+            Some("This is hidden and very long text that should not count".to_string());
         doc.append_child(hidden, hidden_text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1535,7 +1577,8 @@ mod tests {
         assert!(
             size_upper.unwrap_or(0.0) >= size_normal.unwrap_or(0.0),
             "uppercase text should be at least as wide: upper={:?}, normal={:?}",
-            size_upper, size_normal,
+            size_upper,
+            size_normal,
         );
     }
 

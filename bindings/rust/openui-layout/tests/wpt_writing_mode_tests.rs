@@ -6,14 +6,14 @@
 
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{
-    BoxStrut, LayoutUnit, LogicalOffset, LogicalSize, PhysicalSize,
-    WritingDirectionMode, WritingModeConverter,
+    BoxStrut, LayoutUnit, LogicalOffset, LogicalSize, PhysicalSize, WritingDirectionMode,
+    WritingModeConverter,
 };
 use openui_layout::block::block_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 use openui_style::{
-    ComputedStyle, Direction, Display, FontOrientation, TextAlign, TextOrientation,
-    UnicodeBidi, WritingMode,
+    ComputedStyle, Direction, Display, FontOrientation, TextAlign, TextOrientation, UnicodeBidi,
+    WritingMode,
 };
 use openui_text::char_orientation::is_upright_in_mixed_vertical;
 use openui_text::{BidiParagraph, TextDirection};
@@ -217,7 +217,11 @@ mod writing_mode_property {
         ];
         for i in 0..modes.len() {
             for j in (i + 1)..modes.len() {
-                assert_ne!(modes[i], modes[j], "Mode {:?} should differ from {:?}", modes[i], modes[j]);
+                assert_ne!(
+                    modes[i], modes[j],
+                    "Mode {:?} should differ from {:?}",
+                    modes[i], modes[j]
+                );
             }
         }
     }
@@ -655,7 +659,11 @@ mod unicode_bidi {
         ];
         for i in 0..vals.len() {
             for j in (i + 1)..vals.len() {
-                assert_ne!(vals[i], vals[j], "{:?} should differ from {:?}", vals[i], vals[j]);
+                assert_ne!(
+                    vals[i], vals[j],
+                    "{:?} should differ from {:?}",
+                    vals[i], vals[j]
+                );
             }
         }
     }
@@ -740,7 +748,11 @@ mod bidi_algorithm {
         let bidi = BidiParagraph::new("Hello world", Some(TextDirection::Ltr));
         let runs = bidi.visual_runs();
         assert!(!runs.is_empty(), "Should have at least one run");
-        assert_eq!(runs[0].level % 2, 0, "LTR text should have even level (LTR)");
+        assert_eq!(
+            runs[0].level % 2,
+            0,
+            "LTR text should have even level (LTR)"
+        );
     }
 
     /// BidiParagraph with RTL (Hebrew) text produces RTL run.
@@ -749,7 +761,11 @@ mod bidi_algorithm {
         let bidi = BidiParagraph::new("שלום", Some(TextDirection::Rtl));
         let runs = bidi.visual_runs();
         assert!(!runs.is_empty());
-        assert_eq!(runs[0].level % 2, 1, "Hebrew text should have odd level (RTL)");
+        assert_eq!(
+            runs[0].level % 2,
+            1,
+            "Hebrew text should have odd level (RTL)"
+        );
     }
 
     /// BidiParagraph with RTL (Arabic) text produces RTL run.
@@ -885,7 +901,10 @@ mod logical_physical_conversion {
     /// WritingDirectionMode::horizontal_ltr() matches default.
     #[test]
     fn horizontal_ltr_matches_default() {
-        assert_eq!(WritingDirectionMode::horizontal_ltr(), WritingDirectionMode::default());
+        assert_eq!(
+            WritingDirectionMode::horizontal_ltr(),
+            WritingDirectionMode::default()
+        );
     }
 
     /// horizontal-tb LTR: logical size maps inline→width, block→height.
@@ -1002,7 +1021,11 @@ mod logical_physical_conversion {
 
         let logical = LogicalOffset::new(lu_i(0), lu_i(0));
         let physical = converter.to_physical_offset(logical, inner);
-        assert_eq!(physical.left, lu_i(0), "vertical-lr block-start → left edge");
+        assert_eq!(
+            physical.left,
+            lu_i(0),
+            "vertical-lr block-start → left edge"
+        );
         assert_eq!(physical.top, lu_i(0), "inline-start → top");
     }
 
@@ -1045,7 +1068,10 @@ mod logical_physical_conversion {
         let original = LogicalOffset::new(lu_i(30), lu_i(40));
         let physical = converter.to_physical_offset(original, inner);
         let back = converter.to_logical_offset(physical, inner);
-        assert_eq!(back, original, "Round-trip vertical-rl should preserve offset");
+        assert_eq!(
+            back, original,
+            "Round-trip vertical-rl should preserve offset"
+        );
     }
 
     /// Round-trip: logical → physical → logical size in vertical mode.
@@ -1096,7 +1122,10 @@ mod integration {
         assert!(!runs.is_empty());
         // The runs exist; Hebrew chars still get RTL level even with LTR base.
         let has_rtl = runs.iter().any(|r| r.level % 2 == 1);
-        assert!(has_rtl, "Hebrew chars should still be RTL even with LTR base");
+        assert!(
+            has_rtl,
+            "Hebrew chars should still be RTL even with LTR base"
+        );
     }
 
     /// BoxStrut zero has all edges zero.

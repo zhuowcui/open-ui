@@ -34,8 +34,7 @@ fn r30_from_font_ignores_strikeout_thickness() {
     style.text_decoration_style = TextDecorationStyle::Solid;
 
     let surface_info = skia_safe::ImageInfo::new_n32_premul((100, 100), None);
-    let mut surface =
-        skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
+    let mut surface = skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
     let canvas = surface.canvas();
 
     let shape = openui_text::shaping::ShapeResult::empty(TextDirection::Ltr);
@@ -65,24 +64,32 @@ fn r30_underline_and_linethrough_share_thickness() {
 
     let mut style = ComputedStyle::default();
     style.font_size = 16.0;
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.text_decoration_line =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
     style.text_decoration_thickness = TextDecorationThickness::FromFont;
     style.text_decoration_style = TextDecorationStyle::Solid;
 
     let surface_info = skia_safe::ImageInfo::new_n32_premul((100, 100), None);
-    let mut surface =
-        skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
+    let mut surface = skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
     let canvas = surface.canvas();
     let shape = openui_text::shaping::ShapeResult::empty(TextDirection::Ltr);
 
     paint_text_decorations(
-        canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::BeforeText,
+        canvas,
+        &shape,
+        (0.0, 50.0),
+        &style,
+        &metrics,
+        DecorationPhase::BeforeText,
         None,
     );
     paint_text_decorations(
-        canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::AfterText,
+        canvas,
+        &shape,
+        (0.0, 50.0),
+        &style,
+        &metrics,
+        DecorationPhase::AfterText,
         None,
     );
 }
@@ -106,13 +113,17 @@ fn r30_auto_thickness_14px_not_rounded() {
     };
 
     let surface_info = skia_safe::ImageInfo::new_n32_premul((100, 100), None);
-    let mut surface =
-        skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
+    let mut surface = skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
     let canvas = surface.canvas();
     let shape = openui_text::shaping::ShapeResult::empty(TextDirection::Ltr);
 
     paint_text_decorations(
-        canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::BeforeText,
+        canvas,
+        &shape,
+        (0.0, 50.0),
+        &style,
+        &metrics,
+        DecorationPhase::BeforeText,
         None,
     );
 }
@@ -134,13 +145,17 @@ fn r30_auto_thickness_16px_not_rounded() {
     };
 
     let surface_info = skia_safe::ImageInfo::new_n32_premul((100, 100), None);
-    let mut surface =
-        skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
+    let mut surface = skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
     let canvas = surface.canvas();
     let shape = openui_text::shaping::ShapeResult::empty(TextDirection::Ltr);
 
     paint_text_decorations(
-        canvas, &shape, (0.0, 50.0), &style, &metrics, DecorationPhase::BeforeText,
+        canvas,
+        &shape,
+        (0.0, 50.0),
+        &style,
+        &metrics,
+        DecorationPhase::BeforeText,
         None,
     );
 }

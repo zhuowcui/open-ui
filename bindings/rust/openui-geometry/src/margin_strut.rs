@@ -191,15 +191,15 @@ mod tests {
     #[test]
     fn quirky_vs_normal_takes_larger() {
         let mut strut = MarginStrut::new();
-        strut.append(LayoutUnit::from_i32(15), true);  // quirky = 15
-        strut.append_normal(LayoutUnit::from_i32(25));  // normal = 25
-        // Sum = max(15, 25) + 0 = 25
+        strut.append(LayoutUnit::from_i32(15), true); // quirky = 15
+        strut.append_normal(LayoutUnit::from_i32(25)); // normal = 25
+                                                       // Sum = max(15, 25) + 0 = 25
         assert_eq!(strut.sum(), LayoutUnit::from_i32(25));
 
         let mut strut2 = MarginStrut::new();
-        strut2.append(LayoutUnit::from_i32(30), true);  // quirky = 30
-        strut2.append_normal(LayoutUnit::from_i32(10));  // normal = 10
-        // Sum = max(30, 10) + 0 = 30
+        strut2.append(LayoutUnit::from_i32(30), true); // quirky = 30
+        strut2.append_normal(LayoutUnit::from_i32(10)); // normal = 10
+                                                        // Sum = max(30, 10) + 0 = 30
         assert_eq!(strut2.sum(), LayoutUnit::from_i32(30));
     }
 
@@ -216,8 +216,8 @@ mod tests {
     #[test]
     fn quirky_container_sum_ignores_quirky() {
         let mut strut = MarginStrut::new();
-        strut.append(LayoutUnit::from_i32(20), true);  // quirky
-        strut.append_normal(LayoutUnit::from_i32(10));  // normal
+        strut.append(LayoutUnit::from_i32(20), true); // quirky
+        strut.append_normal(LayoutUnit::from_i32(10)); // normal
         assert_eq!(strut.quirky_container_sum(), LayoutUnit::from_i32(10));
     }
 

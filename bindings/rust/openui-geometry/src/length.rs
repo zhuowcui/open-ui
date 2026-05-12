@@ -61,118 +61,192 @@ impl Length {
     /// `Length()` — default is `Fixed(0)` in Blink.
     #[inline]
     pub const fn zero() -> Self {
-        Self { value: 0.0, length_type: LengthType::Fixed, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::Fixed,
+            calc_offset: 0.0,
+        }
     }
 
     /// `Length::Auto()` — the `auto` keyword.
     #[inline]
     pub const fn auto() -> Self {
-        Self { value: 0.0, length_type: LengthType::Auto, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::Auto,
+            calc_offset: 0.0,
+        }
     }
 
     /// `Length::None()` — used as initial value for max-width/max-height.
     #[inline]
     pub const fn none() -> Self {
-        Self { value: 0.0, length_type: LengthType::None, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::None,
+            calc_offset: 0.0,
+        }
     }
 
     /// Fixed pixel value.
     #[inline]
     pub const fn px(value: f32) -> Self {
-        Self { value, length_type: LengthType::Fixed, calc_offset: 0.0 }
+        Self {
+            value,
+            length_type: LengthType::Fixed,
+            calc_offset: 0.0,
+        }
     }
 
     /// Percentage value (0.0 = 0%, 100.0 = 100%).
     #[inline]
     pub const fn percent(value: f32) -> Self {
-        Self { value, length_type: LengthType::Percent, calc_offset: 0.0 }
+        Self {
+            value,
+            length_type: LengthType::Percent,
+            calc_offset: 0.0,
+        }
     }
 
     /// `min-content` intrinsic keyword.
     #[inline]
     pub const fn min_content() -> Self {
-        Self { value: 0.0, length_type: LengthType::MinContent, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::MinContent,
+            calc_offset: 0.0,
+        }
     }
 
     /// `max-content` intrinsic keyword.
     #[inline]
     pub const fn max_content() -> Self {
-        Self { value: 0.0, length_type: LengthType::MaxContent, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::MaxContent,
+            calc_offset: 0.0,
+        }
     }
 
     /// `stretch` keyword.
     #[inline]
     pub const fn stretch() -> Self {
-        Self { value: 0.0, length_type: LengthType::Stretch, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::Stretch,
+            calc_offset: 0.0,
+        }
     }
 
     /// `fit-content` keyword (bare, no argument).
     #[inline]
     pub const fn fit_content() -> Self {
-        Self { value: 0.0, length_type: LengthType::FitContent, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::FitContent,
+            calc_offset: 0.0,
+        }
     }
 
     /// `fit-content(<px>)` functional notation with a pixel argument.
     /// Encodes as `value=0.0` (no percent), `calc_offset=px`.
     #[inline]
     pub const fn fit_content_px(px: f32) -> Self {
-        Self { value: 0.0, length_type: LengthType::FitContent, calc_offset: px }
+        Self {
+            value: 0.0,
+            length_type: LengthType::FitContent,
+            calc_offset: px,
+        }
     }
 
     /// `fit-content(<percent>%)` functional notation with a percentage argument.
     /// Encodes as `value=percent`, `calc_offset=0.0`.
     #[inline]
     pub const fn fit_content_percent(percent: f32) -> Self {
-        Self { value: percent, length_type: LengthType::FitContent, calc_offset: 0.0 }
+        Self {
+            value: percent,
+            length_type: LengthType::FitContent,
+            calc_offset: 0.0,
+        }
     }
 
     /// `content` keyword — used for flex-basis:content and certain grid contexts.
     #[inline]
     pub const fn content() -> Self {
-        Self { value: 0.0, length_type: LengthType::Content, calc_offset: 0.0 }
+        Self {
+            value: 0.0,
+            length_type: LengthType::Content,
+            calc_offset: 0.0,
+        }
     }
 
     /// `fr` fractional unit for CSS Grid.
     #[inline]
     pub const fn flex(value: f32) -> Self {
-        Self { value, length_type: LengthType::Flex, calc_offset: 0.0 }
+        Self {
+            value,
+            length_type: LengthType::Flex,
+            calc_offset: 0.0,
+        }
     }
 
     /// `calc(<percent>% ± <px>px)` — percentage with a fixed pixel offset.
     /// E.g., `calc(50% - 10px)` → `calc_percent_px(50.0, -10.0)`.
     #[inline]
     pub const fn calc_percent_px(percent: f32, px_offset: f32) -> Self {
-        Self { value: percent, length_type: LengthType::Calculated, calc_offset: px_offset }
+        Self {
+            value: percent,
+            length_type: LengthType::Calculated,
+            calc_offset: px_offset,
+        }
     }
 
     // ── Type queries matching Blink's `Is*()` methods ────────────────
 
     #[inline]
-    pub const fn is_auto(&self) -> bool { matches!(self.length_type, LengthType::Auto) }
+    pub const fn is_auto(&self) -> bool {
+        matches!(self.length_type, LengthType::Auto)
+    }
 
     #[inline]
-    pub const fn is_fixed(&self) -> bool { matches!(self.length_type, LengthType::Fixed) }
+    pub const fn is_fixed(&self) -> bool {
+        matches!(self.length_type, LengthType::Fixed)
+    }
 
     #[inline]
-    pub const fn is_percent(&self) -> bool { matches!(self.length_type, LengthType::Percent) }
+    pub const fn is_percent(&self) -> bool {
+        matches!(self.length_type, LengthType::Percent)
+    }
 
     #[inline]
-    pub const fn is_none(&self) -> bool { matches!(self.length_type, LengthType::None) }
+    pub const fn is_none(&self) -> bool {
+        matches!(self.length_type, LengthType::None)
+    }
 
     #[inline]
-    pub const fn is_calculated(&self) -> bool { matches!(self.length_type, LengthType::Calculated) }
+    pub const fn is_calculated(&self) -> bool {
+        matches!(self.length_type, LengthType::Calculated)
+    }
 
     #[inline]
-    pub const fn is_min_content(&self) -> bool { matches!(self.length_type, LengthType::MinContent) }
+    pub const fn is_min_content(&self) -> bool {
+        matches!(self.length_type, LengthType::MinContent)
+    }
 
     #[inline]
-    pub const fn is_max_content(&self) -> bool { matches!(self.length_type, LengthType::MaxContent) }
+    pub const fn is_max_content(&self) -> bool {
+        matches!(self.length_type, LengthType::MaxContent)
+    }
 
     #[inline]
-    pub const fn is_stretch(&self) -> bool { matches!(self.length_type, LengthType::Stretch) }
+    pub const fn is_stretch(&self) -> bool {
+        matches!(self.length_type, LengthType::Stretch)
+    }
 
     #[inline]
-    pub const fn is_fit_content(&self) -> bool { matches!(self.length_type, LengthType::FitContent) }
+    pub const fn is_fit_content(&self) -> bool {
+        matches!(self.length_type, LengthType::FitContent)
+    }
 
     /// True if this is the `fit-content(<arg>)` functional notation (has an argument),
     /// as opposed to the bare `fit-content` keyword.
@@ -186,7 +260,10 @@ impl Length {
     pub const fn is_content_or_intrinsic(&self) -> bool {
         matches!(
             self.length_type,
-            LengthType::MinContent | LengthType::MaxContent | LengthType::FitContent | LengthType::Content
+            LengthType::MinContent
+                | LengthType::MaxContent
+                | LengthType::FitContent
+                | LengthType::Content
         )
     }
 
@@ -194,22 +271,31 @@ impl Length {
     /// resolved against a containing block dimension.
     #[inline]
     pub const fn is_specified(&self) -> bool {
-        matches!(self.length_type, LengthType::Fixed | LengthType::Percent | LengthType::Calculated)
+        matches!(
+            self.length_type,
+            LengthType::Fixed | LengthType::Percent | LengthType::Calculated
+        )
     }
 
     // ── Value access ─────────────────────────────────────────────────
 
     /// The raw numeric value. Interpretation depends on `length_type()`.
     #[inline]
-    pub const fn value(&self) -> f32 { self.value }
+    pub const fn value(&self) -> f32 {
+        self.value
+    }
 
     /// The type discriminant.
     #[inline]
-    pub const fn length_type(&self) -> LengthType { self.length_type }
+    pub const fn length_type(&self) -> LengthType {
+        self.length_type
+    }
 
     /// The calc offset (px) for `Calculated` type. Zero for all other types.
     #[inline]
-    pub const fn calc_offset(&self) -> f32 { self.calc_offset }
+    pub const fn calc_offset(&self) -> f32 {
+        self.calc_offset
+    }
 
     // ── Equality — Blink compares type + value ───────────────────────
 }

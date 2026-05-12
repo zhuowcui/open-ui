@@ -37,13 +37,21 @@ impl LogicalRect {
     }
 
     #[inline]
-    pub const fn inline_offset(&self) -> LayoutUnit { self.offset.inline_offset }
+    pub const fn inline_offset(&self) -> LayoutUnit {
+        self.offset.inline_offset
+    }
     #[inline]
-    pub const fn block_offset(&self) -> LayoutUnit { self.offset.block_offset }
+    pub const fn block_offset(&self) -> LayoutUnit {
+        self.offset.block_offset
+    }
     #[inline]
-    pub const fn inline_size(&self) -> LayoutUnit { self.size.inline_size }
+    pub const fn inline_size(&self) -> LayoutUnit {
+        self.size.inline_size
+    }
     #[inline]
-    pub const fn block_size(&self) -> LayoutUnit { self.size.block_size }
+    pub const fn block_size(&self) -> LayoutUnit {
+        self.size.block_size
+    }
 
     /// End position in the inline direction.
     #[inline]

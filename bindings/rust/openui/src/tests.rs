@@ -380,8 +380,8 @@ fn memo_returns_cached_value() {
         });
         assert_eq!(m.get(), 6);
         assert_eq!(m.get(), 6); // second read — no recompute
-        // The memo computes once eagerly and once in the effect's initial run
-        // (needed to establish dependency tracking). Subsequent reads don't recompute.
+                                // The memo computes once eagerly and once in the effect's initial run
+                                // (needed to establish dependency tracking). Subsequent reads don't recompute.
         assert_eq!(compute_count.get(), 2);
     });
 }
@@ -407,7 +407,11 @@ fn memo_skips_update_when_value_unchanged() {
         // Memo that clamps to max 10
         let m = create_memo(move || {
             let v = s.get();
-            if v > 10 { 10 } else { v }
+            if v > 10 {
+                10
+            } else {
+                v
+            }
         });
 
         create_effect(move || {

@@ -12,9 +12,7 @@ use openui_layout::inline::items::InlineItemType;
 use openui_layout::inline::items_builder::{expand_tabs, InlineItemsBuilder};
 use openui_layout::inline::line_breaker::LineBreaker;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    BorderStyle, Direction, Display, TabSize, TextAlign, WhiteSpace,
-};
+use openui_style::{BorderStyle, Direction, Display, TabSize, TextAlign, WhiteSpace};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 

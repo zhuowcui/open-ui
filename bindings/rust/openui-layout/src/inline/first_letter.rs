@@ -10,9 +10,9 @@
 //! so it can receive special properties (font-size, float, margins, etc.)
 //! that don't apply to the rest of the text.
 
+use crate::inline::items_builder::style_to_font_description;
 use openui_style::ComputedStyle;
 use openui_text::Font;
-use crate::inline::items_builder::style_to_font_description;
 
 /// Result of extracting the first typographic letter unit from text.
 ///
@@ -79,13 +79,12 @@ fn unicode_general_category(ch: char) -> UnicodeCategory {
     // in priority order: Pi/Pf first, then Ps/Pe, then Po.
     match ch {
         // Pi - Initial punctuation (checked first — takes priority)
-        '\u{201B}' | '\u{201F}'
-        | '\u{2E02}' | '\u{2E04}' | '\u{2E09}' | '\u{2E0C}' | '\u{2E1C}' | '\u{2E20}' => {
-            UnicodeCategory::Pi
-        }
+        '\u{201B}' | '\u{201F}' | '\u{2E02}' | '\u{2E04}' | '\u{2E09}' | '\u{2E0C}'
+        | '\u{2E1C}' | '\u{2E20}' => UnicodeCategory::Pi,
         // Pf - Final punctuation
-        '\u{2E03}' | '\u{2E05}'
-        | '\u{2E0A}' | '\u{2E0D}' | '\u{2E1D}' | '\u{2E21}' => UnicodeCategory::Pf,
+        '\u{2E03}' | '\u{2E05}' | '\u{2E0A}' | '\u{2E0D}' | '\u{2E1D}' | '\u{2E21}' => {
+            UnicodeCategory::Pf
+        }
         // Ps - Open punctuation
         '(' | '[' | '{' | '\u{00AB}' | '\u{2018}' | '\u{201C}' | '\u{2039}' | '\u{300C}'
         | '\u{300E}' | '\u{3010}' | '\u{3014}' | '\u{3016}' | '\u{3018}' | '\u{301A}'
@@ -95,12 +94,10 @@ fn unicode_general_category(ch: char) -> UnicodeCategory {
         | '\u{300F}' | '\u{3011}' | '\u{3015}' | '\u{3017}' | '\u{3019}' | '\u{301B}'
         | '\u{FF09}' | '\u{FF3D}' | '\u{FF5D}' => UnicodeCategory::Pe,
         // Po - Other punctuation (common ASCII + Unicode)
-        '!' | '"' | '#' | '%' | '&' | '\'' | '*' | ',' | '.' | '/' | ':' | ';' | '?'
-        | '@' | '\\' | '\u{00A1}' | '\u{00BF}' | '\u{2010}' | '\u{2011}' | '\u{2012}'
-        | '\u{2013}' | '\u{2014}' | '\u{2015}' | '\u{2026}' | '\u{FF01}' | '\u{FF0C}'
-        | '\u{FF0E}' | '\u{FF1A}' | '\u{FF1B}' | '\u{FF1F}' | '\u{3001}' | '\u{3002}' => {
-            UnicodeCategory::Po
-        }
+        '!' | '"' | '#' | '%' | '&' | '\'' | '*' | ',' | '.' | '/' | ':' | ';' | '?' | '@'
+        | '\\' | '\u{00A1}' | '\u{00BF}' | '\u{2010}' | '\u{2011}' | '\u{2012}' | '\u{2013}'
+        | '\u{2014}' | '\u{2015}' | '\u{2026}' | '\u{FF01}' | '\u{FF0C}' | '\u{FF0E}'
+        | '\u{FF1A}' | '\u{FF1B}' | '\u{FF1F}' | '\u{3001}' | '\u{3002}' => UnicodeCategory::Po,
         _ => UnicodeCategory::Other,
     }
 }
@@ -211,7 +208,7 @@ fn is_combining_mark(ch: char) -> bool {
         || (0x093A..=0x094F).contains(&cp)  // Devanagari combining marks
         || (0x0E31..=0x0E3A).contains(&cp)  // Thai combining marks
         || (0x20D0..=0x20FF).contains(&cp)  // Combining Marks for Symbols
-        || (0xFE20..=0xFE2F).contains(&cp)  // Combining Half Marks
+        || (0xFE20..=0xFE2F).contains(&cp) // Combining Half Marks
 }
 
 /// Style properties applicable to `::first-letter`.
@@ -350,8 +347,11 @@ mod tests {
         let result = extract_first_letter("  Hello").unwrap();
         assert_eq!(result.first_letter_start, 2); // skip "  "
         assert_eq!(result.first_letter_end, 3); // "H" at byte 2..3
-        // The first-letter text is "H", not "  H"
-        assert_eq!(&"  Hello"[result.first_letter_start..result.first_letter_end], "H");
+                                                // The first-letter text is "H", not "  H"
+        assert_eq!(
+            &"  Hello"[result.first_letter_start..result.first_letter_end],
+            "H"
+        );
     }
 
     #[test]
@@ -417,12 +417,21 @@ mod tests {
         // Assert positive, sensible values rather than hardcoded approximations.
         assert!(m.ascent > 0.0, "ascent should be positive: {}", m.ascent);
         assert!(m.descent > 0.0, "descent should be positive: {}", m.descent);
-        assert!((m.height - (m.ascent + m.descent)).abs() < 0.01, "height = ascent + descent");
+        assert!(
+            (m.height - (m.ascent + m.descent)).abs() < 0.01,
+            "height = ascent + descent"
+        );
         assert!(m.width > 0.0, "width should be positive: {}", m.width);
         // Sanity: metrics scale with font size
         let m2 = FirstLetterMetrics::from_font_size(96.0);
-        assert!(m2.ascent > m.ascent, "larger font should have larger ascent");
-        assert!(m2.height > m.height, "larger font should have larger height");
+        assert!(
+            m2.ascent > m.ascent,
+            "larger font should have larger ascent"
+        );
+        assert!(
+            m2.height > m.height,
+            "larger font should have larger height"
+        );
     }
 
     #[test]

@@ -20,10 +20,10 @@
 //! `initial-letter: 3 2` — letter is 3 lines tall, sinks 2 lines.
 //! Partially sunken into the paragraph.
 
+use crate::inline::items_builder::style_to_font_description;
 use openui_geometry::LayoutUnit;
 use openui_style::{ComputedStyle, InitialLetter};
 use openui_text::Font;
-use crate::inline::items_builder::style_to_font_description;
 
 /// Computed layout metrics for an initial letter.
 ///
@@ -235,12 +235,15 @@ mod tests {
 
     #[test]
     fn drop_cap_3_lines() {
-        let il = InitialLetter { size: 3.0, sink: None };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: None,
+        };
         let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
 
         assert_eq!(layout.letter_height, lu(60.0)); // 3 × 20
         assert_eq!(layout.computed_font_size, 48.0); // 16 × 3
-        assert_eq!(layout.block_offset, lu(0.0));    // Full drop cap
+        assert_eq!(layout.block_offset, lu(0.0)); // Full drop cap
         assert_eq!(layout.exclusion_lines, 3);
         assert!(layout.is_drop_cap);
         assert!(!layout.is_raised);
@@ -248,7 +251,10 @@ mod tests {
 
     #[test]
     fn raised_cap_3_lines() {
-        let il = InitialLetter { size: 3.0, sink: Some(1.0) };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: Some(1.0),
+        };
         let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
 
         assert_eq!(layout.letter_height, lu(60.0));
@@ -260,7 +266,10 @@ mod tests {
 
     #[test]
     fn sunken_cap_3_size_2_sink() {
-        let il = InitialLetter { size: 3.0, sink: Some(2.0) };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: Some(2.0),
+        };
         let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
 
         assert_eq!(layout.letter_height, lu(60.0));
@@ -272,7 +281,10 @@ mod tests {
 
     #[test]
     fn exclusion_rect_basic() {
-        let il = InitialLetter { size: 3.0, sink: None };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: None,
+        };
         let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
         let margin = lu(4.0);
 
@@ -288,10 +300,30 @@ mod tests {
     fn line_exclusion_detection() {
         // Exclusion zone: block 0..60
         assert!(line_in_exclusion_zone(lu(0.0), lu(20.0), lu(0.0), lu(60.0)));
-        assert!(line_in_exclusion_zone(lu(20.0), lu(20.0), lu(0.0), lu(60.0)));
-        assert!(line_in_exclusion_zone(lu(40.0), lu(20.0), lu(0.0), lu(60.0)));
-        assert!(!line_in_exclusion_zone(lu(60.0), lu(20.0), lu(0.0), lu(60.0)));
-        assert!(!line_in_exclusion_zone(lu(80.0), lu(20.0), lu(0.0), lu(60.0)));
+        assert!(line_in_exclusion_zone(
+            lu(20.0),
+            lu(20.0),
+            lu(0.0),
+            lu(60.0)
+        ));
+        assert!(line_in_exclusion_zone(
+            lu(40.0),
+            lu(20.0),
+            lu(0.0),
+            lu(60.0)
+        ));
+        assert!(!line_in_exclusion_zone(
+            lu(60.0),
+            lu(20.0),
+            lu(0.0),
+            lu(60.0)
+        ));
+        assert!(!line_in_exclusion_zone(
+            lu(80.0),
+            lu(20.0),
+            lu(0.0),
+            lu(60.0)
+        ));
     }
 
     #[test]
@@ -325,32 +357,50 @@ mod tests {
 
     #[test]
     fn initial_letter_effective_sink() {
-        let il = InitialLetter { size: 3.0, sink: None };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: None,
+        };
         assert_eq!(il.effective_sink(), 3.0);
 
-        let il2 = InitialLetter { size: 3.0, sink: Some(1.0) };
+        let il2 = InitialLetter {
+            size: 3.0,
+            sink: Some(1.0),
+        };
         assert_eq!(il2.effective_sink(), 1.0);
     }
 
     #[test]
     fn initial_letter_compute_height() {
-        let il = InitialLetter { size: 3.0, sink: None };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: None,
+        };
         assert_eq!(il.compute_height(20.0), 60.0);
     }
 
     #[test]
     fn initial_letter_sink_offset() {
-        let il = InitialLetter { size: 3.0, sink: None };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: None,
+        };
         assert_eq!(il.compute_sink_offset(20.0), 40.0); // (3-1) × 20
 
-        let il2 = InitialLetter { size: 3.0, sink: Some(1.0) };
+        let il2 = InitialLetter {
+            size: 3.0,
+            sink: Some(1.0),
+        };
         assert_eq!(il2.compute_sink_offset(20.0), 0.0); // raised cap
     }
 
     #[test]
     fn create_initial_letter_style_sets_font_size() {
         let base = ComputedStyle::initial();
-        let il = InitialLetter { size: 3.0, sink: None };
+        let il = InitialLetter {
+            size: 3.0,
+            sink: None,
+        };
         let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
         let style = create_initial_letter_style(&base, &layout);
         assert_eq!(style.font_size, 48.0);
@@ -358,7 +408,10 @@ mod tests {
 
     #[test]
     fn two_line_drop_cap() {
-        let il = InitialLetter { size: 2.0, sink: None };
+        let il = InitialLetter {
+            size: 2.0,
+            sink: None,
+        };
         let layout = compute_initial_letter_layout(&il, 24.0, 16.0);
 
         assert_eq!(layout.letter_height, lu(48.0));
@@ -369,7 +422,10 @@ mod tests {
 
     #[test]
     fn exclusion_for_raised_cap_only_first_line() {
-        let il = InitialLetter { size: 4.0, sink: Some(1.0) };
+        let il = InitialLetter {
+            size: 4.0,
+            sink: Some(1.0),
+        };
         let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
 
         // Only the first line should be excluded

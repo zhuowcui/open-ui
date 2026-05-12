@@ -12,8 +12,8 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::block::block_layout;
 use openui_layout::inline::first_letter::{
-    extract_first_letter, has_first_letter_content, split_first_letter,
-    FirstLetterMetrics, FirstLetterStyle,
+    extract_first_letter, has_first_letter_content, split_first_letter, FirstLetterMetrics,
+    FirstLetterStyle,
 };
 use openui_layout::inline::first_line::{
     apply_first_line_overrides, build_first_line_style, effective_first_line_style,
@@ -24,13 +24,12 @@ use openui_layout::inline::initial_letter::{
     create_initial_letter_style, line_in_exclusion_zone, validate_initial_letter,
 };
 use openui_layout::inline::score_line_breaker::{
-    balance_score, candidates_from_word_widths, requires_scoring, score_line_break,
-    BreakCandidate, FitnessClass, ScoreLineBreaker, ScoreParams,
+    balance_score, candidates_from_word_widths, requires_scoring, score_line_break, BreakCandidate,
+    FitnessClass, ScoreLineBreaker, ScoreParams,
 };
 use openui_layout::ConstraintSpace;
 use openui_style::{
-    ComputedStyle, Display, InitialLetter, LineHeight, TextDecorationLine,
-    TextWrap,
+    ComputedStyle, Display, InitialLetter, LineHeight, TextDecorationLine, TextWrap,
 };
 
 fn lu(v: f32) -> LayoutUnit {
@@ -53,7 +52,10 @@ fn h1_first_line_font_size_override() {
         ..Default::default()
     };
     let merged = apply_first_line_overrides(&base, &overrides);
-    assert_eq!(merged.font_size, 24.0, "first-line should override font-size");
+    assert_eq!(
+        merged.font_size, 24.0,
+        "first-line should override font-size"
+    );
     // Other properties unchanged
     assert_eq!(merged.letter_spacing, 0.0);
     assert_eq!(merged.word_spacing, 0.0);
@@ -96,7 +98,10 @@ fn h1_first_line_only_first_line_gets_style() {
     fls.font_size = 32.0;
     block2.first_line_style = Some(Box::new(fls));
     let eff2 = effective_first_line_style(&block2);
-    assert_eq!(eff2.font_size, 32.0, "First line should use override font-size");
+    assert_eq!(
+        eff2.font_size, 32.0,
+        "First line should use override font-size"
+    );
     // Subsequent lines use block2 directly:
     assert_eq!(block2.font_size, 16.0, "Block style unchanged");
 }
@@ -210,11 +215,18 @@ fn h2_first_letter_split() {
 fn h2_first_letter_metrics() {
     let m = FirstLetterMetrics::from_font_size(48.0);
     // Real font metrics: height = ascent + descent, proportional to font size
-    assert!((m.height - (m.ascent + m.descent)).abs() < 0.01, "Height = ascent + descent");
+    assert!(
+        (m.height - (m.ascent + m.descent)).abs() < 0.01,
+        "Height = ascent + descent"
+    );
     assert!(m.ascent > 0.0, "ascent positive");
     assert!(m.descent > 0.0, "descent positive");
     assert!(m.width > 0.0, "width positive");
-    assert!(m.height > 30.0 && m.height < 80.0, "height in reasonable range for 48px: {}", m.height);
+    assert!(
+        m.height > 30.0 && m.height < 80.0,
+        "height in reasonable range for 48px: {}",
+        m.height
+    );
 }
 
 #[test]
@@ -265,7 +277,10 @@ fn h3_fallback_to_greedy_for_long_paragraphs() {
     let words: Vec<f64> = vec![30.0; 600];
     let candidates = candidates_from_word_widths(&words, 5.0);
     let result = score_line_break(&candidates, 200.0, TextWrap::Pretty);
-    assert!(result.is_none(), "Should fall back to greedy for long paragraphs");
+    assert!(
+        result.is_none(),
+        "Should fall back to greedy for long paragraphs"
+    );
 }
 
 #[test]
@@ -282,9 +297,7 @@ fn h3_fitness_class_transitions() {
         0.0
     );
     // Non-adjacent: penalty
-    assert!(
-        FitnessClass::transition_penalty(FitnessClass::Tight, FitnessClass::VeryLoose) > 0.0
-    );
+    assert!(FitnessClass::transition_penalty(FitnessClass::Tight, FitnessClass::VeryLoose) > 0.0);
 }
 
 #[test]
@@ -330,12 +343,15 @@ fn h3_text_wrap_enum_properties() {
 
 #[test]
 fn h4_drop_cap_3_lines() {
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
 
     assert_eq!(layout.letter_height, lu(60.0)); // 3 × 20
     assert_eq!(layout.computed_font_size, 48.0); // 16 × 3
-    assert_eq!(layout.block_offset, lu(0.0));    // Full drop cap
+    assert_eq!(layout.block_offset, lu(0.0)); // Full drop cap
     assert_eq!(layout.exclusion_lines, 3);
     assert!(layout.is_drop_cap);
     assert!(!layout.is_raised);
@@ -343,7 +359,10 @@ fn h4_drop_cap_3_lines() {
 
 #[test]
 fn h4_raised_cap_3_lines() {
-    let il = InitialLetter { size: 3.0, sink: Some(1.0) };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: Some(1.0),
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
 
     assert_eq!(layout.letter_height, lu(60.0));
@@ -355,7 +374,10 @@ fn h4_raised_cap_3_lines() {
 
 #[test]
 fn h4_exclusion_area() {
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
     let margin = lu(4.0);
 
@@ -370,9 +392,24 @@ fn h4_exclusion_area() {
 fn h4_line_exclusion_detection() {
     // Exclusion zone: block 0..60
     assert!(line_in_exclusion_zone(lu(0.0), lu(20.0), lu(0.0), lu(60.0)));
-    assert!(line_in_exclusion_zone(lu(20.0), lu(20.0), lu(0.0), lu(60.0)));
-    assert!(line_in_exclusion_zone(lu(40.0), lu(20.0), lu(0.0), lu(60.0)));
-    assert!(!line_in_exclusion_zone(lu(60.0), lu(20.0), lu(0.0), lu(60.0)));
+    assert!(line_in_exclusion_zone(
+        lu(20.0),
+        lu(20.0),
+        lu(0.0),
+        lu(60.0)
+    ));
+    assert!(line_in_exclusion_zone(
+        lu(40.0),
+        lu(20.0),
+        lu(0.0),
+        lu(60.0)
+    ));
+    assert!(!line_in_exclusion_zone(
+        lu(60.0),
+        lu(20.0),
+        lu(0.0),
+        lu(60.0)
+    ));
 }
 
 #[test]
@@ -398,7 +435,10 @@ fn h4_initial_letter_style_computed_fields() {
     let mut style = ComputedStyle::initial();
     assert!(style.initial_letter.is_none());
 
-    style.initial_letter = Some(InitialLetter { size: 3.0, sink: None });
+    style.initial_letter = Some(InitialLetter {
+        size: 3.0,
+        sink: None,
+    });
     let il = style.initial_letter.as_ref().unwrap();
     assert_eq!(il.size, 3.0);
     assert_eq!(il.effective_sink(), 3.0);
@@ -407,7 +447,10 @@ fn h4_initial_letter_style_computed_fields() {
 #[test]
 fn h4_create_initial_letter_style() {
     let base = ComputedStyle::initial();
-    let il = InitialLetter { size: 3.0, sink: None };
+    let il = InitialLetter {
+        size: 3.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 20.0, 16.0);
     let letter_style = create_initial_letter_style(&base, &layout);
     assert_eq!(letter_style.font_size, 48.0);
@@ -415,7 +458,10 @@ fn h4_create_initial_letter_style() {
 
 #[test]
 fn h4_two_line_drop_cap() {
-    let il = InitialLetter { size: 2.0, sink: None };
+    let il = InitialLetter {
+        size: 2.0,
+        sink: None,
+    };
     let layout = compute_initial_letter_layout(&il, 24.0, 16.0);
     assert_eq!(layout.letter_height, lu(48.0));
     assert_eq!(layout.computed_font_size, 32.0);
@@ -458,10 +504,19 @@ fn integration_layout_with_new_defaults() {
     let sp = space(400, 800);
     let frag = block_layout(&doc, vp, &sp);
 
-    assert!(!frag.children.is_empty(), "Should produce at least one child");
+    assert!(
+        !frag.children.is_empty(),
+        "Should produce at least one child"
+    );
     let div_frag = &frag.children[0];
-    assert!(div_frag.size.width > lu(0.0), "Div should have positive width");
-    assert!(div_frag.size.height > lu(0.0), "Div should have positive height");
+    assert!(
+        div_frag.size.width > lu(0.0),
+        "Div should have positive width"
+    );
+    assert!(
+        div_frag.size.height > lu(0.0),
+        "Div should have positive height"
+    );
 }
 
 #[test]
@@ -475,7 +530,10 @@ fn integration_text_wrap_field_set() {
 #[test]
 fn integration_initial_letter_field_set() {
     let mut s = ComputedStyle::initial();
-    s.initial_letter = Some(InitialLetter { size: 3.0, sink: Some(2.0) });
+    s.initial_letter = Some(InitialLetter {
+        size: 3.0,
+        sink: Some(2.0),
+    });
     let il = s.initial_letter.as_ref().unwrap();
     assert_eq!(il.size, 3.0);
     assert_eq!(il.effective_sink(), 2.0);

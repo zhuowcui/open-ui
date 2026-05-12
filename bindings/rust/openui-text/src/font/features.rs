@@ -19,10 +19,7 @@ use super::description::FontDescription;
 /// Build a `FontFeature` from a 4-byte tag and value.
 #[inline]
 fn feature(tag: &[u8; 4], value: u32) -> FontFeature {
-    FontFeature {
-        tag: *tag,
-        value,
-    }
+    FontFeature { tag: *tag, value }
 }
 
 /// Enable an OpenType feature (`value = 1`).
@@ -639,7 +636,10 @@ mod tests {
     #[test]
     fn explicit_feature_settings_appended() {
         let f = features_for(|d| {
-            d.feature_settings.push(FontFeature { tag: *b"kern", value: 0 });
+            d.feature_settings.push(FontFeature {
+                tag: *b"kern",
+                value: 0,
+            });
         });
         assert!(has(&f, b"kern", 0));
     }
@@ -649,10 +649,14 @@ mod tests {
         // Variant enables "smcp", explicit settings disable it.
         let f = features_for(|d| {
             d.variant_caps = FontVariantCaps::SmallCaps;
-            d.feature_settings.push(FontFeature { tag: *b"smcp", value: 0 });
+            d.feature_settings.push(FontFeature {
+                tag: *b"smcp",
+                value: 0,
+            });
         });
         // Both should be present; the explicit one comes last (HarfBuzz uses last-wins).
-        let smcp_positions: Vec<_> = f.iter()
+        let smcp_positions: Vec<_> = f
+            .iter()
             .enumerate()
             .filter(|(_, feat)| &feat.tag == b"smcp")
             .collect();
@@ -740,7 +744,10 @@ mod tests {
         let f = features_for(|d| {
             d.variant_caps = FontVariantCaps::SmallCaps;
             d.variant_ligatures.common = LigatureState::Disabled;
-            d.feature_settings.push(FontFeature { tag: *b"kern", value: 1 });
+            d.feature_settings.push(FontFeature {
+                tag: *b"kern",
+                value: 1,
+            });
         });
         let tags: Vec<[u8; 4]> = f.iter().map(|feat| feat.tag).collect();
         // liga off, clig off (ligatures) → smcp (caps) → kern (explicit)
@@ -768,9 +775,18 @@ mod tests {
     #[test]
     fn multiple_explicit_features() {
         let f = features_for(|d| {
-            d.feature_settings.push(FontFeature { tag: *b"liga", value: 0 });
-            d.feature_settings.push(FontFeature { tag: *b"kern", value: 1 });
-            d.feature_settings.push(FontFeature { tag: *b"smcp", value: 1 });
+            d.feature_settings.push(FontFeature {
+                tag: *b"liga",
+                value: 0,
+            });
+            d.feature_settings.push(FontFeature {
+                tag: *b"kern",
+                value: 1,
+            });
+            d.feature_settings.push(FontFeature {
+                tag: *b"smcp",
+                value: 1,
+            });
         });
         assert_eq!(f.len(), 3);
         assert!(has(&f, b"liga", 0));
@@ -782,7 +798,10 @@ mod tests {
 
     #[test]
     fn ligatures_default_is_normal() {
-        assert_eq!(FontVariantLigatures::default(), FontVariantLigatures::NORMAL);
+        assert_eq!(
+            FontVariantLigatures::default(),
+            FontVariantLigatures::NORMAL
+        );
     }
 
     #[test]
@@ -792,7 +811,10 @@ mod tests {
 
     #[test]
     fn east_asian_default_is_normal() {
-        assert_eq!(FontVariantEastAsian::default(), FontVariantEastAsian::NORMAL);
+        assert_eq!(
+            FontVariantEastAsian::default(),
+            FontVariantEastAsian::NORMAL
+        );
     }
 
     #[test]
@@ -802,7 +824,10 @@ mod tests {
 
     #[test]
     fn alternates_default_is_normal() {
-        assert_eq!(FontVariantAlternates::default(), FontVariantAlternates::Normal);
+        assert_eq!(
+            FontVariantAlternates::default(),
+            FontVariantAlternates::Normal
+        );
     }
 
     #[test]

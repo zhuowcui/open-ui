@@ -6,6 +6,9 @@ third_party/skia/
 
 # Build outputs
 out/
+dist/
+debug/
+release/
 
 # Generated link deps (machine-specific absolute paths)
 build/config/chromium/skia_link_deps.rsp
@@ -26,8 +29,19 @@ Thumbs.db
 .gclient_entries
 
 # Rust build artifacts
+target/
 bindings/rust/target/
 tests/pixel_apps/rust/target/
+*.rs.bk
+*.rlib
+*.prof*
+
+# Native build artifacts
+*.o
+*.so
+*.a
+*.exe
+*.dll
 
 # Generated PNGs from examples (re-rendered each build)
 bindings/rust/*.png
@@ -42,3 +56,7 @@ tests/pixel_apps/screenshots/diff-*/
 chrome/
 .venv/
 __pycache__/
+*.pyc
+*.log
+.env*
+*.tmp

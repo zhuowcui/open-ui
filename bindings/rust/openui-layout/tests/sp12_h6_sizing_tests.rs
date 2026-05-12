@@ -8,26 +8,24 @@ mod sp12_wpt_helpers;
 
 use sp12_wpt_helpers::*;
 
-use openui_geometry::{LayoutUnit, Length, MinMaxSizes, INDEFINITE_SIZE};
 use openui_dom::{Document, ElementTag, NodeId};
+use openui_geometry::{LayoutUnit, Length, MinMaxSizes, INDEFINITE_SIZE};
 use openui_layout::css_sizing::{
-    SizingKeyword, apply_aspect_ratio, apply_aspect_ratio_with_auto,
-    compute_automatic_size, compute_definite_size, resolve_preferred_size,
-    resolve_sizing_keyword,
+    apply_aspect_ratio, apply_aspect_ratio_with_auto, compute_automatic_size,
+    compute_definite_size, resolve_preferred_size, resolve_sizing_keyword, SizingKeyword,
 };
 use openui_layout::intrinsic_sizing::{
-    IntrinsicSizes, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
-    compute_block_size_from_content, shrink_to_fit_inline_size,
-    compute_replaced_intrinsic_sizes,
+    compute_block_size_from_content, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
+    compute_replaced_intrinsic_sizes, shrink_to_fit_inline_size, IntrinsicSizes,
 };
 use openui_layout::size_constraints::{
-    SizeConstraint, resolve_size_constraints,
-    constrain_inline_size, constrain_block_size,
-    resolve_inline_size, resolve_block_size,
-    apply_box_sizing_adjustment,
+    apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,
+    resolve_inline_size, resolve_size_constraints, SizeConstraint,
 };
 use openui_layout::ConstraintSpace;
-use openui_style::{AspectRatio, BoxSizing, ComputedStyle, Display, BorderStyle, Overflow, Float, Position};
+use openui_style::{
+    AspectRatio, BorderStyle, BoxSizing, ComputedStyle, Display, Float, Overflow, Position,
+};
 
 fn luf(v: f32) -> LayoutUnit {
     LayoutUnit::from_f32(v)
@@ -66,7 +64,11 @@ fn w_auto_fills_container_1200() {
 #[test]
 fn w_auto_with_margins_subtracts() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_auto().height(50.0).margin(0, 50, 0, 50).done();
+    b.add_child()
+        .width_auto()
+        .height(50.0)
+        .margin(0, 50, 0, 50)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 700, 50);
 }
@@ -74,7 +76,11 @@ fn w_auto_with_margins_subtracts() {
 #[test]
 fn w_auto_with_large_margins() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_auto().height(50.0).margin(0, 200, 0, 200).done();
+    b.add_child()
+        .width_auto()
+        .height(50.0)
+        .margin(0, 200, 0, 200)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
 }
@@ -102,7 +108,11 @@ fn w_auto_multiple_children_all_fill() {
 #[test]
 fn w_auto_with_padding_reduces_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_auto().height(50.0).padding(0, 30, 0, 30).done();
+    b.add_child()
+        .width_auto()
+        .height(50.0)
+        .padding(0, 30, 0, 30)
+        .done();
     let r = b.build();
     // border-box width = 800, content = 800 - 60 = 740
     r.assert_child_size(0, 800, 50);
@@ -111,7 +121,11 @@ fn w_auto_with_padding_reduces_content() {
 #[test]
 fn w_auto_with_border_reduces_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_auto().height(50.0).border(0, 10, 0, 10).done();
+    b.add_child()
+        .width_auto()
+        .height(50.0)
+        .border(0, 10, 0, 10)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 800, 50);
 }
@@ -224,7 +238,12 @@ fn w_75pct() {
 fn w_33pct() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::percent(33.0), lu(900), lu(900), BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(33.0),
+        lu(900),
+        lu(900),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, LayoutUnit::from_f32(297.0));
 }
@@ -235,7 +254,8 @@ fn w_33pct() {
 fn w_plus_padding_plus_border_content_box() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .padding(10, 20, 10, 20)
         .border(5, 5, 5, 5)
         .done();
@@ -247,7 +267,11 @@ fn w_plus_padding_plus_border_content_box() {
 #[test]
 fn w_only_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(300.0).height(80.0).padding(15, 25, 15, 25).done();
+    b.add_child()
+        .width(300.0)
+        .height(80.0)
+        .padding(15, 25, 15, 25)
+        .done();
     let r = b.build();
     // border-box = 300 + 25+25 = 350 wide, 80 + 15+15 = 110 tall
     r.assert_child_size(0, 350, 110);
@@ -256,7 +280,11 @@ fn w_only_padding() {
 #[test]
 fn w_only_border() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(60.0).border(3, 3, 3, 3).done();
+    b.add_child()
+        .width(200.0)
+        .height(60.0)
+        .border(3, 3, 3, 3)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 206, 66);
 }
@@ -264,7 +292,12 @@ fn w_only_border() {
 #[test]
 fn w_large_padding_border() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(50.0).padding(20, 30, 20, 30).border(10, 10, 10, 10).done();
+    b.add_child()
+        .width(100.0)
+        .height(50.0)
+        .padding(20, 30, 20, 30)
+        .border(10, 10, 10, 10)
+        .done();
     let r = b.build();
     // 100 + 30+30 + 10+10 = 180 wide; 50 + 20+20 + 10+10 = 110 tall
     r.assert_child_size(0, 180, 110);
@@ -276,7 +309,8 @@ fn w_large_padding_border() {
 fn w_border_box_200_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .padding(10, 20, 10, 20)
         .box_sizing_border_box()
         .done();
@@ -289,7 +323,8 @@ fn w_border_box_200_with_padding() {
 fn w_border_box_300_with_padding_border() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(300.0).height(150.0)
+        .width(300.0)
+        .height(150.0)
         .padding(10, 15, 10, 15)
         .border(5, 5, 5, 5)
         .box_sizing_border_box()
@@ -302,8 +337,17 @@ fn w_border_box_300_with_padding_border() {
 fn w_border_box_vs_content_box_same_content() {
     // Two children with same content area: content-box 200px, border-box 240px with 20px padding
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).padding(0, 20, 0, 20).done();
-    b.add_child().width(240.0).height(50.0).padding(0, 20, 0, 20).box_sizing_border_box().done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .padding(0, 20, 0, 20)
+        .done();
+    b.add_child()
+        .width(240.0)
+        .height(50.0)
+        .padding(0, 20, 0, 20)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     // child 0: content-box → border-box = 200 + 40 = 240
     r.assert_child_size(0, 240, 50);
@@ -317,7 +361,12 @@ fn w_border_box_vs_content_box_same_content() {
 fn w_content_box_explicit() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::px(300.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c,
+        &Length::px(300.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(300));
 }
@@ -326,7 +375,12 @@ fn w_content_box_explicit() {
 fn w_content_box_with_pb() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::px(300.0), lu(800), lu(800), BoxSizing::ContentBox, lu(40), &c,
+        &Length::px(300.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(40),
+        &c,
     );
     assert_eq!(result, lu(300));
 }
@@ -335,7 +389,12 @@ fn w_content_box_with_pb() {
 fn w_border_box_with_pb_subtracts() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::px(300.0), lu(800), lu(800), BoxSizing::BorderBox, lu(40), &c,
+        &Length::px(300.0),
+        lu(800),
+        lu(800),
+        BoxSizing::BorderBox,
+        lu(40),
+        &c,
     );
     assert_eq!(result, lu(260));
 }
@@ -345,14 +404,28 @@ fn w_border_box_with_pb_subtracts() {
 #[test]
 fn resolve_inline_auto_fills_available_600() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::auto(), lu(600), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(600),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(600));
 }
 
 #[test]
 fn resolve_inline_auto_fills_available_1024() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::auto(), lu(1024), lu(1024), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(1024),
+        lu(1024),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(1024));
 }
 
@@ -369,7 +442,11 @@ fn w_fixed_at_position_0() {
 #[test]
 fn w_fixed_with_left_margin() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).margin(0, 0, 0, 30).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(0, 0, 0, 30)
+        .done();
     let r = b.build();
     r.assert_child_position(0, 30, 0);
 }
@@ -377,7 +454,11 @@ fn w_fixed_with_left_margin() {
 #[test]
 fn w_auto_centered_with_auto_margins() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(50.0).margin_auto_horizontal().done();
+    b.add_child()
+        .width(400.0)
+        .height(50.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     r.assert_child_position(0, 200, 0);
 }
@@ -385,7 +466,11 @@ fn w_auto_centered_with_auto_margins() {
 #[test]
 fn w_200_centered_in_1000() {
     let mut b = BlockTestBuilder::new(1000, 600);
-    b.add_child().width(200.0).height(50.0).margin_auto_horizontal().done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     r.assert_child_position(0, 400, 0);
 }
@@ -408,7 +493,10 @@ fn h_auto_empty_is_zero() {
 fn h_auto_from_child_50() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().width(100.0).height(50.0).done()
+        .add_child()
+        .width(100.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 50);
@@ -418,9 +506,18 @@ fn h_auto_from_child_50() {
 fn h_auto_from_multiple_children() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().width(100.0).height(30.0).done()
-        .add_child().width(100.0).height(40.0).done()
-        .add_child().width(100.0).height(20.0).done()
+        .add_child()
+        .width(100.0)
+        .height(30.0)
+        .done()
+        .add_child()
+        .width(100.0)
+        .height(40.0)
+        .done()
+        .add_child()
+        .width(100.0)
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 90);
@@ -431,7 +528,10 @@ fn h_auto_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
         .padding(15, 0, 15, 0)
-        .add_child().width(100.0).height(50.0).done()
+        .add_child()
+        .width(100.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     // height = child(50) + padding(15+15) = 80
@@ -443,7 +543,10 @@ fn h_auto_with_border() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
         .border(5, 0, 5, 0)
-        .add_child().width(100.0).height(60.0).done()
+        .add_child()
+        .width(100.0)
+        .height(60.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 70);
@@ -532,7 +635,12 @@ fn h_pct_indefinite_cb_treated_as_auto() {
     let c = SizeConstraint::unconstrained();
     let indef = LayoutUnit::from_raw(-64);
     let result = resolve_block_size(
-        &Length::percent(50.0), lu(100), indef, BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(50.0),
+        lu(100),
+        indef,
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(100));
 }
@@ -542,7 +650,12 @@ fn h_pct_indefinite_cb_fallback_200() {
     let c = SizeConstraint::unconstrained();
     let indef = LayoutUnit::from_raw(-64);
     let result = resolve_block_size(
-        &Length::percent(75.0), lu(200), indef, BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(75.0),
+        lu(200),
+        indef,
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(200));
 }
@@ -552,35 +665,70 @@ fn h_pct_indefinite_cb_fallback_200() {
 #[test]
 fn resolve_block_auto_returns_content() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::auto(), lu(130), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(130),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(130));
 }
 
 #[test]
 fn resolve_block_fixed_200() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::px(200.0), lu(50), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::px(200.0),
+        lu(50),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(200));
 }
 
 #[test]
 fn resolve_block_pct_50_of_600() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::percent(50.0), lu(50), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::percent(50.0),
+        lu(50),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(300));
 }
 
 #[test]
 fn resolve_block_border_box_subtracts_pb() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::px(300.0), lu(50), lu(600), BoxSizing::BorderBox, lu(40), &c);
+    let result = resolve_block_size(
+        &Length::px(300.0),
+        lu(50),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(40),
+        &c,
+    );
     assert_eq!(result, lu(260));
 }
 
 #[test]
 fn resolve_block_border_box_auto_subtraction() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::auto(), lu(150), lu(600), BoxSizing::BorderBox, lu(40), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(150),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(40),
+        &c,
+    );
     assert_eq!(result, lu(110));
 }
 
@@ -620,8 +768,16 @@ fn container_height_from_children() {
 #[test]
 fn h_children_with_margins_stacking() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).margin(0, 0, 20, 0).done();
-    b.add_child().width(200.0).height(60.0).margin(10, 0, 0, 0).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(0, 0, 20, 0)
+        .done();
+    b.add_child()
+        .width(200.0)
+        .height(60.0)
+        .margin(10, 0, 0, 0)
+        .done();
     let r = b.build();
     r.assert_child_position(0, 0, 0);
     // Margin collapse: max(20, 10) = 20 from top of first child's bottom
@@ -633,7 +789,11 @@ fn h_children_with_margins_stacking() {
 #[test]
 fn h_with_padding_content_box() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).padding(20, 0, 20, 0).done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .padding(20, 0, 20, 0)
+        .done();
     let r = b.build();
     // content-box: border-box height = 100 + 20 + 20 = 140
     r.assert_child_size(0, 200, 140);
@@ -642,7 +802,12 @@ fn h_with_padding_content_box() {
 #[test]
 fn h_with_border_box() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(200.0).padding(20, 0, 20, 0).box_sizing_border_box().done();
+    b.add_child()
+        .width(200.0)
+        .height(200.0)
+        .padding(20, 0, 20, 0)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 200);
 }
@@ -650,11 +815,15 @@ fn h_with_border_box() {
 #[test]
 fn h_border_box_with_border() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(200.0).border(10, 0, 10, 0).box_sizing_border_box().done();
+    b.add_child()
+        .width(200.0)
+        .height(200.0)
+        .border(10, 0, 10, 0)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 200);
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §3  MIN/MAX WIDTH  (80+ tests)
@@ -698,7 +867,11 @@ fn min_w_equals_size() {
 #[test]
 fn min_w_layout_clamps_child() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).min_width(200.0).height(50.0).done();
+    b.add_child()
+        .width(100.0)
+        .min_width(200.0)
+        .height(50.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 50);
 }
@@ -750,7 +923,11 @@ fn max_w_equals_size() {
 #[test]
 fn max_w_layout_clamps_child() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(500.0).max_width(300.0).height(50.0).done();
+    b.add_child()
+        .width(500.0)
+        .max_width(300.0)
+        .height(50.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 300, 50);
 }
@@ -768,9 +945,15 @@ fn max_w_on_auto_width() {
 #[test]
 fn min_w_gt_max_w_normalized() {
     let c = resolve_size_constraints(
-        &Length::px(400.0), &Length::px(200.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(400.0),
+        &Length::px(200.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(400));
     assert_eq!(c.max_inline_size, lu(400));
@@ -779,9 +962,15 @@ fn min_w_gt_max_w_normalized() {
 #[test]
 fn min_w_gt_max_w_all_clamp_to_min() {
     let c = resolve_size_constraints(
-        &Length::px(300.0), &Length::px(100.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(300.0),
+        &Length::px(100.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_inline_size(lu(50), &c), lu(300));
     assert_eq!(constrain_inline_size(lu(200), &c), lu(300));
@@ -792,7 +981,12 @@ fn min_w_gt_max_w_all_clamp_to_min() {
 fn min_w_gt_max_w_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
     // CSS 2.1 §10.4: min-width > max-width → max-width treated as min-width value
-    b.add_child().width(250.0).min_width(400.0).max_width(200.0).height(50.0).done();
+    b.add_child()
+        .width(250.0)
+        .min_width(400.0)
+        .max_width(200.0)
+        .height(50.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
 }
@@ -802,9 +996,15 @@ fn min_w_gt_max_w_layout() {
 #[test]
 fn min_w_zero_default() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
 }
@@ -812,12 +1012,21 @@ fn min_w_zero_default() {
 #[test]
 fn min_w_explicit_zero() {
     let c = resolve_size_constraints(
-        &Length::px(0.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(0.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
-    assert_eq!(constrain_inline_size(LayoutUnit::zero(), &c), LayoutUnit::zero());
+    assert_eq!(
+        constrain_inline_size(LayoutUnit::zero(), &c),
+        LayoutUnit::zero()
+    );
 }
 
 // ── 3.5  max-width: none (default, no constraint) ───────────────────────
@@ -825,9 +1034,15 @@ fn min_w_explicit_zero() {
 #[test]
 fn max_w_none_default() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, LayoutUnit::max());
 }
@@ -835,9 +1050,15 @@ fn max_w_none_default() {
 #[test]
 fn max_w_none_no_clamp() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_inline_size(lu(99999), &c), lu(99999));
 }
@@ -847,9 +1068,15 @@ fn max_w_none_no_clamp() {
 #[test]
 fn min_w_percentage_20_of_500() {
     let c = resolve_size_constraints(
-        &Length::percent(20.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(500), lu(400), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::percent(20.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(500),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(100));
 }
@@ -857,9 +1084,15 @@ fn min_w_percentage_20_of_500() {
 #[test]
 fn max_w_percentage_50_of_800() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::percent(50.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::percent(50.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, lu(400));
 }
@@ -868,9 +1101,15 @@ fn max_w_percentage_50_of_800() {
 fn min_w_percentage_against_indefinite_is_zero() {
     let indef = LayoutUnit::from_raw(-64);
     let c = resolve_size_constraints(
-        &Length::percent(50.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        indef, lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::percent(50.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        indef,
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
 }
@@ -880,22 +1119,48 @@ fn min_w_percentage_against_indefinite_is_zero() {
 #[test]
 fn min_w_on_auto_width_element() {
     let c = resolve_size_constraints(
-        &Length::px(500.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(400), lu(300), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(500.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(400),
+        lu(300),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::auto(), lu(400), lu(400), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(400),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(500));
 }
 
 #[test]
 fn min_w_300_on_auto_width_in_200_container() {
     let c = resolve_size_constraints(
-        &Length::px(300.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(200), lu(300), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(300.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(200),
+        lu(300),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::auto(), lu(200), lu(200), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(200),
+        lu(200),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(300));
 }
 
@@ -904,11 +1169,24 @@ fn min_w_300_on_auto_width_in_200_container() {
 #[test]
 fn max_w_on_pct_width() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::px(300.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::px(300.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::percent(50.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::percent(50.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // 50% of 800 = 400, clamped to max 300
     assert_eq!(result, lu(300));
 }
@@ -916,11 +1194,24 @@ fn max_w_on_pct_width() {
 #[test]
 fn max_w_on_pct_width_no_clamp() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::px(500.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::px(500.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::percent(50.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::percent(50.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // 50% of 800 = 400, max=500 → 400
     assert_eq!(result, lu(400));
 }
@@ -930,33 +1221,72 @@ fn max_w_on_pct_width_no_clamp() {
 #[test]
 fn combined_min_max_width_clamp_to_max() {
     let c = resolve_size_constraints(
-        &Length::px(100.0), &Length::px(400.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(100.0),
+        &Length::px(400.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::auto(), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(400));
 }
 
 #[test]
 fn combined_min_max_width_clamp_to_min() {
     let c = resolve_size_constraints(
-        &Length::px(200.0), &Length::px(400.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(200.0),
+        &Length::px(400.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::px(100.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::px(100.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(200));
 }
 
 #[test]
 fn combined_min_max_width_within_bounds() {
     let c = resolve_size_constraints(
-        &Length::px(100.0), &Length::px(400.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(100.0),
+        &Length::px(400.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::px(250.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::px(250.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(250));
 }
 
@@ -965,9 +1295,15 @@ fn combined_min_max_width_within_bounds() {
 #[test]
 fn min_w_border_box_subtracts_pb() {
     let c = resolve_size_constraints(
-        &Length::px(200.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(40), lu(0),
+        &Length::px(200.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(40),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(160));
 }
@@ -975,9 +1311,15 @@ fn min_w_border_box_subtracts_pb() {
 #[test]
 fn max_w_border_box_subtracts_pb() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::px(500.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(60), lu(0),
+        &Length::auto(),
+        &Length::px(500.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(60),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, lu(440));
 }
@@ -985,9 +1327,15 @@ fn max_w_border_box_subtracts_pb() {
 #[test]
 fn min_w_border_box_small_clamps_to_zero() {
     let c = resolve_size_constraints(
-        &Length::px(10.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(50), lu(0),
+        &Length::px(10.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(50),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
 }
@@ -1023,7 +1371,11 @@ fn min_h_no_effect_when_taller() {
 #[test]
 fn min_h_layout_clamps() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).min_height(150.0).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .min_height(150.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 150);
 }
@@ -1031,7 +1383,11 @@ fn min_h_layout_clamps() {
 #[test]
 fn min_h_with_auto_height() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height_auto().min_height(100.0).done();
+    b.add_child()
+        .width(200.0)
+        .height_auto()
+        .min_height(100.0)
+        .done();
     let r = b.build();
     // auto height (empty=0) clamped to min 100
     r.assert_child_size(0, 200, 100);
@@ -1040,9 +1396,15 @@ fn min_h_with_auto_height() {
 #[test]
 fn min_h_zero_default() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, LayoutUnit::zero());
 }
@@ -1074,7 +1436,11 @@ fn max_h_no_effect_when_shorter() {
 #[test]
 fn max_h_layout_clamps() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(400.0).max_height(250.0).done();
+    b.add_child()
+        .width(200.0)
+        .height(400.0)
+        .max_height(250.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 250);
 }
@@ -1082,8 +1448,12 @@ fn max_h_layout_clamps() {
 #[test]
 fn max_h_on_auto_height_from_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().max_height(60.0)
-        .add_child().width(100.0).height(100.0).done()
+    b.add_child()
+        .max_height(60.0)
+        .add_child()
+        .width(100.0)
+        .height(100.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 60);
@@ -1092,9 +1462,15 @@ fn max_h_on_auto_height_from_content() {
 #[test]
 fn max_h_none_default() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_block_size, LayoutUnit::max());
 }
@@ -1102,9 +1478,15 @@ fn max_h_none_default() {
 #[test]
 fn max_h_none_no_clamp() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_block_size(lu(99999), &c), lu(99999));
 }
@@ -1114,9 +1496,15 @@ fn max_h_none_no_clamp() {
 #[test]
 fn min_h_gt_max_h_normalized() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(400.0), &Length::px(200.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(400.0),
+        &Length::px(200.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, lu(400));
     assert_eq!(c.max_block_size, lu(400));
@@ -1125,9 +1513,15 @@ fn min_h_gt_max_h_normalized() {
 #[test]
 fn min_h_gt_max_h_all_clamp() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(300.0), &Length::px(100.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(300.0),
+        &Length::px(100.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_block_size(lu(50), &c), lu(300));
     assert_eq!(constrain_block_size(lu(200), &c), lu(300));
@@ -1138,7 +1532,12 @@ fn min_h_gt_max_h_all_clamp() {
 fn min_h_gt_max_h_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
     // CSS 2.1 §10.7: min-height > max-height → max-height treated as min-height value
-    b.add_child().width(200.0).height(250.0).min_height(400.0).max_height(200.0).done();
+    b.add_child()
+        .width(200.0)
+        .height(250.0)
+        .min_height(400.0)
+        .max_height(200.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 400);
 }
@@ -1148,9 +1547,15 @@ fn min_h_gt_max_h_layout() {
 #[test]
 fn min_h_pct_25_of_400() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::percent(25.0), &Length::none(),
-        lu(800), lu(400), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::percent(25.0),
+        &Length::none(),
+        lu(800),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, lu(100));
 }
@@ -1158,9 +1563,15 @@ fn min_h_pct_25_of_400() {
 #[test]
 fn max_h_pct_50_of_600() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::percent(50.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::percent(50.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_block_size, lu(300));
 }
@@ -1169,9 +1580,15 @@ fn max_h_pct_50_of_600() {
 fn min_h_pct_indefinite_is_zero() {
     let indef = LayoutUnit::from_raw(-64);
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::percent(50.0), &Length::none(),
-        lu(800), indef, BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::percent(50.0),
+        &Length::none(),
+        lu(800),
+        indef,
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, LayoutUnit::zero());
 }
@@ -1189,8 +1606,12 @@ fn min_h_auto_height_empty_child() {
 #[test]
 fn min_h_auto_height_small_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().min_height(100.0)
-        .add_child().width(50.0).height(30.0).done()
+    b.add_child()
+        .min_height(100.0)
+        .add_child()
+        .width(50.0)
+        .height(30.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 100);
@@ -1199,8 +1620,12 @@ fn min_h_auto_height_small_content() {
 #[test]
 fn min_h_auto_height_large_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().min_height(50.0)
-        .add_child().width(50.0).height(200.0).done()
+    b.add_child()
+        .min_height(50.0)
+        .add_child()
+        .width(50.0)
+        .height(200.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 200);
@@ -1212,8 +1637,12 @@ fn min_h_auto_height_large_content() {
 fn max_h_overflow_hidden() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .max_height(50.0).overflow_hidden()
-        .add_child().width(100.0).height(200.0).done()
+        .max_height(50.0)
+        .overflow_hidden()
+        .add_child()
+        .width(100.0)
+        .height(200.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 50);
@@ -1222,11 +1651,24 @@ fn max_h_overflow_hidden() {
 #[test]
 fn max_h_constrains_percentage_height() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::px(100.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::px(100.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_block_size(&Length::percent(50.0), lu(50), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::percent(50.0),
+        lu(50),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(100));
 }
 
@@ -1235,9 +1677,15 @@ fn max_h_constrains_percentage_height() {
 #[test]
 fn min_h_border_box_subtracts_pb() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(200.0), &Length::none(),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(0), lu(40),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(200.0),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(0),
+        lu(40),
     );
     assert_eq!(c.min_block_size, lu(160));
 }
@@ -1245,9 +1693,15 @@ fn min_h_border_box_subtracts_pb() {
 #[test]
 fn max_h_border_box_subtracts_pb() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::px(400.0),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(0), lu(60),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::px(400.0),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(0),
+        lu(60),
     );
     assert_eq!(c.max_block_size, lu(340));
 }
@@ -1255,9 +1709,15 @@ fn max_h_border_box_subtracts_pb() {
 #[test]
 fn min_h_border_box_small_clamps_zero() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(10.0), &Length::none(),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(0), lu(50),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(10.0),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(0),
+        lu(50),
     );
     assert_eq!(c.min_block_size, LayoutUnit::zero());
 }
@@ -1267,9 +1727,15 @@ fn min_h_border_box_small_clamps_zero() {
 #[test]
 fn combined_min_max_height_within() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(50.0), &Length::px(300.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(50.0),
+        &Length::px(300.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_block_size(lu(150), &c), lu(150));
 }
@@ -1277,9 +1743,15 @@ fn combined_min_max_height_within() {
 #[test]
 fn combined_min_max_height_clamp_up() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(100.0), &Length::px(300.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(100.0),
+        &Length::px(300.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_block_size(lu(50), &c), lu(100));
 }
@@ -1287,13 +1759,18 @@ fn combined_min_max_height_clamp_up() {
 #[test]
 fn combined_min_max_height_clamp_down() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(50.0), &Length::px(200.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(50.0),
+        &Length::px(200.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(constrain_block_size(lu(400), &c), lu(200));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §5  INTRINSIC SIZING  (80+ tests)
@@ -1412,7 +1889,10 @@ fn shrink_to_fit_available_lt_min() {
 
 #[test]
 fn shrink_to_fit_all_equal() {
-    assert_eq!(shrink_to_fit_inline_size(lu(100), lu(100), lu(100)), lu(100));
+    assert_eq!(
+        shrink_to_fit_inline_size(lu(100), lu(100), lu(100)),
+        lu(100)
+    );
 }
 
 #[test]
@@ -1427,12 +1907,18 @@ fn shrink_to_fit_zero_available() {
 
 #[test]
 fn shrink_to_fit_min_equals_max() {
-    assert_eq!(shrink_to_fit_inline_size(lu(150), lu(150), lu(200)), lu(150));
+    assert_eq!(
+        shrink_to_fit_inline_size(lu(150), lu(150), lu(200)),
+        lu(150)
+    );
 }
 
 #[test]
 fn shrink_to_fit_large_values() {
-    assert_eq!(shrink_to_fit_inline_size(lu(1000), lu(5000), lu(3000)), lu(3000));
+    assert_eq!(
+        shrink_to_fit_inline_size(lu(1000), lu(5000), lu(3000)),
+        lu(3000)
+    );
 }
 
 // ── 5.4  Shrink-to-fit for floats ────────────────────────────────────────
@@ -1448,7 +1934,12 @@ fn float_shrink_to_fit_auto_width() {
 #[test]
 fn float_shrink_to_fit_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().float_left().width(100.0).height(50.0).padding(10, 10, 10, 10).done();
+    b.add_child()
+        .float_left()
+        .width(100.0)
+        .height(50.0)
+        .padding(10, 10, 10, 10)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 120, 70);
 }
@@ -1516,7 +2007,10 @@ fn intrinsic_with_parent_border() {
     doc.node_mut(child).style.height = Length::px(30.0);
     doc.append_child(parent, child);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
-    assert_eq!(sizes.max_content_inline_size, luf(80.0) + LayoutUnit::from_i32(10));
+    assert_eq!(
+        sizes.max_content_inline_size,
+        luf(80.0) + LayoutUnit::from_i32(10)
+    );
 }
 
 // ── 5.7  Nested block intrinsic sizing ───────────────────────────────────
@@ -1678,7 +2172,6 @@ fn intrinsic_child_min_width_constraint() {
     assert_eq!(sizes.max_content_inline_size, luf(120.0));
 }
 
-
 // ═══════════════════════════════════════════════════════════════════════════
 // §6  CSS SIZING L3 KEYWORDS  (80+ tests)
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1734,35 +2227,60 @@ fn sizing_keyword_max_content_zero() {
 #[test]
 fn sizing_keyword_fit_content_clamps_below_min() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(20)), &intrinsic, lu(500), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(20)),
+        &intrinsic,
+        lu(500),
+        lu(0),
+    );
     assert_eq!(result, lu(50));
 }
 
 #[test]
 fn sizing_keyword_fit_content_clamps_above_max() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(500)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(500)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(200));
 }
 
 #[test]
 fn sizing_keyword_fit_content_within_range() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(150)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(150)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(150));
 }
 
 #[test]
 fn sizing_keyword_fit_content_exactly_min() {
     let intrinsic = MinMaxSizes::new(lu(100), lu(300));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(100)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(100)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(100));
 }
 
 #[test]
 fn sizing_keyword_fit_content_exactly_max() {
     let intrinsic = MinMaxSizes::new(lu(100), lu(300));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(300)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(300)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(300));
 }
 
@@ -1865,7 +2383,10 @@ fn aspect_ratio_16_9_height_360() {
 
 #[test]
 fn aspect_ratio_auto_flag_prefers_intrinsic() {
-    let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: true };
+    let ar = AspectRatio {
+        ratio: (16.0, 9.0),
+        auto_flag: true,
+    };
     let intrinsic = Some((4.0, 3.0));
     let (w, h) = apply_aspect_ratio_with_auto(INDEFINITE_SIZE, lu(300), &ar, intrinsic);
     assert_eq!(w, lu(400));
@@ -1874,7 +2395,10 @@ fn aspect_ratio_auto_flag_prefers_intrinsic() {
 
 #[test]
 fn aspect_ratio_auto_flag_no_intrinsic_uses_specified() {
-    let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: true };
+    let ar = AspectRatio {
+        ratio: (16.0, 9.0),
+        auto_flag: true,
+    };
     let (w, h) = apply_aspect_ratio_with_auto(INDEFINITE_SIZE, lu(180), &ar, None);
     assert_eq!(w, lu(320));
     assert_eq!(h, lu(180));
@@ -1882,7 +2406,10 @@ fn aspect_ratio_auto_flag_no_intrinsic_uses_specified() {
 
 #[test]
 fn aspect_ratio_no_auto_flag_uses_specified() {
-    let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (16.0, 9.0),
+        auto_flag: false,
+    };
     let intrinsic = Some((4.0, 3.0));
     let (w, h) = apply_aspect_ratio_with_auto(INDEFINITE_SIZE, lu(180), &ar, intrinsic);
     assert_eq!(w, lu(320));
@@ -1947,10 +2474,21 @@ fn aspect_ratio_1_1_height_150() {
 #[test]
 fn aspect_ratio_plus_min_width() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(400));
-    let ar = AspectRatio { ratio: (2.0, 1.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: false,
+    };
     let result = resolve_preferred_size(
-        &Length::auto(), &Length::px(100.0), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), lu(30), Some(&ar), true,
+        &Length::auto(),
+        &Length::px(100.0),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        lu(30),
+        Some(&ar),
+        true,
     );
     // width from AR: 30*2 = 60, clamped to min 100
     assert_eq!(result, lu(100));
@@ -1959,10 +2497,21 @@ fn aspect_ratio_plus_min_width() {
 #[test]
 fn aspect_ratio_plus_max_width() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(400));
-    let ar = AspectRatio { ratio: (2.0, 1.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: false,
+    };
     let result = resolve_preferred_size(
-        &Length::auto(), &Length::auto(), &Length::px(150.0),
-        lu(800), &intrinsic, lu(800), lu(0), lu(200), Some(&ar), true,
+        &Length::auto(),
+        &Length::auto(),
+        &Length::px(150.0),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        lu(200),
+        Some(&ar),
+        true,
     );
     // width from AR: 200*2 = 400, clamped to max 150
     assert_eq!(result, lu(150));
@@ -2077,8 +2626,16 @@ fn definite_size_pct_indefinite_cb() {
 fn preferred_size_fixed_150() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::px(150.0), &Length::auto(), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::px(150.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(150));
 }
@@ -2087,8 +2644,16 @@ fn preferred_size_fixed_150() {
 fn preferred_size_percentage_50() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::percent(50.0), &Length::auto(), &Length::none(),
-        lu(400), &intrinsic, lu(400), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::percent(50.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(400),
+        &intrinsic,
+        lu(400),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(200));
 }
@@ -2097,8 +2662,16 @@ fn preferred_size_percentage_50() {
 fn preferred_size_max_content_clamped_by_max() {
     let intrinsic = MinMaxSizes::new(lu(80), lu(250));
     let result = resolve_preferred_size(
-        &Length::max_content(), &Length::px(100.0), &Length::px(200.0),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::max_content(),
+        &Length::px(100.0),
+        &Length::px(200.0),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(200));
 }
@@ -2107,8 +2680,16 @@ fn preferred_size_max_content_clamped_by_max() {
 fn preferred_size_min_content_clamped_by_min() {
     let intrinsic = MinMaxSizes::new(lu(30), lu(200));
     let result = resolve_preferred_size(
-        &Length::min_content(), &Length::px(50.0), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::min_content(),
+        &Length::px(50.0),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(50));
 }
@@ -2130,7 +2711,6 @@ fn stretch_resolves_against_available_size() {
     let result = compute_definite_size(&Length::stretch(), lu(600), &space, true);
     assert_eq!(result, Some(lu(600)));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §7  REPLACED ELEMENT SIZING  (60+ tests)
@@ -2295,9 +2875,15 @@ fn replaced_max_width_clamps() {
 #[test]
 fn replaced_max_width_via_constraints() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::px(300.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::px(300.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     let result = constrain_inline_size(lu(500), &c);
     assert_eq!(result, lu(300));
@@ -2309,7 +2895,12 @@ fn replaced_max_width_via_constraints() {
 fn replaced_pct_width_50_of_800() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::percent(50.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(50.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(400));
 }
@@ -2318,7 +2909,12 @@ fn replaced_pct_width_50_of_800() {
 fn replaced_pct_width_100() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::percent(100.0), lu(600), lu(600), BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(100.0),
+        lu(600),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(600));
 }
@@ -2365,7 +2961,10 @@ fn layout_replaced_fixed_size() {
 fn layout_replaced_with_margin() {
     let mut b = BlockTestBuilder::new(800, 600);
     // Top margin collapses, only left margin visible in offset
-    b.add_child().fixed_size(200.0, 150.0).margin(0, 20, 10, 20).done();
+    b.add_child()
+        .fixed_size(200.0, 150.0)
+        .margin(0, 20, 10, 20)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 150);
     r.assert_child_position(0, 20, 0);
@@ -2374,11 +2973,13 @@ fn layout_replaced_with_margin() {
 #[test]
 fn layout_replaced_centered() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().fixed_size(400.0, 200.0).margin_auto_horizontal().done();
+    b.add_child()
+        .fixed_size(400.0, 200.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     r.assert_child_position(0, 200, 0);
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §8  EDGE CASES  (60+ tests)
@@ -2390,7 +2991,12 @@ fn layout_replaced_centered() {
 fn edge_200pct_width() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::percent(200.0), lu(400), lu(400), BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(200.0),
+        lu(400),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(800));
 }
@@ -2399,7 +3005,12 @@ fn edge_200pct_width() {
 fn edge_1000pct_width() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::percent(1000.0), lu(100), lu(100), BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(1000.0),
+        lu(100),
+        lu(100),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(1000));
 }
@@ -2408,7 +3019,12 @@ fn edge_1000pct_width() {
 fn edge_0pct_width() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
-        &Length::percent(0.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c,
+        &Length::percent(0.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
     );
     assert_eq!(result, lu(0));
 }
@@ -2444,11 +3060,24 @@ fn edge_box_sizing_bb_exact_subtraction() {
 #[test]
 fn edge_auto_min_max_clamp_to_max() {
     let c = resolve_size_constraints(
-        &Length::px(100.0), &Length::px(300.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(100.0),
+        &Length::px(300.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::auto(), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // auto fills 800, clamped to max 300
     assert_eq!(result, lu(300));
 }
@@ -2456,11 +3085,24 @@ fn edge_auto_min_max_clamp_to_max() {
 #[test]
 fn edge_auto_min_max_clamp_to_min() {
     let c = resolve_size_constraints(
-        &Length::px(500.0), &Length::px(800.0),
-        &Length::auto(), &Length::none(),
-        lu(400), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(500.0),
+        &Length::px(800.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(400),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::auto(), lu(400), lu(400), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(400),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // auto fills 400, clamped to min 500
     assert_eq!(result, lu(500));
 }
@@ -2468,11 +3110,24 @@ fn edge_auto_min_max_clamp_to_min() {
 #[test]
 fn edge_auto_min_max_no_clamp() {
     let c = resolve_size_constraints(
-        &Length::px(100.0), &Length::px(900.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(100.0),
+        &Length::px(900.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::auto(), lu(600), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(600),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // auto fills 600, within [100, 900]
     assert_eq!(result, lu(600));
 }
@@ -2482,11 +3137,24 @@ fn edge_auto_min_max_no_clamp() {
 #[test]
 fn edge_h_auto_min_max_clamp_to_min() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(200.0), &Length::px(500.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(200.0),
+        &Length::px(500.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_block_size(&Length::auto(), lu(50), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(50),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // content=50, clamped to min 200
     assert_eq!(result, lu(200));
 }
@@ -2494,11 +3162,24 @@ fn edge_h_auto_min_max_clamp_to_min() {
 #[test]
 fn edge_h_auto_min_max_clamp_to_max() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(100.0), &Length::px(300.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(100.0),
+        &Length::px(300.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_block_size(&Length::auto(), lu(500), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(500),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     // content=500, clamped to max 300
     assert_eq!(result, lu(300));
 }
@@ -2506,11 +3187,24 @@ fn edge_h_auto_min_max_clamp_to_max() {
 #[test]
 fn edge_h_auto_min_max_within() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(50.0), &Length::px(400.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(50.0),
+        &Length::px(400.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_block_size(&Length::auto(), lu(200), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(200),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(200));
 }
 
@@ -2520,8 +3214,13 @@ fn edge_h_auto_min_max_within() {
 fn edge_nested_pct_50_of_50() {
     // parent = 50% of 800 = 400, child = 50% of parent = 200
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(50.0).height(50.0)
-        .add_child().with_style(|s| s.width = Length::percent(50.0)).height(30.0).done()
+    b.add_child()
+        .width_pct(50.0)
+        .height(50.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(50.0))
+        .height(30.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
@@ -2531,8 +3230,13 @@ fn edge_nested_pct_50_of_50() {
 #[test]
 fn edge_nested_pct_25_of_50() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(50.0).height(50.0)
-        .add_child().with_style(|s| s.width = Length::percent(25.0)).height(20.0).done()
+    b.add_child()
+        .width_pct(50.0)
+        .height(50.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(25.0))
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 400, 50);
@@ -2542,8 +3246,13 @@ fn edge_nested_pct_25_of_50() {
 #[test]
 fn edge_nested_pct_100_of_100() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(100.0).height(50.0)
-        .add_child().with_style(|s| s.width = Length::percent(100.0)).height(30.0).done()
+    b.add_child()
+        .width_pct(100.0)
+        .height(50.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(100.0))
+        .height(30.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 50);
@@ -2643,9 +3352,15 @@ fn edge_five_varying_heights() {
 #[test]
 fn edge_inline_block_all_constraints() {
     let c = resolve_size_constraints(
-        &Length::px(100.0), &Length::px(500.0),
-        &Length::px(50.0), &Length::px(300.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(100.0),
+        &Length::px(500.0),
+        &Length::px(50.0),
+        &Length::px(300.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(100));
     assert_eq!(c.max_inline_size, lu(500));
@@ -2713,7 +3428,8 @@ fn edge_unconstrained_large() {
 fn edge_border_box_pct_width() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width_pct(50.0).height(50.0)
+        .width_pct(50.0)
+        .height(50.0)
         .padding(0, 20, 0, 20)
         .box_sizing_border_box()
         .done();
@@ -2726,7 +3442,8 @@ fn edge_border_box_pct_width() {
 fn edge_border_box_pct_100() {
     let mut b = BlockTestBuilder::new(600, 400);
     b.add_child()
-        .width_pct(100.0).height(50.0)
+        .width_pct(100.0)
+        .height(50.0)
         .padding(0, 30, 0, 30)
         .border(0, 5, 0, 5)
         .box_sizing_border_box()
@@ -2740,8 +3457,14 @@ fn edge_border_box_pct_100() {
 #[test]
 fn edge_overflow_hidden_fixed_height() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).overflow_hidden()
-        .add_child().width(150.0).height(300.0).done()
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .overflow_hidden()
+        .add_child()
+        .width(150.0)
+        .height(300.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 200, 100);
@@ -2750,8 +3473,13 @@ fn edge_overflow_hidden_fixed_height() {
 #[test]
 fn edge_overflow_hidden_max_height() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().max_height(80.0).overflow_hidden()
-        .add_child().width(100.0).height(200.0).done()
+    b.add_child()
+        .max_height(80.0)
+        .overflow_hidden()
+        .add_child()
+        .width(100.0)
+        .height(200.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 80);
@@ -2762,7 +3490,11 @@ fn edge_overflow_hidden_max_height() {
 #[test]
 fn edge_relative_does_not_affect_sizing() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).position_relative().done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .position_relative()
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 100);
 }
@@ -2770,8 +3502,16 @@ fn edge_relative_does_not_affect_sizing() {
 #[test]
 fn edge_multiple_auto_margin_centering() {
     let mut b = BlockTestBuilder::new(1000, 600);
-    b.add_child().width(200.0).height(50.0).margin_auto_horizontal().done();
-    b.add_child().width(600.0).height(60.0).margin_auto_horizontal().done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin_auto_horizontal()
+        .done();
+    b.add_child()
+        .width(600.0)
+        .height(60.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     r.assert_child_position(0, 400, 0);
     r.assert_child_position(1, 200, 50);
@@ -2782,9 +3522,15 @@ fn edge_multiple_auto_margin_centering() {
 #[test]
 fn edge_min_content_as_min_w_treated_zero() {
     let c = resolve_size_constraints(
-        &Length::min_content(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::min_content(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
 }
@@ -2792,9 +3538,15 @@ fn edge_min_content_as_min_w_treated_zero() {
 #[test]
 fn edge_max_content_as_max_w_treated_none() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::max_content(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::max_content(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, LayoutUnit::max());
 }
@@ -2802,9 +3554,15 @@ fn edge_max_content_as_max_w_treated_none() {
 #[test]
 fn edge_fit_content_as_min_w_treated_zero() {
     let c = resolve_size_constraints(
-        &Length::fit_content(), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::fit_content(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
 }
@@ -2812,9 +3570,15 @@ fn edge_fit_content_as_min_w_treated_zero() {
 #[test]
 fn edge_fit_content_as_max_w_treated_none() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::fit_content(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::fit_content(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, LayoutUnit::max());
 }
@@ -2900,7 +3664,8 @@ fn edge_float_shrinks_to_zero_no_children() {
 fn edge_all_box_model_combined() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .padding(10, 15, 10, 15)
         .border(3, 3, 3, 3)
         .margin(0, 10, 0, 10)
@@ -2915,7 +3680,8 @@ fn edge_all_box_model_combined() {
 fn edge_border_box_all_combined() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .padding(10, 15, 10, 15)
         .border(3, 3, 3, 3)
         .margin(0, 10, 0, 10)
@@ -2985,35 +3751,70 @@ fn edge_empty_container() {
 #[test]
 fn edge_resolve_inline_pct_100() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::percent(100.0), lu(500), lu(500), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::percent(100.0),
+        lu(500),
+        lu(500),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(500));
 }
 
 #[test]
 fn edge_resolve_inline_pct_1() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::percent(1.0), lu(1000), lu(1000), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::percent(1.0),
+        lu(1000),
+        lu(1000),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(10));
 }
 
 #[test]
 fn edge_resolve_block_auto_zero_content() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::auto(), lu(0), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(0),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(0));
 }
 
 #[test]
 fn edge_resolve_block_pct_100() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::percent(100.0), lu(50), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::percent(100.0),
+        lu(50),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(600));
 }
 
 #[test]
 fn edge_resolve_block_pct_1() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::percent(1.0), lu(50), lu(1000), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::percent(1.0),
+        lu(50),
+        lu(1000),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(10));
 }
 
@@ -3022,9 +3823,15 @@ fn edge_resolve_block_pct_1() {
 #[test]
 fn edge_both_min_gt_max_inline_and_block() {
     let c = resolve_size_constraints(
-        &Length::px(500.0), &Length::px(200.0),
-        &Length::px(400.0), &Length::px(100.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(500.0),
+        &Length::px(200.0),
+        &Length::px(400.0),
+        &Length::px(100.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(500));
     assert_eq!(c.max_inline_size, lu(500));
@@ -3035,9 +3842,15 @@ fn edge_both_min_gt_max_inline_and_block() {
 #[test]
 fn edge_pct_max_width_30_of_600() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::percent(30.0),
-        &Length::auto(), &Length::none(),
-        lu(600), lu(400), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::percent(30.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(600),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, lu(180));
 }
@@ -3045,13 +3858,18 @@ fn edge_pct_max_width_30_of_600() {
 #[test]
 fn edge_pct_min_height_10_of_500() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::percent(10.0), &Length::none(),
-        lu(800), lu(500), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::percent(10.0),
+        &Length::none(),
+        lu(800),
+        lu(500),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, lu(50));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §9  ADDITIONAL WIDTH TESTS  (supplementary to reach 600+)
@@ -3100,7 +3918,12 @@ fn w_pct_90_of_1000() {
 #[test]
 fn w_auto_with_margin_and_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_auto().height(50.0).margin(0, 20, 0, 20).padding(0, 10, 0, 10).done();
+    b.add_child()
+        .width_auto()
+        .height(50.0)
+        .margin(0, 20, 0, 20)
+        .padding(0, 10, 0, 10)
+        .done();
     let r = b.build();
     // 800 - 20 - 20 margin = 760 border-box; padding inside that
     r.assert_child_size(0, 760, 50);
@@ -3109,7 +3932,12 @@ fn w_auto_with_margin_and_padding() {
 #[test]
 fn w_border_box_400_padding_30() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(100.0).padding(0, 30, 0, 30).box_sizing_border_box().done();
+    b.add_child()
+        .width(400.0)
+        .height(100.0)
+        .padding(0, 30, 0, 30)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     r.assert_child_size(0, 400, 100);
 }
@@ -3117,7 +3945,13 @@ fn w_border_box_400_padding_30() {
 #[test]
 fn w_border_box_with_margin_centering() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(50.0).padding(0, 20, 0, 20).box_sizing_border_box().margin_auto_horizontal().done();
+    b.add_child()
+        .width(400.0)
+        .height(50.0)
+        .padding(0, 20, 0, 20)
+        .box_sizing_border_box()
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     r.assert_child_position(0, 200, 0);
     r.assert_child_size(0, 400, 50);
@@ -3126,42 +3960,84 @@ fn w_border_box_with_margin_centering() {
 #[test]
 fn resolve_inline_fixed_250() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::px(250.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::px(250.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(250));
 }
 
 #[test]
 fn resolve_inline_fixed_750() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::px(750.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::px(750.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(750));
 }
 
 #[test]
 fn resolve_inline_pct_33_of_600() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::percent(33.0), lu(600), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::percent(33.0),
+        lu(600),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, luf(198.0));
 }
 
 #[test]
 fn resolve_inline_pct_66_of_600() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::percent(66.0), lu(600), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::percent(66.0),
+        lu(600),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, luf(396.0));
 }
 
 #[test]
 fn resolve_inline_border_box_500_pb_80() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::px(500.0), lu(800), lu(800), BoxSizing::BorderBox, lu(80), &c);
+    let result = resolve_inline_size(
+        &Length::px(500.0),
+        lu(800),
+        lu(800),
+        BoxSizing::BorderBox,
+        lu(80),
+        &c,
+    );
     assert_eq!(result, lu(420));
 }
 
 #[test]
 fn resolve_inline_border_box_200_pb_200() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::px(200.0), lu(800), lu(800), BoxSizing::BorderBox, lu(200), &c);
+    let result = resolve_inline_size(
+        &Length::px(200.0),
+        lu(800),
+        lu(800),
+        BoxSizing::BorderBox,
+        lu(200),
+        &c,
+    );
     assert_eq!(result, lu(0));
 }
 
@@ -3196,14 +4072,28 @@ fn h_75pct() {
 #[test]
 fn h_33pct() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::percent(33.0), lu(50), lu(300), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::percent(33.0),
+        lu(50),
+        lu(300),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, luf(99.0));
 }
 
 #[test]
 fn h_border_box_300_pb_60() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::px(300.0), lu(50), lu(600), BoxSizing::BorderBox, lu(60), &c);
+    let result = resolve_block_size(
+        &Length::px(300.0),
+        lu(50),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(60),
+        &c,
+    );
     assert_eq!(result, lu(240));
 }
 
@@ -3211,7 +4101,10 @@ fn h_border_box_300_pb_60() {
 fn h_auto_nested_two_levels() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().height(40.0).width(100.0).done()
+        .add_child()
+        .height(40.0)
+        .width(100.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_child_size(0, 800, 40);
@@ -3221,8 +4114,12 @@ fn h_auto_nested_two_levels() {
 fn h_auto_with_padding_and_border() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .padding(10, 0, 10, 0).border(5, 0, 5, 0)
-        .add_child().width(100.0).height(40.0).done()
+        .padding(10, 0, 10, 0)
+        .border(5, 0, 5, 0)
+        .add_child()
+        .width(100.0)
+        .height(40.0)
+        .done()
         .done();
     let r = b.build();
     // 40 + 10+10 + 5+5 = 70
@@ -3248,7 +4145,12 @@ fn h_pct_10_of_1000() {
 #[test]
 fn h_border_box_with_padding_only() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(200.0).padding(30, 0, 30, 0).box_sizing_border_box().done();
+    b.add_child()
+        .width(200.0)
+        .height(200.0)
+        .padding(30, 0, 30, 0)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 200);
 }
@@ -3260,7 +4162,11 @@ fn h_border_box_with_padding_only() {
 #[test]
 fn min_w_150_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(80.0).min_width(150.0).height(30.0).done();
+    b.add_child()
+        .width(80.0)
+        .min_width(150.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 150, 30);
 }
@@ -3268,7 +4174,11 @@ fn min_w_150_layout() {
 #[test]
 fn max_w_250_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).max_width(250.0).height(30.0).done();
+    b.add_child()
+        .width(400.0)
+        .max_width(250.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 250, 30);
 }
@@ -3276,7 +4186,11 @@ fn max_w_250_layout() {
 #[test]
 fn min_h_200_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(80.0).min_height(200.0).done();
+    b.add_child()
+        .width(200.0)
+        .height(80.0)
+        .min_height(200.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 200);
 }
@@ -3284,7 +4198,11 @@ fn min_h_200_layout() {
 #[test]
 fn max_h_100_layout() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(300.0).max_height(100.0).done();
+    b.add_child()
+        .width(200.0)
+        .height(300.0)
+        .max_height(100.0)
+        .done();
     let r = b.build();
     r.assert_child_size(0, 200, 100);
 }
@@ -3292,9 +4210,15 @@ fn max_h_100_layout() {
 #[test]
 fn min_max_w_equal() {
     let c = resolve_size_constraints(
-        &Length::px(200.0), &Length::px(200.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(200.0),
+        &Length::px(200.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(200));
     assert_eq!(c.max_inline_size, lu(200));
@@ -3305,9 +4229,15 @@ fn min_max_w_equal() {
 #[test]
 fn min_max_h_equal() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(150.0), &Length::px(150.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(150.0),
+        &Length::px(150.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, lu(150));
     assert_eq!(c.max_block_size, lu(150));
@@ -3316,9 +4246,15 @@ fn min_max_h_equal() {
 #[test]
 fn min_w_pct_40_of_600() {
     let c = resolve_size_constraints(
-        &Length::percent(40.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(600), lu(400), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::percent(40.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(600),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(240));
 }
@@ -3326,9 +4262,15 @@ fn min_w_pct_40_of_600() {
 #[test]
 fn max_w_pct_80_of_500() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::percent(80.0),
-        &Length::auto(), &Length::none(),
-        lu(500), lu(400), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::percent(80.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(500),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_inline_size, lu(400));
 }
@@ -3336,9 +4278,15 @@ fn max_w_pct_80_of_500() {
 #[test]
 fn min_h_pct_50_of_800() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::percent(50.0), &Length::none(),
-        lu(800), lu(800), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::percent(50.0),
+        &Length::none(),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_block_size, lu(400));
 }
@@ -3346,9 +4294,15 @@ fn min_h_pct_50_of_800() {
 #[test]
 fn max_h_pct_25_of_400() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::percent(25.0),
-        lu(800), lu(400), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::percent(25.0),
+        lu(800),
+        lu(400),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.max_block_size, lu(100));
 }
@@ -3424,9 +4378,8 @@ fn intrinsic_block_single_tall_child() {
 
 #[test]
 fn intrinsic_four_children() {
-    let (doc, parent) = doc_with_children(&[
-        (80.0, 10.0), (120.0, 20.0), (90.0, 15.0), (110.0, 25.0),
-    ]);
+    let (doc, parent) =
+        doc_with_children(&[(80.0, 10.0), (120.0, 20.0), (90.0, 15.0), (110.0, 25.0)]);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     assert_eq!(sizes.min_content_inline_size, luf(120.0));
     assert_eq!(sizes.max_content_inline_size, luf(120.0));
@@ -3439,7 +4392,11 @@ fn intrinsic_four_children() {
 #[test]
 fn intrinsic_five_same_size_children() {
     let (doc, parent) = doc_with_children(&[
-        (100.0, 20.0), (100.0, 20.0), (100.0, 20.0), (100.0, 20.0), (100.0, 20.0),
+        (100.0, 20.0),
+        (100.0, 20.0),
+        (100.0, 20.0),
+        (100.0, 20.0),
+        (100.0, 20.0),
     ]);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     assert_eq!(sizes.min_content_inline_size, luf(100.0));
@@ -3453,14 +4410,16 @@ fn shrink_to_fit_min_zero_max_zero() {
 
 #[test]
 fn shrink_to_fit_available_very_large() {
-    assert_eq!(shrink_to_fit_inline_size(lu(50), lu(200), lu(10000)), lu(200));
+    assert_eq!(
+        shrink_to_fit_inline_size(lu(50), lu(200), lu(10000)),
+        lu(200)
+    );
 }
 
 #[test]
 fn shrink_to_fit_min_1_max_1() {
     assert_eq!(shrink_to_fit_inline_size(lu(1), lu(1), lu(500)), lu(1));
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §13  ADDITIONAL CSS SIZING L3 KEYWORD TESTS
@@ -3483,14 +4442,20 @@ fn sizing_kw_max_content_small_intrinsic() {
 #[test]
 fn sizing_kw_fit_content_0_equals_min() {
     let intrinsic = MinMaxSizes::new(lu(80), lu(300));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(0)), &intrinsic, lu(800), lu(0));
+    let result =
+        resolve_sizing_keyword(SizingKeyword::FitContent(lu(0)), &intrinsic, lu(800), lu(0));
     assert_eq!(result, lu(80));
 }
 
 #[test]
 fn sizing_kw_fit_content_large_equals_max() {
     let intrinsic = MinMaxSizes::new(lu(80), lu(300));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(10000)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(10000)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(300));
 }
 
@@ -3511,14 +4476,24 @@ fn sizing_kw_stretch_1000() {
 #[test]
 fn sizing_kw_fit_content_200_with_wide_intrinsic() {
     let intrinsic = MinMaxSizes::new(lu(100), lu(500));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(200)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(200)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(200));
 }
 
 #[test]
 fn sizing_kw_fit_content_300_narrow_intrinsic() {
     let intrinsic = MinMaxSizes::new(lu(10), lu(50));
-    let result = resolve_sizing_keyword(SizingKeyword::FitContent(lu(300)), &intrinsic, lu(800), lu(0));
+    let result = resolve_sizing_keyword(
+        SizingKeyword::FitContent(lu(300)),
+        &intrinsic,
+        lu(800),
+        lu(0),
+    );
     assert_eq!(result, lu(50));
 }
 
@@ -3575,7 +4550,10 @@ fn ar_8_5_w_800() {
 
 #[test]
 fn ar_auto_flag_true_no_intrinsic() {
-    let ar = AspectRatio { ratio: (2.0, 1.0), auto_flag: true };
+    let ar = AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: true,
+    };
     let (w, h) = apply_aspect_ratio_with_auto(lu(400), INDEFINITE_SIZE, &ar, None);
     assert_eq!(w, lu(400));
     assert_eq!(h, lu(200));
@@ -3583,7 +4561,10 @@ fn ar_auto_flag_true_no_intrinsic() {
 
 #[test]
 fn ar_auto_flag_true_with_intrinsic_3_2() {
-    let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: true };
+    let ar = AspectRatio {
+        ratio: (16.0, 9.0),
+        auto_flag: true,
+    };
     let (w, h) = apply_aspect_ratio_with_auto(lu(300), INDEFINITE_SIZE, &ar, Some((3.0, 2.0)));
     assert_eq!(w, lu(300));
     assert_eq!(h, lu(200));
@@ -3591,7 +4572,10 @@ fn ar_auto_flag_true_with_intrinsic_3_2() {
 
 #[test]
 fn ar_auto_flag_false_ignores_intrinsic() {
-    let ar = AspectRatio { ratio: (2.0, 1.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: false,
+    };
     let (w, h) = apply_aspect_ratio_with_auto(lu(400), INDEFINITE_SIZE, &ar, Some((3.0, 2.0)));
     assert_eq!(w, lu(400));
     assert_eq!(h, lu(200));
@@ -3603,8 +4587,16 @@ fn ar_auto_flag_false_ignores_intrinsic() {
 fn preferred_auto_stretch_inline() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
     let result = resolve_preferred_size(
-        &Length::auto(), &Length::auto(), &Length::none(),
-        lu(600), &intrinsic, lu(600), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::auto(),
+        &Length::auto(),
+        &Length::none(),
+        lu(600),
+        &intrinsic,
+        lu(600),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(600));
 }
@@ -3613,8 +4605,16 @@ fn preferred_auto_stretch_inline() {
 fn preferred_min_content_directly() {
     let intrinsic = MinMaxSizes::new(lu(80), lu(300));
     let result = resolve_preferred_size(
-        &Length::min_content(), &Length::auto(), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::min_content(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(80));
 }
@@ -3623,8 +4623,16 @@ fn preferred_min_content_directly() {
 fn preferred_max_content_directly() {
     let intrinsic = MinMaxSizes::new(lu(80), lu(300));
     let result = resolve_preferred_size(
-        &Length::max_content(), &Length::auto(), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::max_content(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(300));
 }
@@ -3633,8 +4641,16 @@ fn preferred_max_content_directly() {
 fn preferred_pct_25() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::percent(25.0), &Length::auto(), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::percent(25.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(200));
 }
@@ -3643,8 +4659,16 @@ fn preferred_pct_25() {
 fn preferred_pct_75() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::percent(75.0), &Length::auto(), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::percent(75.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(600));
 }
@@ -3653,8 +4677,16 @@ fn preferred_pct_75() {
 fn preferred_fixed_clamped_by_min() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::px(80.0), &Length::px(150.0), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::px(80.0),
+        &Length::px(150.0),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(150));
 }
@@ -3663,8 +4695,16 @@ fn preferred_fixed_clamped_by_min() {
 fn preferred_fixed_clamped_by_max() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::px(400.0), &Length::auto(), &Length::px(250.0),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::px(400.0),
+        &Length::auto(),
+        &Length::px(250.0),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(250));
 }
@@ -3673,8 +4713,16 @@ fn preferred_fixed_clamped_by_max() {
 fn preferred_fixed_within_bounds() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(300));
     let result = resolve_preferred_size(
-        &Length::px(200.0), &Length::px(100.0), &Length::px(400.0),
-        lu(800), &intrinsic, lu(800), lu(0), INDEFINITE_SIZE, None, true,
+        &Length::px(200.0),
+        &Length::px(100.0),
+        &Length::px(400.0),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        INDEFINITE_SIZE,
+        None,
+        true,
     );
     assert_eq!(result, lu(200));
 }
@@ -3760,7 +4808,6 @@ fn automatic_block_fit_content_tiny_available() {
     assert_eq!(result, lu(50));
 }
 
-
 // ═══════════════════════════════════════════════════════════════════════════
 // §14  LAYOUT INTEGRATION — WIDTH RESOLUTION
 // ═══════════════════════════════════════════════════════════════════════════
@@ -3792,7 +4839,12 @@ fn layout_w_auto_fills_600() {
 #[test]
 fn layout_w_border_box_250() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(250.0).height(80.0).padding(0, 25, 0, 25).box_sizing_border_box().done();
+    b.add_child()
+        .width(250.0)
+        .height(80.0)
+        .padding(0, 25, 0, 25)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (250, 80));
 }
@@ -3830,7 +4882,11 @@ fn layout_w_three_varying() {
 #[test]
 fn layout_w_centered_300_in_800() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(300.0).height(50.0).margin_auto_horizontal().done();
+    b.add_child()
+        .width(300.0)
+        .height(50.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (250, 0) size (300, 50));
 }
@@ -3838,7 +4894,12 @@ fn layout_w_centered_300_in_800() {
 #[test]
 fn layout_w_border_box_500_pb_100() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(500.0).height(200.0).padding(0, 50, 0, 50).box_sizing_border_box().done();
+    b.add_child()
+        .width(500.0)
+        .height(200.0)
+        .padding(0, 50, 0, 50)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (500, 200));
 }
@@ -3846,7 +4907,11 @@ fn layout_w_border_box_500_pb_100() {
 #[test]
 fn layout_w_content_box_500_pb_100() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(500.0).height(200.0).padding(0, 50, 0, 50).done();
+    b.add_child()
+        .width(500.0)
+        .height(200.0)
+        .padding(0, 50, 0, 50)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (600, 200));
 }
@@ -3883,7 +4948,10 @@ fn layout_h_auto_empty() {
 fn layout_h_auto_from_child() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().width(50.0).height(75.0).done()
+        .add_child()
+        .width(50.0)
+        .height(75.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 75));
@@ -3893,8 +4961,14 @@ fn layout_h_auto_from_child() {
 fn layout_h_auto_from_two_children() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().width(50.0).height(30.0).done()
-        .add_child().width(50.0).height(45.0).done()
+        .add_child()
+        .width(50.0)
+        .height(30.0)
+        .done()
+        .add_child()
+        .width(50.0)
+        .height(45.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 75));
@@ -3903,7 +4977,12 @@ fn layout_h_auto_from_two_children() {
 #[test]
 fn layout_h_border_box_200_pb_40() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(200.0).padding(20, 0, 20, 0).box_sizing_border_box().done();
+    b.add_child()
+        .width(100.0)
+        .height(200.0)
+        .padding(20, 0, 20, 0)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 200));
 }
@@ -3911,7 +4990,11 @@ fn layout_h_border_box_200_pb_40() {
 #[test]
 fn layout_h_content_box_200_pb_40() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(200.0).padding(20, 0, 20, 0).done();
+    b.add_child()
+        .width(100.0)
+        .height(200.0)
+        .padding(20, 0, 20, 0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 240));
 }
@@ -3951,7 +5034,11 @@ fn layout_h_pct_100() {
 #[test]
 fn layout_min_w_clamps_narrow() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(50.0).min_width(100.0).height(30.0).done();
+    b.add_child()
+        .width(50.0)
+        .min_width(100.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 30));
 }
@@ -3959,7 +5046,11 @@ fn layout_min_w_clamps_narrow() {
 #[test]
 fn layout_max_w_clamps_wide() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(600.0).max_width(400.0).height(30.0).done();
+    b.add_child()
+        .width(600.0)
+        .max_width(400.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (400, 30));
 }
@@ -3967,7 +5058,11 @@ fn layout_max_w_clamps_wide() {
 #[test]
 fn layout_min_h_clamps_short() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(20.0).min_height(80.0).done();
+    b.add_child()
+        .width(100.0)
+        .height(20.0)
+        .min_height(80.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 80));
 }
@@ -3975,7 +5070,11 @@ fn layout_min_h_clamps_short() {
 #[test]
 fn layout_max_h_clamps_tall() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(500.0).max_height(200.0).done();
+    b.add_child()
+        .width(100.0)
+        .height(500.0)
+        .max_height(200.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 200));
 }
@@ -3984,7 +5083,12 @@ fn layout_max_h_clamps_tall() {
 fn layout_min_w_gt_max_w() {
     let mut b = BlockTestBuilder::new(800, 600);
     // CSS 2.1 §10.4: min-width > max-width → max-width treated as min-width value
-    b.add_child().width(250.0).min_width(300.0).max_width(150.0).height(30.0).done();
+    b.add_child()
+        .width(250.0)
+        .min_width(300.0)
+        .max_width(150.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (300, 30));
 }
@@ -3993,7 +5097,12 @@ fn layout_min_w_gt_max_w() {
 fn layout_min_h_gt_max_h() {
     let mut b = BlockTestBuilder::new(800, 600);
     // CSS 2.1 §10.7: min-height > max-height → max-height treated as min-height value
-    b.add_child().width(100.0).height(250.0).min_height(300.0).max_height(150.0).done();
+    b.add_child()
+        .width(100.0)
+        .height(250.0)
+        .min_height(300.0)
+        .max_height(150.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 300));
 }
@@ -4018,8 +5127,12 @@ fn layout_min_w_on_auto_with_content() {
 #[test]
 fn layout_max_h_on_auto_from_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().max_height(50.0)
-        .add_child().width(100.0).height(200.0).done()
+    b.add_child()
+        .max_height(50.0)
+        .add_child()
+        .width(100.0)
+        .height(200.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 50));
@@ -4028,8 +5141,12 @@ fn layout_max_h_on_auto_from_content() {
 #[test]
 fn layout_min_h_on_auto_from_content() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().min_height(150.0)
-        .add_child().width(100.0).height(30.0).done()
+    b.add_child()
+        .min_height(150.0)
+        .add_child()
+        .width(100.0)
+        .height(30.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 150));
@@ -4042,8 +5159,13 @@ fn layout_min_h_on_auto_from_content() {
 #[test]
 fn layout_nested_50_50_width() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(50.0).height(40.0)
-        .add_child().with_style(|s| s.width = Length::percent(50.0)).height(20.0).done()
+    b.add_child()
+        .width_pct(50.0)
+        .height(40.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(50.0))
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (400, 40));
@@ -4053,8 +5175,13 @@ fn layout_nested_50_50_width() {
 #[test]
 fn layout_nested_100_50_width() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(100.0).height(40.0)
-        .add_child().with_style(|s| s.width = Length::percent(50.0)).height(20.0).done()
+    b.add_child()
+        .width_pct(100.0)
+        .height(40.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(50.0))
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 40));
@@ -4064,8 +5191,13 @@ fn layout_nested_100_50_width() {
 #[test]
 fn layout_nested_75_50_width() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(75.0).height(40.0)
-        .add_child().with_style(|s| s.width = Length::percent(50.0)).height(20.0).done()
+    b.add_child()
+        .width_pct(75.0)
+        .height(40.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(50.0))
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (600, 40));
@@ -4075,8 +5207,12 @@ fn layout_nested_75_50_width() {
 #[test]
 fn layout_nested_auto_50_width() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().height(40.0)
-        .add_child().with_style(|s| s.width = Length::percent(50.0)).height(20.0).done()
+    b.add_child()
+        .height(40.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(50.0))
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 40));
@@ -4086,8 +5222,13 @@ fn layout_nested_auto_50_width() {
 #[test]
 fn layout_nested_fixed_pct_width() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(40.0)
-        .add_child().with_style(|s| s.width = Length::percent(50.0)).height(20.0).done()
+    b.add_child()
+        .width(400.0)
+        .height(40.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(50.0))
+        .height(20.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (400, 40));
@@ -4097,9 +5238,17 @@ fn layout_nested_fixed_pct_width() {
 #[test]
 fn layout_nested_position() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(80.0)
-        .add_child().width(200.0).height(30.0).done()
-        .add_child().width(200.0).height(30.0).done()
+    b.add_child()
+        .width(400.0)
+        .height(80.0)
+        .add_child()
+        .width(200.0)
+        .height(30.0)
+        .done()
+        .add_child()
+        .width(200.0)
+        .height(30.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_position(0, 0, 0, 0);
@@ -4113,7 +5262,11 @@ fn layout_nested_position() {
 #[test]
 fn layout_padding_all_10() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).padding(10, 10, 10, 10).done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .padding(10, 10, 10, 10)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (220, 120));
 }
@@ -4121,7 +5274,11 @@ fn layout_padding_all_10() {
 #[test]
 fn layout_border_all_5() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).border(5, 5, 5, 5).done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .border(5, 5, 5, 5)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (210, 110));
 }
@@ -4130,7 +5287,8 @@ fn layout_border_all_5() {
 fn layout_padding_border_margin() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .padding(10, 10, 10, 10)
         .border(2, 2, 2, 2)
         .margin(0, 5, 0, 5)
@@ -4143,7 +5301,12 @@ fn layout_padding_border_margin() {
 #[test]
 fn layout_border_box_padding_10() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).padding(10, 10, 10, 10).box_sizing_border_box().done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .padding(10, 10, 10, 10)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (200, 100));
 }
@@ -4151,7 +5314,12 @@ fn layout_border_box_padding_10() {
 #[test]
 fn layout_border_box_border_5() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).border(5, 5, 5, 5).box_sizing_border_box().done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .border(5, 5, 5, 5)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (200, 100));
 }
@@ -4160,7 +5328,8 @@ fn layout_border_box_border_5() {
 fn layout_border_box_padding_border_margin() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .padding(10, 10, 10, 10)
         .border(2, 2, 2, 2)
         .margin(0, 5, 0, 5)
@@ -4173,7 +5342,11 @@ fn layout_border_box_padding_border_margin() {
 #[test]
 fn layout_asymmetric_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).padding(5, 10, 15, 20).done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .padding(5, 10, 15, 20)
+        .done();
     let r = b.build();
     // width = 200 + 10 + 20 = 230; height = 100 + 5 + 15 = 120
     assert_layout!(r, child(0) size (230, 120));
@@ -4182,7 +5355,11 @@ fn layout_asymmetric_padding() {
 #[test]
 fn layout_asymmetric_border() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(100.0).border(1, 2, 3, 4).done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .border(1, 2, 3, 4)
+        .done();
     let r = b.build();
     // width = 200 + 2 + 4 = 206; height = 100 + 1 + 3 = 104
     assert_layout!(r, child(0) size (206, 104));
@@ -4192,7 +5369,11 @@ fn layout_asymmetric_border() {
 fn layout_asymmetric_margin() {
     let mut b = BlockTestBuilder::new(800, 600);
     // Top margin collapses through parent, only horizontal margins affect position
-    b.add_child().width(200.0).height(100.0).margin(0, 30, 20, 40).done();
+    b.add_child()
+        .width(200.0)
+        .height(100.0)
+        .margin(0, 30, 20, 40)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (40, 0) size (200, 100));
 }
@@ -4200,7 +5381,11 @@ fn layout_asymmetric_margin() {
 #[test]
 fn layout_large_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(50.0).padding(50, 50, 50, 50).done();
+    b.add_child()
+        .width(100.0)
+        .height(50.0)
+        .padding(50, 50, 50, 50)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (200, 150));
 }
@@ -4318,9 +5503,15 @@ fn edge_constrain_block_just_above_max() {
 #[test]
 fn edge_resolve_constraints_all_fixed() {
     let c = resolve_size_constraints(
-        &Length::px(100.0), &Length::px(500.0),
-        &Length::px(50.0), &Length::px(300.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(100.0),
+        &Length::px(500.0),
+        &Length::px(50.0),
+        &Length::px(300.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(100));
     assert_eq!(c.max_inline_size, lu(500));
@@ -4331,9 +5522,15 @@ fn edge_resolve_constraints_all_fixed() {
 #[test]
 fn edge_resolve_constraints_all_pct() {
     let c = resolve_size_constraints(
-        &Length::percent(10.0), &Length::percent(80.0),
-        &Length::percent(5.0), &Length::percent(50.0),
-        lu(1000), lu(800), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::percent(10.0),
+        &Length::percent(80.0),
+        &Length::percent(5.0),
+        &Length::percent(50.0),
+        lu(1000),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(100));
     assert_eq!(c.max_inline_size, lu(800));
@@ -4344,9 +5541,15 @@ fn edge_resolve_constraints_all_pct() {
 #[test]
 fn edge_resolve_constraints_mixed() {
     let c = resolve_size_constraints(
-        &Length::px(50.0), &Length::percent(50.0),
-        &Length::percent(10.0), &Length::px(400.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(50.0),
+        &Length::percent(50.0),
+        &Length::percent(10.0),
+        &Length::px(400.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
     assert_eq!(c.min_inline_size, lu(50));
     assert_eq!(c.max_inline_size, lu(400));
@@ -4447,7 +5650,12 @@ fn float_right_fixed_300() {
 #[test]
 fn float_left_with_margin() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).float_left().margin(0, 10, 0, 10).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .float_left()
+        .margin(0, 10, 0, 10)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (200, 50));
 }
@@ -4463,7 +5671,10 @@ fn float_shrink_with_nested_fixed_child() {
 #[test]
 fn shrink_to_fit_min_gt_max() {
     // min > max (degenerate): min(max(300, 200), 100) = 100
-    assert_eq!(shrink_to_fit_inline_size(lu(300), lu(100), lu(200)), lu(100));
+    assert_eq!(
+        shrink_to_fit_inline_size(lu(300), lu(100), lu(200)),
+        lu(100)
+    );
 }
 
 #[test]
@@ -4523,11 +5734,21 @@ fn ar_9_16_h_1600() {
 #[test]
 fn ar_preferred_with_ar_and_both_constrained() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(400));
-    let ar = AspectRatio { ratio: (4.0, 3.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (4.0, 3.0),
+        auto_flag: false,
+    };
     let result = resolve_preferred_size(
-        &Length::auto(), &Length::px(100.0), &Length::px(300.0),
-        lu(800), &intrinsic, lu(800), lu(0), lu(300),
-        Some(&ar), true,
+        &Length::auto(),
+        &Length::px(100.0),
+        &Length::px(300.0),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        lu(300),
+        Some(&ar),
+        true,
     );
     // width from AR: 300 * 4/3 = 400, clamped to max 300
     assert_eq!(result, lu(300));
@@ -4536,11 +5757,21 @@ fn ar_preferred_with_ar_and_both_constrained() {
 #[test]
 fn ar_preferred_with_ar_no_constraints() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(400));
-    let ar = AspectRatio { ratio: (2.0, 1.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: false,
+    };
     let result = resolve_preferred_size(
-        &Length::auto(), &Length::auto(), &Length::none(),
-        lu(800), &intrinsic, lu(800), lu(0), lu(100),
-        Some(&ar), true,
+        &Length::auto(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        &intrinsic,
+        lu(800),
+        lu(0),
+        lu(100),
+        Some(&ar),
+        true,
     );
     // width from AR: 100 * 2 = 200
     assert_eq!(result, lu(200));
@@ -4590,7 +5821,11 @@ fn macro_child_count_3() {
 fn macro_child_at() {
     let mut b = BlockTestBuilder::new(800, 600);
     // Top margin collapses, only left margin affects position
-    b.add_child().width(100.0).height(50.0).margin(0, 0, 0, 20).done();
+    b.add_child()
+        .width(100.0)
+        .height(50.0)
+        .margin(0, 0, 0, 20)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (20, 0));
 }
@@ -4618,7 +5853,8 @@ fn with_container_style_override() {
 fn with_style_closure_on_child() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .with_style(|s| {
             s.margin_left = Length::px(50.0);
         })
@@ -4693,9 +5929,11 @@ fn style_builder_display_inline_block() {
 
 #[test]
 fn style_builder_with_closure() {
-    let style = style_builder().with(|s| {
-        s.margin_top = Length::px(20.0);
-    }).build();
+    let style = style_builder()
+        .with(|s| {
+            s.margin_top = Length::px(20.0);
+        })
+        .build();
     assert_eq!(style.margin_top, Length::px(20.0));
 }
 
@@ -4727,117 +5965,261 @@ fn style_builder_border_width() {
     assert_eq!(style.border_top_style, BorderStyle::Solid);
 }
 
-
 // ═══════════════════════════════════════════════════════════════════════════
 // §24  COMPREHENSIVE CONSTRAINT PARAMETERIZATION
 // ═══════════════════════════════════════════════════════════════════════════
 
 #[test]
 fn constrain_inline_size_at_200_in_100_500() {
-    let c = SizeConstraint { min_inline_size: lu(100), max_inline_size: lu(500), min_block_size: lu(0), max_block_size: LayoutUnit::max() };
+    let c = SizeConstraint {
+        min_inline_size: lu(100),
+        max_inline_size: lu(500),
+        min_block_size: lu(0),
+        max_block_size: LayoutUnit::max(),
+    };
     assert_eq!(constrain_inline_size(lu(200), &c), lu(200));
 }
 
 #[test]
 fn constrain_inline_size_at_50_in_100_500() {
-    let c = SizeConstraint { min_inline_size: lu(100), max_inline_size: lu(500), min_block_size: lu(0), max_block_size: LayoutUnit::max() };
+    let c = SizeConstraint {
+        min_inline_size: lu(100),
+        max_inline_size: lu(500),
+        min_block_size: lu(0),
+        max_block_size: LayoutUnit::max(),
+    };
     assert_eq!(constrain_inline_size(lu(50), &c), lu(100));
 }
 
 #[test]
 fn constrain_inline_size_at_600_in_100_500() {
-    let c = SizeConstraint { min_inline_size: lu(100), max_inline_size: lu(500), min_block_size: lu(0), max_block_size: LayoutUnit::max() };
+    let c = SizeConstraint {
+        min_inline_size: lu(100),
+        max_inline_size: lu(500),
+        min_block_size: lu(0),
+        max_block_size: LayoutUnit::max(),
+    };
     assert_eq!(constrain_inline_size(lu(600), &c), lu(500));
 }
 
 #[test]
 fn constrain_inline_size_at_0_in_0_max() {
-    let c = SizeConstraint { min_inline_size: lu(0), max_inline_size: LayoutUnit::max(), min_block_size: lu(0), max_block_size: LayoutUnit::max() };
+    let c = SizeConstraint {
+        min_inline_size: lu(0),
+        max_inline_size: LayoutUnit::max(),
+        min_block_size: lu(0),
+        max_block_size: LayoutUnit::max(),
+    };
     assert_eq!(constrain_inline_size(lu(0), &c), lu(0));
 }
 
 #[test]
 fn constrain_block_at_150_in_50_300() {
-    let c = SizeConstraint { min_inline_size: lu(0), max_inline_size: LayoutUnit::max(), min_block_size: lu(50), max_block_size: lu(300) };
+    let c = SizeConstraint {
+        min_inline_size: lu(0),
+        max_inline_size: LayoutUnit::max(),
+        min_block_size: lu(50),
+        max_block_size: lu(300),
+    };
     assert_eq!(constrain_block_size(lu(150), &c), lu(150));
 }
 
 #[test]
 fn constrain_block_at_20_in_50_300() {
-    let c = SizeConstraint { min_inline_size: lu(0), max_inline_size: LayoutUnit::max(), min_block_size: lu(50), max_block_size: lu(300) };
+    let c = SizeConstraint {
+        min_inline_size: lu(0),
+        max_inline_size: LayoutUnit::max(),
+        min_block_size: lu(50),
+        max_block_size: lu(300),
+    };
     assert_eq!(constrain_block_size(lu(20), &c), lu(50));
 }
 
 #[test]
 fn constrain_block_at_400_in_50_300() {
-    let c = SizeConstraint { min_inline_size: lu(0), max_inline_size: LayoutUnit::max(), min_block_size: lu(50), max_block_size: lu(300) };
+    let c = SizeConstraint {
+        min_inline_size: lu(0),
+        max_inline_size: LayoutUnit::max(),
+        min_block_size: lu(50),
+        max_block_size: lu(300),
+    };
     assert_eq!(constrain_block_size(lu(400), &c), lu(300));
 }
 
 #[test]
 fn resolve_inline_px_100_unconstrained() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_inline_size(&Length::px(100.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c), lu(100));
+    assert_eq!(
+        resolve_inline_size(
+            &Length::px(100.0),
+            lu(800),
+            lu(800),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(100)
+    );
 }
 
 #[test]
 fn resolve_inline_px_800_unconstrained() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_inline_size(&Length::px(800.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c), lu(800));
+    assert_eq!(
+        resolve_inline_size(
+            &Length::px(800.0),
+            lu(800),
+            lu(800),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(800)
+    );
 }
 
 #[test]
 fn resolve_inline_pct_10_of_500() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_inline_size(&Length::percent(10.0), lu(500), lu(500), BoxSizing::ContentBox, lu(0), &c), lu(50));
+    assert_eq!(
+        resolve_inline_size(
+            &Length::percent(10.0),
+            lu(500),
+            lu(500),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(50)
+    );
 }
 
 #[test]
 fn resolve_inline_pct_90_of_500() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_inline_size(&Length::percent(90.0), lu(500), lu(500), BoxSizing::ContentBox, lu(0), &c), lu(450));
+    assert_eq!(
+        resolve_inline_size(
+            &Length::percent(90.0),
+            lu(500),
+            lu(500),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(450)
+    );
 }
 
 #[test]
 fn resolve_block_px_50() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::px(50.0), lu(100), lu(600), BoxSizing::ContentBox, lu(0), &c), lu(50));
+    assert_eq!(
+        resolve_block_size(
+            &Length::px(50.0),
+            lu(100),
+            lu(600),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(50)
+    );
 }
 
 #[test]
 fn resolve_block_px_600() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::px(600.0), lu(100), lu(600), BoxSizing::ContentBox, lu(0), &c), lu(600));
+    assert_eq!(
+        resolve_block_size(
+            &Length::px(600.0),
+            lu(100),
+            lu(600),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(600)
+    );
 }
 
 #[test]
 fn resolve_block_pct_10_of_500() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::percent(10.0), lu(100), lu(500), BoxSizing::ContentBox, lu(0), &c), lu(50));
+    assert_eq!(
+        resolve_block_size(
+            &Length::percent(10.0),
+            lu(100),
+            lu(500),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(50)
+    );
 }
 
 #[test]
 fn resolve_block_pct_90_of_500() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::percent(90.0), lu(100), lu(500), BoxSizing::ContentBox, lu(0), &c), lu(450));
+    assert_eq!(
+        resolve_block_size(
+            &Length::percent(90.0),
+            lu(100),
+            lu(500),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(450)
+    );
 }
 
 #[test]
 fn resolve_block_auto_75() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::auto(), lu(75), lu(600), BoxSizing::ContentBox, lu(0), &c), lu(75));
+    assert_eq!(
+        resolve_block_size(
+            &Length::auto(),
+            lu(75),
+            lu(600),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(75)
+    );
 }
 
 #[test]
 fn resolve_block_auto_0() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::auto(), lu(0), lu(600), BoxSizing::ContentBox, lu(0), &c), lu(0));
+    assert_eq!(
+        resolve_block_size(
+            &Length::auto(),
+            lu(0),
+            lu(600),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(0)
+    );
 }
 
 #[test]
 fn resolve_inline_auto_200() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_inline_size(&Length::auto(), lu(200), lu(200), BoxSizing::ContentBox, lu(0), &c), lu(200));
+    assert_eq!(
+        resolve_inline_size(
+            &Length::auto(),
+            lu(200),
+            lu(200),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(200)
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -4848,7 +6230,11 @@ fn resolve_inline_auto_200() {
 fn layout_w_100_h_100_margin_10_all() {
     let mut b = BlockTestBuilder::new(800, 600);
     // Top margin collapses through parent, left margin applies
-    b.add_child().width(100.0).height(100.0).margin(0, 10, 10, 10).done();
+    b.add_child()
+        .width(100.0)
+        .height(100.0)
+        .margin(0, 10, 10, 10)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (10, 0) size (100, 100));
 }
@@ -4857,8 +6243,16 @@ fn layout_w_100_h_100_margin_10_all() {
 fn layout_two_stacked_with_margins() {
     let mut b = BlockTestBuilder::new(800, 600);
     // Bottom margin doesn't collapse through, but top margin of first collapses
-    b.add_child().width(100.0).height(50.0).margin(0, 0, 10, 0).done();
-    b.add_child().width(100.0).height(50.0).margin(10, 0, 10, 0).done();
+    b.add_child()
+        .width(100.0)
+        .height(50.0)
+        .margin(0, 0, 10, 0)
+        .done();
+    b.add_child()
+        .width(100.0)
+        .height(50.0)
+        .margin(10, 0, 10, 0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (0, 0) size (100, 50));
     // margin collapse: max(10, 10) = 10 between them
@@ -4868,7 +6262,11 @@ fn layout_two_stacked_with_margins() {
 #[test]
 fn layout_child_with_left_margin_50() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).margin(0, 0, 0, 50).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(0, 0, 0, 50)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (50, 0) size (200, 50));
 }
@@ -4877,7 +6275,11 @@ fn layout_child_with_left_margin_50() {
 fn layout_child_with_top_margin_30() {
     let mut b = BlockTestBuilder::new(800, 600);
     // Top margin collapses through parent boundary
-    b.add_child().width(200.0).height(50.0).margin(30, 0, 0, 0).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(30, 0, 0, 0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (0, 0) size (200, 50));
 }
@@ -4885,7 +6287,11 @@ fn layout_child_with_top_margin_30() {
 #[test]
 fn layout_w_pct_100_with_margins() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width_pct(100.0).height(30.0).margin(0, 0, 0, 0).done();
+    b.add_child()
+        .width_pct(100.0)
+        .height(30.0)
+        .margin(0, 0, 0, 0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 30));
 }
@@ -4893,8 +6299,14 @@ fn layout_w_pct_100_with_margins() {
 #[test]
 fn layout_nested_margin_child() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(80.0)
-        .add_child().width(200.0).height(40.0).margin(0, 0, 0, 20).done()
+    b.add_child()
+        .width(400.0)
+        .height(80.0)
+        .add_child()
+        .width(200.0)
+        .height(40.0)
+        .margin(0, 0, 0, 20)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_position(0, 0, 20, 0);
@@ -4939,47 +6351,74 @@ fn layout_pct_height_10() {
 
 #[test]
 fn box_sizing_cb_100_pb_0() {
-    assert_eq!(apply_box_sizing_adjustment(lu(100), BoxSizing::ContentBox, lu(0)), lu(100));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(100), BoxSizing::ContentBox, lu(0)),
+        lu(100)
+    );
 }
 
 #[test]
 fn box_sizing_cb_100_pb_50() {
-    assert_eq!(apply_box_sizing_adjustment(lu(100), BoxSizing::ContentBox, lu(50)), lu(100));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(100), BoxSizing::ContentBox, lu(50)),
+        lu(100)
+    );
 }
 
 #[test]
 fn box_sizing_bb_100_pb_0() {
-    assert_eq!(apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(0)), lu(100));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(0)),
+        lu(100)
+    );
 }
 
 #[test]
 fn box_sizing_bb_100_pb_30() {
-    assert_eq!(apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(30)), lu(70));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(30)),
+        lu(70)
+    );
 }
 
 #[test]
 fn box_sizing_bb_100_pb_100() {
-    assert_eq!(apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(100)), lu(0));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(100)),
+        lu(0)
+    );
 }
 
 #[test]
 fn box_sizing_bb_100_pb_150() {
-    assert_eq!(apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(150)), lu(0));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(100), BoxSizing::BorderBox, lu(150)),
+        lu(0)
+    );
 }
 
 #[test]
 fn box_sizing_bb_500_pb_80() {
-    assert_eq!(apply_box_sizing_adjustment(lu(500), BoxSizing::BorderBox, lu(80)), lu(420));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(500), BoxSizing::BorderBox, lu(80)),
+        lu(420)
+    );
 }
 
 #[test]
 fn box_sizing_bb_1_pb_0() {
-    assert_eq!(apply_box_sizing_adjustment(lu(1), BoxSizing::BorderBox, lu(0)), lu(1));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(1), BoxSizing::BorderBox, lu(0)),
+        lu(1)
+    );
 }
 
 #[test]
 fn box_sizing_bb_1_pb_1() {
-    assert_eq!(apply_box_sizing_adjustment(lu(1), BoxSizing::BorderBox, lu(1)), lu(0));
+    assert_eq!(
+        apply_box_sizing_adjustment(lu(1), BoxSizing::BorderBox, lu(1)),
+        lu(0)
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -5020,9 +6459,15 @@ fn layout_child_taller_than_container() {
 #[test]
 fn resolve_constraints_border_box_all() {
     let c = resolve_size_constraints(
-        &Length::px(200.0), &Length::px(600.0),
-        &Length::px(100.0), &Length::px(400.0),
-        lu(800), lu(600), BoxSizing::BorderBox, lu(40), lu(30),
+        &Length::px(200.0),
+        &Length::px(600.0),
+        &Length::px(100.0),
+        &Length::px(400.0),
+        lu(800),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(40),
+        lu(30),
     );
     assert_eq!(c.min_inline_size, lu(160));
     assert_eq!(c.max_inline_size, lu(560));
@@ -5033,8 +6478,13 @@ fn resolve_constraints_border_box_all() {
 #[test]
 fn layout_nested_three_levels_width() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(600.0).height(100.0)
-        .add_child().width(400.0).height(80.0).done()
+    b.add_child()
+        .width(600.0)
+        .height(100.0)
+        .add_child()
+        .width(400.0)
+        .height(80.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (600, 100));
@@ -5044,7 +6494,11 @@ fn layout_nested_three_levels_width() {
 #[test]
 fn layout_min_w_250_width_200() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).min_width(250.0).height(30.0).done();
+    b.add_child()
+        .width(200.0)
+        .min_width(250.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (250, 30));
 }
@@ -5052,7 +6506,11 @@ fn layout_min_w_250_width_200() {
 #[test]
 fn layout_max_w_150_width_200() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).max_width(150.0).height(30.0).done();
+    b.add_child()
+        .width(200.0)
+        .max_width(150.0)
+        .height(30.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (150, 30));
 }
@@ -5060,7 +6518,11 @@ fn layout_max_w_150_width_200() {
 #[test]
 fn layout_min_h_120_height_80() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(80.0).min_height(120.0).done();
+    b.add_child()
+        .width(100.0)
+        .height(80.0)
+        .min_height(120.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 120));
 }
@@ -5068,7 +6530,11 @@ fn layout_min_h_120_height_80() {
 #[test]
 fn layout_max_h_60_height_100() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(100.0).max_height(60.0).done();
+    b.add_child()
+        .width(100.0)
+        .height(100.0)
+        .max_height(60.0)
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 60));
 }
@@ -5076,7 +6542,12 @@ fn layout_max_h_60_height_100() {
 #[test]
 fn layout_min_w_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).min_width(200.0).height(30.0).padding(0, 10, 0, 10).done();
+    b.add_child()
+        .width(100.0)
+        .min_width(200.0)
+        .height(30.0)
+        .padding(0, 10, 0, 10)
+        .done();
     let r = b.build();
     // content width clamped to min 200, border-box = 200 + 10+10 = 220
     assert_layout!(r, child(0) size (220, 30));
@@ -5085,7 +6556,12 @@ fn layout_min_w_with_padding() {
 #[test]
 fn layout_max_w_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).max_width(300.0).height(30.0).padding(0, 10, 0, 10).done();
+    b.add_child()
+        .width(400.0)
+        .max_width(300.0)
+        .height(30.0)
+        .padding(0, 10, 0, 10)
+        .done();
     let r = b.build();
     // content width clamped to max 300, border-box = 300 + 10+10 = 320
     assert_layout!(r, child(0) size (320, 30));
@@ -5094,7 +6570,12 @@ fn layout_max_w_with_padding() {
 #[test]
 fn layout_min_h_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(30.0).min_height(100.0).padding(10, 0, 10, 0).done();
+    b.add_child()
+        .width(100.0)
+        .height(30.0)
+        .min_height(100.0)
+        .padding(10, 0, 10, 0)
+        .done();
     let r = b.build();
     // content height clamped to min 100, border-box = 100 + 10+10 = 120
     assert_layout!(r, child(0) size (100, 120));
@@ -5103,7 +6584,12 @@ fn layout_min_h_with_padding() {
 #[test]
 fn layout_max_h_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(300.0).max_height(200.0).padding(10, 0, 10, 0).done();
+    b.add_child()
+        .width(100.0)
+        .height(300.0)
+        .max_height(200.0)
+        .padding(10, 0, 10, 0)
+        .done();
     let r = b.build();
     // content height clamped to max 200, border-box = 200 + 10+10 = 220
     assert_layout!(r, child(0) size (100, 220));
@@ -5112,7 +6598,13 @@ fn layout_max_h_with_padding() {
 #[test]
 fn layout_border_box_min_w() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).min_width(200.0).height(30.0).padding(0, 10, 0, 10).box_sizing_border_box().done();
+    b.add_child()
+        .width(100.0)
+        .min_width(200.0)
+        .height(30.0)
+        .padding(0, 10, 0, 10)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (200, 30));
 }
@@ -5120,7 +6612,13 @@ fn layout_border_box_min_w() {
 #[test]
 fn layout_border_box_max_w() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).max_width(300.0).height(30.0).padding(0, 10, 0, 10).box_sizing_border_box().done();
+    b.add_child()
+        .width(400.0)
+        .max_width(300.0)
+        .height(30.0)
+        .padding(0, 10, 0, 10)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (300, 30));
 }
@@ -5128,7 +6626,13 @@ fn layout_border_box_max_w() {
 #[test]
 fn layout_border_box_min_h() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(50.0).min_height(100.0).padding(10, 0, 10, 0).box_sizing_border_box().done();
+    b.add_child()
+        .width(100.0)
+        .height(50.0)
+        .min_height(100.0)
+        .padding(10, 0, 10, 0)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 100));
 }
@@ -5136,7 +6640,13 @@ fn layout_border_box_min_h() {
 #[test]
 fn layout_border_box_max_h() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(400.0).max_height(200.0).padding(10, 0, 10, 0).box_sizing_border_box().done();
+    b.add_child()
+        .width(100.0)
+        .height(400.0)
+        .max_height(200.0)
+        .padding(10, 0, 10, 0)
+        .box_sizing_border_box()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) size (100, 200));
 }
@@ -5225,7 +6735,10 @@ fn layout_w_10_in_10_container() {
 fn layout_auto_both_with_child() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().width(300.0).height(150.0).done()
+        .add_child()
+        .width(300.0)
+        .height(150.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 150));
@@ -5235,8 +6748,14 @@ fn layout_auto_both_with_child() {
 fn layout_auto_both_with_two_children() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .add_child().width(200.0).height(80.0).done()
-        .add_child().width(300.0).height(90.0).done()
+        .add_child()
+        .width(200.0)
+        .height(80.0)
+        .done()
+        .add_child()
+        .width(300.0)
+        .height(90.0)
+        .done()
         .done();
     let r = b.build();
     assert_layout!(r, child(0) size (800, 170));
@@ -5245,8 +6764,14 @@ fn layout_auto_both_with_two_children() {
 #[test]
 fn layout_nested_border_box_child() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(200.0)
-        .add_child().width(300.0).height(100.0).padding(10, 10, 10, 10).done()
+    b.add_child()
+        .width(400.0)
+        .height(200.0)
+        .add_child()
+        .width(300.0)
+        .height(100.0)
+        .padding(10, 10, 10, 10)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_size(0, 0, 320, 120);
@@ -5255,14 +6780,19 @@ fn layout_nested_border_box_child() {
 #[test]
 fn layout_nested_border_box_inner() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(200.0)
-        .add_child().width(300.0).height(100.0).padding(10, 10, 10, 10)
-            .with_style(|s| s.box_sizing = BoxSizing::BorderBox).done()
+    b.add_child()
+        .width(400.0)
+        .height(200.0)
+        .add_child()
+        .width(300.0)
+        .height(100.0)
+        .padding(10, 10, 10, 10)
+        .with_style(|s| s.box_sizing = BoxSizing::BorderBox)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_size(0, 0, 300, 100);
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §28  FINAL BATCH — SIZING COMPLETENESS
@@ -5367,7 +6897,11 @@ fn layout_h_pct_95() {
 #[test]
 fn layout_centered_600_in_1200() {
     let mut b = BlockTestBuilder::new(1200, 600);
-    b.add_child().width(600.0).height(50.0).margin_auto_horizontal().done();
+    b.add_child()
+        .width(600.0)
+        .height(50.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (300, 0) size (600, 50));
 }
@@ -5375,7 +6909,11 @@ fn layout_centered_600_in_1200() {
 #[test]
 fn layout_centered_100_in_800() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(100.0).height(30.0).margin_auto_horizontal().done();
+    b.add_child()
+        .width(100.0)
+        .height(30.0)
+        .margin_auto_horizontal()
+        .done();
     let r = b.build();
     assert_layout!(r, child(0) at (350, 0) size (100, 30));
 }
@@ -5383,44 +6921,96 @@ fn layout_centered_100_in_800() {
 #[test]
 fn resolve_inline_constrained_min_200() {
     let c = resolve_size_constraints(
-        &Length::px(200.0), &Length::none(),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::px(200.0),
+        &Length::none(),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::px(150.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::px(150.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(200));
 }
 
 #[test]
 fn resolve_inline_constrained_max_300() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::px(300.0),
-        &Length::auto(), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::px(300.0),
+        &Length::auto(),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_inline_size(&Length::px(500.0), lu(800), lu(800), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_inline_size(
+        &Length::px(500.0),
+        lu(800),
+        lu(800),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(300));
 }
 
 #[test]
 fn resolve_block_constrained_min_100() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::px(100.0), &Length::none(),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::px(100.0),
+        &Length::none(),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_block_size(&Length::auto(), lu(50), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(50),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(100));
 }
 
 #[test]
 fn resolve_block_constrained_max_200() {
     let c = resolve_size_constraints(
-        &Length::auto(), &Length::none(),
-        &Length::auto(), &Length::px(200.0),
-        lu(800), lu(600), BoxSizing::ContentBox, lu(0), lu(0),
+        &Length::auto(),
+        &Length::none(),
+        &Length::auto(),
+        &Length::px(200.0),
+        lu(800),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        lu(0),
     );
-    let result = resolve_block_size(&Length::auto(), lu(500), lu(600), BoxSizing::ContentBox, lu(0), &c);
+    let result = resolve_block_size(
+        &Length::auto(),
+        lu(500),
+        lu(600),
+        BoxSizing::ContentBox,
+        lu(0),
+        &c,
+    );
     assert_eq!(result, lu(200));
 }
 
@@ -5473,8 +7063,13 @@ fn intrinsic_sizes_large_values() {
 #[test]
 fn layout_nested_pct_width_in_fixed() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(500.0).height(100.0)
-        .add_child().with_style(|s| s.width = Length::percent(60.0)).height(50.0).done()
+    b.add_child()
+        .width(500.0)
+        .height(100.0)
+        .add_child()
+        .with_style(|s| s.width = Length::percent(60.0))
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_size(0, 0, 300, 50);
@@ -5483,8 +7078,12 @@ fn layout_nested_pct_width_in_fixed() {
 #[test]
 fn layout_nested_auto_width_fills_parent() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(100.0)
-        .add_child().height(50.0).done()
+    b.add_child()
+        .width(400.0)
+        .height(100.0)
+        .add_child()
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     r.assert_nested_child_size(0, 0, 400, 50);
@@ -5511,21 +7110,50 @@ fn layout_child_count_1() {
 #[test]
 fn resolve_inline_auto_small_container() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_inline_size(&Length::auto(), lu(50), lu(50), BoxSizing::ContentBox, lu(0), &c), lu(50));
+    assert_eq!(
+        resolve_inline_size(
+            &Length::auto(),
+            lu(50),
+            lu(50),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(50)
+    );
 }
 
 #[test]
 fn resolve_block_pct_25_of_800() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::percent(25.0), lu(50), lu(800), BoxSizing::ContentBox, lu(0), &c), lu(200));
+    assert_eq!(
+        resolve_block_size(
+            &Length::percent(25.0),
+            lu(50),
+            lu(800),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(200)
+    );
 }
 
 #[test]
 fn resolve_block_pct_75_of_400() {
     let c = SizeConstraint::unconstrained();
-    assert_eq!(resolve_block_size(&Length::percent(75.0), lu(50), lu(400), BoxSizing::ContentBox, lu(0), &c), lu(300));
+    assert_eq!(
+        resolve_block_size(
+            &Length::percent(75.0),
+            lu(50),
+            lu(400),
+            BoxSizing::ContentBox,
+            lu(0),
+            &c
+        ),
+        lu(300)
+    );
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // §29  FINAL PUSH TO 600+
@@ -5574,7 +7202,14 @@ fn layout_h_601() {
 #[test]
 fn resolve_inline_bb_pct_50() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_inline_size(&Length::percent(50.0), lu(800), lu(800), BoxSizing::BorderBox, lu(40), &c);
+    let result = resolve_inline_size(
+        &Length::percent(50.0),
+        lu(800),
+        lu(800),
+        BoxSizing::BorderBox,
+        lu(40),
+        &c,
+    );
     // 50% of 800 = 400 border-box, content = 400 - 40 = 360
     assert_eq!(result, lu(360));
 }
@@ -5582,7 +7217,14 @@ fn resolve_inline_bb_pct_50() {
 #[test]
 fn resolve_block_bb_pct_50() {
     let c = SizeConstraint::unconstrained();
-    let result = resolve_block_size(&Length::percent(50.0), lu(100), lu(600), BoxSizing::BorderBox, lu(40), &c);
+    let result = resolve_block_size(
+        &Length::percent(50.0),
+        lu(100),
+        lu(600),
+        BoxSizing::BorderBox,
+        lu(40),
+        &c,
+    );
     // 50% of 600 = 300 border-box, content = 300 - 40 = 260
     assert_eq!(result, lu(260));
 }
@@ -5591,19 +7233,36 @@ fn resolve_block_bb_pct_50() {
 fn resolve_inline_bb_auto_no_subtraction() {
     let c = SizeConstraint::unconstrained();
     // auto with border-box still subtracts pb from the fill-available value
-    let result = resolve_inline_size(&Length::auto(), lu(500), lu(500), BoxSizing::BorderBox, lu(40), &c);
+    let result = resolve_inline_size(
+        &Length::auto(),
+        lu(500),
+        lu(500),
+        BoxSizing::BorderBox,
+        lu(40),
+        &c,
+    );
     assert_eq!(result, lu(460));
 }
 
 #[test]
 fn constrain_inline_mid_range() {
-    let c = SizeConstraint { min_inline_size: lu(50), max_inline_size: lu(250), min_block_size: lu(0), max_block_size: LayoutUnit::max() };
+    let c = SizeConstraint {
+        min_inline_size: lu(50),
+        max_inline_size: lu(250),
+        min_block_size: lu(0),
+        max_block_size: LayoutUnit::max(),
+    };
     assert_eq!(constrain_inline_size(lu(150), &c), lu(150));
 }
 
 #[test]
 fn constrain_block_mid_range() {
-    let c = SizeConstraint { min_inline_size: lu(0), max_inline_size: LayoutUnit::max(), min_block_size: lu(30), max_block_size: lu(200) };
+    let c = SizeConstraint {
+        min_inline_size: lu(0),
+        max_inline_size: LayoutUnit::max(),
+        min_block_size: lu(30),
+        max_block_size: lu(200),
+    };
     assert_eq!(constrain_block_size(lu(100), &c), lu(100));
 }
 
@@ -5642,4 +7301,3 @@ fn replaced_w_only_1_px() {
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(1.0));
 }
-

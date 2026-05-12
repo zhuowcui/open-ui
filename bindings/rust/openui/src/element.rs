@@ -72,8 +72,7 @@ impl Element {
     /// reactive text content.
     pub fn create_text_child(&self, text: &str) -> crate::TextNode {
         let c_text = CString::new(text).unwrap_or_default();
-        let raw =
-            unsafe { openui_sys::oui_element_create_text_child(self.raw, c_text.as_ptr()) };
+        let raw = unsafe { openui_sys::oui_element_create_text_child(self.raw, c_text.as_ptr()) };
         assert!(!raw.is_null(), "failed to create text child");
         unsafe { crate::TextNode::from_raw(raw) }
     }
@@ -149,7 +148,9 @@ impl Element {
         if ptr.is_null() {
             None
         } else {
-            let s = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+            let s = unsafe { CStr::from_ptr(ptr) }
+                .to_string_lossy()
+                .into_owned();
             unsafe { openui_sys::oui_free(ptr as *mut c_void) };
             Some(s)
         }
@@ -169,9 +170,7 @@ impl Element {
     /// Remove an HTML attribute.
     pub fn remove_attribute(&self, name: &str) -> Result<(), OuiError> {
         let c_name = CString::new(name).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe {
-            openui_sys::oui_element_remove_attribute(self.raw, c_name.as_ptr())
-        })
+        check_status(unsafe { openui_sys::oui_element_remove_attribute(self.raw, c_name.as_ptr()) })
     }
 
     /// Get the value of an HTML attribute.
@@ -183,7 +182,9 @@ impl Element {
         if ptr.is_null() {
             None
         } else {
-            let s = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+            let s = unsafe { CStr::from_ptr(ptr) }
+                .to_string_lossy()
+                .into_owned();
             unsafe { openui_sys::oui_free(ptr as *mut c_void) };
             Some(s)
         }
@@ -496,12 +497,7 @@ impl Element {
     // ─── Image injection ────────────────────────────────────
 
     /// Set raw RGBA pixel data on an `<img>` element.
-    pub fn set_image_data(
-        &self,
-        pixels: &[u8],
-        width: i32,
-        height: i32,
-    ) -> Result<(), OuiError> {
+    pub fn set_image_data(&self, pixels: &[u8], width: i32, height: i32) -> Result<(), OuiError> {
         check_status(unsafe {
             openui_sys::oui_element_set_image_data(self.raw, pixels.as_ptr(), width, height)
         })
@@ -551,7 +547,10 @@ impl Element {
     /// });
     /// ```
     pub fn clone_ref(&self) -> Element {
-        Element { raw: self.raw, owned: false }
+        Element {
+            raw: self.raw,
+            owned: false,
+        }
     }
 
     /// Remove and destroy all child elements.

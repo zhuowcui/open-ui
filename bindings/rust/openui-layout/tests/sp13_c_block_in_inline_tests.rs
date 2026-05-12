@@ -64,7 +64,11 @@ fn simple_block_in_inline() {
         "Expected at least 3 children for block-in-inline, got {}",
         frag.children.len()
     );
-    assert_eq!(frag.children[1].size.height, lu(50.0), "Block child should be 50px tall");
+    assert_eq!(
+        frag.children[1].size.height,
+        lu(50.0),
+        "Block child should be 50px tall"
+    );
     let first_line_h = frag.children[0].size.height;
     let last_line_h = frag.children[2].size.height;
     let expected_total = first_line_h + lu(50.0) + last_line_h;
@@ -103,7 +107,11 @@ fn multiple_blocks_in_inline() {
 
     let frag = block_layout(&doc, container, &space(500, 500));
 
-    assert!(frag.children.len() >= 5, "Expected at least 5 children, got {}", frag.children.len());
+    assert!(
+        frag.children.len() >= 5,
+        "Expected at least 5 children, got {}",
+        frag.children.len()
+    );
     assert_eq!(frag.children[1].size.height, lu(30.0));
     assert_eq!(frag.children[3].size.height, lu(40.0));
 }
@@ -135,7 +143,11 @@ fn nested_inline_with_block() {
 
     let frag = block_layout(&doc, container, &space(500, 500));
 
-    assert!(frag.children.len() >= 2, "Expected at least 2 children, got {}", frag.children.len());
+    assert!(
+        frag.children.len() >= 2,
+        "Expected at least 2 children, got {}",
+        frag.children.len()
+    );
     let has_60px = frag.children.iter().any(|c| c.size.height == lu(60.0));
     assert!(has_60px, "Should contain 60px block fragment");
 }
@@ -221,11 +233,19 @@ fn block_with_height() {
 
     let frag = block_layout(&doc, container, &space(500, 500));
 
-    assert!(frag.size.height > lu(100.0), "Total height should exceed 100px, got {:?}", frag.size.height);
+    assert!(
+        frag.size.height > lu(100.0),
+        "Total height should exceed 100px, got {:?}",
+        frag.size.height
+    );
     for i in 1..frag.children.len() {
         let prev_bottom = frag.children[i - 1].offset.top + frag.children[i - 1].size.height;
         let curr_top = frag.children[i].offset.top;
-        assert!(curr_top >= prev_bottom, "Children must not overlap at index {}", i);
+        assert!(
+            curr_top >= prev_bottom,
+            "Children must not overlap at index {}",
+            i
+        );
     }
 }
 
@@ -264,9 +284,16 @@ fn block_in_inline_stacking_order() {
     for i in 1..frag.children.len() {
         let prev_end = frag.children[i - 1].offset.top + frag.children[i - 1].size.height;
         let curr_start = frag.children[i].offset.top;
-        assert!(curr_start >= prev_end, "Children must not overlap at index {}", i);
+        assert!(
+            curr_start >= prev_end,
+            "Children must not overlap at index {}",
+            i
+        );
     }
-    assert!(frag.size.height >= lu(50.0), "Total height should be at least 50px");
+    assert!(
+        frag.size.height >= lu(50.0),
+        "Total height should be at least 50px"
+    );
 }
 
 #[test]
@@ -296,8 +323,15 @@ fn block_in_inline_with_padding() {
 
     let frag = block_layout(&doc, container, &space(500, 500));
 
-    assert!(frag.children.len() >= 3, "Expected at least 3 children, got {}", frag.children.len());
+    assert!(
+        frag.children.len() >= 3,
+        "Expected at least 3 children, got {}",
+        frag.children.len()
+    );
     let has_50px = frag.children.iter().any(|c| c.size.height == lu(50.0));
     assert!(has_50px, "Should contain 50px block");
-    assert!(frag.size.height > lu(50.0), "Total height should exceed 50px");
+    assert!(
+        frag.size.height > lu(50.0),
+        "Total height should exceed 50px"
+    );
 }

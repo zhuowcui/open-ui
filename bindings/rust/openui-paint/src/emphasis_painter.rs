@@ -293,12 +293,18 @@ mod tests {
     #[test]
     fn horizontal_over_offset_is_negative() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::HorizontalTb,
         );
-        assert!(offset < 0.0, "over offset should be negative (above baseline)");
+        assert!(
+            offset < 0.0,
+            "over offset should be negative (above baseline)"
+        );
     }
 
     #[test]
@@ -306,7 +312,10 @@ mod tests {
         // font_size=20, emphasis=10, gap=10*0.15=1.5
         // offset = -(20*0.8 + 1.5 + 10*0.5) = -(16 + 1.5 + 5) = -22.5
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             20.0,
             10.0,
             WritingMode::HorizontalTb,
@@ -319,12 +328,18 @@ mod tests {
     #[test]
     fn horizontal_under_offset_is_positive() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: false, right: true },
+            TextEmphasisPosition {
+                over: false,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::HorizontalTb,
         );
-        assert!(offset > 0.0, "under offset should be positive (below baseline)");
+        assert!(
+            offset > 0.0,
+            "under offset should be positive (below baseline)"
+        );
     }
 
     #[test]
@@ -332,7 +347,10 @@ mod tests {
         // font_size=20, emphasis=10, gap=10*0.15=1.5
         // offset = 20*0.2 + 1.5 + 10*0.5 = 4 + 1.5 + 5 = 10.5
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: false, right: true },
+            TextEmphasisPosition {
+                over: false,
+                right: true,
+            },
             20.0,
             10.0,
             WritingMode::HorizontalTb,
@@ -345,7 +363,10 @@ mod tests {
     #[test]
     fn vertical_right_offset_is_positive() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,
@@ -358,7 +379,10 @@ mod tests {
         // font_size=20, emphasis=10, gap=10*0.15=1.5
         // offset = 20*0.6 + 1.5 = 12 + 1.5 = 13.5
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             20.0,
             10.0,
             WritingMode::VerticalRl,
@@ -369,7 +393,10 @@ mod tests {
     #[test]
     fn vertical_left_offset_is_negative() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: false, right: false },
+            TextEmphasisPosition {
+                over: false,
+                right: false,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,
@@ -382,7 +409,10 @@ mod tests {
         // font_size=20, emphasis=10, gap=10*0.15=1.5
         // offset = -(20*0.6 + 1.5 + 10) = -(12 + 1.5 + 10) = -23.5
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: false, right: false },
+            TextEmphasisPosition {
+                over: false,
+                right: false,
+            },
             20.0,
             10.0,
             WritingMode::VerticalRl,
@@ -395,40 +425,61 @@ mod tests {
     #[test]
     fn vertical_lr_uses_vertical_offsets() {
         let offset_vrl = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,
         );
         let offset_vlr = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::VerticalLr,
         );
-        assert_eq!(offset_vrl, offset_vlr, "both vertical modes use vertical offset logic");
+        assert_eq!(
+            offset_vrl, offset_vlr,
+            "both vertical modes use vertical offset logic"
+        );
     }
 
     #[test]
     fn sideways_rl_uses_vertical_offsets() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::SidewaysRl,
         );
-        assert!(offset > 0.0, "sideways-rl is vertical, right should be positive");
+        assert!(
+            offset > 0.0,
+            "sideways-rl is vertical, right should be positive"
+        );
     }
 
     #[test]
     fn sideways_lr_uses_vertical_offsets() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::SidewaysLr,
         );
-        assert!(offset > 0.0, "sideways-lr is vertical, right should be positive");
+        assert!(
+            offset > 0.0,
+            "sideways-lr is vertical, right should be positive"
+        );
     }
 
     // ── compute_emphasis_offset: scaling ──────────────────────────────
@@ -436,13 +487,19 @@ mod tests {
     #[test]
     fn larger_font_produces_larger_over_offset() {
         let small = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             12.0,
             6.0,
             WritingMode::HorizontalTb,
         );
         let large = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             24.0,
             12.0,
             WritingMode::HorizontalTb,
@@ -456,7 +513,10 @@ mod tests {
     #[test]
     fn zero_font_size_produces_zero_offset() {
         let offset = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             0.0,
             0.0,
             WritingMode::HorizontalTb,
@@ -467,13 +527,19 @@ mod tests {
     #[test]
     fn over_and_under_offsets_differ_in_sign() {
         let over = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::HorizontalTb,
         );
         let under = compute_emphasis_offset(
-            TextEmphasisPosition { over: false, right: true },
+            TextEmphasisPosition {
+                over: false,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::HorizontalTb,
@@ -485,13 +551,19 @@ mod tests {
     #[test]
     fn right_and_left_offsets_differ_in_sign() {
         let right = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,
         );
         let left = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: false },
+            TextEmphasisPosition {
+                over: true,
+                right: false,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,
@@ -628,7 +700,10 @@ mod tests {
         let char_advance = 8.0;
         let mark_width = 12.0;
         let offset = (char_advance - mark_width) / 2.0;
-        assert!(offset < 0.0, "mark wider than char should have negative centering offset");
+        assert!(
+            offset < 0.0,
+            "mark wider than char should have negative centering offset"
+        );
     }
 
     // ── should_draw_emphasis_mark filtering (re-exported, verify integration) ──
@@ -693,7 +768,10 @@ mod tests {
 
     #[test]
     fn none_mark_returns_no_character() {
-        assert_eq!(TextEmphasisMark::None.character(TextEmphasisFill::Filled), None);
+        assert_eq!(
+            TextEmphasisMark::None.character(TextEmphasisFill::Filled),
+            None
+        );
     }
 
     #[test]
@@ -719,14 +797,20 @@ mod tests {
         // Over offset must clear the ascender (~80% of font), while under
         // only needs to clear the descender (~20% of font).
         let over_mag = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::HorizontalTb,
         )
         .abs();
         let under_mag = compute_emphasis_offset(
-            TextEmphasisPosition { over: false, right: true },
+            TextEmphasisPosition {
+                over: false,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::HorizontalTb,
@@ -742,14 +826,20 @@ mod tests {
     fn vertical_left_magnitude_exceeds_right() {
         // Left offset includes the emphasis mark width; right does not.
         let right_mag = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: true },
+            TextEmphasisPosition {
+                over: true,
+                right: true,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,
         )
         .abs();
         let left_mag = compute_emphasis_offset(
-            TextEmphasisPosition { over: true, right: false },
+            TextEmphasisPosition {
+                over: true,
+                right: false,
+            },
             16.0,
             8.0,
             WritingMode::VerticalRl,

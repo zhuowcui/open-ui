@@ -237,7 +237,9 @@ impl App {
     /// updated.
     pub fn load_html(&mut self, html: &str) -> &mut Self {
         self.doc.load_html(html).expect("load_html failed");
-        self.doc.update_all().expect("update_all after load_html failed");
+        self.doc
+            .update_all()
+            .expect("update_all after load_html failed");
         self
     }
 
@@ -256,8 +258,7 @@ impl App {
     pub fn inject_css(&mut self, css: &str) -> &mut Self {
         use crate::element::Element;
 
-        let style_el = Element::create(&self.doc, "style")
-            .expect("failed to create style element");
+        let style_el = Element::create(&self.doc, "style").expect("failed to create style element");
         style_el.set_text(css).expect("failed to set style text");
         if let Some(body) = self.doc.body() {
             body.append_child(&style_el);

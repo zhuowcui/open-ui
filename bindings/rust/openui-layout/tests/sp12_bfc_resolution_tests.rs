@@ -1,14 +1,13 @@
 //! SP12 C1 — BFC offset resolution integration tests.
 
+use openui_dom::NodeId;
 use openui_geometry::{BfcOffset, BoxStrut, LayoutUnit, MarginStrut};
 use openui_layout::bfc_resolution::{
-    resolve_bfc_block_offset, should_resolve_bfc_offset,
-    compute_bfc_block_offset_estimate, needs_relayout,
-    BfcBlockOffsetState, PendingFloats,
+    compute_bfc_block_offset_estimate, needs_relayout, resolve_bfc_block_offset,
+    should_resolve_bfc_offset, BfcBlockOffsetState, PendingFloats,
 };
-use openui_layout::exclusions::{ClearType, ExclusionSpace};
 use openui_layout::exclusions::float_utils::UnpositionedFloat;
-use openui_dom::NodeId;
+use openui_layout::exclusions::{ClearType, ExclusionSpace};
 
 fn lu(v: i32) -> LayoutUnit {
     LayoutUnit::from_i32(v)
@@ -22,6 +21,7 @@ fn make_float(origin_block: LayoutUnit, is_left: bool) -> UnpositionedFloat {
         margins: BoxStrut::zero(),
         inline_size: lu(100),
         block_size: lu(50),
+        placement_min_inline_size: None,
         is_left,
     }
 }
@@ -99,7 +99,12 @@ fn multiple_pending_floats_all_positioned() {
 #[test]
 fn border_padding_triggers_resolution() {
     let bp = BoxStrut::new(lu(5), lu(0), lu(0), lu(0));
-    assert!(should_resolve_bfc_offset(&bp, false, ClearType::None, false));
+    assert!(should_resolve_bfc_offset(
+        &bp,
+        false,
+        ClearType::None,
+        false
+    ));
 }
 
 #[test]
@@ -115,9 +120,24 @@ fn content_triggers_resolution() {
 #[test]
 fn clear_triggers_resolution() {
     let bp = BoxStrut::zero();
-    assert!(should_resolve_bfc_offset(&bp, false, ClearType::Left, false));
-    assert!(should_resolve_bfc_offset(&bp, false, ClearType::Right, false));
-    assert!(should_resolve_bfc_offset(&bp, false, ClearType::Both, false));
+    assert!(should_resolve_bfc_offset(
+        &bp,
+        false,
+        ClearType::Left,
+        false
+    ));
+    assert!(should_resolve_bfc_offset(
+        &bp,
+        false,
+        ClearType::Right,
+        false
+    ));
+    assert!(should_resolve_bfc_offset(
+        &bp,
+        false,
+        ClearType::Both,
+        false
+    ));
 }
 
 #[test]

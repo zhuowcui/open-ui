@@ -5,22 +5,17 @@
 
 use std::sync::Arc;
 
-use openui_geometry::{BfcOffset, BfcRect, LayoutUnit, Length};
 use openui_dom::NodeId;
+use openui_geometry::{BfcOffset, BfcRect, LayoutUnit, Length};
 use openui_style::{ComputedStyle, Display, Float, Overflow, Position};
 
+use openui_layout::exclusions::{ExclusionArea, ExclusionType};
 use openui_layout::new_formatting_context::{
-    NewFcLayoutInput,
-    adjust_for_float_avoidance,
-    build_new_fc_constraint_space,
-    compute_float_avoidance_offset,
-    creates_new_formatting_context,
-    layout_new_formatting_context,
-    new_fc_end_margin_strut,
-    resolve_new_fc_margins,
+    adjust_for_float_avoidance, build_new_fc_constraint_space, compute_float_avoidance_offset,
+    creates_new_formatting_context, layout_new_formatting_context, new_fc_end_margin_strut,
+    resolve_new_fc_margins, NewFcLayoutInput,
 };
 use openui_layout::{ConstraintSpace, ConstraintSpaceBuilder, ExclusionSpace};
-use openui_layout::exclusions::{ExclusionArea, ExclusionType};
 
 fn lu(v: i32) -> LayoutUnit {
     LayoutUnit::from_i32(v)

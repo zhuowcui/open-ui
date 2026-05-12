@@ -48,12 +48,18 @@ pub struct BoxShadow {
 #[derive(Debug, Clone)]
 pub struct ComputedStyle {
     // ── Display & Positioning (bit-packed in Blink) ──────────────────
-
     /// CSS `display`. Initial: `inline` (Blink's `EDisplay::kInline`).
     pub display: Display,
 
+    /// CSS `list-style-position`. Initial: `outside`.
+    pub list_style_position: ListStylePosition,
+
     /// CSS `position`. Initial: `static`.
     pub position: Position,
+
+    /// Whether transform-like properties establish a containing block for
+    /// positioned descendants. Set for `will-change: transform` in ported WPTs.
+    pub establishes_transform_containing_block: bool,
 
     /// CSS `float`. Initial: `none`.
     pub float: Float,
@@ -77,6 +83,12 @@ pub struct ComputedStyle {
     /// Initial: `padding-box` (CSS Overflow 3 §3).
     pub overflow_clip_box: OverflowClipBox,
 
+    /// CSS `scrollbar-color` thumb color. Initial: `auto`.
+    pub scrollbar_thumb_color: Option<Color>,
+
+    /// CSS `scrollbar-color` track color. Initial: `auto`.
+    pub scrollbar_track_color: Option<Color>,
+
     /// CSS `box-sizing`. Initial: `content-box`.
     pub box_sizing: BoxSizing,
 
@@ -87,7 +99,6 @@ pub struct ComputedStyle {
     pub direction: Direction,
 
     // ── Sizing (stored as Length in Blink's box_data_) ───────────────
-
     /// CSS `width`. Initial: `auto`.
     pub width: Length,
 
@@ -107,7 +118,6 @@ pub struct ComputedStyle {
     pub max_height: Length,
 
     // ── Margins (stored as Length in Blink's box_data_) ──────────────
-
     /// CSS `margin-top`. Initial: `0px`. Can be `auto`.
     pub margin_top: Length,
     pub margin_right: Length,
@@ -117,7 +127,6 @@ pub struct ComputedStyle {
     // ── Inset properties (position offsets) ──────────────────────────
     // Blink: stored in `surround_data_` as Length values.
     // Initial value is `auto` for all four (CSS 2.1 §9.3.2).
-
     /// CSS `top`. Initial: `auto`. Used with positioned elements.
     pub top: Length,
 
@@ -132,7 +141,6 @@ pub struct ComputedStyle {
 
     // ── Padding (stored as Length in Blink's box_data_) ──────────────
     // Padding cannot be auto or negative per CSS spec.
-
     /// CSS `padding-top`. Initial: `0px`.
     pub padding_top: Length,
     pub padding_right: Length,
@@ -143,7 +151,6 @@ pub struct ComputedStyle {
     // Blink stores border widths as `int` (32-bit), already resolved to pixels.
     // The initial computed value is 3px (medium), but since initial border-style
     // is `none`, the used value is 0. We store the resolved int.
-
     /// Border width in pixels. Blink initial: 3 (but used as 0 when style=none).
     pub border_top_width: i32,
     pub border_right_width: i32,
@@ -151,14 +158,12 @@ pub struct ComputedStyle {
     pub border_left_width: i32,
 
     // ── Border styles ────────────────────────────────────────────────
-
     pub border_top_style: BorderStyle,
     pub border_right_style: BorderStyle,
     pub border_bottom_style: BorderStyle,
     pub border_left_style: BorderStyle,
 
     // ── Border colors (StyleColor — defaults to currentColor) ────────
-
     pub border_top_color: StyleColor,
     pub border_right_color: StyleColor,
     pub border_bottom_color: StyleColor,
@@ -166,7 +171,6 @@ pub struct ComputedStyle {
 
     // ── Outline (Blink: OutlineValue in surround_data_) ─────────────
     // Outline is drawn outside the border box. Does NOT affect layout.
-
     /// CSS `outline-width`. Initial: `3` (medium = 3px, same as border).
     pub outline_width: i32,
 
@@ -182,7 +186,6 @@ pub struct ComputedStyle {
     // ── Border radii (Blink: LengthSize stored in SurroundData) ─────
     // Each corner stores horizontal and vertical radii as `f32` pixels.
     // Initial value: `0.0` (no rounding).
-
     /// CSS `border-top-left-radius`. Initial: `0.0`.
     pub border_top_left_radius: (f32, f32),
     /// CSS `border-top-right-radius`. Initial: `0.0`.
@@ -193,12 +196,14 @@ pub struct ComputedStyle {
     pub border_bottom_left_radius: (f32, f32),
 
     // ── Colors ───────────────────────────────────────────────────────
-
     /// CSS `background-color`. Initial: `transparent`.
     pub background_color: Color,
 
     /// CSS `background-clip`. Initial: `border-box`.
     pub background_clip: BackgroundClip,
+
+    /// CSS `background-attachment`. Initial: `scroll`.
+    pub background_attachment: BackgroundAttachment,
 
     /// CSS `color` (inherited). Initial: `black` (CanvasText in Blink,
     /// but we use black for simplicity — matches most user agents).
@@ -208,19 +213,16 @@ pub struct ComputedStyle {
     pub opacity: f32,
 
     // ── Box shadows ─────────────────────────────────────────────────
-
     /// CSS `box-shadow`. Initial: `none` (empty vec).
     pub box_shadow: Vec<BoxShadow>,
 
     // ── Z-index ──────────────────────────────────────────────────────
-
     /// CSS `z-index`. `None` means `auto` (no stacking context).
     /// Blink stores this as `int` with a separate `HasAutoZIndex()` flag.
     pub z_index: Option<i32>,
 
     // ── Flexbox properties ───────────────────────────────────────────
     // Source: Blink css_properties.json5 + computed_style_base.h
-
     /// CSS `flex-direction`. Initial: `row`. Container property.
     pub flex_direction: FlexDirection,
 
@@ -261,7 +263,6 @@ pub struct ComputedStyle {
     pub order: i32,
 
     // ── Text & Font properties ───────────────────────────────────────
-
     /// CSS `text-align`. Initial: `start`. Inherited.
     pub text_align: TextAlign,
 
@@ -269,7 +270,6 @@ pub struct ComputedStyle {
     pub white_space: WhiteSpace,
 
     // ── Font Properties ──────────────────────────────────────────────
-
     /// CSS `font-family`. Initial: platform-dependent (we use sans-serif).
     pub font_family: FontFamilyList,
 
@@ -322,12 +322,10 @@ pub struct ComputedStyle {
     pub font_variation_settings: Vec<FontVariation>,
 
     // ── Line Height ──────────────────────────────────────────────────
-
     /// CSS `line-height`. Initial: `normal`. Inherited.
     pub line_height: LineHeight,
 
     // ── Text Spacing ─────────────────────────────────────────────────
-
     /// CSS `letter-spacing`. Initial: `normal` (0). Inherited.
     pub letter_spacing: f32,
 
@@ -338,7 +336,6 @@ pub struct ComputedStyle {
     pub text_indent: Length,
 
     // ── Text Layout ──────────────────────────────────────────────────
-
     /// CSS `text-align-last`. Initial: `auto`. Inherited.
     pub text_align_last: TextAlignLast,
 
@@ -371,7 +368,6 @@ pub struct ComputedStyle {
     pub hyphenate_limit_chars: (u8, u8, u8),
 
     // ── Text Decoration ──────────────────────────────────────────────
-
     /// CSS `text-decoration-line`. Initial: `none`.
     pub text_decoration_line: TextDecorationLine,
 
@@ -394,7 +390,6 @@ pub struct ComputedStyle {
     pub text_decoration_skip_ink: TextDecorationSkipInk,
 
     // ── Text Transform ───────────────────────────────────────────────
-
     /// CSS `text-transform`. Initial: `none`. Inherited.
     pub text_transform: TextTransform,
 
@@ -402,12 +397,10 @@ pub struct ComputedStyle {
     pub text_overflow: TextOverflow,
 
     // ── Vertical Alignment ───────────────────────────────────────────
-
     /// CSS `vertical-align`. Initial: `baseline`.
     pub vertical_align: VerticalAlign,
 
     // ── Writing & Bidi ───────────────────────────────────────────────
-
     /// CSS `unicode-bidi`. Initial: `normal`.
     pub unicode_bidi: UnicodeBidi,
 
@@ -418,7 +411,6 @@ pub struct ComputedStyle {
     pub text_orientation: TextOrientation,
 
     // ── Text Rendering ───────────────────────────────────────────────
-
     /// CSS `text-rendering`. Initial: `auto`. Inherited.
     pub text_rendering: TextRendering,
 
@@ -426,19 +418,16 @@ pub struct ComputedStyle {
     pub font_smoothing: FontSmoothing,
 
     // ── Text Shadow ──────────────────────────────────────────────────
-
     /// CSS `text-shadow`. Initial: `none` (empty). Inherited.
     pub text_shadow: Vec<TextShadow>,
 
     // ── Hanging Punctuation ─────────────────────────────────────────
-
     /// CSS `hanging-punctuation`. Initial: `none`. Inherited.
     /// NOTE: Stored for spec compliance; not applied during layout
     /// (matching Chromium, which does not implement this property).
     pub hanging_punctuation: HangingPunctuation,
 
     // ── Text Emphasis ────────────────────────────────────────────────
-
     /// CSS `text-emphasis-style` mark shape. Initial: `none`. Inherited.
     pub text_emphasis_mark: TextEmphasisMark,
 
@@ -452,12 +441,10 @@ pub struct ComputedStyle {
     pub text_emphasis_color: StyleColor,
 
     // ── Text Combine ─────────────────────────────────────────────────
-
     /// CSS `text-combine-upright`. Initial: `none`.
     pub text_combine_upright: TextCombineUpright,
 
     // ── Ruby Annotation ─────────────────────────────────────────────
-
     /// CSS `ruby-position`. Initial: `over`. Inherited.
     /// Determines where annotation text is placed relative to base text.
     pub ruby_position: RubyPosition,
@@ -467,24 +454,20 @@ pub struct ComputedStyle {
     pub ruby_align: RubyAlign,
 
     // ── Tab Size ─────────────────────────────────────────────────────
-
     /// CSS `tab-size`. Initial: `8`. Inherited.
     pub tab_size: TabSize,
 
     // ── Font Palette ─────────────────────────────────────────────────
-
     /// CSS `font-palette`. Initial: `normal`.
     /// Controls which color palette is used for COLR/CPAL color fonts.
     pub font_palette: FontPalette,
 
     // ── Locale ───────────────────────────────────────────────────────
-
     /// BCP 47 locale derived from the `lang` HTML attribute.
     /// Used for locale-dependent shaping (e.g., CJK font selection).
     pub locale: Option<String>,
 
     // ── Fragmentation ───────────────────────────────────────────────
-
     /// CSS `orphans`. Initial: `2`. Inherited.
     /// Minimum number of lines in a block container that must be left
     /// at the bottom of a fragmentainer (before a fragmentation break).
@@ -519,15 +502,20 @@ pub struct ComputedStyle {
     pub box_decoration_break: BoxDecorationBreak,
 
     // ── Multi-column Layout (CSS Multicol Level 1) ──────────────────
-
     /// CSS `column-count`. `None` = `auto` (no explicit count).
     pub column_count: Option<u32>,
 
     /// CSS `column-width`. `None` = `auto` (no explicit width).
     pub column_width: Option<Length>,
 
+    /// CSS `column-height`. `None` = `auto` (no explicit fragmentainer height).
+    pub column_height: Option<Length>,
+
     /// CSS `column-fill`. Initial: `balance`.
     pub column_fill: ColumnFill,
+
+    /// CSS `column-wrap`. Initial: `wrap`.
+    pub column_wrap: ColumnWrap,
 
     /// CSS `column-span`. Initial: `none`.
     pub column_span: ColumnSpan,
@@ -542,14 +530,12 @@ pub struct ComputedStyle {
     pub column_rule_color: StyleColor,
 
     // ── Aspect Ratio (CSS Sizing Level 3) ────────────────────────────
-
     /// CSS `aspect-ratio`. Initial: `auto` (None).
     /// Stores `(width, height)` ratio and an auto flag for
     /// `aspect-ratio: auto 16/9`.
     pub aspect_ratio: Option<AspectRatio>,
 
     // ── First-Line Pseudo (CSS 2.1 §5.12.1) ─────────────────────────
-
     /// Alternate style for `::first-line` pseudo-element.
     /// When `Some`, the first line of the block container uses this
     /// style for text-related properties (font, color, text-decoration, etc.).
@@ -557,13 +543,11 @@ pub struct ComputedStyle {
     pub first_line_style: Option<Box<ComputedStyle>>,
 
     // ── Text Wrap (CSS Text Level 4) ─────────────────────────────────
-
     /// CSS `text-wrap`. Initial: `wrap`. Inherited.
     /// Controls paragraph-level line breaking strategy.
     pub text_wrap: TextWrap,
 
     // ── Initial Letter (CSS Inline Level 3 §5) ──────────────────────
-
     /// CSS `initial-letter`. Initial: `None` (normal).
     /// When `Some`, the first letter is sized/sunk as a drop-cap or raised cap.
     pub initial_letter: Option<InitialLetter>,
@@ -573,14 +557,18 @@ impl ComputedStyle {
     /// Create a style with all initial values matching Blink's defaults.
     pub fn initial() -> Self {
         Self {
-            display: Display::INITIAL,       // inline
-            position: Position::INITIAL,     // static
-            float: Float::INITIAL,           // none
-            clear: Clear::INITIAL,           // none
-            overflow_x: Overflow::INITIAL,   // visible
-            overflow_y: Overflow::INITIAL,   // visible
+            display: Display::INITIAL, // inline
+            list_style_position: ListStylePosition::Outside,
+            position: Position::INITIAL, // static
+            establishes_transform_containing_block: false,
+            float: Float::INITIAL,         // none
+            clear: Clear::INITIAL,         // none
+            overflow_x: Overflow::INITIAL, // visible
+            overflow_y: Overflow::INITIAL, // visible
             overflow_clip_margin: 0.0,
             overflow_clip_box: OverflowClipBox::default(),
+            scrollbar_thumb_color: None,
+            scrollbar_track_color: None,
             box_sizing: BoxSizing::INITIAL,  // content-box
             visibility: Visibility::INITIAL, // visible
             direction: Direction::INITIAL,   // ltr
@@ -589,8 +577,8 @@ impl ComputedStyle {
             height: Length::auto(),
             min_width: Length::auto(),
             min_height: Length::auto(),
-            max_width: Length::none(),   // NOT auto — Blink uses kNone
-            max_height: Length::none(),  // NOT auto
+            max_width: Length::none(),  // NOT auto — Blink uses kNone
+            max_height: Length::none(), // NOT auto
 
             margin_top: Length::zero(),
             margin_right: Length::zero(),
@@ -615,19 +603,19 @@ impl ComputedStyle {
             border_bottom_width: 3,
             border_left_width: 3,
 
-            border_top_style: BorderStyle::INITIAL,    // none
+            border_top_style: BorderStyle::INITIAL, // none
             border_right_style: BorderStyle::INITIAL,
             border_bottom_style: BorderStyle::INITIAL,
             border_left_style: BorderStyle::INITIAL,
 
-            border_top_color: StyleColor::default(),   // currentColor
+            border_top_color: StyleColor::default(), // currentColor
             border_right_color: StyleColor::default(),
             border_bottom_color: StyleColor::default(),
             border_left_color: StyleColor::default(),
 
-            outline_width: 3,                          // medium (3px)
-            outline_style: BorderStyle::INITIAL,       // none
-            outline_color: StyleColor::default(),      // currentColor
+            outline_width: 3,                     // medium (3px)
+            outline_style: BorderStyle::INITIAL,  // none
+            outline_color: StyleColor::default(), // currentColor
             outline_offset: 0,
 
             border_top_left_radius: (0.0, 0.0),
@@ -637,37 +625,38 @@ impl ComputedStyle {
 
             background_color: Color::TRANSPARENT,
             background_clip: BackgroundClip::BorderBox,
+            background_attachment: BackgroundAttachment::Scroll,
             color: Color::BLACK,
             opacity: 1.0,
             box_shadow: Vec::new(),
             z_index: None, // auto
 
             // Flexbox — container properties
-            flex_direction: FlexDirection::INITIAL,   // row
-            flex_wrap: FlexWrap::INITIAL,             // nowrap
+            flex_direction: FlexDirection::INITIAL,     // row
+            flex_wrap: FlexWrap::INITIAL,               // nowrap
             justify_content: ContentAlignment::INITIAL, // normal
             align_items: ItemAlignment::INITIAL_ITEMS,  // normal (→ stretch in flex)
             align_content: ContentAlignment::INITIAL,   // normal
-            row_gap: None,     // normal = 0px for flex
-            column_gap: None,  // normal = 0px for flex
+            row_gap: None,                              // normal = 0px for flex
+            column_gap: None,                           // normal = 0px for flex
 
             // Flexbox — item properties
             flex_grow: 0.0,
             flex_shrink: 1.0,
             flex_basis: Length::auto(),
-            align_self: ItemAlignment::INITIAL_SELF,  // auto (→ inherits align-items)
+            align_self: ItemAlignment::INITIAL_SELF, // auto (→ inherits align-items)
             order: 0,
 
             // Text & Font — inherited text properties
-            text_align: TextAlign::INITIAL,         // start
-            white_space: WhiteSpace::INITIAL,       // normal
+            text_align: TextAlign::INITIAL,   // start
+            white_space: WhiteSpace::INITIAL, // normal
 
             // Font properties
-            font_family: FontFamilyList::default(),      // sans-serif
-            font_size: 16.0,                              // CSS medium
-            font_weight: FontWeight::NORMAL,              // 400
+            font_family: FontFamilyList::default(), // sans-serif
+            font_size: 16.0,                        // CSS medium
+            font_weight: FontWeight::NORMAL,        // 400
             font_style: FontStyleEnum::Normal,
-            font_stretch: FontStretch::NORMAL,            // 100%
+            font_stretch: FontStretch::NORMAL, // 100%
             font_variant_caps: FontVariantCaps::Normal,
             font_variant_ligatures: FontVariantLigatures::NORMAL,
             font_variant_numeric: FontVariantNumeric::NORMAL,
@@ -690,34 +679,34 @@ impl ComputedStyle {
             text_indent: Length::zero(),
 
             // Text layout
-            text_align_last: TextAlignLast::INITIAL,     // auto
-            text_justify: TextJustify::INITIAL,           // auto
-            word_break: WordBreak::INITIAL,               // normal
-            overflow_wrap: OverflowWrap::INITIAL,         // normal
-            line_break: LineBreak::INITIAL,               // auto
-            hyphens: Hyphens::INITIAL,                    // manual
-            hyphenate_limit_chars: (5, 2, 2),              // Blink defaults
+            text_align_last: TextAlignLast::INITIAL, // auto
+            text_justify: TextJustify::INITIAL,      // auto
+            word_break: WordBreak::INITIAL,          // normal
+            overflow_wrap: OverflowWrap::INITIAL,    // normal
+            line_break: LineBreak::INITIAL,          // auto
+            hyphens: Hyphens::INITIAL,               // manual
+            hyphenate_limit_chars: (5, 2, 2),        // Blink defaults
 
             // Text decoration
             text_decoration_line: TextDecorationLine::NONE,
-            text_decoration_style: TextDecorationStyle::INITIAL,  // solid
+            text_decoration_style: TextDecorationStyle::INITIAL, // solid
             text_decoration_color: StyleColor::CurrentColor,
             text_decoration_thickness: TextDecorationThickness::Auto,
             text_underline_offset: Length::auto(),
-            text_underline_position: TextUnderlinePosition::INITIAL,  // auto
+            text_underline_position: TextUnderlinePosition::INITIAL, // auto
             text_decoration_skip_ink: TextDecorationSkipInk::INITIAL, // auto
 
             // Text transform
-            text_transform: TextTransform::INITIAL,       // none
-            text_overflow: TextOverflow::INITIAL,          // clip
+            text_transform: TextTransform::INITIAL, // none
+            text_overflow: TextOverflow::INITIAL,   // clip
 
             // Vertical alignment
             vertical_align: VerticalAlign::Baseline,
 
             // Writing & bidi
-            unicode_bidi: UnicodeBidi::INITIAL,            // normal
-            writing_mode: WritingMode::INITIAL,            // horizontal-tb
-            text_orientation: TextOrientation::INITIAL,    // mixed
+            unicode_bidi: UnicodeBidi::INITIAL,         // normal
+            writing_mode: WritingMode::INITIAL,         // horizontal-tb
+            text_orientation: TextOrientation::INITIAL, // mixed
 
             // Text rendering
             text_rendering: TextRendering::Auto,
@@ -730,53 +719,55 @@ impl ComputedStyle {
             hanging_punctuation: HangingPunctuation::NONE,
 
             // Text emphasis
-            text_emphasis_mark: TextEmphasisMark::INITIAL,       // none
-            text_emphasis_fill: TextEmphasisFill::INITIAL,       // filled
+            text_emphasis_mark: TextEmphasisMark::INITIAL, // none
+            text_emphasis_fill: TextEmphasisFill::INITIAL, // filled
             text_emphasis_position: TextEmphasisPosition::INITIAL, // over right
             text_emphasis_color: StyleColor::CurrentColor,
-            text_combine_upright: TextCombineUpright::INITIAL,   // none
+            text_combine_upright: TextCombineUpright::INITIAL, // none
 
             // Ruby annotation
-            ruby_position: RubyPosition::INITIAL,                   // over
-            ruby_align: RubyAlign::INITIAL,                         // space-around
+            ruby_position: RubyPosition::INITIAL, // over
+            ruby_align: RubyAlign::INITIAL,       // space-around
 
             // Tab size
             tab_size: TabSize::Spaces(8),
 
             // Font palette
-            font_palette: FontPalette::INITIAL,  // normal
+            font_palette: FontPalette::INITIAL, // normal
 
             // Locale
             locale: None,
 
             // Fragmentation
-            orphans: 2,                            // CSS initial
-            widows: 2,                             // CSS initial
-            break_before: BreakValue::INITIAL,     // auto
-            break_after: BreakValue::INITIAL,      // auto
-            break_inside: BreakInside::INITIAL,    // auto
+            orphans: 2,                                        // CSS initial
+            widows: 2,                                         // CSS initial
+            break_before: BreakValue::INITIAL,                 // auto
+            break_after: BreakValue::INITIAL,                  // auto
+            break_inside: BreakInside::INITIAL,                // auto
             box_decoration_break: BoxDecorationBreak::INITIAL, // slice
 
             // Multi-column layout
-            column_count: None,                        // auto
-            column_width: None,                        // auto
-            column_fill: ColumnFill::INITIAL,          // balance
-            column_span: ColumnSpan::INITIAL,          // none
-            column_rule_width: 3,                      // medium (3px)
-            column_rule_style: BorderStyle::INITIAL,   // none
-            column_rule_color: StyleColor::default(),  // currentColor
+            column_count: None,                       // auto
+            column_width: None,                       // auto
+            column_height: None,                      // auto
+            column_fill: ColumnFill::INITIAL,         // balance
+            column_wrap: ColumnWrap::INITIAL,         // wrap
+            column_span: ColumnSpan::INITIAL,         // none
+            column_rule_width: 3,                     // medium (3px)
+            column_rule_style: BorderStyle::INITIAL,  // none
+            column_rule_color: StyleColor::default(), // currentColor
 
             // Aspect ratio
-            aspect_ratio: None,                        // auto (no specified ratio)
+            aspect_ratio: None, // auto (no specified ratio)
 
             // First-line pseudo
-            first_line_style: None,                    // no ::first-line
+            first_line_style: None, // no ::first-line
 
             // Text wrap
-            text_wrap: TextWrap::INITIAL,              // wrap
+            text_wrap: TextWrap::INITIAL, // wrap
 
             // Initial letter
-            initial_letter: None,                      // normal (no drop-cap)
+            initial_letter: None, // normal (no drop-cap)
         }
     }
 
@@ -786,28 +777,48 @@ impl ComputedStyle {
     /// This matches Blink's "used value" computation.
     #[inline]
     pub fn effective_border_top(&self) -> i32 {
-        if self.border_top_style.has_visible_border() { self.border_top_width } else { 0 }
+        if self.border_top_style.has_visible_border() {
+            self.border_top_width
+        } else {
+            0
+        }
     }
 
     #[inline]
     pub fn effective_border_right(&self) -> i32 {
-        if self.border_right_style.has_visible_border() { self.border_right_width } else { 0 }
+        if self.border_right_style.has_visible_border() {
+            self.border_right_width
+        } else {
+            0
+        }
     }
 
     #[inline]
     pub fn effective_border_bottom(&self) -> i32 {
-        if self.border_bottom_style.has_visible_border() { self.border_bottom_width } else { 0 }
+        if self.border_bottom_style.has_visible_border() {
+            self.border_bottom_width
+        } else {
+            0
+        }
     }
 
     #[inline]
     pub fn effective_border_left(&self) -> i32 {
-        if self.border_left_style.has_visible_border() { self.border_left_width } else { 0 }
+        if self.border_left_style.has_visible_border() {
+            self.border_left_width
+        } else {
+            0
+        }
     }
 
     /// Effective outline width: 0 if outline-style is none/hidden.
     #[inline]
     pub fn effective_outline_width(&self) -> i32 {
-        if self.outline_style.has_visible_border() { self.outline_width } else { 0 }
+        if self.outline_style.has_visible_border() {
+            self.outline_width
+        } else {
+            0
+        }
     }
 
     /// True if this element has a visible outline.
@@ -861,7 +872,9 @@ impl ComputedStyle {
 }
 
 impl Default for ComputedStyle {
-    fn default() -> Self { Self::initial() }
+    fn default() -> Self {
+        Self::initial()
+    }
 }
 
 #[cfg(test)]
@@ -906,6 +919,8 @@ mod tests {
         // Overflow
         assert_eq!(s.overflow_x, Overflow::Visible);
         assert_eq!(s.overflow_clip_margin, 0.0);
+        assert_eq!(s.scrollbar_thumb_color, None);
+        assert_eq!(s.scrollbar_track_color, None);
 
         // Flexbox — container properties
         assert_eq!(s.flex_direction, FlexDirection::Row);
@@ -1031,9 +1046,24 @@ mod tests {
 
     #[test]
     fn hanging_punctuation_equality() {
-        let a = HangingPunctuation { first: true, last: false, force_end: false, allow_end: false };
-        let b = HangingPunctuation { first: true, last: false, force_end: false, allow_end: false };
-        let c = HangingPunctuation { first: false, last: true, force_end: false, allow_end: false };
+        let a = HangingPunctuation {
+            first: true,
+            last: false,
+            force_end: false,
+            allow_end: false,
+        };
+        let b = HangingPunctuation {
+            first: true,
+            last: false,
+            force_end: false,
+            allow_end: false,
+        };
+        let c = HangingPunctuation {
+            first: false,
+            last: true,
+            force_end: false,
+            allow_end: false,
+        };
         assert_eq!(a, b);
         assert_ne!(a, c);
     }
@@ -1084,7 +1114,10 @@ mod tests {
     #[test]
     fn text_emphasis_position_under_left() {
         let mut s = ComputedStyle::initial();
-        s.text_emphasis_position = TextEmphasisPosition { over: false, right: false };
+        s.text_emphasis_position = TextEmphasisPosition {
+            over: false,
+            right: false,
+        };
         assert!(!s.text_emphasis_position.over);
         assert!(!s.text_emphasis_position.right);
     }

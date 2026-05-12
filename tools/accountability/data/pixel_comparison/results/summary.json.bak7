@@ -1,0 +1,22 @@
+{
+  "total": 2,
+  "passed": 0,
+  "failed": 2,
+  "errors": 0,
+  "near_miss_aa": 2,
+  "aa_threshold_pct": 0.5,
+  "reference_tests": 1,
+  "reference_tests_pass": 0,
+  "tests": [
+    {
+      "id": "wpt/css_overflow/overflow-clip-margin-010-ref",
+      "status": "fail",
+      "mismatch_pct": 0.007219
+    },
+    {
+      "id": "wpt/css_overflow/overflow-clip-margin-010",
+      "status": "fail",
+      "mismatch_pct": 0.007219
+    }
+  ]
+}

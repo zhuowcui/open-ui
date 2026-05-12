@@ -58,13 +58,18 @@ impl<T: 'static> Signal<T> {
     pub fn update(&self, f: impl FnOnce(&mut T)) {
         RUNTIME.with(|rt| {
             let mut rt = rt.borrow_mut();
-            let slot = rt.signals.get_mut(self.id.index as usize)
+            let slot = rt
+                .signals
+                .get_mut(self.id.index as usize)
                 .and_then(|s| s.as_mut())
                 .expect("signal has been disposed");
             if slot.generation != self.id.generation {
                 panic!("signal generation mismatch");
             }
-            let val = slot.value.downcast_mut::<T>().expect("signal type mismatch");
+            let val = slot
+                .value
+                .downcast_mut::<T>()
+                .expect("signal type mismatch");
             f(val);
             let subs = slot.subscribers.clone();
             rt.enqueue_effects(subs);

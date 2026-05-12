@@ -7,8 +7,8 @@
 //! - Row vs Column direction
 //! - Single-line vs Multi-line
 
-use openui_geometry::{LayoutUnit, MinMaxSizes};
 use super::item::FlexItem;
+use openui_geometry::{LayoutUnit, MinMaxSizes};
 
 /// Compute min-content and max-content sizes for a flex container.
 ///
@@ -44,14 +44,19 @@ fn compute_row_min_max(
     is_multi_line: bool,
     gap_between_items: LayoutUnit,
 ) -> MinMaxSizes {
-    let num_gaps = if items.len() > 1 { items.len() as i32 - 1 } else { 0 };
+    let num_gaps = if items.len() > 1 {
+        items.len() as i32 - 1
+    } else {
+        0
+    };
     let total_gap = gap_between_items * num_gaps;
 
     let mut min_content = LayoutUnit::zero();
     let mut max_content = LayoutUnit::zero();
 
     for item in items {
-        let item_min = item.main_axis_min_max.min + item.main_axis_border_padding
+        let item_min = item.main_axis_min_max.min
+            + item.main_axis_border_padding
             + item.main_axis_margin_extent();
         let item_max = item.hypothetical_main_axis_margin_box_size();
 
@@ -110,11 +115,11 @@ fn compute_column_min_max(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use openui_geometry::BoxStrut;
-    use openui_dom::NodeId;
-    use openui_style::ItemPosition;
     use super::super::item::FlexerState;
+    use super::*;
+    use openui_dom::NodeId;
+    use openui_geometry::BoxStrut;
+    use openui_style::{ItemPosition, OverflowAlignment};
 
     fn make_item(base: i32, min: i32, max: i32) -> FlexItem {
         FlexItem {
@@ -132,6 +137,7 @@ mod tests {
             margin: BoxStrut::zero(),
             main_axis_auto_margin_count: 0,
             alignment: ItemPosition::Stretch,
+            alignment_overflow: OverflowAlignment::Default,
             flexed_content_size: LayoutUnit::zero(),
             state: FlexerState::None,
             free_space_fraction: 0.0,

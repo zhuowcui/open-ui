@@ -7,8 +7,8 @@
 //! available main-axis space, distribute extra space (grow) or absorb
 //! overflow (shrink) among the items.
 
-use openui_geometry::LayoutUnit;
 use super::item::{FlexItem, FlexerState};
+use openui_geometry::LayoutUnit;
 
 /// Mode of operation for the flexer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -73,8 +73,10 @@ impl<'a> LineFlexer<'a> {
             };
 
             let should_freeze = flex_factor == 0.0
-                || (mode == FlexMode::Grow && item.base_content_size > item.hypothetical_content_size)
-                || (mode == FlexMode::Shrink && item.base_content_size < item.hypothetical_content_size);
+                || (mode == FlexMode::Grow
+                    && item.base_content_size > item.hypothetical_content_size)
+                || (mode == FlexMode::Shrink
+                    && item.base_content_size < item.hypothetical_content_size);
 
             if should_freeze {
                 item.state = FlexerState::Frozen;
@@ -174,9 +176,8 @@ impl<'a> LineFlexer<'a> {
         // If total_flex_factor < 1.0, limit distribution.
         let mut used_free_space = self.free_space;
         if self.total_flex_factor > 0.0 && self.total_flex_factor < 1.0 {
-            let limited = LayoutUnit::from_f64(
-                self.initial_free_space.to_f64() * self.total_flex_factor
-            );
+            let limited =
+                LayoutUnit::from_f64(self.initial_free_space.to_f64() * self.total_flex_factor);
             match self.mode {
                 FlexMode::Grow => {
                     if limited < self.free_space {
@@ -217,7 +218,9 @@ impl<'a> LineFlexer<'a> {
         let mut cumulative_fraction: f64 = 0.0;
 
         // Collect unfrozen indices in reverse order
-        let unfrozen_reversed: Vec<usize> = self.line_indices.iter()
+        let unfrozen_reversed: Vec<usize> = self
+            .line_indices
+            .iter()
             .rev()
             .copied()
             .filter(|&idx| self.items[idx].state != FlexerState::Frozen)
@@ -296,9 +299,9 @@ impl<'a> LineFlexer<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use openui_geometry::MinMaxSizes;
     use openui_dom::NodeId;
-    use openui_style::ItemPosition;
+    use openui_geometry::MinMaxSizes;
+    use openui_style::{ItemPosition, OverflowAlignment};
 
     fn make_test_item(index: usize, base: i32, grow: f32, shrink: f32) -> FlexItem {
         FlexItem {
@@ -313,6 +316,7 @@ mod tests {
             margin: openui_geometry::BoxStrut::zero(),
             main_axis_auto_margin_count: 0,
             alignment: ItemPosition::Stretch,
+            alignment_overflow: OverflowAlignment::Default,
             flexed_content_size: LayoutUnit::zero(),
             state: FlexerState::None,
             free_space_fraction: 0.0,
@@ -332,7 +336,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(400); // 200 extra space
         let sum_hyp = LayoutUnit::from_i32(200);
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // Each gets 100 extra → 200 each
@@ -351,7 +361,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(400);
         let sum_hyp = LayoutUnit::zero();
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // Proportions: 1:2:1 of 400 = 100:200:100
@@ -370,7 +386,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(300); // 100 overflow
         let sum_hyp = LayoutUnit::from_i32(400);
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // Equal base sizes → equal shrink: each loses 50 → 150 each
@@ -393,7 +415,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(300);
         let sum_hyp = LayoutUnit::from_i32(400);
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         assert_eq!(items[0].flexed_content_size, LayoutUnit::from_i32(225));
@@ -417,7 +445,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(300);
         let sum_hyp = LayoutUnit::from_i32(400);
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         assert_eq!(items[0].flexed_content_size, LayoutUnit::from_i32(180));
@@ -434,7 +468,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(400);
         let sum_hyp = LayoutUnit::from_i32(200);
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // No grow/shrink → keep hypothetical sizes
@@ -472,7 +512,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(400); // 200 extra
         let sum_hyp = LayoutUnit::from_i32(200);
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // total_flex_factor = 0.5, limit = 200 * 0.5 = 100
@@ -494,7 +540,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(400);
         let sum_hyp = LayoutUnit::zero();
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // Item 0 frozen at max=100, Item 1 gets remaining 300
@@ -516,7 +568,13 @@ mod tests {
         let container_size = LayoutUnit::from_i32(600);
         let sum_hyp = LayoutUnit::zero();
 
-        let mut flexer = LineFlexer::new(&mut items, &indices, container_size, sum_hyp, LayoutUnit::zero());
+        let mut flexer = LineFlexer::new(
+            &mut items,
+            &indices,
+            container_size,
+            sum_hyp,
+            LayoutUnit::zero(),
+        );
         flexer.run();
 
         // Round 1: each gets 200. Item 0 clamped to 50, Item 1 clamped to 100.

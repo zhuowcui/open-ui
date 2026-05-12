@@ -5,12 +5,12 @@
 
 use openui_geometry::LayoutUnit;
 use openui_layout::fragmentation::{
-    BlockBreakToken, BreakAppeal, BreakPoint, BreakToken, ChildBreakInfo,
-    FragmentainerSpace, find_best_break_point, should_break_before, should_break_after,
-    break_before_appeal, break_after_appeal, join_break_between,
+    break_after_appeal, break_before_appeal, find_best_break_point, join_break_between,
+    should_break_after, should_break_before, BlockBreakToken, BreakAppeal, BreakPoint, BreakToken,
+    ChildBreakInfo, FragmentainerSpace,
 };
 use openui_layout::BreakBetween;
-use openui_style::{BreakValue, BreakInside};
+use openui_style::{BreakInside, BreakValue};
 
 // ── FragmentainerSpace ──────────────────────────────────────────────────
 
@@ -88,7 +88,12 @@ fn break_appeal_full_chain() {
         BreakAppeal::Perfect,
     ];
     for window in appeals.windows(2) {
-        assert!(window[0] < window[1], "{:?} should be < {:?}", window[0], window[1]);
+        assert!(
+            window[0] < window[1],
+            "{:?} should be < {:?}",
+            window[0],
+            window[1]
+        );
     }
 }
 
@@ -132,12 +137,14 @@ fn break_token_chaining_parent_and_child() {
 #[test]
 fn break_token_multiple_children() {
     let mut parent = BlockBreakToken::new(3, LayoutUnit::from_i32(500));
-    parent.add_child_token(BreakToken::Block(
-        BlockBreakToken::new(0, LayoutUnit::from_i32(50)),
-    ));
-    parent.add_child_token(BreakToken::Block(
-        BlockBreakToken::new(1, LayoutUnit::from_i32(100)),
-    ));
+    parent.add_child_token(BreakToken::Block(BlockBreakToken::new(
+        0,
+        LayoutUnit::from_i32(50),
+    )));
+    parent.add_child_token(BreakToken::Block(BlockBreakToken::new(
+        1,
+        LayoutUnit::from_i32(100),
+    )));
     assert_eq!(parent.child_break_tokens.len(), 2);
 }
 
@@ -289,14 +296,23 @@ fn should_break_after_non_forced_values() {
 
 #[test]
 fn break_before_appeal_forced() {
-    assert_eq!(break_before_appeal(BreakValue::Always), BreakAppeal::Perfect);
+    assert_eq!(
+        break_before_appeal(BreakValue::Always),
+        BreakAppeal::Perfect
+    );
     assert_eq!(break_before_appeal(BreakValue::Page), BreakAppeal::Perfect);
 }
 
 #[test]
 fn break_before_appeal_avoid() {
-    assert_eq!(break_before_appeal(BreakValue::Avoid), BreakAppeal::LastResort);
-    assert_eq!(break_before_appeal(BreakValue::AvoidPage), BreakAppeal::LastResort);
+    assert_eq!(
+        break_before_appeal(BreakValue::Avoid),
+        BreakAppeal::LastResort
+    );
+    assert_eq!(
+        break_before_appeal(BreakValue::AvoidPage),
+        BreakAppeal::LastResort
+    );
 }
 
 #[test]
@@ -329,7 +345,10 @@ fn legacy_page_break_before_auto() {
 #[test]
 fn legacy_page_break_left_right() {
     assert_eq!(BreakValue::from_legacy_page_break("left"), BreakValue::Left);
-    assert_eq!(BreakValue::from_legacy_page_break("right"), BreakValue::Right);
+    assert_eq!(
+        BreakValue::from_legacy_page_break("right"),
+        BreakValue::Right
+    );
 }
 
 #[test]

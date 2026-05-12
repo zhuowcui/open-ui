@@ -28,7 +28,7 @@ use skia_safe::Surface;
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::Length;
-use openui_paint::{render_to_surface, render_to_png};
+use openui_paint::{render_to_png, render_to_surface};
 use openui_style::*;
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -81,7 +81,9 @@ fn surface_to_rgba(surface: &mut Surface) -> (u32, u32, Vec<u8>) {
 fn load_png_rgba(path: &Path) -> Result<(u32, u32, Vec<u8>), String> {
     let file = std::fs::File::open(path).map_err(|e| format!("open {:?}: {}", path, e))?;
     let decoder = png::Decoder::new(file);
-    let mut reader = decoder.read_info().map_err(|e| format!("png read {:?}: {}", path, e))?;
+    let mut reader = decoder
+        .read_info()
+        .map_err(|e| format!("png read {:?}: {}", path, e))?;
     let mut buf = vec![0u8; reader.output_buffer_size()];
     let info = reader
         .next_frame(&mut buf)
@@ -107,11 +109,7 @@ fn load_png_rgba(path: &Path) -> Result<(u32, u32, Vec<u8>), String> {
 }
 
 /// Compare two RGBA images pixel-by-pixel with per-channel tolerance.
-fn pixel_diff(
-    a: &(u32, u32, Vec<u8>),
-    b: &(u32, u32, Vec<u8>),
-    tolerance: u8,
-) -> PixelDiff {
+fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
     if a.0 != b.0 || a.1 != b.1 {
         return PixelDiff {
             total_pixels: (a.0 as usize) * (a.1 as usize),
@@ -206,8 +204,7 @@ fn save_diff_image(
 
 /// Write RGBA pixels as a PNG file using the `png` crate.
 fn write_png(path: &Path, width: u32, height: u32, rgba: &[u8]) -> Result<(), String> {
-    let file =
-        std::fs::File::create(path).map_err(|e| format!("create {:?}: {}", path, e))?;
+    let file = std::fs::File::create(path).map_err(|e| format!("create {:?}: {}", path, e))?;
     let ref mut w = std::io::BufWriter::new(file);
     let mut encoder = png::Encoder::new(w, width, height);
     encoder.set_color(png::ColorType::Rgba);
@@ -336,8 +333,7 @@ fn setup_viewport(doc: &mut Document) -> NodeId {
     doc.node_mut(vp).style.padding_right = Length::px(20.0);
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
-    doc.node_mut(vp).style.font_family =
-        FontFamilyList::single("DejaVu Sans");
+    doc.node_mut(vp).style.font_family = FontFamilyList::single("DejaVu Sans");
     doc.node_mut(vp).style.font_size = 16.0;
     doc.node_mut(vp).style.color = Color::BLACK;
     vp
@@ -396,10 +392,7 @@ fn inherit_text_style(doc: &mut Document, parent: NodeId, child: NodeId) {
 
 /// Render a Document, save the PNG, compare with Chromium reference if available.
 /// Returns the diff result (or None if no reference exists).
-fn render_and_compare(
-    doc: &Document,
-    test_name: &str,
-) -> (Surface, Option<PixelDiff>) {
+fn render_and_compare(doc: &Document, test_name: &str) -> (Surface, Option<PixelDiff>) {
     // Ensure output directory exists
     let out_path = openui_render_path(test_name);
     if let Some(parent) = out_path.parent() {
@@ -407,8 +400,8 @@ fn render_and_compare(
     }
 
     // Render
-    let mut surface = render_to_surface(doc, SURFACE_W, SURFACE_H)
-        .expect("render_to_surface failed");
+    let mut surface =
+        render_to_surface(doc, SURFACE_W, SURFACE_H).expect("render_to_surface failed");
 
     // Save our render
     render_to_png(doc, SURFACE_W, SURFACE_H, out_path.to_str().unwrap())
@@ -466,48 +459,89 @@ fn build_basic_text() -> Document {
     inherit_text_style(&mut doc, vp, container);
 
     // 12px normal
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog. 12px normal.",
-        |s| { s.font_size = 12.0; });
+        |s| {
+            s.font_size = 12.0;
+        },
+    );
 
     // 16px normal
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog. 16px normal.",
-        |s| { s.font_size = 16.0; });
+        |s| {
+            s.font_size = 16.0;
+        },
+    );
 
     // 24px normal
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog. 24px normal.",
-        |s| { s.font_size = 24.0; });
+        |s| {
+            s.font_size = 24.0;
+        },
+    );
 
     // 36px normal
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps. 36px.",
-        |s| { s.font_size = 36.0; });
+        |s| {
+            s.font_size = 36.0;
+        },
+    );
 
     // 16px bold
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog. 16px bold.",
-        |s| { s.font_size = 16.0; s.font_weight = FontWeight::BOLD; });
+        |s| {
+            s.font_size = 16.0;
+            s.font_weight = FontWeight::BOLD;
+        },
+    );
 
     // 16px italic
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog. 16px italic.",
-        |s| { s.font_size = 16.0; s.font_style = FontStyleEnum::Italic; });
+        |s| {
+            s.font_size = 16.0;
+            s.font_style = FontStyleEnum::Italic;
+        },
+    );
 
     // 24px bold
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog. 24px bold.",
-        |s| { s.font_size = 24.0; s.font_weight = FontWeight::BOLD; });
+        |s| {
+            s.font_size = 24.0;
+            s.font_weight = FontWeight::BOLD;
+        },
+    );
 
     // 24px bold italic
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps. 24px bold italic.",
         |s| {
             s.font_size = 24.0;
             s.font_weight = FontWeight::BOLD;
             s.font_style = FontStyleEnum::Italic;
-        });
+        },
+    );
 
     doc
 }
@@ -542,7 +576,8 @@ fn build_line_breaking() -> Document {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
 
-    let long_text = "The quick brown fox jumps over the lazy dog repeatedly until it wraps many times.";
+    let long_text =
+        "The quick brown fox jumps over the lazy dog repeatedly until it wraps many times.";
 
     // Helper to set container padding
     let make_container = |doc: &mut Document, parent: NodeId, width: f32| -> NodeId {
@@ -570,13 +605,19 @@ fn build_line_breaking() -> Document {
 
     // Long word in narrow container
     let c = make_container(&mut doc, vp, 200.0);
-    add_text(&mut doc, c,
-        "Supercalifragilisticexpialidocious is a very long word that tests overflow behavior.");
+    add_text(
+        &mut doc,
+        c,
+        "Supercalifragilisticexpialidocious is a very long word that tests overflow behavior.",
+    );
 
     // Short words in 200px
     let c = make_container(&mut doc, vp, 200.0);
-    add_text(&mut doc, c,
-        "Short words in a box with two hundred pixel width container for testing.");
+    add_text(
+        &mut doc,
+        c,
+        "Short words in a box with two hundred pixel width container for testing.",
+    );
 
     doc
 }
@@ -614,7 +655,12 @@ fn build_text_alignment() -> Document {
 
     let align_text = "The quick brown fox jumps over the lazy dog multiple times to wrap.";
 
-    for &align in &[TextAlign::Left, TextAlign::Right, TextAlign::Center, TextAlign::Justify] {
+    for &align in &[
+        TextAlign::Left,
+        TextAlign::Right,
+        TextAlign::Center,
+        TextAlign::Justify,
+    ] {
         let label = match align {
             TextAlign::Left => "Left aligned text. ",
             TextAlign::Right => "Right aligned text. ",
@@ -738,78 +784,116 @@ fn build_text_decoration() -> Document {
     inherit_text_style(&mut doc, vp, container);
 
     // Underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Underline decoration on this text.",
-        |s| { s.text_decoration_line = TextDecorationLine::UNDERLINE; });
+        |s| {
+            s.text_decoration_line = TextDecorationLine::UNDERLINE;
+        },
+    );
 
     // Overline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Overline decoration on this text.",
-        |s| { s.text_decoration_line = TextDecorationLine::OVERLINE; });
+        |s| {
+            s.text_decoration_line = TextDecorationLine::OVERLINE;
+        },
+    );
 
     // Line-through
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Line-through decoration on this text.",
-        |s| { s.text_decoration_line = TextDecorationLine::LINE_THROUGH; });
+        |s| {
+            s.text_decoration_line = TextDecorationLine::LINE_THROUGH;
+        },
+    );
 
     // Solid underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Solid underline style on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_style = TextDecorationStyle::Solid;
-        });
+        },
+    );
 
     // Double underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Double underline style on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_style = TextDecorationStyle::Double;
-        });
+        },
+    );
 
     // Dotted underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Dotted underline style on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_style = TextDecorationStyle::Dotted;
-        });
+        },
+    );
 
     // Dashed underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Dashed underline style on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_style = TextDecorationStyle::Dashed;
-        });
+        },
+    );
 
     // Wavy underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Wavy underline style on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_style = TextDecorationStyle::Wavy;
-        });
+        },
+    );
 
     // Red underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Red underline color on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_color = StyleColor::Resolved(Color::RED);
-        });
+        },
+    );
 
     // Blue underline
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Blue underline color on this text.",
         |s| {
             s.text_decoration_line = TextDecorationLine::UNDERLINE;
             s.text_decoration_color = StyleColor::Resolved(Color::BLUE);
-        });
+        },
+    );
 
     // All three combined
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Underline overline and line-through combined.",
         |s| {
             s.text_decoration_line = TextDecorationLine(
@@ -817,7 +901,8 @@ fn build_text_decoration() -> Document {
                     | TextDecorationLine::OVERLINE.0
                     | TextDecorationLine::LINE_THROUGH.0,
             );
-        });
+        },
+    );
 
     doc
 }
@@ -863,8 +948,9 @@ fn build_letter_word_spacing() -> Document {
         (-1.0, "Letter spacing -1px: "),
     ] {
         let full = format!("{}{}", label, sentence);
-        add_paragraph_with_style(&mut doc, container, &full,
-            |s| { s.letter_spacing = ls; });
+        add_paragraph_with_style(&mut doc, container, &full, |s| {
+            s.letter_spacing = ls;
+        });
     }
 
     // Word spacing variants
@@ -875,8 +961,9 @@ fn build_letter_word_spacing() -> Document {
         (-2.0, "Word spacing -2px: "),
     ] {
         let full = format!("{}{}", label, sentence);
-        add_paragraph_with_style(&mut doc, container, &full,
-            |s| { s.word_spacing = ws; });
+        add_paragraph_with_style(&mut doc, container, &full, |s| {
+            s.word_spacing = ws;
+        });
     }
 
     doc
@@ -893,7 +980,10 @@ fn pixel_letter_word_spacing() {
     );
 
     if let Some(d) = diff {
-        assert!(!d.size_mismatch, "letter_word_spacing: image dimensions differ");
+        assert!(
+            !d.size_mismatch,
+            "letter_word_spacing: image dimensions differ"
+        );
         assert!(
             d.max_channel_diff <= TOLERANCE,
             "letter_word_spacing: max channel diff {} exceeds tolerance {}",
@@ -913,33 +1003,68 @@ fn build_text_transform() -> Document {
     let container = add_block(&mut doc, vp, 400.0);
     inherit_text_style(&mut doc, vp, container);
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "No transform: The Quick Brown Fox Jumps Over The Lazy Dog.",
-        |s| { s.text_transform = TextTransform::None; });
+        |s| {
+            s.text_transform = TextTransform::None;
+        },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Uppercase: The Quick Brown Fox Jumps Over The Lazy Dog.",
-        |s| { s.text_transform = TextTransform::Uppercase; });
+        |s| {
+            s.text_transform = TextTransform::Uppercase;
+        },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Lowercase: The Quick Brown Fox Jumps Over The Lazy Dog.",
-        |s| { s.text_transform = TextTransform::Lowercase; });
+        |s| {
+            s.text_transform = TextTransform::Lowercase;
+        },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Capitalize: the quick brown fox jumps over the lazy dog.",
-        |s| { s.text_transform = TextTransform::Capitalize; });
+        |s| {
+            s.text_transform = TextTransform::Capitalize;
+        },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "UPPERCASE: already uppercase text here 12345.",
-        |s| { s.text_transform = TextTransform::Uppercase; });
+        |s| {
+            s.text_transform = TextTransform::Uppercase;
+        },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "lowercase: ALREADY LOWERCASE TEXT HERE 12345.",
-        |s| { s.text_transform = TextTransform::Lowercase; });
+        |s| {
+            s.text_transform = TextTransform::Lowercase;
+        },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Capitalize: mixed CASE words for capitalize testing.",
-        |s| { s.text_transform = TextTransform::Capitalize; });
+        |s| {
+            s.text_transform = TextTransform::Capitalize;
+        },
+    );
 
     doc
 }
@@ -981,29 +1106,47 @@ fn build_bidi_mixed() -> Document {
     // triggers the assertion due to multi-script shaping complexity.
     // This will be enabled once the shaper integration is hardened.
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Hello World in English only with default LTR direction.",
-        |_| { /* LTR is default */ });
+        |_| { /* LTR is default */ },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "Numbers 123 and 456 in left to right direction.",
-        |_| { /* LTR is default */ });
+        |_| { /* LTR is default */ },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "The quick brown fox jumps over the lazy dog with LTR direction applied.",
-        |_| { /* LTR is default */ });
+        |_| { /* LTR is default */ },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ uppercase alphabet.",
-        |_| { /* LTR is default */ });
+        |_| { /* LTR is default */ },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "abcdefghijklmnopqrstuvwxyz lowercase alphabet.",
-        |_| { /* LTR is default */ });
+        |_| { /* LTR is default */ },
+    );
 
-    add_paragraph_with_style(&mut doc, container,
+    add_paragraph_with_style(
+        &mut doc,
+        container,
         "0123456789 digits and !@#$%^&*() special characters.",
-        |_| { /* LTR is default */ });
+        |_| { /* LTR is default */ },
+    );
 
     doc
 }
@@ -1039,7 +1182,8 @@ fn build_line_height() -> Document {
     let container = add_block(&mut doc, vp, 400.0);
     inherit_text_style(&mut doc, vp, container);
 
-    let text = "The quick brown fox jumps over the lazy dog repeatedly to create multiple wrapped lines.";
+    let text =
+        "The quick brown fox jumps over the lazy dog repeatedly to create multiple wrapped lines.";
 
     let line_heights: &[(LineHeight, &str)] = &[
         (LineHeight::Normal, "Line height normal. "),

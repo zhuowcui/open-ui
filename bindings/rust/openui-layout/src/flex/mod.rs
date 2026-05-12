@@ -11,15 +11,15 @@
 //! - `core/layout/flex/flex_line_breaker.cc` (417 lines)
 //! - `core/layout/flex/flex_child_iterator.cc` (36 lines)
 
-mod item;
-mod line;
-mod line_flexer;
-mod line_breaker;
-mod alignment;
 mod algorithm;
+mod alignment;
 #[allow(dead_code)]
 mod intrinsic;
+mod item;
+mod line;
+mod line_breaker;
+mod line_flexer;
 
+pub use algorithm::flex_layout;
 pub use item::{FlexItem, FlexerState};
 pub use line::FlexLine;
-pub use algorithm::flex_layout;

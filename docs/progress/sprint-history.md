@@ -16,9 +16,9 @@
 | SP10 | Full CSS Flexbox | 617 | — | ✅ Complete |
 | SP11 | Text & Inline Layout | 1,902 | 31 | ✅ Complete |
 | SP11.5 | Full Chromium Text Parity | 3,371 | 6 | ✅ Complete |
-| SP12 | CSS Block Layout | 7,505 | 18 | ✅ Complete |
+| SP12 | CSS Block/Layout WPT Accountability | 7,673 inventory rows | multi-wave | ✅ Complete by ownership |
 
-**Total: 113 commits, 7,505 tests, 468,543 lines of Rust code**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,406 ported/runnable tests, 2,430 runnable passes, 0 `sp12_layout_bug` rows.**
 
 ---
 
@@ -206,60 +206,58 @@ This gives us control, portability, and eliminates the Chromium build dependency
 
 ---
 
-## SP12: CSS Block Layout (CURRENT — COMPLETE)
+## SP12: CSS Block/Layout WPT Accountability (COMPLETE BY OWNERSHIP)
 
-**Goal**: 100% Chromium block layout capabilities with pixel-perfect rendering.
+**Goal**: eliminate all current SP12-owned fixable residuals and make every remaining
+SP12-scope WPT row accountable to an explicit owner.
 
-### What we built (new Rust code):
+### Verified status
 
-| Module | LOC | Purpose |
-|--------|-----|---------|
-| `block.rs` | ~1,300 | Main block layout algorithm |
-| `margin_collapsing.rs` | ~450 | CSS 2.1 §8.3.1 margin strut logic |
-| `exclusion_space.rs` | ~500 | Float exclusion rectangle tracking |
-| `out_of_flow.rs` | ~880 | Absolute, fixed, sticky positioning |
-| `new_formatting_context.rs` | ~400 | Float avoidance for new BFC elements |
-| `intrinsic_sizing.rs` | ~580 | Min/max content size computation |
-| `float_handler.rs` | ~300 | Float positioning lifecycle |
-| `clearance.rs` | ~200 | Clear property implementation |
-| `overflow.rs` | ~400 | Overflow: visible/hidden/scroll/auto/clip |
-| `fragmentation.rs` | ~600 | Block fragmentation for multicol/print |
+| Metric | Value |
+|---|---:|
+| Chromium SP12-scope inventory rows | 7673 |
+| Ported/runnable WPT tests | 3406 |
+| Unported but explicitly tracked rows | 4267 |
+| Runnable passes | 2430 |
+| Runnable failures | 974 |
+| Runnable render/diff errors | 2 |
+| Generic `not_ported` bucket rows | 0 |
+| `sp12_layout_bug` rows | 0 |
 
-### Implementation phases:
+`tools/accountability/audit.py` passes all checks for this state.
 
-| Phase | What |
-|-------|------|
-| A | Core data structures: BFC geometry, MarginStrut, ConstraintSpace, LayoutResult |
-| B | Exclusion space + float positioning |
-| C | BFC offset resolution + full margin collapsing + new formatting context |
-| D | Relative, absolute, fixed, sticky positioning |
-| E | Intrinsic sizing + min/max constraints + CSS Sizing Level 3 |
-| F | Overflow handling + paint clipping |
-| G | Block fragmentation + multicol integration |
-| H | 2,996 WPT-style tests translated and passing |
-| I | 612 pixel comparison tests — all 100% match to Chromium |
-| J | 18 rounds of dual-model review — 102 findings, 83 real fixes, converged to 0 |
+### What changed during the SP12 accountability push
 
-### Dual-model review convergence:
+- Built and used a full WPT accountability pipeline:
+  - generated Rust WPT document builders,
+  - generated Chromium HTML templates,
+  - per-test OpenUI/Chromium/diff PNGs,
+  - full `summary.json`,
+  - full inventory `wpt_mapping.csv`,
+  - deferred dependency CSV and plan.
+- Fixed the final SP12-owned rounded background/border antialiasing residuals.
+- Fixed the final rounded overflow clip-margin residuals:
+  - `overflow-clip-margin-010` and ref,
+  - `overflow-clip-margin-visual-box-and-value-with-border-radius` and ref.
+- Tightened tracking so unported rows are no longer hidden in a generic
+  `not_ported` bucket. Every unported row now has at least one explicit dependency
+  category.
+- Tightened `audit.py` so future generic/unclassified unported rows are audit
+  failures.
 
-| Round | Findings | Real Fixes |
-|-------|----------|------------|
-| R1–R10 | 60 | 55 |
-| R11 | 9 | 4 |
-| R12 | 6 | 5 |
-| R13 | 6 | 6 |
-| R14 | 6 | 5 |
-| R15 | 7 | 4 |
-| R16 | 5 | 1 |
-| R17 | 3 | 3 |
-| **R18** | **0** | **0** ← convergence |
+### What remains outside SP12 ownership
 
-### Deferred items (architectural, require inline layout integration):
+The SP12-scope directories still contain non-passing and unported tests. They are not
+classified as SP12-owned layout bugs. Top owners include:
 
-1. Abspos inline static position
-2. Float avoidance for inline content (CSS 2.1 §9.5.1)
-3. Inline zero intrinsic block-size (CSS 2.1 §10.6.3)
-4. Root element BFC intrinsic float detection (extremely low impact)
+- SP13 fragmentation and multicol,
+- SP11/SP13 text and inline layout,
+- SP11 font metrics,
+- future JavaScript/test harness support,
+- future advanced selectors, writing modes, table/grid layout, generated content,
+  form controls, canvas/SVG, and paint-quality features.
+
+See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current counts.
 
 ---
 
@@ -267,11 +265,12 @@ This gives us control, portability, and eliminates the Chromium build dependency
 
 | Metric | Value |
 |--------|-------|
-| Total commits | 113 |
-| Total Rust LOC | 468,543 |
-| Total tests | 7,505 |
-| Test failures | 0 |
-| Pixel comparison tests | 612+ (block) + 39 pages (SP5/SP6) + 10 apps (SP8) |
+| Current SP12-scope inventory | 7,673 Chromium WPT rows |
+| Current runnable WPT tests | 3,406 |
+| Current runnable WPT passes | 2,430 |
+| Current SP12-owned layout bugs | 0 |
+| Generic unported bucket rows | 0 |
+| Pixel comparison tests | 3,406 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |

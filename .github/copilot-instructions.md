@@ -64,3 +64,10 @@ stated standard of 100% Chromium pixel parity.
   `tools/accountability/shared_detectors.py` (single source of truth
   for wpt_mapping.csv + sp12_5_deferred.csv). Category `sp12_layout_bug`
   is the fallback for tests with no detected cross-SP dependency.
+
+## Active Technologies
+- Rust workspace plus Python tooling; exact compiler/interpreter versions are whatever the repository's existing build and accountability scripts currently use successfully. + OpenUI Rust layout/rendering crates, `pixel-compare`, Skia/Chromium rendering assets already used by the repo, Chromium headless binary for reference rendering, WPT/Blink test corpus. (001-complete-sp12-parity)
+- File-based authoritative artifacts: `tools/accountability/data/wpt_mapping.csv`, `tools/accountability/data/sp12_5_deferred.csv`, `tools/accountability/data/pixel_comparison/results/summary.json`, per-test result directories, generated Rust WPT files. (001-complete-sp12-parity)
+
+## Recent Changes
+- 001-complete-sp12-parity: Added Rust workspace plus Python tooling; exact compiler/interpreter versions are whatever the repository's existing build and accountability scripts currently use successfully. + OpenUI Rust layout/rendering crates, `pixel-compare`, Skia/Chromium rendering assets already used by the repo, Chromium headless binary for reference rendering, WPT/Blink test corpus.

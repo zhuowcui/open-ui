@@ -2,8 +2,10 @@
 //!
 //! Covers Issues 1, 2, 4, 5 from the review.
 
-use openui_text::{FontMetrics, ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
 use openui_style::TextTransform;
+use openui_text::{
+    FontMetrics, ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection,
+};
 
 // ── Issue 1: int_line_spacing() rounds sum-of-rounds ─────────────────────
 
@@ -65,9 +67,7 @@ fn make_justification_test_result(
 
     let font_data = {
         // Use the global font cache to get a valid FontPlatformData
-        let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE
-            .lock()
-            .unwrap();
+        let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
         let desc = openui_text::FontDescription::default();
         cache
             .get_font_platform_data("sans-serif", &desc)
@@ -89,7 +89,11 @@ fn make_justification_test_result(
                 safe_to_break_before: i == 0,
             };
             if i < advances.len() {
-                x += advances[if direction == TextDirection::Rtl { num_glyphs - 1 - i } else { i }];
+                x += advances[if direction == TextDirection::Rtl {
+                    num_glyphs - 1 - i
+                } else {
+                    i
+                }];
             }
             cd
         })

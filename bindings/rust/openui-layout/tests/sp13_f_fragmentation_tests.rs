@@ -9,10 +9,10 @@
 // Blink: InlineLayoutAlgorithm::BreakLine(), BreakBeforeLine()
 
 use openui_geometry::{LayoutUnit, PhysicalSize};
-use openui_layout::inline::{
-    algorithm::{apply_inline_fragmentation, resume_inline_from_break_token},
-};
 use openui_layout::fragmentation::{BreakToken, InlineBreakToken};
+use openui_layout::inline::algorithm::{
+    apply_inline_fragmentation, resume_inline_from_break_token,
+};
 use openui_layout::Fragment;
 
 fn lu(v: f32) -> LayoutUnit {
@@ -65,7 +65,10 @@ fn no_fragmentation_when_all_lines_fit() {
         2, // widows
     );
 
-    assert!(fragmented.break_token.is_none(), "No break token expected when all lines fit");
+    assert!(
+        fragmented.break_token.is_none(),
+        "No break token expected when all lines fit"
+    );
     assert_eq!(fragmented.children.len(), num_lines);
 }
 
@@ -85,7 +88,11 @@ fn fragmentation_splits_at_boundary() {
         1, // widows
     );
 
-    assert_eq!(result.children.len(), 2, "Should keep 2 lines in 50px fragmentainer");
+    assert_eq!(
+        result.children.len(),
+        2,
+        "Should keep 2 lines in 50px fragmentainer"
+    );
     assert!(result.break_token.is_some(), "Should have break token");
     match &result.break_token {
         Some(BreakToken::Inline(t)) => {
@@ -110,7 +117,11 @@ fn fragmentation_with_offset_in_fragmentainer() {
         1,
     );
 
-    assert_eq!(result.children.len(), 1, "Only 1 line should fit with 30px available");
+    assert_eq!(
+        result.children.len(),
+        1,
+        "Only 1 line should fit with 30px available"
+    );
     assert!(result.break_token.is_some());
 }
 
@@ -119,14 +130,7 @@ fn fragmentation_empty_when_no_space() {
     let frag = make_fake_line_fragment(3, 20.0, 200.0);
 
     // No space at all — offset equals fragmentainer size.
-    let result = apply_inline_fragmentation(
-        frag,
-        lu(50.0),
-        lu(50.0),
-        0,
-        1,
-        1,
-    );
+    let result = apply_inline_fragmentation(frag, lu(50.0), lu(50.0), 0, 1, 1);
 
     assert_eq!(result.children.len(), 0, "No lines should fit");
     assert!(result.break_token.is_some());
@@ -142,17 +146,13 @@ fn fragmentation_empty_when_no_space() {
 fn fragmentation_single_line_fits() {
     let frag = make_fake_line_fragment(1, 20.0, 200.0);
 
-    let result = apply_inline_fragmentation(
-        frag,
-        lu(50.0),
-        LayoutUnit::zero(),
-        0,
-        2,
-        2,
-    );
+    let result = apply_inline_fragmentation(frag, lu(50.0), LayoutUnit::zero(), 0, 2, 2);
 
     assert_eq!(result.children.len(), 1);
-    assert!(result.break_token.is_none(), "Single line should fit, no break");
+    assert!(
+        result.break_token.is_none(),
+        "Single line should fit, no break"
+    );
 }
 
 #[test]
@@ -160,14 +160,7 @@ fn fragmentation_single_line_fragmentainer() {
     // 5 lines × 20px. Fragmentainer fits exactly 1 line (20px).
     let frag = make_fake_line_fragment(5, 20.0, 200.0);
 
-    let result = apply_inline_fragmentation(
-        frag,
-        lu(20.0),
-        LayoutUnit::zero(),
-        0,
-        1,
-        1,
-    );
+    let result = apply_inline_fragmentation(frag, lu(20.0), LayoutUnit::zero(), 0, 1, 1);
 
     assert_eq!(result.children.len(), 1);
     assert!(result.break_token.is_some());
@@ -197,7 +190,11 @@ fn widows_steals_lines_from_current_fragmentainer() {
         2, // widows
     );
 
-    assert_eq!(result.children.len(), 3, "Should keep 3 lines (widows=2 needs 2 in next)");
+    assert_eq!(
+        result.children.len(),
+        3,
+        "Should keep 3 lines (widows=2 needs 2 in next)"
+    );
     assert!(result.break_token.is_some());
 }
 
@@ -291,13 +288,7 @@ fn resume_applies_further_fragmentation() {
     let frag = make_fake_line_fragment(6, 20.0, 200.0);
     let break_token = InlineBreakToken::new(2, lu(40.0));
 
-    let result = resume_inline_from_break_token(
-        frag,
-        &break_token,
-        lu(50.0),
-        1,
-        1,
-    );
+    let result = resume_inline_from_break_token(frag, &break_token, lu(50.0), 1, 1);
 
     assert_eq!(result.children.len(), 2, "Should fit 2 lines in 50px");
     assert!(result.break_token.is_some(), "Still more lines to lay out");
@@ -314,13 +305,7 @@ fn resume_from_end_produces_empty() {
     let frag = make_fake_line_fragment(3, 20.0, 200.0);
     let break_token = InlineBreakToken::new(3, lu(60.0));
 
-    let result = resume_inline_from_break_token(
-        frag,
-        &break_token,
-        lu(100.0),
-        1,
-        1,
-    );
+    let result = resume_inline_from_break_token(frag, &break_token, lu(100.0), 1, 1);
 
     assert_eq!(result.children.len(), 0, "All lines consumed");
 }
@@ -332,13 +317,7 @@ fn resume_offsets_are_rebased_to_zero() {
     let frag = make_fake_line_fragment(4, 20.0, 200.0);
     let break_token = InlineBreakToken::new(2, lu(40.0));
 
-    let result = resume_inline_from_break_token(
-        frag,
-        &break_token,
-        lu(2000.0),
-        1,
-        1,
-    );
+    let result = resume_inline_from_break_token(frag, &break_token, lu(2000.0), 1, 1);
 
     assert_eq!(result.children.len(), 2);
     assert_eq!(result.children[0].offset.top, lu(0.0));
@@ -393,14 +372,8 @@ fn multi_fragmentainer_simulation() {
     assert_eq!(total, 6);
 
     // First fragmentainer: 50px → 2 lines.
-    let first = apply_inline_fragmentation(
-        clone_fragment(&frag),
-        lu(50.0),
-        LayoutUnit::zero(),
-        0,
-        1,
-        1,
-    );
+    let first =
+        apply_inline_fragmentation(clone_fragment(&frag), lu(50.0), LayoutUnit::zero(), 0, 1, 1);
     assert_eq!(first.children.len(), 2);
     let token1 = match &first.break_token {
         Some(BreakToken::Inline(t)) => t.clone(),
@@ -409,13 +382,7 @@ fn multi_fragmentainer_simulation() {
     assert_eq!(token1.lines_consumed, 2);
 
     // Second fragmentainer: 50px → 2 more lines.
-    let second = resume_inline_from_break_token(
-        clone_fragment(&frag),
-        &token1,
-        lu(50.0),
-        1,
-        1,
-    );
+    let second = resume_inline_from_break_token(clone_fragment(&frag), &token1, lu(50.0), 1, 1);
     assert_eq!(second.children.len(), 2);
     let token2 = match &second.break_token {
         Some(BreakToken::Inline(t)) => t.clone(),
@@ -424,13 +391,7 @@ fn multi_fragmentainer_simulation() {
     assert_eq!(token2.lines_consumed, 4);
 
     // Third fragmentainer: 50px → 2 remaining lines (all fit).
-    let third = resume_inline_from_break_token(
-        clone_fragment(&frag),
-        &token2,
-        lu(50.0),
-        1,
-        1,
-    );
+    let third = resume_inline_from_break_token(clone_fragment(&frag), &token2, lu(50.0), 1, 1);
     assert_eq!(third.children.len(), 2);
     assert!(third.break_token.is_none(), "All lines consumed");
 
@@ -449,14 +410,7 @@ fn fragmentation_preserves_baselines() {
         child.baseline_offset = 15.0 + i as f32;
     }
 
-    let result = apply_inline_fragmentation(
-        frag_with_bl,
-        lu(45.0),
-        LayoutUnit::zero(),
-        0,
-        1,
-        1,
-    );
+    let result = apply_inline_fragmentation(frag_with_bl, lu(45.0), LayoutUnit::zero(), 0, 1, 1);
 
     assert_eq!(result.children.len(), 2);
     assert!(result.first_baseline.is_some());
@@ -471,14 +425,7 @@ fn no_fragmentation_zero_fragmentainer_size() {
     let frag = make_fake_line_fragment(3, 20.0, 200.0);
 
     // fragmentainer_block_size = 0 → no fragmentation context.
-    let result = apply_inline_fragmentation(
-        frag,
-        LayoutUnit::zero(),
-        LayoutUnit::zero(),
-        0,
-        2,
-        2,
-    );
+    let result = apply_inline_fragmentation(frag, LayoutUnit::zero(), LayoutUnit::zero(), 0, 2, 2);
 
     assert_eq!(result.children.len(), 3, "No fragmentation when size is 0");
     assert!(result.break_token.is_none());
@@ -486,19 +433,18 @@ fn no_fragmentation_zero_fragmentainer_size() {
 
 #[test]
 fn fragmentation_empty_fragment() {
-    let frag = Fragment::new_box(openui_dom::NodeId::NONE, PhysicalSize::new(lu(200.0), LayoutUnit::zero()));
-
-    let result = apply_inline_fragmentation(
-        frag,
-        lu(50.0),
-        LayoutUnit::zero(),
-        0,
-        2,
-        2,
+    let frag = Fragment::new_box(
+        openui_dom::NodeId::NONE,
+        PhysicalSize::new(lu(200.0), LayoutUnit::zero()),
     );
 
+    let result = apply_inline_fragmentation(frag, lu(50.0), LayoutUnit::zero(), 0, 2, 2);
+
     assert_eq!(result.children.len(), 0);
-    assert!(result.break_token.is_none(), "Empty fragment needs no break token");
+    assert!(
+        result.break_token.is_none(),
+        "Empty fragment needs no break token"
+    );
 }
 
 #[test]
@@ -506,14 +452,7 @@ fn height_adjusted_after_fragmentation() {
     let frag = make_fake_line_fragment(4, 25.0, 200.0);
     // Total height = 100px. Fragmentainer = 60px → 2 lines fit (50px).
 
-    let result = apply_inline_fragmentation(
-        frag,
-        lu(60.0),
-        LayoutUnit::zero(),
-        0,
-        1,
-        1,
-    );
+    let result = apply_inline_fragmentation(frag, lu(60.0), LayoutUnit::zero(), 0, 1, 1);
 
     assert_eq!(result.children.len(), 2);
     // Height should be reduced to cover only the kept lines.
@@ -534,17 +473,19 @@ fn make_fake_line_fragment(num_lines: usize, line_height: f32, width: f32) -> Fr
             openui_dom::NodeId::NONE,
             PhysicalSize::new(lu(width), lu(line_height)),
         );
-        line.offset = openui_geometry::PhysicalOffset::new(
-            LayoutUnit::zero(),
-            lu(i as f32 * line_height),
-        );
+        line.offset =
+            openui_geometry::PhysicalOffset::new(LayoutUnit::zero(), lu(i as f32 * line_height));
         line.baseline_offset = line_height * 0.75; // approximate
         frag.children.push(line);
     }
 
-    frag.first_baseline = frag.children.first()
+    frag.first_baseline = frag
+        .children
+        .first()
         .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
-    frag.last_baseline = frag.children.last()
+    frag.last_baseline = frag
+        .children
+        .last()
         .map(|f| f.offset.top + LayoutUnit::from_f32(f.baseline_offset));
 
     frag
@@ -557,11 +498,15 @@ fn clone_fragment(frag: &Fragment) -> Fragment {
     new_frag.first_baseline = frag.first_baseline;
     new_frag.last_baseline = frag.last_baseline;
     new_frag.baseline_offset = frag.baseline_offset;
-    new_frag.children = frag.children.iter().map(|c| {
-        let mut child = Fragment::new_box(c.node_id, c.size);
-        child.offset = c.offset;
-        child.baseline_offset = c.baseline_offset;
-        child
-    }).collect();
+    new_frag.children = frag
+        .children
+        .iter()
+        .map(|c| {
+            let mut child = Fragment::new_box(c.node_id, c.size);
+            child.offset = c.offset;
+            child.baseline_offset = c.baseline_offset;
+            child
+        })
+        .collect();
     new_frag
 }

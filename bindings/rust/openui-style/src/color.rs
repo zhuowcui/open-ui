@@ -20,12 +20,42 @@ pub struct Color {
 impl Color {
     // ── Named constants matching CSS color keywords ──────────────────
 
-    pub const TRANSPARENT: Self = Self { r: 0.0, g: 0.0, b: 0.0, a: 0.0 };
-    pub const BLACK: Self = Self { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
-    pub const WHITE: Self = Self { r: 1.0, g: 1.0, b: 1.0, a: 1.0 };
-    pub const RED: Self = Self { r: 1.0, g: 0.0, b: 0.0, a: 1.0 };
-    pub const GREEN: Self = Self { r: 0.0, g: 128.0 / 255.0, b: 0.0, a: 1.0 };
-    pub const BLUE: Self = Self { r: 0.0, g: 0.0, b: 1.0, a: 1.0 };
+    pub const TRANSPARENT: Self = Self {
+        r: 0.0,
+        g: 0.0,
+        b: 0.0,
+        a: 0.0,
+    };
+    pub const BLACK: Self = Self {
+        r: 0.0,
+        g: 0.0,
+        b: 0.0,
+        a: 1.0,
+    };
+    pub const WHITE: Self = Self {
+        r: 1.0,
+        g: 1.0,
+        b: 1.0,
+        a: 1.0,
+    };
+    pub const RED: Self = Self {
+        r: 1.0,
+        g: 0.0,
+        b: 0.0,
+        a: 1.0,
+    };
+    pub const GREEN: Self = Self {
+        r: 0.0,
+        g: 128.0 / 255.0,
+        b: 0.0,
+        a: 1.0,
+    };
+    pub const BLUE: Self = Self {
+        r: 0.0,
+        g: 0.0,
+        b: 1.0,
+        a: 1.0,
+    };
 
     /// Construct from 0–255 integer components.
     #[inline]
@@ -85,7 +115,9 @@ impl Color {
 
 impl Default for Color {
     /// Initial value for CSS `color` property is black.
-    fn default() -> Self { Self::BLACK }
+    fn default() -> Self {
+        Self::BLACK
+    }
 }
 
 /// Blink's `StyleColor` wraps `Color` with a `currentColor` flag.
@@ -112,7 +144,9 @@ impl StyleColor {
 
 impl Default for StyleColor {
     /// Border colors default to `currentColor` in CSS.
-    fn default() -> Self { Self::CurrentColor }
+    fn default() -> Self {
+        Self::CurrentColor
+    }
 }
 
 #[cfg(test)]

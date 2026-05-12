@@ -141,7 +141,8 @@ fn r28_fallback_preserves_earlier_resolved_runs() {
         assert!(
             advance > 0.0,
             "Character {} should have non-zero advance after fallback: {}",
-            i, advance,
+            i,
+            advance,
         );
     }
 }
@@ -182,11 +183,7 @@ fn r28_rtl_hebrew_no_false_notdef() {
     // All runs should have non-zero glyph IDs for Hebrew.
     for run in &result.runs {
         for (gi, &glyph) in run.glyphs.iter().enumerate() {
-            assert_ne!(
-                glyph, 0,
-                "Hebrew glyph {} should not be .notdef",
-                gi,
-            );
+            assert_ne!(glyph, 0, "Hebrew glyph {} should not be .notdef", gi,);
         }
     }
 }

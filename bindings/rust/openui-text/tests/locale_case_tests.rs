@@ -224,7 +224,11 @@ fn el_upper_upsilon_dialytika_tonos() {
 fn el_upper_mixed_word() {
     // "αθήνα" → "ΑΘΗΝΑ" (accent stripped from ή)
     assert_eq!(
-        apply_text_transform("\u{03B1}\u{03B8}\u{03AE}\u{03BD}\u{03B1}", TextTransform::Uppercase, Some("el")),
+        apply_text_transform(
+            "\u{03B1}\u{03B8}\u{03AE}\u{03BD}\u{03B1}",
+            TextTransform::Uppercase,
+            Some("el")
+        ),
         "\u{0391}\u{0398}\u{0397}\u{039D}\u{0391}"
     );
 }
@@ -406,7 +410,11 @@ fn sigma_word_final() {
     // Actually: ΚΟΣΜΟΣ → κοσμος. The final Σ → ς, middle Σ → σ.
     // κ-ο-σ-μ-ο-ς
     let result = apply_text_transform("ΚΟΣΜΟΣ", TextTransform::Lowercase, None);
-    assert!(result.ends_with('ς'), "Final sigma should be ς, got: {}", result);
+    assert!(
+        result.ends_with('ς'),
+        "Final sigma should be ς, got: {}",
+        result
+    );
 }
 
 #[test]
@@ -648,15 +656,30 @@ fn el_upper_mixed_greek_latin() {
 
 #[test]
 fn empty_string_with_locale() {
-    assert_eq!(apply_text_transform("", TextTransform::Uppercase, Some("tr")), "");
-    assert_eq!(apply_text_transform("", TextTransform::Lowercase, Some("el")), "");
-    assert_eq!(apply_text_transform("", TextTransform::Capitalize, Some("nl")), "");
+    assert_eq!(
+        apply_text_transform("", TextTransform::Uppercase, Some("tr")),
+        ""
+    );
+    assert_eq!(
+        apply_text_transform("", TextTransform::Lowercase, Some("el")),
+        ""
+    );
+    assert_eq!(
+        apply_text_transform("", TextTransform::Capitalize, Some("nl")),
+        ""
+    );
 }
 
 #[test]
 fn single_char_turkish() {
-    assert_eq!(apply_text_transform("i", TextTransform::Uppercase, Some("tr")), "\u{0130}");
-    assert_eq!(apply_text_transform("I", TextTransform::Lowercase, Some("tr")), "\u{0131}");
+    assert_eq!(
+        apply_text_transform("i", TextTransform::Uppercase, Some("tr")),
+        "\u{0130}"
+    );
+    assert_eq!(
+        apply_text_transform("I", TextTransform::Lowercase, Some("tr")),
+        "\u{0131}"
+    );
 }
 
 #[test]
@@ -712,5 +735,9 @@ fn el_lowercase_uses_default_sigma() {
     // Greek lowercase with el locale still handles sigma correctly
     // (lowercase dispatch falls through to default for Greek).
     let result = apply_text_transform("ΚΟΣΜΟΣ", TextTransform::Lowercase, Some("el"));
-    assert!(result.ends_with('ς'), "Expected final ς in Greek lowercase: {}", result);
+    assert!(
+        result.ends_with('ς'),
+        "Expected final ς in Greek lowercase: {}",
+        result
+    );
 }

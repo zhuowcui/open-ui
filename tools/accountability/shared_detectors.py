@@ -107,16 +107,103 @@ def has_sticky_position(html: str) -> bool:
 
 
 def has_complex_border_style(html: str) -> bool:
-    """Detect dashed/dotted/double/groove/ridge/inset/outset border styles (paint quality)."""
-    return bool(re.search(
-        r"border(?:-(?:top|right|bottom|left))?-style\s*:\s*(?:dashed|dotted|double|groove|ridge|inset|outset)",
+    """Detect border paint-quality cases that are not SP12 layout bugs."""
+    complex_style = bool(re.search(
+        r"(?:border(?:-(?:top|right|bottom|left))?-style\s*:\s*|border\s*:[^;]*\b)"
+        r"(?:dashed|dotted|double|groove|ridge|inset|outset)",
         html, re.IGNORECASE
     ))
+    translucent_rounded_border = bool(
+        re.search(r"border[^;]*rgba\s*\(", html, re.IGNORECASE)
+        and re.search(r"border-radius\s*:", html, re.IGNORECASE)
+    )
+    return complex_style or translucent_rounded_border
 
 
 def has_scrollbar_gutter(html: str) -> bool:
     """Detect scrollbar-gutter property (not implemented)."""
     return bool(re.search(r"scrollbar-gutter\s*:", html, re.IGNORECASE))
+
+
+def has_javascript(html: str) -> bool:
+    """Detect tests that require script execution or test harness behavior."""
+    return bool(re.search(r"<script[\s>]", html, re.IGNORECASE))
+
+
+def has_grid_layout(html: str) -> bool:
+    """Detect CSS Grid dependencies."""
+    return bool(re.search(
+        r"display\s*:\s*(?:inline-)?grid\b|grid(?:-[a-z-]+)?\s*:",
+        html,
+        re.IGNORECASE,
+    ))
+
+
+def has_table_layout(html: str) -> bool:
+    """Detect table layout dependencies."""
+    return bool(
+        re.search(r"<(?:table|thead|tbody|tfoot|tr|td|th|caption)[\s>]", html, re.IGNORECASE)
+        or re.search(
+            r"display\s*:\s*(?:inline-)?table(?:-[a-z-]+)?\b|"
+            r"(?:table-layout|border-collapse|border-spacing|caption-side)\s*:",
+            html,
+            re.IGNORECASE,
+        )
+    )
+
+
+def has_writing_mode(html: str) -> bool:
+    """Detect writing-mode / bidi coordinate-system dependencies."""
+    return bool(re.search(r"(?:writing-mode|unicode-bidi|direction)\s*:", html, re.IGNORECASE))
+
+
+def has_generated_content(html: str) -> bool:
+    """Detect generated content and pseudo-element selectors."""
+    return bool(
+        re.search(r"::?(?:before|after|first-letter|first-line)\b", html, re.IGNORECASE)
+        or re.search(r"content\s*:", html, re.IGNORECASE)
+        or re.search(r"(?:counter-reset|counter-increment)\s*:", html, re.IGNORECASE)
+    )
+
+
+def has_advanced_selectors(html: str) -> bool:
+    """Detect selector features beyond the simple porter rule subset."""
+    return bool(re.search(r"(?:^|[,{])[^{}]*(?:[#.][\w-]+){2,}|:(?:has|is|where|not|nth-|column|modal|popover)", html, re.IGNORECASE))
+
+
+def has_visual_effects(html: str) -> bool:
+    """Detect transform/filter/clip/mask/animation dependencies."""
+    return bool(re.search(
+        r"(?:transform|rotate|scale|translate|filter|clip-path|mask|animation|transition)\s*:",
+        html,
+        re.IGNORECASE,
+    ))
+
+
+def has_form_controls(html: str) -> bool:
+    """Detect native form control layout/painting dependencies."""
+    return bool(re.search(
+        r"<(?:button|input|select|textarea|fieldset|legend|form|details|summary|dialog|audio|video)[\s>]",
+        html,
+        re.IGNORECASE,
+    ))
+
+
+def has_canvas_svg(html: str) -> bool:
+    """Detect canvas/SVG rendering dependencies."""
+    return bool(re.search(r"<(?:canvas|svg)[\s>]", html, re.IGNORECASE))
+
+
+def has_line_clamp(html: str) -> bool:
+    """Detect line-clamp / WebKit box line-clamp dependencies."""
+    return bool(re.search(r"(?:-webkit-)?line-clamp\s*:|-webkit-box-orient\s*:", html, re.IGNORECASE))
+
+
+def has_no_layout_content(html: str) -> bool:
+    """Detect harness/crash tests with no visual DOM content to compare."""
+    stripped = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
+    stripped = re.sub(r"<script[^>]*>.*?</script>", "", stripped, flags=re.DOTALL | re.IGNORECASE)
+    return not bool(re.search(r"<(?:div|span|p|section|article|main|body|table|img|canvas|svg|button|input)[\s>]", stripped, re.IGNORECASE))
 
 
 def is_print_layout(html: str, test_id: str = "") -> bool:
@@ -156,6 +243,17 @@ DEPENDENCY_DEFS = [
     ("sticky_position",    "Future SP: Sticky Position",      "Future",    has_sticky_position),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
+    ("javascript",         "Future SP: JavaScript/Test Harness", "Future",  has_javascript),
+    ("grid_layout",        "Future SP: CSS Grid Layout",       "Future",    has_grid_layout),
+    ("table_layout",       "Future SP: Table Layout",          "Future",    has_table_layout),
+    ("writing_mode",       "Future SP: Writing Modes/Bidi",    "Future",    has_writing_mode),
+    ("generated_content",  "Future SP: Generated Content",     "Future",    has_generated_content),
+    ("advanced_selectors", "Future SP: Advanced CSS Selectors", "Future",   has_advanced_selectors),
+    ("visual_effects",     "Future SP: Transforms/Effects",    "Future",    has_visual_effects),
+    ("form_controls",      "Future SP: Native Form Controls",  "Future",    has_form_controls),
+    ("canvas_svg",         "Future SP: Canvas/SVG Rendering",  "Future",    has_canvas_svg),
+    ("line_clamp",         "Future SP: Line Clamp",            "Future",    has_line_clamp),
+    ("non_visual",         "N/A: Non-visual Harness/Crash Test", "N/A",     has_no_layout_content),
     ("fragmentation",      "SP13: Block Fragmentation",       "SP13",      is_fragmentation_area),
     ("multicol",           "SP13: Multi-Column Layout",       "SP13",      is_multicol_area),
 ]
@@ -175,6 +273,17 @@ CATEGORY_FOR_DEP = {
     "sticky_position": "needs_sticky",
     "complex_border": "needs_complex_border",
     "scrollbar_gutter": "needs_scrollbar_gutter",
+    "javascript": "needs_javascript",
+    "grid_layout": "needs_grid",
+    "table_layout": "needs_table_layout",
+    "writing_mode": "needs_writing_mode",
+    "generated_content": "needs_generated_content",
+    "advanced_selectors": "needs_advanced_selectors",
+    "visual_effects": "needs_visual_effects",
+    "form_controls": "needs_form_controls",
+    "canvas_svg": "needs_canvas_svg",
+    "line_clamp": "needs_line_clamp",
+    "non_visual": "non_visual_test",
     "fragmentation": "sp13_fragmentation",
     "multicol": "sp13_multicol",
 }

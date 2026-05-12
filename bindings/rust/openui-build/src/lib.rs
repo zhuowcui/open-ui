@@ -34,12 +34,8 @@ pub fn link() {
         "Missing {complete_lib}. Build with: autoninja -C out/Release openui_complete"
     );
 
-    let libcxx = format!(
-        "{out_release}/obj/buildtools/third_party/libc++/libc++.a"
-    );
-    let libcxxabi = format!(
-        "{out_release}/obj/buildtools/third_party/libc++abi/libc++abi.a"
-    );
+    let libcxx = format!("{out_release}/obj/buildtools/third_party/libc++/libc++.a");
+    let libcxxabi = format!("{out_release}/obj/buildtools/third_party/libc++abi/libc++abi.a");
 
     let clang_rt = format!(
         "{chromium_src}/third_party/llvm-build/Release+Asserts/lib/clang/23/\
@@ -88,8 +84,8 @@ pub fn link() {
 
     // Stub library for the Rust alloc shim and any remaining symbols.
     // The stubs source is always alongside this crate's lib.rs.
-    let stubs_src = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("chromium_rust_stubs.c");
+    let stubs_src =
+        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("chromium_rust_stubs.c");
     if stubs_src.exists() {
         let stubs_obj = format!(
             "{}/chromium_rust_stubs.o",
@@ -156,9 +152,7 @@ pub fn link() {
         "xkbcommon",
         "xshmfence",
     ];
-    println!(
-        "cargo:rustc-link-arg=-L{sysroot}/usr/lib/x86_64-linux-gnu"
-    );
+    println!("cargo:rustc-link-arg=-L{sysroot}/usr/lib/x86_64-linux-gnu");
     for lib in &system_libs {
         println!("cargo:rustc-link-arg=-l{lib}");
     }

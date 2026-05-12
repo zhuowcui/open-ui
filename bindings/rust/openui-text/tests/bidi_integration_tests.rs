@@ -39,7 +39,10 @@ fn bidi_arabic_with_numbers_number_run_is_ltr() {
         let slice = &bidi.text()[r.start..r.end];
         slice.contains('1')
     });
-    assert!(number_run.is_some(), "Should have a run containing the digits");
+    assert!(
+        number_run.is_some(),
+        "Should have a run containing the digits"
+    );
     assert_eq!(
         number_run.unwrap().direction,
         TextDirection::Ltr,
@@ -184,7 +187,10 @@ fn bidi_visual_ltr_rtl_ltr_middle_run_is_rtl() {
     let bidi = BidiParagraph::new("Hello שלום world", None);
     let visual = bidi.visual_runs();
     let rtl_visual = visual.iter().find(|r| r.direction == TextDirection::Rtl);
-    assert!(rtl_visual.is_some(), "RTL run should be present in visual runs");
+    assert!(
+        rtl_visual.is_some(),
+        "RTL run should be present in visual runs"
+    );
     assert_eq!(rtl_visual.unwrap().level, 1, "RTL run should have level 1");
 }
 
@@ -335,7 +341,10 @@ fn bidi_multiple_number_groups_in_rtl() {
     let bidi = BidiParagraph::new(text, None);
     assert_eq!(bidi.base_direction(), TextDirection::Rtl);
     let runs = bidi.runs();
-    let ltr_runs: Vec<_> = runs.iter().filter(|r| r.direction == TextDirection::Ltr).collect();
+    let ltr_runs: Vec<_> = runs
+        .iter()
+        .filter(|r| r.direction == TextDirection::Ltr)
+        .collect();
     assert!(
         ltr_runs.len() >= 2,
         "Should have at least 2 LTR runs for separate number groups, got {}",

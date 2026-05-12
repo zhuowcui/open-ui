@@ -95,7 +95,11 @@ impl FitnessClass {
     /// Penalty for transitioning between non-adjacent fitness classes.
     pub fn transition_penalty(from: Self, to: Self) -> f64 {
         let diff = (from as i8 - to as i8).unsigned_abs();
-        if diff > 1 { 3000.0 } else { 0.0 }
+        if diff > 1 {
+            3000.0
+        } else {
+            0.0
+        }
     }
 }
 
@@ -151,7 +155,10 @@ pub struct ScoreParams {
 impl ScoreParams {
     /// Available width for the given line number.
     pub fn width_for_line(&self, line: usize) -> f64 {
-        self.line_widths.get(line).copied().unwrap_or(self.default_width)
+        self.line_widths
+            .get(line)
+            .copied()
+            .unwrap_or(self.default_width)
     }
 }
 
@@ -241,22 +248,18 @@ impl ScoreLineBreaker {
                     let line_width = self.params.width_for_line(line);
 
                     // Compute width of content between break a and break b
-                    let content_width = candidate.total_width
-                        - candidates[a.candidate_index].total_width;
+                    let content_width =
+                        candidate.total_width - candidates[a.candidate_index].total_width;
 
-                    let stretch = candidate.total_stretch
-                        - candidates[a.candidate_index].total_stretch;
+                    let stretch =
+                        candidate.total_stretch - candidates[a.candidate_index].total_stretch;
 
-                    let shrink = candidate.total_shrink
-                        - candidates[a.candidate_index].total_shrink;
+                    let shrink =
+                        candidate.total_shrink - candidates[a.candidate_index].total_shrink;
 
                     // Compute adjustment ratio
-                    let ratio = compute_adjustment_ratio(
-                        content_width,
-                        line_width,
-                        stretch,
-                        shrink,
-                    );
+                    let ratio =
+                        compute_adjustment_ratio(content_width, line_width, stretch, shrink);
 
                     // Check feasibility
                     if ratio < -1.0 || (ratio > self.params.tolerance && !candidate.is_forced) {
@@ -329,10 +332,14 @@ impl ScoreLineBreaker {
         }
 
         // Find the active node with minimum total demerits
-        let best = active.iter().min_by(|a, b| {
-            a.total_demerits.partial_cmp(&b.total_demerits)
-                .unwrap_or(std::cmp::Ordering::Equal)
-        }).expect("active list is non-empty after paragraph processing");
+        let best = active
+            .iter()
+            .min_by(|a, b| {
+                a.total_demerits
+                    .partial_cmp(&b.total_demerits)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .expect("active list is non-empty after paragraph processing");
 
         let mut path = Vec::new();
         let mut current = best.clone();
@@ -364,11 +371,7 @@ impl ScoreLineBreaker {
     ///
     /// After finding optimal breaks, check if lines can be made more
     /// balanced by shifting words between lines.
-    fn apply_balance_adjustment(
-        &self,
-        candidates: &[BreakCandidate],
-        breaks: &mut Vec<usize>,
-    ) {
+    fn apply_balance_adjustment(&self, candidates: &[BreakCandidate], breaks: &mut Vec<usize>) {
         if breaks.len() < 2 {
             return;
         }
@@ -378,9 +381,11 @@ impl ScoreLineBreaker {
         let avg_width = line_widths.iter().sum::<f64>() / line_widths.len() as f64;
 
         // Compute variance
-        let variance: f64 = line_widths.iter()
+        let variance: f64 = line_widths
+            .iter()
             .map(|w| (w - avg_width) * (w - avg_width))
-            .sum::<f64>() / line_widths.len() as f64;
+            .sum::<f64>()
+            / line_widths.len() as f64;
 
         // If lines are already well-balanced (low variance), skip
         if variance < 100.0 {
@@ -400,7 +405,11 @@ impl ScoreLineBreaker {
 
                 // Try shifting break forward
                 if breaks[i] + 1 < candidates.len() {
-                    let max_idx = if i + 1 < breaks.len() { breaks[i + 1] } else { candidates.len() };
+                    let max_idx = if i + 1 < breaks.len() {
+                        breaks[i + 1]
+                    } else {
+                        candidates.len()
+                    };
                     if breaks[i] + 1 < max_idx {
                         let original = breaks[i];
                         breaks[i] += 1;
@@ -438,11 +447,7 @@ impl ScoreLineBreaker {
     ///
     /// If the last line is very short (< 20% of available width),
     /// try to redistribute content to avoid the orphan.
-    fn apply_pretty_adjustment(
-        &self,
-        candidates: &[BreakCandidate],
-        breaks: &mut Vec<usize>,
-    ) {
+    fn apply_pretty_adjustment(&self, candidates: &[BreakCandidate], breaks: &mut Vec<usize>) {
         if breaks.is_empty() {
             return;
         }
@@ -468,11 +473,7 @@ impl ScoreLineBreaker {
     }
 
     /// Compute the width of each line given the current break points.
-    fn compute_line_widths(
-        &self,
-        candidates: &[BreakCandidate],
-        breaks: &[usize],
-    ) -> Vec<f64> {
+    fn compute_line_widths(&self, candidates: &[BreakCandidate], breaks: &[usize]) -> Vec<f64> {
         let mut widths = Vec::with_capacity(breaks.len() + 1);
         let mut prev_width = 0.0;
 
@@ -500,19 +501,22 @@ impl ScoreLineBreaker {
 /// - ratio > 0: line is shorter than ideal (needs stretching)
 /// - ratio < 0: line is longer than ideal (needs compression)
 /// - ratio < -1: line cannot be compressed enough (infeasible)
-fn compute_adjustment_ratio(
-    content_width: f64,
-    line_width: f64,
-    stretch: f64,
-    shrink: f64,
-) -> f64 {
+fn compute_adjustment_ratio(content_width: f64, line_width: f64, stretch: f64, shrink: f64) -> f64 {
     let diff = line_width - content_width;
     if diff.abs() < 0.01 {
         0.0
     } else if diff > 0.0 {
-        if stretch > 0.01 { diff / stretch } else { INFINITE_DEMERITS }
+        if stretch > 0.01 {
+            diff / stretch
+        } else {
+            INFINITE_DEMERITS
+        }
     } else {
-        if shrink > 0.01 { diff / shrink } else { -INFINITE_DEMERITS }
+        if shrink > 0.01 {
+            diff / shrink
+        } else {
+            -INFINITE_DEMERITS
+        }
     }
 }
 
@@ -521,7 +525,11 @@ fn compute_adjustment_ratio(
 /// badness = 100 * |ratio|³ (capped at 10000)
 fn compute_badness(ratio: f64) -> f64 {
     let b = 100.0 * ratio.abs().powi(3);
-    if b > 10000.0 { 10000.0 } else { b }
+    if b > 10000.0 {
+        10000.0
+    } else {
+        b
+    }
 }
 
 /// Compute demerits from badness and penalty.
@@ -549,9 +557,7 @@ fn compute_variance(values: &[f64]) -> f64 {
         return 0.0;
     }
     let mean = values.iter().sum::<f64>() / values.len() as f64;
-    values.iter()
-        .map(|v| (v - mean) * (v - mean))
-        .sum::<f64>() / values.len() as f64
+    values.iter().map(|v| (v - mean) * (v - mean)).sum::<f64>() / values.len() as f64
 }
 
 /// Check if the text-wrap mode requires score-based breaking.
@@ -565,10 +571,7 @@ pub fn requires_scoring(mode: TextWrap) -> bool {
 /// This is a convenience function for testing. In production, break
 /// candidates are extracted from the inline items during the line-breaking
 /// phase.
-pub fn candidates_from_word_widths(
-    word_widths: &[f64],
-    space_width: f64,
-) -> Vec<BreakCandidate> {
+pub fn candidates_from_word_widths(word_widths: &[f64], space_width: f64) -> Vec<BreakCandidate> {
     let mut candidates = Vec::with_capacity(word_widths.len() + 1);
     let mut total_width = 0.0;
     let mut total_stretch = 0.0;
@@ -698,8 +701,7 @@ mod tests {
     #[test]
     fn transition_penalty_non_adjacent() {
         assert!(
-            FitnessClass::transition_penalty(FitnessClass::Tight, FitnessClass::VeryLoose)
-                > 0.0
+            FitnessClass::transition_penalty(FitnessClass::Tight, FitnessClass::VeryLoose) > 0.0
         );
     }
 

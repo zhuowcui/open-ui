@@ -291,8 +291,7 @@ impl ShapeResult {
                 continue;
             }
             let sk_font = run.font_data.sk_font();
-            let (glyphs_out, positions_out) =
-                builder.alloc_run_pos(sk_font, run.num_glyphs, None);
+            let (glyphs_out, positions_out) = builder.alloc_run_pos(sk_font, run.num_glyphs, None);
             glyphs_out.copy_from_slice(&run.glyphs);
 
             let mut x = run_x;
@@ -337,10 +336,8 @@ impl ShapeResult {
             glyph_by_cluster.sort_by_key(|(c, gi)| (*c, *gi));
 
             // Deduplicate cluster values to find distinct cluster boundaries.
-            let mut unique_clusters: Vec<usize> = glyph_by_cluster
-                .iter()
-                .map(|(c, _)| *c)
-                .collect();
+            let mut unique_clusters: Vec<usize> =
+                glyph_by_cluster.iter().map(|(c, _)| *c).collect();
             unique_clusters.dedup();
 
             let mut glyph_start = run.num_glyphs;
@@ -391,7 +388,12 @@ impl ShapeResult {
     /// trailing spaces (which hang in pre-wrap) are not expanded.
     ///
     /// Blink: `ShapeResult::ApplyExpansion`.
-    pub fn apply_justification(&mut self, extra_per_space: f32, text: &str, exclude_trailing: usize) {
+    pub fn apply_justification(
+        &mut self,
+        extra_per_space: f32,
+        text: &str,
+        exclude_trailing: usize,
+    ) {
         if extra_per_space <= 0.0 || self.runs.is_empty() {
             return;
         }
@@ -401,7 +403,8 @@ impl ShapeResult {
         // Pre-compute the set of character indices that are trailing spaces
         // (the last N spaces in LOGICAL order). This avoids depending on
         // glyph iteration order, which differs between LTR and RTL runs.
-        let mut trailing_space_indices: std::collections::HashSet<usize> = std::collections::HashSet::new();
+        let mut trailing_space_indices: std::collections::HashSet<usize> =
+            std::collections::HashSet::new();
         if exclude_trailing > 0 {
             let mut remaining = exclude_trailing;
             for (i, &ch) in chars.iter().enumerate().rev() {
@@ -484,7 +487,8 @@ impl ShapeResult {
                     .collect();
                 sorted_pairs.sort_by_key(|(c, gi)| (*c, *gi));
 
-                let mut unique_clusters: Vec<usize> = sorted_pairs.iter().map(|(c, _)| *c).collect();
+                let mut unique_clusters: Vec<usize> =
+                    sorted_pairs.iter().map(|(c, _)| *c).collect();
                 unique_clusters.dedup();
 
                 // Track which cluster groups we've already processed.
@@ -603,10 +607,8 @@ impl ShapeResult {
                             .collect();
                         glyph_by_cluster.sort_by_key(|(c, _)| *c);
 
-                        let mut unique_clusters: Vec<usize> = glyph_by_cluster
-                            .iter()
-                            .map(|(c, _)| *c)
-                            .collect();
+                        let mut unique_clusters: Vec<usize> =
+                            glyph_by_cluster.iter().map(|(c, _)| *c).collect();
                         unique_clusters.dedup();
 
                         for (uc_idx, &uc) in unique_clusters.iter().enumerate() {

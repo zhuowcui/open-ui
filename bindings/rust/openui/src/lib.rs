@@ -75,11 +75,11 @@ pub use signal::{create_memo, create_signal, Memo, Signal};
 pub use document::Document;
 pub use element::Element;
 pub use events::{Event, KeyEventType, Modifiers, MouseButton, MouseEventType};
-pub use text_node::TextNode;
 pub use style::{
     AlignItems, Bitmap, Display, FlexDirection, FlexWrap, FontStyle, JustifyContent, Length,
     OuiError, Overflow, Position, Rect, TextAlign,
 };
+pub use text_node::TextNode;
 
 // ─── Re-exports: view system ────────────────────────────────
 

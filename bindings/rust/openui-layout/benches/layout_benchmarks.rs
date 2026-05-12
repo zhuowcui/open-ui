@@ -6,8 +6,8 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BfcOffset, BfcRect, LayoutUnit, Length};
-use openui_layout::{block_layout, compute_ruby_layout, ConstraintSpace, ExclusionSpace};
 use openui_layout::exclusions::{ExclusionArea, ExclusionType};
+use openui_layout::{block_layout, compute_ruby_layout, ConstraintSpace, ExclusionSpace};
 use openui_style::*;
 
 // ---------------------------------------------------------------------------
@@ -64,7 +64,9 @@ fn bench_single_block(c: &mut Criterion) {
                 add_sized_block(&mut doc, vp, 200.0, 100.0);
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -81,7 +83,9 @@ fn bench_10_stacked_blocks(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -98,7 +102,9 @@ fn bench_100_stacked_blocks(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -116,7 +122,9 @@ fn bench_deep_nesting_10(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -134,7 +142,9 @@ fn bench_deep_nesting_50(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -153,7 +163,9 @@ fn bench_margin_collapsing(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -192,7 +204,9 @@ fn bench_mixed_sizing(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -217,7 +231,9 @@ fn bench_float_left_simple(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -239,13 +255,19 @@ fn bench_float_text_wrap(c: &mut Criterion) {
 
                 // Paragraph that wraps around the float
                 let para = add_block(&mut doc, vp);
-                add_text(&mut doc, para, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
+                add_text(
+                    &mut doc,
+                    para,
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
                     Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.");
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+                );
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -271,7 +293,9 @@ fn bench_float_complex(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -302,7 +326,9 @@ fn bench_absolute_positioning(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -322,7 +348,9 @@ fn bench_relative_offsets(c: &mut Criterion) {
                 }
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -368,9 +396,12 @@ fn bench_blog_layout(c: &mut Criterion) {
                 for _ in 0..8 {
                     let para = add_block(&mut doc, content);
                     doc.node_mut(para).style.margin_bottom = Length::px(16.0);
-                    add_text(&mut doc, para,
+                    add_text(
+                        &mut doc,
+                        para,
                         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem \
-                         accusantium doloremque laudantium, totam rem aperiam.");
+                         accusantium doloremque laudantium, totam rem aperiam.",
+                    );
                 }
 
                 // Footer
@@ -380,7 +411,9 @@ fn bench_blog_layout(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -429,7 +462,9 @@ fn bench_form_layout(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -456,7 +491,8 @@ fn bench_grid_of_cards(c: &mut Criterion) {
 
                     // Card header
                     let card_header = add_sized_block(&mut doc, card, 180.0, 40.0);
-                    doc.node_mut(card_header).style.background_color = Color::from_rgba8(0, 120, 215, 255);
+                    doc.node_mut(card_header).style.background_color =
+                        Color::from_rgba8(0, 120, 215, 255);
 
                     // Card body text
                     let card_body = add_block(&mut doc, card);
@@ -464,7 +500,11 @@ fn bench_grid_of_cards(c: &mut Criterion) {
                     doc.node_mut(card_body).style.padding_right = Length::px(8.0);
                     doc.node_mut(card_body).style.padding_bottom = Length::px(8.0);
                     doc.node_mut(card_body).style.padding_left = Length::px(8.0);
-                    add_text(&mut doc, card_body, "Card content here with some description.");
+                    add_text(
+                        &mut doc,
+                        card_body,
+                        "Card content here with some description.",
+                    );
 
                     // Card footer
                     add_sized_block(&mut doc, card, 180.0, 30.0);
@@ -472,7 +512,9 @@ fn bench_grid_of_cards(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -503,7 +545,9 @@ fn bench_flex_row_5_items(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -530,7 +574,9 @@ fn bench_flex_column_10_items(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -559,7 +605,9 @@ fn bench_flex_wrap_20_items(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -582,7 +630,9 @@ fn bench_inline_short_text(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -597,18 +647,23 @@ fn bench_inline_long_paragraph(c: &mut Criterion) {
 
                 let para = add_block(&mut doc, vp);
                 doc.node_mut(para).style.width = Length::px(600.0);
-                add_text(&mut doc, para,
+                add_text(
+                    &mut doc,
+                    para,
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
                      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
                      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris \
                      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in \
                      reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla \
                      pariatur. Excepteur sint occaecat cupidatat non proident, sunt in \
-                     culpa qui officia deserunt mollit anim id est laborum.");
+                     culpa qui officia deserunt mollit anim id est laborum.",
+                );
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -634,7 +689,9 @@ fn bench_inline_mixed_spans(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -662,11 +719,17 @@ fn bench_sizing_min_content_nested(c: &mut Criterion) {
                     doc.node_mut(child).style.padding_left = Length::px(4.0);
                     parent = child;
                 }
-                add_text(&mut doc, parent, "Min-content sizing text inside nested blocks");
+                add_text(
+                    &mut doc,
+                    parent,
+                    "Min-content sizing text inside nested blocks",
+                );
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -682,14 +745,19 @@ fn bench_sizing_max_content_text(c: &mut Criterion) {
                 // Auto-width block containing a paragraph — exercises
                 // max-content sizing when the container has no explicit width.
                 let para = add_block(&mut doc, vp);
-                add_text(&mut doc, para,
+                add_text(
+                    &mut doc,
+                    para,
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
                      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
-                     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.");
+                     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+                );
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -709,13 +777,18 @@ fn bench_sizing_min_max_constraints(c: &mut Criterion) {
                 doc.node_mut(block).style.height = Length::percent(40.0);
                 doc.node_mut(block).style.min_height = Length::px(100.0);
                 doc.node_mut(block).style.max_height = Length::px(300.0);
-                add_text(&mut doc, block,
+                add_text(
+                    &mut doc,
+                    block,
                     "Content inside a block with min-width, max-width, \
-                     min-height, and max-height constraints applied.");
+                     min-height, and max-height constraints applied.",
+                );
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -744,7 +817,9 @@ fn bench_multicol_3_columns_20_blocks(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -774,7 +849,9 @@ fn bench_fragmentation_break_token_chain(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -795,7 +872,9 @@ fn bench_text_inline_long_paragraph(c: &mut Criterion) {
                 doc.node_mut(para).style.width = Length::px(500.0);
 
                 // ~200 words of lorem ipsum text
-                add_text(&mut doc, para,
+                add_text(
+                    &mut doc,
+                    para,
                     "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do \
                      eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim \
                      ad minim veniam quis nostrud exercitation ullamco laboris nisi ut \
@@ -814,11 +893,14 @@ fn bench_text_inline_long_paragraph(c: &mut Criterion) {
                      corporis suscipit laboriosam nisi ut aliquid ex ea commodi consequatur \
                      Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse \
                      quam nihil molestiae consequatur vel illum qui dolorem eum fugiat quo \
-                     voluptas nulla pariatur");
+                     voluptas nulla pariatur",
+                );
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -878,19 +960,20 @@ fn bench_text_inline_line_breaking_stress(c: &mut Criterion) {
 
                 // 50 short words — each 3-6 chars — crammed into 80px
                 let words: Vec<&str> = vec![
-                    "the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog",
-                    "and", "then", "runs", "back", "again", "with", "great", "speed",
-                    "down", "long", "road", "past", "old", "farm", "near", "big",
-                    "red", "barn", "next", "wide", "blue", "lake", "into", "deep",
-                    "dark", "wood", "full", "tall", "pine", "trees", "soft", "green",
-                    "moss", "grew", "upon", "each", "flat", "gray", "rock", "all",
+                    "the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog", "and", "then",
+                    "runs", "back", "again", "with", "great", "speed", "down", "long", "road",
+                    "past", "old", "farm", "near", "big", "red", "barn", "next", "wide", "blue",
+                    "lake", "into", "deep", "dark", "wood", "full", "tall", "pine", "trees",
+                    "soft", "green", "moss", "grew", "upon", "each", "flat", "gray", "rock", "all",
                     "day", "long",
                 ];
                 add_text(&mut doc, para, &words.join(" "));
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -943,7 +1026,9 @@ fn bench_sticky_basic(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -1004,8 +1089,7 @@ fn bench_position_fixed_children(c: &mut Criterion) {
                 doc.node_mut(overlay).style.left = Length::px(0.0);
                 doc.node_mut(overlay).style.width = Length::px(800.0);
                 doc.node_mut(overlay).style.height = Length::px(600.0);
-                doc.node_mut(overlay).style.background_color =
-                    Color::from_rgba8(0, 0, 0, 128);
+                doc.node_mut(overlay).style.background_color = Color::from_rgba8(0, 0, 0, 128);
 
                 // Fixed-position dialog within the overlay
                 let dialog = add_block(&mut doc, vp);
@@ -1018,7 +1102,9 @@ fn bench_position_fixed_children(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -1063,7 +1149,9 @@ fn bench_bfc_float_triggered(c: &mut Criterion) {
 
                 doc
             },
-            |doc| { block_layout(doc, doc.root(), &root_space()); },
+            |doc| {
+                block_layout(doc, doc.root(), &root_space());
+            },
             criterion::BatchSize::SmallInput,
         )
     });
@@ -1103,10 +1191,8 @@ fn bench_float_exclusion_query(c: &mut Criterion) {
                 // Query layout opportunities at various block offsets —
                 // simulates the inner loop of inline layout with floats.
                 for i in 0..20 {
-                    let offset = BfcOffset::new(
-                        LayoutUnit::zero(),
-                        LayoutUnit::from_f32(i as f32 * 40.0),
-                    );
+                    let offset =
+                        BfcOffset::new(LayoutUnit::zero(), LayoutUnit::from_f32(i as f32 * 40.0));
                     let _ = space.find_layout_opportunity(
                         &offset,
                         LayoutUnit::from_f32(800.0),
@@ -1177,30 +1263,15 @@ criterion_group!(
     bench_sizing_min_max_constraints,
 );
 
-criterion_group!(
-    multicol_benches,
-    bench_multicol_3_columns_20_blocks,
-);
+criterion_group!(multicol_benches, bench_multicol_3_columns_20_blocks,);
 
-criterion_group!(
-    fragmentation_benches,
-    bench_fragmentation_break_token_chain,
-);
+criterion_group!(fragmentation_benches, bench_fragmentation_break_token_chain,);
 
-criterion_group!(
-    sticky_benches,
-    bench_sticky_basic,
-);
+criterion_group!(sticky_benches, bench_sticky_basic,);
 
-criterion_group!(
-    ruby_benches,
-    bench_ruby_annotation_layout,
-);
+criterion_group!(ruby_benches, bench_ruby_annotation_layout,);
 
-criterion_group!(
-    bfc_benches,
-    bench_bfc_float_triggered,
-);
+criterion_group!(bfc_benches, bench_bfc_float_triggered,);
 
 criterion_group!(
     text_benches,

@@ -8,9 +8,7 @@ use openui_geometry::{LayoutUnit, Length};
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::inline::items_builder::style_to_font_description;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    ComputedStyle, Display, TextAlign, TextJustify,
-};
+use openui_style::{ComputedStyle, Display, TextAlign, TextJustify};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
@@ -117,10 +115,7 @@ fn inter_char_justification_text_only_counts_internal_gaps() {
     let result = inline_layout(&doc, block, &space);
 
     let texts = all_text_fragments(&result);
-    assert!(
-        !texts.is_empty(),
-        "Expected at least 1 text fragment"
-    );
+    assert!(!texts.is_empty(), "Expected at least 1 text fragment");
 }
 
 // ── Issue 3: Locale plumbed from ComputedStyle to FontDescription ───────
@@ -156,4 +151,3 @@ fn computed_style_locale_defaults_to_none() {
         "ComputedStyle.locale should default to None"
     );
 }
-

@@ -448,8 +448,14 @@ mod tests {
 
     #[test]
     fn error_display() {
-        assert_eq!(OuiError::NotInitialized.to_string(), "library not initialized");
-        assert_eq!(OuiError::CreationFailed.to_string(), "object creation failed");
+        assert_eq!(
+            OuiError::NotInitialized.to_string(),
+            "library not initialized"
+        );
+        assert_eq!(
+            OuiError::CreationFailed.to_string(),
+            "object creation failed"
+        );
     }
 
     #[test]

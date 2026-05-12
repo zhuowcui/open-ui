@@ -1,0 +1,27 @@
+{
+  "total": 3,
+  "passed": 1,
+  "failed": 2,
+  "errors": 0,
+  "near_miss_aa": 2,
+  "aa_threshold_pct": 0.5,
+  "reference_tests": 0,
+  "reference_tests_pass": 0,
+  "tests": [
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.000425
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius",
+      "status": "fail",
+      "mismatch_pct": 0.000425
+    }
+  ]
+}

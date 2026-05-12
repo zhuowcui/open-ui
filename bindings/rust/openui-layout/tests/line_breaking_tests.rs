@@ -47,7 +47,12 @@ fn make_shaped_items(
 
 /// Simple helper: make shaped items with default CSS settings.
 fn make_normal_items(texts: &[&str]) -> openui_layout::inline::items_builder::InlineItemsData {
-    make_shaped_items(texts, WhiteSpace::Normal, WordBreak::Normal, OverflowWrap::Normal)
+    make_shaped_items(
+        texts,
+        WhiteSpace::Normal,
+        WordBreak::Normal,
+        OverflowWrap::Normal,
+    )
 }
 
 /// Collect all lines from a line breaker.
@@ -104,7 +109,10 @@ fn two_words_break_when_narrow() {
     let data = make_normal_items(&["hello world"]);
     let w = measure_text("hello ") + 1.0; // just enough for "hello " but not "hello world"
     let lines = collect_all_lines(&data, lu(w));
-    assert!(lines.len() >= 2, "Should break 'hello world' into 2+ lines at narrow width");
+    assert!(
+        lines.len() >= 2,
+        "Should break 'hello world' into 2+ lines at narrow width"
+    );
 }
 
 #[test]
@@ -129,7 +137,10 @@ fn overflow_wrap_break_word_breaks_mid_word() {
     // Width for ~3 characters
     let avail = single_char_width * 3.5;
     let lines = collect_all_lines(&data, lu(avail));
-    assert!(lines.len() >= 2, "overflow-wrap: break-word should break mid-word");
+    assert!(
+        lines.len() >= 2,
+        "overflow-wrap: break-word should break mid-word"
+    );
 }
 
 #[test]
@@ -143,7 +154,10 @@ fn word_break_break_all_breaks_between_characters() {
     let single_char_width = measure_text("a");
     let avail = single_char_width * 2.5;
     let lines = collect_all_lines(&data, lu(avail));
-    assert!(lines.len() >= 2, "word-break: break-all should break between characters");
+    assert!(
+        lines.len() >= 2,
+        "word-break: break-all should break between characters"
+    );
 }
 
 #[test]
@@ -155,7 +169,11 @@ fn white_space_nowrap_prevents_breaks() {
         OverflowWrap::Normal,
     );
     let lines = collect_all_lines(&data, lu(50.0));
-    assert_eq!(lines.len(), 1, "white-space: nowrap should prevent line breaks");
+    assert_eq!(
+        lines.len(),
+        1,
+        "white-space: nowrap should prevent line breaks"
+    );
 }
 
 #[test]
@@ -298,7 +316,10 @@ fn single_character_per_line_break_all() {
     let single_char_width = measure_text("a");
     let avail = single_char_width * 1.5;
     let lines = collect_all_lines(&data, lu(avail));
-    assert!(lines.len() >= 3, "break-all with narrow width should produce many lines");
+    assert!(
+        lines.len() >= 3,
+        "break-all with narrow width should produce many lines"
+    );
 }
 
 #[test]
@@ -366,7 +387,14 @@ fn span_open_close_on_same_line() {
     assert_eq!(lines.len(), 1);
     // Should have open, text, close
     let types: Vec<_> = lines[0].items.iter().map(|i| i.item_type).collect();
-    assert_eq!(types, vec![InlineItemType::OpenTag, InlineItemType::Text, InlineItemType::CloseTag]);
+    assert_eq!(
+        types,
+        vec![
+            InlineItemType::OpenTag,
+            InlineItemType::Text,
+            InlineItemType::CloseTag
+        ]
+    );
 }
 
 #[test]
@@ -454,7 +482,7 @@ fn pre_trailing_newline() {
         OverflowWrap::Normal,
     );
     let lines = collect_all_lines(&data, lu(10000.0));
-    // "hello" on first line (forced break), then empty content — 
+    // "hello" on first line (forced break), then empty content —
     // the forced break produces one line with content
     assert!(lines.len() >= 1);
     assert!(lines[0].has_forced_break);
@@ -486,7 +514,10 @@ fn overflow_wrap_anywhere_breaks_mid_word() {
     let single_char_width = measure_text("a");
     let avail = single_char_width * 3.5;
     let lines = collect_all_lines(&data, lu(avail));
-    assert!(lines.len() >= 2, "overflow-wrap: anywhere should break mid-word");
+    assert!(
+        lines.len() >= 2,
+        "overflow-wrap: anywhere should break mid-word"
+    );
 }
 
 // ── word-break: break-word (legacy) ─────────────────────────────────────
@@ -513,7 +544,10 @@ fn word_break_break_word_same_as_overflow_wrap_break_word() {
 fn zero_width_available_forces_content() {
     let data = make_normal_items(&["hello"]);
     let lines = collect_all_lines(&data, lu(0.0));
-    assert!(!lines.is_empty(), "Zero width should still produce at least one line");
+    assert!(
+        !lines.is_empty(),
+        "Zero width should still produce at least one line"
+    );
 }
 
 #[test]
@@ -552,7 +586,10 @@ fn break_all_unicode() {
     let single_char_width = measure_text("a");
     let avail = single_char_width * 2.5;
     let lines = collect_all_lines(&data, lu(avail));
-    assert!(lines.len() >= 2, "break-all should work with multi-byte chars");
+    assert!(
+        lines.len() >= 2,
+        "break-all should work with multi-byte chars"
+    );
 }
 
 #[test]
@@ -632,7 +669,10 @@ fn last_line_marker_multiline() {
     assert!(lines.len() >= 2);
     for (i, line) in lines.iter().enumerate() {
         if i < lines.len() - 1 {
-            assert!(!line.is_last_line, "non-last line should not be marked as last");
+            assert!(
+                !line.is_last_line,
+                "non-last line should not be marked as last"
+            );
         } else {
             assert!(line.is_last_line, "last line should be marked as last");
         }
@@ -705,7 +745,12 @@ fn cjk_breaks_between_ideographs() {
     use openui_layout::inline::line_breaker::find_break_opportunities;
     // CJK characters should have break opportunities between each pair
     let text = "\u{4e16}\u{754c}"; // "世界" — two CJK characters
-    let breaks = find_break_opportunities(text, WordBreak::Normal, OverflowWrap::Normal, openui_style::LineBreak::Auto);
+    let breaks = find_break_opportunities(
+        text,
+        WordBreak::Normal,
+        OverflowWrap::Normal,
+        openui_style::LineBreak::Auto,
+    );
     // There should be a break opportunity between the two characters
     assert!(
         !breaks.is_empty(),
@@ -718,7 +763,12 @@ fn cjk_three_chars_have_two_breaks() {
     use openui_layout::inline::line_breaker::find_break_opportunities;
     // Three CJK characters should have break opportunities between each pair
     let text = "\u{4e16}\u{754c}\u{597d}"; // "世界好"
-    let breaks = find_break_opportunities(text, WordBreak::Normal, OverflowWrap::Normal, openui_style::LineBreak::Auto);
+    let breaks = find_break_opportunities(
+        text,
+        WordBreak::Normal,
+        OverflowWrap::Normal,
+        openui_style::LineBreak::Auto,
+    );
     // Should have at least 2 break opportunities (between pairs)
     assert!(
         breaks.len() >= 2,
@@ -732,7 +782,12 @@ fn cjk_mixed_with_latin_breaks() {
     use openui_layout::inline::line_breaker::find_break_opportunities;
     // Mixed Latin and CJK: "hello世界"
     let text = "hello\u{4e16}\u{754c}";
-    let breaks = find_break_opportunities(text, WordBreak::Normal, OverflowWrap::Normal, openui_style::LineBreak::Auto);
+    let breaks = find_break_opportunities(
+        text,
+        WordBreak::Normal,
+        OverflowWrap::Normal,
+        openui_style::LineBreak::Auto,
+    );
     // Should have break between Latin and CJK, and between CJK characters
     assert!(
         !breaks.is_empty(),
@@ -753,7 +808,10 @@ fn trailing_space_stripped_from_full_item() {
     // because the trailing space is stripped.
     let hello_width = measure_text("hello");
     let hello_space_width = measure_text("hello ");
-    assert!(hello_space_width > hello_width, "hello-space should be wider than hello");
+    assert!(
+        hello_space_width > hello_width,
+        "hello-space should be wider than hello"
+    );
 
     // The line's used_width after stripping should be close to "hello" width
     let line_width = lines[0].used_width.to_f32();
