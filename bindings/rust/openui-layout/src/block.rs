@@ -6805,14 +6805,17 @@ fn layout_multicol(
                             let can_extend_positioned_abspos_overflow_columns =
                                 should_continue_abspos_overflow
                                     && child_style.position.is_positioned()
-                                    && style.position.is_positioned()
-                                    && !style.left.is_auto()
-                                    && resolve_length(
-                                        &style.left,
-                                        child_available_inline,
-                                        LayoutUnit::zero(),
-                                        LayoutUnit::zero(),
-                                    ) < LayoutUnit::zero();
+                                    && ((style.position.is_positioned()
+                                        && !style.left.is_auto()
+                                        && resolve_length(
+                                            &style.left,
+                                            child_available_inline,
+                                            LayoutUnit::zero(),
+                                            LayoutUnit::zero(),
+                                        ) < LayoutUnit::zero())
+                                        || (positioned_direct_abspos_visual_overflow
+                                            && child_style.overflow_x == Overflow::Visible
+                                            && child_style.overflow_y == Overflow::Visible));
                             while overflow_consumed.raw() < overflow_bottom.raw()
                                 && (overflow_col_idx < resolved.count as usize
                                     || can_extend_positioned_abspos_overflow_columns

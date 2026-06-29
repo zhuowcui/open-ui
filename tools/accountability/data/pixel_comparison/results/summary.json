@@ -1,7 +1,7 @@
 {
   "total": 3406,
-  "passed": 2669,
-  "failed": 737,
+  "passed": 2671,
+  "failed": 735,
   "errors": 0,
   "near_miss_aa": 171,
   "aa_threshold_pct": 0.5,
@@ -11050,8 +11050,8 @@
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-002",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-003",
@@ -11355,8 +11355,8 @@
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-082",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-083",

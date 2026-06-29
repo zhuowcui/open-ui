@@ -2263,7 +2263,7 @@ css-break/orphans-in-parallel-flow.html,orphans-in-parallel-flow,css_break,yes,w
 css-break/out-of-flow-in-inline-with-negative-offset-crash.html,out-of-flow-in-inline-with-negative-offset-crash,css_break,yes,wpt/css_break/out-of-flow-in-inline-with-negative-offset-crash,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-001.html,out-of-flow-in-multicolumn-001,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-001,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-001-ref.html,out-of-flow-in-multicolumn-001-ref,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-001-ref,pass,0.0,,,
-css-break/out-of-flow-in-multicolumn-002.html,out-of-flow-in-multicolumn-002,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-002,fail,1.061571,sp13_fragmentation,SP13: Block Fragmentation,
+css-break/out-of-flow-in-multicolumn-002.html,out-of-flow-in-multicolumn-002,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-002,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-003.html,out-of-flow-in-multicolumn-003,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-003,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-004.html,out-of-flow-in-multicolumn-004,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-004,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-004-ref.html,out-of-flow-in-multicolumn-004-ref,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-004-ref,pass,0.0,,,
@@ -2346,7 +2346,7 @@ css-break/out-of-flow-in-multicolumn-078.html,out-of-flow-in-multicolumn-078,css
 css-break/out-of-flow-in-multicolumn-079.html,out-of-flow-in-multicolumn-079,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-079,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-080.html,out-of-flow-in-multicolumn-080,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-080,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-081.html,out-of-flow-in-multicolumn-081,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-081,fail,2.123142,sp13_fragmentation,SP13: Block Fragmentation,
-css-break/out-of-flow-in-multicolumn-082.html,out-of-flow-in-multicolumn-082,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-082,fail,1.061571,sp13_fragmentation,SP13: Block Fragmentation,
+css-break/out-of-flow-in-multicolumn-082.html,out-of-flow-in-multicolumn-082,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-082,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-083.html,out-of-flow-in-multicolumn-083,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-083,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-084.html,out-of-flow-in-multicolumn-084,css_break,yes,wpt/css_break/out-of-flow-in-multicolumn-084,pass,0.0,,,
 css-break/out-of-flow-in-multicolumn-085.html,out-of-flow-in-multicolumn-085,css_break,no,,,,"needs_text,needs_advanced_selectors,needs_visual_effects,sp13_fragmentation",SP11/SP13: Text Rendering; Future SP: Advanced CSS Selectors; Future SP: Transforms/Effects; SP13: Block Fragmentation,Porter deferred: unsupported property: filter
