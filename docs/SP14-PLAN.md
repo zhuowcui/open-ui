@@ -96,4 +96,27 @@ smoke test (step 2) therefore targets DejaVu-fallback text, not real Ahem square
 
 ## Status
 
+**SP14 smoke test complete — the precise starting bug is identified.**
+
+Ran existing text builders (`sp13/inline_*`, `first_letter_basic`, `mixed_block_inline`,
+`line_breaking_normal_wrap`) through the real pixel pipeline (they use `ElementTag::Span` +
+`.text`, with matching HTML templates). Findings:
+
+- The path is wired (builders emit text; Chromium renders the text in the shared DejaVu
+  fallback), and single-line cases report small mismatches (`inline_single_span` 0.36%,
+  `inline_multiple_spans` 0.38%, `first_letter_basic` 0.33%).
+- **But our engine paints zero glyph pixels.** `first_letter_basic` and
+  `line_breaking_normal_wrap` render fully white; `mixed_block_inline` paints its background
+  boxes (24000 px) but **no text**; `inline_single_span` renders nothing in the text row.
+  The small mismatch % is only because a missing single text line is a small fraction of the
+  800×600 canvas.
+- The `openui-text` suite passes 186/186 (shaping/metrics are correct), so the gap is
+  specifically in the **layout→paint glyph path inside `pixel-compare`'s `render_to_png`** —
+  text is shaped and laid out but never rasterized to the canvas.
+
+**SP14 first implementation task (revised):** make inline text fragments actually paint
+glyphs in the pixel-compare render path, starting with a single-line block of text
+(e.g. a `<div>Text</div>`), and drive `inline_single_span` / `first_letter_basic` toward
+0.0%. Then proceed to the port-tool + pilot steps.
+
 _To be regenerated as SP14 progresses (pilot pass count, audit result, commit SHAs)._
