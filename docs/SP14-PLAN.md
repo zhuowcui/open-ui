@@ -57,6 +57,25 @@ proves the whole path under the strict 0.0% standard.
 6. **Promote** — full `wpt/` run, regenerate artifacts, `audit.py` 7/7, independent verifier,
    commit + push.
 
+## Font-strategy finding (SP14 execution) — use the shared DejaVu fallback, do NOT install Ahem
+
+Investigation during SP14 step 1 found:
+
+- **Ahem is not installed** on the environment; `fc-match "Ahem"` falls back to **DejaVu Sans**.
+  Both our Skia `FontMgr::default()` and the headless-Chromium reference go through the same
+  fontconfig, so both currently resolve `font-family: Ahem` → DejaVu Sans **identically**.
+- **119 currently-passing tests reference Ahem** (they render box-only on our side and pass
+  against a Chromium reference that used the Ahem→DejaVu fallback). **Installing Ahem globally
+  would re-render those Chromium references with real Ahem square glyphs and regress up to 119
+  passing tests** (our box-only builders would no longer match).
+
+Decision: **SP14 uses the existing shared DejaVu fallback, not a real Ahem install.**
+Determinism still holds because both sides use the identical font + Skia shaping. The
+accountability standard is *parity with headless Chromium*, which the DejaVu-fallback
+reference already encodes. Installing real Ahem (and re-rendering all 245 Ahem references +
+rendering their text on our side) is a coordinated migration deferred to a later SP. The
+smoke test (step 2) therefore targets DejaVu-fallback text, not real Ahem squares.
+
 ## Exit criteria
 
 - `port_wpt.py` can emit text nodes for the Ahem subset, and the behavior is documented.
