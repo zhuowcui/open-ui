@@ -96,27 +96,32 @@ smoke test (step 2) therefore targets DejaVu-fallback text, not real Ahem square
 
 ## Status
 
-**SP14 smoke test complete — the precise starting bug is identified.**
+**SP14 smoke test + root-cause diagnosis complete. The engine renders text correctly; the
+gap is (1) DOM representation in the port tool and (2) sub-pixel glyph parity.**
 
-Ran existing text builders (`sp13/inline_*`, `first_letter_basic`, `mixed_block_inline`,
-`line_breaking_normal_wrap`) through the real pixel pipeline (they use `ElementTag::Span` +
-`.text`, with matching HTML templates). Findings:
+Ran existing text builders through the real pixel pipeline, then traced why no glyphs painted:
 
-- The path is wired (builders emit text; Chromium renders the text in the shared DejaVu
-  fallback), and single-line cases report small mismatches (`inline_single_span` 0.36%,
-  `inline_multiple_spans` 0.38%, `first_letter_basic` 0.33%).
-- **But our engine paints zero glyph pixels.** `first_letter_basic` and
-  `line_breaking_normal_wrap` render fully white; `mixed_block_inline` paints its background
-  boxes (24000 px) but **no text**; `inline_single_span` renders nothing in the text row.
-  The small mismatch % is only because a missing single text line is a small fraction of the
-  800×600 canvas.
-- The `openui-text` suite passes 186/186 (shaping/metrics are correct), so the gap is
-  specifically in the **layout→paint glyph path inside `pixel-compare`'s `render_to_png`** —
-  text is shaped and laid out but never rasterized to the canvas.
+- **Root cause of "no text painted":** the inline item builder (`openui-layout/src/inline/
+  items_builder.rs`, `collect_children`) reads `.text` only from `ElementTag::Text` nodes.
+  For `ElementTag::Span`/`Div` it recurses into the node's *children* and **ignores the
+  node's own `.text`**. The legacy `sp13/*` builders set `.text` directly on `Span` nodes
+  (no `Text` child), so the text is silently dropped and layout emits an empty anonymous box.
+  The engine is correct: proper `ElementTag::Text` child nodes lay out and paint fine (the
+  passing `openui-text`/inline unit tests use `Text` nodes).
+- **Proof:** temporarily rewriting `sp13_inline_single_span` to append an `ElementTag::Text`
+  child (instead of `.text` on the span) made the engine render the red line at
+  x[20,279] y[23,37], matching Chromium's text bbox (20,23,281,37). (Reverted — the
+  `sp13/*` builders are legacy/orphaned and not in the authoritative WPT set; SP14's port
+  tool will emit `Text` nodes properly across the board.)
+- **Remaining gap is sub-pixel glyph parity:** that smoke render differs from the Chromium
+  reference by **0.356%** (1710 px), bbox-aligned but with sub-pixel AA/advance differences
+  in glyph rasterization (~900 large-delta edge pixels). This is the genuine SP14 parity
+  work: match our Skia text raster to Chromium's.
 
-**SP14 first implementation task (revised):** make inline text fragments actually paint
-glyphs in the pixel-compare render path, starting with a single-line block of text
-(e.g. a `<div>Text</div>`), and drive `inline_single_span` / `first_letter_basic` toward
-0.0%. Then proceed to the port-tool + pilot steps.
+**SP14 implementation tasks (sharpened):**
+1. **Port tool emits `ElementTag::Text` child nodes** with content + font props (not `.text`
+   on spans). The inline builder/layout/paint already handle `Text` nodes correctly.
+2. **Drive sub-pixel glyph parity to 0.0%** (or AA-near-miss) on the single-line pilot —
+   investigate glyph positioning/advance accumulation and anti-aliasing vs Chromium.
 
 _To be regenerated as SP14 progresses (pilot pass count, audit result, commit SHAs)._
