@@ -267,7 +267,7 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
 | Current runnable WPT tests | 3,406 |
-| Current runnable WPT passes | 2,430 |
+| Current runnable WPT passes | 2,671 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
 | Pixel comparison tests | 3,406 generated WPT comparisons + earlier SP pages/apps |
@@ -276,3 +276,28 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Total real fixes from review | 230+ |
 | CSS features implemented | Block, Flex, Inline, Text, Ruby |
 | Chromium version | M147 (147.0.7727.24) |
+
+---
+
+## SP13 (partial) + Accountability Restore + Text Pivot
+
+### What happened
+
+- Continued SP13 fragmentation/multicol. Net layout state advanced to **2671 pass / 735
+  fail / 0 errors**, `audit.py` 7/7 (commits `b66e0df`, `4780f71`).
+  - `b66e0df`: restored a broken/stale `summary.json` left by an earlier commit (audit was
+    failing 7/7) by re-running the full WPT suite and regenerating artifacts.
+  - `4780f71`: SP13 fix — extended multicol overflow columns for abspos descendant overflow
+    (`out-of-flow-in-multicolumn-002`, `-082`), zero regressions.
+- SP13 has ~48 hard, heterogeneous fragmentation/multicol residuals remaining; documented
+  per-cluster for later resumption.
+
+### Decision: pause layout, pivot to text (SP14+)
+
+Text is the largest single unlock (`needs_text` 4045 unported + 336 runnable;
+`needs_font_metrics` 230/553). The SP11 text engine, inline layout, and glyph painter already
+exist — the gap is that the WPT porting tool emits box-only builders, so text is never
+compared against Chromium. The text track (SP14–SP18) is a porting + parity effort, starting
+with the deterministic Ahem subset.
+
+See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (first SP).
