@@ -3007,6 +3007,30 @@ def generate_border_color_shorthand(val: str, s: str) -> list[str] | None:
 
 # ─── Document builder generation ──────────────────────────────────────────
 
+# ── SP14: text-node emission (gated) ─────────────────────────────────────
+# Historically the porter skipped text nodes ("comparing layout only"), which
+# is why every text-containing WPT test is classified `needs_text`. SP14 emits
+# real `ElementTag::Text` nodes so text can be pixel-compared against Chromium.
+#
+# This is OFF by default so regenerating the existing corpus produces
+# byte-identical box-only builders (no churn / zero regression to the passing
+# set). SP14 enables it per-pilot: either set EMIT_TEXT_NODES = True for a
+# scoped run, or add specific test source paths to EMIT_TEXT_FOR (an allowlist
+# keyed by the porter's per-test gating — see callers).
+EMIT_TEXT_NODES = False
+
+
+def _rust_escape_string(s: str) -> str:
+    """Escape a Python string for embedding in a Rust double-quoted literal."""
+    return (
+        s.replace('\\', '\\\\')
+         .replace('"', '\\"')
+         .replace('\n', '\\n')
+         .replace('\r', '\\r')
+         .replace('\t', '\\t')
+    )
+
+
 def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = None) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
     lines = []
@@ -3072,7 +3096,22 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
             custom_props = {}
 
         if node.is_text:
-            # Skip text nodes — we're comparing layout only
+            # SP14: emit a real Text node when text emission is enabled; otherwise
+            # skip (legacy box-only behavior, default — keeps the passing corpus
+            # byte-identical). `text_content` is already whitespace-stripped; our
+            # inline layout performs CSS white-space processing on the content.
+            if EMIT_TEXT_NODES:
+                text = getattr(node, 'text_content', '') or ''
+                if text.strip():
+                    counter[0] += 1
+                    tvar = f"n{counter[0]}"
+                    ws = "    " * indent
+                    lines.append(f"{ws}let {tvar} = doc.create_node(ElementTag::Text);")
+                    lines.append(
+                        f'{ws}doc.node_mut({tvar}).text = '
+                        f'Some("{_rust_escape_string(text)}".to_string());'
+                    )
+                    lines.append(f"{ws}doc.append_child({parent_var}, {tvar});")
             return
 
         if node.tag in ('p', 'strong', 'em', 'b', 'i', 'u', 'a',
