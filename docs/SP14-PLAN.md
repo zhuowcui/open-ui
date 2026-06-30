@@ -118,10 +118,24 @@ Ran existing text builders through the real pixel pipeline, then traced why no g
   in glyph rasterization (~900 large-delta edge pixels). This is the genuine SP14 parity
   work: match our Skia text raster to Chromium's.
 
-**SP14 implementation tasks (sharpened):**
-1. **Port tool emits `ElementTag::Text` child nodes** with content + font props (not `.text`
-   on spans). The inline builder/layout/paint already handle `Text` nodes correctly.
-2. **Drive sub-pixel glyph parity to 0.0%** (or AA-near-miss) on the single-line pilot —
-   investigate glyph positioning/advance accumulation and anti-aliasing vs Chromium.
+**SP14 progress so far:**
+1. ✅ Font strategy decided (shared DejaVu fallback; not installing Ahem).
+2. ✅ Smoke test + root cause: engine renders `ElementTag::Text` nodes correctly; the
+   porter dropped text and the legacy `sp13/*` builders mis-set `.text` on spans.
+3. ✅ **Gated text-node emission built** in `tools/wpt/port_wpt.py` (`EMIT_TEXT_NODES`,
+   default off). Verified: off = byte-identical box-only output (zero churn); on = emits
+   escaped `ElementTag::Text` nodes. This is the mechanism the pilot uses.
+
+**Remaining SP14 sprint (precisely scoped):**
+1. **Port a single-line pilot** with `EMIT_TEXT_NODES` enabled for an allowlist; wire the
+   generated builders + templates; run focused comparisons.
+2. **Glyph parity** — the core remaining work. The smoke render is bbox-aligned but
+   **0.356%** off with ~900 large-delta edge pixels, indicating sub-pixel horizontal
+   advance/positioning (and possibly hinting/edging) differences between our Skia text
+   raster (`openui-paint/src/text_painter.rs` + the `SkFont` used in shaping) and
+   headless Chromium. Match `SkFont` edging/hinting/subpixel + advance rounding to drive
+   the pilot to 0.0% (or AA near-miss). This is iterative parity tuning.
+3. Guard slices (zero regression to the 2671) → full `wpt/` → regenerate artifacts →
+   `audit.py` 7/7 → reclassify out of `needs_text` → independent verifier → commit.
 
 _To be regenerated as SP14 progresses (pilot pass count, audit result, commit SHAs)._
