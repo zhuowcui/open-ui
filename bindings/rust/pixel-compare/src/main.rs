@@ -2298,8 +2298,15 @@ fn sp13_inline_single_span() -> Document {
     let (mut doc, vp) = base_doc();
     let span = doc.create_node(ElementTag::Span);
     doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.color = Color::RED;
-    doc.node_mut(span).text = Some("A single inline span with red text".to_string());
+    doc.node_mut(span).style.color = Color::from_rgba8(0, 0, 0, 255);
+    doc.node_mut(span).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(span).style.font_size = 20.0;
+    let text = doc.create_node(ElementTag::Text);
+    doc.node_mut(text).style.color = Color::from_rgba8(0, 0, 0, 255);
+    doc.node_mut(text).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(text).style.font_size = 20.0;
+    doc.node_mut(text).text = Some("Xpqg".to_string());
+    doc.append_child(span, text);
     doc.append_child(vp, span);
     doc
 }

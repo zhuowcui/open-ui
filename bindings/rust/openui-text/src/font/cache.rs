@@ -7,12 +7,21 @@
 use std::collections::HashMap;
 use std::sync::{Arc, LazyLock, Mutex};
 
+use skia_safe::textlayout::TypefaceFontProvider;
+use skia_safe::utils::OrderedFontMgr;
 use skia_safe::FontMgr;
 
 use openui_style::GenericFontFamily;
 
 use super::description::FontDescription;
 use super::platform::FontPlatformData;
+
+/// Fonts pinned in-process for deterministic pixel parity, independent of
+/// ambient system font configuration. Each is registered under its CSS family
+/// name ahead of the system font manager, so `match_family_style` resolves the
+/// vendored `.ttf` (byte-identical to the Chromium reference's font) instead of
+/// a system fallback. See `fonts/README.md`.
+const PINNED_FONTS: &[(&str, &[u8])] = &[("Ahem", include_bytes!("../../fonts/Ahem.ttf"))];
 
 /// Cache key derived from the properties that affect typeface selection.
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
@@ -61,9 +70,32 @@ impl FontCache {
     /// Create a new font cache with the system default font manager.
     pub fn new() -> Self {
         Self {
-            font_mgr: SendFontMgr(FontMgr::default()),
+            font_mgr: SendFontMgr(Self::build_font_mgr()),
             cache: HashMap::new(),
         }
+    }
+
+    /// Build the typeface manager: pinned deterministic fonts first (matched by
+    /// family name), then the system default manager for everything else. If no
+    /// pinned font loads, fall back to the plain system manager so resolution of
+    /// all other families is unchanged.
+    fn build_font_mgr() -> FontMgr {
+        let system = FontMgr::default();
+        let mut provider = TypefaceFontProvider::new();
+        let mut pinned = 0usize;
+        for &(family, bytes) in PINNED_FONTS {
+            if let Some(typeface) = system.new_from_data(bytes, None) {
+                provider.register_typeface(typeface, Some(family));
+                pinned += 1;
+            }
+        }
+        if pinned == 0 {
+            return system;
+        }
+        let mut ordered = OrderedFontMgr::new();
+        ordered.append(provider);
+        ordered.append(system);
+        ordered.into()
     }
 
     /// Get or create platform font data for a specific family + description.

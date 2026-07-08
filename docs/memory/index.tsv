@@ -16,3 +16,6 @@
 0015	active	process standard	MANDATORY process: independent verifier before task_complete; no escape buckets	2026-07-08	entries/0015-mandatory-process-independent-verifier-before-ta.md
 0016	active	meta provenance recovery	Memory provenance: seeded from recovered session 4ab79aa9 'Read Repo Documentation'	2026-07-08	entries/0016-memory-provenance-seeded-from-recovered-session.md
 0017	active	sp14 text wip uncommitted	Uncommitted SP14 glyph-parity WIP in tree (continuation point)	2026-07-08	entries/0017-uncommitted-sp14-glyph-parity-wip-in-tree-contin.md
+0018	superseded	sp14 text font finding blocker	ROOT CAUSE: OpenUI Skia font-mgr doesn't resolve user-installed Ahem (parity blocker)	2026-07-08	entries/0018-root-cause-openui-skia-font-mgr-doesn-t-resolve.md
+0019	active	sp14 text font parity finding near_miss_aa	SP14 smoke at 0.04%: residual is sub-pixel AA/text-gamma, not geometry	2026-07-08	entries/0019-sp14-smoke-at-0-04-residual-is-sub-pixel-aa-text.md
+0020	active	testing accountability text guard gotcha	Testing: authoritative set is wpt/ only; legacy .text builders render blank	2026-07-08	entries/0020-testing-authoritative-set-is-wpt-only-legacy-tex.md

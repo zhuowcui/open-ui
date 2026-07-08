@@ -13,3 +13,5 @@ As of 2026-07-08 the working tree has UNCOMMITTED SP14 glyph-parity WIP (from re
 - main.rs sp13_inline_single_span(): now builds a real ElementTag::Text child (proves text path).
 - run_all_pixel_comparisons.py + inline_single_span/test.html: smoke test switched to Ahem 20px black.
 KNOWN INCONSISTENCY to fix first: the builder text ("A single inline span") does NOT match the reference template text ("Xpqg") — reconcile them before trusting the 0.356% smoke number. result.json is an untracked run artifact.
+UPDATE 2026-07-08: text mismatch FIXED — builder sp13_inline_single_span now renders span Ahem/20px/black "Xpqg" matching the reference template (main.rs edit, uncommitted). Built + ran focused compare: still FAILS 0.31% (1445px). Root cause is NOT text/rasterization — see entry 0018.
+PROGRESS 2026-07-08: smoke now 0.04% (was 0.31%). Geometry exact; residual is sub-pixel AA/text-gamma only (see 0019). Uncommitted changes now also include: openui-text FontCache pinning (cache.rs), vendored fonts/Ahem.ttf, builder font-on-text-node fix (main.rs). Still need: zero-regression validation + decision on last-mile (match Chrome gamma vs near_miss_aa).

@@ -41,8 +41,34 @@ impl FontPlatformData {
     /// for applying a skew transform during text painting.
     pub fn with_oblique_angle(typeface: Typeface, size: f32, oblique_angle: f32) -> Self {
         let mut sk_font = SkFont::from_typeface(&typeface, size);
-        sk_font.set_subpixel(true);
-        sk_font.set_hinting(FontHinting::Slight);
+        // SP14 parity experiment: allow overriding rasterization settings via env
+        // vars so we can match headless Chromium without recompiling per combo.
+        // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
+        // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
+        let subpixel = std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
+        sk_font.set_subpixel(subpixel);
+        let hinting = match std::env::var("OPENUI_HINTING").ok().as_deref() {
+            Some("none") => FontHinting::None,
+            Some("normal") => FontHinting::Normal,
+            Some("full") => FontHinting::Full,
+            _ => FontHinting::Slight,
+        };
+        sk_font.set_hinting(hinting);
+        match std::env::var("OPENUI_EDGING").ok().as_deref() {
+            Some("alias") => {
+                sk_font.set_edging(skia_safe::font::Edging::Alias);
+            }
+            Some("subpixel") => {
+                sk_font.set_edging(skia_safe::font::Edging::SubpixelAntiAlias);
+            }
+            Some("aa") => {
+                sk_font.set_edging(skia_safe::font::Edging::AntiAlias);
+            }
+            _ => {}
+        }
+        if std::env::var("OPENUI_AUTOHINT").ok().as_deref() == Some("1") {
+            sk_font.set_force_auto_hinting(true);
+        }
 
         // Apply synthetic oblique via skew if angle is non-zero.
         if oblique_angle != 0.0 {

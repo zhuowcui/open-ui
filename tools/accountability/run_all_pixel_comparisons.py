@@ -224,7 +224,7 @@ HTML_TEMPLATES = {
     "sp11/text_shadow_offset": "<div style='margin-bottom:10px;text-shadow:3px 3px 0 red;'>Shadow</div>",
 
     # ── SP13 Inline Basic ────────────────────────────────────────────
-    "sp13/inline_single_span": "<span style='color:red;'>A single inline span with red text</span>",
+    "sp13/inline_single_span": "<span style='font-family:Ahem;font-size:20px;color:black;'>Xpqg</span>",
     "sp13/inline_multiple_spans": "<span style='color:red;'>First span </span><span style='color:blue;'>Second span </span><span style='color:green;'>Third span</span>",
     "sp13/inline_nested_spans": "<span style='color:blue;'>Outer <span style='color:red;font-weight:bold;'>inner bold red</span></span><span style='color:blue;'> outer again</span>",
 
