@@ -5,7 +5,7 @@
 0004	active	text finding port_wpt	Text pivot is porting+parity, NOT a from-scratch engine	2026-07-08	entries/0004-text-pivot-is-porting-parity-not-a-from-scratch.md
 0005	active	sp14 text plan	SP14 goal + scope: single-line LTR Ahem text to 0.0% parity	2026-07-08	entries/0005-sp14-goal-scope-single-line-ltr-ahem-text-to-0-0.md
 0006	active	sp14 text progress next-steps	SP14 progress + next steps (glyph parity sprint)	2026-07-08	entries/0006-sp14-progress-next-steps-glyph-parity-sprint.md
-0007	active	text font gotcha sp14	Font strategy: use DejaVu Sans fallback, do NOT install Ahem	2026-07-08	entries/0007-font-strategy-use-dejavu-sans-fallback-do-not-in.md
+0007	active	text font gotcha sp14 reconciled	Font strategy: use DejaVu Sans fallback, do NOT install Ahem	2026-07-08	entries/0007-font-strategy-use-dejavu-sans-fallback-do-not-in.md
 0008	active	gotcha accountability pipeline	GOTCHA: filtered pixel runs OVERWRITE summary.json	2026-07-08	entries/0008-gotcha-filtered-pixel-runs-overwrite-summary-jso.md
 0009	active	commands pipeline accountability	Canonical pipeline commands (build/compare/regen/audit)	2026-07-08	entries/0009-canonical-pipeline-commands-build-compare-regen.md
 0010	active	accountability artifacts	Authoritative artifacts + failure classification	2026-07-08	entries/0010-authoritative-artifacts-failure-classification.md
@@ -15,7 +15,9 @@
 0014	active	gotcha speckit process	GOTCHA: do not trust speckit.implement claims; verify manually	2026-07-08	entries/0014-gotcha-do-not-trust-speckit-implement-claims-ver.md
 0015	active	process standard	MANDATORY process: independent verifier before task_complete; no escape buckets	2026-07-08	entries/0015-mandatory-process-independent-verifier-before-ta.md
 0016	active	meta provenance recovery	Memory provenance: seeded from recovered session 4ab79aa9 'Read Repo Documentation'	2026-07-08	entries/0016-memory-provenance-seeded-from-recovered-session.md
-0017	active	sp14 text wip uncommitted	Uncommitted SP14 glyph-parity WIP in tree (continuation point)	2026-07-08	entries/0017-uncommitted-sp14-glyph-parity-wip-in-tree-contin.md
+0017	superseded	sp14 text wip uncommitted	Uncommitted SP14 glyph-parity WIP in tree (continuation point)	2026-07-08	entries/0017-uncommitted-sp14-glyph-parity-wip-in-tree-contin.md
 0018	superseded	sp14 text font finding blocker	ROOT CAUSE: OpenUI Skia font-mgr doesn't resolve user-installed Ahem (parity blocker)	2026-07-08	entries/0018-root-cause-openui-skia-font-mgr-doesn-t-resolve.md
-0019	active	sp14 text font parity finding near_miss_aa	SP14 smoke at 0.04%: residual is sub-pixel AA/text-gamma, not geometry	2026-07-08	entries/0019-sp14-smoke-at-0-04-residual-is-sub-pixel-aa-text.md
+0019	active	sp14 text font parity finding near_miss_aa determination	SP14 smoke at 0.04%: residual is sub-pixel AA/text-gamma, not geometry	2026-07-08	entries/0019-sp14-smoke-at-0-04-residual-is-sub-pixel-aa-text.md
 0020	active	testing accountability text guard gotcha	Testing: authoritative set is wpt/ only; legacy .text builders render blank	2026-07-08	entries/0020-testing-authoritative-set-is-wpt-only-legacy-tex.md
+0021	active	sp14 text milestone state	SP14 milestone: Ahem text pixel path proven end-to-end (0.04%)	2026-07-08	entries/0021-sp14-milestone-ahem-text-pixel-path-proven-end-t.md
+0022	active	sp14 text pilot port_wpt next-steps plan	SP14 pilot batch: plan + key porter gap (font on Text nodes)	2026-07-08	entries/0022-sp14-pilot-batch-plan-key-porter-gap-font-on-tex.md
