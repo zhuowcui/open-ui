@@ -1,0 +1,18 @@
+# id	status	tags	title	updated	path
+0001	active	project standard	Project north star: Chromium pixel parity under strict accountability	2026-07-08	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
+0002	active	state accountability	Authoritative WPT state (2026-06-30): 2671 pass / 735 fail / 0 err, audit 7/7	2026-07-08	entries/0002-authoritative-wpt-state-2026-06-30-2671-pass-735.md
+0003	active	direction text sp14	Direction: layout PAUSED, pivot to text (SP14+)	2026-07-08	entries/0003-direction-layout-paused-pivot-to-text-sp14.md
+0004	active	text finding port_wpt	Text pivot is porting+parity, NOT a from-scratch engine	2026-07-08	entries/0004-text-pivot-is-porting-parity-not-a-from-scratch.md
+0005	active	sp14 text plan	SP14 goal + scope: single-line LTR Ahem text to 0.0% parity	2026-07-08	entries/0005-sp14-goal-scope-single-line-ltr-ahem-text-to-0-0.md
+0006	active	sp14 text progress next-steps	SP14 progress + next steps (glyph parity sprint)	2026-07-08	entries/0006-sp14-progress-next-steps-glyph-parity-sprint.md
+0007	active	text font gotcha sp14	Font strategy: use DejaVu Sans fallback, do NOT install Ahem	2026-07-08	entries/0007-font-strategy-use-dejavu-sans-fallback-do-not-in.md
+0008	active	gotcha accountability pipeline	GOTCHA: filtered pixel runs OVERWRITE summary.json	2026-07-08	entries/0008-gotcha-filtered-pixel-runs-overwrite-summary-jso.md
+0009	active	commands pipeline accountability	Canonical pipeline commands (build/compare/regen/audit)	2026-07-08	entries/0009-canonical-pipeline-commands-build-compare-regen.md
+0010	active	accountability artifacts	Authoritative artifacts + failure classification	2026-07-08	entries/0010-authoritative-artifacts-failure-classification.md
+0011	active	hotspot layout sp13 block-rs	Code hotspot: block.rs multicol/flex/OOF/clone fragmentation	2026-07-08	entries/0011-code-hotspot-block-rs-multicol-flex-oof-clone-fr.md
+0012	active	hotspot text port_wpt sp14	Code hotspot: port_wpt.py text emission + generated WPT registry	2026-07-08	entries/0012-code-hotspot-port-wpt-py-text-emission-generated.md
+0013	active	sp13 residuals paused	SP13 residuals (paused): ~48 hard fragmentation/multicol tails	2026-07-08	entries/0013-sp13-residuals-paused-48-hard-fragmentation-mult.md
+0014	active	gotcha speckit process	GOTCHA: do not trust speckit.implement claims; verify manually	2026-07-08	entries/0014-gotcha-do-not-trust-speckit-implement-claims-ver.md
+0015	active	process standard	MANDATORY process: independent verifier before task_complete; no escape buckets	2026-07-08	entries/0015-mandatory-process-independent-verifier-before-ta.md
+0016	active	meta provenance recovery	Memory provenance: seeded from recovered session 4ab79aa9 'Read Repo Documentation'	2026-07-08	entries/0016-memory-provenance-seeded-from-recovered-session.md
+0017	active	sp14 text wip uncommitted	Uncommitted SP14 glyph-parity WIP in tree (continuation point)	2026-07-08	entries/0017-uncommitted-sp14-glyph-parity-wip-in-tree-contin.md

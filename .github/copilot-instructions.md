@@ -1,5 +1,41 @@
 # Copilot Instructions — open-ui
 
+## Project memory (MANDATORY — read at start, write as you learn)
+
+This repo has a durable, in-repo memory store at `docs/memory/` (CLI:
+`tools/memory/mem.py`). It exists so you do NOT have to reconstruct project
+state from giant session logs. Treat it as your working memory: it is
+short per entry (one fact/decision/gotcha/status per file), indexed
+(`docs/memory/index.tsv`), and searchable. Full spec: `docs/memory/README.md`.
+
+**At the START of every task, before doing anything else:**
+
+1. Read the index: `view docs/memory/index.tsv` (or
+   `python3 tools/memory/mem.py list`). It is one line per entry — cheap.
+2. Search before touching a subsystem, e.g.
+   `python3 tools/memory/mem.py search "multicol"` (add `--tag`/`--status`,
+   `-v` for body lines), then `python3 tools/memory/mem.py get <id>` the hits.
+3. Prefer memory over re-deriving state. Entry `0002` holds the current
+   authoritative WPT snapshot; re-run the pipeline to confirm before relying
+   on any number.
+
+**WRITE to memory whenever you learn something durable and reusable** — a
+state change (pass/fail counts, audit status, HEAD/branch), a decision/pivot
+with rationale, a gotcha/footgun, a verified command, a code hotspot
+(file+region), or concrete sprint progress + next steps:
+
+```bash
+python3 tools/memory/mem.py add --title "…" --tags "a,b" \
+  --refs "commit:<sha>,path/to/file" --body "one tight fact"
+python3 tools/memory/mem.py update <id> --status superseded --append "Replaced by 00NN."
+```
+
+Rules: keep each entry small and single-topic; when a fact stops being true
+mark it `superseded`/`archived` (don't silently delete history) and record the
+new truth; the index is auto-maintained by the CLI — run `reindex` only after
+hand-editing files; never store secrets or one-off ephemeral task notes.
+Keeping this store current is part of finishing the work, not optional.
+
 ## Exit-condition enforcement (MANDATORY)
 
 Before calling `task_complete` on any task that has user-stated exit
