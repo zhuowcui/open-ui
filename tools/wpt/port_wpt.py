@@ -1540,6 +1540,12 @@ def generate_style_code(styles: dict, var_name: str, inherited_font_size: float 
     # Process font-size first so other properties can use the correct em base.
     font_size = inherited_font_size
     fs_val = styles.get('font-size', '')
+    if not fs_val and 'font' in styles:
+        # The `font` shorthand also carries font-size; extract the size token so
+        # the effective font-size threads correctly to descendants (incl. text).
+        m = re.search(r'(-?[\d.]+(?:px|pt|em|rem|%))', styles['font'])
+        if m:
+            fs_val = m.group(1)
     if fs_val:
         fs_val = fs_val.strip().rstrip(';').strip()
         m = re.match(r'^(-?[\d.]+)px$', fs_val)
@@ -3031,6 +3037,45 @@ def _rust_escape_string(s: str) -> str:
     )
 
 
+def _font_family_to_rust(css_family: str) -> str | None:
+    """Convert a CSS font-family value to a Rust FontFamilyList expression.
+
+    Uses the first family in the list. Generic families map to
+    `FontFamilyList::generic(...)`; named families to `FontFamilyList::single`.
+    Only families the engine can resolve render correctly; for SP14 the pinned
+    deterministic font is Ahem (see openui-text FontCache).
+    """
+    if not css_family:
+        return None
+    first = css_family.split(',')[0].strip().strip('"\'').strip()
+    if not first:
+        return None
+    generics = {
+        'serif': 'Serif', 'sans-serif': 'SansSerif', 'monospace': 'Monospace',
+        'cursive': 'Cursive', 'fantasy': 'Fantasy', 'system-ui': 'SystemUi',
+    }
+    generic = generics.get(first.lower())
+    if generic:
+        return f"FontFamilyList::generic(GenericFontFamily::{generic})"
+    return f'FontFamilyList::single("{_rust_escape_string(first)}")'
+
+
+def _family_from_font_shorthand(val: str) -> str | None:
+    """Extract the font-family portion from a CSS `font` shorthand value.
+
+    e.g. `20px/1 Ahem` -> `Ahem`, `bold 16px Ahem, sans-serif` -> `Ahem, ...`.
+    The family list follows the size (and optional /line-height) token.
+    """
+    if not val:
+        return None
+    val = val.strip().rstrip(';').strip()
+    m = re.search(r'\d[\d.]*(px|pt|em|rem|%)(\s*/\s*\S+)?', val)
+    if not m:
+        return None
+    family = val[m.end():].strip()
+    return family or None
+
+
 def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = None) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
     lines = []
@@ -3085,7 +3130,7 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                        'font-size', 'line-height', 'visibility'}
     # CSS-wide `inherit` can apply to any property; keep explicit parent
     # values for non-inherited properties that WPT coverage exercises.
-    EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {'background-clip'}
+    EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {'background-clip', 'font-family'}
 
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
@@ -3107,6 +3152,20 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                     tvar = f"n{counter[0]}"
                     ws = "    " * indent
                     lines.append(f"{ws}let {tvar} = doc.create_node(ElementTag::Text);")
+                    # SP14: our inline layout shapes text using the Text node's
+                    # OWN computed style (font is not inherited to the Text child
+                    # in the builder path), so set the effective inherited font
+                    # and color explicitly on the emitted Text node.
+                    ts = f"doc.node_mut({tvar}).style"
+                    lines.append(f"{ws}{ts}.font_size = {float(parent_font_size)};")
+                    fam = inherited.get('font-family')
+                    fam_rust = _font_family_to_rust(fam) if fam else None
+                    if fam_rust:
+                        lines.append(f"{ws}{ts}.font_family = {fam_rust};")
+                    col = inherited.get('color')
+                    col_rust = parse_color(col) if col else None
+                    if col_rust:
+                        lines.append(f"{ws}{ts}.color = {col_rust};")
                     lines.append(
                         f'{ws}doc.node_mut({tvar}).text = '
                         f'Some("{_rust_escape_string(text)}".to_string());'
@@ -3245,6 +3304,11 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         for prop in EXPLICIT_INHERIT_PROPS:
             if prop in effective_styles:
                 child_inherited[prop] = effective_styles[prop]
+        # SP14: thread font-family from the `font` shorthand too (for text nodes).
+        if 'font' in effective_styles:
+            _fam = _family_from_font_shorthand(effective_styles['font'])
+            if _fam:
+                child_inherited['font-family'] = _fam
 
         # Process children (inherit font_size + CSS inherited props)
         for child in node.children:
@@ -3266,6 +3330,10 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         for prop in EXPLICIT_INHERIT_PROPS:
             if prop in root.styles:
                 body_inherited[prop] = root.styles[prop]
+        if 'font' in root.styles:
+            _fam = _family_from_font_shorthand(root.styles['font'])
+            if _fam:
+                body_inherited['font-family'] = _fam
 
     for child in root.children:
         gen_node(child, 'vp', 1, root_font_size, body_inherited, body_custom_props)

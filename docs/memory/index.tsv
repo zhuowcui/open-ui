@@ -21,3 +21,6 @@
 0020	active	testing accountability text guard gotcha	Testing: authoritative set is wpt/ only; legacy .text builders render blank	2026-07-08	entries/0020-testing-authoritative-set-is-wpt-only-legacy-tex.md
 0021	active	sp14 text milestone state	SP14 milestone: Ahem text pixel path proven end-to-end (0.04%)	2026-07-08	entries/0021-sp14-milestone-ahem-text-pixel-path-proven-end-t.md
 0022	active	sp14 text pilot port_wpt next-steps plan	SP14 pilot batch: plan + key porter gap (font on Text nodes)	2026-07-08	entries/0022-sp14-pilot-batch-plan-key-porter-gap-font-on-tex.md
+0023	active	sp14 text pilot port_wpt finding	Porter deep-dive: font-family IGNORED + text stripped from HTML template	2026-07-08	entries/0023-porter-deep-dive-font-family-ignored-text-stripp.md
+0024	active	gotcha port_wpt accountability pilot blocker	CRITICAL: committed wpt modules are divergent from port_wpt.py; batch regen is UNSAFE	2026-07-08	entries/0024-critical-committed-wpt-modules-are-divergent-fro.md
+0025	active	sp14 text pilot port_wpt progress	DONE: port_wpt.py Rust-side text emission (font on Text nodes) implemented + verified	2026-07-08	entries/0025-done-port-wpt-py-rust-side-text-emission-font-on.md
