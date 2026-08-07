@@ -1,9 +1,9 @@
 {
   "total": 3406,
-  "passed": 2671,
-  "failed": 735,
+  "passed": 2700,
+  "failed": 706,
   "errors": 0,
-  "near_miss_aa": 171,
+  "near_miss_aa": 175,
   "aa_threshold_pct": 0.5,
   "reference_tests": 936,
   "reference_tests_pass": 742,
@@ -30,8 +30,8 @@
     },
     {
       "id": "wpt/css2_floats/float-no-content-beside-001",
-      "status": "fail",
-      "mismatch_pct": 1.202548
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-1-notref",
@@ -171,12 +171,12 @@
     {
       "id": "wpt/css2_floats/floats-placement-003",
       "status": "fail",
-      "mismatch_pct": 0.212314
+      "mismatch_pct": 0.042463
     },
     {
       "id": "wpt/css2_floats/floats-placement-004",
-      "status": "fail",
-      "mismatch_pct": 1.698514
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-005-ref",
@@ -216,12 +216,12 @@
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001b",
       "status": "fail",
-      "mismatch_pct": 3.184713
+      "mismatch_pct": 7.138004
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001c",
       "status": "fail",
-      "mismatch_pct": 3.184713
+      "mismatch_pct": 7.138004
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-003-ref",
@@ -455,13 +455,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-bfc-001l",
-      "status": "fail",
-      "mismatch_pct": 0.624204
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-bfc-001r",
-      "status": "fail",
-      "mismatch_pct": 0.624204
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-bfc-002l",
@@ -475,13 +475,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-bfc-003l",
-      "status": "fail",
-      "mismatch_pct": 0.592357
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-bfc-003r",
-      "status": "fail",
-      "mismatch_pct": 0.592357
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-001l",
@@ -531,7 +531,7 @@
     {
       "id": "wpt/css2_floats/intrinsic-size-float-and-line",
       "status": "fail",
-      "mismatch_pct": 2.123142
+      "mismatch_pct": 10.615711
     },
     {
       "id": "wpt/css2_floats/line-pushed-by-floats-crash",
@@ -596,7 +596,7 @@
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float-4",
       "status": "fail",
-      "mismatch_pct": 8.492569
+      "mismatch_pct": 16.806794
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float",
@@ -4470,8 +4470,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox_order-noninteger-invalid",
-      "status": "fail",
-      "mismatch_pct": 0.747346
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox_order-ref",
@@ -5166,7 +5166,7 @@
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001",
       "status": "fail",
-      "mismatch_pct": 1.467941
+      "mismatch_pct": 1.561783
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001-ref",
@@ -5176,7 +5176,7 @@
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001",
       "status": "fail",
-      "mismatch_pct": 1.267728
+      "mismatch_pct": 1.20276
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002-ref",
@@ -5196,7 +5196,7 @@
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003",
       "status": "fail",
-      "mismatch_pct": 1.264756
+      "mismatch_pct": 1.204883
     },
     {
       "id": "wpt/css_flexbox/abspos_flexbox-abspos-child-001-ref",
@@ -6956,12 +6956,12 @@
     {
       "id": "wpt/css_multicol/multicol-rule-000-ref",
       "status": "fail",
-      "mismatch_pct": 0.020382
+      "mismatch_pct": 0.016985
     },
     {
       "id": "wpt/css_multicol/multicol-rule-000",
       "status": "fail",
-      "mismatch_pct": 0.018684
+      "mismatch_pct": 0.016985
     },
     {
       "id": "wpt/css_multicol/multicol-rule-001-ref",
@@ -7011,32 +7011,32 @@
     {
       "id": "wpt/css_multicol/multicol-rule-dashed-000-ref",
       "status": "fail",
-      "mismatch_pct": 6.570701
+      "mismatch_pct": 6.591932
     },
     {
       "id": "wpt/css_multicol/multicol-rule-dashed-000",
       "status": "fail",
-      "mismatch_pct": 7.658599
+      "mismatch_pct": 7.650106
     },
     {
       "id": "wpt/css_multicol/multicol-rule-dotted-000-ref",
       "status": "fail",
-      "mismatch_pct": 6.55414
+      "mismatch_pct": 6.535032
     },
     {
       "id": "wpt/css_multicol/multicol-rule-dotted-000",
       "status": "fail",
-      "mismatch_pct": 7.657325
+      "mismatch_pct": 7.649257
     },
     {
       "id": "wpt/css_multicol/multicol-rule-double-000-ref",
       "status": "fail",
-      "mismatch_pct": 6.557962
+      "mismatch_pct": 6.550318
     },
     {
       "id": "wpt/css_multicol/multicol-rule-double-000",
       "status": "fail",
-      "mismatch_pct": 7.654352
+      "mismatch_pct": 7.649257
     },
     {
       "id": "wpt/css_multicol/multicol-rule-fraction-001",
@@ -7061,12 +7061,12 @@
     {
       "id": "wpt/css_multicol/multicol-rule-groove-000-ref",
       "status": "fail",
-      "mismatch_pct": 6.647134
+      "mismatch_pct": 6.634395
     },
     {
       "id": "wpt/css_multicol/multicol-rule-groove-000",
       "status": "fail",
-      "mismatch_pct": 7.658599
+      "mismatch_pct": 7.650106
     },
     {
       "id": "wpt/css_multicol/multicol-rule-hidden-000-ref",
@@ -7081,7 +7081,7 @@
     {
       "id": "wpt/css_multicol/multicol-rule-inset-000",
       "status": "fail",
-      "mismatch_pct": 7.658599
+      "mismatch_pct": 7.650106
     },
     {
       "id": "wpt/css_multicol/multicol-rule-large-001",
@@ -7141,7 +7141,7 @@
     {
       "id": "wpt/css_multicol/multicol-rule-outset-000",
       "status": "fail",
-      "mismatch_pct": 7.658599
+      "mismatch_pct": 7.650106
     },
     {
       "id": "wpt/css_multicol/multicol-rule-percent-001",
@@ -7161,12 +7161,12 @@
     {
       "id": "wpt/css_multicol/multicol-rule-ridge-000-ref",
       "status": "fail",
-      "mismatch_pct": 6.647134
+      "mismatch_pct": 6.634395
     },
     {
       "id": "wpt/css_multicol/multicol-rule-ridge-000",
       "status": "fail",
-      "mismatch_pct": 7.658599
+      "mismatch_pct": 7.650106
     },
     {
       "id": "wpt/css_multicol/multicol-rule-samelength-001-ref",
@@ -7196,12 +7196,12 @@
     {
       "id": "wpt/css_multicol/multicol-rule-solid-000-ref",
       "status": "fail",
-      "mismatch_pct": 6.647134
+      "mismatch_pct": 6.634395
     },
     {
       "id": "wpt/css_multicol/multicol-rule-solid-000",
       "status": "fail",
-      "mismatch_pct": 7.658599
+      "mismatch_pct": 7.650106
     },
     {
       "id": "wpt/css_multicol/multicol-rule-stacking-001",
@@ -9006,7 +9006,7 @@
     {
       "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-1",
       "status": "fail",
-      "mismatch_pct": 0.12569
+      "mismatch_pct": 0.132484
     },
     {
       "id": "wpt/css_sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2-ref",
@@ -10910,13 +10910,13 @@
     },
     {
       "id": "wpt/css_break/inline-with-float-001",
-      "status": "fail",
-      "mismatch_pct": 0.636943
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/inline-with-float-002",
-      "status": "fail",
-      "mismatch_pct": 0.509554
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_break/inline-with-float-004",
@@ -13360,8 +13360,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-block-001",
-      "status": "fail",
-      "mismatch_pct": 3.227176
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_display/display-contents-block-002-ref",
@@ -13410,8 +13410,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-inline-001",
-      "status": "fail",
-      "mismatch_pct": 3.227176
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_display/display-contents-inline-002",
@@ -14445,8 +14445,8 @@
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-001",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-002",
@@ -14475,13 +14475,13 @@
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-010",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-011",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-012",
@@ -14495,13 +14495,13 @@
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-left-radius-014",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-001",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-002",
@@ -14530,13 +14530,13 @@
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-010",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-011",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-012",
@@ -14550,8 +14550,8 @@
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-right-radius-014",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-bottom-width-medium",
@@ -14900,8 +14900,8 @@
     },
     {
       "id": "wpt/css_backgrounds/border-radius-001",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-radius-002-ref",
@@ -14911,7 +14911,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-002",
       "status": "fail",
-      "mismatch_pct": 3.529936
+      "mismatch_pct": 0.041614
     },
     {
       "id": "wpt/css_backgrounds/border-radius-003-ref",
@@ -14921,7 +14921,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-003",
       "status": "fail",
-      "mismatch_pct": 3.540552
+      "mismatch_pct": 0.064119
     },
     {
       "id": "wpt/css_backgrounds/border-radius-004-ref",
@@ -14931,7 +14931,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-004",
       "status": "fail",
-      "mismatch_pct": 3.515287
+      "mismatch_pct": 0.000849
     },
     {
       "id": "wpt/css_backgrounds/border-radius-005-ref",
@@ -14941,7 +14941,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-005",
       "status": "fail",
-      "mismatch_pct": 3.504459
+      "mismatch_pct": 0.002548
     },
     {
       "id": "wpt/css_backgrounds/border-radius-006-ref",
@@ -14951,7 +14951,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-006",
       "status": "fail",
-      "mismatch_pct": 3.503822
+      "mismatch_pct": 0.005945
     },
     {
       "id": "wpt/css_backgrounds/border-radius-007-ref",
@@ -14961,12 +14961,12 @@
     {
       "id": "wpt/css_backgrounds/border-radius-007",
       "status": "fail",
-      "mismatch_pct": 3.510191
+      "mismatch_pct": 0.005096
     },
     {
       "id": "wpt/css_backgrounds/border-radius-008",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-radius-009-ref",
@@ -14976,7 +14976,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-009",
       "status": "fail",
-      "mismatch_pct": 3.718471
+      "mismatch_pct": 0.002548
     },
     {
       "id": "wpt/css_backgrounds/border-radius-010-ref",
@@ -14986,7 +14986,7 @@
     {
       "id": "wpt/css_backgrounds/border-radius-010",
       "status": "fail",
-      "mismatch_pct": 3.649469
+      "mismatch_pct": 0.003822
     },
     {
       "id": "wpt/css_backgrounds/border-radius-011-ref",
@@ -15055,8 +15055,8 @@
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-001",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-002",
@@ -15085,13 +15085,13 @@
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-010",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-011",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-012",
@@ -15105,13 +15105,13 @@
     },
     {
       "id": "wpt/css_backgrounds/border-top-left-radius-014",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-001",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-002",
@@ -15140,13 +15140,13 @@
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-010",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-011",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-012",
@@ -15160,8 +15160,8 @@
     },
     {
       "id": "wpt/css_backgrounds/border-top-right-radius-014",
-      "status": "fail",
-      "mismatch_pct": 3.461571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/border-top-width-medium",
@@ -17011,32 +17011,32 @@
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-001-ref",
       "status": "fail",
-      "mismatch_pct": 0.302123
+      "mismatch_pct": 0.672187
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-001",
       "status": "fail",
-      "mismatch_pct": 0.302123
+      "mismatch_pct": 0.672187
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-002-ref",
       "status": "fail",
-      "mismatch_pct": 0.302123
+      "mismatch_pct": 0.672187
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-002",
       "status": "fail",
-      "mismatch_pct": 0.302123
+      "mismatch_pct": 0.672187
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003-ref",
       "status": "fail",
-      "mismatch_pct": 0.844586
+      "mismatch_pct": 1.577707
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003",
       "status": "fail",
-      "mismatch_pct": 0.844586
+      "mismatch_pct": 1.577707
     }
   ]
 }
