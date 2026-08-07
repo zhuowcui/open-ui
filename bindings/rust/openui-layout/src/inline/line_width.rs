@@ -81,6 +81,34 @@ pub fn compute_line_availability(
     }
 }
 
+/// CSS 2.1 §9.5.1 (rule for unfittable shortened line boxes): find the block
+/// offset of the nearest float bottom strictly below `block_offset`.
+///
+/// When a line box shortened by floats is too small to contain its content,
+/// the line box is shifted downward until either the content fits or there
+/// are no more floats present. Shifting to successive float bottoms is
+/// sufficient: available width only changes at float edges.
+pub fn next_float_bottom(
+    exclusion_space: Option<&ExclusionSpace>,
+    block_offset: LayoutUnit,
+) -> Option<LayoutUnit> {
+    let es = exclusion_space?;
+    if !es.has_floats() {
+        return None;
+    }
+    let mut next: Option<LayoutUnit> = None;
+    for ex in es.all_exclusions() {
+        let bottom = ex.rect.end_offset.block_offset;
+        if bottom > block_offset {
+            next = Some(match next {
+                Some(n) if n <= bottom => n,
+                _ => bottom,
+            });
+        }
+    }
+    next
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -232,5 +260,46 @@ mod tests {
             assert_eq!(result.inline_start, LayoutUnit::from_f32(150.0));
             assert_eq!(result.available_inline_size, LayoutUnit::from_f32(250.0));
         }
+    }
+
+    #[test]
+    fn next_float_bottom_without_floats_is_none() {
+        assert_eq!(next_float_bottom(None, LayoutUnit::zero()), None);
+        assert_eq!(
+            next_float_bottom(Some(&ExclusionSpace::new()), LayoutUnit::zero()),
+            None
+        );
+    }
+
+    #[test]
+    fn next_float_bottom_visits_left_and_right_edges_in_order() {
+        let mut es = ExclusionSpace::new();
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+                BfcOffset::new(LayoutUnit::from_f32(80.0), LayoutUnit::from_f32(60.0)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(LayoutUnit::from_f32(300.0), LayoutUnit::zero()),
+                BfcOffset::new(LayoutUnit::from_f32(400.0), LayoutUnit::from_f32(35.0)),
+            ),
+            exclusion_type: ExclusionType::Right,
+        });
+
+        assert_eq!(
+            next_float_bottom(Some(&es), LayoutUnit::zero()),
+            Some(LayoutUnit::from_f32(35.0))
+        );
+        assert_eq!(
+            next_float_bottom(Some(&es), LayoutUnit::from_f32(35.0)),
+            Some(LayoutUnit::from_f32(60.0))
+        );
+        assert_eq!(
+            next_float_bottom(Some(&es), LayoutUnit::from_f32(60.0)),
+            None
+        );
     }
 }

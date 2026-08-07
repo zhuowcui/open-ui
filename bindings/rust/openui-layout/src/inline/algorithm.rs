@@ -28,7 +28,7 @@ use super::items::{InlineItemResult, InlineItemType};
 use super::items_builder::{style_to_font_description, InlineItemsBuilder, InlineItemsData};
 use super::line_breaker::{byte_to_char_offset, LineBreaker};
 use super::line_info::LineInfo;
-use super::line_width::compute_line_availability;
+use super::line_width::{compute_line_availability, next_float_bottom};
 
 // ── Inline box state tracking (CSS Fragmentation §4.4) ──────────────────
 
@@ -498,7 +498,29 @@ pub fn inline_layout_from_items(
             line_avail.available_inline_size
         };
 
-        if let Some(mut line_info) = line_breaker.next_line(line_available) {
+        if let Some(mut line_info) = {
+            let checkpoint = line_breaker.checkpoint();
+            let mut produced = line_breaker.next_line(line_available);
+            // CSS 2.1 §9.5.1: if floats shortened this line and its content
+            // doesn't fit in the shortened width, shift the line box down to
+            // the next float bottom (where more width is available) and
+            // re-break. Repeats via the outer loop until content fits or no
+            // floats remain at the line's offset.
+            if let Some(ref li) = produced {
+                if line_avail.available_inline_size < available_inline_size
+                    && li.used_width - li.hang_width > line_available
+                {
+                    if let Some(shift_to) =
+                        next_float_bottom(exclusion_ref, bfc_block_start + block_offset)
+                    {
+                        line_breaker.restore(checkpoint);
+                        block_offset = shift_to - bfc_block_start;
+                        produced = None;
+                    }
+                }
+            }
+            produced
+        } {
             // Step 4b: BiDi reorder items on this line for visual display.
             bidi_reorder_line(&mut line_info.items, &working_items_data);
 
@@ -960,7 +982,26 @@ pub fn inline_layout_for_children(
             line_avail.available_inline_size
         };
 
-        if let Some(mut line_info) = line_breaker.next_line(line_available) {
+        if let Some(mut line_info) = {
+            let checkpoint = line_breaker.checkpoint();
+            let mut produced = line_breaker.next_line(line_available);
+            // CSS 2.1 §9.5.1: shift unfittable float-shortened lines down
+            // (see the identical logic in inline_layout above).
+            if let Some(ref li) = produced {
+                if line_avail.available_inline_size < available_inline_size
+                    && li.used_width - li.hang_width > line_available
+                {
+                    if let Some(shift_to) =
+                        next_float_bottom(exclusion_ref, bfc_block_start + block_offset)
+                    {
+                        line_breaker.restore(checkpoint);
+                        block_offset = shift_to - bfc_block_start;
+                        produced = None;
+                    }
+                }
+            }
+            produced
+        } {
             bidi_reorder_line(&mut line_info.items, &items_data);
 
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
@@ -1086,29 +1127,33 @@ fn create_line_box(
     // "Line boxes that contain no text, no preserved white space, no inline
     // elements with a non-zero margin, padding, or border, and no other
     // in-flow content must be treated as zero-height line boxes."
-    let line_has_content = line_info
-        .items
-        .iter()
-        .any(|item_result| match item_result.item_type {
-            InlineItemType::Text | InlineItemType::AtomicInline => true,
-            InlineItemType::OpenTag => {
-                let item = &items_data.items[item_result.item_index];
-                let s = &items_data.styles[item.style_index];
-                s.effective_border_left() > 0
-                    || s.effective_border_right() > 0
-                    || s.effective_border_top() > 0
-                    || s.effective_border_bottom() > 0
-                    || (s.padding_left.is_fixed() && s.padding_left.value() != 0.0)
-                    || (s.padding_right.is_fixed() && s.padding_right.value() != 0.0)
-                    || (s.padding_top.is_fixed() && s.padding_top.value() != 0.0)
-                    || (s.padding_bottom.is_fixed() && s.padding_bottom.value() != 0.0)
-                    || (s.margin_left.is_fixed() && s.margin_left.value() != 0.0)
-                    || (s.margin_right.is_fixed() && s.margin_right.value() != 0.0)
-                    || (s.margin_top.is_fixed() && s.margin_top.value() != 0.0)
-                    || (s.margin_bottom.is_fixed() && s.margin_bottom.value() != 0.0)
-            }
-            _ => false,
-        });
+    // A forced break (<br> or preserved newline) establishes a strut even
+    // when it is the only item on the line. Without this, `<p><br></p>` has
+    // zero height and following block content overlaps it.
+    let line_has_content = line_info.has_forced_break
+        || line_info
+            .items
+            .iter()
+            .any(|item_result| match item_result.item_type {
+                InlineItemType::Text | InlineItemType::AtomicInline => true,
+                InlineItemType::OpenTag => {
+                    let item = &items_data.items[item_result.item_index];
+                    let s = &items_data.styles[item.style_index];
+                    s.effective_border_left() > 0
+                        || s.effective_border_right() > 0
+                        || s.effective_border_top() > 0
+                        || s.effective_border_bottom() > 0
+                        || (s.padding_left.is_fixed() && s.padding_left.value() != 0.0)
+                        || (s.padding_right.is_fixed() && s.padding_right.value() != 0.0)
+                        || (s.padding_top.is_fixed() && s.padding_top.value() != 0.0)
+                        || (s.padding_bottom.is_fixed() && s.padding_bottom.value() != 0.0)
+                        || (s.margin_left.is_fixed() && s.margin_left.value() != 0.0)
+                        || (s.margin_right.is_fixed() && s.margin_right.value() != 0.0)
+                        || (s.margin_top.is_fixed() && s.margin_top.value() != 0.0)
+                        || (s.margin_bottom.is_fixed() && s.margin_bottom.value() != 0.0)
+                }
+                _ => false,
+            });
 
     // === STEP 1: Compute strut (minimum line height from block's font) ===
     let strut = compute_line_height_metrics(

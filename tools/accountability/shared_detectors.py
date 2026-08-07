@@ -6,6 +6,7 @@ consistent classification across all tracking artifacts.
 """
 
 import re
+from html.parser import HTMLParser
 
 
 def strip_style_blocks(html: str) -> str:
@@ -96,6 +97,87 @@ def has_inline_block(html: str) -> bool:
     return bool(re.search(r"display\s*:\s*inline-block", html, re.IGNORECASE))
 
 
+def has_positioned_inline_layout(html: str) -> bool:
+    """Detect relative/fixed positioning through an inline ancestor.
+
+    This combination needs inline-fragment containing-block propagation and,
+    when a block descendant is present, block-in-inline splitting that keeps
+    the positioned ancestor's coordinate space.
+    """
+    return bool(
+        re.search(r"<span[\s>]", html, re.IGNORECASE)
+        and re.search(r"position\s*:\s*(?:relative|absolute|fixed)", html, re.IGNORECASE)
+        and re.search(r"<div[\s>]", html, re.IGNORECASE)
+    )
+
+
+def has_abspos_flex_static_position(html: str) -> bool:
+    """Detect out-of-flow children whose static position comes from flex."""
+    return bool(
+        re.search(r"display\s*:\s*(?:inline-)?flex\b", html, re.IGNORECASE)
+        and re.search(r"position\s*:\s*absolute\b", html, re.IGNORECASE)
+    )
+
+
+def has_float_descendant_of_inline(html: str) -> bool:
+    """Detect floats nested beneath an inline ``span`` ancestor.
+
+    Direct floated children are handled by block layout. A float encountered
+    while flattening an inline subtree instead needs the inline collector to
+    preserve an out-of-flow float placeholder and feed it back to the ancestor
+    block formatting context.
+    """
+    if not re.search(r"float\s*:\s*(?:left|right)\b", html, re.IGNORECASE):
+        return False
+
+    float_classes: set[str] = set()
+    for css in re.findall(r"<style[^>]*>(.*?)</style>", html, re.DOTALL | re.IGNORECASE):
+        for selector, declarations in re.findall(r"([^{}]+)\{([^{}]*)\}", css):
+            if re.search(r"float\s*:\s*(?:left|right)\b", declarations, re.IGNORECASE):
+                float_classes.update(re.findall(r"\.([\w-]+)", selector))
+
+    class InlineFloatParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.span_depth = 0
+            self.found = False
+
+        def handle_starttag(self, tag, attrs):
+            attrs_d = dict(attrs)
+            if self.span_depth > 0:
+                inline_style = attrs_d.get("style", "")
+                classes = set(attrs_d.get("class", "").split())
+                if re.search(
+                    r"float\s*:\s*(?:left|right)\b", inline_style, re.IGNORECASE
+                ) or classes.intersection(float_classes):
+                    self.found = True
+            if tag.lower() == "span":
+                self.span_depth += 1
+
+        def handle_endtag(self, tag):
+            if tag.lower() == "span" and self.span_depth > 0:
+                self.span_depth -= 1
+
+    parser = InlineFloatParser()
+    parser.feed(html)
+    return parser.found
+
+
+def has_float_bfc_phantom_margin_separation(html: str) -> bool:
+    """Detect the float/BFC margin-separation case with a phantom line.
+
+    An empty inline between a nested float and a later new formatting context
+    creates a zero-height phantom line. Margins may collapse through that line,
+    but moving the BFC below the float must make the float non-adjoining first.
+    """
+    return bool(
+        re.search(r"float\s*:\s*(?:left|right)\b", html, re.IGNORECASE)
+        and re.search(r"overflow\s*:\s*(?:hidden|auto|scroll)\b", html, re.IGNORECASE)
+        and re.search(r"margin-top\s*:\s*[^;\"']+", html, re.IGNORECASE)
+        and re.search(r"<span\b[^>]*>\s*</span\s*>", html, re.IGNORECASE)
+    )
+
+
 def has_box_shadow(html: str) -> bool:
     """Detect box-shadow property (not yet implemented)."""
     return bool(re.search(r"box-shadow\s*:", html, re.IGNORECASE))
@@ -120,6 +202,21 @@ def has_complex_border_style(html: str) -> bool:
     return complex_style or translucent_rounded_border
 
 
+def has_rounded_border_paint(html: str) -> bool:
+    """Detect rounded-border rasterization as a distinct paint dependency.
+
+    Solid rounded borders are not complex border-style cases, but their
+    curved outer and inner edges still require Chromium-compatible coverage
+    and compositing. Keep that dependency precise instead of folding it into
+    a generic paint bucket.
+    """
+    return bool(re.search(
+        r"border(?:-(?:top-left|top-right|bottom-right|bottom-left))?-radius\s*:",
+        html,
+        re.IGNORECASE,
+    ))
+
+
 def has_scrollbar_gutter(html: str) -> bool:
     """Detect scrollbar-gutter property (not implemented)."""
     return bool(re.search(r"scrollbar-gutter\s*:", html, re.IGNORECASE))
@@ -127,7 +224,11 @@ def has_scrollbar_gutter(html: str) -> bool:
 
 def has_javascript(html: str) -> bool:
     """Detect tests that require script execution or test harness behavior."""
-    return bool(re.search(r"<script[\s>]", html, re.IGNORECASE))
+    # Historical XHTML tests often retain disabled harness snippets inside
+    # comments. They do not execute and therefore are not a JavaScript
+    # dependency of the visual result.
+    uncommented = re.sub(r"<!--.*?-->", "", html, flags=re.DOTALL)
+    return bool(re.search(r"<script[\s>]", uncommented, re.IGNORECASE))
 
 
 def has_grid_layout(html: str) -> bool:
@@ -168,7 +269,18 @@ def has_generated_content(html: str) -> bool:
 
 def has_advanced_selectors(html: str) -> bool:
     """Detect selector features beyond the simple porter rule subset."""
-    return bool(re.search(r"(?:^|[,{])[^{}]*(?:[#.][\w-]+){2,}|:(?:has|is|where|not|nth-|column|modal|popover)", html, re.IGNORECASE))
+    # Only selector preludes inside CSS are relevant. Scanning the whole HTML
+    # makes dotted author/help URLs look like compound class selectors.
+    css = "\n".join(re.findall(
+        r"<style[^>]*>(.*?)</style>", html, re.DOTALL | re.IGNORECASE
+    ))
+    selectors = "\n".join(re.findall(r"([^{}]+)\{", css))
+    return bool(re.search(
+        r"(?:^|[,{])[^{}]*(?:[#.][\w-]+){2,}|"
+        r":(?:has|is|where|not|nth-|column|modal|popover)",
+        selectors,
+        re.IGNORECASE,
+    ))
 
 
 def has_visual_effects(html: str) -> bool:
@@ -239,8 +351,13 @@ DEPENDENCY_DEFS = [
     ("gradient",           "SP13: Gradient Rendering",        "SP13",      has_gradient),
     ("margin_trim",        "Future SP: margin-trim",          "Future",    has_margin_trim),
     ("inline_block",       "SP11: Inline Block Layout",       "SP11",      has_inline_block),
+    ("positioned_inline_layout", "SP13: Positioned Inline Layout", "SP13", has_positioned_inline_layout),
+    ("abspos_flex_static_position", "SP12: Abspos Flex Static Position", "SP12", has_abspos_flex_static_position),
+    ("float_descendant_of_inline", "SP13: Float Descendant of Inline", "SP13", has_float_descendant_of_inline),
+    ("float_bfc_phantom_margin_separation", "SP12: Float/BFC Phantom Margin Separation", "SP12", has_float_bfc_phantom_margin_separation),
     ("box_shadow",         "Future SP: Box Shadow",           "Future",    has_box_shadow),
     ("sticky_position",    "Future SP: Sticky Position",      "Future",    has_sticky_position),
+    ("rounded_border_paint", "Paint Quality: Rounded Borders", "Future",   has_rounded_border_paint),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
     ("javascript",         "Future SP: JavaScript/Test Harness", "Future",  has_javascript),
@@ -269,8 +386,13 @@ CATEGORY_FOR_DEP = {
     "gradient": "needs_gradient",
     "margin_trim": "needs_margin_trim",
     "inline_block": "needs_inline_block",
+    "positioned_inline_layout": "needs_positioned_inline_layout",
+    "abspos_flex_static_position": "needs_abspos_flex_static_position",
+    "float_descendant_of_inline": "needs_float_descendant_of_inline",
+    "float_bfc_phantom_margin_separation": "needs_float_bfc_phantom_margin_separation",
     "box_shadow": "needs_box_shadow",
     "sticky_position": "needs_sticky",
+    "rounded_border_paint": "needs_rounded_border_paint",
     "complex_border": "needs_complex_border",
     "scrollbar_gutter": "needs_scrollbar_gutter",
     "javascript": "needs_javascript",
@@ -289,13 +411,18 @@ CATEGORY_FOR_DEP = {
 }
 
 
-def classify_dependencies(html: str, test_id: str = "") -> list[str]:
+def classify_dependencies(
+    html: str, test_id: str = "", excluded: set[str] | None = None
+) -> list[str]:
     """Return list of dependency keys that apply to this test's HTML.
 
     Multi-label: returns ALL matching dependencies, not just the first.
     """
     result = []
+    excluded = excluded or set()
     for key, _label, _sp, detector in DEPENDENCY_DEFS:
+        if key in excluded:
+            continue
         import inspect
         params = inspect.signature(detector).parameters
         if 'test_id' in params:
@@ -307,13 +434,15 @@ def classify_dependencies(html: str, test_id: str = "") -> list[str]:
     return result
 
 
-def classify_failure_categories(html: str, test_id: str = "") -> tuple[str, str]:
+def classify_failure_categories(
+    html: str, test_id: str = "", excluded: set[str] | None = None
+) -> tuple[str, str]:
     """Classify a failing test's cross-SP dependencies for wpt_mapping.csv.
 
     Returns (failure_category, dependency) where category may be comma-separated.
     If no cross-SP dependencies detected, returns ("sp12_layout_bug", "").
     """
-    deps = classify_dependencies(html, test_id=test_id)
+    deps = classify_dependencies(html, test_id=test_id, excluded=excluded)
     if deps:
         categories = [CATEGORY_FOR_DEP[d] for d in deps]
         labels = []

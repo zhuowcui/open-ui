@@ -377,3 +377,85 @@ fn float_in_pure_inline_context_is_positioned() {
     assert_eq!(float_frag.size.width, lu(100.0));
     assert_eq!(float_frag.size.height, lu(80.0));
 }
+
+/// Build a narrow inline formatting context with an optional float and return
+/// the float/line children. A long unbreakable word exercises CSS 2.1's rule
+/// that a line too narrow to contain any content shifts below the float.
+fn layout_narrow_float_line(float_side: Option<Float>, text: &str) -> Fragment {
+    let mut doc = Document::new();
+    let vp = doc.root();
+    let container = doc.create_node(ElementTag::Div);
+    doc.node_mut(container).style.display = Display::Block;
+    doc.node_mut(container).style.width = Length::px(160.0);
+    doc.append_child(vp, container);
+
+    if let Some(side) = float_side {
+        let float_node = doc.create_node(ElementTag::Div);
+        doc.node_mut(float_node).style.display = Display::Block;
+        doc.node_mut(float_node).style.float = side;
+        doc.node_mut(float_node).style.width = Length::px(80.0);
+        doc.node_mut(float_node).style.height = Length::px(80.0);
+        doc.append_child(container, float_node);
+    }
+
+    let text_node = doc.create_node(ElementTag::Text);
+    doc.node_mut(text_node).style.display = Display::Inline;
+    doc.node_mut(text_node).style.font_size = 16.0;
+    doc.node_mut(text_node).text = Some(text.to_string());
+    doc.append_child(container, text_node);
+    block_layout(&doc, vp, &space(160, 400))
+}
+
+#[test]
+fn short_content_stays_beside_left_float() {
+    let root = layout_narrow_float_line(Some(Float::Left), "x");
+    let children = get_container_children(&root);
+    assert_eq!(
+        children.len(),
+        2,
+        "expected float and one line: {children:#?}"
+    );
+    let line = &children[1];
+    assert_eq!(line.offset.left, lu(80.0));
+    assert_eq!(line.offset.top, lu(0.0));
+}
+
+#[test]
+fn short_content_stays_beside_right_float() {
+    let root = layout_narrow_float_line(Some(Float::Right), "x");
+    let children = get_container_children(&root);
+    assert_eq!(
+        children.len(),
+        2,
+        "expected float and one line: {children:#?}"
+    );
+    let line = &children[1];
+    assert_eq!(line.offset.left, lu(0.0));
+    assert_eq!(line.offset.top, lu(0.0));
+}
+
+#[test]
+fn unbreakable_content_shifts_below_float() {
+    let root = layout_narrow_float_line(
+        Some(Float::Left),
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    );
+    let children = get_container_children(&root);
+    assert_eq!(
+        children.len(),
+        2,
+        "expected float and one line: {children:#?}"
+    );
+    let line = &children[1];
+    assert_eq!(line.offset.left, lu(0.0));
+    assert_eq!(line.offset.top, lu(80.0));
+}
+
+#[test]
+fn no_float_line_position_is_unchanged() {
+    let root = layout_narrow_float_line(None, "x");
+    let children = get_container_children(&root);
+    assert_eq!(children.len(), 1, "expected one line: {children:#?}");
+    assert_eq!(children[0].offset.left, lu(0.0));
+    assert_eq!(children[0].offset.top, lu(0.0));
+}

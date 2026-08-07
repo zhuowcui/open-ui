@@ -68,6 +68,14 @@ enum LineState {
     Done,
 }
 
+/// Opaque rewind point for [`LineBreaker::checkpoint`]/[`LineBreaker::restore`].
+#[derive(Clone, Copy, Debug)]
+pub struct LineBreakerCheckpoint {
+    current_item: usize,
+    current_text_offset: usize,
+    is_finished: bool,
+}
+
 impl<'a> LineBreaker<'a> {
     /// Create a new line breaker for the given inline items.
     pub fn new(items_data: &'a InlineItemsData, containing_block_width: LayoutUnit) -> Self {
@@ -111,6 +119,24 @@ impl<'a> LineBreaker<'a> {
     /// Check if all items have been consumed.
     pub fn is_finished(&self) -> bool {
         self.is_finished
+    }
+
+    /// Snapshot the breaker position so a produced line can be re-broken
+    /// (CSS 2.1 §9.5.1 line-shift below floats re-runs `next_line` at a
+    /// lower block offset with a wider available width).
+    pub fn checkpoint(&self) -> LineBreakerCheckpoint {
+        LineBreakerCheckpoint {
+            current_item: self.current_item,
+            current_text_offset: self.current_text_offset,
+            is_finished: self.is_finished,
+        }
+    }
+
+    /// Rewind to a previously captured checkpoint.
+    pub fn restore(&mut self, cp: LineBreakerCheckpoint) {
+        self.current_item = cp.current_item;
+        self.current_text_offset = cp.current_text_offset;
+        self.is_finished = cp.is_finished;
     }
 
     /// Get the next line. Returns `None` when all items are consumed.
@@ -229,13 +255,27 @@ impl<'a> LineBreaker<'a> {
         let style = &self.items_data.styles[item.style_index];
 
         // Determine the actual text range to process (may be a suffix after mid-item break)
-        let text_start =
+        let mut text_start =
             if self.current_text_offset > 0 && self.current_text_offset > item.text_range.start {
                 self.current_text_offset
             } else {
                 item.text_range.start
             };
         let text_end = item.text_range.end;
+
+        // CSS Text §4.1.3: collapsible spaces at the start of a line are
+        // removed. This applies both to source indentation at the start of an
+        // inline formatting context and to a suffix reprocessed after wrapping.
+        if !line.has_content()
+            && matches!(
+                style.white_space,
+                WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+            )
+            && self.items_data.text[text_start..text_end].starts_with(' ')
+        {
+            text_start += 1;
+            self.current_text_offset = text_start;
+        }
 
         if text_start >= text_end {
             self.current_item += 1;
@@ -3243,5 +3283,85 @@ mod tests {
         breaker.set_hyphens(Hyphens::Manual, (5, 2, 2));
         assert_eq!(breaker.hyphens, Hyphens::Manual);
         assert!(breaker.hyphenation.is_none());
+    }
+
+    #[test]
+    fn checkpoint_restore_rebreaks_the_same_text_at_a_wider_width() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let text = "alpha beta gamma";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
+        let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 6) + 1.0);
+        let wide = LayoutUnit::from_f32(shape.width + 1.0);
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(shape),
+                style_index: 0,
+                end_collapse_type: CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+                intrinsic_inline_size: None,
+            }],
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, wide);
+        let checkpoint = breaker.checkpoint();
+        let narrow_line = breaker.next_line(narrow).expect("narrow line");
+        assert!(
+            narrow_line.items.last().unwrap().text_range.end < text.len(),
+            "narrow line should consume only a prefix"
+        );
+
+        breaker.restore(checkpoint);
+        let rebroken = breaker.next_line(wide).expect("rebroken wide line");
+        assert_eq!(rebroken.items.first().unwrap().text_range.start, 0);
+        assert_eq!(rebroken.items.last().unwrap().text_range.end, text.len());
+        assert!(breaker.is_finished());
+    }
+
+    #[test]
+    fn collapsible_space_at_line_start_has_zero_advance() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let text = " hello";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(shape),
+                style_index: 0,
+                end_collapse_type: CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+                intrinsic_inline_size: None,
+            }],
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
+        let line = breaker
+            .next_line(LayoutUnit::from_f32(500.0))
+            .expect("line");
+        assert_eq!(line.items[0].text_range, 1..text.len());
     }
 }

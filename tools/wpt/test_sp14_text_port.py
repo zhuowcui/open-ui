@@ -354,6 +354,15 @@ class RunnerScopeTests(unittest.TestCase):
 
 
 class AccountabilityDetectorTests(unittest.TestCase):
+    def test_commented_script_is_not_a_javascript_dependency(self):
+        html = """<div style="border-radius:25px"></div>
+            <!-- <script src="disabled-helper.js"></script> -->"""
+        categories, dependency = shared_detectors.classify_failure_categories(
+            html, excluded={"text_rendering"}
+        )
+        self.assertEqual(categories, "needs_rounded_border_paint")
+        self.assertEqual(dependency, "Paint Quality: Rounded Borders")
+
     def test_solid_rounded_border_has_precise_non_text_owner(self):
         html = """<style>.box { border: 2px solid #a1a1a1;
                   border-bottom-left-radius: 25px; }</style>

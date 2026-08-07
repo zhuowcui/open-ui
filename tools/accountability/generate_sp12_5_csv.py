@@ -18,6 +18,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent.parent
 TEMPLATES_PATH = SCRIPT_DIR / "data" / "wpt_ported" / "all_wpt_templates.json"
+TEXT_PORTED_PATH = SCRIPT_DIR / "data" / "wpt_ported" / "text_ported_tests.json"
 SUMMARY_PATH = SCRIPT_DIR / "data" / "pixel_comparison" / "results" / "summary.json"
 CSV_OUTPUT = SCRIPT_DIR / "data" / "sp12_5_deferred.csv"
 MD_OUTPUT = REPO_ROOT / "docs" / "SP12.5-PLAN.md"
@@ -44,6 +45,23 @@ def main() -> None:
         templates = json.load(f)
     with open(SUMMARY_PATH) as f:
         summary = json.load(f)
+    text_ported_tests: set[str] = set()
+    if TEXT_PORTED_PATH.exists():
+        with open(TEXT_PORTED_PATH) as f:
+            text_ported_data = json.load(f)
+        if (
+            not isinstance(text_ported_data, list)
+            or any(not isinstance(test_id, str) or not test_id for test_id in text_ported_data)
+            or len(text_ported_data) != len(set(text_ported_data))
+        ):
+            raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_PATH}")
+        text_ported_tests = set(text_ported_data)
+        missing_templates = text_ported_tests - set(templates)
+        if missing_templates:
+            raise ValueError(
+                "text-port manifest contains tests without templates: "
+                + ", ".join(sorted(missing_templates))
+            )
 
     # Build lookup: id -> test record (failures + errors are both deferrable)
     fail_map: dict[str, dict] = {}
@@ -59,7 +77,11 @@ def main() -> None:
     for test_id, html in templates.items():
         if test_id not in fail_map:
             continue
-        deps = classify_dependencies(html, test_id=test_id)
+        deps = classify_dependencies(
+            html,
+            test_id=test_id,
+            excluded={"text_rendering"} if test_id in text_ported_tests else None,
+        )
         if not deps:
             continue
         for d in deps:
