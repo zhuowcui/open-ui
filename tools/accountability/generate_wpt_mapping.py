@@ -36,6 +36,7 @@ TEMPLATES_JSON = DATA_DIR / "wpt_ported" / "all_wpt_templates.json"
 SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 OUTPUT_CSV = DATA_DIR / "wpt_mapping.csv"
 PORT_REPORT_DIR = DATA_DIR / "wpt_ported"
+TEXT_PORTED_JSON = PORT_REPORT_DIR / "text_ported_tests.json"
 
 # Chromium directory → our area name
 SP12_AREAS = {
@@ -96,6 +97,21 @@ def load_pixel_results() -> dict[str, dict]:
     with open(SUMMARY_JSON) as f:
         data = json.load(f)
     return {t["id"]: t for t in data["tests"]}
+
+
+def load_text_ported_tests() -> set[str]:
+    """Load tests whose retained text is now an implemented capability."""
+    if not TEXT_PORTED_JSON.exists():
+        return set()
+    with open(TEXT_PORTED_JSON) as f:
+        data = json.load(f)
+    if (
+        not isinstance(data, list)
+        or any(not isinstance(test_id, str) or not test_id for test_id in data)
+        or len(data) != len(set(data))
+    ):
+        raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_JSON}")
+    return set(data)
 
 
 def load_portability_reasons() -> dict[tuple[str, str], str]:
@@ -210,6 +226,13 @@ def main():
     templates = load_templates()
     pixel_results = load_pixel_results()
     portability_reasons = load_portability_reasons()
+    text_ported_tests = load_text_ported_tests()
+    missing_text_templates = text_ported_tests - set(templates)
+    if missing_text_templates:
+        raise ValueError(
+            "text-port manifest contains tests without templates: "
+            + ", ".join(sorted(missing_text_templates))
+        )
 
     # Build lookup: test_name → test_id per area
     ported_lookup: dict[tuple[str, str], str] = {}
@@ -257,8 +280,27 @@ def main():
                 row["mismatch_pct"] = pr["mismatch_pct"]
 
                 if status == "fail":
-                    html = templates.get(test_id, "")
-                    category, dep = classify_failure_categories(html, test_id=test_id)
+                    if test_id in text_ported_tests:
+                        # Text is implemented for this surgical port, so it can
+                        # no longer own a failure. Classify any newly exposed
+                        # dependency from the original upstream source rather
+                        # than from the normalized comparison template.
+                        upstream_path = CHROMIUM_WPT_BASE / test["chromium_test_path"]
+                        html = (
+                            upstream_path.read_text(errors="ignore")
+                            if upstream_path.exists()
+                            else ""
+                        )
+                        category, dep = classify_failure_categories(
+                            html,
+                            test_id=test_id,
+                            excluded={"text_rendering"},
+                        )
+                    else:
+                        html = templates.get(test_id, "")
+                        category, dep = classify_failure_categories(
+                            html, test_id=test_id
+                        )
                     row["failure_category"] = category
                     row["dependency"] = dep
         else:

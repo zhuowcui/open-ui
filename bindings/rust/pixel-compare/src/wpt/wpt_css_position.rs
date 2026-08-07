@@ -1346,6 +1346,8 @@ fn css_position_position_relative_001() -> Document {
 // Source: position-relative-002.html
 fn css_position_position_relative_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1356,6 +1358,7 @@ fn css_position_position_relative_002() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1371,6 +1374,7 @@ fn css_position_position_relative_002() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n2).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -1385,6 +1389,7 @@ fn css_position_position_relative_002() -> Document {
     doc.node_mut(n2).style.left = Length::px(100.0);
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -1408,6 +1413,8 @@ fn css_position_position_relative_002() -> Document {
 // Source: position-relative-003.html
 fn css_position_position_relative_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1418,6 +1425,7 @@ fn css_position_position_relative_003() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1433,6 +1441,7 @@ fn css_position_position_relative_003() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n2).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -1447,6 +1456,7 @@ fn css_position_position_relative_003() -> Document {
     doc.node_mut(n2).style.left = Length::percent(100.0);
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -1461,6 +1471,7 @@ fn css_position_position_relative_003() -> Document {
     doc.node_mut(n3).style.left = Length::px(-100.0);
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);

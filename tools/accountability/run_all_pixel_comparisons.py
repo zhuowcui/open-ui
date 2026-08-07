@@ -20,6 +20,14 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 RESULTS_DIR = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results")
 PIXEL_COMPARE = os.path.join(PROJECT_ROOT, "bindings", "rust", "target", "release", "pixel_compare")
 PIXEL_DIFF = os.path.join(SCRIPT_DIR, "pixel_diff.py")
+# SP14: fontconfig that renders Ahem with zero antialiasing (binary {0,255}
+# coverage, matching OpenUI's rasterizer). It is applied only to IDs in the
+# authoritative text-port manifest; the historical Ahem corpus keeps its
+# existing environment. See data/fonts/ahem_noaa.conf and memory 0027.
+AHEM_FONTCONFIG = os.path.join(SCRIPT_DIR, "data", "fonts", "ahem_noaa.conf")
+TEXT_PORTED_LIST = os.path.join(
+    SCRIPT_DIR, "data", "wpt_ported", "text_ported_tests.json"
+)
 
 # Chrome binary detection
 CHROME_DIRS = [
@@ -358,15 +366,33 @@ def find_chrome():
     return None, None
 
 
-def render_chrome(html_file, output_png, chrome_bin, chrome_dir):
+def chrome_environment(chrome_dir, use_ahem_noaa=False):
+    """Build Chrome's environment, scoping SP14 fontconfig to opted-in IDs."""
+    env = os.environ.copy()
+    if chrome_dir:
+        env["LD_LIBRARY_PATH"] = chrome_dir + ":" + env.get("LD_LIBRARY_PATH", "")
+    # The existing Ahem WPT corpus predates SP14 and must retain its historical
+    # Chrome environment. Only surgically text-ported tests opt into binary
+    # Ahem coverage through the authoritative manifest.
+    if use_ahem_noaa:
+        if not os.path.isfile(AHEM_FONTCONFIG):
+            raise FileNotFoundError(AHEM_FONTCONFIG)
+        env["FONTCONFIG_FILE"] = AHEM_FONTCONFIG
+    return env
+
+
+def render_chrome(
+    html_file, output_png, chrome_bin, chrome_dir, use_ahem_noaa=False
+):
     """Render HTML with Chrome headless.
 
     Chrome headless reserves 87px for virtual UI, so we use a taller window
     (800×687) to get an actual 800×600 viewport, then crop to 800×600.
     """
-    env = os.environ.copy()
-    if chrome_dir:
-        env["LD_LIBRARY_PATH"] = chrome_dir + ":" + env.get("LD_LIBRARY_PATH", "")
+    try:
+        env = chrome_environment(chrome_dir, use_ahem_noaa)
+    except FileNotFoundError:
+        return False
     # Use 687 height so the viewport content area is exactly 600px.
     raw_png = output_png + ".raw.png"
     cmd = [
@@ -392,12 +418,24 @@ def render_chrome(html_file, output_png, chrome_bin, chrome_dir):
         return False
 
 
-def render_openui(test_id, output_png):
+def openui_environment(use_ahem_noaa=False):
+    """Build OpenUI's environment for the same scoped binary Ahem mode."""
+    env = os.environ.copy()
+    if use_ahem_noaa:
+        env["OPENUI_EDGING"] = "alias"
+        env["OPENUI_SUBPIXEL"] = "0"
+        env["OPENUI_HINTING"] = "none"
+    return env
+
+
+def render_openui(test_id, output_png, use_ahem_noaa=False):
     """Render test pattern with our engine."""
     try:
         result = subprocess.run(
             [PIXEL_COMPARE, "render", test_id, output_png],
-            capture_output=True, timeout=30
+            env=openui_environment(use_ahem_noaa),
+            capture_output=True,
+            timeout=30,
         )
         return result.returncode == 0 and os.path.isfile(output_png)
     except subprocess.TimeoutExpired:
@@ -439,6 +477,26 @@ def main():
             wpt_templates = json.load(f)
         HTML_TEMPLATES.update(wpt_templates)
         print(f"Loaded {len(wpt_templates)} WPT HTML templates")
+
+    text_ported_tests = set()
+    if os.path.isfile(TEXT_PORTED_LIST):
+        with open(TEXT_PORTED_LIST) as f:
+            text_ported_data = json.load(f)
+        if (
+            not isinstance(text_ported_data, list)
+            or any(not isinstance(t, str) or not t for t in text_ported_data)
+            or len(text_ported_data) != len(set(text_ported_data))
+        ):
+            print(f"ERROR: invalid text-port manifest: {TEXT_PORTED_LIST}", file=sys.stderr)
+            sys.exit(1)
+        text_ported_tests = set(text_ported_data)
+        missing_templates = text_ported_tests - set(HTML_TEMPLATES)
+        if missing_templates:
+            print(
+                f"ERROR: {len(missing_templates)} text-ported tests lack templates",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
     # Get all test IDs
     result = subprocess.run([PIXEL_COMPARE, "list"], capture_output=True, text=True)
@@ -518,14 +576,24 @@ def main():
             f.write(html_content)
 
         # Render our engine
-        if not render_openui(test_id, openui_png):
+        if not render_openui(
+            test_id,
+            openui_png,
+            use_ahem_noaa=test_id in text_ported_tests,
+        ):
             print(f"  ERROR  {test_id} — openui render failed")
             errors += 1
             results_summary.append((test_id, "error", 0.0))
             continue
 
         # Render Chrome
-        if not render_chrome(html_file, chromium_png, chrome_bin, chrome_dir):
+        if not render_chrome(
+            html_file,
+            chromium_png,
+            chrome_bin,
+            chrome_dir,
+            use_ahem_noaa=test_id in text_ported_tests,
+        ):
             print(f"  ERROR  {test_id} — chrome render failed")
             errors += 1
             results_summary.append((test_id, "error", 0.0))

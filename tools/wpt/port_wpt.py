@@ -1179,6 +1179,18 @@ class WptHtmlParser(HTMLParser):
             return
         if self.skip_depth > 0:
             return
+        if RETAIN_TEXT:
+            # Preserve source whitespace verbatim. The inline engine applies
+            # the effective `white-space` mode to the Text node, just as Chrome
+            # does; eagerly collapsing here would corrupt pre/pre-wrap text.
+            # Whitespace-only nodes are contextually filtered during generation
+            # so source indentation between blocks cannot create line boxes.
+            if data and self.in_body:
+                node = DomNode('#text', {}, {})
+                node.is_text = True
+                node.text_content = data
+                self.stack[-1].children.append(node)
+            return
         text = data.strip()
         if text and self.in_body:
             node = DomNode('#text', {}, {})
@@ -1316,7 +1328,26 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
                 return False, reason
         return True, ""
 
-    return check_tree(parser.root)
+    ok, reason = check_tree(parser.root)
+    if not ok:
+        return ok, reason
+
+    if RETAIN_TEXT:
+        # SP14 text mode: only ASCII text is allowed for now. Non-ASCII glyphs
+        # risk missing Ahem coverage → Chrome font fallback (antialiased,
+        # different metrics) breaking the deterministic-font invariant.
+        def check_text_ascii(node):
+            if getattr(node, 'is_text', False):
+                text = getattr(node, 'text_content', '') or ''
+                for ch in text:
+                    if ch not in '\t\n\r\f' and not (0x20 <= ord(ch) <= 0x7E):
+                        return False
+                return True
+            return all(check_text_ascii(c) for c in node.children)
+        if not check_text_ascii(parser.root):
+            return False, "text_non_ascii"
+
+    return True, ""
 
 
 # ─── Rust code generation ─────────────────────────────────────────────────
@@ -2390,6 +2421,30 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.vertical_align = {mapping[val]};"
 
+    # ── SP14 text-mode-only properties ──
+    # These affect layout only when text is present. Emitted exclusively for
+    # text-retaining ports so box-only output stays byte-identical (they are
+    # in IGNORED_PROPERTIES for the legacy corpus).
+    if RETAIN_TEXT:
+        if prop == 'text-indent':
+            length = parse_length(val, font_size)
+            if length:
+                return f"{s}.text_indent = {length};"
+        if prop in ('letter-spacing', 'word-spacing'):
+            field = prop.replace('-', '_')
+            if val == 'normal':
+                return f"{s}.{field} = 0.0;"
+            px = _css_length_px(val, font_size)
+            if px is not None:
+                return f"{s}.{field} = {float(px)};"
+        if prop == 'text-transform':
+            mapping = {
+                'none': 'TextTransform::None', 'capitalize': 'TextTransform::Capitalize',
+                'uppercase': 'TextTransform::Uppercase', 'lowercase': 'TextTransform::Lowercase',
+            }
+            if val in mapping:
+                return f"{s}.text_transform = {mapping[val]};"
+
     # ── columns shorthand (column-count + column-width) ──
     if prop == 'columns':
         lines = []
@@ -3025,6 +3080,25 @@ def generate_border_color_shorthand(val: str, s: str) -> list[str] | None:
 # keyed by the porter's per-test gating — see callers).
 EMIT_TEXT_NODES = False
 
+# SP14: retain text in the Chrome HTML template (skip the TextStripper) and
+# force the deterministic Ahem font on BOTH sides. Must be enabled together
+# with EMIT_TEXT_NODES for symmetric text-retaining ports. OFF by default:
+# box-only output stays byte-identical. Enabled by tools/wpt/splice_text_port.py.
+RETAIN_TEXT = False
+
+# CSS override appended to text-retaining Chrome templates. Forces Ahem
+# everywhere (deterministic glyph boxes, zero-AA via ahem_noaa.conf) and
+# neutralizes UA styling our engine does not replicate (synthetic bold/italic,
+# underlines, list markers). The Rust side mirrors this by forcing Ahem on
+# every emitted Text node and ignoring font-weight/style/text-decoration.
+TEXT_TEMPLATE_OVERRIDE = (
+    "<style>body, body * { font-family: Ahem !important; "
+    "font-weight: normal !important; font-style: normal !important; "
+    "font-synthesis: none !important; text-decoration: none !important; "
+    "list-style: none !important; font-kerning: none !important; "
+    "font-variant-ligatures: none !important; }</style>"
+)
+
 
 def _rust_escape_string(s: str) -> str:
     """Escape a Python string for embedding in a Rust double-quoted literal."""
@@ -3076,11 +3150,159 @@ def _family_from_font_shorthand(val: str) -> str | None:
     return family or None
 
 
+def _line_height_from_font_shorthand(val: str) -> str:
+    """Return the CSS line-height carried by a `font` shorthand.
+
+    A font shorthand resets line-height to `normal` when the slash component
+    is absent. Keeping that reset in the inherited Text-node style is needed
+    because generated element styles are not automatically inherited by the
+    hand-built DOM.
+    """
+    if not val:
+        return "normal"
+    m = re.search(
+        r'\d[\d.]*(?:px|pt|em|rem|%)(?:\s*/\s*([^\s]+))?', val.strip()
+    )
+    if not m or not m.group(1):
+        return "normal"
+    return m.group(1)
+
+
+# ── SP14 text-mode helpers ─────────────────────────────────────────────────
+
+# CSS-inherited text properties threaded to Text nodes in text mode, beyond
+# the standing INHERITED_PROPS set (kept unchanged for box-mode stability).
+TEXT_EXTRA_INHERITED = {'text-transform', 'letter-spacing', 'word-spacing'}
+
+_BORDER_RADIUS_CORNERS = (
+    'border-top-left-radius',
+    'border-top-right-radius',
+    'border-bottom-right-radius',
+    'border-bottom-left-radius',
+)
+
+
+def _expand_border_radius_css(value: str) -> dict[str, str] | None:
+    """Expand a CSS border-radius shorthand without resolving its units.
+
+    Percentages are computed against the box that receives the inherited
+    value, so the porter must retain the CSS tokens rather than prematurely
+    converting them against the parent's dimensions.
+    """
+    parts = value.split('/')
+    if len(parts) > 2:
+        return None
+    horizontal = parts[0].split()
+    vertical = parts[1].split() if len(parts) == 2 else horizontal
+
+    def expand(values: list[str]) -> tuple[str, str, str, str] | None:
+        if len(values) == 1:
+            return (values[0],) * 4
+        if len(values) == 2:
+            return values[0], values[1], values[0], values[1]
+        if len(values) == 3:
+            return values[0], values[1], values[2], values[1]
+        if len(values) == 4:
+            return tuple(values)
+        return None
+
+    h_values = expand(horizontal)
+    v_values = expand(vertical)
+    if h_values is None or v_values is None:
+        return None
+    return {
+        corner: h if h == v else f"{h} {v}"
+        for corner, h, v in zip(_BORDER_RADIUS_CORNERS, h_values, v_values)
+    }
+
+
+def _computed_border_radius(styles: dict[str, str]) -> dict[str, str] | None:
+    """Return the four computed corner tokens after shorthand expansion."""
+    computed = {corner: '0' for corner in _BORDER_RADIUS_CORNERS}
+    saw_radius = False
+    for prop, value in styles.items():
+        if prop == 'border-radius':
+            expanded = _expand_border_radius_css(value)
+            if expanded is not None:
+                computed.update(expanded)
+                saw_radius = True
+        elif prop in _BORDER_RADIUS_CORNERS:
+            computed[prop] = value
+            saw_radius = True
+    return computed if saw_radius else None
+
+_INLINE_LEVEL_TAGS = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small',
+                      'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark',
+                      'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'br'}
+
+
+def _subtree_text(node) -> str:
+    """Concatenate all text content in a DomNode subtree."""
+    if getattr(node, 'is_text', False):
+        return getattr(node, 'text_content', '') or ''
+    return ''.join(_subtree_text(c) for c in node.children)
+
+
+def _is_inline_level(node) -> bool:
+    """Whether a DomNode participates in inline layout (for whitespace rules)."""
+    if node is None:
+        return False
+    if getattr(node, 'is_text', False):
+        return bool((getattr(node, 'text_content', '') or '').strip())
+    display = (node.styles or {}).get('display', '').strip()
+    if display:
+        return display.startswith('inline')
+    return node.tag in _INLINE_LEVEL_TAGS
+
+
+def _filter_ws_only_text_nodes(node):
+    """Drop whitespace-only text nodes except between two inline-level siblings.
+
+    Mirrors CSS white-space collapsing: inter-element whitespace between
+    blocks produces no rendering in Chrome, so emitting Text nodes for it
+    would create spurious line boxes in the Rust document.
+    """
+    if getattr(node, 'is_text', False):
+        return
+    kept = []
+    children = node.children
+    parent_display = (node.styles or {}).get('display', '').strip()
+    for i, c in enumerate(children):
+        if getattr(c, 'is_text', False) and not (getattr(c, 'text_content', '') or '').strip():
+            # Collapsible whitespace between flex items is not wrapped in an
+            # anonymous flex item and contributes no flex base size.
+            if parent_display in ('flex', 'inline-flex'):
+                continue
+            prev_node = kept[-1] if kept else None
+            next_node = children[i + 1] if i + 1 < len(children) else None
+            if not (_is_inline_level(prev_node) and _is_inline_level(next_node)):
+                continue
+        kept.append(c)
+    node.children = kept
+    for c in kept:
+        _filter_ws_only_text_nodes(c)
+
+
 def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = None) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
+    if RETAIN_TEXT:
+        _filter_ws_only_text_nodes(root)
     lines = []
     lines.append(f"fn {fn_name}() -> Document {{")
     lines.append("    let (mut doc, vp) = base_doc();")
+    if RETAIN_TEXT:
+        # Inline line-box struts use the block container's font metrics, not
+        # only the leaf Text item's metrics. Pin every generated style to Ahem
+        # (matching the template's `body, body *` override), beginning with the
+        # viewport/body style. Hand-built DOM styles do not inherit implicitly.
+        lines.append('    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");')
+        # `base_doc` uses flow-root as a convenient isolation boundary for the
+        # legacy generated corpus. The node represents HTML's body, however,
+        # whose initial display is block. That distinction is observable when
+        # body has an auto height and floated children: their overflow must not
+        # inflate body's border box. Author `display` still overrides this in
+        # the generated body style lines below.
+        lines.append('    doc.node_mut(vp).style.display = Display::Block;')
 
     # ── Body-background propagation (CSS Backgrounds §3.11.1) ──
     # If <html> has a non-transparent background, paint it on the canvas.
@@ -3147,7 +3369,10 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
             # inline layout performs CSS white-space processing on the content.
             if EMIT_TEXT_NODES:
                 text = getattr(node, 'text_content', '') or ''
-                if text.strip():
+                # In text mode whitespace-only nodes between inline siblings are
+                # significant (word separators) — the block-context ones were
+                # already dropped by _filter_ws_only_text_nodes.
+                if text.strip() or (RETAIN_TEXT and text):
                     counter[0] += 1
                     tvar = f"n{counter[0]}"
                     ws = "    " * indent
@@ -3158,14 +3383,30 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                     # and color explicitly on the emitted Text node.
                     ts = f"doc.node_mut({tvar}).style"
                     lines.append(f"{ws}{ts}.font_size = {float(parent_font_size)};")
-                    fam = inherited.get('font-family')
-                    fam_rust = _font_family_to_rust(fam) if fam else None
-                    if fam_rust:
-                        lines.append(f"{ws}{ts}.font_family = {fam_rust};")
+                    if RETAIN_TEXT:
+                        # Deterministic-font mode: every glyph renders as Ahem on
+                        # both sides (TEXT_TEMPLATE_OVERRIDE forces it in Chrome).
+                        lines.append(f'{ws}{ts}.font_family = FontFamilyList::single("Ahem");')
+                    else:
+                        fam = inherited.get('font-family')
+                        fam_rust = _font_family_to_rust(fam) if fam else None
+                        if fam_rust:
+                            lines.append(f"{ws}{ts}.font_family = {fam_rust};")
                     col = inherited.get('color')
                     col_rust = parse_color(col) if col else None
                     if col_rust:
                         lines.append(f"{ws}{ts}.color = {col_rust};")
+                    if RETAIN_TEXT:
+                        # Thread inherited text-affecting properties onto the Text
+                        # node itself: the inline items builder reads white-space /
+                        # transform / spacing from the item's own style.
+                        for prop in ('white-space', 'line-height', 'text-transform',
+                                     'letter-spacing', 'word-spacing'):
+                            if prop in inherited:
+                                code = generate_single_style(prop, inherited[prop], ts, parent_font_size)
+                                if code:
+                                    for cl in (code if isinstance(code, list) else [code]):
+                                        lines.append(f"{ws}{cl}")
                     lines.append(
                         f'{ws}doc.node_mut({tvar}).text = '
                         f'Some("{_rust_escape_string(text)}".to_string());'
@@ -3175,20 +3416,40 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
 
         if node.tag in ('p', 'strong', 'em', 'b', 'i', 'u', 'a',
                         'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
-            # Skip unstyled wrapper/heading elements but still process their children
-            # (reparented to the grandparent). Headings in WPT tests are usually
-            # section labels with user-agent styling (margins, bold, font-size) that
-            # our engine doesn't replicate. Skipping them avoids mismatches.
             has_real_styles = _has_meaningful_styles(node.styles)
             skip_self = False
-            if not has_real_styles and node.tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
-                skip_self = True
-            if node.tag in ('strong', 'em', 'b', 'i', 'u', 'a') and not has_real_styles:
-                skip_self = True
+            skip_subtree = False
+            if RETAIN_TEXT:
+                # Text mode keeps wrapper elements (their text is content) but
+                # mirrors the Chrome template's stripping exactly:
+                #  - instructional "Test passes…" paragraphs are removed on both
+                #    sides (template regex strip);
+                #  - unstyled headings carry UA font styling we don't replicate,
+                #    so both sides drop the whole subtree.
+                if node.tag == 'p' and 'test passes' in _subtree_text(node).lower():
+                    skip_subtree = True
+                elif node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6') and not has_real_styles:
+                    skip_subtree = True
+            else:
+                # Skip unstyled wrapper/heading elements but still process their
+                # children (reparented to the grandparent). Headings in WPT tests
+                # are usually section labels with user-agent styling (margins,
+                # bold, font-size) that our engine doesn't replicate. Skipping
+                # them avoids mismatches.
+                if not has_real_styles and node.tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
+                    skip_self = True
+                if node.tag in ('strong', 'em', 'b', 'i', 'u', 'a') and not has_real_styles:
+                    skip_self = True
+            if skip_subtree:
+                return
             if skip_self:
                 # Merge any inherited props from this skipped node
                 child_inherited = dict(inherited)
-                for prop in EXPLICIT_INHERIT_PROPS:
+                skip_inherit = EXPLICIT_INHERIT_PROPS | (
+                    TEXT_EXTRA_INHERITED | set(_BORDER_RADIUS_CORNERS)
+                    if RETAIN_TEXT else set()
+                )
+                for prop in sorted(skip_inherit):
                     if prop in node.styles:
                         child_inherited[prop] = node.styles[prop]
                 child_custom_props = dict(custom_props)
@@ -3200,6 +3461,69 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 return
 
         if node.tag == 'br' and node.styles.get('clear', 'none') == 'none':
+            if RETAIN_TEXT:
+                # Forced line break: a "\n" Text node with white-space:pre-line
+                # (the items builder preserves newlines in pre-line mode and
+                # emits a Control/forced-break item). Font size matches the
+                # inherited size so the empty-line strut height matches Chrome.
+                counter[0] += 1
+                bvar = f"n{counter[0]}"
+                ws = "    " * indent
+                lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Text);")
+                bs = f"doc.node_mut({bvar}).style"
+                lines.append(f"{ws}{bs}.font_size = {float(parent_font_size)};")
+                lines.append(f'{ws}{bs}.font_family = FontFamilyList::single("Ahem");')
+                lines.append(f"{ws}{bs}.white_space = WhiteSpace::PreLine;")
+                if 'line-height' in inherited:
+                    code = generate_single_style('line-height', inherited['line-height'], bs, parent_font_size)
+                    if code:
+                        for cl in (code if isinstance(code, list) else [code]):
+                            lines.append(f"{ws}{cl}")
+                lines.append(f'{ws}doc.node_mut({bvar}).text = Some("\\n".to_string());')
+                lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
+            return
+
+        if RETAIN_TEXT and node.styles.get('display', '').strip() == 'contents':
+            # display:contents generates no principal box. Reparent its
+            # children while retaining the element's inheritance/custom-
+            # property boundary; otherwise borders/backgrounds incorrectly
+            # paint and block descendants participate in the wrong context.
+            effective_styles = OrderedDict(node.styles)
+            for prop, val in list(effective_styles.items()):
+                if isinstance(val, str) and val.strip() == 'inherit' and prop in inherited:
+                    effective_styles[prop] = inherited[prop]
+            node_custom_props = dict(custom_props)
+            for prop, val in effective_styles.items():
+                if prop.startswith('--'):
+                    node_custom_props[prop] = val
+            for prop, val in list(effective_styles.items()):
+                if isinstance(val, str) and not prop.startswith('--'):
+                    effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
+
+            _ignored_lines, contents_font_size = generate_style_code(
+                effective_styles, parent_var, parent_font_size
+            )
+            child_inherited = dict(inherited)
+            contents_inherit_props = EXPLICIT_INHERIT_PROPS | TEXT_EXTRA_INHERITED
+            for prop in sorted(contents_inherit_props):
+                if prop in effective_styles:
+                    child_inherited[prop] = effective_styles[prop]
+            if 'font' in effective_styles:
+                family = _family_from_font_shorthand(effective_styles['font'])
+                if family:
+                    child_inherited['font-family'] = family
+                child_inherited['line-height'] = _line_height_from_font_shorthand(
+                    effective_styles['font']
+                )
+            for child in node.children:
+                gen_node(
+                    child,
+                    parent_var,
+                    indent,
+                    contents_font_size,
+                    child_inherited,
+                    node_custom_props,
+                )
             return
 
         counter[0] += 1
@@ -3213,9 +3537,18 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         else:
             element_tag = "ElementTag::Div"
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
+        if RETAIN_TEXT:
+            lines.append(
+                f'{ws}doc.node_mut({var}).style.font_family = '
+                'FontFamilyList::single("Ahem");'
+            )
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
-            lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px(19.0);")
+            # Empty-line height for a clearing <br>: line-height of the inherited
+            # font. Box mode calibrates to DejaVu Sans 16px (~19px line); text
+            # mode forces Ahem, whose normal line-height is exactly 1.0em.
+            br_h = float(parent_font_size) if RETAIN_TEXT else 19.0
+            lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px({br_h});")
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
@@ -3227,7 +3560,7 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
             'contents', 'list-item', 'flex', 'inline-flex',
         }
         display_value = node.styles.get('display', '').strip()
-        if node.tag == 'li' and (
+        if not RETAIN_TEXT and node.tag == 'li' and (
             'display' not in node.styles or display_value not in supported_display_values
         ):
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::ListItem;")
@@ -3263,9 +3596,39 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
         effective_styles = OrderedDict(node.styles)
+        if (
+            RETAIN_TEXT
+            and node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
+            and 'font-size' not in effective_styles
+            and 'font' not in effective_styles
+        ):
+            # Chromium's UA sheet gives headings a relative font size. Styled
+            # headings are retained in deterministic-text mode, so properties
+            # such as `height: 4em` must resolve against that computed size too.
+            # Store the absolute computed value: this keeps the legacy box-only
+            # generator byte-for-byte unchanged and avoids treating the UA `em`
+            # value as author CSS during code generation.
+            heading_scale = {
+                'h1': 2.0,
+                'h2': 1.5,
+                'h3': 1.17,
+                'h4': 1.0,
+                'h5': 0.83,
+                'h6': 0.67,
+            }[node.tag]
+            effective_styles['font-size'] = f'{parent_font_size * heading_scale}px'
+        if RETAIN_TEXT and effective_styles.get('border-radius', '').strip() == 'inherit':
+            # The shorthand inherits the parent's four computed longhands,
+            # including initial zero values for corners the parent omitted.
+            del effective_styles['border-radius']
+            for corner in _BORDER_RADIUS_CORNERS:
+                effective_styles[corner] = inherited.get(corner, '0')
         for prop, val in list(effective_styles.items()):
-            if isinstance(val, str) and val.strip() == 'inherit' and prop in inherited:
-                effective_styles[prop] = inherited[prop]
+            if isinstance(val, str) and val.strip() == 'inherit':
+                if prop in inherited:
+                    effective_styles[prop] = inherited[prop]
+                elif RETAIN_TEXT and prop in _BORDER_RADIUS_CORNERS:
+                    effective_styles[prop] = '0'
         node_custom_props = dict(custom_props)
         for prop, val in effective_styles.items():
             if prop.startswith('--'):
@@ -3286,7 +3649,7 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
             lines.append(f"{ws}doc.node_mut({var}).style.overflow_clip_box = {var}_inherited_overflow_clip_box;")
 
         # Apply inherited CSS properties from ancestors that this node doesn't override
-        for prop in INHERITED_PROPS:
+        for prop in sorted(INHERITED_PROPS):
             if prop in inherited and prop not in effective_styles:
                 val = inherited[prop]
                 s = f"doc.node_mut({var}).style"
@@ -3301,14 +3664,24 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
 
         # Build inherited props for children: parent inherited + this node's own
         child_inherited = dict(inherited)
-        for prop in EXPLICIT_INHERIT_PROPS:
+        child_inherit_props = EXPLICIT_INHERIT_PROPS | (
+            TEXT_EXTRA_INHERITED if RETAIN_TEXT else set()
+        )
+        for prop in sorted(child_inherit_props):
             if prop in effective_styles:
                 child_inherited[prop] = effective_styles[prop]
+        if RETAIN_TEXT:
+            computed_radius = _computed_border_radius(effective_styles)
+            if computed_radius is not None:
+                child_inherited.update(computed_radius)
         # SP14: thread font-family from the `font` shorthand too (for text nodes).
         if 'font' in effective_styles:
             _fam = _family_from_font_shorthand(effective_styles['font'])
             if _fam:
                 child_inherited['font-family'] = _fam
+            child_inherited['line-height'] = _line_height_from_font_shorthand(
+                effective_styles['font']
+            )
 
         # Process children (inherit font_size + CSS inherited props)
         for child in node.children:
@@ -3327,13 +3700,23 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         for sl in body_styles:
             lines.append(f"    {sl}")
         # Collect inherited props from body for propagation to children
-        for prop in EXPLICIT_INHERIT_PROPS:
+        body_inherit_props = EXPLICIT_INHERIT_PROPS | (
+            TEXT_EXTRA_INHERITED if RETAIN_TEXT else set()
+        )
+        for prop in sorted(body_inherit_props):
             if prop in root.styles:
                 body_inherited[prop] = root.styles[prop]
+        if RETAIN_TEXT:
+            computed_radius = _computed_border_radius(root.styles)
+            if computed_radius is not None:
+                body_inherited.update(computed_radius)
         if 'font' in root.styles:
             _fam = _family_from_font_shorthand(root.styles['font'])
             if _fam:
                 body_inherited['font-family'] = _fam
+            body_inherited['line-height'] = _line_height_from_font_shorthand(
+                root.styles['font']
+            )
 
     for child in root.children:
         gen_node(child, 'vp', 1, root_font_size, body_inherited, body_custom_props)
@@ -3424,7 +3807,14 @@ def generate_html_template(html_path: str) -> str:
             css_targeted_tags.add(m.group(1).lower())
 
     class TextStripper(HTMLParser):
-        """Remove text nodes and unstyled heading/p tags from HTML, preserving element structure."""
+        """Remove text nodes and unstyled heading/p tags from HTML, preserving element structure.
+
+        In SP14 text mode (RETAIN_TEXT) text is kept and wrapper elements are
+        NOT unwrapped — only unstyled instructional headings are dropped
+        (mirroring the Rust generator, which skips those subtrees). All other
+        differences from Chrome UA defaults are neutralized by
+        TEXT_TEMPLATE_OVERRIDE appended to the template.
+        """
         # Tags to skip entirely (including children) when unstyled.
         # These are instructional headings in WPT tests with user-agent
         # default styling that our engine can't replicate.
@@ -3469,7 +3859,8 @@ def generate_html_template(html_path: str) -> str:
                 self.skip_depth = 1
                 return
             # Unwrap unstyled <p> only if no CSS rule targets the tag
-            if (tag in self.UNWRAP_UNSTYLED and self._is_unstyled(attrs)
+            # (box mode only — text mode keeps wrappers so their text stays).
+            if (not RETAIN_TEXT and tag in self.UNWRAP_UNSTYLED and self._is_unstyled(attrs)
                     and tag not in css_targeted_tags):
                 self.unwrap_tags.append(tag)
                 return
@@ -3495,13 +3886,27 @@ def generate_html_template(html_path: str) -> str:
             if tag == 'style':
                 self.in_style = False
 
+        def handle_startendtag(self, tag, attrs):
+            # Preserve XHTML void elements as one HTML void element. The
+            # HTMLParser default calls start+end, producing `<br></br>`; HTML5
+            # parses that invalid pair as two breaks and diverges from the Rust
+            # builder's single forced break.
+            self.handle_starttag(tag, attrs)
+            if tag not in WptHtmlParser.VOID_TAGS:
+                self.handle_endtag(tag)
+
         def handle_data(self, data):
             if self.skip_depth > 0:
                 return
             # Preserve text inside <style> tags (CSS rules)
             if self.in_style:
                 self.out.write(data)
-            # Drop all other text content
+                return
+            if RETAIN_TEXT:
+                # SP14 text mode: keep text content (Chrome applies its own
+                # CSS white-space collapsing; the Rust side mirrors it).
+                self.out.write(data)
+            # Otherwise drop all text content
 
         def handle_entityref(self, name):
             if self.skip_depth > 0:
@@ -3519,6 +3924,9 @@ def generate_html_template(html_path: str) -> str:
 
     # Combine: style blocks first, then body content
     template = style_prefix + '\n' + body.strip() if style_prefix else body.strip()
+    if RETAIN_TEXT:
+        # Deterministic-font override LAST so it wins the cascade.
+        template = template + '\n' + TEXT_TEMPLATE_OVERRIDE
     return template
 
 
