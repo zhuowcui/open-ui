@@ -2,7 +2,7 @@
 id: 0028
 title: SP14 W0/W1 closes 48 sole-needs_text tests with 26 exact and 22 named residuals
 tags: sp14, text, accountability, milestone, handoff
-status: active
+status: superseded
 created: 2026-08-07
 updated: 2026-08-07
 refs: commit:eb92a21, commit:7e80669, tools/accountability/data/wpt_ported/text_ported_tests.json, tools/accountability/data/pixel_comparison/results/summary.json
@@ -17,3 +17,5 @@ Infrastructure: deterministic retained text/Ahem on both renderers, scoped no-AA
 Acceptance commands: `cargo build --release -p pixel-compare`; `python3 -m unittest -q tools/wpt/test_sp14_text_port.py`; focused openui-layout tests; `python3 tools/accountability/run_all_pixel_comparisons.py wpt/` (no resume); mapping/deferred generators; `python3 tools/accountability/audit.py`.
 
 Next SP14 handoff: process the 288 co-blocked ported text tests by genuine dependency, then the 4045 unported text-classified tests. Keep `text_ported_tests.json` as the opt-in boundary and require exact 0-pixel parity for deterministic Ahem ports.
+
+Superseded by 0029: W2 closed the 286 runnable co-blocked targets.

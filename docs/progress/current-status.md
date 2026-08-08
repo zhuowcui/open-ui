@@ -21,37 +21,30 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (after SP12/SP12.5/SP13 layout work):
+Latest authoritative accountability snapshot (after SP14 W2 runnable-text closure):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
 | Ported/runnable WPT tests | 3406 |
 | Unported but explicitly tracked tests | 4267 |
-| Runnable passes | 2671 |
-| Runnable failures | 735 |
+| Runnable passes | 2715 |
+| Runnable failures | 691 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 
-`python3 tools/accountability/audit.py` passes all 7 checks for this snapshot
-(commits `b66e0df`, `4780f71` on `001-complete-sp12-parity`).
+`python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
+The full run was executed without resume, and all 2700 prior exact-pass IDs remain exact.
 
-## Current Direction: layout paused, Text next (SP14+)
+## Current Direction: unported text closure (SP14 W3/W4)
 
-Layout (SP12) is complete in-scope and SP13 (fragmentation/multicol) has been driven to
-~48 hard, heterogeneous residuals. **We are pausing further layout work** and pivoting to
-**text**, which is the single largest unlock: `needs_text` alone blocks **4045 unported**
-tests plus **336 runnable failures** (and `needs_font_metrics` another 230/553).
-
-Important: text is **not** a from-scratch build. The text engine already exists from SP11
-(`openui-text`: font metrics, HarfBuzz/Skia shaping, bidi, hyphenation, emoji, emphasis),
-inline layout already shapes text, and the glyph painter already exists. The gap is the
-**accountability pixel pipeline**: the WPT porting tool (`tools/wpt/port_wpt.py`) emits
-box-only builders, so there are currently **0 text nodes** across ported WPT tests and text
-is never compared against Chromium. The text track (SP14+) is therefore a **porting + parity**
-effort. See `docs/plan/10-text-rendering-parity.md` and `docs/SP14-PLAN.md`.
+SP14 now has a deterministic, manifest-scoped text pipeline. All 334 formerly runnable
+`needs_text` tests retain text: 41 pass exactly and 293 have evidence-backed non-text
+owners. No runnable failure retains `needs_text`. The next logical batch is the 4045
+unported rows that still carry that category; see `docs/plan/10-text-rendering-parity.md`
+and `docs/SP14-PLAN.md`.
 
 ## What "SP12 Complete" Means
 
@@ -67,25 +60,25 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 735 non-passing runnable tests are ported tests classified by the feature that owns the
+The 691 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
 
 | Category | Count |
 |---|---:|
-| `needs_text` | 336 |
-| `needs_font_metrics` | 230 |
-| `sp13_fragmentation` | 217 |
-| `reference_test` | 190 |
-| `sp13_multicol` | 170 |
-| `needs_inline_block` | 108 |
+| `needs_font_metrics` | 225 |
+| `sp13_fragmentation` | 214 |
+| `reference_test` | 179 |
+| `sp13_multicol` | 165 |
+| `needs_inline_block` | 99 |
 | `needs_writing_mode` | 79 |
 | `needs_image` | 70 |
 | `needs_gradient` | 70 |
-| `needs_complex_border` | 46 |
-| `needs_advanced_selectors` | 42 |
-| `needs_generated_content` | 31 |
+| `needs_rounded_border_paint` | 56 |
+| `needs_abspos_flex_static_position` | 49 |
+| `needs_complex_border` | 45 |
+| `needs_positioned_inline_layout` | 38 |
 
 ## Current Unported Inventory Ownership
 
@@ -97,7 +90,6 @@ Top unported categories:
 | Category | Count |
 |---|---:|
 | `needs_text` | 4045 |
-| `needs_advanced_selectors` | 3867 |
 | `needs_javascript` | 1945 |
 | `needs_writing_mode` | 826 |
 | `sp13_fragmentation` | 654 |
@@ -108,15 +100,16 @@ Top unported categories:
 | `needs_inline_block` | 424 |
 | `sp13_multicol` | 420 |
 | `needs_containment` | 325 |
+| `needs_grid` | 304 |
+| `needs_form_controls` | 264 |
+| `needs_advanced_selectors` | 200 |
 
 ## Recommended Next Work
 
-**SP14+ text track (this is the current direction).** Text is the largest single unlock of
-the unported inventory (`needs_text` 4045) and a large block of runnable failures
-(`needs_text` 336 + `needs_font_metrics` 230 + `needs_inline_block` 108). Because the SP11
-engine, inline layout, and glyph painter already exist, the work is to wire text through the
-WPT pixel pipeline and reach Chromium parity, starting with the deterministic Ahem subset.
-See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (first SP).
+**SP14 W3/W4 unported text closure.** Process the 4045 unported `needs_text` rows in
+dependency-aware batches using the now-verified surgical text porter. Preserve the manifest
+scope, exact-pixel standard, and upstream-evidence ownership rules. Do not retire the global
+text detector until the unported inventory is closed.
 
 Remaining SP13 layout residuals (~48 actionable fragmentation/multicol tests) are paused but
 tracked; they can be resumed after the text track or in parallel.

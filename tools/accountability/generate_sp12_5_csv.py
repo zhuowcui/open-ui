@@ -20,8 +20,17 @@ REPO_ROOT = SCRIPT_DIR.parent.parent
 TEMPLATES_PATH = SCRIPT_DIR / "data" / "wpt_ported" / "all_wpt_templates.json"
 TEXT_PORTED_PATH = SCRIPT_DIR / "data" / "wpt_ported" / "text_ported_tests.json"
 SUMMARY_PATH = SCRIPT_DIR / "data" / "pixel_comparison" / "results" / "summary.json"
+WPT_MAPPING_PATH = SCRIPT_DIR / "data" / "wpt_mapping.csv"
 CSV_OUTPUT = SCRIPT_DIR / "data" / "sp12_5_deferred.csv"
 MD_OUTPUT = REPO_ROOT / "docs" / "SP12.5-PLAN.md"
+CHROMIUM_WPT_BASE = Path(
+    os.environ.get(
+        "CHROMIUM_WPT_CSS",
+        os.path.expanduser(
+            "~/chromium/src/third_party/blink/web_tests/external/wpt/css"
+        ),
+    )
+)
 
 # Import shared detectors (single source of truth)
 sys.path.insert(0, str(SCRIPT_DIR))
@@ -33,6 +42,50 @@ def priority_for_count(count: int) -> str:
     if count >= 20:
         return "medium"
     return "low"
+
+
+def load_text_port_upstream_paths(text_ported_tests: set[str]) -> dict[str, str]:
+    """Resolve text ports to the original Chromium source used for ownership."""
+    if not text_ported_tests:
+        return {}
+    if not WPT_MAPPING_PATH.exists():
+        raise FileNotFoundError(
+            f"missing WPT mapping required for text-port ownership: {WPT_MAPPING_PATH}"
+        )
+
+    result: dict[str, str] = {}
+    with open(WPT_MAPPING_PATH, newline="") as f:
+        for row in csv.DictReader(f):
+            test_id = row.get("our_test_id", "")
+            if test_id in text_ported_tests:
+                result[test_id] = row.get("chromium_test_path", "")
+
+    missing = text_ported_tests - set(result)
+    if missing:
+        raise ValueError(
+            "text ports missing from WPT mapping: " + ", ".join(sorted(missing))
+        )
+    return result
+
+
+def classification_html(
+    test_id: str,
+    template_html: str,
+    text_ported_tests: set[str],
+    upstream_paths: dict[str, str],
+) -> str:
+    """Use upstream HTML once normalized text is an implemented capability."""
+    if test_id not in text_ported_tests:
+        return template_html
+
+    relative_path = upstream_paths.get(test_id, "")
+    upstream_path = CHROMIUM_WPT_BASE / relative_path
+    if not relative_path or not upstream_path.is_file():
+        raise FileNotFoundError(
+            f"missing upstream source for text-port ownership: {test_id}: "
+            f"{upstream_path}"
+        )
+    return upstream_path.read_text(encoding="utf-8", errors="ignore")
 
 
 # ---------------------------------------------------------------------------
@@ -62,6 +115,7 @@ def main() -> None:
                 "text-port manifest contains tests without templates: "
                 + ", ".join(sorted(missing_templates))
             )
+    text_port_upstream_paths = load_text_port_upstream_paths(text_ported_tests)
 
     # Build lookup: id -> test record (failures + errors are both deferrable)
     fail_map: dict[str, dict] = {}
@@ -74,9 +128,15 @@ def main() -> None:
     dep_counts: dict[str, int] = defaultdict(int)
     dep_tests: dict[str, list[str]] = defaultdict(list)
 
-    for test_id, html in templates.items():
+    for test_id, template_html in templates.items():
         if test_id not in fail_map:
             continue
+        html = classification_html(
+            test_id,
+            template_html,
+            text_ported_tests,
+            text_port_upstream_paths,
+        )
         deps = classify_dependencies(
             html,
             test_id=test_id,

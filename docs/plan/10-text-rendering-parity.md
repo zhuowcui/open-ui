@@ -1,79 +1,57 @@
 # Text Rendering Parity — SP14+ Roadmap
 
-Chronological text-track plan. We pause layout (SP12 complete in-scope; SP13
-fragmentation/multicol at ~48 hard residuals) and pivot to **text**, the single largest
-unlock of the Chromium WPT corpus.
+The text engine, inline layout, and glyph painter already exist. The text track connects
+them to the Chromium accountability corpus through deterministic text-retaining ports,
+then expands from Ahem geometry to real-font and advanced-text parity.
 
-## Why text, and why it is tractable
+## Current state
 
-`needs_text` blocks **4045 unported** tests and **336 runnable failures**;
-`needs_font_metrics` another **230 runnable / 553 unported**. It is the biggest lever by far.
+SP14 W0–W2 closed runnable `needs_text` ownership. The text manifest contains 334
+tests: 41 exact and 293 with detector-backed non-text owners. The complete 3,406-test
+run has 2,715 exact passes and zero errors, preserves all 2,700 W1 baseline passes, and
+passes the 7/7 audit. The remaining text backlog is 4,045 unported tests.
 
-Critically, text is **not** a from-scratch build:
+Deterministic ports use repo-vendored Ahem plus an explicit DejaVu Sans fallback for
+verified missing glyphs. The no-AA/no-hinting environment is scoped by
+`text_ported_tests.json` on both renderers. Exact zero-pixel parity remains the standard;
+AA near misses are never promoted to passes.
 
-- **Engine exists (SP11):** `bindings/rust/openui-text` — font resolution/metrics,
-  HarfBuzz/Skia shaping, bidi (UAX#9), hyphenation, emoji, emphasis, transform; with
-  `wpt_text_tests`, `wpt_font_tests`, `sp11_round21..30` suites.
-- **Inline layout already shapes text:** `openui-layout/src/inline/algorithm.rs` calls
-  `TextShaper`/`FontMetrics`/`shape_text()`; line-breaking, first-line, first-letter,
-  initial-letter, text-combine modules exist.
-- **Paint already renders glyphs:** `openui-paint` has `text_painter.rs`,
-  `decoration_painter.rs`, `emphasis_painter.rs`.
-- **DOM supports text:** `ElementTag::Text` + `NodeData.text`.
+## Chronological work
 
-**The gap is the accountability pixel pipeline.** `tools/wpt/port_wpt.py` emits box-only
-builders — there are currently **0 `ElementTag::Text` nodes** across all ported WPT tests, so
-text is never compared against headless Chromium. The text track is therefore a
-**porting + parity** effort: emit text, render it, drive it to pixel parity.
+### SP14 W3/W4 — unported text closure
 
-## Determinism strategy
+Process the 4,045 unported `needs_text` rows in increasing dependency coupling. Port
+representable cases transactionally, reject unsupported content before any write, and
+move residuals only to dependencies demonstrated by original upstream HTML. Retain the
+global text detector until this inventory reaches zero.
 
-- **Ahem first.** ~245 corpus tests use the **Ahem** font (exact filled-square glyphs), so
-  pixel-exact (0.0%) parity is achievable. Start here.
-- **Then real fonts.** Default is **DejaVu Sans** — the same font the headless-Chromium
-  reference uses, both rendered through Skia — so real-text parity is also achievable,
-  just harder (anti-aliasing/hinting).
-- **Standard unchanged:** exact 0.0% mismatch is the bar; AA-only near-misses are tracked in
-  the existing `near_miss_aa` bucket, never hidden.
+### SP15 — inline layout and line breaking
 
-## Chronological SPs
+Address functional residuals exposed by text ports: inline box decoration, clearing
+breaks beside floats, inline-block interaction, wrapping, baseline alignment, and related
+line construction behavior.
 
-### SP14 — Text Rendering Foundation (Ahem, single-line, LTR)
-Wire text end-to-end through the pixel pipeline; reach exact parity on single-line,
-left-to-right, horizontal Ahem text. Detailed in `docs/SP14-PLAN.md`.
-Exit: pilot single-line Ahem tests at 0.0%, zero regressions to the 2671 box-only passes,
-audit 7/7, port tool can emit text.
+### SP16 — real-font metrics and parity
 
-### SP15 — Inline layout & line breaking
-Multi-line text, soft/forced wraps, `white-space`, `text-align`, `line-height` (incl.
-font-metric `normal`/unitless), `<br>`, `<span>` inline boxes, baseline `vertical-align`.
-Targets much of `needs_inline_block` (108 runnable) and wrapping text tests.
+Move beyond deterministic Ahem geometry to font metrics, `ch`/`ex`, font shorthand,
+`line-height: normal`, hinting, and real-glyph raster parity. Runnable font-metric
+ownership currently covers 225 failures.
 
-### SP16 — Real-font metrics & parity (DejaVu Sans)
-Move beyond Ahem to the default real font; `ch`/`ex` units, `font` shorthand,
-`line-height: normal`. Drive `needs_font_metrics` (230 runnable / 553 unported) to parity.
+### SP17 — advanced text
 
-### SP17 — Advanced text
-Bidi/RTL runs, vertical writing modes + char-orientation, `text-transform`, decoration
-(underline/overline/line-through), emphasis marks, complex-script shaping, emoji. Targets
-text portions of `needs_writing_mode` (79 runnable) and the advanced `openui-text` modules.
+Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis, complex
+scripts, and emoji.
 
-### SP18 — Generated content & text pseudo/effects
-`::first-line`, `::first-letter`, `text-shadow`, `text-overflow: ellipsis`, generated
-content (counters/quotes). Targets `needs_generated_content` (31 runnable).
+### SP18 — generated content and text effects
 
-Boundaries are proposals; refine as each SP is reached. Images, gradients, grid, tables,
-advanced selectors, and JavaScript remain deferred behind text.
+Cover first-line/first-letter behavior, counters and quotes, text shadow, and overflow
+ellipsis.
 
-## Accountability discipline (every SP)
+## Accountability discipline
 
-Same pipeline as layout work:
-
-1. Regenerate templates / port via `tools/wpt/port_wpt.py` (and any batch driver).
-2. Build: `cd bindings/rust && cargo build --release --package pixel-compare`.
-3. Run: `LD_LIBRARY_PATH=... python3 -u tools/accountability/run_all_pixel_comparisons.py 'wpt/'`
-   (snapshot `summary.json` before any filtered run — it overwrites on partial runs).
-4. Regenerate `wpt_mapping.csv` + `sp12_5_deferred.csv`; reclassify newly-passing tests out
-   of `needs_text`/`needs_font_metrics`.
-5. `python3 tools/accountability/audit.py` must pass 7/7.
-6. Guard slices for zero regression before promoting; independent verifier before completion.
+1. Use the surgical splice workflow; do not batch-regenerate committed WPT modules.
+2. Snapshot the full summary before focused runs and run focused targets without resume.
+3. Require zero mismatched pixels for every promoted deterministic pass.
+4. Run the complete `wpt/` suite without resume before updating authoritative artifacts.
+5. Regenerate mapping then deferred artifacts, require audit 7/7, and independently verify
+   the milestone before completion.

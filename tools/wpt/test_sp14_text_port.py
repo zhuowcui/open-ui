@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "accountability"))
 import run_all_pixel_comparisons
 import shared_detectors
 import audit
+import generate_sp12_5_csv
 
 
 class TextPorterTests(unittest.TestCase):
@@ -463,6 +464,32 @@ class RunnerScopeTests(unittest.TestCase):
 
 
 class AccountabilityDetectorTests(unittest.TestCase):
+    def test_deferred_classifier_uses_upstream_html_for_text_ports(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            upstream = root / "CSS2" / "floats" / "sample.html"
+            upstream.parent.mkdir(parents=True)
+            upstream.write_text("<div>original upstream evidence</div>")
+            with mock.patch.object(generate_sp12_5_csv, "CHROMIUM_WPT_BASE", root):
+                self.assertEqual(
+                    generate_sp12_5_csv.classification_html(
+                        "wpt/demo/text",
+                        "<div>normalized comparison template</div>",
+                        {"wpt/demo/text"},
+                        {"wpt/demo/text": "CSS2/floats/sample.html"},
+                    ),
+                    "<div>original upstream evidence</div>",
+                )
+                self.assertEqual(
+                    generate_sp12_5_csv.classification_html(
+                        "wpt/demo/ordinary",
+                        "<div>ordinary template</div>",
+                        {"wpt/demo/text"},
+                        {"wpt/demo/text": "CSS2/floats/sample.html"},
+                    ),
+                    "<div>ordinary template</div>",
+                )
+
     def test_text_port_ownership_rejects_stale_and_metadata_only_categories(self):
         rows = [
             {
