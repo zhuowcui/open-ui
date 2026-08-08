@@ -6,10 +6,11 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 ## Current state
 
-SP14 W0–W2 closed runnable `needs_text` ownership. The text manifest contains 334
-tests: 41 exact and 293 with detector-backed non-text owners. The complete 3,406-test
-run has 2,715 exact passes and zero errors, preserves all 2,700 W1 baseline passes, and
-passes the 7/7 audit. The remaining text backlog is 4,045 unported tests.
+SP14 W0–W4 closed the global `needs_text` category. The text manifest contains 445
+tests: 93 exact and 352 with detector-backed non-text owners. The complete 3,517-test
+run has 2,767 exact passes and zero errors, preserves all 2,715 frozen baseline passes,
+and passes the 7/7 audit. The former 4,045-row unported text backlog is split into 111
+runnable W3 ports and 3,934 structured W4 dispositions.
 
 Deterministic ports use repo-vendored Ahem plus an explicit DejaVu Sans fallback for
 verified missing glyphs. The no-AA/no-hinting environment is scoped by
@@ -20,10 +21,9 @@ AA near misses are never promoted to passes.
 
 ### SP14 W3/W4 — unported text closure
 
-Process the 4,045 unported `needs_text` rows in increasing dependency coupling. Port
-representable cases transactionally, reject unsupported content before any write, and
-move residuals only to dependencies demonstrated by original upstream HTML. Retain the
-global text detector until this inventory reaches zero.
+Complete. The 111 deterministic cases were ported transactionally (52 exact, 59 named
+functional owners), all 3,934 residuals record their actual porter rejection plus merged
+upstream ownership, and the global text detector was retired after coverage was proven.
 
 ### SP15 — inline layout and line breaking
 

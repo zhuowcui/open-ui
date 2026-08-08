@@ -17,6 +17,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import port_wpt
 import splice_text_port
+import generate_sp14_text_closure
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "accountability"))
 import run_all_pixel_comparisons
@@ -311,6 +312,21 @@ class SpliceTransactionTests(unittest.TestCase):
         paths = list(self.rust_dir.iterdir()) + list(self.template_dir.iterdir())
         return {str(path): path.read_bytes() for path in paths}
 
+    def add_unported_fixture(self, name: str, html: str | None = None) -> str:
+        test_id = f"wpt/demo/{name}"
+        filename = f"{name}.html"
+        (self.wpt_root / filename).write_text(
+            html or f"<!doctype html><body><div>{name} text</div></body>",
+            encoding="utf-8",
+        )
+        self.mapping[test_id] = {
+            "chromium_test_path": filename,
+            "test_name": name,
+            "sp_area": "demo",
+            "our_test_id": "",
+        }
+        return test_id
+
     def test_dry_run_is_side_effect_free(self):
         before = self.snapshot()
         with mock.patch.object(
@@ -333,11 +349,100 @@ class SpliceTransactionTests(unittest.TestCase):
         self.assertEqual(once, self.snapshot())
         self.assertEqual(json.loads(self.manifest.read_text()), ["wpt/demo/sample"])
 
+    def test_mixed_add_and_replace_transaction_is_idempotent(self):
+        added = self.add_unported_fixture("added")
+        generated, originals, changes = splice_text_port.prepare_changes(
+            [added, "wpt/demo/sample"], self.mapping
+        )
+        self.assertEqual([item.test_id for item in generated], sorted([added, "wpt/demo/sample"]))
+        splice_text_port.commit_changes(originals, changes)
+
+        rust = (self.rust_dir / "wpt_demo.rs").read_text(encoding="utf-8")
+        self.assertEqual(rust.count("fn demo_added() -> Document"), 1)
+        self.assertEqual(rust.count(f'"{added}"'), 1)
+        self.assertNotIn("vec![\n\n", rust)
+        self.assertIn(f'        (\n            "{added}"', rust)
+        for filename in ("all_wpt_templates.json", "wpt_demo_templates.json"):
+            templates = json.loads((self.template_dir / filename).read_text())
+            self.assertIn(added, templates)
+        self.assertEqual(
+            json.loads(self.manifest.read_text()), sorted([added, "wpt/demo/sample"])
+        )
+
+        once = self.snapshot()
+        _generated, originals, changes = splice_text_port.prepare_changes(
+            ["wpt/demo/sample", added], self.mapping
+        )
+        splice_text_port.commit_changes(originals, changes)
+        self.assertEqual(once, self.snapshot())
+
+    def test_ids_file_drives_a_dry_run(self):
+        ledger = Path(self.temp.name, "ids.json")
+        ledger.write_text('["wpt/demo/sample"]\n', encoding="utf-8")
+        before = self.snapshot()
+        with mock.patch.object(
+            sys,
+            "argv",
+            ["splice_text_port.py", "--ids-file", str(ledger), "--dry-run"],
+        ), contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(splice_text_port.main(), 0)
+        self.assertEqual(before, self.snapshot())
+
+        ledger.write_text(
+            '["wpt/demo/sample", "wpt/demo/sample"]\n', encoding="utf-8"
+        )
+        with mock.patch.object(
+            sys, "argv", ["splice_text_port.py", "--ids-file", str(ledger)]
+        ), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(splice_text_port.main(), 1)
+        self.assertEqual(before, self.snapshot())
+
+    def test_unported_mapping_rows_receive_canonical_ids(self):
+        self.mapping_csv.write_text(
+            "chromium_test_path,test_name,sp_area,our_test_id\n"
+            "sample.html,sample,demo,\n",
+            encoding="utf-8",
+        )
+        rows = splice_text_port.load_mapping_rows()
+        self.assertEqual(set(rows), {"wpt/demo/sample"})
+
+    def test_function_collision_and_partial_add_state_write_nothing(self):
+        first = self.add_unported_fixture("new-a")
+        second = self.add_unported_fixture("new_a")
+        before = self.snapshot()
+        with self.assertRaises(ValueError):
+            splice_text_port.prepare_changes([first, second], self.mapping)
+        self.assertEqual(before, self.snapshot())
+
+        partial = self.add_unported_fixture("partial")
+        all_templates = self.template_dir / "all_wpt_templates.json"
+        templates = json.loads(all_templates.read_text())
+        templates[partial] = "<div>partial</div>"
+        all_templates.write_text(json.dumps(templates, indent=2) + "\n")
+        before = self.snapshot()
+        with self.assertRaises(ValueError):
+            splice_text_port.prepare_changes([partial], self.mapping)
+        self.assertEqual(before, self.snapshot())
+
+    def test_missing_upstream_rejected_before_writes(self):
+        missing = "wpt/demo/missing"
+        mapping = dict(self.mapping)
+        mapping[missing] = {
+            "chromium_test_path": "missing.html",
+            "test_name": "missing",
+            "sp_area": "demo",
+            "our_test_id": "",
+        }
+        before = self.snapshot()
+        with self.assertRaises(FileNotFoundError):
+            splice_text_port.prepare_changes([missing], mapping)
+        self.assertEqual(before, self.snapshot())
+
     def test_validation_failure_writes_nothing(self):
         module_templates = self.template_dir / "wpt_demo_templates.json"
         module_templates.write_text("{}\n", encoding="utf-8")
         before = self.snapshot()
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValueError):
             splice_text_port.prepare_changes(["wpt/demo/sample"], self.mapping)
         self.assertEqual(before, self.snapshot())
 
@@ -369,7 +474,7 @@ class SpliceTransactionTests(unittest.TestCase):
         }
 
         before = self.snapshot()
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValueError):
             splice_text_port.prepare_changes(
                 ["wpt/demo/sample", "wpt/other/other"], mapping
             )
@@ -398,16 +503,20 @@ class SpliceTransactionTests(unittest.TestCase):
 
 
 class RunnerScopeTests(unittest.TestCase):
-    def test_w2_ledger_is_sorted_unique_and_fully_manifested(self):
+    def test_w2_w3_ledgers_are_sorted_unique_and_fully_manifested(self):
         data_dir = Path(run_all_pixel_comparisons.__file__).resolve().parent / "data"
         ported_dir = data_dir / "wpt_ported"
-        ledger = json.loads((ported_dir / "sp14_w2_targets.json").read_text())
+        w2 = json.loads((ported_dir / "sp14_w2_targets.json").read_text())
+        w3 = json.loads((ported_dir / "sp14_w3_targets.json").read_text())
         manifest = json.loads((ported_dir / "text_ported_tests.json").read_text())
-        self.assertEqual(len(ledger), 286)
-        self.assertEqual(ledger, sorted(set(ledger)))
-        self.assertEqual(len(manifest), 334)
-        self.assertEqual(len(set(manifest) - set(ledger)), 48)
-        self.assertTrue(set(ledger) <= set(manifest))
+        self.assertEqual(len(w2), 286)
+        self.assertEqual(len(w3), 111)
+        self.assertEqual(w2, sorted(set(w2)))
+        self.assertEqual(w3, sorted(set(w3)))
+        self.assertFalse(set(w2) & set(w3))
+        self.assertEqual(len(manifest), 445)
+        self.assertEqual(len(set(manifest) - set(w2) - set(w3)), 48)
+        self.assertTrue(set(w2) | set(w3) <= set(manifest))
 
     def test_ahem_fontconfig_is_only_added_for_manifest_opt_in(self):
         with tempfile.NamedTemporaryFile() as config, mock.patch.object(
@@ -463,7 +572,203 @@ class RunnerScopeTests(unittest.TestCase):
         self.assertEqual(text_ported["OPENUI_HINTING"], "none")
 
 
+class TextClosureLedgerTests(unittest.TestCase):
+    def test_ledger_derivation_is_deterministic_and_merges_rejection_owner(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "portable.html").write_text(
+                "<!doctype html><body><div>portable</div></body>", encoding="utf-8"
+            )
+            (root / "scripted.html").write_text(
+                "<!doctype html><body><script>run()</script><div>text</div></body>",
+                encoding="utf-8",
+            )
+            (root / "root-only.html").write_text(
+                "<!doctype html><style>body{overflow:scroll}</style>"
+                "<body>root text</body>",
+                encoding="utf-8",
+            )
+            rows = [
+                {
+                    "chromium_test_path": filename,
+                    "test_name": name,
+                    "sp_area": "demo",
+                    "ported": "no",
+                    "our_test_id": "",
+                    "failure_category": "needs_text",
+                }
+                for filename, name in (
+                    ("portable.html", "portable"),
+                    ("scripted.html", "scripted"),
+                    ("root-only.html", "root-only"),
+                )
+            ]
+            summary = {
+                "tests": [
+                    {"id": "wpt/z/exact", "status": "pass", "mismatch_pct": 0.0},
+                    {"id": "wpt/a/fail", "status": "fail", "mismatch_pct": 1.0},
+                ]
+            }
+            first = generate_sp14_text_closure.build_ledgers(rows, summary, root)
+            second = generate_sp14_text_closure.build_ledgers(rows, summary, root)
+            self.assertEqual(first, second)
+            baseline, w3, w4 = first
+            self.assertEqual(baseline, ["wpt/z/exact"])
+            self.assertEqual(w3, ["wpt/demo/portable"])
+            by_id = {item["test_id"]: item for item in w4}
+            self.assertEqual(
+                by_id["wpt/demo/scripted"]["rejection_owner"],
+                "needs_javascript",
+            )
+            self.assertIn(
+                "needs_javascript",
+                by_id["wpt/demo/scripted"]["owner_categories"],
+            )
+            self.assertEqual(
+                by_id["wpt/demo/root-only"]["rejection_owner"],
+                "needs_root_body_layout",
+            )
+
+    def test_closed_snapshot_preserves_baseline_and_w3_w4_disposition(self):
+        rows = [
+            {
+                "chromium_test_path": "portable.html",
+                "test_name": "portable",
+                "sp_area": "demo",
+                "ported": "yes",
+                "failure_category": "",
+                "notes": "",
+            },
+            {
+                "chromium_test_path": "scripted.html",
+                "test_name": "scripted",
+                "sp_area": "demo",
+                "ported": "no",
+                "failure_category": "needs_javascript",
+                "notes": "Porter deferred: uses_javascript",
+            },
+        ]
+        summary = {
+            "tests": [
+                {
+                    "id": "wpt/demo/portable",
+                    "status": "pass",
+                    "mismatch_pct": 0.0,
+                }
+            ]
+        }
+        w4 = [
+            {
+                "test_id": "wpt/demo/scripted",
+                "chromium_test_path": "scripted.html",
+                "rejection_reason": "uses_javascript",
+                "rejection_owner": "needs_javascript",
+                "owner_categories": ["needs_javascript"],
+            }
+        ]
+        generate_sp14_text_closure.validate_closed_snapshot(
+            rows,
+            summary,
+            ["wpt/demo/portable"],
+            ["wpt/demo/portable"],
+            w4,
+        )
+        rows[1]["failure_category"] = "reference_test"
+        with self.assertRaisesRegex(ValueError, "ownership drift"):
+            generate_sp14_text_closure.validate_closed_snapshot(
+                rows,
+                summary,
+                ["wpt/demo/portable"],
+                ["wpt/demo/portable"],
+                w4,
+            )
+
+
 class AccountabilityDetectorTests(unittest.TestCase):
+    def test_unported_classification_merges_detector_and_rejection_owners(self):
+        categories, _dependency = shared_detectors.classify_failure_categories(
+            "<div style=\"background:url(asset.png)\"></div>",
+            excluded={"text_rendering"},
+        )
+        self.assertIn("needs_image", categories)
+
+        import generate_wpt_mapping
+
+        categories, _dependency = generate_wpt_mapping.classify_unported_test(
+            "<div style=\"background:url(asset.png)\"></div>",
+            "demo",
+            "sample",
+            "uses_javascript",
+        )
+        self.assertEqual(
+            set(categories.split(",")), {"needs_image", "needs_javascript"}
+        )
+
+    def test_sp14_audit_invariants_cover_baseline_w3_and_w4(self):
+        rows = [
+            {
+                "chromium_test_path": "portable.html",
+                "test_name": "portable",
+                "sp_area": "demo",
+                "ported": "yes",
+                "our_test_id": "wpt/demo/portable",
+                "pixel_result": "pass",
+                "failure_category": "",
+                "notes": "",
+            },
+            {
+                "chromium_test_path": "scripted.html",
+                "test_name": "scripted",
+                "sp_area": "demo",
+                "ported": "no",
+                "our_test_id": "",
+                "pixel_result": "",
+                "failure_category": "needs_javascript",
+                "notes": "Porter deferred: uses_javascript",
+            },
+        ]
+        summary = {
+            "wpt/demo/portable": {
+                "id": "wpt/demo/portable",
+                "status": "pass",
+                "mismatch_pct": 0.0,
+            }
+        }
+        w4 = [
+            {
+                "test_id": "wpt/demo/scripted",
+                "chromium_test_path": "scripted.html",
+                "rejection_reason": "uses_javascript",
+                "rejection_owner": "needs_javascript",
+                "owner_categories": ["needs_javascript"],
+            }
+        ]
+        errors = audit.sp14_text_closure_errors(
+            rows,
+            summary,
+            {"wpt/demo/portable": "<div>portable</div>"},
+            {"wpt/demo/portable"},
+            ["wpt/demo/portable"],
+            ["wpt/demo/portable"],
+            w4,
+            enforce_frozen_counts=False,
+        )
+        self.assertEqual(errors, [])
+
+        w4[0]["rejection_owner"] = "non_visual_test"
+        w4[0]["owner_categories"] = ["non_visual_test"]
+        errors = audit.sp14_text_closure_errors(
+            rows,
+            summary,
+            {"wpt/demo/portable": "<div>portable</div>"},
+            {"wpt/demo/portable"},
+            ["wpt/demo/portable"],
+            ["wpt/demo/portable"],
+            w4,
+            enforce_frozen_counts=False,
+        )
+        self.assertTrue(any("functional ownership" in error for error in errors))
+
     def test_deferred_classifier_uses_upstream_html_for_text_ports(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -532,6 +837,16 @@ class AccountabilityDetectorTests(unittest.TestCase):
         )
         self.assertEqual(categories, "needs_rounded_border_paint")
         self.assertEqual(dependency, "Paint Quality: Rounded Borders")
+
+    def test_multi_value_border_style_has_complex_border_owner(self):
+        html = """<style>#test { border: black solid 5px;
+                  border-style: solid dotted dashed double; }</style>
+                  <div id="test"></div>"""
+        categories, dependency = shared_detectors.classify_failure_categories(
+            html, excluded={"text_rendering"}
+        )
+        self.assertEqual(categories, "needs_complex_border")
+        self.assertEqual(dependency, "Paint Quality: Complex Borders")
 
     def test_positioned_block_through_inline_has_precise_owner(self):
         html = """<p>Test passes if green covers red.</p>

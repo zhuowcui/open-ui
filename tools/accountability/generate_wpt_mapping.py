@@ -19,6 +19,7 @@ from shared_detectors import (
     CATEGORY_FOR_DEP,
     classify_dependencies,
     classify_failure_categories,
+    dependency_for_portability_reason,
 )
 
 # --- Configuration ---
@@ -37,6 +38,7 @@ SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 OUTPUT_CSV = DATA_DIR / "wpt_mapping.csv"
 PORT_REPORT_DIR = DATA_DIR / "wpt_ported"
 TEXT_PORTED_JSON = PORT_REPORT_DIR / "text_ported_tests.json"
+SP14_W4_JSON = PORT_REPORT_DIR / "sp14_w4_residuals.json"
 
 # Chromium directory → our area name
 SP12_AREAS = {
@@ -126,49 +128,34 @@ def load_portability_reasons() -> dict[tuple[str, str], str]:
                 if row.get("status") == "ported":
                     continue
                 reasons[(area, row.get("filename", ""))] = row.get("reason", "")
+    if SP14_W4_JSON.exists():
+        with open(SP14_W4_JSON, encoding="utf-8") as f:
+            residuals = json.load(f)
+        if not isinstance(residuals, list):
+            raise ValueError(f"invalid W4 ledger: {SP14_W4_JSON}")
+        for item in residuals:
+            test_id = item.get("test_id", "") if isinstance(item, dict) else ""
+            parts = test_id.split("/")
+            reason = item.get("rejection_reason", "") if isinstance(item, dict) else ""
+            if len(parts) != 3 or parts[0] != "wpt" or not reason:
+                raise ValueError(f"invalid W4 ledger entry: {item!r}")
+            key = (parts[1], parts[2])
+            existing = reasons.get(key)
+            if existing and existing != reason:
+                raise ValueError(
+                    f"W4 rejection drift for {test_id}: {existing!r} != {reason!r}"
+                )
+            reasons[key] = reason
     return reasons
-
-
-def dependency_for_portability_reason(reason: str) -> str:
-    """Map porter rejection reasons to a named deferred dependency key."""
-    r = reason.lower()
-    if "javascript" in r:
-        return "javascript"
-    if "line-clamp" in r or "-webkit-box-orient" in r:
-        return "line_clamp"
-    if "grid" in r:
-        return "grid_layout"
-    if "table" in r or "border-collapse" in r or "border-spacing" in r or "caption-side" in r:
-        return "table_layout"
-    if "writing-mode" in r or "unicode-bidi" in r:
-        return "writing_mode"
-    if "margin-trim" in r:
-        return "margin_trim"
-    if "contain" in r:
-        return "css_containment"
-    if "transform" in r or "filter" in r or "clip-path" in r or "mask" in r or "animation" in r or "transition" in r:
-        return "visual_effects"
-    if "img" in r or "image" in r or "iframe" in r or "video" in r:
-        return "image_rendering"
-    if "canvas" in r or "svg" in r:
-        return "canvas_svg"
-    if any(tag in r for tag in ("button", "input", "select", "textarea", "fieldset", "details", "dialog", "audio", "form")):
-        return "form_controls"
-    if "content" in r or "before" in r or "after" in r or "first-letter" in r or "first-line" in r:
-        return "generated_content"
-    if "complex_css_selector" in r:
-        return "advanced_selectors"
-    if "no_layout_content" in r:
-        return "non_visual"
-    return "advanced_selectors"
 
 
 def classify_unported_test(html: str, area: str, name: str, reason: str) -> tuple[str, str]:
     """Classify an unported Chromium test into explicit owning dependencies."""
     test_id = f"wpt/{area}/{name}"
-    deps = classify_dependencies(html, test_id=test_id)
-    if not deps:
-        deps = [dependency_for_portability_reason(reason)]
+    deps = classify_dependencies(html, test_id=test_id, excluded={"text_rendering"})
+    reason_owner = dependency_for_portability_reason(reason)
+    if reason_owner not in deps:
+        deps.append(reason_owner)
     categories = [CATEGORY_FOR_DEP[d] for d in deps]
     labels = []
     from shared_detectors import DEPENDENCY_DEFS

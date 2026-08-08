@@ -5,7 +5,6 @@ import csv
 import html
 import json
 import os
-from datetime import datetime, timezone
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, "data")
@@ -175,7 +174,6 @@ def build_report_data():
         "test_rows": test_rows,
         "has_mapping": mapping is not None,
         "has_sp12": sp12 is not None,
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
     }
 
 
@@ -564,7 +562,7 @@ body {{
 {test_table_html}
 </div>
 <div class="footer">
-  Generated {esc(data['timestamp'])} &middot; Open UI WPT Accountability Tracker
+  Generated from authoritative artifacts &middot; Open UI WPT Accountability Tracker
   {' &middot; <em>Mapping CSV not loaded — showing summary.json data only</em>' if not data['has_mapping'] else ''}
 </div>
 

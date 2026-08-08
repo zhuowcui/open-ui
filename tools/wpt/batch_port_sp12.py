@@ -62,7 +62,8 @@ def process_recursive(base_dir: str, module_name: str) -> dict:
     """Process a WPT directory recursively."""
     from tools.wpt.port_wpt import (
         parse_wpt_html, analyze_portability, sanitize_fn_name,
-        generate_rust_fn, generate_html_template, generate_style_code
+        generate_rust_fn, generate_html_template, generate_style_code,
+        has_layout_content,
     )
 
     results = {
@@ -90,23 +91,7 @@ def process_recursive(base_dir: str, module_name: str) -> dict:
                 results['not_portable'].append((unique_name, reason))
                 continue
 
-            # Check if DOM tree has any layout children
-            layout_children = []
-            for c in parser.root.children:
-                if c.is_text:
-                    continue
-                if c.tag == 'p' and not c.styles:
-                    has_test_text = False
-                    for sub in c.children:
-                        if sub.is_text and 'test passes' in getattr(sub, 'text_content', '').lower():
-                            has_test_text = True
-                    if has_test_text:
-                        continue
-                if c.tag == 'br':
-                    continue
-                layout_children.append(c)
-
-            if not layout_children:
+            if not has_layout_content(parser):
                 results['not_portable'].append((unique_name, "no_layout_content"))
                 continue
 

@@ -191,8 +191,8 @@ def has_sticky_position(html: str) -> bool:
 def has_complex_border_style(html: str) -> bool:
     """Detect border paint-quality cases that are not SP12 layout bugs."""
     complex_style = bool(re.search(
-        r"(?:border(?:-(?:top|right|bottom|left))?-style\s*:\s*|border\s*:[^;]*\b)"
-        r"(?:dashed|dotted|double|groove|ridge|inset|outset)",
+        r"(?:border(?:-(?:top|right|bottom|left))?-style|border)\s*:"
+        r"[^;]*(?:dashed|dotted|double|groove|ridge|inset|outset)",
         html, re.IGNORECASE
     ))
     translucent_rounded_border = bool(
@@ -391,12 +391,89 @@ def is_multicol_area(html: str, test_id: str = "") -> bool:
     return test_id.startswith("wpt/css_multicol/")
 
 
+def reason_only_dependency(html: str) -> bool:
+    """Dependencies attached from a concrete porter rejection, not HTML alone."""
+    return False
+
+
+def dependency_for_portability_reason(reason: str) -> str:
+    """Map a deterministic porter rejection to its functional owner."""
+    value = reason.lower()
+    if value == "no_layout_content":
+        return "root_body_layout"
+    if "javascript" in value:
+        return "javascript"
+    if "line-clamp" in value or "-webkit-box-orient" in value:
+        return "line_clamp"
+    if "writing-mode" in value or "unicode-bidi" in value:
+        return "writing_mode"
+    if "margin-trim" in value:
+        return "margin_trim"
+    if "contain" in value or "container" in value:
+        return "css_containment"
+    if "grid" in value:
+        return "grid_layout"
+    if (
+        "table" in value
+        or "border-collapse" in value
+        or "border-spacing" in value
+        or "caption-side" in value
+    ):
+        return "table_layout"
+    if any(
+        token in value
+        for token in (
+            "transform",
+            "filter",
+            "clip-path",
+            "shape-outside",
+            "mask",
+            "animation",
+            "transition",
+        )
+    ):
+        return "visual_effects"
+    if any(tag in value for tag in ("<img>", "<iframe>", "<video>", "<object>", "<embed>")):
+        return "image_rendering"
+    if "<canvas>" in value or "<svg>" in value:
+        return "canvas_svg"
+    if any(
+        tag in value
+        for tag in (
+            "<button>",
+            "<input>",
+            "<select>",
+            "<textarea>",
+            "<fieldset>",
+            "<legend>",
+            "<details>",
+            "<form>",
+            "<audio>",
+            "-webkit-appearance",
+        )
+    ):
+        return "form_controls"
+    if any(
+        token in value
+        for token in (
+            "::before",
+            "::after",
+            "::first-letter",
+            "::first-line",
+            "content",
+            "counter-reset",
+            "counter-increment",
+        )
+    ):
+        return "generated_content"
+    return "advanced_selectors"
+
+
 # Ordered list of (key, label, owning_sp, detector)
 # Detectors that need test_id have a special flag.
 DEPENDENCY_DEFS = [
     ("reference_test",     "Reference Test (not standalone)", "N/A",       is_reference_test),
     ("print_layout",       "Print Layout Test",               "Future",    is_print_layout),
-    ("text_rendering",     "SP11/SP13: Text Rendering",       "SP11,SP13", has_visible_text),
     ("font_metrics",       "SP11: Font Metrics",              "SP11",      has_font_metrics),
     ("image_rendering",    "SP13: Image Rendering",           "SP13",      has_image_ref),
     ("css_containment",    "Future SP: CSS Containment",      "Future",    has_containment),
@@ -414,6 +491,7 @@ DEPENDENCY_DEFS = [
     ("clearing_break_after_floats", "SP15: Clearing Break After Floats", "SP15", has_clearing_break_after_floats),
     ("display_contents_style_element", "SP15: display:contents Style Element", "SP15", has_display_contents_style_element),
     ("display_contents_list_layout", "SP15: display:contents List Layout", "SP15", has_display_contents_list_layout),
+    ("root_body_layout", "SP15: Root/Body Viewport Propagation", "SP15", reason_only_dependency),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
     ("javascript",         "Future SP: JavaScript/Test Harness", "Future",  has_javascript),
@@ -435,7 +513,6 @@ DEPENDENCY_DEFS = [
 CATEGORY_FOR_DEP = {
     "reference_test": "reference_test",
     "print_layout": "print_layout",
-    "text_rendering": "needs_text",
     "font_metrics": "needs_font_metrics",
     "image_rendering": "needs_image",
     "css_containment": "needs_containment",
@@ -453,6 +530,7 @@ CATEGORY_FOR_DEP = {
     "clearing_break_after_floats": "needs_clearing_break_after_floats",
     "display_contents_style_element": "needs_display_contents_style_element",
     "display_contents_list_layout": "needs_display_contents_list_layout",
+    "root_body_layout": "needs_root_body_layout",
     "complex_border": "needs_complex_border",
     "scrollbar_gutter": "needs_scrollbar_gutter",
     "javascript": "needs_javascript",

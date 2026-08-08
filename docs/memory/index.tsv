@@ -27,4 +27,5 @@
 0026	superseded	sp14 text strategy plan	SP14 100% strategy: 4381 needs_text = 48 sole + 288 co-blocked ported + 4045 unported	2026-08-07	entries/0026-sp14-100-strategy-4381-needs-text-48-sole-288-co.md
 0027	active	sp14 text font finding fontconfig	BREAKTHROUGH: fontconfig kills Chrome text AA -> exact 0-mismatch text passes	2026-07-14	entries/0027-breakthrough-fontconfig-kills-chrome-text-aa-exa.md
 0028	superseded	sp14 text accountability milestone handoff	SP14 W0/W1 closes 48 sole-needs_text tests with 26 exact and 22 named residuals	2026-08-07	entries/0028-sp14-w0-w1-48-sole-needs-text-closure.md
-0029	active	sp14 text accountability milestone handoff	SP14 W2 closes all runnable needs_text ownership	2026-08-07	entries/0029-sp14-w2-runnable-needs-text-closure.md
+0029	superseded	sp14 text accountability milestone handoff	SP14 W2 closes all runnable needs_text ownership	2026-08-07	entries/0029-sp14-w2-runnable-needs-text-closure.md
+0030	active	sp14 text accountability milestone handoff	SP14 W3/W4 closes the global needs_text backlog	2026-08-08	entries/0030-sp14-w3-w4-global-needs-text-closure.md

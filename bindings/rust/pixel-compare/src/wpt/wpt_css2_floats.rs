@@ -12709,6 +12709,167 @@ fn css2_floats_zero_width_floats() -> Document {
     doc
 }
 
+// Source: CSS2/floats/crashtests/float-rewind-parallel-flow-1-crash.html
+fn css2_floats_crashtests_float_rewind_parallel_flow_1_crash() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.display = Display::ListItem;
+    doc.node_mut(n1).style.list_style_position = ListStylePosition::Inside;
+    doc.node_mut(n1).style.column_count = Some(2);
+    doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.font_size = 1.0;
+    doc.node_mut(n1).style.direction = Direction::Rtl;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.node_mut(n2).style.padding_top = Length::px(0.0);
+        doc.node_mut(n2).style.padding_right = Length::px(0.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.padding_left = Length::px(0.0);
+        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.float = Float::Right;
+        doc.node_mut(n2).style.width = Length::percent(100.0);
+        doc.node_mut(n2).style.height = Length::px(150.0);
+        doc.node_mut(n2).style.direction = Direction::Rtl;
+        doc.node_mut(n2).style.font_size = 1.0;
+        doc.append_child(n1, n2);
+        let n3 = doc.create_node(ElementTag::Text);
+        doc.node_mut(n3).style.font_size = 1.0;
+        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+        doc.node_mut(n3).text = Some("\n  x\n".to_string());
+        doc.append_child(n1, n3);
+    doc
+}
+
+// Source: CSS2/floats/crashtests/float-rewind-parallel-flow-2-crash.html
+fn css2_floats_crashtests_float_rewind_parallel_flow_2_crash() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.height = Length::px(10.0);
+    doc.node_mut(n1).style.direction = Direction::Rtl;
+    doc.node_mut(n1).style.column_span = ColumnSpan::All;
+    doc.append_child(vp, n1);
+        let n2 = doc.create_node(ElementTag::Div);
+        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+        doc.node_mut(n2).style.display = Display::Block;
+        doc.node_mut(n2).style.margin_top = Length::px(0.0);
+        doc.node_mut(n2).style.margin_right = Length::px(0.0);
+        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.margin_left = Length::px(0.0);
+        doc.node_mut(n2).style.padding_top = Length::px(0.0);
+        doc.node_mut(n2).style.padding_right = Length::px(0.0);
+        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+        doc.node_mut(n2).style.padding_left = Length::px(0.0);
+        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+        doc.node_mut(n2).style.position = Position::Fixed;
+        doc.node_mut(n2).style.column_width = Some(Length::percent(100.0));
+        doc.node_mut(n2).style.column_span = ColumnSpan::All;
+        doc.node_mut(n2).style.column_count = Some(3);
+        doc.node_mut(n2).style.direction = Direction::Rtl;
+        doc.append_child(n1, n2);
+            let n3 = doc.create_node(ElementTag::Span);
+            doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+            doc.node_mut(n3).style.margin_top = Length::px(0.0);
+            doc.node_mut(n3).style.margin_right = Length::px(0.0);
+            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+            doc.node_mut(n3).style.margin_left = Length::px(0.0);
+            doc.node_mut(n3).style.padding_top = Length::px(0.0);
+            doc.node_mut(n3).style.padding_right = Length::px(0.0);
+            doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+            doc.node_mut(n3).style.padding_left = Length::px(0.0);
+            doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+            doc.node_mut(n3).style.float = Float::Right;
+            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+            doc.node_mut(n3).style.column_count = Some(3);
+            doc.node_mut(n3).style.column_gap = Some(Length::px(65536.0));
+            doc.node_mut(n3).style.direction = Direction::Rtl;
+            doc.append_child(n2, n3);
+                let n4 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+                doc.node_mut(n4).style.margin_top = Length::px(0.0);
+                doc.node_mut(n4).style.margin_right = Length::px(0.0);
+                doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n4).style.margin_left = Length::px(0.0);
+                doc.node_mut(n4).style.padding_top = Length::px(0.0);
+                doc.node_mut(n4).style.padding_right = Length::px(0.0);
+                doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+                doc.node_mut(n4).style.padding_left = Length::px(0.0);
+                doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n4).style.direction = Direction::Rtl;
+                doc.append_child(n3, n4);
+                let n5 = doc.create_node(ElementTag::Div);
+                doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+                doc.node_mut(n5).style.display = Display::Block;
+                doc.node_mut(n5).style.margin_top = Length::px(0.0);
+                doc.node_mut(n5).style.margin_right = Length::px(0.0);
+                doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+                doc.node_mut(n5).style.margin_left = Length::px(0.0);
+                doc.node_mut(n5).style.padding_top = Length::px(0.0);
+                doc.node_mut(n5).style.padding_right = Length::px(0.0);
+                doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+                doc.node_mut(n5).style.padding_left = Length::px(0.0);
+                doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n5).style.direction = Direction::Rtl;
+                doc.append_child(n3, n5);
+            let n6 = doc.create_node(ElementTag::Text);
+            doc.node_mut(n6).style.font_size = 16.0;
+            doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+            doc.node_mut(n6).text = Some("\n    -1467632561\n  ".to_string());
+            doc.append_child(n2, n6);
+    doc
+}
+
 pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         ("wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline", css2_floats_float_after_block_with_collapsed_margin_inside_inline as fn() -> Document),
@@ -12837,5 +12998,13 @@ pub fn css2_floats_registry() -> Vec<(&'static str, fn() -> Document)> {
         ("wpt/css2_floats/zero-available-space-float-positioning", css2_floats_zero_available_space_float_positioning as fn() -> Document),
         ("wpt/css2_floats/zero-width-floats-positioning.tentative", css2_floats_zero_width_floats_positioning_tentative as fn() -> Document),
         ("wpt/css2_floats/zero-width-floats", css2_floats_zero_width_floats as fn() -> Document),
+        (
+            "wpt/css2_floats/crashtests_float-rewind-parallel-flow-1-crash",
+            css2_floats_crashtests_float_rewind_parallel_flow_1_crash as fn() -> Document,
+        ),
+        (
+            "wpt/css2_floats/crashtests_float-rewind-parallel-flow-2-crash",
+            css2_floats_crashtests_float_rewind_parallel_flow_2_crash as fn() -> Document,
+        ),
     ]
 }

@@ -32,7 +32,7 @@ Examples:
 
 - `sp13_fragmentation` for block fragmentation ownership,
 - `sp13_multicol` for multi-column layout ownership,
-- `needs_text` for text/inline layout dependencies,
+- `needs_font_metrics` for real-font measurement dependencies,
 - `needs_javascript` for harness/runtime dependencies,
 - `needs_grid` for CSS Grid dependencies,
 - `needs_complex_border` for paint-quality cases outside layout.
@@ -94,6 +94,6 @@ condition, continue work or clarify the condition; do not self-certify completio
 
 ## Recommended Next Phase
 
-Start SP13 fragmentation and multicol. It owns the largest runnable failure blocks and
-aligns with existing deferred todos around fragmented containing blocks, flex
-fragmentation, multicol balancing, and column-span behavior.
+Start SP15 functional text-layout follow-up using the completed SP14 ledgers. Prioritize
+inline construction, line breaking, root/body propagation, and the named layout owners
+exposed by deterministic text ports.

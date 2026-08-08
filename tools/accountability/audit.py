@@ -35,6 +35,15 @@ from shared_detectors import CATEGORY_FOR_DEP
 
 VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "sp13_fragmentation_architecture", "not_ported"}
 TEXT_PORT_METADATA_CATEGORIES = {"reference_test", "non_visual_test"}
+SP14_BASELINE_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp14_w3_baseline_exact.json"
+)
+SP14_W3_PATH = os.path.join(DATA_DIR, "wpt_ported", "sp14_w3_targets.json")
+SP14_W4_PATH = os.path.join(DATA_DIR, "wpt_ported", "sp14_w4_residuals.json")
+SP14_EXPECTED_INVENTORY = 7673
+SP14_EXPECTED_BASELINE = 2715
+SP14_EXPECTED_W3 = 111
+SP14_EXPECTED_W4 = 3934
 
 issues = []
 warnings = []
@@ -72,6 +81,110 @@ def text_port_ownership_errors(rows, text_ported_tests):
         if not (categories - TEXT_PORT_METADATA_CATEGORIES - {"needs_text"}):
             metadata_only.append(test_id)
     return stale_text, metadata_only
+
+
+def canonical_mapping_id(row):
+    """Return the canonical identity even when an unported row has no ID cell."""
+    return f"wpt/{row.get('sp_area', '').strip()}/{row.get('test_name', '').strip()}"
+
+
+def sp14_text_closure_errors(
+    rows,
+    summary_by_id,
+    templates,
+    text_ported_tests,
+    baseline,
+    w3,
+    w4,
+    *,
+    enforce_frozen_counts=True,
+):
+    """Validate the complete W3/W4 closure against authoritative artifacts."""
+    errors = []
+    w4_ids = [item.get("test_id", "") for item in w4 if isinstance(item, dict)]
+    if baseline != sorted(set(baseline)):
+        errors.append("baseline ledger is not sorted and unique")
+    if w3 != sorted(set(w3)):
+        errors.append("W3 ledger is not sorted and unique")
+    if len(w4_ids) != len(w4) or w4_ids != sorted(set(w4_ids)):
+        errors.append("W4 ledger is malformed or not sorted and unique")
+    if set(w3) & set(w4_ids):
+        errors.append("W3 and W4 ledgers overlap")
+    if enforce_frozen_counts:
+        expected = (
+            (len(rows), SP14_EXPECTED_INVENTORY, "inventory"),
+            (len(baseline), SP14_EXPECTED_BASELINE, "baseline"),
+            (len(w3), SP14_EXPECTED_W3, "W3"),
+            (len(w4), SP14_EXPECTED_W4, "W4"),
+            (len(set(w3) | set(w4_ids)), SP14_EXPECTED_W3 + SP14_EXPECTED_W4, "W3/W4 cover"),
+        )
+        for actual, wanted, label in expected:
+            if actual != wanted:
+                errors.append(f"{label} count {actual} != {wanted}")
+
+    mapping_by_id = {}
+    for row in rows:
+        test_id = canonical_mapping_id(row)
+        if test_id in mapping_by_id:
+            errors.append(f"duplicate canonical mapping ID: {test_id}")
+        mapping_by_id[test_id] = row
+        if "needs_text" in {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }:
+            errors.append(f"mapping retains needs_text: {test_id}")
+
+    for test_id in baseline:
+        result = summary_by_id.get(test_id)
+        if not result or result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            errors.append(f"baseline exact pass regressed: {test_id}")
+
+    for test_id in w3:
+        row = mapping_by_id.get(test_id)
+        result = summary_by_id.get(test_id)
+        if not row or row.get("ported") != "yes" or row.get("our_test_id") != test_id:
+            errors.append(f"W3 target is not ported: {test_id}")
+        if test_id not in templates or test_id not in text_ported_tests:
+            errors.append(f"W3 target is not fully manifested: {test_id}")
+        if not result or result.get("status") == "error":
+            errors.append(f"W3 target is not runnable without error: {test_id}")
+
+    for item in w4:
+        if not isinstance(item, dict):
+            continue
+        test_id = item.get("test_id", "")
+        row = mapping_by_id.get(test_id)
+        owners = item.get("owner_categories")
+        rejection_owner = item.get("rejection_owner", "")
+        reason = item.get("rejection_reason", "")
+        if (
+            not isinstance(owners, list)
+            or owners != sorted(set(owners))
+            or not reason
+            or rejection_owner not in set(owners or [])
+            or "needs_text" in set(owners or [])
+            or not (set(owners or []) - TEXT_PORT_METADATA_CATEGORIES)
+        ):
+            errors.append(f"W4 target lacks reason-backed functional ownership: {test_id}")
+            continue
+        if not row or row.get("ported") != "no":
+            errors.append(f"W4 target is not unported: {test_id}")
+            continue
+        if row.get("chromium_test_path") != item.get("chromium_test_path"):
+            errors.append(f"W4 Chromium path drift: {test_id}")
+        mapped_owners = {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }
+        if not set(owners) <= mapped_owners:
+            errors.append(f"W4 mapping ownership drift: {test_id}")
+        if row.get("notes") != f"Porter deferred: {reason}":
+            errors.append(f"W4 rejection reason drift: {test_id}")
+        if test_id in templates or test_id in summary_by_id or test_id in text_ported_tests:
+            errors.append(f"W4 target unexpectedly became runnable: {test_id}")
+    return errors
 
 
 def check_summary_integrity():
@@ -350,6 +463,52 @@ def check_mapping_coverage():
             ok(
                 f"All failing text ports have functional non-text ownership "
                 f"({len(text_ported_tests)} manifest IDs)"
+            )
+
+    closure_paths = (
+        SP14_BASELINE_PATH,
+        SP14_W3_PATH,
+        SP14_W4_PATH,
+        os.path.join(DATA_DIR, "wpt_ported", "all_wpt_templates.json"),
+        os.path.join(RESULTS_DIR, "summary.json"),
+        text_manifest_path,
+    )
+    missing_closure_paths = [path for path in closure_paths if not os.path.isfile(path)]
+    if missing_closure_paths:
+        issue(
+            "SP14 W3/W4 closure artifacts missing: "
+            + ", ".join(os.path.relpath(path, PROJECT_ROOT) for path in missing_closure_paths)
+        )
+    else:
+        with open(SP14_BASELINE_PATH, encoding="utf-8") as f:
+            baseline = json.load(f)
+        with open(SP14_W3_PATH, encoding="utf-8") as f:
+            w3 = json.load(f)
+        with open(SP14_W4_PATH, encoding="utf-8") as f:
+            w4 = json.load(f)
+        with open(closure_paths[3], encoding="utf-8") as f:
+            closure_templates = json.load(f)
+        with open(closure_paths[4], encoding="utf-8") as f:
+            closure_summary = json.load(f)
+        with open(text_manifest_path, encoding="utf-8") as f:
+            closure_manifest = set(json.load(f))
+        closure_errors = sp14_text_closure_errors(
+            rows,
+            {test["id"]: test for test in closure_summary["tests"]},
+            closure_templates,
+            closure_manifest,
+            baseline,
+            w3,
+            w4,
+        )
+        if closure_errors:
+            issue(f"SP14 W3/W4 closure has {len(closure_errors)} invariant violations")
+            for message in closure_errors[:3]:
+                print(f"         {message}")
+        else:
+            ok(
+                f"SP14 closure: {len(baseline)} baseline exact, "
+                f"{len(w3)} W3 runnable, {len(w4)} W4 reason-owned"
             )
 
     # Accounting identity: ported + not_ported = total

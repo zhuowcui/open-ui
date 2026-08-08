@@ -1,9 +1,9 @@
 {
-  "total": 3406,
-  "passed": 2715,
-  "failed": 691,
+  "total": 3517,
+  "passed": 2767,
+  "failed": 750,
   "errors": 0,
-  "near_miss_aa": 147,
+  "near_miss_aa": 180,
   "aa_threshold_pct": 0.5,
   "reference_tests": 936,
   "reference_tests_pass": 755,
@@ -637,6 +637,16 @@
       "id": "wpt/css2_floats/zero-width-floats",
       "status": "pass",
       "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/crashtests_float-rewind-parallel-flow-1-crash",
+      "status": "fail",
+      "mismatch_pct": 0.00552
+    },
+    {
+      "id": "wpt/css2_floats/crashtests_float-rewind-parallel-flow-2-crash",
+      "status": "fail",
+      "mismatch_pct": 0.487261
     },
     {
       "id": "wpt/css_position/absolute-pos-box-inside-fixed-pos-box-with-changing-height-ref",
@@ -5514,6 +5524,131 @@
       "mismatch_pct": 0.0
     },
     {
+      "id": "wpt/css_flexbox/align-content-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-content-002",
+      "status": "fail",
+      "mismatch_pct": 3.057325
+    },
+    {
+      "id": "wpt/css_flexbox/align-content-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-content-004",
+      "status": "fail",
+      "mismatch_pct": 2.356688
+    },
+    {
+      "id": "wpt/css_flexbox/align-content-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-content-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-content-007",
+      "status": "fail",
+      "mismatch_pct": 8.492569
+    },
+    {
+      "id": "wpt/css_flexbox/align-items-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-items-002",
+      "status": "fail",
+      "mismatch_pct": 3.121019
+    },
+    {
+      "id": "wpt/css_flexbox/align-items-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-items-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/align-items-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/display-flex-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flex-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flex-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flex-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flex-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-wrap-default",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-wrap-nowrap",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/justify-content-001",
+      "status": "fail",
+      "mismatch_pct": 1.571125
+    },
+    {
+      "id": "wpt/css_flexbox/justify-content-002",
+      "status": "fail",
+      "mismatch_pct": 3.184713
+    },
+    {
+      "id": "wpt/css_flexbox/justify-content-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/justify-content-004",
+      "status": "fail",
+      "mismatch_pct": 3.142251
+    },
+    {
+      "id": "wpt/css_flexbox/justify-content-005",
+      "status": "fail",
+      "mismatch_pct": 1.571125
+    },
+    {
+      "id": "wpt/css_flexbox/order-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
       "id": "wpt/css_multicol/abspos-after-spanner-static-pos",
       "status": "pass",
       "mismatch_pct": 0.0
@@ -7984,6 +8119,81 @@
       "mismatch_pct": 3.70276
     },
     {
+      "id": "wpt/css_multicol/crashtests_block-in-inline-with-spanner-in-overflowed-parent",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_block-in-inline-with-spanner-in-overflowed-parent-nested-multicol",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_chrome-bug-1297118",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_chrome-bug-1314866",
+      "status": "fail",
+      "mismatch_pct": 0.054352
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_inline-with-spanner-in-overflowed-container-before-multicol-float",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_multicol-block-in-inline-crash",
+      "status": "fail",
+      "mismatch_pct": 3.562208
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_multicol-floats-in-ifc",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_oof-in-nested-line-float",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_oof-in-spanner-in-relpos-in-multicol-in-relpos-multicol-002",
+      "status": "fail",
+      "mismatch_pct": 0.108705
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_spanner-in-inline-after-very-tall-content-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_spanner-in-inline-after-very-tall-content-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_spanner-in-overflowed-container-before-inline-content",
+      "status": "fail",
+      "mismatch_pct": 0.054352
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_spanner-inside-inline-in-overflowed-container",
+      "status": "fail",
+      "mismatch_pct": 0.044586
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_text-box-trim-end-and-widows",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_zero-column-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
       "id": "wpt/css_overflow/clip-001-ref",
       "status": "pass",
       "mismatch_pct": 0.0
@@ -10025,6 +10235,31 @@
     },
     {
       "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-021-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/fit-content-length-percentage-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/fit-content-length-percentage-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/fit-content-length-percentage-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/fit-content-length-percentage-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/fit-content-length-percentage-009",
       "status": "pass",
       "mismatch_pct": 0.0
     },
@@ -17037,6 +17272,326 @@
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003",
       "status": "fail",
       "mismatch_pct": 1.783439
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local-scrolling",
+      "status": "fail",
+      "mismatch_pct": 0.41104
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-applied-to-rounded-inline-element",
+      "status": "fail",
+      "mismatch_pct": 1.408068
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-border-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-padding-box",
+      "status": "fail",
+      "mismatch_pct": 0.6
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-applies-to-block",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-aspect-ratio",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background_color_padding_box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background_repeat_space_border_box",
+      "status": "fail",
+      "mismatch_pct": 0.599575
+    },
+    {
+      "id": "wpt/css_backgrounds/background_repeat_space_content_box",
+      "status": "fail",
+      "mismatch_pct": 0.599575
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-image-type-001",
+      "status": "fail",
+      "mismatch_pct": 0.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-image-type-002",
+      "status": "fail",
+      "mismatch_pct": 0.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-image-type-003",
+      "status": "fail",
+      "mismatch_pct": 2.802548
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-image-type-004",
+      "status": "fail",
+      "mismatch_pct": 0.084926
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-image-type-005",
+      "status": "fail",
+      "mismatch_pct": 0.084926
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-outset-001",
+      "status": "fail",
+      "mismatch_pct": 0.127389
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-outset-002",
+      "status": "fail",
+      "mismatch_pct": 0.190234
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-002",
+      "status": "fail",
+      "mismatch_pct": 0.241189
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-004",
+      "status": "fail",
+      "mismatch_pct": 0.237792
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-shorthand-001",
+      "status": "fail",
+      "mismatch_pct": 3.597452
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-shorthand-002",
+      "status": "fail",
+      "mismatch_pct": 5.581316
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-shorthand-003",
+      "status": "fail",
+      "mismatch_pct": 3.322293
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-005",
+      "status": "fail",
+      "mismatch_pct": 15.928662
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-007",
+      "status": "fail",
+      "mismatch_pct": 15.87431
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-001",
+      "status": "fail",
+      "mismatch_pct": 0.8862
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-002",
+      "status": "fail",
+      "mismatch_pct": 0.002123
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-003",
+      "status": "fail",
+      "mismatch_pct": 0.007431
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-004",
+      "status": "fail",
+      "mismatch_pct": 0.002123
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-005",
+      "status": "fail",
+      "mismatch_pct": 0.002123
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-010",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-applies-to-017",
+      "status": "fail",
+      "mismatch_pct": 0.002123
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-clip-002",
+      "status": "fail",
+      "mismatch_pct": 1.364119
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-initial-value-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-not-inherited-001",
+      "status": "fail",
+      "mismatch_pct": 0.113588
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-style-001",
+      "status": "fail",
+      "mismatch_pct": 1.996815
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-style-002",
+      "status": "fail",
+      "mismatch_pct": 2.526964
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-style-003",
+      "status": "fail",
+      "mismatch_pct": 0.462208
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-style-004",
+      "status": "fail",
+      "mismatch_pct": 0.163694
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-style-005",
+      "status": "fail",
+      "mismatch_pct": 0.000849
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-with-three-values-001",
+      "status": "fail",
+      "mismatch_pct": 0.051168
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-with-two-values-001",
+      "status": "fail",
+      "mismatch_pct": 0.042251
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-values-001",
+      "status": "fail",
+      "mismatch_pct": 0.006157
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-values-002",
+      "status": "fail",
+      "mismatch_pct": 0.027176
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-003",
+      "status": "fail",
+      "mismatch_pct": 3.82845
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-004",
+      "status": "fail",
+      "mismatch_pct": 1.981316
+    },
+    {
+      "id": "wpt/css_backgrounds/color-behind-images",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/order-of-images",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-color",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-color-shorthand",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-color-shorthand-missing-bottom",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-color-shorthand-missing-left",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-color-shorthand-missing-right",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-style",
+      "status": "fail",
+      "mismatch_pct": 0.067941
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-style-double",
+      "status": "fail",
+      "mismatch_pct": 0.26327
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand",
+      "status": "fail",
+      "mismatch_pct": 0.067941
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-bottom",
+      "status": "fail",
+      "mismatch_pct": 0.003397
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-style-shorthand-missing-left",
+      "status": "fail",
+      "mismatch_pct": 0.001911
+    },
+    {
+      "id": "wpt/css_backgrounds/ttwf-css3background-border-style-values",
+      "status": "fail",
+      "mismatch_pct": 1.974735
     }
   ]
 }

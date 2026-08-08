@@ -1363,6 +1363,28 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     return True, ""
 
 
+def has_layout_content(parser: WptHtmlParser) -> bool:
+    """Return whether the parsed body contains a renderable test node.
+
+    Instruction-only paragraphs and forced breaks are not sufficient on their
+    own.  Text nodes are intentionally ignored here: a body/root-only test
+    needs separate viewport propagation support and must not be promoted merely
+    because deterministic text retention made its prose visible.
+    """
+    for child in parser.root.children:
+        if child.is_text or child.tag == "br":
+            continue
+        if child.tag == "p" and not child.styles:
+            if any(
+                sub.is_text
+                and "test passes" in getattr(sub, "text_content", "").lower()
+                for sub in child.children
+            ):
+                continue
+        return True
+    return False
+
+
 # ─── Rust code generation ─────────────────────────────────────────────────
 
 def sanitize_fn_name(name: str) -> str:
@@ -3992,25 +4014,7 @@ def process_directory(wpt_dir: str, prefix: str = "wpt") -> dict:
                 results['not_portable'].append((filename, reason))
                 continue
 
-            # Check if DOM tree has any layout children
-            # Skip only <p> that contains "Test passes if" instruction text
-            layout_children = []
-            for c in parser.root.children:
-                if c.is_text:
-                    continue
-                if c.tag == 'p' and not c.styles:
-                    # Check if it's instruction text
-                    has_test_text = False
-                    for sub in c.children:
-                        if sub.is_text and 'test passes' in getattr(sub, 'text_content', '').lower():
-                            has_test_text = True
-                    if has_test_text:
-                        continue
-                if c.tag == 'br':
-                    continue
-                layout_children.append(c)
-
-            if not layout_children:
+            if not has_layout_content(parser):
                 results['not_portable'].append((filename, "no_layout_content"))
                 continue
 

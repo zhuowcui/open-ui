@@ -9,6 +9,7 @@ step fails, already-replaced files are restored from their in-memory originals.
 Usage:
   python3 tools/wpt/splice_text_port.py wpt/css2_floats/example [...]
   python3 tools/wpt/splice_text_port.py --dry-run wpt/css2_floats/example
+  python3 tools/wpt/splice_text_port.py --ids-file targets.json [--dry-run]
 """
 
 from __future__ import annotations
@@ -48,22 +49,52 @@ class GeneratedReplacement:
     test_id: str
     module: str
     fn_name: str
+    chromium_path: str
     rust_code: str
     template: str
 
 
+def canonical_test_id(row: dict[str, str]) -> str:
+    """Derive the stable Open UI identity for any mapping row."""
+    area = row.get("sp_area", "").strip()
+    name = row.get("test_name", "").strip()
+    if not area or not name or "/" in area or "/" in name:
+        raise ValueError(
+            "mapping row has invalid canonical identity: "
+            f"area={area!r}, name={name!r}"
+        )
+    canonical = f"wpt/{area}/{name}"
+    recorded = row.get("our_test_id", "").strip()
+    if recorded and recorded != canonical:
+        raise ValueError(
+            f"mapping identity mismatch: {recorded!r} != {canonical!r}"
+        )
+    return canonical
+
+
 def load_mapping_rows() -> dict[str, dict[str, str]]:
-    """Load the one-to-one test-id mapping, rejecting ambiguous IDs."""
+    """Load canonical identities for ported and unported mapping rows."""
     rows: dict[str, dict[str, str]] = {}
     with open(MAPPING_CSV, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            test_id = row.get("our_test_id", "")
-            if not test_id:
-                continue
+            test_id = canonical_test_id(row)
             if test_id in rows:
                 raise ValueError(f"ambiguous mapping for {test_id}")
             rows[test_id] = row
     return rows
+
+
+def load_ids_file(path: str) -> list[str]:
+    """Load a strict, unique JSON ID list used by transactional batches."""
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    if (
+        not isinstance(data, list)
+        or any(not isinstance(test_id, str) or not test_id for test_id in data)
+        or len(data) != len(set(data))
+    ):
+        raise ValueError(f"invalid IDs ledger: {path}")
+    return data
 
 
 def _rust_function_span(rust_src: str, fn_name: str) -> tuple[int, int]:
@@ -174,16 +205,104 @@ def _generate_one(
     portable, reason = port_wpt.analyze_portability(parser)
     if not portable:
         raise ValueError(f"{test_id}: not text-portable ({reason})")
+    if not port_wpt.has_layout_content(parser):
+        raise ValueError(f"{test_id}: not text-portable (no_layout_content)")
 
     fn_name = f"{module}_{port_wpt.sanitize_fn_name(name)}"
     return GeneratedReplacement(
         test_id=test_id,
         module=module,
         fn_name=fn_name,
+        chromium_path=upstream_rel,
         rust_code=port_wpt.generate_rust_fn(
             fn_name, parser.root, parser.html_styles
         ),
         template=port_wpt.generate_html_template(upstream),
+    )
+
+
+def _load_json_object(path: str) -> tuple[str, dict[str, str]]:
+    """Read a JSON object while rejecting duplicate keys."""
+    with open(path, encoding="utf-8") as f:
+        original = f.read()
+
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key {key!r} in {path}")
+            result[key] = value
+        return result
+
+    value = json.loads(original, object_pairs_hook=unique_object)
+    if not isinstance(value, dict) or any(
+        not isinstance(key, str) or not isinstance(item, str)
+        for key, item in value.items()
+    ):
+        raise ValueError(f"template file is not a string object: {path}")
+    return original, value
+
+
+def _function_count(rust_src: str, fn_name: str) -> int:
+    return len(
+        re.findall(rf"(?m)^fn\s+{re.escape(fn_name)}\s*\(", rust_src)
+    )
+
+
+def _registry_identities(rust_src: str, test_id: str) -> list[str]:
+    pattern = re.compile(
+        rf'\(\s*"{re.escape(test_id)}"\s*,\s*'
+        rf'(\w+)\s+as\s+fn\(\)\s*->\s*Document\s*,?\s*\)',
+        re.DOTALL,
+    )
+    return pattern.findall(rust_src)
+
+
+def _insert_rust_additions(
+    rust_src: str, module: str, additions: list[GeneratedReplacement]
+) -> str:
+    """Insert builders and registry entries without rewriting the module."""
+    registry = re.compile(
+        rf"(?ms)^(pub fn {re.escape(module)}_registry\(\)\s*"
+        rf"->\s*Vec<\(&'static str, fn\(\) -> Document\)>\s*\{{\s*"
+        rf"vec!\[)(.*?)(\s*\]\s*\}}\s*)\Z"
+    )
+    matches = list(registry.finditer(rust_src))
+    if len(matches) != 1:
+        raise ValueError(
+            f"{module}: expected one terminal registry, found {len(matches)}"
+        )
+
+    additions = sorted(additions, key=lambda item: item.test_id)
+    builders = []
+    entries = []
+    for replacement in additions:
+        builders.append(
+            f"// Source: {replacement.chromium_path}\n"
+            f"{replacement.rust_code.rstrip()}\n\n"
+        )
+        entries.append(
+            "        (\n"
+            f'            "{replacement.test_id}",\n'
+            f"            {replacement.fn_name} as fn() -> Document,\n"
+            "        ),"
+        )
+
+    match = matches[0]
+    body = match.group(2).strip("\r\n").rstrip()
+    if body:
+        body += "\n"
+    body += "\n".join(entries) + "\n"
+    prefix = match.group(1)
+    if not prefix.endswith("\n"):
+        prefix += "\n"
+    suffix = match.group(3).lstrip("\r\n")
+    new_registry = prefix + body + suffix
+    return (
+        rust_src[: match.start()]
+        + "".join(builders)
+        + new_registry
+        + rust_src[match.end() :]
     )
 
 
@@ -194,7 +313,10 @@ def prepare_changes(
     if len(test_ids) != len(set(test_ids)):
         raise ValueError("duplicate test IDs in one splice transaction")
 
-    generated = [_generate_one(test_id, mapping) for test_id in test_ids]
+    generated = [_generate_one(test_id, mapping) for test_id in sorted(test_ids)]
+    fn_names = [replacement.fn_name for replacement in generated]
+    if len(fn_names) != len(set(fn_names)):
+        raise ValueError("generated function-name collision in splice transaction")
     originals: dict[str, str] = {}
     changes: dict[str, str] = {}
 
@@ -202,53 +324,70 @@ def prepare_changes(
     for replacement in generated:
         by_module[replacement.module].append(replacement)
 
+    template_paths = {os.path.join(WPT_PORTED_DIR, "all_wpt_templates.json")}
+    template_paths.update(
+        os.path.join(WPT_PORTED_DIR, f"wpt_{module}_templates.json")
+        for module in by_module
+    )
+    template_data: dict[str, dict[str, str]] = {}
+    for path in sorted(template_paths):
+        original, templates = _load_json_object(path)
+        originals[path] = original
+        template_data[path] = templates
+
+    global_path = os.path.join(WPT_PORTED_DIR, "all_wpt_templates.json")
     for module, replacements in sorted(by_module.items()):
         rust_path = os.path.join(RUST_WPT_DIR, f"wpt_{module}.rs")
         with open(rust_path, encoding="utf-8") as f:
             original = f.read()
         updated = original
+        module_template_path = os.path.join(
+            WPT_PORTED_DIR, f"wpt_{module}_templates.json"
+        )
+        additions: list[GeneratedReplacement] = []
         for replacement in replacements:
-            registry_pattern = re.compile(
-                rf'\(\s*"{re.escape(replacement.test_id)}"\s*,\s*'
-                rf'{re.escape(replacement.fn_name)}\s+as\s+fn\(\)\s*->\s*Document\s*,?\s*\)'
-            )
-            registry_matches = registry_pattern.findall(original)
-            if len(registry_matches) != 1:
+            fn_count = _function_count(original, replacement.fn_name)
+            identities = _registry_identities(original, replacement.test_id)
+            global_has = replacement.test_id in template_data[global_path]
+            module_has = replacement.test_id in template_data[module_template_path]
+            if fn_count > 1 or len(identities) > 1:
                 raise ValueError(
-                    f"{replacement.test_id}: expected exactly one registry identity, "
-                    f"found {len(registry_matches)}"
+                    f"{replacement.test_id}: duplicate Rust function or registry identity"
                 )
-            updated = replace_fn(updated, replacement.fn_name, replacement.rust_code)
+            fully_present = (
+                fn_count == 1
+                and identities == [replacement.fn_name]
+                and global_has
+                and module_has
+            )
+            fully_absent = (
+                fn_count == 0
+                and not identities
+                and not global_has
+                and not module_has
+            )
+            if not fully_present and not fully_absent:
+                raise ValueError(
+                    f"{replacement.test_id}: partial template/registry state"
+                )
+            if fully_present:
+                updated = replace_fn(
+                    updated, replacement.fn_name, replacement.rust_code
+                )
+            else:
+                additions.append(replacement)
+
+            template_data[global_path][replacement.test_id] = replacement.template
+            template_data[module_template_path][replacement.test_id] = (
+                replacement.template
+            )
+        if additions:
+            updated = _insert_rust_additions(updated, module, additions)
         originals[rust_path] = original
         changes[rust_path] = updated
 
-    template_paths = {
-        os.path.join(WPT_PORTED_DIR, "all_wpt_templates.json")
-    }
-    template_paths.update(
-        os.path.join(WPT_PORTED_DIR, f"wpt_{module}_templates.json")
-        for module in by_module
-    )
     for path in sorted(template_paths):
-        with open(path, encoding="utf-8") as f:
-            original = f.read()
-        templates = json.loads(original)
-        if not isinstance(templates, dict):
-            raise ValueError(f"template file is not an object: {path}")
-        relevant = [
-            r
-            for r in generated
-            if os.path.basename(path) == "all_wpt_templates.json"
-            or os.path.basename(path) == f"wpt_{r.module}_templates.json"
-        ]
-        for replacement in relevant:
-            if replacement.test_id not in templates:
-                raise KeyError(
-                    f"{replacement.test_id}: missing matching template in {path}"
-                )
-            templates[replacement.test_id] = replacement.template
-        originals[path] = original
-        changes[path] = json.dumps(templates, indent=2) + "\n"
+        changes[path] = json.dumps(template_data[path], indent=2) + "\n"
 
     with open(TEXT_PORTED_LIST, encoding="utf-8") as f:
         original_manifest = f.read()
@@ -309,14 +448,29 @@ def commit_changes(originals: dict[str, str], changes: dict[str, str]) -> None:
 
 def main() -> int:
     args = sys.argv[1:]
-    dry_run = "--dry-run" in args
-    unknown_options = [a for a in args if a.startswith("--") and a != "--dry-run"]
-    if unknown_options:
-        print(f"ERROR: unknown options: {' '.join(unknown_options)}", file=sys.stderr)
-        return 2
-    test_ids = [a for a in args if not a.startswith("--")]
-    if not test_ids:
-        print(__doc__)
+    dry_run = False
+    ids_path = None
+    positional = []
+    index = 0
+    while index < len(args):
+        arg = args[index]
+        if arg == "--dry-run":
+            dry_run = True
+        elif arg == "--ids-file":
+            index += 1
+            if index >= len(args) or ids_path is not None:
+                print("ERROR: --ids-file requires exactly one path", file=sys.stderr)
+                return 2
+            ids_path = args[index]
+        elif arg.startswith("--"):
+            print(f"ERROR: unknown option: {arg}", file=sys.stderr)
+            return 2
+        else:
+            positional.append(arg)
+        index += 1
+
+    if ids_path and positional:
+        print("ERROR: do not combine --ids-file with positional IDs", file=sys.stderr)
         return 2
 
     # Enable symmetric deterministic-text generation for the whole prepare
@@ -325,6 +479,9 @@ def main() -> int:
     port_wpt.RETAIN_TEXT = True
 
     try:
+        test_ids = load_ids_file(ids_path) if ids_path else positional
+        if not test_ids:
+            raise ValueError("no test IDs supplied")
         mapping = load_mapping_rows()
         generated, originals, changes = prepare_changes(test_ids, mapping)
         if dry_run:

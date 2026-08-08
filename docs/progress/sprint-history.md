@@ -18,7 +18,7 @@
 | SP11.5 | Full Chromium Text Parity | 3,371 | 6 | ✅ Complete |
 | SP12 | CSS Block/Layout WPT Accountability | 7,673 inventory rows | multi-wave | ✅ Complete by ownership |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,406 ported/runnable tests, 2,430 runnable passes, 0 `sp12_layout_bug` rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,517 ported/runnable tests, 2,767 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 `needs_text` rows.**
 
 ---
 
@@ -216,13 +216,14 @@ SP12-scope WPT row accountable to an explicit owner.
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
-| Ported/runnable WPT tests | 3406 |
-| Unported but explicitly tracked rows | 4267 |
-| Runnable passes | 2430 |
-| Runnable failures | 974 |
-| Runnable render/diff errors | 2 |
+| Ported/runnable WPT tests | 3517 |
+| Unported but explicitly tracked rows | 4156 |
+| Runnable passes | 2767 |
+| Runnable failures | 750 |
+| Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
+| `needs_text` rows | 0 |
 
 `tools/accountability/audit.py` passes all checks for this state.
 
@@ -251,7 +252,7 @@ The SP12-scope directories still contain non-passing and unported tests. They ar
 classified as SP12-owned layout bugs. Top owners include:
 
 - SP13 fragmentation and multicol,
-- SP11/SP13 text and inline layout,
+- SP15 inline layout and root/body viewport propagation,
 - SP11 font metrics,
 - future JavaScript/test harness support,
 - future advanced selectors, writing modes, table/grid layout, generated content,
@@ -266,11 +267,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,406 |
-| Current runnable WPT passes | 2,671 |
+| Current runnable WPT tests | 3,517 |
+| Current runnable WPT passes | 2,767 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,406 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,517 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -301,3 +302,17 @@ compared against Chromium. The text track (SP14–SP18) is a porting + parity ef
 with the deterministic Ahem subset.
 
 See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (first SP).
+
+### SP14 W3/W4 complete: global text accountability closed
+
+- Froze a 2,715-ID exact baseline, a 111-ID deterministic W3 ledger, and a structured
+  3,934-row W4 rejection/ownership ledger. W3 and W4 are a disjoint cover of all 4,045
+  original unported `needs_text` rows.
+- Added the 111 W3 tests transactionally across existing divergent modules: 52 exact,
+  59 functional non-text failures, and zero render/diff errors.
+- Retired the global `text_rendering`/`needs_text` category only after every W4 row had
+  merged upstream-detector and actual-rejection ownership.
+- Authoritative full state: **2,767 pass / 750 fail / 0 errors** across 3,517 runnable
+  tests; all 2,715 frozen baseline IDs remain exact; audit passes 7/7.
+- Next: SP15 inline/layout and root/body propagation, followed by SP16 real-font metrics,
+  SP17 advanced text, and SP18 generated content/text effects.

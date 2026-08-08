@@ -2,7 +2,7 @@
 id: 0029
 title: SP14 W2 closes all runnable needs_text ownership
 tags: sp14, text, accountability, milestone, handoff
-status: active
+status: superseded
 created: 2026-08-07
 updated: 2026-08-07
 refs: commit:f13f617, tools/accountability/data/wpt_ported/sp14_w2_targets.json, tools/accountability/data/wpt_ported/text_ported_tests.json, tools/accountability/data/pixel_comparison/results/summary.json

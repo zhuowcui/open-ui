@@ -38,13 +38,14 @@ Latest verified SP12-scope snapshot:
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope WPT inventory rows | 7673 |
-| Ported/runnable tests | 3406 |
-| Runnable passes | 2430 |
-| Runnable failures | 974 |
-| Runnable render/diff errors | 2 |
-| Unported but explicitly categorized rows | 4267 |
+| Ported/runnable tests | 3517 |
+| Runnable passes | 2767 |
+| Runnable failures | 750 |
+| Runnable render/diff errors | 0 |
+| Unported but explicitly categorized rows | 4156 |
 | Generic `not_ported` category rows | 0 |
 | `sp12_layout_bug` rows | 0 |
+| `needs_text` rows | 0 |
 
 Use `docs/progress/current-status.md` for the current handoff status and
 `docs/architecture/rust-wpt-accountability.md` for the accountability architecture.
