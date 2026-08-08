@@ -217,6 +217,58 @@ def has_rounded_border_paint(html: str) -> bool:
     ))
 
 
+def has_inline_box_decoration_break(html: str) -> bool:
+    """Detect sliced/cloned decoration across inline fragments.
+
+    Inline borders/backgrounds must be split or cloned at forced/soft line
+    breaks. This needs fragment-aware inline decoration geometry rather than
+    ordinary block border painting.
+    """
+    return bool(
+        re.search(r"(?:-webkit-)?box-decoration-break\s*:", html, re.IGNORECASE)
+        and re.search(r"<span[\s>]", html, re.IGNORECASE)
+    )
+
+
+def has_clearing_break_after_floats(html: str) -> bool:
+    """Detect a clearing ``br`` whose line box must interact with floats."""
+    if not re.search(r"float\s*:\s*(?:left|right)\b", html, re.IGNORECASE):
+        return False
+    css_clearing_break = re.search(
+        r"br\s*\{[^}]*clear\s*:\s*(?:left|right|both)\b",
+        html,
+        re.DOTALL | re.IGNORECASE,
+    )
+    inline_clearing_break = re.search(
+        r"<br\b[^>]*(?:clear\s*=|style\s*=\s*[^>]*clear\s*:)",
+        html,
+        re.IGNORECASE,
+    )
+    return bool(css_clearing_break or inline_clearing_break)
+
+
+def has_display_contents_style_element(html: str) -> bool:
+    """Detect author-visible style text produced by ``display:contents``."""
+    return bool(re.search(
+        r"<style[^>]*>.*?\*\s*\{[^}]*display\s*:\s*contents\b",
+        html,
+        re.DOTALL | re.IGNORECASE,
+    ))
+
+
+def has_display_contents_list_layout(html: str) -> bool:
+    """Detect linked-CSS ``display:contents`` participation in list layout."""
+    return bool(
+        re.search(r"<link\b[^>]*rel\s*=\s*[\"']stylesheet[\"']", html, re.IGNORECASE)
+        and re.search(r"<(?:ul|ol|li)[\s>]", html, re.IGNORECASE)
+        and re.search(
+            r"class\s*=\s*[\"'][^\"']*\bcontents\b",
+            html,
+            re.IGNORECASE,
+        )
+    )
+
+
 def has_scrollbar_gutter(html: str) -> bool:
     """Detect scrollbar-gutter property (not implemented)."""
     return bool(re.search(r"scrollbar-gutter\s*:", html, re.IGNORECASE))
@@ -358,6 +410,10 @@ DEPENDENCY_DEFS = [
     ("box_shadow",         "Future SP: Box Shadow",           "Future",    has_box_shadow),
     ("sticky_position",    "Future SP: Sticky Position",      "Future",    has_sticky_position),
     ("rounded_border_paint", "Paint Quality: Rounded Borders", "Future",   has_rounded_border_paint),
+    ("inline_box_decoration_break", "SP15: Inline Box Decoration Break", "SP15", has_inline_box_decoration_break),
+    ("clearing_break_after_floats", "SP15: Clearing Break After Floats", "SP15", has_clearing_break_after_floats),
+    ("display_contents_style_element", "SP15: display:contents Style Element", "SP15", has_display_contents_style_element),
+    ("display_contents_list_layout", "SP15: display:contents List Layout", "SP15", has_display_contents_list_layout),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
     ("javascript",         "Future SP: JavaScript/Test Harness", "Future",  has_javascript),
@@ -393,6 +449,10 @@ CATEGORY_FOR_DEP = {
     "box_shadow": "needs_box_shadow",
     "sticky_position": "needs_sticky",
     "rounded_border_paint": "needs_rounded_border_paint",
+    "inline_box_decoration_break": "needs_inline_box_decoration_break",
+    "clearing_break_after_floats": "needs_clearing_break_after_floats",
+    "display_contents_style_element": "needs_display_contents_style_element",
+    "display_contents_list_layout": "needs_display_contents_list_layout",
     "complex_border": "needs_complex_border",
     "scrollbar_gutter": "needs_scrollbar_gutter",
     "javascript": "needs_javascript",

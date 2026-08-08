@@ -34,6 +34,7 @@ sys.path.insert(0, SCRIPT_DIR)
 from shared_detectors import CATEGORY_FOR_DEP
 
 VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "sp13_fragmentation_architecture", "not_ported"}
+TEXT_PORT_METADATA_CATEGORIES = {"reference_test", "non_visual_test"}
 
 issues = []
 warnings = []
@@ -51,6 +52,26 @@ def warn(msg):
 
 def ok(msg):
     print(f"  ✅ {msg}")
+
+
+def text_port_ownership_errors(rows, text_ported_tests):
+    """Return manifest failures with stale or metadata-only ownership."""
+    stale_text = []
+    metadata_only = []
+    for row in rows:
+        test_id = row.get("our_test_id", "").strip()
+        if test_id not in text_ported_tests or row.get("pixel_result") != "fail":
+            continue
+        categories = {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }
+        if "needs_text" in categories:
+            stale_text.append(test_id)
+        if not (categories - TEXT_PORT_METADATA_CATEGORIES - {"needs_text"}):
+            metadata_only.append(test_id)
+    return stale_text, metadata_only
 
 
 def check_summary_integrity():
@@ -313,6 +334,23 @@ def check_mapping_coverage():
         issue(f"{unclassified_unported} unported tests have no explicit dependency category")
     if not untracked_not_ported and not unclassified_unported:
         ok(f"All {not_ported} unported tests have explicit dependency categories")
+
+    text_manifest_path = os.path.join(DATA_DIR, "wpt_ported", "text_ported_tests.json")
+    if os.path.isfile(text_manifest_path):
+        with open(text_manifest_path, encoding="utf-8") as f:
+            text_ported_tests = set(json.load(f))
+        stale_text, metadata_only = text_port_ownership_errors(rows, text_ported_tests)
+        if stale_text:
+            issue(f"{len(stale_text)} text-ported failures still retain needs_text")
+        if metadata_only:
+            issue(
+                f"{len(metadata_only)} text-ported failures have only reference/non-visual metadata ownership"
+            )
+        if not stale_text and not metadata_only:
+            ok(
+                f"All failing text ports have functional non-text ownership "
+                f"({len(text_ported_tests)} manifest IDs)"
+            )
 
     # Accounting identity: ported + not_ported = total
     if ported + not_ported != total:

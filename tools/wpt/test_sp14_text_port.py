@@ -21,6 +21,7 @@ import splice_text_port
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "accountability"))
 import run_all_pixel_comparisons
 import shared_detectors
+import audit
 
 
 class TextPorterTests(unittest.TestCase):
@@ -68,9 +69,10 @@ class TextPorterTests(unittest.TestCase):
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
         template = port_wpt.generate_html_template(str(path))
 
-        self.assertIn('font_family = FontFamilyList::single("Ahem")', rust)
+        self.assertIn(port_wpt.DETERMINISTIC_FONT_FAMILY_RUST, rust)
         self.assertIn(
-            'doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem")',
+            'doc.node_mut(vp).style.font_family = '
+            + port_wpt.DETERMINISTIC_FONT_FAMILY_RUST,
             rust,
         )
         self.assertIn("doc.node_mut(vp).style.display = Display::Block", rust)
@@ -88,8 +90,25 @@ class TextPorterTests(unittest.TestCase):
         self.assertNotIn("</br>", template)
         self.assertTrue(template.endswith(port_wpt.TEXT_TEMPLATE_OVERRIDE))
 
-    def test_non_ascii_text_is_rejected(self):
-        path = self.html("<!doctype html><body><div>café</div></body>")
+    def test_verified_unicode_repertoire_is_preserved_as_ascii_rust(self):
+        path = self.html(
+            "<!doctype html><body><div>&nbsp;É…\u202ea\u202d←↓</div></body>"
+        )
+        port_wpt.EMIT_TEXT_NODES = True
+        port_wpt.RETAIN_TEXT = True
+        parser = port_wpt.parse_wpt_html(str(path))
+        self.assertEqual(port_wpt.analyze_portability(parser), (True, ""))
+        rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
+        template = port_wpt.generate_html_template(str(path))
+        rust.encode("ascii")
+        self.assertIn(
+            r'Some("\u{a0}\u{c9}\u{2026}\u{202e}a\u{202d}\u{2190}\u{2193}".to_string())',
+            rust,
+        )
+        self.assertIn('font-family: Ahem, "DejaVu Sans"', template)
+
+    def test_unsupported_unicode_text_is_rejected(self):
+        path = self.html("<!doctype html><body><div>snowman ☃</div></body>")
         port_wpt.EMIT_TEXT_NODES = True
         port_wpt.RETAIN_TEXT = True
         parser = port_wpt.parse_wpt_html(str(path))
@@ -209,6 +228,18 @@ class TextPorterTests(unittest.TestCase):
         self.assertNotIn("font_size = 32.0", legacy)
         self.assertIn("height = Length::px(64.0)", legacy)
 
+    def test_clearing_break_retains_deterministic_line_strut(self):
+        path = self.html(
+            "<!doctype html><style>br{clear:both}</style><body>"
+            "<div style='float:left;width:20px;height:20px'></div><br>after</body>"
+        )
+        port_wpt.EMIT_TEXT_NODES = True
+        port_wpt.RETAIN_TEXT = True
+        parser = port_wpt.parse_wpt_html(str(path))
+        rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
+        self.assertIn("clear = Clear::Both", rust)
+        self.assertIn("height = Length::px(16.0)", rust)
+
 
 class SpliceTransactionTests(unittest.TestCase):
     def setUp(self):
@@ -309,6 +340,40 @@ class SpliceTransactionTests(unittest.TestCase):
             splice_text_port.prepare_changes(["wpt/demo/sample"], self.mapping)
         self.assertEqual(before, self.snapshot())
 
+    def test_cross_module_validation_failure_writes_nothing(self):
+        (self.wpt_root / "other.html").write_text(
+            "<!doctype html><body><div>other text</div></body>", encoding="utf-8"
+        )
+        (self.rust_dir / "wpt_other.rs").write_text(
+            "fn other_other() -> Document { old_doc() }\n"
+            "pub fn other_registry() -> Vec<(&'static str, fn() -> Document)> {\n"
+            "    vec![(\"wpt/other/other\", other_other as fn() -> Document)]\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        all_templates = self.template_dir / "all_wpt_templates.json"
+        templates = json.loads(all_templates.read_text(encoding="utf-8"))
+        templates["wpt/other/other"] = "<div></div>"
+        all_templates.write_text(json.dumps(templates, indent=2) + "\n", encoding="utf-8")
+        # The module template deliberately lacks its matching identity.
+        (self.template_dir / "wpt_other_templates.json").write_text(
+            "{}\n", encoding="utf-8"
+        )
+        mapping = dict(self.mapping)
+        mapping["wpt/other/other"] = {
+            "chromium_test_path": "other.html",
+            "test_name": "other",
+            "sp_area": "other",
+            "our_test_id": "wpt/other/other",
+        }
+
+        before = self.snapshot()
+        with self.assertRaises(KeyError):
+            splice_text_port.prepare_changes(
+                ["wpt/demo/sample", "wpt/other/other"], mapping
+            )
+        self.assertEqual(before, self.snapshot())
+
     def test_commit_failure_rolls_back_replaced_files(self):
         files = sorted([self.manifest, self.template_dir / "all_wpt_templates.json"])
         originals = {str(path): path.read_text(encoding="utf-8") for path in files}
@@ -332,6 +397,17 @@ class SpliceTransactionTests(unittest.TestCase):
 
 
 class RunnerScopeTests(unittest.TestCase):
+    def test_w2_ledger_is_sorted_unique_and_fully_manifested(self):
+        data_dir = Path(run_all_pixel_comparisons.__file__).resolve().parent / "data"
+        ported_dir = data_dir / "wpt_ported"
+        ledger = json.loads((ported_dir / "sp14_w2_targets.json").read_text())
+        manifest = json.loads((ported_dir / "text_ported_tests.json").read_text())
+        self.assertEqual(len(ledger), 286)
+        self.assertEqual(ledger, sorted(set(ledger)))
+        self.assertEqual(len(manifest), 334)
+        self.assertEqual(len(set(manifest) - set(ledger)), 48)
+        self.assertTrue(set(ledger) <= set(manifest))
+
     def test_ahem_fontconfig_is_only_added_for_manifest_opt_in(self):
         with tempfile.NamedTemporaryFile() as config, mock.patch.object(
             run_all_pixel_comparisons, "AHEM_FONTCONFIG", config.name
@@ -340,6 +416,39 @@ class RunnerScopeTests(unittest.TestCase):
             text_ported = run_all_pixel_comparisons.chrome_environment("/chrome", True)
         self.assertNotIn("FONTCONFIG_FILE", ordinary)
         self.assertEqual(text_ported["FONTCONFIG_FILE"], config.name)
+
+    def test_exact_id_manifest_selection_is_validated_and_ordered(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp, "ids.json")
+            path.write_text('["wpt/a/one", "wpt/c/three"]\n', encoding="utf-8")
+            selected, resume, label = run_all_pixel_comparisons.select_tests(
+                ["wpt/a/one", "wpt/b/two", "wpt/c/three"],
+                ["--ids-file", str(path)],
+            )
+            self.assertEqual(selected, ["wpt/a/one", "wpt/c/three"])
+            self.assertFalse(resume)
+            self.assertIn("exact IDs", label)
+
+            path.write_text('["wpt/a/one", "wpt/a/one"]\n', encoding="utf-8")
+            with self.assertRaises(ValueError):
+                run_all_pixel_comparisons.select_tests(
+                    ["wpt/a/one"], ["--ids-file", str(path)]
+                )
+
+    def test_legacy_prefix_and_resume_selection_still_work(self):
+        selected, resume, label = run_all_pixel_comparisons.select_tests(
+            ["wpt/a/one", "wpt/b/two"], ["--resume", "wpt/a/"]
+        )
+        self.assertEqual(selected, ["wpt/a/one"])
+        self.assertTrue(resume)
+        self.assertIn("prefix", label)
+
+    def test_reset_style_node_cannot_be_made_renderable_by_test_css(self):
+        document = run_all_pixel_comparisons.build_html_document(
+            "<style>* { display: contents }</style><br><whatever>PASS</whatever>"
+        )
+        self.assertIn('<style style="display:none!important">', document)
+        self.assertEqual(document.count(run_all_pixel_comparisons.BODY_STYLE), 1)
 
     def test_openui_alias_mode_is_only_added_for_manifest_opt_in(self):
         with mock.patch.dict(
@@ -354,6 +463,30 @@ class RunnerScopeTests(unittest.TestCase):
 
 
 class AccountabilityDetectorTests(unittest.TestCase):
+    def test_text_port_ownership_rejects_stale_and_metadata_only_categories(self):
+        rows = [
+            {
+                "our_test_id": "wpt/demo/stale",
+                "pixel_result": "fail",
+                "failure_category": "needs_text,reference_test",
+            },
+            {
+                "our_test_id": "wpt/demo/owned",
+                "pixel_result": "fail",
+                "failure_category": "reference_test,needs_inline_block",
+            },
+            {
+                "our_test_id": "wpt/demo/pass",
+                "pixel_result": "pass",
+                "failure_category": "",
+            },
+        ]
+        stale, metadata_only = audit.text_port_ownership_errors(
+            rows, {"wpt/demo/stale", "wpt/demo/owned", "wpt/demo/pass"}
+        )
+        self.assertEqual(stale, ["wpt/demo/stale"])
+        self.assertEqual(metadata_only, ["wpt/demo/stale"])
+
     def test_commented_script_is_not_a_javascript_dependency(self):
         html = """<div style="border-radius:25px"></div>
             <!-- <script src="disabled-helper.js"></script> -->"""
@@ -420,6 +553,48 @@ class AccountabilityDetectorTests(unittest.TestCase):
         )
         self.assertEqual(categories, "needs_float_bfc_phantom_margin_separation")
         self.assertEqual(dependency, "SP12: Float/BFC Phantom Margin Separation")
+
+    def test_inline_box_decoration_break_has_precise_owner(self):
+        html = """<style>.slice { box-decoration-break:slice;
+                  border:10px solid blue }</style>
+                  <div>AAA<span class="slice">AAA<br>AA</span>AA</div>"""
+        categories, dependency = shared_detectors.classify_failure_categories(
+            html, excluded={"text_rendering"}
+        )
+        self.assertEqual(categories, "needs_inline_box_decoration_break")
+        self.assertEqual(dependency, "SP15: Inline Box Decoration Break")
+
+    def test_clearing_break_after_floats_has_precise_owner(self):
+        html = """<style>.container { float:left } br { clear:both }</style>
+                  <div class="container"></div><br>"""
+        categories, dependency = shared_detectors.classify_failure_categories(
+            html, excluded={"text_rendering"}
+        )
+        self.assertEqual(categories, "needs_clearing_break_after_floats")
+        self.assertEqual(dependency, "SP15: Clearing Break After Floats")
+
+    def test_display_contents_style_element_has_precise_owner(self):
+        html = """<style>* { display: contents }</style><br><whatever>PASS</whatever>"""
+        categories, dependency = shared_detectors.classify_failure_categories(
+            html, excluded={"text_rendering"}
+        )
+        self.assertEqual(
+            categories,
+            "needs_display_contents_style_element,non_visual_test",
+        )
+        self.assertEqual(
+            dependency,
+            "SP15: display:contents Style Element; N/A: Non-visual Harness/Crash Test",
+        )
+
+    def test_linked_display_contents_list_layout_has_precise_owner(self):
+        html = """<link rel="stylesheet" href="support/acid.css">
+                  <ul><li><div class="contents c2">text</div></li></ul>"""
+        categories, dependency = shared_detectors.classify_failure_categories(
+            html, excluded={"text_rendering"}
+        )
+        self.assertEqual(categories, "needs_display_contents_list_layout")
+        self.assertEqual(dependency, "SP15: display:contents List Layout")
 
 
 if __name__ == "__main__":

@@ -1333,16 +1333,29 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
         return ok, reason
 
     if RETAIN_TEXT:
-        # SP14 text mode: only ASCII text is allowed for now. Non-ASCII glyphs
-        # risk missing Ahem coverage → Chrome font fallback (antialiased,
-        # different metrics) breaking the deterministic-font invariant.
+        # SP14 deterministic text mode accepts only the repertoire exercised by
+        # the opted-in corpus. Ahem covers Latin-1 and the ellipsis; directional
+        # controls are non-painting; the two instructional arrows fall through
+        # to the explicitly pinned DejaVu Sans fallback on both renderers.
+        # Unknown code points remain a hard transactional failure rather than
+        # silently depending on ambient font fallback.
+        extra_codepoints = {0x2026, 0x2190, 0x2193}
+
+        def deterministic_text_char(ch):
+            cp = ord(ch)
+            return (
+                ch in '\t\n\r\f'
+                or 0x20 <= cp <= 0x7E
+                or 0xA0 <= cp <= 0xFF
+                or cp in extra_codepoints
+                or 0x202A <= cp <= 0x202E
+                or 0x2066 <= cp <= 0x2069
+            )
+
         def check_text_ascii(node):
             if getattr(node, 'is_text', False):
                 text = getattr(node, 'text_content', '') or ''
-                for ch in text:
-                    if ch not in '\t\n\r\f' and not (0x20 <= ord(ch) <= 0x7E):
-                        return False
-                return True
+                return all(deterministic_text_char(ch) for ch in text)
             return all(check_text_ascii(c) for c in node.children)
         if not check_text_ascii(parser.root):
             return False, "text_non_ascii"
@@ -3086,28 +3099,43 @@ EMIT_TEXT_NODES = False
 # box-only output stays byte-identical. Enabled by tools/wpt/splice_text_port.py.
 RETAIN_TEXT = False
 
-# CSS override appended to text-retaining Chrome templates. Forces Ahem
+# CSS override appended to text-retaining Chrome templates. Forces Ahem with
+# an explicit deterministic DejaVu Sans fallback for the small verified set of
+# glyphs Ahem does not contain (currently instructional arrows). Both families
+# are no-AA under the manifest-scoped fontconfig used by the comparison runner.
 # everywhere (deterministic glyph boxes, zero-AA via ahem_noaa.conf) and
 # neutralizes UA styling our engine does not replicate (synthetic bold/italic,
 # underlines, list markers). The Rust side mirrors this by forcing Ahem on
 # every emitted Text node and ignoring font-weight/style/text-decoration.
 TEXT_TEMPLATE_OVERRIDE = (
-    "<style>body, body * { font-family: Ahem !important; "
+    '<style>body, body * { font-family: Ahem, "DejaVu Sans" !important; '
     "font-weight: normal !important; font-style: normal !important; "
     "font-synthesis: none !important; text-decoration: none !important; "
     "list-style: none !important; font-kerning: none !important; "
     "font-variant-ligatures: none !important; }</style>"
 )
 
+DETERMINISTIC_FONT_FAMILY_RUST = (
+    'FontFamilyList { families: vec!['
+    'FontFamily::Named("Ahem".to_string()), '
+    'FontFamily::Named("DejaVu Sans".to_string())] }'
+)
+
 
 def _rust_escape_string(s: str) -> str:
     """Escape a Python string for embedding in a Rust double-quoted literal."""
-    return (
+    escaped = (
         s.replace('\\', '\\\\')
          .replace('"', '\\"')
          .replace('\n', '\\n')
          .replace('\r', '\\r')
          .replace('\t', '\\t')
+    )
+    # Keep generated Rust source ASCII-only and stable across locale/editor
+    # settings while preserving the exact Unicode scalar values.
+    return ''.join(
+        ch if ord(ch) < 0x80 else f'\\u{{{ord(ch):x}}}'
+        for ch in escaped
     )
 
 
@@ -3295,7 +3323,10 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         # only the leaf Text item's metrics. Pin every generated style to Ahem
         # (matching the template's `body, body *` override), beginning with the
         # viewport/body style. Hand-built DOM styles do not inherit implicitly.
-        lines.append('    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");')
+        lines.append(
+            '    doc.node_mut(vp).style.font_family = '
+            f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+        )
         # `base_doc` uses flow-root as a convenient isolation boundary for the
         # legacy generated corpus. The node represents HTML's body, however,
         # whose initial display is block. That distinction is observable when
@@ -3386,7 +3417,10 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                     if RETAIN_TEXT:
                         # Deterministic-font mode: every glyph renders as Ahem on
                         # both sides (TEXT_TEMPLATE_OVERRIDE forces it in Chrome).
-                        lines.append(f'{ws}{ts}.font_family = FontFamilyList::single("Ahem");')
+                        lines.append(
+                            f'{ws}{ts}.font_family = '
+                            f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+                        )
                     else:
                         fam = inherited.get('font-family')
                         fam_rust = _font_family_to_rust(fam) if fam else None
@@ -3472,7 +3506,10 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Text);")
                 bs = f"doc.node_mut({bvar}).style"
                 lines.append(f"{ws}{bs}.font_size = {float(parent_font_size)};")
-                lines.append(f'{ws}{bs}.font_family = FontFamilyList::single("Ahem");')
+                lines.append(
+                    f'{ws}{bs}.font_family = '
+                    f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+                )
                 lines.append(f"{ws}{bs}.white_space = WhiteSpace::PreLine;")
                 if 'line-height' in inherited:
                     code = generate_single_style('line-height', inherited['line-height'], bs, parent_font_size)
@@ -3540,7 +3577,7 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         if RETAIN_TEXT:
             lines.append(
                 f'{ws}doc.node_mut({var}).style.font_family = '
-                'FontFamilyList::single("Ahem");'
+                f'{DETERMINISTIC_FONT_FAMILY_RUST};'
             )
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")

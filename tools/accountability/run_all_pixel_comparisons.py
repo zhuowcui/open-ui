@@ -37,6 +37,19 @@ CHROME_DIRS = [
 
 BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } html { overflow: hidden; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }"
 
+
+def build_html_document(template):
+    """Wrap a comparison template without exposing reset CSS as renderable text."""
+    # Tests such as `* { display: contents }` can otherwise override the UA
+    # display:none of the injected <style> element and paint BODY_STYLE itself.
+    # Inline !important is runner-owned and keeps the reset node non-rendered
+    # while its stylesheet continues to participate normally.
+    return (
+        "<!DOCTYPE html><html><head>"
+        f'<style style="display:none!important">{BODY_STYLE}</style>'
+        f"</head><body>{template}</body></html>"
+    )
+
 # HTML templates for each test pattern.
 # Each template is the inner <body> content.  BODY_STYLE provides the CSS reset
 # (* { margin:0; padding:0; box-sizing:content-box }) and body defaults that
@@ -458,6 +471,58 @@ def pixel_diff(img_a, img_b, diff_out, result_out):
     return None
 
 
+def select_tests(all_tests, args):
+    """Select an exact manifest or one legacy prefix from registered tests."""
+    args = list(args)
+    resume_mode = False
+    if "--resume" in args:
+        args.remove("--resume")
+        resume_mode = True
+
+    ids_file = None
+    if "--ids-file" in args:
+        index = args.index("--ids-file")
+        if index + 1 >= len(args):
+            raise ValueError("--ids-file requires a JSON path")
+        ids_file = args[index + 1]
+        del args[index:index + 2]
+
+    unknown = [arg for arg in args if arg.startswith("--")]
+    if unknown:
+        raise ValueError(f"unknown option: {unknown[0]}")
+    if ids_file and args:
+        raise ValueError("--ids-file cannot be combined with a prefix")
+    if len(args) > 1:
+        raise ValueError("expected at most one prefix")
+
+    if ids_file:
+        with open(ids_file, encoding="utf-8") as f:
+            selected_data = json.load(f)
+        if (
+            not isinstance(selected_data, list)
+            or any(not isinstance(test_id, str) or not test_id for test_id in selected_data)
+            or len(selected_data) != len(set(selected_data))
+        ):
+            raise ValueError(f"invalid exact-ID manifest: {ids_file}")
+        registered = set(all_tests)
+        unknown_ids = set(selected_data) - registered
+        if unknown_ids:
+            raise ValueError(
+                f"exact-ID manifest contains {len(unknown_ids)} unregistered tests"
+            )
+        selected = set(selected_data)
+        return [test_id for test_id in all_tests if test_id in selected], resume_mode, (
+            f"exact IDs from '{ids_file}'"
+        )
+
+    prefix = args[0] if args else None
+    if prefix:
+        return [test_id for test_id in all_tests if test_id.startswith(prefix)], resume_mode, (
+            f"prefix '{prefix}'"
+        )
+    return all_tests, resume_mode, None
+
+
 def main():
     chrome_bin, chrome_dir = find_chrome()
     if not chrome_bin:
@@ -501,16 +566,16 @@ def main():
     # Get all test IDs
     result = subprocess.run([PIXEL_COMPARE, "list"], capture_output=True, text=True)
     all_tests = result.stdout.strip().split("\n")
+    registered_tests = set(all_tests)
     print(f"Total tests: {len(all_tests)}")
 
-    # Optional prefix filter from command line
-    prefix_filter = sys.argv[1] if len(sys.argv) > 1 else None
-    resume_mode = "--resume" in sys.argv
-    if prefix_filter and prefix_filter == "--resume":
-        prefix_filter = sys.argv[2] if len(sys.argv) > 2 else None
-    if prefix_filter:
-        all_tests = [t for t in all_tests if t.startswith(prefix_filter)]
-        print(f"Filtered to {len(all_tests)} tests matching '{prefix_filter}'")
+    try:
+        all_tests, resume_mode, selection = select_tests(all_tests, sys.argv[1:])
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(2)
+    if selection:
+        print(f"Filtered to {len(all_tests)} tests matching {selection}")
 
     # Filter to only tests with HTML templates
     tests_with_html = [t for t in all_tests if t in HTML_TEMPLATES]
@@ -525,7 +590,7 @@ def main():
         sys.exit(1)
 
     # Check for orphaned templates (in HTML but not in registry)
-    orphaned = [t for t in HTML_TEMPLATES if t not in all_tests]
+    orphaned = [t for t in HTML_TEMPLATES if t not in registered_tests]
     if orphaned:
         print(f"\nWARNING: {len(orphaned)} orphaned HTML templates (not in registry):")
         for t in orphaned:
@@ -571,7 +636,7 @@ def main():
 
         # Write HTML (strip CDATA wrappers that break CSS in HTML5 mode)
         template = re.sub(r'<!\[CDATA\[|\]\]>', '', HTML_TEMPLATES[test_id])
-        html_content = f"<!DOCTYPE html><html><head><style>{BODY_STYLE}</style></head><body>{template}</body></html>"
+        html_content = build_html_document(template)
         with open(html_file, "w") as f:
             f.write(html_content)
 
