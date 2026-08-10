@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+import csv
 import io
 import json
 import os
@@ -230,7 +231,7 @@ class TextPorterTests(unittest.TestCase):
         self.assertNotIn("font_size = 32.0", legacy)
         self.assertIn("height = Length::px(64.0)", legacy)
 
-    def test_clearing_break_retains_deterministic_line_strut(self):
+    def test_clearing_break_emits_semantic_zero_height_break(self):
         path = self.html(
             "<!doctype html><style>br{clear:both}</style><body>"
             "<div style='float:left;width:20px;height:20px'></div><br>after</body>"
@@ -239,8 +240,9 @@ class TextPorterTests(unittest.TestCase):
         port_wpt.RETAIN_TEXT = True
         parser = port_wpt.parse_wpt_html(str(path))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
+        self.assertIn("ElementTag::Break", rust)
         self.assertIn("clear = Clear::Both", rust)
-        self.assertIn("height = Length::px(16.0)", rust)
+        self.assertNotIn("height = Length::px(16.0)", rust)
 
 
 class SpliceTransactionTests(unittest.TestCase):
@@ -275,6 +277,11 @@ class SpliceTransactionTests(unittest.TestCase):
                 json.dumps({"wpt/demo/sample": "<div></div>"}, indent=2) + "\n",
                 encoding="utf-8",
             )
+        (self.template_dir / "wpt_demo_report.csv").write_text(
+            "filename,status,fn_name,reason\n"
+            "sample,ported,demo_sample,\n",
+            encoding="utf-8",
+        )
         self.manifest = self.template_dir / "text_ported_tests.json"
         self.manifest.write_text("[]\n", encoding="utf-8")
         self.mapping_csv = root / "mapping.csv"
@@ -325,6 +332,8 @@ class SpliceTransactionTests(unittest.TestCase):
             "sp_area": "demo",
             "our_test_id": "",
         }
+        with (self.template_dir / "wpt_demo_report.csv").open("a", encoding="utf-8") as f:
+            f.write(f"{name},not_portable,,no_layout_content\n")
         return test_id
 
     def test_dry_run_is_side_effect_free(self):
@@ -365,6 +374,11 @@ class SpliceTransactionTests(unittest.TestCase):
         for filename in ("all_wpt_templates.json", "wpt_demo_templates.json"):
             templates = json.loads((self.template_dir / filename).read_text())
             self.assertIn(added, templates)
+        with (self.template_dir / "wpt_demo_report.csv").open(newline="") as report:
+            report_rows = {row["filename"]: row for row in csv.DictReader(report)}
+        self.assertEqual(report_rows["added"]["status"], "ported")
+        self.assertEqual(report_rows["added"]["fn_name"], "demo_added")
+        self.assertEqual(report_rows["added"]["reason"], "")
         self.assertEqual(
             json.loads(self.manifest.read_text()), sorted([added, "wpt/demo/sample"])
         )
@@ -514,9 +528,11 @@ class RunnerScopeTests(unittest.TestCase):
         self.assertEqual(w2, sorted(set(w2)))
         self.assertEqual(w3, sorted(set(w3)))
         self.assertFalse(set(w2) & set(w3))
-        self.assertEqual(len(manifest), 445)
-        self.assertEqual(len(set(manifest) - set(w2) - set(w3)), 48)
+        sp15 = json.loads((ported_dir / "sp15_actionable_targets.json").read_text())
+        self.assertEqual(len(manifest), 496)
+        self.assertEqual(len(set(manifest) - set(w2) - set(w3)), 99)
         self.assertTrue(set(w2) | set(w3) <= set(manifest))
+        self.assertTrue(set(sp15) <= set(manifest))
 
     def test_ahem_fontconfig_is_only_added_for_manifest_opt_in(self):
         with tempfile.NamedTemporaryFile() as config, mock.patch.object(
@@ -685,6 +701,30 @@ class TextClosureLedgerTests(unittest.TestCase):
 
 
 class AccountabilityDetectorTests(unittest.TestCase):
+    def test_mask_longhands_have_a_functional_visual_effects_owner(self):
+        categories, _dependency = shared_detectors.classify_failure_categories(
+            "<style>.x{-webkit-mask-image:url(mask.png);mask-size:100px}</style>",
+        )
+        self.assertIn("needs_visual_effects", categories.split(","))
+
+    def test_sp15_exposed_residuals_have_precise_functional_owners(self):
+        cases = {
+            "<p>label</p><div></div><div></div><div style='margin:10px'></div>":
+                "needs_empty_block_margin_collapse",
+            "<style>body{background:lightblue}</style><div></div>":
+                "needs_body_canvas_background_extent",
+            "<style>.x{overflow:auto;scrollbar-color:blue blue}</style>":
+                "needs_scrollbar_paint",
+            "<div style='display:flow-root'><i style='float:left'></i>"
+            "<i style='float:right'></i><i style='float:left'></i>"
+            "<i style='float:right'></i></div>": "needs_float_row_packing",
+            "<style>body{column-count:2}</style>": "sp13_multicol",
+        }
+        for html, owner in cases.items():
+            with self.subTest(owner=owner):
+                categories, _dependency = shared_detectors.classify_failure_categories(html)
+                self.assertIn(owner, categories.split(","))
+
     def test_unported_classification_merges_detector_and_rejection_owners(self):
         categories, _dependency = shared_detectors.classify_failure_categories(
             "<div style=\"background:url(asset.png)\"></div>",
@@ -896,47 +936,61 @@ class AccountabilityDetectorTests(unittest.TestCase):
         self.assertEqual(categories, "needs_float_bfc_phantom_margin_separation")
         self.assertEqual(dependency, "SP12: Float/BFC Phantom Margin Separation")
 
-    def test_inline_box_decoration_break_has_precise_owner(self):
+    def test_inline_box_decoration_break_owner_is_retired(self):
         html = """<style>.slice { box-decoration-break:slice;
                   border:10px solid blue }</style>
                   <div>AAA<span class="slice">AAA<br>AA</span>AA</div>"""
         categories, dependency = shared_detectors.classify_failure_categories(
             html, excluded={"text_rendering"}
         )
-        self.assertEqual(categories, "needs_inline_box_decoration_break")
-        self.assertEqual(dependency, "SP15: Inline Box Decoration Break")
+        self.assertNotIn("needs_inline_box_decoration_break", categories)
+        self.assertEqual(categories, "sp12_layout_bug")
 
-    def test_clearing_break_after_floats_has_precise_owner(self):
+    def test_clearing_break_after_floats_owner_is_retired(self):
         html = """<style>.container { float:left } br { clear:both }</style>
                   <div class="container"></div><br>"""
         categories, dependency = shared_detectors.classify_failure_categories(
             html, excluded={"text_rendering"}
         )
-        self.assertEqual(categories, "needs_clearing_break_after_floats")
-        self.assertEqual(dependency, "SP15: Clearing Break After Floats")
+        self.assertNotIn("needs_clearing_break_after_floats", categories)
+        self.assertEqual(categories, "sp12_layout_bug")
 
-    def test_display_contents_style_element_has_precise_owner(self):
+    def test_display_contents_style_element_owner_is_retired(self):
         html = """<style>* { display: contents }</style><br><whatever>PASS</whatever>"""
         categories, dependency = shared_detectors.classify_failure_categories(
             html, excluded={"text_rendering"}
         )
-        self.assertEqual(
-            categories,
-            "needs_display_contents_style_element,non_visual_test",
-        )
-        self.assertEqual(
-            dependency,
-            "SP15: display:contents Style Element; N/A: Non-visual Harness/Crash Test",
-        )
+        self.assertEqual(categories, "non_visual_test")
+        self.assertNotIn("SP15", dependency)
 
-    def test_linked_display_contents_list_layout_has_precise_owner(self):
-        html = """<link rel="stylesheet" href="support/acid.css">
-                  <ul><li><div class="contents c2">text</div></li></ul>"""
+    def test_mixed_inline_block_layout_has_precise_successor_owner(self):
+        html = """<style>.contents { display:contents }
+                  .inline { display:inline }</style>
+                  <ul><li><div class="contents"><div class="inline"><div>text</div>
+                  </div></div></li></ul>"""
         categories, dependency = shared_detectors.classify_failure_categories(
             html, excluded={"text_rendering"}
         )
-        self.assertEqual(categories, "needs_display_contents_list_layout")
-        self.assertEqual(dependency, "SP15: display:contents List Layout")
+        self.assertEqual(categories, "needs_mixed_inline_block_layout")
+        self.assertEqual(dependency, "Future SP: Mixed Inline/Block Layout")
+
+        linked_fixture = """<link rel="stylesheet" href="support/acid.css">
+            <ul><li><div class="contents"><div class="inline"><div>x</div>
+            </div></div></li></ul>"""
+        categories, _dependency = shared_detectors.classify_failure_categories(
+            linked_fixture, excluded={"text_rendering"}
+        )
+        self.assertIn("needs_mixed_inline_block_layout", categories.split(","))
+
+    def test_all_sp15_categories_are_retired_from_global_registry(self):
+        retired = {
+            "needs_inline_box_decoration_break",
+            "needs_clearing_break_after_floats",
+            "needs_display_contents_style_element",
+            "needs_display_contents_list_layout",
+            "needs_root_body_layout",
+        }
+        self.assertFalse(retired & set(shared_detectors.CATEGORY_FOR_DEP.values()))
 
 
 if __name__ == "__main__":

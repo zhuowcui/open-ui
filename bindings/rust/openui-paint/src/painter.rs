@@ -142,7 +142,16 @@ pub fn paint_fragment(
         return;
     }
 
-    let style = &doc.node(fragment.node_id).style;
+    let original_style = &doc.node(fragment.node_id).style;
+    let mut canvas_adjusted_style = None;
+    if doc.canvas_background_source() == Some(fragment.node_id) {
+        let mut adjusted = original_style.clone();
+        // Canvas-propagated backgrounds are painted once on the canvas, not
+        // again on the source element's principal box.
+        adjusted.background_color = Color::TRANSPARENT;
+        canvas_adjusted_style = Some(adjusted);
+    }
+    let style = canvas_adjusted_style.as_ref().unwrap_or(original_style);
 
     // CSS opacity creates a stacking context and composites the entire
     // subtree at the given opacity. Blink implements this via
@@ -190,7 +199,7 @@ pub fn paint_fragment(
     }
 
     // ── Overflow clipping + children ──────────────────────────────────
-    let needs_clip = needs_overflow_clip(fragment, style);
+    let needs_clip = needs_overflow_clip(fragment, style, doc);
     if needs_clip {
         paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
     } else {
@@ -768,7 +777,12 @@ fn paint_negative_stacking_descendants(
 /// Returns `true` when either the layout-computed `has_overflow_clip` flag is
 /// set, or the style's `overflow-x`/`overflow-y` is not `visible` for a
 /// box-level fragment.
-fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle) -> bool {
+fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Document) -> bool {
+    if doc.node(fragment.node_id).tag == openui_dom::ElementTag::Body
+        && doc.body_overflow_is_propagated()
+    {
+        return false;
+    }
     fragment.has_overflow_clip
         || ((style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
             && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport))
@@ -1899,13 +1913,24 @@ fn thin_uniform_circular_border_radii(
 }
 
 fn slice_adjust_border_radii(mut radii: [Point; 4], fragment: &Fragment) -> [Point; 4] {
-    if !fragment.is_first_for_node {
-        radii[0] = Point::new(0.0, 0.0);
-        radii[1] = Point::new(0.0, 0.0);
-    }
-    if !fragment.is_last_for_node {
-        radii[2] = Point::new(0.0, 0.0);
-        radii[3] = Point::new(0.0, 0.0);
+    if fragment.is_inline_box_fragment {
+        if !fragment.is_first_for_node {
+            radii[0] = Point::new(0.0, 0.0);
+            radii[3] = Point::new(0.0, 0.0);
+        }
+        if !fragment.is_last_for_node {
+            radii[1] = Point::new(0.0, 0.0);
+            radii[2] = Point::new(0.0, 0.0);
+        }
+    } else {
+        if !fragment.is_first_for_node {
+            radii[0] = Point::new(0.0, 0.0);
+            radii[1] = Point::new(0.0, 0.0);
+        }
+        if !fragment.is_last_for_node {
+            radii[2] = Point::new(0.0, 0.0);
+            radii[3] = Point::new(0.0, 0.0);
+        }
     }
     radii
 }
@@ -3629,9 +3654,31 @@ fn paint_box_decoration_background(
     let br_bw = style.effective_border_right() as f32;
     let bb_bw = style.effective_border_bottom() as f32;
     let bl_bw = style.effective_border_left() as f32;
-    let paint_bt = if fragment.is_first_for_node { bt } else { 0.0 };
-    let paint_bb = if fragment.is_last_for_node {
+    let clone_inline = fragment.is_inline_box_fragment
+        && style.box_decoration_break == openui_style::BoxDecorationBreak::Clone;
+    let paint_bt = if fragment.is_inline_box_fragment || fragment.is_first_for_node {
+        bt
+    } else {
+        0.0
+    };
+    let paint_br = if !fragment.is_inline_box_fragment
+        || clone_inline
+        || fragment.is_last_for_node
+    {
+        br_bw
+    } else {
+        0.0
+    };
+    let paint_bb = if fragment.is_inline_box_fragment || fragment.is_last_for_node {
         bb_bw
+    } else {
+        0.0
+    };
+    let paint_bl = if !fragment.is_inline_box_fragment
+        || clone_inline
+        || fragment.is_first_for_node
+    {
+        bl_bw
     } else {
         0.0
     };
@@ -3656,7 +3703,7 @@ fn paint_box_decoration_background(
             style.border_top_color.resolve(&style.color),
         ),
         (
-            br_bw,
+            paint_br,
             style.border_right_style,
             style.border_right_color.resolve(&style.color),
         ),
@@ -3666,7 +3713,7 @@ fn paint_box_decoration_background(
             style.border_bottom_color.resolve(&style.color),
         ),
         (
-            bl_bw,
+            paint_bl,
             style.border_left_style,
             style.border_left_color.resolve(&style.color),
         ),
@@ -3721,6 +3768,34 @@ fn paint_box_decoration_background(
         let c = &style.background_color;
         set_paint_css_color_with_alpha(&mut paint, c, opacity_multiplier);
 
+        if effective_background_clip == BackgroundClip::BorderArea {
+            let top = fragment.border.top.round().to_f32();
+            let right_width = fragment.border.right.round().to_f32();
+            let bottom_height = fragment.border.bottom.round().to_f32();
+            let left_width = fragment.border.left.round().to_f32();
+            if top > 0.0 {
+                canvas.draw_rect(Rect::from_xywh(x, y, w, top), &paint);
+            }
+            if bottom_height > 0.0 {
+                canvas.draw_rect(
+                    Rect::from_xywh(x, bottom - bottom_height, w, bottom_height),
+                    &paint,
+                );
+            }
+            let middle_height = (h - top - bottom_height).max(0.0);
+            if left_width > 0.0 {
+                canvas.draw_rect(
+                    Rect::from_xywh(x, y + top, left_width, middle_height),
+                    &paint,
+                );
+            }
+            if right_width > 0.0 {
+                canvas.draw_rect(
+                    Rect::from_xywh(right - right_width, y + top, right_width, middle_height),
+                    &paint,
+                );
+            }
+        } else if effective_background_clip != BackgroundClip::Text {
         let bg_rect = match effective_background_clip {
             BackgroundClip::BorderBox => border_box_rect,
             BackgroundClip::PaddingBox => {
@@ -3749,6 +3824,7 @@ fn paint_box_decoration_background(
                 let bh = (bb - by).max(0.0);
                 Rect::from_xywh(bx, by, bw, bh)
             }
+            BackgroundClip::BorderArea | BackgroundClip::Text => unreachable!(),
         };
 
         if has_radius {
@@ -3813,6 +3889,7 @@ fn paint_box_decoration_background(
                         ),
                     ]
                 }
+                BackgroundClip::BorderArea | BackgroundClip::Text => unreachable!(),
             };
             let correct_top_left_aa = effective_background_clip == BackgroundClip::BorderBox
                 && bt == 0.0
@@ -3852,6 +3929,7 @@ fn paint_box_decoration_background(
             canvas.draw_rect(bg_rect, &paint);
         }
         apply_overflow_visual_child_exact_cleanup(canvas, fragment, style, border_box_rect);
+        }
     }
 
     // ── 3. Inset box shadows (painted on top of background) ──────────
@@ -4079,20 +4157,36 @@ fn paint_borders(
     h: f32,
     outer_rrect_clipped: bool,
 ) {
-    // box-decoration-break: slice (default) — suppress block-start border on
-    // non-first fragments and block-end border on non-last fragments.
-    let bt = if fragment.is_first_for_node {
+    // Slice block fragments on the block axis and inline fragments on the
+    // inline axis. Clone repeats both inline edges for every continuation.
+    let clone_inline = fragment.is_inline_box_fragment
+        && style.box_decoration_break == openui_style::BoxDecorationBreak::Clone;
+    let bt = if fragment.is_inline_box_fragment || fragment.is_first_for_node {
         style.effective_border_top() as f32
     } else {
         0.0
     };
-    let br = style.effective_border_right() as f32;
-    let bb = if fragment.is_last_for_node {
+    let br = if !fragment.is_inline_box_fragment
+        || clone_inline
+        || fragment.is_last_for_node
+    {
+        style.effective_border_right() as f32
+    } else {
+        0.0
+    };
+    let bb = if fragment.is_inline_box_fragment || fragment.is_last_for_node {
         style.effective_border_bottom() as f32
     } else {
         0.0
     };
-    let bl = style.effective_border_left() as f32;
+    let bl = if !fragment.is_inline_box_fragment
+        || clone_inline
+        || fragment.is_first_for_node
+    {
+        style.effective_border_left() as f32
+    } else {
+        0.0
+    };
 
     // No borders to paint
     if bt == 0.0 && br == 0.0 && bb == 0.0 && bl == 0.0 {

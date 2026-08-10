@@ -1800,6 +1800,10 @@ pub enum BackgroundClip {
     PaddingBox = 1,
     /// Background is painted within the content-box.
     ContentBox = 2,
+    /// Paint only the border area (CSS Backgrounds Level 4).
+    BorderArea = 3,
+    /// Clip the background to foreground text glyphs.
+    Text = 4,
 }
 
 impl Default for BackgroundClip {

@@ -14,7 +14,7 @@
 //! 4. Position child using ComputeInflowPosition logic
 //! 5. After all children: compute intrinsic block size, apply CSS height
 
-use openui_dom::{Document, NodeId};
+use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{
     BfcOffset, BfcRect, BoxStrut, LayoutUnit, Length, LengthType, MarginStrut, PhysicalOffset,
     PhysicalRect, PhysicalSize,
@@ -210,7 +210,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Exception: if the constraint space imposes a fixed block size (e.g.,
     // viewport/ICB, or flex/grid definite cross-size), children can resolve
     // percentage heights against that definite size.
-    let child_percentage_block_size = if (space.is_fixed_block_size || space.stretch_block_size)
+    // The viewport establishes the initial containing block. Percentage
+    // heights on the document element resolve against its definite block
+    // size even though the viewport fragment itself has an auto CSS height.
+    let is_viewport = doc.node(node_id).tag == ElementTag::Viewport;
+    let child_percentage_block_size = if (space.is_fixed_block_size
+        || space.stretch_block_size
+        || is_viewport)
         && !space.is_initial_block_size_indefinite
     {
         // Definite block size from external constraint — use it directly.
@@ -1808,6 +1814,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Set the overflow clip flag from style.
     fragment.has_overflow_clip =
         style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible;
+    if doc.node(node_id).tag == openui_dom::ElementTag::Body
+        && doc.body_overflow_is_propagated()
+    {
+        fragment.has_overflow_clip = false;
+    } else if doc.node(node_id).tag == openui_dom::ElementTag::Viewport
+        && doc.body_overflow_is_propagated()
+    {
+        fragment.has_overflow_clip = true;
+    }
 
     // Attach any un-resolved OOF candidates for the parent to absorb.
     // These are abs-pos descendants that need a positioned ancestor higher up.
@@ -1890,7 +1905,10 @@ pub fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
         if child.style.float != Float::None {
             return true;
         }
-        if child.tag == openui_dom::ElementTag::Text {
+        if matches!(
+            child.tag,
+            openui_dom::ElementTag::Text | openui_dom::ElementTag::Break
+        ) {
             continue;
         }
         if child.style.display.is_block_level() {
@@ -1906,7 +1924,10 @@ fn is_inline_level_child(doc: &Document, child_id: NodeId) -> bool {
     if child.style.is_out_of_flow() || child.style.display == Display::None {
         return false;
     }
-    child.tag == openui_dom::ElementTag::Text || child.style.display.is_inline_level()
+    matches!(
+        child.tag,
+        openui_dom::ElementTag::Text | openui_dom::ElementTag::Break
+    ) || child.style.display.is_inline_level()
 }
 
 // ── Helper: map CSS Clear to ClearType ───────────────────────────────

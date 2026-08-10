@@ -537,6 +537,26 @@ pub fn base_doc() -> (Document, NodeId) {
     (doc, body)
 }
 
+/// Create the opt-in browser-shaped document used by root/body WPT ports.
+///
+/// Unlike `base_doc()`, this keeps the viewport, document element, and body as
+/// three distinct nodes.  Existing generated builders intentionally continue
+/// to use the historical two-node helper.
+pub fn root_doc() -> (Document, NodeId, NodeId) {
+    let mut doc = Document::new();
+    let viewport = doc.root();
+    doc.node_mut(viewport).style.display = Display::Block;
+
+    let html = doc.create_node(ElementTag::Html);
+    doc.node_mut(html).style.display = Display::Block;
+    doc.append_child(viewport, html);
+
+    let body = doc.create_node(ElementTag::Body);
+    doc.node_mut(body).style.display = Display::Block;
+    doc.append_child(html, body);
+    (doc, html, body)
+}
+
 fn add_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
     doc.node_mut(div).style.display = Display::Block;

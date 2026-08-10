@@ -10,16 +10,17 @@
 //! §10.8 (line height calculations), and §16.2 (text alignment).
 
 use openui_dom::{Document, NodeId};
-use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalSize};
+use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize};
 use openui_style::{
-    BoxDecorationBreak, ComputedStyle, Direction, Display, LineHeight, TextAlign, TextAlignLast,
-    TextJustify, VerticalAlign,
+    BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, LineHeight, TextAlign,
+    TextAlignLast, TextJustify, VerticalAlign,
 };
 use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
 use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::constraint_space::ConstraintSpace;
+use crate::exclusions::ClearType;
 use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::resolve_margin_or_padding;
 use crate::out_of_flow::OutOfFlowCandidate;
@@ -51,6 +52,148 @@ pub struct InlineBoxState {
     pub node_id: NodeId,
     /// `box-decoration-break` mode from the element's style.
     pub box_decoration_break: BoxDecorationBreak,
+}
+
+#[derive(Debug)]
+enum InlineLineChild {
+    Fragment(usize),
+    InlineBox(usize),
+}
+
+#[derive(Debug)]
+struct InlineLineBox {
+    node_id: NodeId,
+    style_index: usize,
+    border_start: LayoutUnit,
+    border_end: LayoutUnit,
+    is_first: bool,
+    is_last: bool,
+    children: Vec<InlineLineChild>,
+}
+
+fn attach_inline_line_child(
+    stack: &[usize],
+    boxes: &mut [InlineLineBox],
+    roots: &mut Vec<InlineLineChild>,
+    child: InlineLineChild,
+) {
+    if let Some(&parent) = stack.last() {
+        boxes[parent].children.push(child);
+    } else {
+        roots.push(child);
+    }
+}
+
+fn materialize_inline_line_child(
+    child: InlineLineChild,
+    boxes: &[InlineLineBox],
+    flat_fragments: &mut [Option<Fragment>],
+    items_data: &InlineItemsData,
+    percentage_base: LayoutUnit,
+    baseline: LayoutUnit,
+) -> Fragment {
+    match child {
+        InlineLineChild::Fragment(index) => flat_fragments[index]
+            .take()
+            .expect("inline line child materialized once"),
+        InlineLineChild::InlineBox(index) => {
+            let record = &boxes[index];
+            let style = &items_data.styles[record.style_index];
+            let mut children: Vec<Fragment> = record
+                .children
+                .iter()
+                .map(|child| match child {
+                    InlineLineChild::Fragment(index) => flat_fragments[*index]
+                        .take()
+                        .expect("inline fragment belongs to one box"),
+                    InlineLineChild::InlineBox(index) => materialize_inline_line_child(
+                        InlineLineChild::InlineBox(*index),
+                        boxes,
+                        flat_fragments,
+                        items_data,
+                        percentage_base,
+                        baseline,
+                    ),
+                })
+                .collect();
+
+            let font = Font::new(style_to_font_description(style));
+            let metrics = font.font_metrics().copied().unwrap_or_default();
+            let mut content_top = baseline - LayoutUnit::from_f32_ceil(metrics.ascent);
+            let mut content_bottom = baseline + LayoutUnit::from_f32_ceil(metrics.descent);
+            for child in &children {
+                content_top = content_top.min_of(child.offset.top);
+                content_bottom = content_bottom.max_of(child.offset.top + child.size.height);
+            }
+
+            let border = BoxStrut::new(
+                LayoutUnit::from_i32(style.effective_border_top()),
+                LayoutUnit::from_i32(style.effective_border_right()),
+                LayoutUnit::from_i32(style.effective_border_bottom()),
+                LayoutUnit::from_i32(style.effective_border_left()),
+            );
+            let padding = BoxStrut::new(
+                resolve_margin_or_padding(&style.padding_top, percentage_base),
+                resolve_margin_or_padding(&style.padding_right, percentage_base),
+                resolve_margin_or_padding(&style.padding_bottom, percentage_base),
+                resolve_margin_or_padding(&style.padding_left, percentage_base),
+            );
+            let margin = BoxStrut::new(
+                resolve_margin_or_padding(&style.margin_top, percentage_base),
+                resolve_margin_or_padding(&style.margin_right, percentage_base),
+                resolve_margin_or_padding(&style.margin_bottom, percentage_base),
+                resolve_margin_or_padding(&style.margin_left, percentage_base),
+            );
+            let box_top = content_top - padding.top - border.top;
+            let box_bottom = content_bottom + padding.bottom + border.bottom;
+            for child in &mut children {
+                child.offset.left = child.offset.left - record.border_start;
+                child.offset.top = child.offset.top - box_top;
+            }
+            let mut fragment = Fragment::new_box(
+                record.node_id,
+                PhysicalSize::new(
+                    (record.border_end - record.border_start).clamp_negative_to_zero(),
+                    (box_bottom - box_top).clamp_negative_to_zero(),
+                ),
+            );
+            fragment.offset = PhysicalOffset::new(record.border_start, box_top);
+            fragment.border = border;
+            fragment.padding = padding;
+            fragment.margin = margin;
+            fragment.children = children;
+            fragment.is_first_for_node = record.is_first;
+            fragment.is_last_for_node = record.is_last;
+            fragment.is_inline_box_fragment = true;
+            fragment
+        }
+    }
+}
+
+fn line_break_clear(line: &LineInfo, items: &InlineItemsData) -> Clear {
+    let mut result = Clear::None;
+    for item_result in &line.items {
+        if item_result.item_type != InlineItemType::Control {
+            continue;
+        }
+        let item = &items.items[item_result.item_index];
+        let clear = items.styles[item.style_index].clear;
+        result = match (result, clear) {
+            (Clear::None, value) | (value, Clear::None) => value,
+            (a, b) if a == b => a,
+            _ => Clear::Both,
+        };
+    }
+    result
+}
+
+fn clear_type(clear: Clear) -> ClearType {
+    match clear {
+        Clear::None => ClearType::None,
+        Clear::Left => ClearType::Left,
+        Clear::Right => ClearType::Right,
+        Clear::Both => ClearType::Both,
+    }
 }
 
 // ── Line height metrics (CSS 2.2 §10.8.1 half-leading model) ────────────
@@ -342,39 +485,8 @@ fn is_cjk_character(ch: char) -> bool {
 
 // ── Inline start/end resolution for open/close tag items ─────────────────
 
-/// Resolve inline-start MBP contribution of an OpenTag item.
-///
-/// In LTR, inline-start is the left side; in RTL, inline-start is the right side.
-fn resolve_inline_start(style: &ComputedStyle, percentage_base: LayoutUnit) -> LayoutUnit {
-    if style.direction == Direction::Rtl {
-        let margin = resolve_margin_or_padding(&style.margin_right, percentage_base);
-        let border = LayoutUnit::from_i32(style.effective_border_right());
-        let padding = resolve_margin_or_padding(&style.padding_right, percentage_base);
-        margin + border + padding
-    } else {
-        let margin = resolve_margin_or_padding(&style.margin_left, percentage_base);
-        let border = LayoutUnit::from_i32(style.effective_border_left());
-        let padding = resolve_margin_or_padding(&style.padding_left, percentage_base);
-        margin + border + padding
-    }
-}
-
-/// Resolve inline-end MBP contribution of a CloseTag item.
-///
-/// In LTR, inline-end is the right side; in RTL, inline-end is the left side.
-fn resolve_inline_end(style: &ComputedStyle, percentage_base: LayoutUnit) -> LayoutUnit {
-    if style.direction == Direction::Rtl {
-        let padding = resolve_margin_or_padding(&style.padding_left, percentage_base);
-        let border = LayoutUnit::from_i32(style.effective_border_left());
-        let margin = resolve_margin_or_padding(&style.margin_left, percentage_base);
-        padding + border + margin
-    } else {
-        let padding = resolve_margin_or_padding(&style.padding_right, percentage_base);
-        let border = LayoutUnit::from_i32(style.effective_border_right());
-        let margin = resolve_margin_or_padding(&style.margin_right, percentage_base);
-        padding + border + margin
-    }
-}
+// Inline start/end decoration is resolved when a concrete continuation
+// fragment is materialized, where first/last slice metadata is available.
 
 // ── Main entry point ─────────────────────────────────────────────────────
 
@@ -584,6 +696,13 @@ pub fn inline_layout_from_items(
             }
 
             block_offset = block_offset + positioned_line.size.height;
+            let break_clear = line_break_clear(&line_info, &working_items_data);
+            if break_clear != Clear::None {
+                if let Some(exclusions) = exclusion_ref {
+                    let target = exclusions.clearance_offset(clear_type(break_clear));
+                    block_offset = block_offset.max_of(target - bfc_block_start);
+                }
+            }
             line_fragments.push(positioned_line);
             is_first_line = false;
         }
@@ -1056,6 +1175,13 @@ pub fn inline_layout_for_children(
             }
 
             block_offset = block_offset + positioned_line.size.height;
+            let break_clear = line_break_clear(&line_info, &items_data);
+            if break_clear != Clear::None {
+                if let Some(exclusions) = exclusion_ref {
+                    let target = exclusions.clearance_offset(clear_type(break_clear));
+                    block_offset = block_offset.max_of(target - bfc_block_start);
+                }
+            }
             line_fragments.push(positioned_line);
             is_first_line = false;
         }
@@ -1130,7 +1256,8 @@ fn create_line_box(
     // A forced break (<br> or preserved newline) establishes a strut even
     // when it is the only item on the line. Without this, `<p><br></p>` has
     // zero height and following block content overlaps it.
-    let line_has_content = line_info.has_forced_break
+    let clearing_break = line_break_clear(line_info, items_data) != Clear::None;
+    let line_has_content = (line_info.has_forced_break && !clearing_break)
         || line_info
             .items
             .iter()
@@ -1542,6 +1669,9 @@ fn create_line_box(
 
     // === STEP 4: Position each item ===
     let mut children: Vec<Fragment> = Vec::new();
+    let mut inline_boxes: Vec<InlineLineBox> = Vec::new();
+    let mut inline_box_roots: Vec<InlineLineChild> = Vec::new();
+    let mut inline_box_record_stack: Vec<usize> = Vec::new();
     let mut inline_offset = text_align_offset + text_indent;
     let mut justification_accumulator = 0.0f32;
     // Track how many characters we've seen before this item (for inter-character
@@ -1558,13 +1688,38 @@ fn create_line_box(
         .map(|b| b.style_index)
         .collect();
 
-    // For `box-decoration-break: clone`, boxes that were already open at line
-    // start need their inline-start MBP added at the beginning of this line.
+    // Re-open per-line fragments for inline boxes continued from the previous
+    // line. Clone gets fresh inline-start MBP; slice begins directly at the
+    // continuation content edge.
     for open_box in boxes_open_at_line_start {
+        let style = &items_data.styles[open_box.style_index];
         if open_box.box_decoration_break == BoxDecorationBreak::Clone {
-            let style = &items_data.styles[open_box.style_index];
-            inline_offset = inline_offset + resolve_inline_start(style, percentage_base);
+            inline_offset = inline_offset
+                + resolve_margin_or_padding(&style.margin_left, percentage_base);
         }
+        let border_start = inline_offset;
+        if open_box.box_decoration_break == BoxDecorationBreak::Clone {
+            inline_offset = inline_offset
+                + LayoutUnit::from_i32(style.effective_border_left())
+                + resolve_margin_or_padding(&style.padding_left, percentage_base);
+        }
+        let index = inline_boxes.len();
+        inline_boxes.push(InlineLineBox {
+            node_id: open_box.node_id,
+            style_index: open_box.style_index,
+            border_start,
+            border_end: border_start,
+            is_first: false,
+            is_last: false,
+            children: Vec::new(),
+        });
+        attach_inline_line_child(
+            &inline_box_record_stack,
+            &mut inline_boxes,
+            &mut inline_box_roots,
+            InlineLineChild::InlineBox(index),
+        );
+        inline_box_record_stack.push(index);
     }
 
     // Pre-scan to determine which boxes don't close on this line (needed for
@@ -1778,12 +1933,41 @@ fn create_line_box(
                     text_fragment.is_last_for_node = !boxes_open_at_line_end.contains(&style_idx);
                 }
 
+                let child_index = children.len();
                 children.push(text_fragment);
+                attach_inline_line_child(
+                    &inline_box_record_stack,
+                    &mut inline_boxes,
+                    &mut inline_box_roots,
+                    InlineLineChild::Fragment(child_index),
+                );
                 inline_offset = inline_offset + item_width;
             }
             InlineItemType::OpenTag => {
                 let style = &items_data.styles[item.style_index];
-                inline_offset = inline_offset + resolve_inline_start(style, percentage_base);
+                inline_offset = inline_offset
+                    + resolve_margin_or_padding(&style.margin_left, percentage_base);
+                let border_start = inline_offset;
+                inline_offset = inline_offset
+                    + LayoutUnit::from_i32(style.effective_border_left())
+                    + resolve_margin_or_padding(&style.padding_left, percentage_base);
+                let index = inline_boxes.len();
+                inline_boxes.push(InlineLineBox {
+                    node_id: item.node_id,
+                    style_index: item.style_index,
+                    border_start,
+                    border_end: border_start,
+                    is_first: true,
+                    is_last: false,
+                    children: Vec::new(),
+                });
+                attach_inline_line_child(
+                    &inline_box_record_stack,
+                    &mut inline_boxes,
+                    &mut inline_box_roots,
+                    InlineLineChild::InlineBox(index),
+                );
+                inline_box_record_stack.push(index);
                 // Push this inline element's font metrics for nested content.
                 let font_desc = style_to_font_description(style);
                 let font = Font::new(font_desc);
@@ -1793,8 +1977,16 @@ fn create_line_box(
                 inline_box_stack.push((item.style_index, true));
             }
             InlineItemType::CloseTag => {
-                let style = &items_data.styles[item.style_index];
-                inline_offset = inline_offset + resolve_inline_end(style, percentage_base);
+                if let Some(index) = inline_box_record_stack.pop() {
+                    let style = &items_data.styles[inline_boxes[index].style_index];
+                    inline_offset = inline_offset
+                        + resolve_margin_or_padding(&style.padding_right, percentage_base)
+                        + LayoutUnit::from_i32(style.effective_border_right());
+                    inline_boxes[index].border_end = inline_offset;
+                    inline_boxes[index].is_last = true;
+                    inline_offset = inline_offset
+                        + resolve_margin_or_padding(&style.margin_right, percentage_base);
+                }
                 inline_metrics_stack.pop();
                 inline_box_stack.pop();
             }
@@ -1929,7 +2121,14 @@ fn create_line_box(
                     frag
                 };
 
+                let child_index = children.len();
                 children.push(atomic_fragment);
+                attach_inline_line_child(
+                    &inline_box_record_stack,
+                    &mut inline_boxes,
+                    &mut inline_box_roots,
+                    InlineLineChild::Fragment(child_index),
+                );
                 // Advance by the full margin-box inline size so subsequent
                 // items start at the correct position.
                 inline_offset =
@@ -1940,10 +2139,17 @@ fn create_line_box(
 
     // For `box-decoration-break: clone`, boxes still open at line end need
     // their inline-end MBP added after all items have been positioned.
-    for &style_idx in &boxes_open_at_line_end {
-        let style = &items_data.styles[style_idx];
+    for &index in inline_box_record_stack.iter().rev() {
+        let style = &items_data.styles[inline_boxes[index].style_index];
         if style.box_decoration_break == BoxDecorationBreak::Clone {
-            inline_offset = inline_offset + resolve_inline_end(style, percentage_base);
+            inline_offset = inline_offset
+                + resolve_margin_or_padding(&style.padding_right, percentage_base)
+                + LayoutUnit::from_i32(style.effective_border_right());
+            inline_boxes[index].border_end = inline_offset;
+            inline_offset = inline_offset
+                + resolve_margin_or_padding(&style.margin_right, percentage_base);
+        } else {
+            inline_boxes[index].border_end = inline_offset;
         }
     }
 
@@ -1975,10 +2181,24 @@ fn create_line_box(
             }
             hyphen_fragment.offset =
                 PhysicalOffset::new(text_align_offset + text_indent, hyphen_top);
-            children.insert(0, hyphen_fragment);
+            let child_index = children.len();
+            children.push(hyphen_fragment);
+            attach_inline_line_child(
+                &inline_box_record_stack,
+                &mut inline_boxes,
+                &mut inline_box_roots,
+                InlineLineChild::Fragment(child_index),
+            );
         } else {
             hyphen_fragment.offset = PhysicalOffset::new(inline_offset, hyphen_top);
+            let child_index = children.len();
             children.push(hyphen_fragment);
+            attach_inline_line_child(
+                &inline_box_record_stack,
+                &mut inline_boxes,
+                &mut inline_box_roots,
+                InlineLineChild::Fragment(child_index),
+            );
             inline_offset = inline_offset + hyphen_width;
         }
     }
@@ -2017,7 +2237,14 @@ fn create_line_box(
                 PhysicalOffset::new(text_align_offset + text_indent, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
-            children.insert(0, ellipsis_fragment);
+            let child_index = children.len();
+            children.push(ellipsis_fragment);
+            attach_inline_line_child(
+                &inline_box_record_stack,
+                &mut inline_boxes,
+                &mut inline_box_roots,
+                InlineLineChild::Fragment(child_index),
+            );
         } else {
             // LTR: place ellipsis at the right edge (after content).
             let mut ellipsis_fragment = Fragment::new_text(
@@ -2029,9 +2256,34 @@ fn create_line_box(
             ellipsis_fragment.offset = PhysicalOffset::new(inline_offset, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
+            let child_index = children.len();
             children.push(ellipsis_fragment);
+            attach_inline_line_child(
+                &inline_box_record_stack,
+                &mut inline_boxes,
+                &mut inline_box_roots,
+                InlineLineChild::Fragment(child_index),
+            );
         }
     }
+
+    // Replace the flat text/atomic list with paintable per-line inline box
+    // fragments. Descendant offsets are converted from line coordinates to
+    // their nearest inline fragment's local coordinate space.
+    let mut flat_fragments: Vec<Option<Fragment>> = children.into_iter().map(Some).collect();
+    let children = inline_box_roots
+        .into_iter()
+        .map(|child| {
+            materialize_inline_line_child(
+                child,
+                &inline_boxes,
+                &mut flat_fragments,
+                items_data,
+                percentage_base,
+                baseline,
+            )
+        })
+        .collect();
 
     // Build the line box fragment.
     let mut line_fragment = Fragment::new_box(
@@ -2309,7 +2561,10 @@ pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
         if child.style.display == Display::None || child.style.is_out_of_flow() {
             continue;
         }
-        if child.tag == openui_dom::ElementTag::Text {
+        if matches!(
+            child.tag,
+            openui_dom::ElementTag::Text | openui_dom::ElementTag::Break
+        ) {
             return true;
         }
         if child.style.display.is_inline_level() {
@@ -2323,7 +2578,7 @@ pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
 mod tests {
     use super::*;
     use openui_dom::ElementTag;
-    use openui_style::Display;
+    use openui_style::{Color, Display};
 
     /// Helper to build a FontMetrics with specific ascent, descent, and line_gap.
     fn test_metrics(ascent: f32, descent: f32, line_gap: f32) -> FontMetrics {
@@ -2909,20 +3164,33 @@ mod tests {
         assert!(!div_frag.children.is_empty(), "Should have line boxes");
         let line = &div_frag.children[0];
 
-        assert!(
-            line.children.len() >= 2,
-            "Line should have at least 2 text fragments, got {}",
-            line.children.len(),
-        );
+        fn collect_text_tops(
+            fragment: &Fragment,
+            parent_top: LayoutUnit,
+            tops: &mut Vec<LayoutUnit>,
+        ) {
+            let top = parent_top + fragment.offset.top;
+            if fragment.kind == FragmentKind::Text {
+                tops.push(top);
+            }
+            for child in &fragment.children {
+                collect_text_tops(child, top, tops);
+            }
+        }
 
-        let outer_frag = &line.children[0]; // "A" at 30px
-        let inner_frag = &line.children[1]; // "X" at 12px, text-top
+        let mut text_tops = Vec::new();
+        collect_text_tops(line, LayoutUnit::zero(), &mut text_tops);
+        assert!(
+            text_tops.len() >= 2,
+            "Line should have at least 2 descendant text fragments, got {}",
+            text_tops.len(),
+        );
 
         // text-top: the top of the inner item aligns with the parent inline's
         // text top. Since the parent inline has 30px font, the inner item's top
         // should be near the outer item's top.
-        let outer_top = outer_frag.offset.top.to_f32();
-        let inner_top = inner_frag.offset.top.to_f32();
+        let outer_top = text_tops[0].to_f32();
+        let inner_top = text_tops[1].to_f32();
 
         // With block metrics (16px), text-top would align to the block's ascent,
         // producing a larger offset difference. With parent inline metrics (30px),
@@ -3264,5 +3532,68 @@ mod tests {
             LayoutUnit::from_i32(10),
             "hang_width overflow should not affect alignment"
         );
+    }
+
+    #[test]
+    fn decorated_inline_produces_a_real_box_fragment() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.width = openui_geometry::Length::px(200.0);
+        doc.append_child(vp, block);
+
+        let span = doc.create_node(ElementTag::Span);
+        doc.node_mut(span).style.display = Display::Inline;
+        doc.node_mut(span).style.padding_left = openui_geometry::Length::px(4.0);
+        doc.node_mut(span).style.padding_right = openui_geometry::Length::px(6.0);
+        doc.node_mut(span).style.background_color = Color::RED;
+        doc.append_child(block, span);
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("XX".to_string());
+        doc.append_child(span, text);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let inline = &fragment.children[0].children[0].children[0];
+        assert_eq!(inline.node_id, span);
+        assert!(inline.is_inline_box_fragment);
+        assert!(inline.is_first_for_node && inline.is_last_for_node);
+        assert_eq!(inline.padding.left, LayoutUnit::from_i32(4));
+        assert_eq!(inline.padding.right, LayoutUnit::from_i32(6));
+        assert!(!inline.children.is_empty());
+    }
+
+    #[test]
+    fn wrapped_inline_fragments_have_first_and_last_continuations() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.width = openui_geometry::Length::px(18.0);
+        doc.append_child(vp, block);
+        let span = doc.create_node(ElementTag::Span);
+        doc.node_mut(span).style.display = Display::Inline;
+        doc.node_mut(span).style.background_color = Color::BLUE;
+        doc.append_child(block, span);
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("X X X".to_string());
+        doc.append_child(span, text);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
+        let fragment = crate::block::block_layout(&doc, vp, &space);
+        let mut continuations = Vec::new();
+        for line in &fragment.children[0].children {
+            for child in &line.children {
+                if child.node_id == span && child.is_inline_box_fragment {
+                    continuations.push(child);
+                }
+            }
+        }
+        assert!(continuations.len() >= 2);
+        assert!(continuations.first().unwrap().is_first_for_node);
+        assert!(!continuations.first().unwrap().is_last_for_node);
+        assert!(!continuations.last().unwrap().is_first_for_node);
+        assert!(continuations.last().unwrap().is_last_for_node);
     }
 }

@@ -17,8 +17,10 @@
 | SP11 | Text & Inline Layout | 1,902 | 31 | ✅ Complete |
 | SP11.5 | Full Chromium Text Parity | 3,371 | 6 | ✅ Complete |
 | SP12 | CSS Block/Layout WPT Accountability | 7,673 inventory rows | multi-wave | ✅ Complete by ownership |
+| SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
+| SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,517 ported/runnable tests, 2,767 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 `needs_text` rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 2,804 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 retired SP15 owner rows.**
 
 ---
 
@@ -267,11 +269,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,517 |
-| Current runnable WPT passes | 2,767 |
+| Current runnable WPT tests | 3,566 |
+| Current runnable WPT passes | 2,804 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,517 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,566 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -314,5 +316,21 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   merged upstream-detector and actual-rejection ownership.
 - Authoritative full state: **2,767 pass / 750 fail / 0 errors** across 3,517 runnable
   tests; all 2,715 frozen baseline IDs remain exact; audit passes 7/7.
-- Next: SP15 inline/layout and root/body propagation, followed by SP16 real-font metrics,
-  SP17 advanced text, and SP18 generated content/text effects.
+- This handoff led to SP15 inline/layout and root/body propagation; the remaining text
+  roadmap continues with SP16 real-font metrics, SP17 advanced text, and SP18 generated
+  content/text effects.
+
+### SP15 complete: inline/layout and root/body ownership closed
+
+- Froze a 2,767-ID exact baseline, a 76-ID actionable ledger, and 54 structured
+  unported residual dispositions covering all 130 original SP15 owner rows.
+- Promoted all 49 deterministic root/body tests. Across all 76 actionable tests,
+  34 are exact, 42 retain precise non-SP15 functional owners, and none error.
+- Implemented real decorated-inline continuation fragments, semantic clearing breaks,
+  `display:contents` inheritance/style handling, and root/body canvas/overflow propagation.
+- Retired all five SP15 categories after proving complete coverage and preserved the
+  immutable historical SP14 W4 ledger through explicit supersession rules.
+- Authoritative full state: **2,804 pass / 762 fail / 0 errors** across 3,566 runnable
+  tests; all 2,767 frozen baseline IDs remain exact; audit passes 7/7.
+- Next: SP16 real-font metrics, or resume the explicitly owned SP13 multicol and
+  fragmentation clusters.

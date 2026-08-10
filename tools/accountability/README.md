@@ -45,11 +45,11 @@ Current verified snapshot:
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
-| Ported/runnable WPT tests | 3517 |
-| Runnable passes | 2767 |
-| Runnable failures | 750 |
+| Ported/runnable WPT tests | 3566 |
+| Runnable passes | 2804 |
+| Runnable failures | 762 |
 | Runnable render/diff errors | 0 |
-| Unported but explicitly categorized rows | 4156 |
+| Unported but explicitly categorized rows | 4107 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |

@@ -15,6 +15,7 @@ Usage:
 from __future__ import annotations
 
 import csv
+import io
 import json
 import os
 import re
@@ -39,6 +40,9 @@ RUST_WPT_DIR = os.path.join(
     PROJECT_ROOT, "bindings", "rust", "pixel-compare", "src", "wpt"
 )
 TEXT_PORTED_LIST = os.path.join(WPT_PORTED_DIR, "text_ported_tests.json")
+SP15_TARGETS_LIST = os.path.join(WPT_PORTED_DIR, "sp15_actionable_targets.json")
+SP14_W4_LIST = os.path.join(WPT_PORTED_DIR, "sp14_w4_residuals.json")
+REPORT_COLUMNS = ["filename", "status", "fn_name", "reason"]
 
 sys.path.insert(0, SCRIPT_DIR)
 import port_wpt  # noqa: E402
@@ -52,6 +56,7 @@ class GeneratedReplacement:
     chromium_path: str
     rust_code: str
     template: str
+    root_aware: bool
 
 
 def canonical_test_id(row: dict[str, str]) -> str:
@@ -95,6 +100,37 @@ def load_ids_file(path: str) -> list[str]:
     ):
         raise ValueError(f"invalid IDs ledger: {path}")
     return data
+
+
+def load_root_aware_ids() -> set[str]:
+    """Recover root/body membership from history and committed templates."""
+    with open(SP14_W4_LIST, encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, list):
+        raise ValueError(f"invalid SP14 W4 ledger: {SP14_W4_LIST}")
+    result = set()
+    for item in data:
+        if not isinstance(item, dict):
+            raise ValueError(f"invalid SP14 W4 ledger entry: {item!r}")
+        test_id = item.get("test_id", "")
+        owners = item.get("owner_categories", [])
+        if not isinstance(test_id, str) or not isinstance(owners, list):
+            raise ValueError(f"invalid SP14 W4 ledger entry: {item!r}")
+        if "needs_root_body_layout" in owners:
+            result.add(test_id)
+    templates_path = os.path.join(WPT_PORTED_DIR, "all_wpt_templates.json")
+    if os.path.exists(templates_path):
+        with open(templates_path, encoding="utf-8") as f:
+            templates = json.load(f)
+        if not isinstance(templates, dict):
+            raise ValueError(f"invalid global templates: {templates_path}")
+        result.update(
+            test_id
+            for test_id, template in templates.items()
+            if isinstance(template, str)
+            and template.startswith("<!--OPENUI_ROOT_AWARE-->")
+        )
+    return result
 
 
 def _rust_function_span(rust_src: str, fn_name: str) -> tuple[int, int]:
@@ -201,11 +237,16 @@ def _generate_one(
     if not upstream_rel or not os.path.isfile(upstream):
         raise FileNotFoundError(f"{test_id}: upstream missing ({upstream})")
 
-    parser = port_wpt.parse_wpt_html(upstream)
+    root_aware = test_id in load_root_aware_ids()
+    if root_aware:
+        frozen_targets = set(load_ids_file(SP15_TARGETS_LIST))
+        if test_id not in frozen_targets:
+            raise ValueError(f"{test_id}: not in the frozen SP15 root-aware allowlist")
+    parser = port_wpt.parse_wpt_html(upstream, root_aware=root_aware)
     portable, reason = port_wpt.analyze_portability(parser)
-    if not portable:
+    if not root_aware and not portable:
         raise ValueError(f"{test_id}: not text-portable ({reason})")
-    if not port_wpt.has_layout_content(parser):
+    if not root_aware and not port_wpt.has_layout_content(parser):
         raise ValueError(f"{test_id}: not text-portable (no_layout_content)")
 
     fn_name = f"{module}_{port_wpt.sanitize_fn_name(name)}"
@@ -215,9 +256,10 @@ def _generate_one(
         fn_name=fn_name,
         chromium_path=upstream_rel,
         rust_code=port_wpt.generate_rust_fn(
-            fn_name, parser.root, parser.html_styles
+            fn_name, parser.root, parser.html_styles, root_aware=root_aware
         ),
-        template=port_wpt.generate_html_template(upstream),
+        template=port_wpt.generate_html_template(upstream, root_aware=root_aware),
+        root_aware=root_aware,
     )
 
 
@@ -241,6 +283,38 @@ def _load_json_object(path: str) -> tuple[str, dict[str, str]]:
     ):
         raise ValueError(f"template file is not a string object: {path}")
     return original, value
+
+
+def _promote_report_rows(
+    path: str, replacements: list[GeneratedReplacement]
+) -> tuple[str, str]:
+    """Return the original and deterministically promoted porter report."""
+    with open(path, newline="", encoding="utf-8") as f:
+        original = f.read()
+    reader = csv.DictReader(io.StringIO(original, newline=""))
+    if reader.fieldnames != REPORT_COLUMNS:
+        raise ValueError(f"unexpected porter report columns in {path}: {reader.fieldnames}")
+    rows = list(reader)
+    by_name = {replacement.test_id.rsplit("/", 1)[1]: replacement for replacement in replacements}
+    seen: set[str] = set()
+    for row in rows:
+        name = row["filename"]
+        replacement = by_name.get(name)
+        if replacement is None:
+            continue
+        if name in seen:
+            raise ValueError(f"duplicate porter report row for {replacement.test_id}")
+        row.update(status="ported", fn_name=replacement.fn_name, reason="")
+        seen.add(name)
+    missing = sorted(set(by_name) - seen)
+    if missing:
+        raise ValueError(f"missing porter report rows in {path}: {', '.join(missing)}")
+
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=REPORT_COLUMNS, lineterminator="\r\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return original, output.getvalue()
 
 
 def _function_count(rust_src: str, fn_name: str) -> int:
@@ -383,8 +457,20 @@ def prepare_changes(
             )
         if additions:
             updated = _insert_rust_additions(updated, module, additions)
+        if any(replacement.root_aware for replacement in replacements):
+            updated = updated.replace(
+                "use crate::base_doc;", "use crate::{base_doc, root_doc};", 1
+            )
         originals[rust_path] = original
         changes[rust_path] = updated
+
+        report_path = os.path.join(WPT_PORTED_DIR, f"wpt_{module}_report.csv")
+        if os.path.exists(report_path):
+            report_original, report_updated = _promote_report_rows(
+                report_path, replacements
+            )
+            originals[report_path] = report_original
+            changes[report_path] = report_updated
 
     for path in sorted(template_paths):
         changes[path] = json.dumps(template_data[path], indent=2) + "\n"

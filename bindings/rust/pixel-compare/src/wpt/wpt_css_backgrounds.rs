@@ -6,7 +6,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_style::*;
 
-use crate::base_doc;
+use crate::{base_doc, root_doc};
 
 // Source: background-334.html
 fn css_backgrounds_background_334() -> Document {
@@ -52550,6 +52550,917 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc
 }
 
+// Source: css-backgrounds/animations/background-color-animation-in-body-ref.html
+fn css_backgrounds_animations_background_color_animation_in_body_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_color = Color::from_rgba8(100, 100, 0, 255);
+    doc
+}
+
+// Source: css-backgrounds/animations/background-color-animation-non-zero-size-element-change-to-zero-ref.html
+fn css_backgrounds_animations_background_color_animation_non_zero_size_element_change_to_zero_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/animations/background-color-animation-zero-size-element-ref.html
+fn css_backgrounds_animations_background_color_animation_zero_size_element_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/animations/background-color-transparent-animation-in-body-ref.html
+fn css_backgrounds_animations_background_color_transparent_animation_in_body_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-attachment-margin-root-001.html
+fn css_backgrounds_background_attachment_margin_root_001() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(50.0);
+    doc.node_mut(html).style.margin_right = Length::px(50.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(html).style.margin_left = Length::px(50.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-attachment-margin-root-002.html
+fn css_backgrounds_background_attachment_margin_root_002() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(50.0);
+    doc.node_mut(html).style.margin_right = Length::px(50.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(html).style.margin_left = Length::px(50.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-border-area-on-body-not-propagated-to-root.html
+fn css_backgrounds_background_clip_clip_border_area_on_body_not_propagated_to_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(html).style.height = Length::percent(100.0);
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(10.0);
+    doc.node_mut(vp).style.padding_right = Length::px(10.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(10.0);
+    doc.node_mut(vp).style.padding_left = Length::px(10.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    doc.node_mut(vp).style.border_top_width = 20;
+    doc.node_mut(vp).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(vp).style.border_right_width = 20;
+    doc.node_mut(vp).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(vp).style.border_bottom_width = 20;
+    doc.node_mut(vp).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(vp).style.border_left_width = 20;
+    doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(vp).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(vp).style.background_clip = BackgroundClip::BorderArea;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("There should be a 20px green border around the edge of the viewport. This text should be black on a white background.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-border-area-on-body-not-propagated-to-root-ref.html
+fn css_backgrounds_background_clip_clip_border_area_on_body_not_propagated_to_root_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(html).style.height = Length::percent(100.0);
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(10.0);
+    doc.node_mut(vp).style.padding_right = Length::px(10.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(10.0);
+    doc.node_mut(vp).style.padding_left = Length::px(10.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    doc.node_mut(vp).style.border_top_width = 20;
+    doc.node_mut(vp).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(vp).style.border_right_width = 20;
+    doc.node_mut(vp).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(vp).style.border_bottom_width = 20;
+    doc.node_mut(vp).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(vp).style.border_left_width = 20;
+    doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(vp).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("There should be a 20px green border around the edge of the viewport. This text should be black on a white background.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-border-area-on-body-propagated-to-root.html
+fn css_backgrounds_background_clip_clip_border_area_on_body_propagated_to_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(html).style.height = Length::percent(100.0);
+    doc.node_mut(html).style.color = Color::TRANSPARENT;
+    doc.node_mut(html).style.border_top_width = 20;
+    doc.node_mut(html).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.border_right_width = 20;
+    doc.node_mut(html).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.border_bottom_width = 20;
+    doc.node_mut(html).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.border_left_width = 20;
+    doc.node_mut(html).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    doc.node_mut(vp).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(vp).style.background_clip = BackgroundClip::BorderArea;
+    doc.node_mut(vp).style.color = Color::TRANSPARENT;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.color = Color::TRANSPARENT;
+    doc.node_mut(n1).text = Some("The border should not be visible; the page should be entirely green.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-border-area-on-root.html
+fn css_backgrounds_background_clip_clip_border_area_on_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(html).style.height = Length::percent(100.0);
+    doc.node_mut(html).style.color = Color::TRANSPARENT;
+    doc.node_mut(html).style.border_top_width = 20;
+    doc.node_mut(html).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_top_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.border_right_width = 20;
+    doc.node_mut(html).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.border_bottom_width = 20;
+    doc.node_mut(html).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.border_left_width = 20;
+    doc.node_mut(html).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(html).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(html).style.background_clip = BackgroundClip::BorderArea;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.height = Length::percent(100.0);
+    doc.node_mut(vp).style.color = Color::TRANSPARENT;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.color = Color::TRANSPARENT;
+    doc.node_mut(n1).text = Some("The border should not be visible; the page should be entirely green.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-text-on-body-not-propagated-to-root.html
+fn css_backgrounds_background_clip_clip_text_on_body_not_propagated_to_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.color = Color::TRANSPARENT;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(vp).style.background_clip = BackgroundClip::Text;
+    doc.node_mut(vp).style.color = Color::TRANSPARENT;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).text = Some("This text should be green".to_string());
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n2).text = Some("\n".to_string());
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).text = Some("\non a white background.".to_string());
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-text-on-body-not-propagated-to-root-ref.html
+fn css_backgrounds_background_clip_clip_text_on_body_not_propagated_to_root_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.color = Color::from_rgba8(0, 128, 0, 255);
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).text = Some("This text should be green".to_string());
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n2).text = Some("\n".to_string());
+    doc.append_child(vp, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).text = Some("\non a white background.".to_string());
+    doc.append_child(vp, n3);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-text-on-body-propagated-to-root.html
+fn css_backgrounds_background_clip_clip_text_on_body_propagated_to_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.font_size = 80.0;
+    doc.node_mut(html).style.color = Color::TRANSPARENT;
+    doc.node_mut(html).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_clip = BackgroundClip::Text;
+    doc.node_mut(vp).style.color = Color::TRANSPARENT;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.color = Color::TRANSPARENT;
+    doc.node_mut(n1).text = Some("This text should not be visible; the page should be entirely green.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-backgrounds/background-clip/clip-text-on-root.html
+fn css_backgrounds_background_clip_clip_text_on_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.font_size = 80.0;
+    doc.node_mut(html).style.color = Color::TRANSPARENT;
+    doc.node_mut(html).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(html).style.background_clip = BackgroundClip::Text;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.color = Color::TRANSPARENT;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.color = Color::TRANSPARENT;
+    doc.node_mut(n1).text = Some("This text should not be visible; the page should be entirely green.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-backgrounds/background-color-body-propagation-004.html
+fn css_backgrounds_background_color_body_propagation_004() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_color = Color::RED;
+    doc.node_mut(vp).style.display = Display::None;
+    doc
+}
+
+// Source: css-backgrounds/background-color-body-propagation-005.html
+fn css_backgrounds_background_color_body_propagation_005() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.display = Display::None;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_color = Color::RED;
+    doc
+}
+
+// Source: css-backgrounds/background-color-body-propagation-007.html
+fn css_backgrounds_background_color_body_propagation_007() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_color = Color::RED;
+    doc.node_mut(vp).style.display = Display::Contents;
+    doc.node_mut(vp).style.display = Display::None;
+    doc
+}
+
+// Source: css-backgrounds/background-color-root-propagation-001.html
+fn css_backgrounds_background_color_root_propagation_001() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::RED;
+    doc.node_mut(html).style.display = Display::None;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-image-shared-stylesheet-ref.html
+fn css_backgrounds_background_image_shared_stylesheet_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::from_rgba8(0, 255, 0, 255);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-margin-root.html
+fn css_backgrounds_background_margin_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(50.0);
+    doc.node_mut(html).style.margin_right = Length::px(50.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(html).style.margin_left = Length::px(50.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-margin-will-change-root.html
+fn css_backgrounds_background_margin_will_change_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(50.0);
+    doc.node_mut(html).style.margin_right = Length::px(50.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(html).style.margin_left = Length::px(50.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(html).style.establishes_transform_containing_block = true;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-position/background-position-right-in-body.html
+fn css_backgrounds_background_position_background_position_right_in_body() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(8.0);
+    doc.node_mut(html).style.margin_right = Length::px(8.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(8.0);
+    doc.node_mut(html).style.margin_left = Length::px(8.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/background-size-percentage-root.html
+fn css_backgrounds_background_size_percentage_root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.position = Position::Fixed;
+    doc.node_mut(html).style.width = Length::px(100.0);
+    doc.node_mut(html).style.height = Length::px(50.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/box-shadow-body.html
+fn css_backgrounds_box_shadow_body() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(20.0);
+    doc.node_mut(vp).style.margin_right = Length::auto();
+    doc.node_mut(vp).style.margin_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.margin_left = Length::auto();
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.position = Position::Relative;
+    doc.node_mut(vp).style.box_shadow = vec![BoxShadow { offset_x: 0.0, offset_y: 0.0, blur_radius: 0.0, spread_radius: 4.0, color: Color::RED, inset: false }];
+    doc.node_mut(vp).style.height = Length::px(300.0);
+    doc.node_mut(vp).style.width = Length::px(600.0);
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc
+}
+
+// Source: css-backgrounds/document-canvas-remove-body-ref.html
+fn css_backgrounds_document_canvas_remove_body_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/gradient-wrong-interpolation-crash.html
+fn css_backgrounds_gradient_wrong_interpolation_crash() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-backgrounds/justfortest.html
+fn css_backgrounds_justfortest() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
 pub fn css_backgrounds_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         ("wpt/css_backgrounds/background-334", css_backgrounds_background_334 as fn() -> Document),
@@ -53483,6 +54394,114 @@ pub fn css_backgrounds_registry() -> Vec<(&'static str, fn() -> Document)> {
         (
             "wpt/css_backgrounds/ttwf-css3background-border-style-values",
             css_backgrounds_ttwf_css3background_border_style_values as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/animations_background-color-animation-in-body-ref",
+            css_backgrounds_animations_background_color_animation_in_body_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/animations_background-color-animation-non-zero-size-element-change-to-zero-ref",
+            css_backgrounds_animations_background_color_animation_non_zero_size_element_change_to_zero_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/animations_background-color-animation-zero-size-element-ref",
+            css_backgrounds_animations_background_color_animation_zero_size_element_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/animations_background-color-transparent-animation-in-body-ref",
+            css_backgrounds_animations_background_color_transparent_animation_in_body_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-attachment-margin-root-001",
+            css_backgrounds_background_attachment_margin_root_001 as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-attachment-margin-root-002",
+            css_backgrounds_background_attachment_margin_root_002 as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-border-area-on-body-not-propagated-to-root",
+            css_backgrounds_background_clip_clip_border_area_on_body_not_propagated_to_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-border-area-on-body-not-propagated-to-root-ref",
+            css_backgrounds_background_clip_clip_border_area_on_body_not_propagated_to_root_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-border-area-on-body-propagated-to-root",
+            css_backgrounds_background_clip_clip_border_area_on_body_propagated_to_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-border-area-on-root",
+            css_backgrounds_background_clip_clip_border_area_on_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-text-on-body-not-propagated-to-root",
+            css_backgrounds_background_clip_clip_text_on_body_not_propagated_to_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-text-on-body-not-propagated-to-root-ref",
+            css_backgrounds_background_clip_clip_text_on_body_not_propagated_to_root_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-text-on-body-propagated-to-root",
+            css_backgrounds_background_clip_clip_text_on_body_propagated_to_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-clip_clip-text-on-root",
+            css_backgrounds_background_clip_clip_text_on_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-color-body-propagation-004",
+            css_backgrounds_background_color_body_propagation_004 as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-color-body-propagation-005",
+            css_backgrounds_background_color_body_propagation_005 as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-color-body-propagation-007",
+            css_backgrounds_background_color_body_propagation_007 as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-color-root-propagation-001",
+            css_backgrounds_background_color_root_propagation_001 as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-image-shared-stylesheet-ref",
+            css_backgrounds_background_image_shared_stylesheet_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-margin-root",
+            css_backgrounds_background_margin_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-margin-will-change-root",
+            css_backgrounds_background_margin_will_change_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-position_background-position-right-in-body",
+            css_backgrounds_background_position_background_position_right_in_body as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/background-size-percentage-root",
+            css_backgrounds_background_size_percentage_root as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/box-shadow-body",
+            css_backgrounds_box_shadow_body as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/document-canvas-remove-body-ref",
+            css_backgrounds_document_canvas_remove_body_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/gradient-wrong-interpolation-crash",
+            css_backgrounds_gradient_wrong_interpolation_crash as fn() -> Document,
+        ),
+        (
+            "wpt/css_backgrounds/justfortest",
+            css_backgrounds_justfortest as fn() -> Document,
         ),
     ]
 }

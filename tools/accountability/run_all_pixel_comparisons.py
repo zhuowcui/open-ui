@@ -36,6 +36,7 @@ CHROME_DIRS = [
 ]
 
 BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } html { overflow: hidden; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }"
+ROOT_BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; }"
 
 
 def build_html_document(template):
@@ -44,9 +45,11 @@ def build_html_document(template):
     # display:none of the injected <style> element and paint BODY_STYLE itself.
     # Inline !important is runner-owned and keeps the reset node non-rendered
     # while its stylesheet continues to participate normally.
+    root_aware = template.startswith("<!--OPENUI_ROOT_AWARE-->")
+    harness_style = ROOT_BODY_STYLE if root_aware else BODY_STYLE
     return (
         "<!DOCTYPE html><html><head>"
-        f'<style style="display:none!important">{BODY_STYLE}</style>'
+        f'<style style="display:none!important">{harness_style}</style>'
         f"</head><body>{template}</body></html>"
     )
 

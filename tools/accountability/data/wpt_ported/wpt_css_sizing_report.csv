@@ -729,7 +729,7 @@ responsive-iframe_responsive-iframe-value.tentative,not_portable,,uses_javascrip
 responsive-iframe_responsive-iframe.tentative,not_portable,,unsupported element: <iframe>
 responsive-iframe_parsing_frame-sizing-computed.tentative,not_portable,,uses_javascript
 responsive-iframe_parsing_frame-sizing-valid.tentative,not_portable,,uses_javascript
-responsive-iframe_resources_iframe-contents-400x200root,not_portable,,no_layout_content
+responsive-iframe_resources_iframe-contents-400x200root,ported,css_sizing_responsive_iframe_resources_iframe_contents_400x200root,
 responsive-iframe_resources_iframe-contents-dom-content-loaded,not_portable,,uses_javascript
 responsive-iframe_resources_iframe-contents-icb,not_portable,,uses_javascript
 responsive-iframe_resources_iframe-contents-request-resize-error,not_portable,,uses_javascript

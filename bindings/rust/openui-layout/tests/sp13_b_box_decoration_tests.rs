@@ -14,8 +14,7 @@
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::block::block_layout;
-use openui_layout::ConstraintSpace;
-use openui_layout::Fragment;
+use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 use openui_style::{BorderStyle, BoxDecorationBreak, Direction, Display};
 
 fn lu(v: f32) -> LayoutUnit {
@@ -29,6 +28,20 @@ fn space(width: f32, height: f32) -> ConstraintSpace {
 fn layout(doc: &Document, node_id: openui_dom::NodeId) -> Fragment {
     let s = space(400.0, 800.0);
     block_layout(doc, node_id, &s)
+}
+
+fn first_text_geometry(
+    fragment: &Fragment,
+    parent_left: LayoutUnit,
+) -> Option<(&Fragment, LayoutUnit)> {
+    let left = parent_left + fragment.offset.left;
+    if fragment.kind == FragmentKind::Text {
+        return Some((fragment, left));
+    }
+    fragment
+        .children
+        .iter()
+        .find_map(|child| first_text_geometry(child, left))
 }
 
 /// Helper: create a block container with a span child containing text.
@@ -92,8 +105,9 @@ fn single_line_span_gets_full_mbp() {
     assert!(!line.children.is_empty(), "Line should have text children");
 
     // First text fragment should be offset by at least the left padding.
-    let first_text = &line.children[0];
-    let text_left = first_text.offset.left.to_f32();
+    let (first_text, text_left) = first_text_geometry(line, LayoutUnit::zero())
+        .expect("Line should have a descendant text fragment");
+    let text_left = text_left.to_f32();
     assert!(
         text_left >= 10.0,
         "Text should be offset by at least left padding (10px), got {}",
@@ -239,8 +253,8 @@ fn nested_spans_multi_line() {
 
     // First line should have text offset by both outer and inner padding.
     let line1 = &div_frag.children[0];
-    if let Some(first_text) = line1.children.first() {
-        let left = first_text.offset.left.to_f32();
+    if let Some((_first_text, left)) = first_text_geometry(line1, LayoutUnit::zero()) {
+        let left = left.to_f32();
         // Should be at least outer_padding + inner_padding = 5 + 3 = 8
         assert!(
             left >= 8.0,
@@ -453,10 +467,11 @@ fn span_with_padding_and_border_contributes_to_inline_size() {
     let frag = layout(&doc, vp);
     let div_frag = &frag.children[0];
     let line = &div_frag.children[0];
-    let text_frag = &line.children[0];
+    let (_text_frag, left) = first_text_geometry(line, LayoutUnit::zero())
+        .expect("Line should have a descendant text fragment");
 
     // Text should be offset by padding_left + border_left = 10 + 2 = 12.
-    let left = text_frag.offset.left.to_f32();
+    let left = left.to_f32();
     assert!(
         left >= 12.0,
         "Text should be offset by padding+border (>= 12px), got {}",

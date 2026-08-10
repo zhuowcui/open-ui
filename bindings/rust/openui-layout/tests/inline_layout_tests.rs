@@ -133,6 +133,19 @@ fn collect_text_fragments(fragment: &Fragment) -> Vec<&Fragment> {
     result
 }
 
+/// Get text fragment block offsets relative to the root fragment.
+fn collect_text_tops(fragment: &Fragment, parent_top: LayoutUnit) -> Vec<LayoutUnit> {
+    let top = parent_top + fragment.offset.top;
+    let mut result = Vec::new();
+    if fragment.kind == FragmentKind::Text {
+        result.push(top);
+    }
+    for child in &fragment.children {
+        result.extend(collect_text_tops(child, top));
+    }
+    result
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // LINE HEIGHT TESTS (20)
 // ═══════════════════════════════════════════════════════════════════════
@@ -720,10 +733,10 @@ fn vertical_align_length_zero_same_as_baseline() {
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
     let frag_len = inline_layout(&doc, block, &sp);
 
-    let t_bl = collect_text_fragments(&frag_bl);
-    let t_len = collect_text_fragments(&frag_len);
+    let t_bl = collect_text_tops(&frag_bl, LayoutUnit::zero());
+    let t_len = collect_text_tops(&frag_len, LayoutUnit::zero());
     assert!(!t_bl.is_empty() && !t_len.is_empty());
-    assert_eq!(t_bl[0].offset.top, t_len[0].offset.top);
+    assert_eq!(t_bl[0], t_len[0]);
 }
 
 #[test]

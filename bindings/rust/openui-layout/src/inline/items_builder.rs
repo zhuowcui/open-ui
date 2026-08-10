@@ -557,7 +557,11 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.append_text(child_id, text, &style);
                 }
             }
-            ElementTag::Span => {
+            ElementTag::Break => {
+                let style = node.style.clone();
+                self.append_break(child_id, &style);
+            }
+            ElementTag::Span | ElementTag::Style => {
                 let display = node.style.display;
                 let style = node.style.clone();
                 if display == Display::InlineBlock
@@ -595,7 +599,7 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.exit_inline(child_id, &style);
                 }
             }
-            ElementTag::Div => {
+            ElementTag::Div | ElementTag::Html | ElementTag::Body => {
                 let display = node.style.display;
                 if display == Display::Inline {
                     // display:inline on a div creates a normal inline box, not atomic.

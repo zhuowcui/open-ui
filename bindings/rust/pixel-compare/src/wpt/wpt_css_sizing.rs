@@ -6,7 +6,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_style::*;
 
-use crate::base_doc;
+use crate::{base_doc, root_doc};
 
 // Source: abspos-auto-sizing-fit-content-percentage-001.html
 fn css_sizing_abspos_auto_sizing_fit_content_percentage_001() -> Document {
@@ -58830,6 +58830,48 @@ fn css_sizing_fit_content_length_percentage_009() -> Document {
     doc
 }
 
+// Source: css-sizing/responsive-iframe/resources/iframe-contents-400x200root.html
+fn css_sizing_responsive_iframe_resources_iframe_contents_400x200root() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::BorderBox;
+    doc.node_mut(html).style.width = Length::px(400.0);
+    doc.node_mut(html).style.height = Length::px(200.0);
+    doc.node_mut(html).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+    doc.node_mut(html).style.border_top_width = 10;
+    doc.node_mut(html).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(html).style.border_right_width = 10;
+    doc.node_mut(html).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(html).style.border_bottom_width = 10;
+    doc.node_mut(html).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(html).style.border_left_width = 10;
+    doc.node_mut(html).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(html).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255));
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
 pub fn css_sizing_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         ("wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-001", css_sizing_abspos_auto_sizing_fit_content_percentage_001 as fn() -> Document),
@@ -59139,6 +59181,10 @@ pub fn css_sizing_registry() -> Vec<(&'static str, fn() -> Document)> {
         (
             "wpt/css_sizing/fit-content-length-percentage-009",
             css_sizing_fit_content_length_percentage_009 as fn() -> Document,
+        ),
+        (
+            "wpt/css_sizing/responsive-iframe_resources_iframe-contents-400x200root",
+            css_sizing_responsive_iframe_resources_iframe_contents_400x200root as fn() -> Document,
         ),
     ]
 }

@@ -6,11 +6,10 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 ## Current state
 
-SP14 W0–W4 closed the global `needs_text` category. The text manifest contains 445
-tests: 93 exact and 352 with detector-backed non-text owners. The complete 3,517-test
-run has 2,767 exact passes and zero errors, preserves all 2,715 frozen baseline passes,
-and passes the 7/7 audit. The former 4,045-row unported text backlog is split into 111
-runnable W3 ports and 3,934 structured W4 dispositions.
+SP14 W0–W4 closed the global `needs_text` category, and SP15 closed its inline/layout
+and root/body follow-up. The text manifest contains 496 tests: 128 exact and 368 with
+detector-backed non-text owners. The complete 3,566-test run has 2,804 exact passes and
+zero errors, preserves all 2,767 frozen SP15 baseline passes, and passes the 7/7 audit.
 
 Deterministic ports use repo-vendored Ahem plus an explicit DejaVu Sans fallback for
 verified missing glyphs. The no-AA/no-hinting environment is scoped by
@@ -25,17 +24,18 @@ Complete. The 111 deterministic cases were ported transactionally (52 exact, 59 
 functional owners), all 3,934 residuals record their actual porter rejection plus merged
 upstream ownership, and the global text detector was retired after coverage was proven.
 
-### SP15 — inline layout and line breaking
+### SP15 — inline layout, line breaking, and root/body propagation
 
-Address functional residuals exposed by text ports: inline box decoration, clearing
-breaks beside floats, inline-block interaction, wrapping, baseline alignment, and related
-line construction behavior.
+Complete. All 130 original owner rows are frozen in 76 actionable and 54 residual
+ledgers. Decorated inline continuations, semantic clearing breaks, `display:contents`
+inheritance/style handling, and root/body canvas and overflow propagation are implemented.
+The actionable set finishes 34 exact, 42 functionally owned, and zero errors.
 
 ### SP16 — real-font metrics and parity
 
 Move beyond deterministic Ahem geometry to font metrics, `ch`/`ex`, font shorthand,
 `line-height: normal`, hinting, and real-glyph raster parity. Runnable font-metric
-ownership currently covers 225 failures.
+ownership currently covers 226 runnable failures.
 
 ### SP17 — advanced text
 

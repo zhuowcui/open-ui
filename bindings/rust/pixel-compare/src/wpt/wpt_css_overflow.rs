@@ -6,7 +6,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_style::*;
 
-use crate::base_doc;
+use crate::{base_doc, root_doc};
 
 // Source: clip-001-ref.html
 fn css_overflow_clip_001_ref() -> Document {
@@ -10080,6 +10080,300 @@ fn css_overflow_scroll_markers_scroll_target_group_inline_crash() -> Document {
     doc
 }
 
+// Source: css-overflow/overflow-body-propagation-001.html
+fn css_overflow_overflow_body_propagation_001() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(vp).style.margin_top = Length::px(100.0);
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("The viewport should have scrollbars, not the body.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-overflow/overflow-body-propagation-002.html
+fn css_overflow_overflow_body_propagation_002() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.display = Display::None;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc
+}
+
+// Source: css-overflow/overflow-body-propagation-003.html
+fn css_overflow_overflow_body_propagation_003() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.display = Display::Contents;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(vp).style.display = Display::None;
+    doc
+}
+
+// Source: css-overflow/overflow-body-propagation-004.html
+fn css_overflow_overflow_body_propagation_004() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(html).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(vp).style.margin_top = Length::px(100.0);
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("The body should have scrollbars, not the viewport.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-overflow/overflow-body-propagation-005.html
+fn css_overflow_overflow_body_propagation_005() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(vp).style.margin_top = Length::px(100.0);
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("The viewport should have scrollbars, not the body.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-overflow/overflow-body-propagation-006.html
+fn css_overflow_overflow_body_propagation_006() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc.node_mut(vp).style.margin_top = Length::px(100.0);
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("The viewport should have scrollbars, not the body.".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
+// Source: css-overflow/overflow-body-propagation-013.html
+fn css_overflow_overflow_body_propagation_013() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.display = Display::None;
+    doc.node_mut(html).style.scrollbar_thumb_color = Some(Color::RED);
+    doc.node_mut(html).style.scrollbar_track_color = Some(Color::RED);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.overflow_x = Overflow::Scroll;
+    doc.node_mut(vp).style.overflow_y = Overflow::Scroll;
+    doc
+}
+
+// Source: css-overflow/scrollbar-gutter-with-background-gradient.html
+fn css_overflow_scrollbar_gutter_with_background_gradient() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
+// Source: css-overflow/scrollbar-gutter-with-background-gradient-ref.html
+fn css_overflow_scrollbar_gutter_with_background_gradient_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.position = Position::Fixed;
+    doc.node_mut(html).style.top = Length::px(0.0);
+    doc.node_mut(html).style.right = Length::px(0.0);
+    doc.node_mut(html).style.bottom = Length::px(0.0);
+    doc.node_mut(html).style.left = Length::px(0.0);
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc
+}
+
 pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         (
@@ -10569,6 +10863,42 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         (
             "wpt/css_overflow/scroll-markers_scroll-target-group-inline-crash",
             css_overflow_scroll_markers_scroll_target_group_inline_crash as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-001",
+            css_overflow_overflow_body_propagation_001 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-002",
+            css_overflow_overflow_body_propagation_002 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-003",
+            css_overflow_overflow_body_propagation_003 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-004",
+            css_overflow_overflow_body_propagation_004 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-005",
+            css_overflow_overflow_body_propagation_005 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-006",
+            css_overflow_overflow_body_propagation_006 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/overflow-body-propagation-013",
+            css_overflow_overflow_body_propagation_013 as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/scrollbar-gutter-with-background-gradient",
+            css_overflow_scrollbar_gutter_with_background_gradient as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/scrollbar-gutter-with-background-gradient-ref",
+            css_overflow_scrollbar_gutter_with_background_gradient_ref as fn() -> Document,
         ),
     ]
 }

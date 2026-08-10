@@ -180,6 +180,13 @@ pub struct Fragment {
     /// Blink: `PhysicalBoxFragment::IsLastForNode()`.
     pub is_last_for_node: bool,
 
+    /// Whether this is a per-line fragment of a non-atomic inline box.
+    ///
+    /// Inline continuations slice their inline-start/inline-end decoration;
+    /// block fragmentation slices block-start/block-end decoration.  Keeping
+    /// the axes distinct avoids applying multicol border rules to spans.
+    pub is_inline_box_fragment: bool,
+
     /// Break token for fragmentation — records where layout was interrupted
     /// so the next fragmentainer can resume from this point.
     ///
@@ -242,6 +249,7 @@ impl Fragment {
             last_baseline: None,
             is_first_for_node: true,
             is_last_for_node: true,
+            is_inline_box_fragment: false,
             break_token: None,
             float_resolved_bfc: false,
             float_exclusions: Vec::new(),
@@ -284,6 +292,7 @@ impl Fragment {
             last_baseline: None,
             is_first_for_node: true,
             is_last_for_node: true,
+            is_inline_box_fragment: false,
             break_token: None,
             float_resolved_bfc: false,
             float_exclusions: Vec::new(),

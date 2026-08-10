@@ -3664,6 +3664,7 @@ fn css_display_display_contents_list_001() -> Document {
                     doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
                     doc.node_mut(n9).style.padding_left = Length::px(0.0);
                     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+                    doc.node_mut(n9).style.background_color = Color::TRANSPARENT;
                     doc.node_mut(n9).style.color = Color::from_rgba8(255, 192, 203, 255);
                     doc.node_mut(n9).style.font_size = 16.0;
                     doc.append_child(n7, n9);
@@ -3732,6 +3733,7 @@ fn css_display_display_contents_list_001() -> Document {
                         doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
                         doc.node_mut(n16).style.padding_left = Length::px(0.0);
                         doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+                        doc.node_mut(n16).style.background_color = Color::BLUE;
                         doc.node_mut(n16).style.color = Color::from_rgba8(255, 192, 203, 255);
                         doc.node_mut(n16).style.font_size = 16.0;
                         doc.append_child(n13, n16);
@@ -3878,6 +3880,7 @@ fn css_display_display_contents_list_001() -> Document {
                     doc.node_mut(n30).style.padding_bottom = Length::px(0.0);
                     doc.node_mut(n30).style.padding_left = Length::px(0.0);
                     doc.node_mut(n30).style.box_sizing = BoxSizing::ContentBox;
+                    doc.node_mut(n30).style.background_color = Color::BLUE;
                     doc.node_mut(n30).style.color = Color::from_rgba8(255, 192, 203, 255);
                     doc.node_mut(n30).style.font_size = 16.0;
                     doc.append_child(n28, n30);
@@ -3931,6 +3934,7 @@ fn css_display_display_contents_list_001() -> Document {
                 doc.node_mut(n36).style.padding_bottom = Length::px(0.0);
                 doc.node_mut(n36).style.padding_left = Length::px(0.0);
                 doc.node_mut(n36).style.box_sizing = BoxSizing::ContentBox;
+                doc.node_mut(n36).style.background_color = Color::BLUE;
                 doc.node_mut(n36).style.color = Color::from_rgba8(255, 192, 203, 255);
                 doc.node_mut(n36).style.font_size = 16.0;
                 doc.append_child(n3, n36);
@@ -5407,6 +5411,8 @@ fn css_display_display_contents_shadow_dom_1_ref() -> Document {
 // Source: display-contents-sharing-001-ref.html
 fn css_display_display_contents_sharing_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5417,18 +5423,17 @@ fn css_display_display_contents_sharing_001_ref() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.display = Display::Contents;
-    let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.margin_top = Length::px(0.0);
-    doc.node_mut(n1).style.margin_right = Length::px(0.0);
-    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n1).style.margin_left = Length::px(0.0);
-    doc.node_mut(n1).style.padding_top = Length::px(0.0);
-    doc.node_mut(n1).style.padding_right = Length::px(0.0);
-    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n1).style.padding_left = Length::px(0.0);
-    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.display = Display::Contents;
-    doc.append_child(vp, n1);
+    doc.node_mut(vp).style.display = Display::None;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("\n  * { display: contents }\n".to_string());
+    doc.append_child(doc.root(), n1);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).text = Some("\n  PASS\n".to_string());
+    doc.append_child(doc.root(), n2);
     doc
 }
 
@@ -5447,17 +5452,17 @@ fn css_display_display_contents_sharing_001() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.display = Display::Contents;
+    doc.node_mut(vp).style.display = Display::None;
     let n1 = doc.create_node(ElementTag::Text);
     doc.node_mut(n1).style.font_size = 16.0;
     doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-    doc.node_mut(n1).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n1).text = Some("\n".to_string());
-    doc.append_child(vp, n1);
+    doc.node_mut(n1).text = Some("\n  * { display: contents }\n".to_string());
+    doc.append_child(doc.root(), n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 16.0;
     doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
     doc.node_mut(n2).text = Some("\n  PASS\n".to_string());
-    doc.append_child(vp, n2);
+    doc.append_child(doc.root(), n2);
     doc
 }
 

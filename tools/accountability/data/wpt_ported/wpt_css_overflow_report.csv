@@ -180,15 +180,15 @@ overflow-auto-scrollbar-gutter-intrinsic-002,not_portable,,unsupported property:
 overflow-auto-scrollbar-gutter-intrinsic-003-ref,not_portable,,unsupported property: writing-mode
 overflow-auto-scrollbar-gutter-intrinsic-003,not_portable,,unsupported property: writing-mode
 overflow-auto-scrolling-with-margin-and-transform,not_portable,,uses_javascript
-overflow-body-propagation-001,not_portable,,no_layout_content
-overflow-body-propagation-002,not_portable,,no_layout_content
-overflow-body-propagation-003,not_portable,,no_layout_content
-overflow-body-propagation-004,not_portable,,no_layout_content
-overflow-body-propagation-005,not_portable,,no_layout_content
-overflow-body-propagation-006,not_portable,,no_layout_content
+overflow-body-propagation-001,ported,css_overflow_overflow_body_propagation_001,
+overflow-body-propagation-002,ported,css_overflow_overflow_body_propagation_002,
+overflow-body-propagation-003,ported,css_overflow_overflow_body_propagation_003,
+overflow-body-propagation-004,ported,css_overflow_overflow_body_propagation_004,
+overflow-body-propagation-005,ported,css_overflow_overflow_body_propagation_005,
+overflow-body-propagation-006,ported,css_overflow_overflow_body_propagation_006,
 overflow-body-propagation-010,not_portable,,style_block_unsupported property: contain
 overflow-body-propagation-011,not_portable,,style_block_unsupported property: contain
-overflow-body-propagation-013,not_portable,,no_layout_content
+overflow-body-propagation-013,ported,css_overflow_overflow_body_propagation_013,
 overflow-body-propagation-014,not_portable,,uses_javascript
 overflow-body-propagation-015,not_portable,,uses_javascript
 overflow-body-propagation-016,not_portable,,uses_javascript
@@ -337,8 +337,8 @@ scrollbar-gutter-vertical-lr-002,not_portable,,style_block_unsupported property:
 scrollbar-gutter-vertical-rl-001,not_portable,,uses_javascript
 scrollbar-gutter-vertical-rl-002-ref,not_portable,,uses_javascript
 scrollbar-gutter-vertical-rl-002,not_portable,,style_block_unsupported property: writing-mode
-scrollbar-gutter-with-background-gradient-ref,not_portable,,no_layout_content
-scrollbar-gutter-with-background-gradient,not_portable,,no_layout_content
+scrollbar-gutter-with-background-gradient-ref,ported,css_overflow_scrollbar_gutter_with_background_gradient_ref,
+scrollbar-gutter-with-background-gradient,ported,css_overflow_scrollbar_gutter_with_background_gradient,
 scrollbar-large-scale-in-iframe,not_portable,,unsupported element: <iframe>
 scrollbars-chrome-bug-001-ref,not_portable,,style_block_unsupported property: transform
 scrollbars-chrome-bug-001,not_portable,,uses_javascript

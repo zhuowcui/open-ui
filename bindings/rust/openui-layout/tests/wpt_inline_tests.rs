@@ -143,6 +143,18 @@ fn collect_text_fragments(fragment: &Fragment) -> Vec<&Fragment> {
     result
 }
 
+fn collect_text_tops(fragment: &Fragment, parent_top: LayoutUnit) -> Vec<LayoutUnit> {
+    let top = parent_top + fragment.offset.top;
+    let mut result = Vec::new();
+    if fragment.kind == FragmentKind::Text {
+        result.push(top);
+    }
+    for child in &fragment.children {
+        result.extend(collect_text_tops(child, top));
+    }
+    result
+}
+
 fn first_block_child(fragment: &Fragment) -> &Fragment {
     fragment
         .children
@@ -384,13 +396,10 @@ mod vertical_align {
         });
         let frag_zero = inline_layout(&doc, block, &inline_space(800));
 
-        let t_bl = collect_text_fragments(&frag_bl);
-        let t_zero = collect_text_fragments(&frag_zero);
+        let t_bl = collect_text_tops(&frag_bl, LayoutUnit::zero());
+        let t_zero = collect_text_tops(&frag_zero, LayoutUnit::zero());
         assert!(!t_bl.is_empty() && !t_zero.is_empty());
-        assert_eq!(
-            t_bl[0].offset.top, t_zero[0].offset.top,
-            "Length(0) should equal baseline"
-        );
+        assert_eq!(t_bl[0], t_zero[0], "Length(0) should equal baseline");
     }
 
     /// vertical-align: Percentage(50.0) produces a valid layout distinct from baseline.

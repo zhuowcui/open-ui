@@ -54,6 +54,23 @@ from shared_detectors import (  # noqa: E402
     dependency_for_portability_reason,
 )
 
+# SP14's frozen W4 ledger is historical evidence. Keep the retired SP15 owner
+# names locally so reproducing that immutable milestone does not require those
+# categories to remain active in the global detector registry.
+LEGACY_CATEGORY_FOR_DEP = {
+    "inline_box_decoration_break": "needs_inline_box_decoration_break",
+    "clearing_break_after_floats": "needs_clearing_break_after_floats",
+    "display_contents_style_element": "needs_display_contents_style_element",
+    "display_contents_list_layout": "needs_display_contents_list_layout",
+    "root_body_layout": "needs_root_body_layout",
+}
+
+
+def category_for_dependency(dependency: str) -> str:
+    if dependency in CATEGORY_FOR_DEP:
+        return CATEGORY_FOR_DEP[dependency]
+    return LEGACY_CATEGORY_FOR_DEP[dependency]
+
 
 def _categories(value: str) -> set[str]:
     return {part.strip() for part in value.split(",") if part.strip()}
@@ -111,9 +128,9 @@ def build_ledgers(
             if rejection_dependency not in dependencies:
                 dependencies.append(rejection_dependency)
             owner_categories = sorted(
-                {CATEGORY_FOR_DEP[dependency] for dependency in dependencies}
+                {category_for_dependency(dependency) for dependency in dependencies}
             )
-            rejection_owner = CATEGORY_FOR_DEP[rejection_dependency]
+            rejection_owner = category_for_dependency(rejection_dependency)
             functional = set(owner_categories) - METADATA_CATEGORIES
             if (
                 not reason

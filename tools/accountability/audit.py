@@ -44,6 +44,26 @@ SP14_EXPECTED_INVENTORY = 7673
 SP14_EXPECTED_BASELINE = 2715
 SP14_EXPECTED_W3 = 111
 SP14_EXPECTED_W4 = 3934
+SP15_BASELINE_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp15_baseline_exact.json"
+)
+SP15_TARGETS_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp15_actionable_targets.json"
+)
+SP15_RESIDUALS_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp15_residual_dispositions.json"
+)
+SP15_RETIRED_CATEGORIES = {
+    "needs_inline_box_decoration_break",
+    "needs_clearing_break_after_floats",
+    "needs_display_contents_style_element",
+    "needs_display_contents_list_layout",
+    "needs_root_body_layout",
+}
+SP15_EXPECTED_BASELINE = 2767
+SP15_EXPECTED_TARGETS = 76
+SP15_EXPECTED_RESIDUALS = 54
+SP15_EXPECTED_RUNNABLE = 3566
 
 issues = []
 warnings = []
@@ -98,6 +118,8 @@ def sp14_text_closure_errors(
     w4,
     *,
     enforce_frozen_counts=True,
+    superseded_actionable=(),
+    superseded_residuals=None,
 ):
     """Validate the complete W3/W4 closure against authoritative artifacts."""
     errors = []
@@ -150,11 +172,41 @@ def sp14_text_closure_errors(
         if not result or result.get("status") == "error":
             errors.append(f"W3 target is not runnable without error: {test_id}")
 
+    superseded_actionable = set(superseded_actionable)
+    superseded_residuals = superseded_residuals or {}
     for item in w4:
         if not isinstance(item, dict):
             continue
         test_id = item.get("test_id", "")
         row = mapping_by_id.get(test_id)
+        if test_id in superseded_actionable:
+            result = summary_by_id.get(test_id)
+            if not row or row.get("ported") != "yes" or row.get("our_test_id") != test_id:
+                errors.append(f"SP15-superseded W4 target is not ported: {test_id}")
+            if test_id not in templates or test_id not in text_ported_tests:
+                errors.append(f"SP15-superseded W4 target is not manifested: {test_id}")
+            if not result or result.get("status") == "error":
+                errors.append(f"SP15-superseded W4 target is not runnable: {test_id}")
+            continue
+        if test_id in superseded_residuals:
+            disposition = superseded_residuals[test_id]
+            if not row or row.get("ported") != "no":
+                errors.append(f"SP15-superseded W4 residual is not unported: {test_id}")
+                continue
+            mapped_owners = {
+                part.strip()
+                for part in row.get("failure_category", "").split(",")
+                if part.strip()
+            }
+            if not set(disposition.get("owner_categories", [])) <= mapped_owners:
+                errors.append(f"SP15 residual mapping ownership drift: {test_id}")
+            if row.get("chromium_test_path") != disposition.get("chromium_test_path"):
+                errors.append(f"SP15 residual Chromium path drift: {test_id}")
+            if row.get("notes") != f"Porter deferred: {disposition.get('rejection_reason', '')}":
+                errors.append(f"SP15 residual rejection reason drift: {test_id}")
+            if test_id in templates or test_id in summary_by_id or test_id in text_ported_tests:
+                errors.append(f"SP15 residual unexpectedly became runnable: {test_id}")
+            continue
         owners = item.get("owner_categories")
         rejection_owner = item.get("rejection_owner", "")
         reason = item.get("rejection_reason", "")
@@ -184,6 +236,106 @@ def sp14_text_closure_errors(
             errors.append(f"W4 rejection reason drift: {test_id}")
         if test_id in templates or test_id in summary_by_id or test_id in text_ported_tests:
             errors.append(f"W4 target unexpectedly became runnable: {test_id}")
+    return errors
+
+
+def sp15_closure_errors(
+    rows, summary_by_id, templates, text_ported_tests, baseline, targets, residuals
+):
+    """Validate the frozen SP15 cover and its closed runnable snapshot."""
+    errors = []
+    residual_ids = [item.get("test_id", "") for item in residuals if isinstance(item, dict)]
+    if baseline != sorted(set(baseline)) or len(baseline) != SP15_EXPECTED_BASELINE:
+        errors.append("SP15 baseline ledger is not the frozen sorted 2,767-ID set")
+    if targets != sorted(set(targets)) or len(targets) != SP15_EXPECTED_TARGETS:
+        errors.append("SP15 actionable ledger is not the frozen sorted 76-ID set")
+    if residual_ids != sorted(set(residual_ids)) or len(residuals) != SP15_EXPECTED_RESIDUALS:
+        errors.append("SP15 residual ledger is malformed or not sorted and unique")
+    if set(targets) & set(residual_ids) or len(set(targets) | set(residual_ids)) != 130:
+        errors.append("SP15 actionable/residual ledgers are not a disjoint 130-ID cover")
+
+    mapping_by_id = {canonical_mapping_id(row): row for row in rows}
+    for test_id in baseline:
+        result = summary_by_id.get(test_id)
+        if not result or result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            errors.append(f"SP15 baseline exact pass regressed: {test_id}")
+    for test_id in targets:
+        row = mapping_by_id.get(test_id)
+        result = summary_by_id.get(test_id)
+        if not row or row.get("ported") != "yes" or row.get("our_test_id") != test_id:
+            errors.append(f"SP15 actionable target is not ported: {test_id}")
+        if test_id not in templates or test_id not in text_ported_tests:
+            errors.append(f"SP15 actionable target is not fully manifested: {test_id}")
+        if not result or result.get("status") == "error":
+            errors.append(f"SP15 actionable target is not runnable without error: {test_id}")
+
+    for item in residuals:
+        if not isinstance(item, dict):
+            continue
+        test_id = item.get("test_id", "")
+        owners = item.get("owner_categories", [])
+        row = mapping_by_id.get(test_id)
+        if (
+            set(item) != {
+                "test_id", "chromium_test_path", "rejection_reason", "owner_categories"
+            }
+            or not item.get("chromium_test_path")
+            or not item.get("rejection_reason")
+            or owners != sorted(set(owners))
+            or set(owners) & SP15_RETIRED_CATEGORIES
+            or not (set(owners) - TEXT_PORT_METADATA_CATEGORIES)
+        ):
+            errors.append(f"SP15 residual disposition is invalid: {test_id}")
+            continue
+        if not row or row.get("ported") != "no":
+            errors.append(f"SP15 residual is not unported: {test_id}")
+            continue
+        mapped = {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }
+        if not set(owners) <= mapped:
+            errors.append(f"SP15 residual ownership drift: {test_id}")
+        if row.get("chromium_test_path") != item.get("chromium_test_path"):
+            errors.append(f"SP15 residual Chromium path drift: {test_id}")
+        if row.get("notes") != f"Porter deferred: {item.get('rejection_reason', '')}":
+            errors.append(f"SP15 residual rejection reason drift: {test_id}")
+
+    stale = []
+    fallback_owned = []
+    metadata_only_failures = []
+    for row in rows:
+        test_id = canonical_mapping_id(row)
+        categories = {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }
+        if categories & SP15_RETIRED_CATEGORIES:
+            stale.append(test_id)
+        if categories & {"sp12_layout_bug", "not_ported"}:
+            fallback_owned.append(test_id)
+        if row.get("pixel_result") == "fail" and not (
+            categories - TEXT_PORT_METADATA_CATEGORIES
+        ):
+            metadata_only_failures.append(test_id)
+    if stale:
+        errors.append(f"mapping retains retired SP15 ownership: {stale[0]}")
+    if fallback_owned:
+        errors.append(f"mapping retains fallback ownership: {fallback_owned[0]}")
+    if metadata_only_failures:
+        errors.append(
+            "runnable failures lack functional non-metadata ownership: "
+            + metadata_only_failures[0]
+        )
+    if len(rows) != SP14_EXPECTED_INVENTORY:
+        errors.append(f"SP15 inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
+    if len(templates) != SP15_EXPECTED_RUNNABLE or len(summary_by_id) != SP15_EXPECTED_RUNNABLE:
+        errors.append(
+            f"SP15 runnable count templates={len(templates)}, summary={len(summary_by_id)} "
+            f"!= {SP15_EXPECTED_RUNNABLE}"
+        )
     return errors
 
 
@@ -473,7 +625,14 @@ def check_mapping_coverage():
         os.path.join(RESULTS_DIR, "summary.json"),
         text_manifest_path,
     )
-    missing_closure_paths = [path for path in closure_paths if not os.path.isfile(path)]
+    sp15_paths = (
+        SP15_BASELINE_PATH,
+        SP15_TARGETS_PATH,
+        SP15_RESIDUALS_PATH,
+    )
+    missing_closure_paths = [
+        path for path in closure_paths + sp15_paths if not os.path.isfile(path)
+    ]
     if missing_closure_paths:
         issue(
             "SP14 W3/W4 closure artifacts missing: "
@@ -492,14 +651,30 @@ def check_mapping_coverage():
             closure_summary = json.load(f)
         with open(text_manifest_path, encoding="utf-8") as f:
             closure_manifest = set(json.load(f))
+        with open(SP15_BASELINE_PATH, encoding="utf-8") as f:
+            sp15_baseline = json.load(f)
+        with open(SP15_TARGETS_PATH, encoding="utf-8") as f:
+            sp15_targets = json.load(f)
+        with open(SP15_RESIDUALS_PATH, encoding="utf-8") as f:
+            sp15_residuals = json.load(f)
+        sp15_residuals_by_id = {
+            item.get("test_id", ""): item
+            for item in sp15_residuals
+            if isinstance(item, dict)
+        }
+        closure_summary_by_id = {
+            test["id"]: test for test in closure_summary["tests"]
+        }
         closure_errors = sp14_text_closure_errors(
             rows,
-            {test["id"]: test for test in closure_summary["tests"]},
+            closure_summary_by_id,
             closure_templates,
             closure_manifest,
             baseline,
             w3,
             w4,
+            superseded_actionable=sp15_targets,
+            superseded_residuals=sp15_residuals_by_id,
         )
         if closure_errors:
             issue(f"SP14 W3/W4 closure has {len(closure_errors)} invariant violations")
@@ -509,6 +684,24 @@ def check_mapping_coverage():
             ok(
                 f"SP14 closure: {len(baseline)} baseline exact, "
                 f"{len(w3)} W3 runnable, {len(w4)} W4 reason-owned"
+            )
+        sp15_errors = sp15_closure_errors(
+            rows,
+            closure_summary_by_id,
+            closure_templates,
+            closure_manifest,
+            sp15_baseline,
+            sp15_targets,
+            sp15_residuals,
+        )
+        if sp15_errors:
+            issue(f"SP15 closure has {len(sp15_errors)} invariant violations")
+            for message in sp15_errors[:3]:
+                print(f"         {message}")
+        else:
+            ok(
+                f"SP15 closure: {len(sp15_baseline)} baseline exact, "
+                f"{len(sp15_targets)} actionable, {len(sp15_residuals)} residual"
             )
 
     # Accounting identity: ported + not_ported = total

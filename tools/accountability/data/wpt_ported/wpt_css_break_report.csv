@@ -663,7 +663,7 @@ table_repeated-section_fixedpos-in-footer-forced-break-print-ref,ported,css_brea
 table_repeated-section_text-in-nested-multicol-ref,ported,css_break_table_repeated_section_text_in_nested_multicol_ref,
 table_repeated-section_variable-fragmentainer-size-001-ref,ported,css_break_table_repeated_section_variable_fragmentainer_size_001_ref,
 table_repeated-section_variable-fragmentainer-size-002-ref,ported,css_break_table_repeated_section_variable_fragmentainer_size_002_ref,
-abspos-in-clipped-overflow-print-ref,not_portable,,no_layout_content
+abspos-in-clipped-overflow-print-ref,ported,css_break_abspos_in_clipped_overflow_print_ref,
 background-attachment-fixed,not_portable,,uses_javascript
 background-image-000-ref,not_portable,,style_block_unsupported property: writing-mode
 background-image-000,not_portable,,style_block_unsupported property: writing-mode
@@ -778,7 +778,7 @@ hit-test-transformed,not_portable,,uses_javascript
 iframe-in-repeated-table-header-crash,not_portable,,unsupported element: <table>
 increase-fragmentainer-size-tall-border,not_portable,,uses_javascript
 inheritance,not_portable,,uses_javascript
-ink-overflow-001-print,not_portable,,no_layout_content
+ink-overflow-001-print,ported,css_break_ink_overflow_001_print,
 inline-with-float-003,not_portable,,uses_javascript
 line-and-fragmentainer-break-before-float-crash,not_portable,,unsupported property: contain
 monolithic-content-with-forced-break-001,not_portable,,unsupported property: contain
@@ -866,7 +866,7 @@ parallel-flow-trailing-margin-001,not_portable,,unsupported property: contain
 parallel-flow-trailing-margin-002,not_portable,,unsupported property: contain
 relpos-inline-hit-testing,not_portable,,uses_javascript
 remove-inline-child,not_portable,,uses_javascript
-root-margin-001-print,not_portable,,no_layout_content
+root-margin-001-print,ported,css_break_root_margin_001_print,
 rounded-clipped-border-ref,not_portable,,unsupported property: writing-mode
 rounded-clipped-border,not_portable,,unsupported property: writing-mode
 soft-break-before-margin-001,not_portable,,unsupported display: grid

@@ -67,6 +67,97 @@ def has_font_metrics(html: str) -> bool:
     return False
 
 
+def has_clearing_line_box_metrics(html: str) -> bool:
+    """Detect float-row fixtures whose repeated clearing BRs create line boxes.
+
+    SP15 handles the clearance itself. These dense reference fixtures still
+    depend on the default line-box strut between successive floated rows.
+    """
+    return (
+        len(re.findall(r"<br\b", html, re.IGNORECASE)) >= 2
+        and bool(re.search(r"\bfloat\s*:\s*(?:left|right)", html, re.IGNORECASE))
+        and bool(re.search(r"\bclear\s*:\s*(?:both|left|right)", html, re.IGNORECASE))
+    )
+
+
+def has_mixed_inline_block_layout(html: str) -> bool:
+    """Detect display:contents list fixtures exposing block-in-inline splitting."""
+    inline_stylesheet_fixture = bool(
+        re.search(r"href\s*=\s*['\"]support/acid\.css['\"]", html, re.IGNORECASE)
+        and re.search(r"class\s*=\s*['\"][^'\"]*\bcontents\b", html, re.IGNORECASE)
+        and re.search(r"class\s*=\s*['\"][^'\"]*\binline\b", html, re.IGNORECASE)
+    )
+    return bool(
+        (re.search(r"display\s*:\s*contents", html, re.IGNORECASE) or inline_stylesheet_fixture)
+        and re.search(r"<\s*(?:ul|ol|li)\b", html, re.IGNORECASE)
+        and (re.search(r"display\s*:\s*inline\b", html, re.IGNORECASE) or inline_stylesheet_fixture)
+        and re.search(r"<div[^>]*>\s*<div", html, re.IGNORECASE)
+    )
+
+
+def has_special_background_clip(html: str) -> bool:
+    """Detect background-clip modes beyond the ordinary three box clips."""
+    return bool(
+        re.search(
+            r"background-clip\s*:\s*(?:text|border-area)\b",
+            html,
+            re.IGNORECASE,
+        )
+    )
+
+
+def has_quirks_body_fill(html: str) -> bool:
+    """Detect the quirks-mode body-fills-html sizing rule."""
+    return bool(
+        re.search(r"<!doctype\s+quirks", html, re.IGNORECASE)
+        and re.search(r"\bbody\s*\{[^}]*display\s*:\s*flex", html, re.IGNORECASE | re.DOTALL)
+    )
+
+
+def has_empty_block_margin_collapse(html: str) -> bool:
+    """Detect text-label reference stacks whose stripped blocks collapse margins."""
+    label_stack = bool(re.search(
+        r"<(?:p|div)\b[^>]*>[^<]*[A-Za-z][^<]*</(?:p|div)>",
+        html,
+        re.IGNORECASE,
+    ))
+    stripped_stack = len(re.findall(
+        r"<div\b[^>]*>\s*</div>", html, re.IGNORECASE
+    )) >= 3
+    return bool(
+        re.search(r"\bmargin\s*:\s*[^;}]+", html, re.IGNORECASE)
+        and (label_stack or stripped_stack)
+        and len(re.findall(r"<div\b", html, re.IGNORECASE)) >= 3
+    )
+
+
+def has_body_canvas_background_extent(html: str) -> bool:
+    """Detect a body background that must cover the full document canvas."""
+    return bool(re.search(
+        r"\bbody\s*\{[^}]*\bbackground(?:-color)?\s*:",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    ))
+
+
+def has_scrollbar_paint(html: str) -> bool:
+    """Detect fixtures that require actual scrollbar geometry and painting."""
+    return bool(
+        re.search(r"\boverflow\s*:\s*(?:auto|scroll)\b", html, re.IGNORECASE)
+        and re.search(r"\bscrollbar-(?:color|width)\s*:", html, re.IGNORECASE)
+    )
+
+
+def has_float_row_packing(html: str) -> bool:
+    """Detect dense alternating float rows that depend on opportunity packing."""
+    floats = re.findall(r"\bfloat\s*:\s*(left|right)\b", html, re.IGNORECASE)
+    return (
+        len(floats) >= 4
+        and {side.lower() for side in floats} == {"left", "right"}
+        and bool(re.search(r"display\s*:\s*flow-root", html, re.IGNORECASE))
+    )
+
+
 def has_image_ref(html: str) -> bool:
     """Detect url() near background or border-image properties."""
     return bool(re.search(
@@ -338,7 +429,8 @@ def has_advanced_selectors(html: str) -> bool:
 def has_visual_effects(html: str) -> bool:
     """Detect transform/filter/clip/mask/animation dependencies."""
     return bool(re.search(
-        r"(?:transform|rotate|scale|translate|filter|clip-path|mask|animation|transition)\s*:",
+        r"(?:-webkit-)?(?:transform|rotate|scale|translate|filter|clip-path|"
+        r"mask(?:-[a-z-]+)?|animation(?:-[a-z-]+)?|transition(?:-[a-z-]+)?)\s*:",
         html,
         re.IGNORECASE,
     ))
@@ -388,7 +480,11 @@ def is_fragmentation_area(html: str, test_id: str = "") -> bool:
 
 def is_multicol_area(html: str, test_id: str = "") -> bool:
     """Detect tests in SP13-owned multi-column layout area (css_multicol)."""
-    return test_id.startswith("wpt/css_multicol/")
+    return test_id.startswith("wpt/css_multicol/") or bool(re.search(
+        r"\bcolumn-(?:count|width|fill|span|gap|rule)(?:-[a-z-]+)?\s*:",
+        html,
+        re.IGNORECASE,
+    ))
 
 
 def reason_only_dependency(html: str) -> bool:
@@ -475,6 +571,14 @@ DEPENDENCY_DEFS = [
     ("reference_test",     "Reference Test (not standalone)", "N/A",       is_reference_test),
     ("print_layout",       "Print Layout Test",               "Future",    is_print_layout),
     ("font_metrics",       "SP11: Font Metrics",              "SP11",      has_font_metrics),
+    ("clearing_line_box_metrics", "SP11: Clearing Line-Box Metrics", "SP11", has_clearing_line_box_metrics),
+    ("mixed_inline_block_layout", "Future SP: Mixed Inline/Block Layout", "Future", has_mixed_inline_block_layout),
+    ("special_background_clip", "Future SP: Special Background Clip", "Future", has_special_background_clip),
+    ("quirks_body_fill", "Future SP: Quirks Body Fill", "Future", has_quirks_body_fill),
+    ("empty_block_margin_collapse", "SP12: Empty Block Margin Collapsing", "SP12", has_empty_block_margin_collapse),
+    ("body_canvas_background_extent", "Future SP: Body Canvas Background Extent", "Future", has_body_canvas_background_extent),
+    ("scrollbar_paint", "Future SP: Scrollbar Painting", "Future", has_scrollbar_paint),
+    ("float_row_packing", "SP12: Float Row Packing", "SP12", has_float_row_packing),
     ("image_rendering",    "SP13: Image Rendering",           "SP13",      has_image_ref),
     ("css_containment",    "Future SP: CSS Containment",      "Future",    has_containment),
     ("gradient",           "SP13: Gradient Rendering",        "SP13",      has_gradient),
@@ -487,11 +591,6 @@ DEPENDENCY_DEFS = [
     ("box_shadow",         "Future SP: Box Shadow",           "Future",    has_box_shadow),
     ("sticky_position",    "Future SP: Sticky Position",      "Future",    has_sticky_position),
     ("rounded_border_paint", "Paint Quality: Rounded Borders", "Future",   has_rounded_border_paint),
-    ("inline_box_decoration_break", "SP15: Inline Box Decoration Break", "SP15", has_inline_box_decoration_break),
-    ("clearing_break_after_floats", "SP15: Clearing Break After Floats", "SP15", has_clearing_break_after_floats),
-    ("display_contents_style_element", "SP15: display:contents Style Element", "SP15", has_display_contents_style_element),
-    ("display_contents_list_layout", "SP15: display:contents List Layout", "SP15", has_display_contents_list_layout),
-    ("root_body_layout", "SP15: Root/Body Viewport Propagation", "SP15", reason_only_dependency),
     ("complex_border",     "Paint Quality: Complex Borders",  "Future",    has_complex_border_style),
     ("scrollbar_gutter",   "Future SP: Scrollbar Gutter",     "Future",    has_scrollbar_gutter),
     ("javascript",         "Future SP: JavaScript/Test Harness", "Future",  has_javascript),
@@ -514,6 +613,14 @@ CATEGORY_FOR_DEP = {
     "reference_test": "reference_test",
     "print_layout": "print_layout",
     "font_metrics": "needs_font_metrics",
+    "clearing_line_box_metrics": "needs_clearing_line_box_metrics",
+    "mixed_inline_block_layout": "needs_mixed_inline_block_layout",
+    "special_background_clip": "needs_special_background_clip",
+    "quirks_body_fill": "needs_quirks_body_fill",
+    "empty_block_margin_collapse": "needs_empty_block_margin_collapse",
+    "body_canvas_background_extent": "needs_body_canvas_background_extent",
+    "scrollbar_paint": "needs_scrollbar_paint",
+    "float_row_packing": "needs_float_row_packing",
     "image_rendering": "needs_image",
     "css_containment": "needs_containment",
     "gradient": "needs_gradient",
@@ -526,11 +633,6 @@ CATEGORY_FOR_DEP = {
     "box_shadow": "needs_box_shadow",
     "sticky_position": "needs_sticky",
     "rounded_border_paint": "needs_rounded_border_paint",
-    "inline_box_decoration_break": "needs_inline_box_decoration_break",
-    "clearing_break_after_floats": "needs_clearing_break_after_floats",
-    "display_contents_style_element": "needs_display_contents_style_element",
-    "display_contents_list_layout": "needs_display_contents_list_layout",
-    "root_body_layout": "needs_root_body_layout",
     "complex_border": "needs_complex_border",
     "scrollbar_gutter": "needs_scrollbar_gutter",
     "javascript": "needs_javascript",

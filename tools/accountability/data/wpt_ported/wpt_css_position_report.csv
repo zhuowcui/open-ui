@@ -134,9 +134,9 @@ position-absolute-replaced-intrinsic-size.tentative,not_portable,,unsupported el
 position-absolute-replaced-minmax,not_portable,,uses_javascript
 position-absolute-replaced-no-intrinsic-size.tentative,not_portable,,unsupported element: <img>
 position-absolute-replaced-with-display-table,not_portable,,unsupported display: table
-position-absolute-root-element-flex,not_portable,,no_layout_content
+position-absolute-root-element-flex,ported,css_position_position_absolute_root_element_flex,
 position-absolute-root-element-grid,not_portable,,unsupported display: grid
-position-absolute-root-element-ref,not_portable,,no_layout_content
+position-absolute-root-element-ref,ported,css_position_position_absolute_root_element_ref,
 position-absolute-scrollable-overflow-001,not_portable,,uses_javascript
 position-absolute-semi-replaced-stretch-button-ref,not_portable,,unsupported element: <button>
 position-absolute-semi-replaced-stretch-button,not_portable,,unsupported element: <button>
@@ -151,9 +151,9 @@ position-absolute-with-negative-sized-imcb,not_portable,,uses_javascript
 position-change,not_portable,,uses_javascript
 position-fixed-at-bottom-right-on-viewport,not_portable,,uses_javascript
 position-fixed-dynamic-transformed-sibling,not_portable,,uses_javascript
-position-fixed-root-element-flex,not_portable,,no_layout_content
+position-fixed-root-element-flex,ported,css_position_position_fixed_root_element_flex,
 position-fixed-root-element-grid,not_portable,,unsupported display: grid
-position-fixed-root-element-ref,not_portable,,no_layout_content
+position-fixed-root-element-ref,ported,css_position_position_fixed_root_element_ref,
 position-fixed-scroll-nested-fixed,not_portable,,uses_javascript
 position-fixed-scroll-overlap,not_portable,,uses_javascript
 position-fixed-video-controls-print,not_portable,,unsupported element: <audio>
@@ -399,7 +399,7 @@ resources_position-absolute-iframe-child-002.sub,not_portable,,unsupported eleme
 resources_position-sticky-fixed-ancestor-iframe-child,not_portable,,unsupported element: <button>
 overlay_author-overlay-top-layer-removal-ref,not_portable,,uses_javascript
 overlay_author-overlay-top-layer-removal,not_portable,,uses_javascript
-overlay_green-ref,not_portable,,no_layout_content
+overlay_green-ref,ported,css_position_overlay_green_ref,
 overlay_overlay-button-appearance-ref,not_portable,,unsupported element: <button>
 overlay_overlay-button-appearance,not_portable,,uses_javascript
 overlay_overlay-computed,not_portable,,uses_javascript

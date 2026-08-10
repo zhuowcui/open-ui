@@ -1226,8 +1226,8 @@ flexbox-min-width-auto-002c,not_portable,,unsupported element: <img>
 flexbox-min-width-auto-005,not_portable,,unsupported element: <img>
 flexbox-min-width-auto-006,not_portable,,unsupported element: <img>
 flexbox-overflow-padding-002,not_portable,,style_block_unsupported property: writing-mode
-flexbox-root-node-001a,not_portable,,no_layout_content
-flexbox-root-node-001b,not_portable,,no_layout_content
+flexbox-root-node-001a,ported,css_flexbox_flexbox_root_node_001a,
+flexbox-root-node-001b,ported,css_flexbox_flexbox_root_node_001b,
 flexbox-safe-overflow-position-005,not_portable,,style_block_unsupported property: writing-mode
 flexbox-safe-overflow-position-006,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-align
 flexbox-table-fixup-001,not_portable,,unsupported element: <td>
@@ -1299,7 +1299,7 @@ flexbox_justifycontent-start-rtl-ref,not_portable,,unsupported display: inline-g
 flexbox_justifycontent-start-rtl,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-start,not_portable,,unsupported display: inline-grid
 flexbox_object,not_portable,,unsupported element: <object>
-flexbox_quirks_body,not_portable,,no_layout_content
+flexbox_quirks_body,ported,css_flexbox_flexbox_quirks_body,
 flexbox_rowspan-overflow-automatic,not_portable,,style_block_unsupported property: border-spacing
 flexbox_rowspan-overflow,not_portable,,style_block_unsupported property: table-layout
 flexbox_rowspan-ref,not_portable,,style_block_unsupported property: table-layout

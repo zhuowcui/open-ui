@@ -21,29 +21,36 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (after SP14 W3/W4 text closure):
+Latest authoritative accountability snapshot (after SP15 closure):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3517 |
-| Unported but explicitly tracked tests | 4156 |
-| Runnable passes | 2767 |
-| Runnable failures | 750 |
+| Ported/runnable WPT tests | 3566 |
+| Unported but explicitly tracked tests | 4107 |
+| Runnable passes | 2804 |
+| Runnable failures | 762 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full run was executed without resume, and all 2715 frozen exact-pass IDs remain exact.
+The full `wpt/` run was executed without resume, and all 2767 frozen SP15
+exact-pass IDs remain exact.
 
-## Current Direction: SP15 functional text-layout follow-up
+## SP15 Closure
 
-SP14 is complete. All 445 manifest-scoped text ports retain deterministic text: 93 pass
-exactly and 352 have evidence-backed functional owners. The entire 4,045-row former
-unported text backlog is covered by the 111-ID W3 ledger and 3,934-row W4 disposition
-ledger. No mapping row retains `needs_text`; see `docs/SP14-PLAN.md`.
+SP15 is complete. Its immutable ledgers contain 2767 frozen exact passes, 76 actionable
+tests, and 54 reason-owned unported residuals. All 49 root/body targets became runnable;
+the 76-test actionable set finishes with 34 exact and 42 detector-backed functional
+failures. The deterministic text manifest now contains 496 tests: 128 exact and 368
+with functional non-text owners.
+
+No mapping row retains any of the five retired SP15 categories. Root/body canvas and
+overflow propagation, semantic clearing breaks, real decorated-inline continuation
+fragments, and `display:contents` inheritance/style handling are implemented. See
+`docs/SP15-PLAN.md` for the frozen scope and evidence.
 
 ## What "SP12 Complete" Means
 
@@ -59,29 +66,30 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 750 non-passing runnable tests are ported tests classified by the feature that owns the
+The 762 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
 
 | Category | Count |
 |---|---:|
-| `needs_font_metrics` | 225 |
-| `sp13_fragmentation` | 214 |
-| `reference_test` | 179 |
-| `sp13_multicol` | 170 |
+| `sp13_multicol` | 363 |
+| `needs_font_metrics` | 226 |
+| `sp13_fragmentation` | 213 |
+| `reference_test` | 180 |
 | `needs_inline_block` | 101 |
-| `needs_image` | 88 |
+| `needs_empty_block_margin_collapse` | 93 |
+| `needs_image` | 87 |
+| `needs_gradient` | 87 |
 | `needs_writing_mode` | 81 |
-| `needs_gradient` | 79 |
+| `needs_complex_border` | 77 |
 | `needs_rounded_border_paint` | 74 |
-| `needs_complex_border` | 73 |
-| `needs_abspos_flex_static_position` | 49 |
+| `needs_abspos_flex_static_position` | 50 |
 | `needs_positioned_inline_layout` | 39 |
 
 ## Current Unported Inventory Ownership
 
-The 4156 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 4107 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -89,29 +97,26 @@ Top unported categories:
 | Category | Count |
 |---|---:|
 | `needs_javascript` | 1945 |
+| `sp13_multicol` | 1018 |
 | `needs_writing_mode` | 823 |
-| `sp13_fragmentation` | 654 |
-| `needs_font_metrics` | 552 |
+| `sp13_fragmentation` | 651 |
+| `needs_font_metrics` | 550 |
 | `needs_table_layout` | 462 |
-| `reference_test` | 455 |
-| `needs_generated_content` | 445 |
+| `needs_generated_content` | 443 |
+| `reference_test` | 441 |
 | `needs_inline_block` | 410 |
-| `sp13_multicol` | 405 |
 | `needs_containment` | 335 |
-| `needs_image` | 326 |
+| `needs_image` | 325 |
 | `needs_advanced_selectors` | 318 |
 | `needs_grid` | 304 |
+| `needs_empty_block_margin_collapse` | 304 |
 | `needs_form_controls` | 264 |
 
 ## Recommended Next Work
 
-**SP15 inline/layout follow-up.** Work the functional gaps exposed by deterministic text:
-inline box decoration and wrapping, clearing beside floats, inline-block interaction,
-baseline/alignment behavior, and root/body viewport propagation. Preserve the manifest
-scope, exact-pixel standard, and upstream-evidence ownership rules.
-
-Remaining SP13 layout residuals (~48 actionable fragmentation/multicol tests) are paused but
-tracked; they can be resumed after the text track or in parallel.
+Proceed to SP16 real-font metrics or resume the named SP13 multicol/fragmentation
+residuals. Preserve the exact-pixel standard, frozen SP15 baseline, and upstream-evidence
+ownership rules.
 
 ## Authoritative Commands
 

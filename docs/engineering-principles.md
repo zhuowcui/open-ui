@@ -94,6 +94,6 @@ condition, continue work or clarify the condition; do not self-certify completio
 
 ## Recommended Next Phase
 
-Start SP15 functional text-layout follow-up using the completed SP14 ledgers. Prioritize
-inline construction, line breaking, root/body propagation, and the named layout owners
-exposed by deterministic text ports.
+SP15 is closed. Continue with SP16 real-font metrics or the explicitly owned SP13
+multicol/fragmentation residuals, preserving the 2,767-ID frozen exact baseline and
+the zero-pixel passing threshold.

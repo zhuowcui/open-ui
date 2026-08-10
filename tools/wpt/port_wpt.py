@@ -758,6 +758,15 @@ BODY_STYLE_RULES = parse_simple_css_rules(
     'body { margin: 0; padding: 20px; }'
 )
 
+# Root-aware ports keep the comparison harness reset, but deliberately do not
+# force ``html { overflow:hidden }`` or an opaque body background.  Those two
+# declarations erase the root/body propagation behavior these ports exercise.
+ROOT_BODY_STYLE_RULES = parse_simple_css_rules(
+    '* { margin: 0; padding: 0; box-sizing: content-box; } '
+    'body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; '
+    'font-size: 16px; }'
+)
+
 
 def _match_simple_selector(selector: str, tag: str, classes: list, id_val: str) -> bool:
     """Check if a simple (non-compound) CSS selector matches an element."""
@@ -866,6 +875,8 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     # Evaluate bare structural pseudo-classes (not inside :not())
     # Strip :not(...) content first to avoid double-matching
     bare_selector = re.sub(r':not\([^()]*(?:\([^)]*\)[^()]*)*\)', '', selector)
+    if ':root' in bare_selector and ancestors:
+        return False
     if ':first-child' in bare_selector and sibling_index != 1:
         return False
     if ':last-child' in bare_selector and sibling_index != sibling_count:
@@ -1066,14 +1077,17 @@ class WptHtmlParser(HTMLParser):
                    'footer', 'nav', 'aside', 'figure', 'figcaption', 'br',
                    'strong', 'em', 'b', 'i', 'u', 'a', 'img'}
 
-    def __init__(self):
+    def __init__(self, *, root_aware: bool = False):
         super().__init__()
+        self.root_aware = root_aware
         self.root = DomNode('body', {}, {})
         self.stack = [self.root]
         self.in_body = False
         self.skip_depth = 0
         self.in_style = False
         self.style_content = ""
+        self.current_style_attrs = {}
+        self.author_style_blocks = []
         self.has_script = False
         self.has_style_block = False
         self.css_rules = []  # Parsed CSS rules from <style>
@@ -1110,6 +1124,7 @@ class WptHtmlParser(HTMLParser):
             self.has_style_block = True
             self.in_style = True
             self.style_content = ""
+            self.current_style_attrs = attrs_dict
             return
 
         if tag in ('head', 'html', 'body'):
@@ -1138,6 +1153,14 @@ class WptHtmlParser(HTMLParser):
             self.in_body = True
 
         styles = parse_inline_styles(attrs_dict.get('style', ''))
+        # HTML's legacy ``clear=all`` spelling computes to ``clear:both``.
+        # Preserve it as style so the semantic Break node participates in the
+        # same float-clearance path as author CSS on ``br``.
+        if tag == 'br' and attrs_dict.get('clear', '').strip().lower() in (
+            'all', 'both', 'left', 'right'
+        ):
+            clear = attrs_dict['clear'].strip().lower()
+            styles['clear'] = 'both' if clear == 'all' else clear
         self.all_styles.append(styles)
 
         node = DomNode(tag, attrs_dict, styles)
@@ -1159,7 +1182,11 @@ class WptHtmlParser(HTMLParser):
     def handle_endtag(self, tag):
         if tag == 'style':
             self.in_style = False
-            self.css_rules = parse_simple_css_rules(self.style_content)
+            self.css_rules.extend(parse_simple_css_rules(self.style_content))
+            self.author_style_blocks.append(
+                (dict(self.current_style_attrs), self.style_content)
+            )
+            self.current_style_attrs = {}
             return
         if tag == 'script':
             if self.skip_depth > 0:
@@ -1185,6 +1212,10 @@ class WptHtmlParser(HTMLParser):
             # does; eagerly collapsing here would corrupt pre/pre-wrap text.
             # Whitespace-only nodes are contextually filtered during generation
             # so source indentation between blocks cannot create line boxes.
+            # Non-whitespace character data after head metadata implicitly
+            # opens HTML's body even when the source omits a <body> tag.
+            if not self.in_body and data and data.strip():
+                self.in_body = True
             if data and self.in_body:
                 node = DomNode('#text', {}, {})
                 node.is_text = True
@@ -1206,9 +1237,15 @@ class WptHtmlParser(HTMLParser):
         BODY_STYLE_RULES come first (matching Chrome's BODY_STYLE wrapper),
         then external stylesheet rules, then inline <style> rules.
         Specificity-based cascade ensures body { padding:20px } beats * { padding:0 }."""
-        all_rules = BODY_STYLE_RULES + self.external_css_rules + self.css_rules
+        harness_rules = ROOT_BODY_STYLE_RULES if self.root_aware else BODY_STYLE_RULES
+        all_rules = harness_rules + self.external_css_rules + self.css_rules
         if all_rules:
-            apply_css_rules(all_rules, self.root)
+            # In root-aware mode the parsed tree starts at <body>, but CSS
+            # selectors still see the real <html> ancestor. Seeding that
+            # ancestor prevents :root rules from being misapplied to body and
+            # lets html-descendant selectors retain their browser semantics.
+            root_ancestors = [('html', [], '')] if self.root_aware else None
+            apply_css_rules(all_rules, self.root, ancestors=root_ancestors)
             # Apply html-targeted rules to self.html_styles for body-bg propagation logic.
             html_cascade = OrderedDict()
             html_cascade_spec = {}
@@ -1225,6 +1262,31 @@ class WptHtmlParser(HTMLParser):
             inline = OrderedDict(self.html_styles)
             html_cascade.update(inline)
             self.html_styles = html_cascade
+
+            # A style element normally has UA ``display:none``.  If author CSS
+            # changes that computed display, its raw stylesheet text becomes
+            # ordinary renderable text.  Retain it in source order ahead of
+            # body content, matching the comparison template.
+            visible_style_nodes = []
+            for attrs, text in self.author_style_blocks:
+                style_node = DomNode(
+                    'style', attrs, parse_inline_styles(attrs.get('style', ''))
+                )
+                apply_css_rules(
+                    all_rules,
+                    style_node,
+                    ancestors=[('html', [], ''), ('body', [], '')]
+                    if self.root_aware else None,
+                )
+                display = style_node.styles.get('display', '').strip().lower()
+                if display and display != 'none':
+                    text_node = DomNode('#text', {}, {})
+                    text_node.is_text = True
+                    text_node.text_content = text
+                    style_node.children.append(text_node)
+                    visible_style_nodes.append(style_node)
+            if visible_style_nodes:
+                self.root.children = visible_style_nodes + self.root.children
             # Re-collect all styles
             self.all_styles = []
             def collect(node):
@@ -1235,12 +1297,12 @@ class WptHtmlParser(HTMLParser):
             collect(self.root)
 
 
-def parse_wpt_html(html_path: str) -> WptHtmlParser:
+def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
     """Parse a WPT HTML file and return the parser with DOM tree."""
     with open(html_path, 'r', encoding='utf-8', errors='replace') as f:
         content = f.read()
 
-    parser = WptHtmlParser()
+    parser = WptHtmlParser(root_aware=root_aware)
     parser.html_dir = os.path.dirname(os.path.abspath(html_path))
     parser.feed(content)
 
@@ -1985,6 +2047,8 @@ def generate_single_style(
             'border-box': 'BackgroundClip::BorderBox',
             'padding-box': 'BackgroundClip::PaddingBox',
             'content-box': 'BackgroundClip::ContentBox',
+            'border-area': 'BackgroundClip::BorderArea',
+            'text': 'BackgroundClip::Text',
         }
         if val.strip() in mapping:
             return f"{s}.background_clip = {mapping[val.strip()]};"
@@ -3130,7 +3194,7 @@ RETAIN_TEXT = False
 # underlines, list markers). The Rust side mirrors this by forcing Ahem on
 # every emitted Text node and ignoring font-weight/style/text-decoration.
 TEXT_TEMPLATE_OVERRIDE = (
-    '<style>body, body * { font-family: Ahem, "DejaVu Sans" !important; '
+    '<style style="display:none!important">body, body * { font-family: Ahem, "DejaVu Sans" !important; '
     "font-weight: normal !important; font-style: normal !important; "
     "font-synthesis: none !important; text-decoration: none !important; "
     "list-style: none !important; font-kerning: none !important; "
@@ -3333,13 +3397,30 @@ def _filter_ws_only_text_nodes(node):
         _filter_ws_only_text_nodes(c)
 
 
-def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = None) -> str:
+def generate_rust_fn(
+    fn_name: str,
+    root: DomNode,
+    html_styles: dict | None = None,
+    *,
+    root_aware: bool = False,
+) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
     if RETAIN_TEXT:
         _filter_ws_only_text_nodes(root)
+        if root_aware and root.children:
+            # Collapsible whitespace at the start/end of the body formatting
+            # context disappears. Trim only boundary text nodes; separators
+            # between inline siblings remain intact.
+            if root.children[0].is_text:
+                root.children[0].text_content = root.children[0].text_content.lstrip()
+            if root.children and root.children[-1].is_text:
+                root.children[-1].text_content = root.children[-1].text_content.rstrip()
     lines = []
     lines.append(f"fn {fn_name}() -> Document {{")
-    lines.append("    let (mut doc, vp) = base_doc();")
+    if root_aware:
+        lines.append("    let (mut doc, html, vp) = root_doc();")
+    else:
+        lines.append("    let (mut doc, vp) = base_doc();")
     if RETAIN_TEXT:
         # Inline line-box struts use the block container's font metrics, not
         # only the leaf Text item's metrics. Pin every generated style to Ahem
@@ -3375,11 +3456,11 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
     html_bg_image = html_styles.get('background-image', '')
     body_bg = body_styles_d.get('background-color', '')
     canvas_color_line = None
-    if html_bg and not _is_transparent(html_bg):
+    if not root_aware and html_bg and not _is_transparent(html_bg):
         c = parse_color(html_bg)
         if c:
             canvas_color_line = f"    doc.node_mut(doc.root()).style.background_color = {c};"
-    elif (
+    elif not root_aware and (
         body_bg
         and not _is_transparent(body_bg)
         and (not html_bg_image or _is_transparent(html_bg_image))
@@ -3405,7 +3486,38 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                        'font-size', 'line-height', 'visibility'}
     # CSS-wide `inherit` can apply to any property; keep explicit parent
     # values for non-inherited properties that WPT coverage exercises.
-    EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {'background-clip', 'font-family'}
+    EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {
+        'background', 'background-color', 'background-clip', 'font-family',
+        'list-style-position',
+    }
+    EXPLICIT_NON_INHERITED_INITIALS = {
+        'background': 'transparent',
+        'background-color': 'transparent',
+        'background-clip': 'border-box',
+    }
+
+    def _computed_child_boundary(inherited):
+        """Start an element's computed-value boundary for its children.
+
+        Values tracked solely so CSS-wide ``inherit`` can read them are not
+        naturally inherited. They therefore reset to their initial computed
+        value at every element, including an unboxed display:contents one.
+        """
+        child = dict(inherited)
+        child.update(EXPLICIT_NON_INHERITED_INITIALS)
+        return child
+
+    def _background_text_color(styles):
+        """Return a solid color used by ``background-clip:text``."""
+        if styles.get('background-clip', '').strip() != 'text':
+            return None
+        value = styles.get('background-color', '') or styles.get('background', '')
+        if parse_color(value):
+            return value
+        for token in value.split():
+            if parse_color(token):
+                return token
+        return None
 
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
@@ -3500,7 +3612,7 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 return
             if skip_self:
                 # Merge any inherited props from this skipped node
-                child_inherited = dict(inherited)
+                child_inherited = _computed_child_boundary(inherited)
                 skip_inherit = EXPLICIT_INHERIT_PROPS | (
                     TEXT_EXTRA_INHERITED | set(_BORDER_RADIUS_CORNERS)
                     if RETAIN_TEXT else set()
@@ -3515,6 +3627,15 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 for child in node.children:
                     gen_node(child, parent_var, indent, parent_font_size, child_inherited, child_custom_props)
                 return
+
+        if (
+            node.tag == 'br'
+            and node.styles.get('display', '').strip() in ('none', 'contents')
+        ):
+            # CSS Display's unusual-element rules suppress a <br> whose
+            # computed display is none/contents; it does not generate a forced
+            # line break or a principal box.
+            return
 
         if node.tag == 'br' and node.styles.get('clear', 'none') == 'none':
             if RETAIN_TEXT:
@@ -3562,11 +3683,14 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
             _ignored_lines, contents_font_size = generate_style_code(
                 effective_styles, parent_var, parent_font_size
             )
-            child_inherited = dict(inherited)
+            child_inherited = _computed_child_boundary(inherited)
             contents_inherit_props = EXPLICIT_INHERIT_PROPS | TEXT_EXTRA_INHERITED
             for prop in sorted(contents_inherit_props):
                 if prop in effective_styles:
                     child_inherited[prop] = effective_styles[prop]
+            clipped_text_color = _background_text_color(effective_styles)
+            if clipped_text_color:
+                child_inherited['color'] = clipped_text_color
             if 'font' in effective_styles:
                 family = _family_from_font_shorthand(effective_styles['font'])
                 if family:
@@ -3591,8 +3715,10 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
 
         # Map HTML tag to ElementTag
         inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp'}
-        if node.tag in inline_tags:
+        if node.tag in inline_tags or node.tag == 'style':
             element_tag = "ElementTag::Span"
+        elif node.tag == 'br':
+            element_tag = "ElementTag::Break"
         else:
             element_tag = "ElementTag::Div"
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
@@ -3602,18 +3728,13 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 f'{DETERMINISTIC_FONT_FAMILY_RUST};'
             )
         if node.tag == 'br':
-            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
-            # Empty-line height for a clearing <br>: line-height of the inherited
-            # font. Box mode calibrates to DejaVu Sans 16px (~19px line); text
-            # mode forces Ahem, whose normal line-height is exactly 1.0em.
-            br_h = float(parent_font_size) if RETAIN_TEXT else 19.0
-            lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px({br_h});")
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Inline;")
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
                       'details', 'summary', 'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                      'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'hr', 'table', 'br'}
+                      'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'hr', 'table'}
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
             'contents', 'list-item', 'flex', 'inline-flex',
@@ -3722,13 +3843,16 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         lines.append(f"{ws}doc.append_child({parent_var}, {var});")
 
         # Build inherited props for children: parent inherited + this node's own
-        child_inherited = dict(inherited)
+        child_inherited = _computed_child_boundary(inherited)
         child_inherit_props = EXPLICIT_INHERIT_PROPS | (
             TEXT_EXTRA_INHERITED if RETAIN_TEXT else set()
         )
         for prop in sorted(child_inherit_props):
             if prop in effective_styles:
                 child_inherited[prop] = effective_styles[prop]
+        clipped_text_color = _background_text_color(effective_styles)
+        if clipped_text_color:
+            child_inherited['color'] = clipped_text_color
         if RETAIN_TEXT:
             computed_radius = _computed_border_radius(effective_styles)
             if computed_radius is not None:
@@ -3749,8 +3873,16 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
     # Process body children
     # Apply body-level styles if any
     root_font_size = 16.0
-    body_inherited = {}
+    body_inherited = {
+        prop: html_styles[prop]
+        for prop in sorted(EXPLICIT_INHERIT_PROPS | TEXT_EXTRA_INHERITED)
+        if root_aware and prop in html_styles
+    }
     body_custom_props = {}
+    if root_aware and html_styles:
+        html_style_lines, _html_font_size = generate_style_code(html_styles, 'html')
+        for sl in html_style_lines:
+            lines.append(f"    {sl}")
     if root.styles:
         for prop, val in root.styles.items():
             if prop.startswith('--'):
@@ -3758,6 +3890,27 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         body_styles, root_font_size = generate_style_code(root.styles, 'vp')
         for sl in body_styles:
             lines.append(f"    {sl}")
+        if RETAIN_TEXT and root.styles.get('display', '').strip() == 'contents':
+            # `base_doc()` models <body> as a concrete child of the viewport.
+            # A display:contents body instead contributes its children directly
+            # to the document-element formatting context. Hide the synthetic
+            # body box below and attach its already-computed descendants to the
+            # viewport root; this also gives their line boxes the correct
+            # document-element strut while retaining body inheritance.
+            lines.append("    doc.node_mut(vp).style.display = Display::None;")
+        if root_aware:
+            for prop in sorted(INHERITED_PROPS):
+                if prop in body_inherited and prop not in root.styles:
+                    inherited_line = generate_single_style(
+                        prop, body_inherited[prop], 'doc.node_mut(vp).style', root_font_size
+                    )
+                    if inherited_line:
+                        for sl in (
+                            inherited_line
+                            if isinstance(inherited_line, list)
+                            else [inherited_line]
+                        ):
+                            lines.append(f"    {sl}")
         # Collect inherited props from body for propagation to children
         body_inherit_props = EXPLICIT_INHERIT_PROPS | (
             TEXT_EXTRA_INHERITED if RETAIN_TEXT else set()
@@ -3765,6 +3918,9 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
         for prop in sorted(body_inherit_props):
             if prop in root.styles:
                 body_inherited[prop] = root.styles[prop]
+        clipped_text_color = _background_text_color(root.styles)
+        if clipped_text_color:
+            body_inherited['color'] = clipped_text_color
         if RETAIN_TEXT:
             computed_radius = _computed_border_radius(root.styles)
             if computed_radius is not None:
@@ -3777,8 +3933,16 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
                 root.styles['font']
             )
 
+    body_is_contents = (
+        RETAIN_TEXT and root.styles.get('display', '').strip() == 'contents'
+    )
+    body_parent = (
+        'html' if body_is_contents and root_aware
+        else 'doc.root()' if body_is_contents
+        else 'vp'
+    )
     for child in root.children:
-        gen_node(child, 'vp', 1, root_font_size, body_inherited, body_custom_props)
+        gen_node(child, body_parent, 1, root_font_size, body_inherited, body_custom_props)
 
     lines.append("    doc")
     lines.append("}")
@@ -3786,7 +3950,7 @@ def generate_rust_fn(fn_name: str, root: DomNode, html_styles: dict | None = Non
     return '\n'.join(lines)
 
 
-def generate_html_template(html_path: str) -> str:
+def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     """Read an HTML file and extract body content + style blocks for Chrome rendering.
     The template must include <style> blocks so Chrome applies the same CSS rules
     that the Rust code generator parsed and encoded into Document builder code.
@@ -3808,6 +3972,15 @@ def generate_html_template(html_path: str) -> str:
         style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_open.group(1), re.IGNORECASE)
         if style_attr:
             style_blocks.append(f"<style>body {{{style_attr.group(1)}}}</style>")
+
+    if root_aware:
+        html_open = re.search(r'<html\b([^>]*)>', content, re.IGNORECASE)
+        if html_open:
+            style_attr = re.search(
+                r'\bstyle=["\']([^"\']*)["\']', html_open.group(1), re.IGNORECASE
+            )
+            if style_attr:
+                style_blocks.append(f"<style>html {{{style_attr.group(1)}}}</style>")
 
     # Inline external stylesheets referenced by <link rel="stylesheet">
     for m in re.finditer(r'<link[^>]*rel=["\']?stylesheet["\']?[^>]*>', content, re.IGNORECASE):
@@ -3986,6 +4159,8 @@ def generate_html_template(html_path: str) -> str:
     if RETAIN_TEXT:
         # Deterministic-font override LAST so it wins the cascade.
         template = template + '\n' + TEXT_TEMPLATE_OVERRIDE
+    if root_aware:
+        template = '<!--OPENUI_ROOT_AWARE-->\n' + template
     return template
 
 

@@ -6,7 +6,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_style::*;
 
-use crate::base_doc;
+use crate::{base_doc, root_doc};
 
 // Source: abspos-after-spanner-static-pos.html
 fn css_multicol_abspos_after_spanner_static_pos() -> Document {
@@ -56265,6 +56265,38 @@ fn css_multicol_crashtests_zero_column_height() -> Document {
     doc
 }
 
+// Source: css-multicol/auto-fill-auto-size-001-print-ref.html
+fn css_multicol_auto_fill_auto_size_001_print_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
+    let n1 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).text = Some("On the first page".to_string());
+    doc.append_child(vp, n1);
+    doc
+}
+
 pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         (
@@ -58303,6 +58335,10 @@ pub fn css_multicol_registry() -> Vec<(&'static str, fn() -> Document)> {
         (
             "wpt/css_multicol/crashtests_zero-column-height",
             css_multicol_crashtests_zero_column_height as fn() -> Document,
+        ),
+        (
+            "wpt/css_multicol/auto-fill-auto-size-001-print-ref",
+            css_multicol_auto_fill_auto_size_001_print_ref as fn() -> Document,
         ),
     ]
 }

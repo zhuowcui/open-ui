@@ -37,11 +37,14 @@ fn collect_line_boxes(fragment: &Fragment) -> Vec<&Fragment> {
 }
 
 fn collect_text_fragments(fragment: &Fragment) -> Vec<&Fragment> {
-    fragment
-        .children
-        .iter()
-        .filter(|c| c.kind == FragmentKind::Text)
-        .collect()
+    let mut result = Vec::new();
+    if fragment.kind == FragmentKind::Text {
+        result.push(fragment);
+    }
+    for child in &fragment.children {
+        result.extend(collect_text_fragments(child));
+    }
+    result
 }
 
 // ── Issue 1: Half-leading sub-pixel precision ───────────────────────────

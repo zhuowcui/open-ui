@@ -38,8 +38,7 @@ use openui_layout::inline::score_line_breaker::{
     FitnessClass,
 };
 use openui_layout::intrinsic_sizing::compute_intrinsic_block_sizes;
-use openui_layout::ConstraintSpace;
-use openui_layout::Fragment;
+use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 use openui_style::{
     BorderStyle, BoxDecorationBreak, Color, ComputedStyle, Direction, Display, Float,
     InitialLetter, LineHeight, Position, TextDecorationLine, TextWrap,
@@ -72,6 +71,17 @@ fn add_text(doc: &mut Document, parent: NodeId, text: &str) -> NodeId {
     doc.node_mut(t).style.display = Display::Inline;
     doc.append_child(parent, t);
     t
+}
+
+fn first_text_left(fragment: &Fragment, parent_left: LayoutUnit) -> Option<LayoutUnit> {
+    let left = parent_left + fragment.offset.left;
+    if fragment.kind == FragmentKind::Text {
+        return Some(left);
+    }
+    fragment
+        .children
+        .iter()
+        .find_map(|child| first_text_left(child, left))
 }
 
 fn make_fake_lines(num: usize, line_h: f32, width: f32) -> Fragment {
@@ -384,11 +394,12 @@ fn wpt_inline_padding_offsets_text() {
     let frag = block_layout(&doc, vp, &space(400, 400));
     let div_frag = &frag.children[0];
     let line = &div_frag.children[0];
-    let text_frag = &line.children[0];
+    let text_left = first_text_left(line, LayoutUnit::zero())
+        .expect("Line should have a descendant text fragment");
     assert!(
-        text_frag.offset.left.to_f32() >= 20.0,
+        text_left.to_f32() >= 20.0,
         "Text should be offset by padding-left (20px), got {}",
-        text_frag.offset.left.to_f32()
+        text_left.to_f32()
     );
 }
 
@@ -454,12 +465,13 @@ fn wpt_inline_border_contributes_to_offset() {
     let frag = block_layout(&doc, vp, &space(500, 400));
     let div_frag = &frag.children[0];
     let line = &div_frag.children[0];
-    let text_frag = &line.children[0];
+    let text_left = first_text_left(line, LayoutUnit::zero())
+        .expect("Line should have a descendant text fragment");
     // border_left(3) + padding_left(7) = 10
     assert!(
-        text_frag.offset.left.to_f32() >= 10.0,
+        text_left.to_f32() >= 10.0,
         "Text offset should include border+padding (>=10), got {}",
-        text_frag.offset.left.to_f32()
+        text_left.to_f32()
     );
 }
 

@@ -39,8 +39,21 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     let mut surface = surfaces::raster_n32_premul((width, height))
         .ok_or_else(|| "Failed to create Skia surface".to_string())?;
 
-    // Clear to white (matches browser default background)
-    surface.canvas().clear(SkColor::WHITE);
+    // Clear to the propagated root/body canvas background. Transparent
+    // documents retain the browser's white default canvas.
+    let canvas_color = doc
+        .canvas_background_source()
+        .map(|source| doc.node(source).style.background_color)
+        .map(|color| {
+            SkColor::from_argb(
+                (color.a * 255.0).round() as u8,
+                (color.r * 255.0).round() as u8,
+                (color.g * 255.0).round() as u8,
+                (color.b * 255.0).round() as u8,
+            )
+        })
+        .unwrap_or(SkColor::WHITE);
+    surface.canvas().clear(canvas_color);
 
     // Layout
     let space =
