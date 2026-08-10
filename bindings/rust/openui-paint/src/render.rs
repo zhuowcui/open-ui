@@ -6,7 +6,10 @@
 use openui_dom::Document;
 use openui_geometry::LayoutUnit;
 use openui_layout::{block_layout, ConstraintSpace};
-use skia_safe::{surfaces, Color as SkColor, EncodedImageFormat, Surface};
+use skia_safe::{
+    surfaces, Color as SkColor, EncodedImageFormat, ImageInfo, PixelGeometry, Surface,
+    SurfaceProps, SurfacePropsFlags,
+};
 
 use crate::painter::paint_fragment;
 
@@ -35,8 +38,11 @@ pub fn render_to_png(doc: &Document, width: i32, height: i32, path: &str) -> Res
 /// Returns the surface with the rendered content. The surface uses
 /// raster (CPU) backend — same pixels as Blink's software renderer.
 pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surface, String> {
-    // Create raster surface
-    let mut surface = surfaces::raster_n32_premul((width, height))
+    // Chromium's Linux LCD path uses horizontal RGB subpixels. This is scoped
+    // by the comparison runner to SP16 IDs so historical Ahem and box-only
+    // snapshots retain the default unknown pixel geometry.
+    let real_font_raster = std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1");
+    let mut surface = create_raster_surface(width, height, real_font_raster)
         .ok_or_else(|| "Failed to create Skia surface".to_string())?;
 
     // Clear to the propagated root/body canvas background. Transparent
@@ -65,6 +71,36 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     paint_fragment(surface.canvas(), &fragment, doc, zero_offset);
 
     Ok(surface)
+}
+
+fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Option<Surface> {
+    if real_font_raster {
+        // Chromium's Linux Skia build pins these in //skia/BUILD.gn. Passing
+        // them explicitly avoids inheriting the independently-built skia-safe
+        // defaults (0.5 contrast and sRGB gamma).
+        let contrast = raster_parameter("OPENUI_TEXT_CONTRAST", 0.2);
+        let gamma = raster_parameter("OPENUI_TEXT_GAMMA", 1.2);
+        let props = SurfaceProps::new_with_text_properties(
+            SurfacePropsFlags::default(),
+            PixelGeometry::RGBH,
+            contrast,
+            gamma,
+        );
+        surfaces::raster(
+            &ImageInfo::new_n32_premul((width, height), None),
+            None,
+            Some(&props),
+        )
+    } else {
+        surfaces::raster_n32_premul((width, height))
+    }
+}
+
+fn raster_parameter(name: &str, default: f32) -> f32 {
+    std::env::var(name)
+        .ok()
+        .and_then(|value| value.parse::<f32>().ok())
+        .unwrap_or(default)
 }
 
 #[cfg(test)]
@@ -167,5 +203,20 @@ mod tests {
         assert!(std::path::Path::new(path).exists());
         // Cleanup
         std::fs::remove_file(path).ok();
+    }
+
+    #[test]
+    fn real_font_surface_uses_horizontal_rgb_geometry() {
+        let surface = create_raster_surface(16, 16, true).unwrap();
+        let props = surface.props();
+        assert_eq!(props.pixel_geometry(), PixelGeometry::RGBH);
+        assert_eq!(props.text_contrast(), 0.2);
+        assert_eq!(props.text_gamma(), 1.2);
+    }
+
+    #[test]
+    fn legacy_surface_keeps_unknown_pixel_geometry() {
+        let surface = create_raster_surface(16, 16, false).unwrap();
+        assert_eq!(surface.props().pixel_geometry(), PixelGeometry::Unknown);
     }
 }

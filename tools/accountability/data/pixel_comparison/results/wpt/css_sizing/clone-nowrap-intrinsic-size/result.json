@@ -9,9 +9,9 @@
   ],
   "size_match": true,
   "total_pixels": 471000,
-  "mismatched_pixels": 71786,
-  "mismatch_pct": 15.241189,
+  "mismatched_pixels": 27012,
+  "mismatch_pct": 5.735032,
   "max_channel_diff": 255,
-  "avg_channel_diff": 18.3395,
+  "avg_channel_diff": 6.052,
   "status": "fail"
 }

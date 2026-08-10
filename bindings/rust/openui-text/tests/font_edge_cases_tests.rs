@@ -563,15 +563,15 @@ fn system_font_cache_name_mapping() {
     // Verify FontCache maps all required generics to string names
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Serif),
-        "serif"
+        "DejaVu Serif"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SansSerif),
-        "sans-serif"
+        "DejaVu Sans"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Monospace),
-        "monospace"
+        "DejaVu Sans Mono"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Cursive),
@@ -583,6 +583,6 @@ fn system_font_cache_name_mapping() {
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SystemUi),
-        "system-ui"
+        "DejaVu Sans"
     );
 }

@@ -107,6 +107,38 @@ impl FontDescription {
         desc.specified_size = size;
         desc
     }
+
+    /// Build the complete font selection input from a computed style.
+    ///
+    /// Keeping this conversion in the font subsystem prevents layout, paint,
+    /// and font-relative length resolution from drifting apart.
+    pub fn from_computed_style(style: &openui_style::ComputedStyle) -> Self {
+        Self {
+            family: style.font_family.clone(),
+            size: style.font_size,
+            specified_size: style.font_size,
+            weight: style.font_weight,
+            stretch: style.font_stretch,
+            style: style.font_style,
+            variant_caps: style.font_variant_caps,
+            variant_ligatures: style.font_variant_ligatures,
+            variant_numeric: style.font_variant_numeric,
+            variant_east_asian: style.font_variant_east_asian,
+            variant_position: style.font_variant_position,
+            variant_alternates: style.font_variant_alternates,
+            letter_spacing: style.letter_spacing,
+            word_spacing: style.word_spacing,
+            locale: style.locale.clone(),
+            font_smoothing: style.font_smoothing,
+            text_rendering: style.text_rendering,
+            feature_settings: style.font_feature_settings.clone(),
+            variation_settings: style.font_variation_settings.clone(),
+            font_synthesis_weight: style.font_synthesis_weight,
+            font_synthesis_style: style.font_synthesis_style,
+            font_optical_sizing: style.font_optical_sizing,
+            orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
+        }
+    }
 }
 
 impl Default for FontDescription {

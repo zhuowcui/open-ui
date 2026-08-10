@@ -15,7 +15,10 @@ use openui_style::{
     BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, LineHeight, TextAlign,
     TextAlignLast, TextJustify, VerticalAlign,
 };
-use openui_text::{Font, FontMetrics, ShapeResult, TextShaper};
+use openui_text::{
+    used_line_height, used_line_height_metrics, Font, FontMetrics, ShapeResult, TextShaper,
+    UsedLineHeightMetrics,
+};
 use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -198,16 +201,6 @@ fn clear_type(clear: Clear) -> ClearType {
 
 // ── Line height metrics (CSS 2.2 §10.8.1 half-leading model) ────────────
 
-/// Vertical extent above/below baseline for a single inline element,
-/// after applying line-height (half-leading distribution).
-#[derive(Debug, Clone, Copy)]
-struct LineHeightMetrics {
-    /// Distance above baseline (positive upward).
-    ascent: f32,
-    /// Distance below baseline (positive downward).
-    descent: f32,
-}
-
 /// Compute line height metrics using the CSS 2.2 §10.8.1 half-leading model.
 ///
 /// The computed line-height determines total height, and extra space (leading)
@@ -219,32 +212,8 @@ fn compute_line_height_metrics(
     metrics: &FontMetrics,
     line_height: &LineHeight,
     font_size: f32,
-) -> LineHeightMetrics {
-    // Blink uses integer-rounded ascent/descent (FixedAscent/FixedDescent)
-    // BEFORE the half-leading calculation.
-    let font_ascent = metrics.int_ascent();
-    let font_descent = metrics.int_descent();
-
-    let computed_line_height = match line_height {
-        // Blink uses the rounded sum for line-height: normal.
-        LineHeight::Normal => metrics.int_line_spacing(),
-        LineHeight::Number(n) => font_size * n,
-        LineHeight::Length(px) => *px,
-        LineHeight::Percentage(pct) => font_size * pct / 100.0,
-    };
-
-    let leading = computed_line_height - (font_ascent + font_descent);
-    // Blink snaps to LayoutUnit grid (1/64 px): floor on ascent side,
-    // ceil on descent side. Computing descent as `leading - ascent_half`
-    // ensures the total exactly equals computed line-height after snapping.
-    let grid = 1.0 / 64.0; // LayoutUnit precision
-    let ascent_half = (leading / 2.0 / grid).floor() * grid;
-    let descent_half = leading - ascent_half;
-
-    LineHeightMetrics {
-        ascent: font_ascent + ascent_half,
-        descent: font_descent + descent_half,
-    }
+) -> UsedLineHeightMetrics {
+    used_line_height_metrics(metrics, line_height, font_size)
 }
 
 // ── Vertical alignment (CSS 2.2 §10.8) ──────────────────────────────────
@@ -1362,12 +1331,8 @@ fn create_line_box(
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
 
-                let element_line_height = match style.line_height {
-                    LineHeight::Normal => metrics.int_line_spacing(),
-                    LineHeight::Number(n) => style.font_size * n,
-                    LineHeight::Length(px) => px,
-                    LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
-                };
+                let element_line_height =
+                    used_line_height(&metrics, &style.line_height, style.font_size);
 
                 // Use parent inline's metrics if inside a nested inline,
                 // otherwise fall back to block container metrics.
@@ -1470,17 +1435,11 @@ fn create_line_box(
                     }
                     VerticalAlign::Percentage(pct) => {
                         // Compute element's own line-height for percentage basis
-                        let element_line_height = match style.line_height {
-                            LineHeight::Normal => {
-                                let font_desc = style_to_font_description(style);
-                                let font = Font::new(font_desc);
-                                let metrics = font.font_metrics().copied().unwrap_or_default();
-                                metrics.int_line_spacing()
-                            }
-                            LineHeight::Number(n) => style.font_size * n,
-                            LineHeight::Length(px) => px,
-                            LineHeight::Percentage(p) => style.font_size * p / 100.0,
-                        };
+                        let font_desc = style_to_font_description(style);
+                        let font = Font::new(font_desc);
+                        let metrics = font.font_metrics().copied().unwrap_or_default();
+                        let element_line_height =
+                            used_line_height(&metrics, &style.line_height, style.font_size);
                         let shift = element_line_height * pct / 100.0;
                         let shifted_ascent = (margin_box_height + shift).max(0.0);
                         let shifted_descent = (-shift).max(0.0);
@@ -1694,8 +1653,8 @@ fn create_line_box(
     for open_box in boxes_open_at_line_start {
         let style = &items_data.styles[open_box.style_index];
         if open_box.box_decoration_break == BoxDecorationBreak::Clone {
-            inline_offset = inline_offset
-                + resolve_margin_or_padding(&style.margin_left, percentage_base);
+            inline_offset =
+                inline_offset + resolve_margin_or_padding(&style.margin_left, percentage_base);
         }
         let border_start = inline_offset;
         if open_box.box_decoration_break == BoxDecorationBreak::Clone {
@@ -1757,12 +1716,8 @@ fn create_line_box(
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
 
-                let element_line_height = match style.line_height {
-                    LineHeight::Normal => metrics.int_line_spacing(),
-                    LineHeight::Number(n) => style.font_size * n,
-                    LineHeight::Length(px) => px,
-                    LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
-                };
+                let element_line_height =
+                    used_line_height(&metrics, &style.line_height, style.font_size);
 
                 // Compute half-leading-adjusted metrics for baseline shift
                 // (CSS 2.2 §10.8.1: text-top/text-bottom/middle use the inline
@@ -1945,8 +1900,8 @@ fn create_line_box(
             }
             InlineItemType::OpenTag => {
                 let style = &items_data.styles[item.style_index];
-                inline_offset = inline_offset
-                    + resolve_margin_or_padding(&style.margin_left, percentage_base);
+                inline_offset =
+                    inline_offset + resolve_margin_or_padding(&style.margin_left, percentage_base);
                 let border_start = inline_offset;
                 inline_offset = inline_offset
                     + LayoutUnit::from_i32(style.effective_border_left())
@@ -2072,17 +2027,11 @@ fn create_line_box(
                     }
                     VerticalAlign::Percentage(pct) => {
                         // Percentage of the element's own line-height (CSS 2.2 §10.8.1).
-                        let element_line_height = match style.line_height {
-                            LineHeight::Normal => {
-                                let font_desc = style_to_font_description(style);
-                                let font = Font::new(font_desc);
-                                let metrics = font.font_metrics().copied().unwrap_or_default();
-                                metrics.int_line_spacing()
-                            }
-                            LineHeight::Number(n) => style.font_size * n,
-                            LineHeight::Length(px) => px,
-                            LineHeight::Percentage(p) => style.font_size * p / 100.0,
-                        };
+                        let font_desc = style_to_font_description(style);
+                        let font = Font::new(font_desc);
+                        let metrics = font.font_metrics().copied().unwrap_or_default();
+                        let element_line_height =
+                            used_line_height(&metrics, &style.line_height, style.font_size);
                         let shift = LayoutUnit::from_f32(element_line_height * pct / 100.0);
                         baseline - item_height - margin_bottom_lu - shift
                     }
@@ -2146,8 +2095,8 @@ fn create_line_box(
                 + resolve_margin_or_padding(&style.padding_right, percentage_base)
                 + LayoutUnit::from_i32(style.effective_border_right());
             inline_boxes[index].border_end = inline_offset;
-            inline_offset = inline_offset
-                + resolve_margin_or_padding(&style.margin_right, percentage_base);
+            inline_offset =
+                inline_offset + resolve_margin_or_padding(&style.margin_right, percentage_base);
         } else {
             inline_boxes[index].border_end = inline_offset;
         }

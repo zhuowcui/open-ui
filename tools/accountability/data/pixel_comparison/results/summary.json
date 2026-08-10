@@ -1,12 +1,12 @@
 {
   "total": 3566,
-  "passed": 2804,
-  "failed": 762,
+  "passed": 2823,
+  "failed": 743,
   "errors": 0,
-  "near_miss_aa": 180,
+  "near_miss_aa": 187,
   "aa_threshold_pct": 0.5,
   "reference_tests": 950,
-  "reference_tests_pass": 768,
+  "reference_tests_pass": 779,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -36,42 +36,42 @@
     {
       "id": "wpt/css2_floats/float-nowrap-1-notref",
       "status": "fail",
-      "mismatch_pct": 1.141401
+      "mismatch_pct": 0.752229
     },
     {
       "id": "wpt/css2_floats/float-nowrap-1",
-      "status": "fail",
-      "mismatch_pct": 1.358811
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-2",
       "status": "fail",
-      "mismatch_pct": 3.009766
+      "mismatch_pct": 0.438004
     },
     {
       "id": "wpt/css2_floats/float-nowrap-3-ref",
       "status": "fail",
-      "mismatch_pct": 4.096815
+      "mismatch_pct": 0.972399
     },
     {
       "id": "wpt/css2_floats/float-nowrap-3",
       "status": "fail",
-      "mismatch_pct": 4.096815
+      "mismatch_pct": 1.128238
     },
     {
       "id": "wpt/css2_floats/float-nowrap-4-ref",
       "status": "fail",
-      "mismatch_pct": 3.879406
+      "mismatch_pct": 0.971125
     },
     {
       "id": "wpt/css2_floats/float-nowrap-4-ref2",
-      "status": "fail",
-      "mismatch_pct": 3.879406
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-4",
       "status": "fail",
-      "mismatch_pct": 4.096815
+      "mismatch_pct": 1.128238
     },
     {
       "id": "wpt/css2_floats/float-nowrap-5-ref",
@@ -91,32 +91,32 @@
     {
       "id": "wpt/css2_floats/float-nowrap-7",
       "status": "fail",
-      "mismatch_pct": 1.141401
+      "mismatch_pct": 0.523142
     },
     {
       "id": "wpt/css2_floats/float-nowrap-8",
       "status": "fail",
-      "mismatch_pct": 3.661996
+      "mismatch_pct": 0.977282
     },
     {
       "id": "wpt/css2_floats/float-nowrap-9",
       "status": "fail",
-      "mismatch_pct": 3.879406
+      "mismatch_pct": 1.074098
     },
     {
       "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref",
       "status": "fail",
-      "mismatch_pct": 8.55414
+      "mismatch_pct": 2.555202
     },
     {
       "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref2",
       "status": "fail",
-      "mismatch_pct": 8.418259
+      "mismatch_pct": 2.445648
     },
     {
       "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1",
       "status": "fail",
-      "mismatch_pct": 8.55414
+      "mismatch_pct": 2.23758
     },
     {
       "id": "wpt/css2_floats/float-root-ref",
@@ -151,7 +151,7 @@
     {
       "id": "wpt/css2_floats/floats-line-wrap-shifted-001-ref",
       "status": "fail",
-      "mismatch_pct": 4.076433
+      "mismatch_pct": 0.089172
     },
     {
       "id": "wpt/css2_floats/floats-line-wrap-shifted-001",
@@ -781,12 +781,12 @@
     {
       "id": "wpt/css_position/static-position_htb-ltr-ltr",
       "status": "fail",
-      "mismatch_pct": 41.878556
+      "mismatch_pct": 3.301911
     },
     {
       "id": "wpt/css_position/static-position_htb-ltr-rtl.tentative",
       "status": "fail",
-      "mismatch_pct": 41.878556
+      "mismatch_pct": 3.301911
     },
     {
       "id": "wpt/css_position/static-position_htb-ref",
@@ -796,12 +796,12 @@
     {
       "id": "wpt/css_position/static-position_htb-rtl-ltr.tentative",
       "status": "fail",
-      "mismatch_pct": 41.878556
+      "mismatch_pct": 3.322293
     },
     {
       "id": "wpt/css_position/static-position_htb-rtl-rtl",
       "status": "fail",
-      "mismatch_pct": 41.878556
+      "mismatch_pct": 3.322293
     },
     {
       "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-013",
@@ -1766,12 +1766,12 @@
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-001a",
       "status": "fail",
-      "mismatch_pct": 15.610191
+      "mismatch_pct": 13.432909
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-001b",
       "status": "fail",
-      "mismatch_pct": 15.610191
+      "mismatch_pct": 13.432909
     },
     {
       "id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-002-ref",
@@ -2370,8 +2370,8 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-items-as-stacking-contexts-002-ref",
-      "status": "fail",
-      "mismatch_pct": 0.974098
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/flexbox-items-as-stacking-contexts-002",
@@ -6241,12 +6241,12 @@
     {
       "id": "wpt/css_multicol/multicol-block-no-clip-001",
       "status": "fail",
-      "mismatch_pct": 4.129087
+      "mismatch_pct": 4.238854
     },
     {
       "id": "wpt/css_multicol/multicol-block-no-clip-002",
       "status": "fail",
-      "mismatch_pct": 4.151168
+      "mismatch_pct": 4.389809
     },
     {
       "id": "wpt/css_multicol/multicol-br-inside-avoidcolumn-001",
@@ -6261,7 +6261,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-000",
       "status": "fail",
-      "mismatch_pct": 1.528662
+      "mismatch_pct": 0.613588
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-001-ref",
@@ -6271,7 +6271,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-001",
       "status": "fail",
-      "mismatch_pct": 4.747346
+      "mismatch_pct": 1.59448
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-002-ref",
@@ -6281,7 +6281,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-002",
       "status": "fail",
-      "mismatch_pct": 8.237792
+      "mismatch_pct": 2.607643
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-003-ref",
@@ -6291,7 +6291,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-003",
       "status": "fail",
-      "mismatch_pct": 4.747346
+      "mismatch_pct": 1.59448
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-004-ref",
@@ -6301,7 +6301,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-004",
       "status": "fail",
-      "mismatch_pct": 4.789809
+      "mismatch_pct": 1.636943
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-005-ref",
@@ -6311,7 +6311,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-005",
       "status": "fail",
-      "mismatch_pct": 8.152866
+      "mismatch_pct": 2.522718
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-006-ref",
@@ -6321,7 +6321,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-006",
       "status": "fail",
-      "mismatch_pct": 8.152866
+      "mismatch_pct": 8.153079
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-000-ref",
@@ -6331,7 +6331,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-000",
       "status": "fail",
-      "mismatch_pct": 1.443737
+      "mismatch_pct": 0.528662
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-001-ref",
@@ -6341,7 +6341,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-001",
       "status": "fail",
-      "mismatch_pct": 4.66242
+      "mismatch_pct": 1.509554
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-002-ref",
@@ -6351,7 +6351,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-002",
       "status": "fail",
-      "mismatch_pct": 8.152866
+      "mismatch_pct": 2.522718
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-003-ref",
@@ -6361,7 +6361,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-003",
       "status": "fail",
-      "mismatch_pct": 4.66242
+      "mismatch_pct": 1.509554
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-004-ref",
@@ -6371,7 +6371,7 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-004",
       "status": "fail",
-      "mismatch_pct": 4.683652
+      "mismatch_pct": 1.530786
     },
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-005-ref",
@@ -6381,27 +6381,27 @@
     {
       "id": "wpt/css_multicol/multicol-breaking-nobackground-005",
       "status": "fail",
-      "mismatch_pct": 8.152866
+      "mismatch_pct": 2.522718
     },
     {
       "id": "wpt/css_multicol/multicol-clip-001",
       "status": "fail",
-      "mismatch_pct": 3.563482
+      "mismatch_pct": 3.63758
     },
     {
       "id": "wpt/css_multicol/multicol-clip-002",
       "status": "fail",
-      "mismatch_pct": 3.322293
+      "mismatch_pct": 3.378344
     },
     {
       "id": "wpt/css_multicol/multicol-collapsing-001",
       "status": "fail",
-      "mismatch_pct": 0.595754
+      "mismatch_pct": 0.999151
     },
     {
       "id": "wpt/css_multicol/multicol-columns-001-ref",
       "status": "fail",
-      "mismatch_pct": 5.350318
+      "mismatch_pct": 5.392781
     },
     {
       "id": "wpt/css_multicol/multicol-columns-001",
@@ -6441,17 +6441,17 @@
     {
       "id": "wpt/css_multicol/multicol-columns-invalid-001",
       "status": "fail",
-      "mismatch_pct": 3.738004
+      "mismatch_pct": 3.746072
     },
     {
       "id": "wpt/css_multicol/multicol-columns-invalid-002",
       "status": "fail",
-      "mismatch_pct": 3.138854
+      "mismatch_pct": 3.21104
     },
     {
       "id": "wpt/css_multicol/multicol-columns-toolong-001",
       "status": "fail",
-      "mismatch_pct": 3.138854
+      "mismatch_pct": 3.21104
     },
     {
       "id": "wpt/css_multicol/multicol-contained-absolute-ref",
@@ -6466,7 +6466,7 @@
     {
       "id": "wpt/css_multicol/multicol-containing-001",
       "status": "fail",
-      "mismatch_pct": 3.859023
+      "mismatch_pct": 3.878556
     },
     {
       "id": "wpt/css_multicol/multicol-containing-002-ref",
@@ -6486,47 +6486,47 @@
     {
       "id": "wpt/css_multicol/multicol-count-002",
       "status": "fail",
-      "mismatch_pct": 16.815287
+      "mismatch_pct": 16.985138
     },
     {
       "id": "wpt/css_multicol/multicol-count-computed-003",
       "status": "fail",
-      "mismatch_pct": 3.529299
+      "mismatch_pct": 3.612951
     },
     {
       "id": "wpt/css_multicol/multicol-count-computed-004",
       "status": "fail",
-      "mismatch_pct": 1.219533
+      "mismatch_pct": 1.36051
     },
     {
       "id": "wpt/css_multicol/multicol-count-computed-005",
       "status": "fail",
-      "mismatch_pct": 3.529299
+      "mismatch_pct": 3.612951
     },
     {
       "id": "wpt/css_multicol/multicol-count-negative-001",
       "status": "fail",
-      "mismatch_pct": 1.830998
+      "mismatch_pct": 1.985563
     },
     {
       "id": "wpt/css_multicol/multicol-count-negative-002",
       "status": "fail",
-      "mismatch_pct": 1.830998
+      "mismatch_pct": 1.985563
     },
     {
       "id": "wpt/css_multicol/multicol-count-non-integer-001",
       "status": "fail",
-      "mismatch_pct": 1.830998
+      "mismatch_pct": 1.985563
     },
     {
       "id": "wpt/css_multicol/multicol-count-non-integer-002",
       "status": "fail",
-      "mismatch_pct": 1.830998
+      "mismatch_pct": 1.985563
     },
     {
       "id": "wpt/css_multicol/multicol-count-non-integer-003",
       "status": "fail",
-      "mismatch_pct": 1.830998
+      "mismatch_pct": 1.985563
     },
     {
       "id": "wpt/css_multicol/multicol-dynamic-add-001-ref",
@@ -6561,7 +6561,7 @@
     {
       "id": "wpt/css_multicol/multicol-fill-auto-003",
       "status": "fail",
-      "mismatch_pct": 4.762633
+      "mismatch_pct": 1.949894
     },
     {
       "id": "wpt/css_multicol/multicol-fill-auto-004",
@@ -6681,27 +6681,27 @@
     {
       "id": "wpt/css_multicol/multicol-gap-000",
       "status": "fail",
-      "mismatch_pct": 7.643312
+      "mismatch_pct": 7.66879
     },
     {
       "id": "wpt/css_multicol/multicol-gap-001",
       "status": "fail",
-      "mismatch_pct": 0.764331
+      "mismatch_pct": 0.789809
     },
     {
       "id": "wpt/css_multicol/multicol-gap-002",
       "status": "fail",
-      "mismatch_pct": 3.312102
+      "mismatch_pct": 3.348195
     },
     {
       "id": "wpt/css_multicol/multicol-gap-003",
       "status": "fail",
-      "mismatch_pct": 3.312102
+      "mismatch_pct": 3.348195
     },
     {
       "id": "wpt/css_multicol/multicol-gap-fraction-001-ref",
       "status": "fail",
-      "mismatch_pct": 2.756688
+      "mismatch_pct": 0.679406
     },
     {
       "id": "wpt/css_multicol/multicol-gap-fraction-001",
@@ -6716,17 +6716,17 @@
     {
       "id": "wpt/css_multicol/multicol-gap-large-001",
       "status": "fail",
-      "mismatch_pct": 3.719745
+      "mismatch_pct": 3.761783
     },
     {
       "id": "wpt/css_multicol/multicol-gap-large-002",
       "status": "fail",
-      "mismatch_pct": 4.134183
+      "mismatch_pct": 4.214862
     },
     {
       "id": "wpt/css_multicol/multicol-gap-negative-001",
       "status": "fail",
-      "mismatch_pct": 3.104883
+      "mismatch_pct": 3.166879
     },
     {
       "id": "wpt/css_multicol/multicol-height-001",
@@ -6745,23 +6745,23 @@
     },
     {
       "id": "wpt/css_multicol/multicol-height-block-child-001-ref",
-      "status": "fail",
-      "mismatch_pct": 5.832696
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-height-block-child-001",
-      "status": "fail",
-      "mismatch_pct": 3.424204
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-inherit-001",
       "status": "fail",
-      "mismatch_pct": 0.636943
+      "mismatch_pct": 0.815287
     },
     {
       "id": "wpt/css_multicol/multicol-inherit-002",
       "status": "fail",
-      "mismatch_pct": 2.403397
+      "mismatch_pct": 0.951168
     },
     {
       "id": "wpt/css_multicol/multicol-inherit-003",
@@ -6855,8 +6855,8 @@
     },
     {
       "id": "wpt/css_multicol/multicol-margin-001",
-      "status": "fail",
-      "mismatch_pct": 8.492569
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-margin-002",
@@ -6876,22 +6876,22 @@
     {
       "id": "wpt/css_multicol/multicol-margin-child-001",
       "status": "fail",
-      "mismatch_pct": 1.277282
+      "mismatch_pct": 0.862845
     },
     {
       "id": "wpt/css_multicol/multicol-nested-002-ref",
-      "status": "fail",
-      "mismatch_pct": 7.059023
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-nested-002",
       "status": "fail",
-      "mismatch_pct": 0.625053
+      "mismatch_pct": 0.815287
     },
     {
       "id": "wpt/css_multicol/multicol-nested-005",
       "status": "fail",
-      "mismatch_pct": 2.757537
+      "mismatch_pct": 1.107219
     },
     {
       "id": "wpt/css_multicol/multicol-nested-007",
@@ -7001,7 +7001,7 @@
     {
       "id": "wpt/css_multicol/multicol-nested-column-rule-001-ref",
       "status": "fail",
-      "mismatch_pct": 0.835669
+      "mismatch_pct": 0.203822
     },
     {
       "id": "wpt/css_multicol/multicol-nested-column-rule-001",
@@ -7020,8 +7020,8 @@
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-001-ref",
-      "status": "fail",
-      "mismatch_pct": 6.610616
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-001",
@@ -7030,38 +7030,38 @@
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-002-ref",
-      "status": "fail",
-      "mismatch_pct": 6.098514
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-002",
       "status": "fail",
-      "mismatch_pct": 1.415074
+      "mismatch_pct": 0.974522
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-003-ref",
-      "status": "fail",
-      "mismatch_pct": 8.305732
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-003",
-      "status": "fail",
-      "mismatch_pct": 2.069639
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-004-ref",
-      "status": "fail",
-      "mismatch_pct": 8.271762
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-004",
       "status": "fail",
-      "mismatch_pct": 3.583015
+      "mismatch_pct": 2.056263
     },
     {
       "id": "wpt/css_multicol/multicol-nested-margin-005",
       "status": "fail",
-      "mismatch_pct": 3.583015
+      "mismatch_pct": 2.056263
     },
     {
       "id": "wpt/css_multicol/multicol-oof-inline-cb-001-ref",
@@ -7110,33 +7110,33 @@
     },
     {
       "id": "wpt/css_multicol/multicol-overflowing-001-ref",
-      "status": "fail",
-      "mismatch_pct": 3.859023
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-overflowing-001",
-      "status": "fail",
-      "mismatch_pct": 1.956688
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-reduce-000-ref",
       "status": "fail",
-      "mismatch_pct": 16.254777
+      "mismatch_pct": 16.397665
     },
     {
       "id": "wpt/css_multicol/multicol-reduce-000",
       "status": "fail",
-      "mismatch_pct": 9.787686
+      "mismatch_pct": 9.998514
     },
     {
       "id": "wpt/css_multicol/multicol-rule-000-ref",
       "status": "fail",
-      "mismatch_pct": 5.961783
+      "mismatch_pct": 5.993631
     },
     {
       "id": "wpt/css_multicol/multicol-rule-000",
       "status": "fail",
-      "mismatch_pct": 4.26327
+      "mismatch_pct": 4.280255
     },
     {
       "id": "wpt/css_multicol/multicol-rule-001-ref",
@@ -7146,7 +7146,7 @@
     {
       "id": "wpt/css_multicol/multicol-rule-001",
       "status": "fail",
-      "mismatch_pct": 3.397028
+      "mismatch_pct": 3.456476
     },
     {
       "id": "wpt/css_multicol/multicol-rule-002",
@@ -7156,7 +7156,7 @@
     {
       "id": "wpt/css_multicol/multicol-rule-003",
       "status": "fail",
-      "mismatch_pct": 1.03949
+      "mismatch_pct": 0.631847
     },
     {
       "id": "wpt/css_multicol/multicol-rule-004-ref",
@@ -7171,7 +7171,7 @@
     {
       "id": "wpt/css_multicol/multicol-rule-color-001",
       "status": "fail",
-      "mismatch_pct": 3.50913
+      "mismatch_pct": 3.616985
     },
     {
       "id": "wpt/css_multicol/multicol-rule-color-inherit-001",
@@ -7216,12 +7216,12 @@
     {
       "id": "wpt/css_multicol/multicol-rule-fraction-001",
       "status": "fail",
-      "mismatch_pct": 0.978344
+      "mismatch_pct": 0.597877
     },
     {
       "id": "wpt/css_multicol/multicol-rule-fraction-002",
       "status": "fail",
-      "mismatch_pct": 0.978344
+      "mismatch_pct": 0.597877
     },
     {
       "id": "wpt/css_multicol/multicol-rule-fraction-003",
@@ -7245,8 +7245,8 @@
     },
     {
       "id": "wpt/css_multicol/multicol-rule-hidden-000-ref",
-      "status": "fail",
-      "mismatch_pct": 7.814862
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/multicol-rule-hidden-000",
@@ -7261,12 +7261,12 @@
     {
       "id": "wpt/css_multicol/multicol-rule-large-001",
       "status": "fail",
-      "mismatch_pct": 1.093843
+      "mismatch_pct": 0.631847
     },
     {
       "id": "wpt/css_multicol/multicol-rule-large-002",
       "status": "fail",
-      "mismatch_pct": 1.03949
+      "mismatch_pct": 0.631847
     },
     {
       "id": "wpt/css_multicol/multicol-rule-nested-balancing-001-ref",
@@ -7406,17 +7406,17 @@
     {
       "id": "wpt/css_multicol/multicol-span-all-001",
       "status": "fail",
-      "mismatch_pct": 6.583439
+      "mismatch_pct": 6.638217
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-002",
       "status": "fail",
-      "mismatch_pct": 5.606794
+      "mismatch_pct": 5.633546
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-003",
       "status": "fail",
-      "mismatch_pct": 17.664544
+      "mismatch_pct": 17.719745
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-007-ref",
@@ -7481,7 +7481,7 @@
     {
       "id": "wpt/css_multicol/multicol-span-all-block-sibling-003",
       "status": "fail",
-      "mismatch_pct": 10.326964
+      "mismatch_pct": 12.967728
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-block-sibling-3-ref",
@@ -7691,12 +7691,12 @@
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-001",
       "status": "fail",
-      "mismatch_pct": 6.338854
+      "mismatch_pct": 6.365605
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-002",
       "status": "fail",
-      "mismatch_pct": 6.644586
+      "mismatch_pct": 6.696391
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-003",
@@ -7706,17 +7706,17 @@
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-bottom-001",
       "status": "fail",
-      "mismatch_pct": 7.363057
+      "mismatch_pct": 7.376858
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-nested-001",
       "status": "fail",
-      "mismatch_pct": 2.673461
+      "mismatch_pct": 0.930786
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-nested-002",
       "status": "fail",
-      "mismatch_pct": 3.284926
+      "mismatch_pct": 1.729087
     },
     {
       "id": "wpt/css_multicol/multicol-span-all-margin-nested-firstchild-001",
@@ -7766,7 +7766,7 @@
     {
       "id": "wpt/css_multicol/multicol-span-float-001",
       "status": "fail",
-      "mismatch_pct": 3.63482
+      "mismatch_pct": 3.711253
     },
     {
       "id": "wpt/css_multicol/multicol-span-float-002-ref",
@@ -7786,7 +7786,7 @@
     {
       "id": "wpt/css_multicol/multicol-span-none-001",
       "status": "fail",
-      "mismatch_pct": 7.317197
+      "mismatch_pct": 7.467516
     },
     {
       "id": "wpt/css_multicol/multicol-width-001-ref",
@@ -7801,12 +7801,12 @@
     {
       "id": "wpt/css_multicol/multicol-width-002",
       "status": "fail",
-      "mismatch_pct": 3.138854
+      "mismatch_pct": 3.21104
     },
     {
       "id": "wpt/css_multicol/multicol-width-003",
       "status": "fail",
-      "mismatch_pct": 3.155839
+      "mismatch_pct": 1.280679
     },
     {
       "id": "wpt/css_multicol/multicol-width-004-ref",
@@ -7841,32 +7841,32 @@
     {
       "id": "wpt/css_multicol/multicol-width-count-002",
       "status": "fail",
-      "mismatch_pct": 16.815287
+      "mismatch_pct": 16.985138
     },
     {
       "id": "wpt/css_multicol/multicol-width-invalid-001",
       "status": "fail",
-      "mismatch_pct": 1.402972
+      "mismatch_pct": 1.628875
     },
     {
       "id": "wpt/css_multicol/multicol-width-large-001",
       "status": "fail",
-      "mismatch_pct": 2.075584
+      "mismatch_pct": 2.179193
     },
     {
       "id": "wpt/css_multicol/multicol-width-large-002",
       "status": "fail",
-      "mismatch_pct": 2.075584
+      "mismatch_pct": 2.179193
     },
     {
       "id": "wpt/css_multicol/multicol-width-negative-001",
       "status": "fail",
-      "mismatch_pct": 14.067091
+      "mismatch_pct": 14.087473
     },
     {
       "id": "wpt/css_multicol/multicol-width-small-001",
       "status": "fail",
-      "mismatch_pct": 2.445011
+      "mismatch_pct": 2.454352
     },
     {
       "id": "wpt/css_multicol/multicol-zero-height-001-ref",
@@ -8705,23 +8705,23 @@
     },
     {
       "id": "wpt/css_overflow/line-clamp_discard_discard-multicol-001",
-      "status": "fail",
-      "mismatch_pct": 0.759236
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/line-clamp_discard_discard-multicol-002",
-      "status": "fail",
-      "mismatch_pct": 0.759236
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/line-clamp_discard_discard-multicol-003",
       "status": "fail",
-      "mismatch_pct": 0.425053
+      "mismatch_pct": 0.193206
     },
     {
       "id": "wpt/css_overflow/line-clamp_discard_discard-multicol-004",
-      "status": "fail",
-      "mismatch_pct": 0.759236
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/scroll-markers_column-scroll-marker-001-ref",
@@ -9071,32 +9071,32 @@
     {
       "id": "wpt/css_sizing/clone-intrinsic-size-ref",
       "status": "fail",
-      "mismatch_pct": 14.50828
+      "mismatch_pct": 5.880042
     },
     {
       "id": "wpt/css_sizing/clone-intrinsic-size",
       "status": "fail",
-      "mismatch_pct": 16.089809
+      "mismatch_pct": 7.210828
     },
     {
       "id": "wpt/css_sizing/clone-nowrap-intrinsic-size-bidi-ref",
       "status": "fail",
-      "mismatch_pct": 16.464331
+      "mismatch_pct": 10.448832
     },
     {
       "id": "wpt/css_sizing/clone-nowrap-intrinsic-size-bidi",
       "status": "fail",
-      "mismatch_pct": 15.894055
+      "mismatch_pct": 8.566879
     },
     {
       "id": "wpt/css_sizing/clone-nowrap-intrinsic-size-ref",
       "status": "fail",
-      "mismatch_pct": 15.100212
+      "mismatch_pct": 5.884289
     },
     {
       "id": "wpt/css_sizing/clone-nowrap-intrinsic-size",
       "status": "fail",
-      "mismatch_pct": 15.241189
+      "mismatch_pct": 5.735032
     },
     {
       "id": "wpt/css_sizing/div-auto-margin-bottom-ref",
@@ -9431,32 +9431,32 @@
     {
       "id": "wpt/css_sizing/slice-intrinsic-size-ref",
       "status": "fail",
-      "mismatch_pct": 14.379193
+      "mismatch_pct": 5.697665
     },
     {
       "id": "wpt/css_sizing/slice-intrinsic-size",
       "status": "fail",
-      "mismatch_pct": 15.739915
+      "mismatch_pct": 6.969639
     },
     {
       "id": "wpt/css_sizing/slice-nowrap-intrinsic-size-bidi-ref",
       "status": "fail",
-      "mismatch_pct": 16.464331
+      "mismatch_pct": 10.448832
     },
     {
       "id": "wpt/css_sizing/slice-nowrap-intrinsic-size-bidi",
       "status": "fail",
-      "mismatch_pct": 15.894055
+      "mismatch_pct": 8.566879
     },
     {
       "id": "wpt/css_sizing/slice-nowrap-intrinsic-size-ref",
       "status": "fail",
-      "mismatch_pct": 15.100212
+      "mismatch_pct": 5.884289
     },
     {
       "id": "wpt/css_sizing/slice-nowrap-intrinsic-size",
       "status": "fail",
-      "mismatch_pct": 15.241189
+      "mismatch_pct": 5.735032
     },
     {
       "id": "wpt/css_sizing/svg-intrinsic-size-006-ref",
@@ -10526,62 +10526,62 @@
     {
       "id": "wpt/css_break/block-max-height-001-ref",
       "status": "fail",
-      "mismatch_pct": 15.131847
+      "mismatch_pct": 10.43949
     },
     {
       "id": "wpt/css_break/block-max-height-001",
       "status": "fail",
-      "mismatch_pct": 15.131847
+      "mismatch_pct": 10.43949
     },
     {
       "id": "wpt/css_break/block-max-height-001b-ref",
       "status": "fail",
-      "mismatch_pct": 17.500212
+      "mismatch_pct": 15.466242
     },
     {
       "id": "wpt/css_break/block-max-height-001b",
       "status": "fail",
-      "mismatch_pct": 17.500212
+      "mismatch_pct": 15.466242
     },
     {
       "id": "wpt/css_break/block-max-height-002",
       "status": "fail",
-      "mismatch_pct": 15.131847
+      "mismatch_pct": 10.43949
     },
     {
       "id": "wpt/css_break/block-max-height-002b",
       "status": "fail",
-      "mismatch_pct": 17.500212
+      "mismatch_pct": 15.466242
     },
     {
       "id": "wpt/css_break/block-max-height-003",
       "status": "fail",
-      "mismatch_pct": 15.131847
+      "mismatch_pct": 10.43949
     },
     {
       "id": "wpt/css_break/block-max-height-003b",
       "status": "fail",
-      "mismatch_pct": 17.500212
+      "mismatch_pct": 15.466242
     },
     {
       "id": "wpt/css_break/block-min-height-001-ref",
       "status": "fail",
-      "mismatch_pct": 9.250531
+      "mismatch_pct": 0.006369
     },
     {
       "id": "wpt/css_break/block-min-height-001",
       "status": "fail",
-      "mismatch_pct": 9.250531
+      "mismatch_pct": 0.006369
     },
     {
       "id": "wpt/css_break/block-min-height-001b-ref",
       "status": "fail",
-      "mismatch_pct": 9.996603
+      "mismatch_pct": 0.289172
     },
     {
       "id": "wpt/css_break/block-min-height-001b",
       "status": "fail",
-      "mismatch_pct": 9.996603
+      "mismatch_pct": 0.289172
     },
     {
       "id": "wpt/css_break/border-image-000",
@@ -10906,12 +10906,12 @@
     {
       "id": "wpt/css_break/break-inside-avoid-min-block-size-1-ref",
       "status": "fail",
-      "mismatch_pct": 5.978769
+      "mismatch_pct": 5.435244
     },
     {
       "id": "wpt/css_break/break-inside-avoid-min-block-size-1",
       "status": "fail",
-      "mismatch_pct": 5.515074
+      "mismatch_pct": 4.95966
     },
     {
       "id": "wpt/css_break/break-inside-avoid-multicol-001-print-ref",
@@ -11561,12 +11561,12 @@
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-049",
       "status": "fail",
-      "mismatch_pct": 2.377919
+      "mismatch_pct": 2.123142
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-050",
       "status": "fail",
-      "mismatch_pct": 2.717622
+      "mismatch_pct": 2.407643
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-051",
@@ -11576,17 +11576,17 @@
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-052",
       "status": "fail",
-      "mismatch_pct": 2.462845
+      "mismatch_pct": 2.144374
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-053",
       "status": "fail",
-      "mismatch_pct": 2.292994
+      "mismatch_pct": 2.123142
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-054",
       "status": "fail",
-      "mismatch_pct": 3.142251
+      "mismatch_pct": 2.861996
     },
     {
       "id": "wpt/css_break/out-of-flow-in-multicolumn-055",
@@ -12106,7 +12106,7 @@
     {
       "id": "wpt/css_break/widows-001",
       "status": "fail",
-      "mismatch_pct": 8.475584
+      "mismatch_pct": 3.98259
     },
     {
       "id": "wpt/css_break/widows-block-in-inline-001",
@@ -12136,57 +12136,57 @@
     {
       "id": "wpt/css_break/widows-orphans-008",
       "status": "fail",
-      "mismatch_pct": 8.373673
+      "mismatch_pct": 3.880679
     },
     {
       "id": "wpt/css_break/widows-orphans-009",
       "status": "fail",
-      "mismatch_pct": 8.373673
+      "mismatch_pct": 3.880679
     },
     {
       "id": "wpt/css_break/widows-orphans-010",
       "status": "fail",
-      "mismatch_pct": 8.373673
+      "mismatch_pct": 3.880679
     },
     {
       "id": "wpt/css_break/widows-orphans-011",
       "status": "fail",
-      "mismatch_pct": 10.47983
+      "mismatch_pct": 4.626115
     },
     {
       "id": "wpt/css_break/widows-orphans-012",
       "status": "fail",
-      "mismatch_pct": 12.531635
+      "mismatch_pct": 5.367516
     },
     {
       "id": "wpt/css_break/widows-orphans-013",
       "status": "fail",
-      "mismatch_pct": 12.280255
+      "mismatch_pct": 5.336943
     },
     {
       "id": "wpt/css_break/widows-orphans-014",
       "status": "fail",
-      "mismatch_pct": 8.601274
+      "mismatch_pct": 4.411465
     },
     {
       "id": "wpt/css_break/widows-orphans-015",
       "status": "fail",
-      "mismatch_pct": 8.373673
+      "mismatch_pct": 3.880679
     },
     {
       "id": "wpt/css_break/widows-orphans-016",
       "status": "fail",
-      "mismatch_pct": 8.373673
+      "mismatch_pct": 3.880679
     },
     {
       "id": "wpt/css_break/widows-orphans-017",
       "status": "fail",
-      "mismatch_pct": 7.945648
+      "mismatch_pct": 3.694268
     },
     {
       "id": "wpt/css_break/widows-orphans-018",
       "status": "fail",
-      "mismatch_pct": 8.373673
+      "mismatch_pct": 3.880679
     },
     {
       "id": "wpt/css_break/widows-orphans-019",
@@ -13901,7 +13901,7 @@
     {
       "id": "wpt/css_display/display-flow-root-001",
       "status": "fail",
-      "mismatch_pct": 10.123142
+      "mismatch_pct": 10.15414
     },
     {
       "id": "wpt/css_display/display-flow-root-002-ref",
@@ -13921,7 +13921,7 @@
     {
       "id": "wpt/css_display/display-flow-root-list-item-001",
       "status": "fail",
-      "mismatch_pct": 11.223779
+      "mismatch_pct": 11.078981
     },
     {
       "id": "wpt/css_box/margin-trim_block-container-non-adjoining-item-ref",
@@ -15965,8 +15965,8 @@
     },
     {
       "id": "wpt/css_backgrounds/background-clip_clip-text-dynamic-2-ref",
-      "status": "fail",
-      "mismatch_pct": 32.271762
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/background-clip_clip-text-ellipsis-ref",
@@ -17361,7 +17361,7 @@
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-001",
       "status": "fail",
-      "mismatch_pct": 0.624416
+      "mismatch_pct": 0.666454
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-002-ref",
@@ -17371,7 +17371,7 @@
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-002",
       "status": "fail",
-      "mismatch_pct": 0.624416
+      "mismatch_pct": 0.666454
     },
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003-ref",
@@ -17381,7 +17381,7 @@
     {
       "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003",
       "status": "fail",
-      "mismatch_pct": 1.243312
+      "mismatch_pct": 1.304459
     },
     {
       "id": "wpt/css_backgrounds/background-attachment-local-scrolling",

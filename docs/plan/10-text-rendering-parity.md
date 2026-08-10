@@ -6,14 +6,14 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 ## Current state
 
-SP14 W0–W4 closed the global `needs_text` category, and SP15 closed its inline/layout
-and root/body follow-up. The text manifest contains 496 tests: 128 exact and 368 with
-detector-backed non-text owners. The complete 3,566-test run has 2,804 exact passes and
-zero errors, preserves all 2,767 frozen SP15 baseline passes, and passes the 7/7 audit.
+SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
+and root/body follow-up, and SP16 closed all 776 real-font-metric rows. The text
+manifest remains 496 IDs. The complete 3,566-test run has 2,823 exact passes and
+zero errors, preserves all 2,804 frozen SP16 baseline passes, and passes the 7/7 audit.
 
-Deterministic ports use repo-vendored Ahem plus an explicit DejaVu Sans fallback for
-verified missing glyphs. The no-AA/no-hinting environment is scoped by
-`text_ported_tests.json` on both renderers. Exact zero-pixel parity remains the standard;
+Deterministic ports use repo-vendored Ahem. Real-font ports use vendored DejaVu Sans,
+Sans Mono, and Serif plus the pinned Chromium 147 FreeType runtime. Each raster policy
+is manifest-scoped on both renderers. Exact zero-pixel parity remains the standard;
 AA near misses are never promoted to passes.
 
 ## Chronological work
@@ -33,9 +33,11 @@ The actionable set finishes 34 exact, 42 functionally owned, and zero errors.
 
 ### SP16 — real-font metrics and parity
 
-Move beyond deterministic Ahem geometry to font metrics, `ch`/`ex`, font shorthand,
-`line-height: normal`, hinting, and real-glyph raster parity. Runnable font-metric
-ownership currently covers 226 runnable failures.
+Complete. The 226 runnable targets finish 19 exact and 207 functionally owned with
+zero errors; 550 unported residuals retain their actual rejection and non-font owners.
+Shared font metrics, `ch`/`ex`/`lh`, used line height, shorthand parsing, deterministic
+family selection, and the real-glyph LCD raster profile are implemented. The global
+`needs_font_metrics` category is retired.
 
 ### SP17 — advanced text
 

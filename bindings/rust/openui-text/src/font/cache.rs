@@ -21,7 +21,30 @@ use super::platform::FontPlatformData;
 /// name ahead of the system font manager, so `match_family_style` resolves the
 /// vendored `.ttf` (byte-identical to the Chromium reference's font) instead of
 /// a system fallback. See `fonts/README.md`.
-const PINNED_FONTS: &[(&str, &[u8])] = &[("Ahem", include_bytes!("../../fonts/Ahem.ttf"))];
+const PINNED_FONTS: &[(&str, &[u8])] = &[
+    ("Ahem", include_bytes!("../../fonts/Ahem.ttf")),
+    ("DejaVu Sans", include_bytes!("../../fonts/DejaVuSans.ttf")),
+    (
+        "DejaVu Sans",
+        include_bytes!("../../fonts/DejaVuSans-Bold.ttf"),
+    ),
+    (
+        "DejaVu Sans Mono",
+        include_bytes!("../../fonts/DejaVuSansMono.ttf"),
+    ),
+    (
+        "DejaVu Sans Mono",
+        include_bytes!("../../fonts/DejaVuSansMono-Bold.ttf"),
+    ),
+    (
+        "DejaVu Serif",
+        include_bytes!("../../fonts/DejaVuSerif.ttf"),
+    ),
+    (
+        "DejaVu Serif",
+        include_bytes!("../../fonts/DejaVuSerif-Bold.ttf"),
+    ),
+];
 
 /// Cache key derived from the properties that affect typeface selection.
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
@@ -138,20 +161,18 @@ impl FontCache {
     /// Map a generic CSS font family to the string name passed to SkFontMgr.
     pub fn generic_family_name(generic: GenericFontFamily) -> &'static str {
         match generic {
-            GenericFontFamily::Serif => "serif",
-            GenericFontFamily::SansSerif => "sans-serif",
-            GenericFontFamily::Monospace => "monospace",
+            GenericFontFamily::Serif | GenericFontFamily::UiSerif => "DejaVu Serif",
+            GenericFontFamily::SansSerif
+            | GenericFontFamily::SystemUi
+            | GenericFontFamily::UiSansSerif
+            | GenericFontFamily::UiRounded => "DejaVu Sans",
+            GenericFontFamily::Monospace | GenericFontFamily::UiMonospace => "DejaVu Sans Mono",
             GenericFontFamily::Cursive => "cursive",
             GenericFontFamily::Fantasy => "fantasy",
-            GenericFontFamily::SystemUi => "system-ui",
             GenericFontFamily::Math => "math",
             GenericFontFamily::Emoji => "emoji",
             GenericFontFamily::FangSong => "fangsong",
-            GenericFontFamily::UiSerif => "ui-serif",
-            GenericFontFamily::UiSansSerif => "ui-sans-serif",
-            GenericFontFamily::UiMonospace => "ui-monospace",
-            GenericFontFamily::UiRounded => "ui-rounded",
-            GenericFontFamily::None => "sans-serif",
+            GenericFontFamily::None => "DejaVu Sans",
         }
     }
 
@@ -311,5 +332,76 @@ mod tests {
             key1, key2,
             "Same oblique angle should produce identical cache keys"
         );
+    }
+
+    #[test]
+    fn generic_families_resolve_to_vendored_dejavu_faces() {
+        assert_eq!(
+            FontCache::generic_family_name(GenericFontFamily::SansSerif),
+            "DejaVu Sans"
+        );
+        assert_eq!(
+            FontCache::generic_family_name(GenericFontFamily::Monospace),
+            "DejaVu Sans Mono"
+        );
+        assert_eq!(
+            FontCache::generic_family_name(GenericFontFamily::Serif),
+            "DejaVu Serif"
+        );
+    }
+
+    #[test]
+    fn regular_and_bold_select_matching_vendored_styles() {
+        let mut cache = FontCache::new();
+        let regular = FontDescription::default();
+        let mut bold = regular.clone();
+        bold.weight = openui_style::FontWeight::BOLD;
+        let regular_face = cache
+            .get_font_platform_data("DejaVu Sans", &regular)
+            .expect("vendored regular face");
+        let bold_face = cache
+            .get_font_platform_data("DejaVu Sans", &bold)
+            .expect("vendored bold face");
+        assert_eq!(regular_face.typeface().family_name(), "DejaVu Sans");
+        assert_eq!(bold_face.typeface().family_name(), "DejaVu Sans");
+        assert_ne!(
+            regular_face.typeface().font_style().weight(),
+            bold_face.typeface().font_style().weight()
+        );
+    }
+
+    #[test]
+    fn vendored_dejavu_sans_has_exact_16px_metrics() {
+        let mut cache = FontCache::new();
+        let face = cache
+            .get_font_platform_data("DejaVu Sans", &FontDescription::default())
+            .expect("vendored DejaVu Sans");
+        let metrics = face.metrics();
+        assert_eq!(metrics.ascent, 14.8515625);
+        assert_eq!(metrics.descent, 3.7734375);
+        assert_eq!(metrics.line_gap, 0.0);
+        assert_eq!(metrics.line_spacing, 18.625);
+        assert_eq!(metrics.x_height, 9.0);
+        assert_eq!(metrics.zero_width, 10.1796875);
+        assert_eq!(metrics.units_per_em, 2048);
+    }
+
+    #[test]
+    fn resolved_faces_are_arc_cached_and_ahem_stays_isolated() {
+        let mut cache = FontCache::new();
+        let description = FontDescription::default();
+        let first = cache
+            .get_font_platform_data("DejaVu Sans", &description)
+            .expect("vendored DejaVu Sans");
+        let second = cache
+            .get_font_platform_data("DejaVu Sans", &description)
+            .expect("cached DejaVu Sans");
+        let ahem = cache
+            .get_font_platform_data("Ahem", &description)
+            .expect("vendored Ahem");
+        assert!(Arc::ptr_eq(&first, &second));
+        assert_eq!(cache.len(), 2);
+        assert_eq!(ahem.typeface().family_name(), "Ahem");
+        assert_ne!(ahem.typeface().unique_id(), first.typeface().unique_id());
     }
 }

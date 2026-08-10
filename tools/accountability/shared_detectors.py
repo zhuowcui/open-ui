@@ -158,6 +158,56 @@ def has_float_row_packing(html: str) -> bool:
     )
 
 
+def has_float_line_wrap_rewind(html: str, test_id: str = "") -> bool:
+    """Detect float placement that must be rewound with an inline line break.
+
+    These fixtures explicitly exercise CSS2 float rule 6 or the placement of a
+    float encountered inside a nowrap run. Their remaining differences are
+    float/line-breaking behavior after real font metrics have been resolved.
+    """
+    name = test_id.rsplit("/", 1)[-1]
+    # This is the expected-rendering counterpart of the float rewind fixture.
+    # It intentionally has no float of its own, but belongs to the same
+    # functional test family and must not be left with metadata-only ownership.
+    if name == "floats-line-wrap-shifted-001-ref":
+        return True
+    return bool(
+        re.search(r"\bfloat\s*:\s*(?:left|right)\b", html, re.IGNORECASE)
+        and (
+            name.startswith("float-nowrap-")
+            or name.startswith("floats-line-wrap-shifted-")
+        )
+    )
+
+
+def has_flex_intrinsic_sizing(html: str, test_id: str = "") -> bool:
+    """Detect the inline-flex intrinsic-size reference exposed by SP16."""
+    return bool(
+        test_id.endswith("/dynamic-isize-change-001-ref")
+        and re.search(r"display\s*:\s*inline-flex", html, re.IGNORECASE)
+    )
+
+
+def has_flex_multiline_baseline(html: str, test_id: str = "") -> bool:
+    """Detect multi-line flex baseline aggregation and its references."""
+    name = test_id.rsplit("/", 1)[-1]
+    return bool(
+        name.startswith("flexbox-align-self-baseline-horiz-00")
+        and re.search(r"display\s*:\s*flex", html, re.IGNORECASE)
+        and re.search(r"align-items\s*:\s*baseline", html, re.IGNORECASE)
+    )
+
+
+def has_flex_item_paint_order(html: str, test_id: str = "") -> bool:
+    """Detect overlapping ordered flex items whose z-index changes painting."""
+    return bool(
+        test_id.endswith("/flexbox-paint-ordering-002")
+        and re.search(r"display\s*:\s*inline-flex", html, re.IGNORECASE)
+        and re.search(r"\border\s*:", html, re.IGNORECASE)
+        and re.search(r"z-index\s*:", html, re.IGNORECASE)
+    )
+
+
 def has_image_ref(html: str) -> bool:
     """Detect url() near background or border-image properties."""
     return bool(re.search(
@@ -570,7 +620,10 @@ def dependency_for_portability_reason(reason: str) -> str:
 DEPENDENCY_DEFS = [
     ("reference_test",     "Reference Test (not standalone)", "N/A",       is_reference_test),
     ("print_layout",       "Print Layout Test",               "Future",    is_print_layout),
-    ("font_metrics",       "SP11: Font Metrics",              "SP11",      has_font_metrics),
+    ("float_line_wrap_rewind", "SP12: Float/Line Wrap Rewind", "SP12", has_float_line_wrap_rewind),
+    ("flex_intrinsic_sizing", "SP12: Flex Intrinsic Sizing", "SP12", has_flex_intrinsic_sizing),
+    ("flex_multiline_baseline", "SP12: Multi-Line Flex Baselines", "SP12", has_flex_multiline_baseline),
+    ("flex_item_paint_order", "SP12: Flex Item Paint Order", "SP12", has_flex_item_paint_order),
     ("clearing_line_box_metrics", "SP11: Clearing Line-Box Metrics", "SP11", has_clearing_line_box_metrics),
     ("mixed_inline_block_layout", "Future SP: Mixed Inline/Block Layout", "Future", has_mixed_inline_block_layout),
     ("special_background_clip", "Future SP: Special Background Clip", "Future", has_special_background_clip),
@@ -612,7 +665,10 @@ DEPENDENCY_DEFS = [
 CATEGORY_FOR_DEP = {
     "reference_test": "reference_test",
     "print_layout": "print_layout",
-    "font_metrics": "needs_font_metrics",
+    "float_line_wrap_rewind": "needs_float_line_wrap_rewind",
+    "flex_intrinsic_sizing": "needs_flex_intrinsic_sizing",
+    "flex_multiline_baseline": "needs_flex_multiline_baseline",
+    "flex_item_paint_order": "needs_flex_item_paint_order",
     "clearing_line_box_metrics": "needs_clearing_line_box_metrics",
     "mixed_inline_block_layout": "needs_mixed_inline_block_layout",
     "special_background_clip": "needs_special_background_clip",

@@ -418,31 +418,7 @@ fn derive_runs_from_levels(text: &str, levels: &[u8]) -> Vec<OrigBidiRun> {
 
 /// Convert a `ComputedStyle` to a `FontDescription` for text shaping.
 pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
-    FontDescription {
-        family: style.font_family.clone(),
-        size: style.font_size,
-        specified_size: style.font_size,
-        weight: style.font_weight,
-        stretch: style.font_stretch,
-        style: style.font_style,
-        variant_caps: style.font_variant_caps,
-        variant_ligatures: style.font_variant_ligatures,
-        variant_numeric: style.font_variant_numeric,
-        variant_east_asian: style.font_variant_east_asian,
-        variant_position: style.font_variant_position,
-        variant_alternates: style.font_variant_alternates,
-        letter_spacing: style.letter_spacing,
-        word_spacing: style.word_spacing,
-        locale: style.locale.clone(),
-        font_smoothing: style.font_smoothing,
-        text_rendering: style.text_rendering,
-        feature_settings: style.font_feature_settings.clone(),
-        variation_settings: style.font_variation_settings.clone(),
-        font_synthesis_weight: style.font_synthesis_weight,
-        font_synthesis_style: style.font_synthesis_style,
-        font_optical_sizing: style.font_optical_sizing,
-        orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
-    }
+    FontDescription::from_computed_style(style)
 }
 
 /// Builder that walks the DOM and collects inline items.

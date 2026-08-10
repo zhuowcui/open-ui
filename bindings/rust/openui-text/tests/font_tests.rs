@@ -471,15 +471,15 @@ fn cache_returns_different_arc_for_different_size() {
 fn cache_generic_family_name_mapping() {
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Serif),
-        "serif"
+        "DejaVu Serif"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SansSerif),
-        "sans-serif"
+        "DejaVu Sans"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Monospace),
-        "monospace"
+        "DejaVu Sans Mono"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Cursive),
@@ -491,11 +491,11 @@ fn cache_generic_family_name_mapping() {
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SystemUi),
-        "system-ui"
+        "DejaVu Sans"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::None),
-        "sans-serif"
+        "DejaVu Sans"
     );
 }
 

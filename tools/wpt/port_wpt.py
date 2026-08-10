@@ -31,9 +31,45 @@ import re
 import sys
 import csv
 import json
+from enum import Enum
 from pathlib import Path
 from html.parser import HTMLParser
 from collections import OrderedDict
+
+
+class PorterProfile(Enum):
+    """Explicit generation environments with intentionally isolated output."""
+
+    LEGACY_BOX_ONLY = "legacy-box-only"
+    DETERMINISTIC_AHEM = "deterministic-ahem"
+    REAL_FONT = "real-font"
+
+
+ACTIVE_PORTER_PROFILE = PorterProfile.LEGACY_BOX_ONLY
+
+
+def set_porter_profile(profile: PorterProfile, *, retain_text: bool | None = None) -> None:
+    """Select one porter profile without changing historical defaults.
+
+    The SP16 real-font profile may retain or strip text per manifest membership,
+    so its text switch is explicit at each transaction boundary.
+    """
+    global ACTIVE_PORTER_PROFILE, EMIT_TEXT_NODES, RETAIN_TEXT
+    ACTIVE_PORTER_PROFILE = profile
+    if profile is PorterProfile.LEGACY_BOX_ONLY:
+        EMIT_TEXT_NODES = False
+        RETAIN_TEXT = False
+    elif profile is PorterProfile.DETERMINISTIC_AHEM:
+        EMIT_TEXT_NODES = True
+        RETAIN_TEXT = True
+    else:
+        keep = bool(retain_text)
+        EMIT_TEXT_NODES = keep
+        RETAIN_TEXT = keep
+
+
+def is_real_font_profile() -> bool:
+    return ACTIVE_PORTER_PROFILE is PorterProfile.REAL_FONT
 
 
 # ─── CSS property support map ──────────────────────────────────────────────
@@ -334,6 +370,9 @@ def parse_color(value: str) -> str | None:
     return None
 
 
+_ACTIVE_FONT_RELATIVE_RESOLVER: str | None = None
+
+
 def parse_length(value: str, font_size: float = 16.0) -> str | None:
     """Convert a CSS length value to Rust Length expression.
     
@@ -352,6 +391,14 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
     m = re.match(r'^(-?[\d.]+)%$', value)
     if m:
         return f'Length::percent({float(m.group(1))})'
+    m = re.match(r'^(-?[\d.]+)(ch|ex|lh)$', value, re.IGNORECASE)
+    if m and is_real_font_profile() and _ACTIVE_FONT_RELATIVE_RESOLVER:
+        unit = {"ch": "Ch", "ex": "Ex", "lh": "Lh"}[m.group(2).lower()]
+        return (
+            "Length::px("
+            f"{_ACTIVE_FONT_RELATIVE_RESOLVER}.resolve({float(m.group(1))}, "
+            f"openui_text::FontRelativeUnit::{unit}))"
+        )
     # em → convert to px using current font-size context
     m = re.match(r'^(-?[\d.]+)em$', value)
     if m:
@@ -634,6 +681,183 @@ def parse_border_width(value: str, font_size: float = 16.0) -> str | None:
     return None
 
 
+_FONT_SIZE_TOKEN = re.compile(
+    r"^(?:xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large|"
+    r"smaller|larger|[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:px|pt|pc|in|cm|mm|em|rem|%))$",
+    re.IGNORECASE,
+)
+_FONT_LINE_HEIGHT_TOKEN = re.compile(
+    r"^(?:normal|[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:px|pt|pc|in|cm|mm|em|rem|%)?)$",
+    re.IGNORECASE,
+)
+_FONT_STRETCH_KEYWORDS = {
+    "ultra-condensed", "extra-condensed", "condensed", "semi-condensed",
+    "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded",
+}
+
+
+class UnsupportedFontShorthand(ValueError):
+    pass
+
+
+def _font_tokens(value: str) -> list[str]:
+    """Split the pre-family shorthand while preserving quotes and `/`."""
+    tokens = []
+    current = []
+    quote = None
+    for ch in value:
+        if quote:
+            current.append(ch)
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+            current.append(ch)
+        elif ch == '/':
+            if current:
+                tokens.append(''.join(current))
+                current = []
+            tokens.append('/')
+        elif ch.isspace():
+            if current:
+                tokens.append(''.join(current))
+                current = []
+        else:
+            current.append(ch)
+    if quote:
+        raise UnsupportedFontShorthand("unterminated family quote")
+    if current:
+        tokens.append(''.join(current))
+    return tokens
+
+
+def _valid_family_list(value: str) -> bool:
+    if not value:
+        return False
+    parts = []
+    current = []
+    quote = None
+    for ch in value:
+        if quote:
+            current.append(ch)
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+            current.append(ch)
+        elif ch == ',':
+            parts.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+    parts.append(''.join(current).strip())
+    return quote is None and bool(parts) and all(parts)
+
+
+def parse_font_shorthand(value: str) -> OrderedDict:
+    """Expand the corpus-used CSS `font` grammar into computed longhands.
+
+    Unsupported or ambiguous forms raise instead of partially applying a size;
+    the splice transaction therefore remains all-or-nothing.
+    """
+    original = value
+    value = value.strip().rstrip(';').strip()
+    lower = value.lower()
+    longhands = OrderedDict()
+    if lower in {"inherit", "initial"}:
+        if lower == "inherit":
+            inherited = "inherit"
+            for prop in (
+                "font-style", "font-variant-caps", "font-weight", "font-stretch",
+                "font-size", "line-height", "font-family",
+            ):
+                longhands[prop] = inherited
+        else:
+            longhands.update((
+                ("font-style", "normal"),
+                ("font-variant-caps", "normal"),
+                ("font-weight", "normal"),
+                ("font-stretch", "normal"),
+                ("font-size", "medium"),
+                ("line-height", "normal"),
+                ("font-family", "sans-serif"),
+            ))
+        return longhands
+    if lower in {"caption", "icon", "menu", "message-box", "small-caption", "status-bar"}:
+        raise UnsupportedFontShorthand(f"unsupported system font: {original}")
+
+    tokens = _font_tokens(value)
+    size_index = next((i for i, token in enumerate(tokens) if _FONT_SIZE_TOKEN.match(token)), None)
+    if size_index is None:
+        raise UnsupportedFontShorthand(f"missing font size: {original}")
+
+    style = "normal"
+    variant = "normal"
+    weight = "normal"
+    stretch = "normal"
+    seen = set()
+    index = 0
+    while index < size_index:
+        token = tokens[index].lower()
+        if token == "normal":
+            index += 1
+            continue
+        if token in {"italic", "oblique"}:
+            if "style" in seen:
+                raise UnsupportedFontShorthand(f"duplicate font style: {original}")
+            style = token
+            seen.add("style")
+            if token == "oblique" and index + 1 < size_index and re.match(
+                r"^[-+]?(?:\d+(?:\.\d*)?|\.\d+)deg$", tokens[index + 1], re.I
+            ):
+                style += " " + tokens[index + 1]
+                index += 1
+        elif token == "small-caps":
+            if "variant" in seen:
+                raise UnsupportedFontShorthand(f"duplicate font variant: {original}")
+            variant = token
+            seen.add("variant")
+        elif token in {"bold", "bolder", "lighter"} or re.match(r"^\d{1,4}$", token):
+            if "weight" in seen:
+                raise UnsupportedFontShorthand(f"duplicate font weight: {original}")
+            if token.isdigit() and not 1 <= int(token) <= 1000:
+                raise UnsupportedFontShorthand(f"invalid font weight: {original}")
+            weight = token
+            seen.add("weight")
+        elif token in _FONT_STRETCH_KEYWORDS - {"normal"}:
+            if "stretch" in seen:
+                raise UnsupportedFontShorthand(f"duplicate font stretch: {original}")
+            stretch = token
+            seen.add("stretch")
+        else:
+            raise UnsupportedFontShorthand(f"unsupported font prefix {token!r}: {original}")
+        index += 1
+
+    size = tokens[size_index]
+    index = size_index + 1
+    line_height = "normal"
+    if index < len(tokens) and tokens[index] == '/':
+        index += 1
+        if index >= len(tokens) or not _FONT_LINE_HEIGHT_TOKEN.match(tokens[index]):
+            raise UnsupportedFontShorthand(f"invalid line height: {original}")
+        line_height = tokens[index]
+        index += 1
+    family = ' '.join(tokens[index:]).strip()
+    if not _valid_family_list(family):
+        raise UnsupportedFontShorthand(f"missing or invalid font family: {original}")
+
+    longhands.update((
+        ("font-style", style),
+        ("font-variant-caps", variant),
+        ("font-weight", weight),
+        ("font-stretch", stretch),
+        ("font-size", size),
+        ("line-height", line_height),
+        ("font-family", family),
+    ))
+    return longhands
+
+
 def parse_inline_styles(style_str: str) -> dict:
     """Parse a CSS style string into property:value dict."""
     result = OrderedDict()
@@ -644,7 +868,12 @@ def parse_inline_styles(style_str: str) -> dict:
         if ':' not in decl:
             continue
         prop, val = decl.split(':', 1)
-        result[prop.strip().lower()] = val.strip()
+        prop = prop.strip().lower()
+        val = val.strip()
+        if prop == "font" and is_real_font_profile():
+            result.update(parse_font_shorthand(val))
+        else:
+            result[prop] = val
     return result
 
 
@@ -1401,7 +1630,7 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
         # to the explicitly pinned DejaVu Sans fallback on both renderers.
         # Unknown code points remain a hard transactional failure rather than
         # silently depending on ambient font fallback.
-        extra_codepoints = {0x2026, 0x2190, 0x2193}
+        extra_codepoints = {0x2026, 0x2190, 0x2193, 0xFEFF}
 
         def deterministic_text_char(ch):
             cp = ord(ch)
@@ -1656,6 +1885,55 @@ def _border_radius_basis(styles: dict, font_size: float) -> tuple[float, float] 
     return width + pl + pr + bl + br, height + pt + pb + bt + bb
 
 
+def _computed_font_size(value: str, inherited_font_size: float) -> float:
+    value = value.strip().rstrip(';').strip().lower()
+    keyword_sizes = {
+        'xx-small': 9.0, 'x-small': 10.0, 'small': 13.333, 'medium': 16.0,
+        'large': 18.0, 'x-large': 24.0, 'xx-large': 32.0, 'xxx-large': 48.0,
+    }
+    if value in keyword_sizes:
+        return keyword_sizes[value]
+    if value == 'smaller':
+        return inherited_font_size * 0.833
+    if value == 'larger':
+        return inherited_font_size * 1.2
+    if value == '0':
+        return 0.0
+    factors = {
+        'px': 1.0, 'pt': 96.0 / 72.0, 'pc': 16.0, 'in': 96.0,
+        'cm': 96.0 / 2.54, 'mm': 96.0 / 25.4, 'em': inherited_font_size,
+        'rem': 16.0, '%': inherited_font_size / 100.0,
+    }
+    m = re.match(r'^(-?[\d.]+)(px|pt|pc|in|cm|mm|em|rem|%)$', value)
+    if m:
+        return float(m.group(1)) * factors[m.group(2)]
+    if value in {'inherit', 'unset'}:
+        return inherited_font_size
+    raise UnsupportedFontShorthand(f"unsupported font-size value: {value}")
+
+
+def _computed_inherited_line_height(value: str, font_size: float) -> str:
+    """Serialize the computed value that descendants inherit."""
+    value = value.strip().lower()
+    if value == 'normal':
+        return value
+    if re.match(r'^[-+]?[\d.]+$', value):
+        return value  # unitless numbers inherit as numbers
+    m = re.match(r'^([-+]?[\d.]+)%$', value)
+    if m:
+        return f"{float(m.group(1)) * font_size / 100.0}px"
+    m = re.match(r'^([-+]?[\d.]+)(px|pt|pc|in|cm|mm|em|rem)$', value)
+    if m:
+        unit = m.group(2)
+        factors = {
+            'px': 1.0, 'pt': 96.0 / 72.0, 'pc': 16.0, 'in': 96.0,
+            'cm': 96.0 / 2.54, 'mm': 96.0 / 25.4,
+            'em': font_size, 'rem': 16.0,
+        }
+        return f"{float(m.group(1)) * factors[unit]}px"
+    raise UnsupportedFontShorthand(f"unsupported inherited line-height: {value}")
+
+
 def generate_style_code(styles: dict, var_name: str, inherited_font_size: float = 16.0) -> list[str]:
     """Generate Rust code lines to set style properties on a node.
     
@@ -1675,53 +1953,87 @@ def generate_style_code(styles: dict, var_name: str, inherited_font_size: float 
         if m:
             fs_val = m.group(1)
     if fs_val:
-        fs_val = fs_val.strip().rstrip(';').strip()
-        m = re.match(r'^(-?[\d.]+)px$', fs_val)
-        if m:
-            font_size = float(m.group(1))
+        if is_real_font_profile():
+            font_size = _computed_font_size(fs_val, inherited_font_size)
         else:
-            m = re.match(r'^(-?[\d.]+)em$', fs_val)
+            fs_val = fs_val.strip().rstrip(';').strip()
+            m = re.match(r'^(-?[\d.]+)px$', fs_val)
             if m:
-                font_size = float(m.group(1)) * inherited_font_size
+                font_size = float(m.group(1))
             else:
-                m = re.match(r'^(-?[\d.]+)rem$', fs_val)
+                m = re.match(r'^(-?[\d.]+)em$', fs_val)
                 if m:
-                    font_size = float(m.group(1)) * 16.0
-                elif fs_val in ('small',):
-                    font_size = 13.333
-                elif fs_val in ('smaller',):
-                    font_size = inherited_font_size * 0.833
-                elif fs_val in ('larger',):
-                    font_size = inherited_font_size * 1.2
-                elif fs_val in ('large',):
-                    font_size = 18.0
-                elif fs_val in ('x-large',):
-                    font_size = 24.0
-                elif fs_val in ('xx-large',):
-                    font_size = 32.0
-                elif fs_val in ('x-small',):
-                    font_size = 10.0
-                elif fs_val in ('xx-small',):
-                    font_size = 9.0
+                    font_size = float(m.group(1)) * inherited_font_size
                 else:
-                    m = re.match(r'^(-?[\d.]+)pt$', fs_val)
+                    m = re.match(r'^(-?[\d.]+)rem$', fs_val)
                     if m:
-                        font_size = float(m.group(1)) * 4.0 / 3.0
+                        font_size = float(m.group(1)) * 16.0
+                    elif fs_val in ('small',):
+                        font_size = 13.333
+                    elif fs_val in ('smaller',):
+                        font_size = inherited_font_size * 0.833
+                    elif fs_val in ('larger',):
+                        font_size = inherited_font_size * 1.2
+                    elif fs_val in ('large',):
+                        font_size = 18.0
+                    elif fs_val in ('x-large',):
+                        font_size = 24.0
+                    elif fs_val in ('xx-large',):
+                        font_size = 32.0
+                    elif fs_val in ('x-small',):
+                        font_size = 10.0
+                    elif fs_val in ('xx-small',):
+                        font_size = 9.0
                     else:
-                        m = re.match(r'^(-?[\d.]+)%$', fs_val)
+                        m = re.match(r'^(-?[\d.]+)pt$', fs_val)
                         if m:
-                            font_size = float(m.group(1)) / 100.0 * inherited_font_size
-                        elif fs_val == '0':
-                            font_size = 0.0
+                            font_size = float(m.group(1)) * 4.0 / 3.0
+                        else:
+                            m = re.match(r'^(-?[\d.]+)%$', fs_val)
+                            if m:
+                                font_size = float(m.group(1)) / 100.0 * inherited_font_size
+                            elif fs_val == '0':
+                                font_size = 0.0
 
     radius_basis = _border_radius_basis(styles, font_size)
 
-    for prop, val in styles.items():
-        if prop == 'background-clip':
-            val = _select_background_clip_layer(styles, val)
-        code = generate_single_style(prop, val, s, font_size, radius_basis)
-        if code:
-            lines.extend(code if isinstance(code, list) else [code])
+    font_props = {
+        'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch',
+        'font-variant-caps', 'line-height',
+    }
+    if is_real_font_profile():
+        for prop in (
+            'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch',
+            'font-variant-caps', 'line-height',
+        ):
+            if prop in styles:
+                code = generate_single_style(prop, styles[prop], s, font_size, radius_basis)
+                if code:
+                    lines.extend(code if isinstance(code, list) else [code])
+
+    global _ACTIVE_FONT_RELATIVE_RESOLVER
+    previous_resolver = _ACTIVE_FONT_RELATIVE_RESOLVER
+    has_relative_lengths = is_real_font_profile() and any(
+        re.search(r'(?<![\w-])[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:ch|ex|lh)\b', str(value), re.I)
+        for value in styles.values()
+    )
+    if has_relative_lengths:
+        resolver = f"{var_name}_font_relative"
+        lines.append(
+            f"let {resolver} = openui_text::FontRelativeLengthResolver::from_style(&doc.node({var_name}).style);"
+        )
+        _ACTIVE_FONT_RELATIVE_RESOLVER = resolver
+    try:
+        for prop, val in styles.items():
+            if is_real_font_profile() and prop in font_props:
+                continue
+            if prop == 'background-clip':
+                val = _select_background_clip_layer(styles, val)
+            code = generate_single_style(prop, val, s, font_size, radius_basis)
+            if code:
+                lines.extend(code if isinstance(code, list) else [code])
+    finally:
+        _ACTIVE_FONT_RELATIVE_RESOLVER = previous_resolver
 
     return lines, font_size
 
@@ -2448,7 +2760,8 @@ def generate_single_style(
             return f"{s}.line_height = LineHeight::Length({float(m.group(1))});"
         m = re.match(r'^(-?[\d.]+)(em|rem)$', val.strip())
         if m:
-            return f"{s}.line_height = LineHeight::Length({float(m.group(1)) * font_size});"
+            basis = 16.0 if m.group(2) == 'rem' else font_size
+            return f"{s}.line_height = LineHeight::Length({float(m.group(1)) * basis});"
         m = re.match(r'^(-?[\d.]+)%$', val.strip())
         if m:
             return f"{s}.line_height = LineHeight::Percentage({float(m.group(1))});"
@@ -2808,6 +3121,50 @@ def generate_single_style(
         if bw:
             return [f"{s}.{p} = {bw};" for p in _border_width_logical_map[prop]]
 
+    # ── real-font computed longhands ──
+    if is_real_font_profile() and prop == 'font-family':
+        family = _font_family_to_rust(val)
+        if family:
+            return f"{s}.font_family = {family};"
+        raise UnsupportedFontShorthand(f"unsupported font-family: {val}")
+
+    if is_real_font_profile() and prop == 'font-weight':
+        weights = {
+            'normal': 400.0, 'bold': 700.0, 'bolder': 700.0, 'lighter': 300.0,
+        }
+        if val in weights:
+            return f"{s}.font_weight = FontWeight({weights[val]});"
+        if re.match(r'^\d{1,4}$', val) and 1 <= int(val) <= 1000:
+            return f"{s}.font_weight = FontWeight({float(val)});"
+        raise UnsupportedFontShorthand(f"unsupported font-weight: {val}")
+
+    if is_real_font_profile() and prop == 'font-style':
+        if val == 'normal':
+            return f"{s}.font_style = FontStyleEnum::Normal;"
+        if val == 'italic':
+            return f"{s}.font_style = FontStyleEnum::Italic;"
+        m = re.match(r'^oblique(?:\s+([-+]?[\d.]+)deg)?$', val)
+        if m:
+            angle = float(m.group(1)) if m.group(1) else 14.0
+            return f"{s}.font_style = FontStyleEnum::Oblique({angle});"
+        raise UnsupportedFontShorthand(f"unsupported font-style: {val}")
+
+    if is_real_font_profile() and prop == 'font-stretch':
+        values = {
+            'ultra-condensed': 50.0, 'extra-condensed': 62.5, 'condensed': 75.0,
+            'semi-condensed': 87.5, 'normal': 100.0, 'semi-expanded': 112.5,
+            'expanded': 125.0, 'extra-expanded': 150.0, 'ultra-expanded': 200.0,
+        }
+        if val in values:
+            return f"{s}.font_stretch = FontStretch({values[val]});"
+        raise UnsupportedFontShorthand(f"unsupported font-stretch: {val}")
+
+    if is_real_font_profile() and prop == 'font-variant-caps':
+        values = {'normal': 'Normal', 'small-caps': 'SmallCaps'}
+        if val in values:
+            return f"{s}.font_variant_caps = FontVariantCaps::{values[val]};"
+        raise UnsupportedFontShorthand(f"unsupported font variant: {val}")
+
     # ── font shorthand (extract font-size) ──
     if prop == 'font':
         # font: <size>/<line-height> <family> or <size> <family> etc.
@@ -2823,6 +3180,8 @@ def generate_single_style(
 
     # ── font-size ──
     if prop == 'font-size':
+        if is_real_font_profile():
+            return f"{s}.font_size = {float(font_size)};"
         v = val.strip()
         if v == '0':
             return f"{s}.font_size = 0.0;"
@@ -3228,24 +3587,50 @@ def _rust_escape_string(s: str) -> str:
 def _font_family_to_rust(css_family: str) -> str | None:
     """Convert a CSS font-family value to a Rust FontFamilyList expression.
 
-    Uses the first family in the list. Generic families map to
-    `FontFamilyList::generic(...)`; named families to `FontFamilyList::single`.
-    Only families the engine can resolve render correctly; for SP14 the pinned
-    deterministic font is Ahem (see openui-text FontCache).
+    Preserves the complete authored fallback order. Generic families remain
+    typed generic values so `openui-text` can deterministically map the three
+    SP16 generics to their vendored DejaVu assets.
     """
     if not css_family:
         return None
-    first = css_family.split(',')[0].strip().strip('"\'').strip()
-    if not first:
+    families = []
+    current = []
+    quote = None
+    for ch in css_family:
+        if quote:
+            current.append(ch)
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+            current.append(ch)
+        elif ch == ',':
+            families.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+    families.append(''.join(current).strip())
+    if quote or not families or any(not family for family in families):
         return None
     generics = {
         'serif': 'Serif', 'sans-serif': 'SansSerif', 'monospace': 'Monospace',
         'cursive': 'Cursive', 'fantasy': 'Fantasy', 'system-ui': 'SystemUi',
+        'ui-serif': 'UiSerif', 'ui-sans-serif': 'UiSansSerif',
+        'ui-monospace': 'UiMonospace', 'ui-rounded': 'UiRounded',
     }
-    generic = generics.get(first.lower())
-    if generic:
-        return f"FontFamilyList::generic(GenericFontFamily::{generic})"
-    return f'FontFamilyList::single("{_rust_escape_string(first)}")'
+    rust_families = []
+    for family in families:
+        family = family.strip().strip('"\'').strip()
+        if not family:
+            return None
+        generic = generics.get(family.lower())
+        if generic:
+            rust_families.append(f"FontFamily::Generic(GenericFontFamily::{generic})")
+        else:
+            rust_families.append(
+                f'FontFamily::Named("{_rust_escape_string(family)}".to_string())'
+            )
+    return "FontFamilyList { families: vec![" + ", ".join(rust_families) + "] }"
 
 
 def _family_from_font_shorthand(val: str) -> str | None:
@@ -3426,10 +3811,11 @@ def generate_rust_fn(
         # only the leaf Text item's metrics. Pin every generated style to Ahem
         # (matching the template's `body, body *` override), beginning with the
         # viewport/body style. Hand-built DOM styles do not inherit implicitly.
-        lines.append(
-            '    doc.node_mut(vp).style.font_family = '
-            f'{DETERMINISTIC_FONT_FAMILY_RUST};'
-        )
+        if not is_real_font_profile():
+            lines.append(
+                '    doc.node_mut(vp).style.font_family = '
+                f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+            )
         # `base_doc` uses flow-root as a convenient isolation boundary for the
         # legacy generated corpus. The node represents HTML's body, however,
         # whose initial display is block. That distinction is observable when
@@ -3484,6 +3870,11 @@ def generate_rust_fn(
     # CSS inherited properties that must propagate to descendants
     INHERITED_PROPS = {'direction', 'color', 'white-space', 'text-align',
                        'font-size', 'line-height', 'visibility'}
+    if is_real_font_profile():
+        INHERITED_PROPS |= {
+            'font-family', 'font-weight', 'font-style', 'font-stretch',
+            'font-variant-caps',
+        }
     # CSS-wide `inherit` can apply to any property; keep explicit parent
     # values for non-inherited properties that WPT coverage exercises.
     EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {
@@ -3494,6 +3885,15 @@ def generate_rust_fn(
         'background': 'transparent',
         'background-color': 'transparent',
         'background-clip': 'border-box',
+    }
+    REAL_FONT_INITIALS = {
+        'font-family': 'sans-serif',
+        'font-size': '16px',
+        'font-weight': 'normal',
+        'font-style': 'normal',
+        'font-stretch': 'normal',
+        'font-variant-caps': 'normal',
+        'line-height': 'normal',
     }
 
     def _computed_child_boundary(inherited):
@@ -3548,7 +3948,7 @@ def generate_rust_fn(
                     # and color explicitly on the emitted Text node.
                     ts = f"doc.node_mut({tvar}).style"
                     lines.append(f"{ws}{ts}.font_size = {float(parent_font_size)};")
-                    if RETAIN_TEXT:
+                    if RETAIN_TEXT and not is_real_font_profile():
                         # Deterministic-font mode: every glyph renders as Ahem on
                         # both sides (TEXT_TEMPLATE_OVERRIDE forces it in Chrome).
                         lines.append(
@@ -3568,8 +3968,11 @@ def generate_rust_fn(
                         # Thread inherited text-affecting properties onto the Text
                         # node itself: the inline items builder reads white-space /
                         # transform / spacing from the item's own style.
-                        for prop in ('white-space', 'line-height', 'text-transform',
-                                     'letter-spacing', 'word-spacing'):
+                        for prop in (
+                            'font-weight', 'font-style', 'font-stretch',
+                            'font-variant-caps', 'white-space', 'line-height',
+                            'text-transform', 'letter-spacing', 'word-spacing',
+                        ):
                             if prop in inherited:
                                 code = generate_single_style(prop, inherited[prop], ts, parent_font_size)
                                 if code:
@@ -3649,10 +4052,20 @@ def generate_rust_fn(
                 lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Text);")
                 bs = f"doc.node_mut({bvar}).style"
                 lines.append(f"{ws}{bs}.font_size = {float(parent_font_size)};")
-                lines.append(
-                    f'{ws}{bs}.font_family = '
-                    f'{DETERMINISTIC_FONT_FAMILY_RUST};'
-                )
+                if is_real_font_profile():
+                    family = _font_family_to_rust(inherited.get('font-family', 'sans-serif'))
+                    lines.append(f"{ws}{bs}.font_family = {family};")
+                    for prop in ('font-weight', 'font-style', 'font-stretch', 'font-variant-caps'):
+                        if prop in inherited:
+                            code = generate_single_style(prop, inherited[prop], bs, parent_font_size)
+                            if code:
+                                for cl in (code if isinstance(code, list) else [code]):
+                                    lines.append(f"{ws}{cl}")
+                else:
+                    lines.append(
+                        f'{ws}{bs}.font_family = '
+                        f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+                    )
                 lines.append(f"{ws}{bs}.white_space = WhiteSpace::PreLine;")
                 if 'line-height' in inherited:
                     code = generate_single_style('line-height', inherited['line-height'], bs, parent_font_size)
@@ -3669,6 +4082,10 @@ def generate_rust_fn(
             # property boundary; otherwise borders/backgrounds incorrectly
             # paint and block descendants participate in the wrong context.
             effective_styles = OrderedDict(node.styles)
+            if is_real_font_profile():
+                for prop in sorted(INHERITED_PROPS):
+                    if prop in inherited and prop not in effective_styles:
+                        effective_styles[prop] = inherited[prop]
             for prop, val in list(effective_styles.items()):
                 if isinstance(val, str) and val.strip() == 'inherit' and prop in inherited:
                     effective_styles[prop] = inherited[prop]
@@ -3688,6 +4105,13 @@ def generate_rust_fn(
             for prop in sorted(contents_inherit_props):
                 if prop in effective_styles:
                     child_inherited[prop] = effective_styles[prop]
+            if is_real_font_profile():
+                if 'font-size' in child_inherited:
+                    child_inherited['font-size'] = f'{contents_font_size}px'
+                if 'line-height' in child_inherited:
+                    child_inherited['line-height'] = _computed_inherited_line_height(
+                        child_inherited['line-height'], contents_font_size
+                    )
             clipped_text_color = _background_text_color(effective_styles)
             if clipped_text_color:
                 child_inherited['color'] = clipped_text_color
@@ -3722,7 +4146,7 @@ def generate_rust_fn(
         else:
             element_tag = "ElementTag::Div"
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
-        if RETAIN_TEXT:
+        if RETAIN_TEXT and not is_real_font_profile():
             lines.append(
                 f'{ws}doc.node_mut({var}).style.font_family = '
                 f'{DETERMINISTIC_FONT_FAMILY_RUST};'
@@ -3776,6 +4200,13 @@ def generate_rust_fn(
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
         effective_styles = OrderedDict(node.styles)
+        if is_real_font_profile():
+            # Generated DOM nodes do not run a cascade. Materialize inherited
+            # font properties before resolving ch/ex/lh so face selection sees
+            # the actual computed values.
+            for prop in sorted(INHERITED_PROPS):
+                if prop in inherited and prop not in effective_styles:
+                    effective_styles[prop] = inherited[prop]
         if (
             RETAIN_TEXT
             and node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
@@ -3807,6 +4238,8 @@ def generate_rust_fn(
             if isinstance(val, str) and val.strip() == 'inherit':
                 if prop in inherited:
                     effective_styles[prop] = inherited[prop]
+                elif is_real_font_profile() and prop in REAL_FONT_INITIALS:
+                    effective_styles[prop] = REAL_FONT_INITIALS[prop]
                 elif RETAIN_TEXT and prop in _BORDER_RADIUS_CORNERS:
                     effective_styles[prop] = '0'
         node_custom_props = dict(custom_props)
@@ -3850,6 +4283,13 @@ def generate_rust_fn(
         for prop in sorted(child_inherit_props):
             if prop in effective_styles:
                 child_inherited[prop] = effective_styles[prop]
+        if is_real_font_profile():
+            if 'font-size' in child_inherited:
+                child_inherited['font-size'] = f'{node_font_size}px'
+            if 'line-height' in child_inherited:
+                child_inherited['line-height'] = _computed_inherited_line_height(
+                    child_inherited['line-height'], node_font_size
+                )
         clipped_text_color = _background_text_color(effective_styles)
         if clipped_text_color:
             child_inherited['color'] = clipped_text_color
@@ -3880,14 +4320,29 @@ def generate_rust_fn(
     }
     body_custom_props = {}
     if root_aware and html_styles:
-        html_style_lines, _html_font_size = generate_style_code(html_styles, 'html')
+        computed_html_styles = OrderedDict(html_styles)
+        if is_real_font_profile():
+            for prop, val in list(computed_html_styles.items()):
+                if val.strip() == 'inherit' and prop in REAL_FONT_INITIALS:
+                    computed_html_styles[prop] = REAL_FONT_INITIALS[prop]
+        html_style_lines, _html_font_size = generate_style_code(computed_html_styles, 'html')
         for sl in html_style_lines:
             lines.append(f"    {sl}")
     if root.styles:
         for prop, val in root.styles.items():
             if prop.startswith('--'):
                 body_custom_props[prop] = val
-        body_styles, root_font_size = generate_style_code(root.styles, 'vp')
+        computed_root_styles = OrderedDict(root.styles)
+        if is_real_font_profile():
+            for prop in sorted(INHERITED_PROPS):
+                if prop in body_inherited and prop not in computed_root_styles:
+                    computed_root_styles[prop] = body_inherited[prop]
+            for prop, val in list(computed_root_styles.items()):
+                if val.strip() == 'inherit' and prop in REAL_FONT_INITIALS:
+                    computed_root_styles[prop] = body_inherited.get(
+                        prop, REAL_FONT_INITIALS[prop]
+                    )
+        body_styles, root_font_size = generate_style_code(computed_root_styles, 'vp')
         for sl in body_styles:
             lines.append(f"    {sl}")
         if RETAIN_TEXT and root.styles.get('display', '').strip() == 'contents':
@@ -3916,8 +4371,15 @@ def generate_rust_fn(
             TEXT_EXTRA_INHERITED if RETAIN_TEXT else set()
         )
         for prop in sorted(body_inherit_props):
-            if prop in root.styles:
-                body_inherited[prop] = root.styles[prop]
+            if prop in computed_root_styles:
+                body_inherited[prop] = computed_root_styles[prop]
+        if is_real_font_profile():
+            if 'font-size' in body_inherited:
+                body_inherited['font-size'] = f'{root_font_size}px'
+            if 'line-height' in body_inherited:
+                body_inherited['line-height'] = _computed_inherited_line_height(
+                    body_inherited['line-height'], root_font_size
+                )
         clipped_text_color = _background_text_color(root.styles)
         if clipped_text_color:
             body_inherited['color'] = clipped_text_color
@@ -4156,7 +4618,7 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
 
     # Combine: style blocks first, then body content
     template = style_prefix + '\n' + body.strip() if style_prefix else body.strip()
-    if RETAIN_TEXT:
+    if RETAIN_TEXT and not is_real_font_profile():
         # Deterministic-font override LAST so it wins the cascade.
         template = template + '\n' + TEXT_TEMPLATE_OVERRIDE
     if root_aware:

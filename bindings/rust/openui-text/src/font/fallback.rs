@@ -49,9 +49,10 @@ impl FontFallbackList {
             }
         }
 
-        // If nothing resolved, use system default sans-serif
+        // If nothing resolved, use the same vendored sans face as the CSS
+        // generic. This keeps missing-family fallback independent of the host.
         if self.platform_data.is_empty() {
-            if let Some(data) = cache.get_font_platform_data("sans-serif", description) {
+            if let Some(data) = cache.get_font_platform_data("DejaVu Sans", description) {
                 self.platform_data.push(data);
             }
         }

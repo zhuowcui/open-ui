@@ -46,13 +46,14 @@ Current verified snapshot:
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
 | Ported/runnable WPT tests | 3566 |
-| Runnable passes | 2804 |
-| Runnable failures | 762 |
+| Runnable passes | 2823 |
+| Runnable failures | 743 |
 | Runnable render/diff errors | 0 |
 | Unported but explicitly categorized rows | 4107 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |
+| `needs_font_metrics` rows | 0 |
 
 ## Data Files
 
@@ -75,7 +76,7 @@ not it has a runnable Rust port.
 | `notes` | Porter rejection reason or additional tracking note |
 
 `not_ported` is not an acceptable long-term category. Unported rows must be assigned
-to named categories such as `needs_javascript`, `needs_font_metrics`, `sp13_fragmentation`,
+to named categories such as `needs_javascript`, `needs_writing_mode`, `sp13_fragmentation`,
 `needs_grid`, or `needs_table_layout`.
 
 ### Pixel Summary (`data/pixel_comparison/results/summary.json`)

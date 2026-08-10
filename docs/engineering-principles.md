@@ -32,7 +32,7 @@ Examples:
 
 - `sp13_fragmentation` for block fragmentation ownership,
 - `sp13_multicol` for multi-column layout ownership,
-- `needs_font_metrics` for real-font measurement dependencies,
+- `needs_writing_mode` for vertical-flow and bidi dependencies,
 - `needs_javascript` for harness/runtime dependencies,
 - `needs_grid` for CSS Grid dependencies,
 - `needs_complex_border` for paint-quality cases outside layout.
@@ -94,6 +94,6 @@ condition, continue work or clarify the condition; do not self-certify completio
 
 ## Recommended Next Phase
 
-SP15 is closed. Continue with SP16 real-font metrics or the explicitly owned SP13
-multicol/fragmentation residuals, preserving the 2,767-ID frozen exact baseline and
+SP16 is closed. Continue with SP17 advanced text or the explicitly owned SP13
+multicol/fragmentation residuals, preserving the 2,804-ID frozen exact baseline and
 the zero-pixel passing threshold.

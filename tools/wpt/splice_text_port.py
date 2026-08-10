@@ -41,6 +41,7 @@ RUST_WPT_DIR = os.path.join(
 )
 TEXT_PORTED_LIST = os.path.join(WPT_PORTED_DIR, "text_ported_tests.json")
 SP15_TARGETS_LIST = os.path.join(WPT_PORTED_DIR, "sp15_actionable_targets.json")
+SP16_REAL_LIST = os.path.join(WPT_PORTED_DIR, "sp16_real_font_tests.json")
 SP14_W4_LIST = os.path.join(WPT_PORTED_DIR, "sp14_w4_residuals.json")
 REPORT_COLUMNS = ["filename", "status", "fn_name", "reason"]
 
@@ -57,6 +58,7 @@ class GeneratedReplacement:
     rust_code: str
     template: str
     root_aware: bool
+    retains_text: bool
 
 
 def canonical_test_id(row: dict[str, str]) -> str:
@@ -218,7 +220,10 @@ def replace_fn(rust_src: str, fn_name: str, new_fn_code: str) -> str:
 
 
 def _generate_one(
-    test_id: str, mapping: dict[str, dict[str, str]]
+    test_id: str,
+    mapping: dict[str, dict[str, str]],
+    profile: port_wpt.PorterProfile,
+    text_manifest: set[str],
 ) -> GeneratedReplacement:
     parts = test_id.split("/")
     if len(parts) != 3 or parts[0] != "wpt" or not parts[1] or not parts[2]:
@@ -242,6 +247,12 @@ def _generate_one(
         frozen_targets = set(load_ids_file(SP15_TARGETS_LIST))
         if test_id not in frozen_targets:
             raise ValueError(f"{test_id}: not in the frozen SP15 root-aware allowlist")
+    retains_text = (
+        True
+        if profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM
+        else test_id in text_manifest
+    )
+    port_wpt.set_porter_profile(profile, retain_text=retains_text)
     parser = port_wpt.parse_wpt_html(upstream, root_aware=root_aware)
     portable, reason = port_wpt.analyze_portability(parser)
     if not root_aware and not portable:
@@ -260,6 +271,7 @@ def _generate_one(
         ),
         template=port_wpt.generate_html_template(upstream, root_aware=root_aware),
         root_aware=root_aware,
+        retains_text=retains_text,
     )
 
 
@@ -381,13 +393,39 @@ def _insert_rust_additions(
 
 
 def prepare_changes(
-    test_ids: list[str], mapping: dict[str, dict[str, str]]
+    test_ids: list[str],
+    mapping: dict[str, dict[str, str]],
+    *,
+    profile: port_wpt.PorterProfile = port_wpt.PorterProfile.DETERMINISTIC_AHEM,
 ) -> tuple[list[GeneratedReplacement], dict[str, str], dict[str, str]]:
     """Generate and validate a complete transaction without writing files."""
     if len(test_ids) != len(set(test_ids)):
         raise ValueError("duplicate test IDs in one splice transaction")
 
-    generated = [_generate_one(test_id, mapping) for test_id in sorted(test_ids)]
+    with open(TEXT_PORTED_LIST, encoding="utf-8") as f:
+        original_manifest = f.read()
+    ported = json.loads(original_manifest)
+    if (
+        not isinstance(ported, list)
+        or any(not isinstance(t, str) or not t for t in ported)
+        or len(ported) != len(set(ported))
+    ):
+        raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_LIST}")
+    text_manifest = set(ported)
+
+    if profile is port_wpt.PorterProfile.REAL_FONT and os.path.exists(SP16_REAL_LIST):
+        allowed = set(load_ids_file(SP16_REAL_LIST))
+        outside = set(test_ids) - allowed
+        if outside:
+            raise ValueError(
+                "real-font profile contains IDs outside the frozen SP16 manifest: "
+                + ", ".join(sorted(outside))
+            )
+
+    generated = [
+        _generate_one(test_id, mapping, profile, text_manifest)
+        for test_id in sorted(test_ids)
+    ]
     fn_names = [replacement.fn_name for replacement in generated]
     if len(fn_names) != len(set(fn_names)):
         raise ValueError("generated function-name collision in splice transaction")
@@ -475,18 +513,10 @@ def prepare_changes(
     for path in sorted(template_paths):
         changes[path] = json.dumps(template_data[path], indent=2) + "\n"
 
-    with open(TEXT_PORTED_LIST, encoding="utf-8") as f:
-        original_manifest = f.read()
-    ported = json.loads(original_manifest)
-    if (
-        not isinstance(ported, list)
-        or any(not isinstance(t, str) or not t for t in ported)
-        or len(ported) != len(set(ported))
-    ):
-        raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_LIST}")
-    ported = sorted(set(ported).union(test_ids))
-    originals[TEXT_PORTED_LIST] = original_manifest
-    changes[TEXT_PORTED_LIST] = json.dumps(ported, indent=2) + "\n"
+    if profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM:
+        ported = sorted(set(ported).union(test_ids))
+        originals[TEXT_PORTED_LIST] = original_manifest
+        changes[TEXT_PORTED_LIST] = json.dumps(ported, indent=2) + "\n"
 
     return generated, originals, changes
 
@@ -536,6 +566,7 @@ def main() -> int:
     args = sys.argv[1:]
     dry_run = False
     ids_path = None
+    profile = port_wpt.PorterProfile.DETERMINISTIC_AHEM
     positional = []
     index = 0
     while index < len(args):
@@ -548,6 +579,20 @@ def main() -> int:
                 print("ERROR: --ids-file requires exactly one path", file=sys.stderr)
                 return 2
             ids_path = args[index]
+        elif arg == "--profile":
+            index += 1
+            if index >= len(args):
+                print("ERROR: --profile requires a value", file=sys.stderr)
+                return 2
+            profiles = {item.value: item for item in port_wpt.PorterProfile}
+            try:
+                profile = profiles[args[index]]
+            except KeyError:
+                print(
+                    "ERROR: --profile must be deterministic-ahem or real-font",
+                    file=sys.stderr,
+                )
+                return 2
         elif arg.startswith("--"):
             print(f"ERROR: unknown option: {arg}", file=sys.stderr)
             return 2
@@ -559,17 +604,14 @@ def main() -> int:
         print("ERROR: do not combine --ids-file with positional IDs", file=sys.stderr)
         return 2
 
-    # Enable symmetric deterministic-text generation for the whole prepare
-    # phase. The standalone batch porter remains box-only by default.
-    port_wpt.EMIT_TEXT_NODES = True
-    port_wpt.RETAIN_TEXT = True
-
     try:
         test_ids = load_ids_file(ids_path) if ids_path else positional
         if not test_ids:
             raise ValueError("no test IDs supplied")
         mapping = load_mapping_rows()
-        generated, originals, changes = prepare_changes(test_ids, mapping)
+        generated, originals, changes = prepare_changes(
+            test_ids, mapping, profile=profile
+        )
         if dry_run:
             for replacement in generated:
                 print(f"=== {replacement.test_id} (fn {replacement.fn_name}) ===")

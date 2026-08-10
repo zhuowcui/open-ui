@@ -19,8 +19,9 @@
 | SP12 | CSS Block/Layout WPT Accountability | 7,673 inventory rows | multi-wave | ✅ Complete by ownership |
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
+| SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 2,804 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 retired SP15 owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 2,823 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 retired SP16 font-metric owner rows.**
 
 ---
 
@@ -270,7 +271,7 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
 | Current runnable WPT tests | 3,566 |
-| Current runnable WPT passes | 2,804 |
+| Current runnable WPT passes | 2,823 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
 | Pixel comparison tests | 3,566 generated WPT comparisons + earlier SP pages/apps |
@@ -333,4 +334,22 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Authoritative full state: **2,804 pass / 762 fail / 0 errors** across 3,566 runnable
   tests; all 2,767 frozen baseline IDs remain exact; audit passes 7/7.
 - Next: SP16 real-font metrics, or resume the explicitly owned SP13 multicol and
+  fragmentation clusters.
+
+### SP16 complete: real-font metrics and raster ownership closed
+
+- Froze a 2,804-ID exact baseline, a 226-ID actionable real-font ledger, and 550
+  structured unported residual dispositions covering all 776 original
+  `needs_font_metrics` rows.
+- Vendored deterministic DejaVu Sans, Sans Mono, and Serif faces; added shared primary
+  metrics, `ch`/`ex`/`lh`, used line height, full corpus-used font shorthand parsing,
+  and manifest-scoped Linux LCD rendering using the pinned Chromium FreeType runtime.
+- The 20 sole-owner targets finish 5 exact and 15 functionally reclassified. Across
+  all 226 actionable tests, 19 are exact, 207 retain precise non-font owners, and none
+  error.
+- Retired `needs_font_metrics` globally while preserving the immutable SP14/SP15
+  ledgers through explicit supersession rules.
+- Authoritative full state: **2,823 pass / 743 fail / 0 errors** across 3,566 runnable
+  tests; all 2,804 frozen baseline IDs remain exact; audit passes 7/7.
+- Next: SP17 advanced text, or resume the explicitly owned SP13 multicol and
   fragmentation clusters.
