@@ -271,7 +271,7 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
 | Current runnable WPT tests | 3,566 |
-| Current runnable WPT passes | 2,823 |
+| Current runnable WPT passes | 3,267 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
 | Pixel comparison tests | 3,566 generated WPT comparisons + earlier SP pages/apps |
@@ -279,7 +279,7 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
 | CSS features implemented | Block, Flex, Inline, Text, Ruby |
-| Chromium version | M147 (147.0.7727.24) |
+| Chromium version | M147 (147.0.7727.50) |
 
 ---
 
@@ -353,3 +353,19 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   tests; all 2,804 frozen baseline IDs remain exact; audit passes 7/7.
 - Next: SP17 advanced text, or resume the explicitly owned SP13 multicol and
   fragmentation clusters.
+
+### SP13-R complete: runnable multicol exact closure
+
+- Froze a 2823-ID exact baseline, a 351-ID runnable multicol target ledger, and
+  1018 structured unported residual dispositions. The target and residual ledgers
+  are a disjoint cover of the original 1369 multicol-owned rows.
+- Implemented shared multicol used geometry, authoritative fragmentation and
+  continuation state, spanners and nested rows, fragmented flex and positioned
+  interactions, rule painting, and fragmented decoration/image behavior.
+- The exact-ID target run finishes 351 pass / 0 fail / 0 errors at 0.0% mismatch.
+  No runnable row retains `sp13_multicol`; every unported residual retains its
+  Chromium path, porter rejection, and complete reason-backed ownership.
+- Authoritative full state: **3267 pass / 299 fail / 0 errors** across 3566 runnable
+  tests; all 2823 baseline IDs remain exact; audit passes 7/7.
+- Vertical and sideways writing modes remain out of scope. Next: SP17 advanced
+  text or another explicitly owned residual system.

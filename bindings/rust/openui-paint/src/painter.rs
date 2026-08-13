@@ -17,33 +17,100 @@
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
 use openui_dom::Document;
-use openui_geometry::PhysicalOffset;
+use openui_geometry::{LayoutUnit, PhysicalOffset};
 use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
-    BackgroundAttachment, BackgroundClip, BorderStyle, Color, ComputedStyle, Display, LineHeight,
-    ListStylePosition, Overflow, OverflowClipBox, StyleColor, Visibility,
+    BackgroundAttachment, BackgroundClip, BorderStyle, Color, ComputedStyle, Display,
+    GradientStopPosition, LineHeight, ListStylePosition, ListStyleType, Overflow, OverflowClipBox,
+    StyleColor, Visibility,
 };
 use openui_text::font::FontMetrics;
 use skia_safe::{
-    BlendMode, Canvas, ClipOp, Color4f, ColorSpace, Paint, PaintStyle, Path, PathFillType, Point,
-    RRect, Rect,
+    gradient_shader, BlendMode, Canvas, ClipOp, Color4f, ColorSpace, Paint, PaintStyle,
+    PathBuilder, PathFillType, Point, RRect, Rect, TileMode,
 };
 
 use std::cell::RefCell;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 fn set_paint_css_color(paint: &mut Paint, color: &Color) {
     set_paint_css_color_with_alpha(paint, color, 1.0);
 }
 
 fn set_paint_css_color_with_alpha(paint: &mut Paint, color: &Color, alpha_multiplier: f32) {
+    // Blink carries CSS colors through PaintFlags as SkColor4f. Converting to
+    // packed SkColor first changes premultiplication rounding at antialiased
+    // edges, even when the authored channels came from 8-bit CSS syntax.
+    paint.set_color4f(
+        Color4f::new(
+            color.r.clamp(0.0, 1.0),
+            color.g.clamp(0.0, 1.0),
+            color.b.clamp(0.0, 1.0),
+            (color.a * alpha_multiplier).clamp(0.0, 1.0),
+        ),
+        None::<&ColorSpace>,
+    );
+}
+
+fn skia_css_color_with_alpha(color: &Color, alpha_multiplier: f32) -> skia_safe::Color {
     let to_u8 = |component: f32| (component.clamp(0.0, 1.0) * 255.0).round() as u8;
-    paint.set_color(skia_safe::Color::from_argb(
+    skia_safe::Color::from_argb(
         to_u8(color.a * alpha_multiplier),
         to_u8(color.r),
         to_u8(color.g),
         to_u8(color.b),
-    ));
+    )
+}
+
+fn resolved_gradient_positions(
+    stops: &[openui_style::LinearGradientStop],
+    line_length: f32,
+) -> Vec<f32> {
+    let count = stops.len();
+    let mut result: Vec<Option<f32>> = stops
+        .iter()
+        .map(|stop| match stop.position {
+            GradientStopPosition::Auto => None,
+            GradientStopPosition::Percent(value) => Some(value / 100.0),
+            GradientStopPosition::Px(value) => Some(if line_length > 0.0 {
+                value / line_length
+            } else {
+                0.0
+            }),
+        })
+        .collect();
+    if count == 0 {
+        return Vec::new();
+    }
+    if result[0].is_none() {
+        result[0] = Some(0.0);
+    }
+    if result[count - 1].is_none() {
+        result[count - 1] = Some(1.0);
+    }
+    let mut start = 0;
+    while start + 1 < count {
+        let mut end = start + 1;
+        while end < count && result[end].is_none() {
+            end += 1;
+        }
+        let start_value = result[start].unwrap_or(0.0);
+        let end_value = result[end].unwrap_or(start_value);
+        let span = (end - start) as f32;
+        for (offset, item) in result.iter_mut().enumerate().take(end).skip(start + 1) {
+            *item = Some(start_value + (end_value - start_value) * (offset - start) as f32 / span);
+        }
+        start = end;
+    }
+    let mut previous = f32::NEG_INFINITY;
+    result
+        .into_iter()
+        .map(|position| {
+            let position = position.unwrap_or(previous).max(previous).clamp(0.0, 1.0);
+            previous = position;
+            position
+        })
+        .collect()
 }
 
 // Fragments hoisted from in-flow subtrees into the nearest stacking context's
@@ -52,6 +119,9 @@ fn set_paint_css_color_with_alpha(paint: &mut Paint, color: &Color, alpha_multip
 // removed before Phase 3 so the entry in non_negative_z paints them correctly.
 thread_local! {
     static HOIST_SKIP: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
+    static PREPAINTED_COLUMN_DECORATIONS: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
+    static FRAGMENTED_OOF_HOIST_ACTIVE: RefCell<bool> = const { RefCell::new(false) };
+    static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
 }
 
 /// Resolve a padding/margin Length to f32 pixels.
@@ -89,10 +159,24 @@ pub fn paint_fragment(
         offset.left + fragment.offset.left,
         offset.top + fragment.offset.top,
     );
-
     // Skip fragments that have been hoisted to the nearest stacking context's
     // non_negative_z list — they will be painted in Phase 3 instead.
     if HOIST_SKIP.with(|s| s.borrow().contains(&(fragment as *const Fragment as usize))) {
+        return;
+    }
+
+    // A fragmented inline's positioned descendants and its later in-flow
+    // content share one source-order stacking sequence across all columns.
+    // During the first column traversal, defer later inline fragments so they
+    // can be painted once in that global sequence instead of once per column.
+    if !fragment.node_id.is_none()
+        && fragment.is_inline_box_fragment
+        && FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| {
+            source_after
+                .borrow()
+                .is_some_and(|source_after| fragment.node_id.index() > source_after)
+        })
+    {
         return;
     }
 
@@ -113,17 +197,55 @@ pub fn paint_fragment(
     // to the column boundaries.
     if fragment.kind == FragmentKind::ColumnBox {
         if fragment.has_overflow_clip {
+            // A nested multicol's rule is ink in the intervening column gap,
+            // not content clipped to the ancestor column's inline edge. When
+            // the ancestor owns a two-axis continuation clip, paint only the
+            // lateral part of descendant rules outside that edge here; the
+            // ordinary traversal below paints the portion inside the column.
+            // Both passes remain constrained to this fragmentainer's block
+            // interval, so rules cannot leak into an adjacent row.
+            if !fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
+                let (clip_y, clip_h) = compute_column_block_clip_rect(fragment, abs_offset);
+                canvas.save();
+                canvas.clip_rect(
+                    Rect::from_xywh(-1_000_000.0, clip_y, 2_000_000.0, clip_h),
+                    ClipOp::Intersect,
+                    false,
+                );
+                canvas.clip_rect(
+                    Rect::from_xywh(
+                        abs_offset.left.to_f32(),
+                        clip_y,
+                        fragment.size.width.to_f32(),
+                        clip_h,
+                    ),
+                    ClipOp::Difference,
+                    false,
+                );
+                paint_descendant_column_rules(canvas, &fragment.children, doc, abs_offset);
+                canvas.restore();
+            }
             canvas.save();
-            let (_, clip_y, _, clip_h) = compute_clip_rect(fragment, abs_offset);
+            let (clip_y, clip_h) = compute_column_block_clip_rect(fragment, abs_offset);
             // Multicol fragmentainers clip in the block axis. Inline overflow
-            // may paint into the column gap, matching Chromium for over-wide
-            // descendants inside narrow columns.
-            let clip_x = -1_000_000.0;
-            let clip_w = 2_000_000.0;
+            // may normally paint into the column gap. Layout clears
+            // `block_axis_clip_only` when a nested fragmentation context owns
+            // an inline-axis continuation boundary as well.
+            let (clip_x, clip_w) =
+                if fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
+                    (-1_000_000.0, 2_000_000.0)
+                } else {
+                    (abs_offset.left.to_f32(), fragment.size.width.to_f32())
+                };
+            let (clip_y, clip_h) = if fragment.inline_axis_clip_only {
+                (-1_000_000.0, 2_000_000.0)
+            } else {
+                (clip_y, clip_h)
+            };
             canvas.clip_rect(
                 skia_safe::Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
                 skia_safe::ClipOp::Intersect,
-                true,
+                false,
             );
             paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset, false);
             canvas.restore();
@@ -174,12 +296,28 @@ pub fn paint_fragment(
             }
             FragmentKind::Box | FragmentKind::Viewport => {
                 let paint_opacity = if flattens_opacity { style.opacity } else { 1.0 };
-                paint_box_decoration_background(canvas, fragment, style, abs_offset, paint_opacity);
+                let decoration_prepainted = PREPAINTED_COLUMN_DECORATIONS.with(|fragments| {
+                    fragments
+                        .borrow()
+                        .contains(&(fragment as *const Fragment as usize))
+                });
+                if !decoration_prepainted {
+                    paint_box_decoration_background(
+                        canvas,
+                        fragment,
+                        style,
+                        abs_offset,
+                        paint_opacity,
+                    );
+                }
                 let outside_marker_clipped = style.list_style_position
                     == ListStylePosition::Outside
                     && (style.overflow_x != Overflow::Visible
                         || style.overflow_y != Overflow::Visible);
-                if style.display == Display::ListItem && !outside_marker_clipped {
+                if style.display == Display::ListItem
+                    && style.list_style_type != ListStyleType::None
+                    && !outside_marker_clipped
+                {
                     paint_list_marker(canvas, fragment, style, abs_offset);
                 }
             }
@@ -193,7 +331,11 @@ pub fn paint_fragment(
     }
 
     let paint_outline_after_children = should_paint_outline_after_children(fragment, doc, style);
-    let should_outline = should_paint_outline(fragment, style);
+    // A column rule borrows the originating multicol style for its rule
+    // width/style/color, but it is not another principal box and must not
+    // duplicate that element's outline around the synthetic rule fragment.
+    let should_outline =
+        fragment.kind != FragmentKind::ColumnRule && should_paint_outline(fragment, doc, style);
     if style.visibility == Visibility::Visible && should_outline && !paint_outline_after_children {
         paint_outline(canvas, fragment, style, abs_offset);
     }
@@ -217,8 +359,38 @@ pub fn paint_fragment(
     }
 }
 
-fn should_paint_outline(fragment: &Fragment, style: &ComputedStyle) -> bool {
+fn paint_descendant_column_rules(
+    canvas: &Canvas,
+    children: &[Fragment],
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+) {
+    for child in children {
+        if child.kind == FragmentKind::ColumnRule {
+            paint_fragment(canvas, child, doc, parent_offset);
+            continue;
+        }
+        let child_offset = PhysicalOffset::new(
+            parent_offset.left + child.offset.left,
+            parent_offset.top + child.offset.top,
+        );
+        paint_descendant_column_rules(canvas, &child.children, doc, child_offset);
+    }
+}
+
+fn should_paint_outline(fragment: &Fragment, doc: &Document, style: &ComputedStyle) -> bool {
     if !style.has_outline() {
+        return false;
+    }
+    // The body canvas does not acquire an outline from an empty principal
+    // multicol fragment. Its padding still contributes to the canvas box,
+    // but there is no column-row border edge around which to draw the outline.
+    if doc.node(fragment.node_id).tag == openui_dom::ElementTag::Body
+        && !fragment.children.is_empty()
+        && fragment.children.iter().all(|child| {
+            child.kind == FragmentKind::ColumnBox && child.size.height == LayoutUnit::zero()
+        })
+    {
         return false;
     }
     !(style.column_span == openui_style::ColumnSpan::All
@@ -252,6 +424,395 @@ enum StackingEntry<'a> {
     DescendantWithClip(&'a Fragment, PhysicalOffset, Rect),
 }
 
+struct FragmentedInlineOofEntry<'a> {
+    fragment: &'a Fragment,
+    parent_offset: PhysicalOffset,
+    clip: Rect,
+    column_order: usize,
+    visible: bool,
+}
+
+fn collect_inline_oof_ids(fragment: &Fragment, doc: &Document, result: &mut BTreeSet<usize>) {
+    use openui_style::Position;
+
+    if !fragment.node_id.is_none() {
+        let node = doc.node(fragment.node_id);
+        if matches!(node.style.position, Position::Absolute | Position::Fixed)
+            && node.style.z_index.is_none()
+            && !node.parent.is_none()
+            && doc.node(node.parent).style.display.is_inline_level()
+        {
+            result.insert(fragment.node_id.index());
+        }
+    }
+    for child in &fragment.children {
+        collect_inline_oof_ids(child, doc, result);
+    }
+}
+
+fn collect_fragmented_inline_oof_entries<'a>(
+    fragment: &'a Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    candidate_ids: &BTreeSet<usize>,
+    clip: Rect,
+    column_order: usize,
+    entries: &mut Vec<FragmentedInlineOofEntry<'a>>,
+) {
+    use openui_style::Position;
+
+    if !fragment.node_id.is_none() {
+        let node = doc.node(fragment.node_id);
+        if matches!(node.style.position, Position::Absolute | Position::Fixed)
+            && node.style.z_index.is_none()
+            && candidate_ids.contains(&fragment.node_id.index())
+        {
+            let fragment_top = parent_offset.top.to_f32() + fragment.offset.top.to_f32();
+            let fragment_bottom = fragment_top + fragment.size.height.to_f32();
+            entries.push(FragmentedInlineOofEntry {
+                fragment,
+                parent_offset,
+                clip,
+                column_order,
+                visible: fragment_top < clip.bottom && fragment_bottom > clip.top,
+            });
+            return;
+        }
+    }
+
+    let fragment_offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    let clip = if fragment.has_overflow_clip {
+        let (_, clip_y, _, clip_h) = compute_clip_rect(fragment, fragment_offset);
+        let (clip_x, clip_w) = if fragment.block_axis_clip_only {
+            (-1_000_000.0, 2_000_000.0)
+        } else {
+            let (clip_x, _, clip_w, _) = compute_clip_rect(fragment, fragment_offset);
+            (clip_x, clip_w)
+        };
+        let local = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
+        Rect::from_ltrb(
+            clip.left.max(local.left),
+            clip.top.max(local.top),
+            clip.right.min(local.right),
+            clip.bottom.min(local.bottom),
+        )
+    } else {
+        clip
+    };
+    for child in &fragment.children {
+        collect_fragmented_inline_oof_entries(
+            child,
+            doc,
+            fragment_offset,
+            candidate_ids,
+            clip,
+            column_order,
+            entries,
+        );
+    }
+}
+
+fn repaint_fragmented_inline_source_range(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    source_after: usize,
+    source_through: Option<usize>,
+    inherited_clip: Rect,
+    repaint_clip: Rect,
+) {
+    use openui_style::Position;
+
+    let fragment_offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    let local_clip = if fragment.has_overflow_clip {
+        let (clip_x, clip_y, clip_w, clip_h) = compute_clip_rect(fragment, fragment_offset);
+        let (clip_x, clip_w) = if fragment.block_axis_clip_only {
+            (-1_000_000.0, 2_000_000.0)
+        } else {
+            (clip_x, clip_w)
+        };
+        Rect::from_xywh(clip_x, clip_y, clip_w, clip_h)
+    } else {
+        inherited_clip
+    };
+    let clip = Rect::from_ltrb(
+        inherited_clip
+            .left
+            .max(local_clip.left)
+            .max(repaint_clip.left),
+        inherited_clip.top.max(local_clip.top).max(repaint_clip.top),
+        inherited_clip
+            .right
+            .min(local_clip.right)
+            .min(repaint_clip.right),
+        inherited_clip
+            .bottom
+            .min(local_clip.bottom)
+            .min(repaint_clip.bottom),
+    );
+    if clip.left >= clip.right || clip.top >= clip.bottom {
+        return;
+    }
+
+    if !fragment.node_id.is_none() {
+        let node_id = fragment.node_id.index();
+        let style = &doc.node(fragment.node_id).style;
+        if matches!(style.position, Position::Absolute | Position::Fixed) {
+            return;
+        }
+        let in_source_range = node_id > source_after
+            && source_through.is_none_or(|source_through| node_id <= source_through);
+        if in_source_range && fragment.is_inline_box_fragment {
+            canvas.save();
+            canvas.clip_rect(clip, ClipOp::Intersect, false);
+            paint_fragment(canvas, fragment, doc, parent_offset);
+            canvas.restore();
+            return;
+        }
+    }
+
+    for child in &fragment.children {
+        repaint_fragmented_inline_source_range(
+            canvas,
+            child,
+            doc,
+            fragment_offset,
+            source_after,
+            source_through,
+            clip,
+            repaint_clip,
+        );
+    }
+}
+
+/// Paint shared inline-positioned continuations in the stacking position of
+/// the fragmented inline as a whole.
+fn paint_shared_inline_oof_across_column_row(
+    canvas: &Canvas,
+    children: &[Fragment],
+    doc: &Document,
+    offset: PhysicalOffset,
+    _is_stacking_context: bool,
+) -> bool {
+    use openui_style::Position;
+
+    if FRAGMENTED_OOF_HOIST_ACTIVE.with(|active| *active.borrow()) {
+        return false;
+    }
+    let is_direct_inline_oof = |child: &Fragment| {
+        if child.node_id.is_none() {
+            return false;
+        }
+        let node = doc.node(child.node_id);
+        matches!(node.style.position, Position::Absolute | Position::Fixed)
+            && node.style.z_index.is_none()
+            && !node.parent.is_none()
+            && doc.node(node.parent).style.display.is_inline_level()
+            && child.positioned_fragmentation.is_some()
+    };
+    let column_count = children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .count();
+    if column_count < 2
+        || children.iter().any(|child| {
+            !matches!(
+                child.kind,
+                FragmentKind::ColumnBox | FragmentKind::ColumnRule
+            ) && !is_direct_inline_oof(child)
+        })
+    {
+        return false;
+    }
+
+    let mut candidate_ids = BTreeSet::new();
+    for child in children {
+        collect_inline_oof_ids(child, doc, &mut candidate_ids);
+    }
+    if candidate_ids.is_empty() {
+        return false;
+    }
+
+    let mut entries = Vec::new();
+    for (column_order, column) in children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .enumerate()
+    {
+        let column_offset = PhysicalOffset::new(
+            offset.left + column.offset.left,
+            offset.top + column.offset.top,
+        );
+        let clip = if column.has_overflow_clip {
+            let (clip_y, clip_h) = compute_column_block_clip_rect(column, column_offset);
+            Rect::from_xywh(-1_000_000.0, clip_y, 2_000_000.0, clip_h)
+        } else {
+            Rect::from_xywh(-1_000_000.0, -1_000_000.0, 2_000_000.0, 2_000_000.0)
+        };
+        collect_fragmented_inline_oof_entries(
+            column,
+            doc,
+            offset,
+            &candidate_ids,
+            clip,
+            column_order,
+            &mut entries,
+        );
+    }
+    // Positioned continuations are owned by the multicol row rather than
+    // duplicated inside its anonymous column boxes.  Their break-token
+    // metadata identifies the column whose source-order slot they occupy.
+    for child in children.iter().filter(|child| is_direct_inline_oof(child)) {
+        let column_order = child
+            .positioned_fragmentation
+            .as_ref()
+            .and_then(|data| data.fragmentainer_index)
+            .unwrap_or_default() as usize;
+        collect_fragmented_inline_oof_entries(
+            child,
+            doc,
+            offset,
+            &candidate_ids,
+            Rect::from_xywh(-1_000_000.0, -1_000_000.0, 2_000_000.0, 2_000_000.0),
+            column_order,
+            &mut entries,
+        );
+    }
+
+    let mut visible_columns: BTreeMap<usize, BTreeSet<usize>> = BTreeMap::new();
+    for entry in &entries {
+        if entry.visible {
+            visible_columns
+                .entry(entry.fragment.node_id.index())
+                .or_default()
+                .insert(entry.column_order);
+        }
+    }
+    let selected_ids: BTreeSet<usize> = visible_columns
+        .iter()
+        .filter_map(|(node_id, columns)| (columns.len() >= 2).then_some(*node_id))
+        .collect();
+    if selected_ids.is_empty() {
+        return false;
+    }
+    // The special row-wide traversal exists to interleave multiple positioned
+    // siblings with the fragmented inline content between them. A lone OOF
+    // descendant needs only the ordinary stacking traversal; selecting it here
+    // can suppress valid later in-flow continuations.
+    // A single continuation needs this row-wide path only when it is the only
+    // positioned descendant of its inline owner. If just one of several OOF
+    // siblings crosses columns, ordinary traversal already preserves their
+    // source-order relationship. Multiple crossing descendants may belong to
+    // different inline owners, and are grouped independently below.
+    if selected_ids.len() < 2 && candidate_ids.len() != 1 {
+        return false;
+    }
+    let mut inline_groups: BTreeMap<usize, BTreeSet<usize>> = BTreeMap::new();
+    for entry in entries
+        .iter()
+        .filter(|entry| entry.visible && selected_ids.contains(&entry.fragment.node_id.index()))
+    {
+        let selected_id = entry.fragment.node_id.index();
+        let parent = doc.node(entry.fragment.node_id).parent;
+        if !parent.is_none() {
+            inline_groups
+                .entry(parent.index())
+                .or_default()
+                .insert(selected_id);
+        }
+    }
+    if inline_groups.is_empty() {
+        return false;
+    }
+    let inline_groups: Vec<(usize, BTreeSet<usize>)> = inline_groups.into_iter().collect();
+    let selected_ids: BTreeSet<usize> = inline_groups
+        .iter()
+        .flat_map(|(_, ids)| ids.iter().copied())
+        .collect();
+    entries.retain(|entry| selected_ids.contains(&entry.fragment.node_id.index()));
+    let skipped: Vec<usize> = entries
+        .iter()
+        .map(|entry| entry.fragment as *const Fragment as usize)
+        .collect();
+    HOIST_SKIP.with(|set| set.borrow_mut().extend(skipped.iter().copied()));
+    FRAGMENTED_OOF_HOIST_ACTIVE.with(|active| *active.borrow_mut() = true);
+    FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| {
+        *source_after.borrow_mut() = inline_groups.first().map(|(parent_id, _)| *parent_id);
+    });
+
+    for rule in children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnRule)
+    {
+        paint_fragment(canvas, rule, doc, offset);
+    }
+    for column in children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+    {
+        paint_fragment(canvas, column, doc, offset);
+    }
+    FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| *source_after.borrow_mut() = None);
+    for (group_index, (inline_parent_id, group_ids)) in inline_groups.iter().enumerate() {
+        let source_through = inline_groups
+            .get(group_index + 1)
+            .map(|(parent_id, _)| *parent_id);
+        for entry in entries
+            .iter()
+            .filter(|entry| entry.visible && group_ids.contains(&entry.fragment.node_id.index()))
+        {
+            HOIST_SKIP.with(|set| {
+                set.borrow_mut()
+                    .remove(&(entry.fragment as *const Fragment as usize));
+            });
+            canvas.save();
+            canvas.clip_rect(entry.clip, ClipOp::Intersect, false);
+            paint_fragment(canvas, entry.fragment, doc, entry.parent_offset);
+            canvas.restore();
+        }
+        for column in children
+            .iter()
+            .filter(|child| child.kind == FragmentKind::ColumnBox)
+        {
+            let column_offset = PhysicalOffset::new(
+                offset.left + column.offset.left,
+                offset.top + column.offset.top,
+            );
+            let column_clip = if column.has_overflow_clip {
+                let (clip_y, clip_h) = compute_column_block_clip_rect(column, column_offset);
+                Rect::from_xywh(-1_000_000.0, clip_y, 2_000_000.0, clip_h)
+            } else {
+                Rect::from_xywh(-1_000_000.0, -1_000_000.0, 2_000_000.0, 2_000_000.0)
+            };
+            repaint_fragmented_inline_source_range(
+                canvas,
+                column,
+                doc,
+                offset,
+                *inline_parent_id,
+                source_through,
+                column_clip,
+                column_clip,
+            );
+        }
+    }
+    HOIST_SKIP.with(|set| {
+        let mut set = set.borrow_mut();
+        for pointer in &skipped {
+            set.remove(pointer);
+        }
+    });
+    FRAGMENTED_OOF_HOIST_ACTIVE.with(|active| *active.borrow_mut() = false);
+    true
+}
+
 /// Paint children respecting CSS stacking order.
 ///
 /// CSS 2 §E.2 / CSS Positioned Layout §7.2 paint order:
@@ -277,6 +838,11 @@ fn paint_children_with_stacking_order(
     is_stacking_context: bool,
 ) {
     use openui_style::Position;
+
+    if paint_shared_inline_oof_across_column_row(canvas, children, doc, offset, is_stacking_context)
+    {
+        return;
+    }
 
     // Classify children into buckets
     let mut negative_z: Vec<(i32, usize, StackingEntry)> = Vec::new(); // (z-index, doc_order, entry)
@@ -311,7 +877,7 @@ fn paint_children_with_stacking_order(
         let is_flex_item = !parent_id.is_none() && doc.node(parent_id).style.display.is_flex();
         let has_z_index = child_style.z_index.is_some();
 
-        if is_positioned || (is_flex_item && has_z_index) {
+        if is_positioned || (is_flex_item && has_z_index) || child_style.opacity < 1.0 {
             let z = child_style.z_index.unwrap_or(0);
             let paint_order = if parent_is_flex {
                 order
@@ -420,12 +986,67 @@ fn paint_children_with_stacking_order(
         }
     }
 
-    // Phase 2: In-flow elements (in document order); hoisted fragments are skipped.
-    for &idx in &in_flow {
-        if matches!(children[idx].kind, FragmentKind::ColumnRule) {
+    // Phase 2: In-flow elements (in document order); hoisted fragments are
+    // skipped. Fragmented roots need their decorations prepainted within one
+    // contiguous column row so a later continuation background cannot erase
+    // earlier inline overflow. A spanner ends that row: prepainting columns
+    // from both sides of it together would put post-spanner backgrounds below
+    // the spanner and invert ordinary source paint order.
+    let mut in_flow_position = 0usize;
+    while in_flow_position < in_flow.len() {
+        let idx = in_flow[in_flow_position];
+        if children[idx].kind == FragmentKind::ColumnRule {
+            in_flow_position += 1;
             continue;
         }
-        paint_fragment(canvas, &children[idx], doc, offset);
+        if children[idx].kind != FragmentKind::ColumnBox {
+            paint_fragment(canvas, &children[idx], doc, offset);
+            in_flow_position += 1;
+            continue;
+        }
+
+        let row_start = idx;
+        let mut row_end = idx + 1;
+        let mut row_position_end = in_flow_position + 1;
+        while row_position_end < in_flow.len() {
+            let candidate = in_flow[row_position_end];
+            if candidate != row_end
+                || !matches!(
+                    children[candidate].kind,
+                    FragmentKind::ColumnBox | FragmentKind::ColumnRule
+                )
+            {
+                break;
+            }
+            row_end += 1;
+            row_position_end += 1;
+        }
+
+        let prepainted = prepaint_shared_column_root_decorations(
+            canvas,
+            &children[row_start..row_end],
+            doc,
+            offset,
+        );
+        if !prepainted.is_empty() {
+            PREPAINTED_COLUMN_DECORATIONS.with(|fragments| {
+                fragments.borrow_mut().extend(prepainted.iter().copied());
+            });
+        }
+        for &row_idx in &in_flow[in_flow_position..row_position_end] {
+            if children[row_idx].kind != FragmentKind::ColumnRule {
+                paint_fragment(canvas, &children[row_idx], doc, offset);
+            }
+        }
+        if !prepainted.is_empty() {
+            PREPAINTED_COLUMN_DECORATIONS.with(|fragments| {
+                let mut fragments = fragments.borrow_mut();
+                for pointer in &prepainted {
+                    fragments.remove(pointer);
+                }
+            });
+        }
+        in_flow_position = row_position_end;
     }
 
     // Deregister hoisted fragments before Phase 3 so they paint correctly.
@@ -451,6 +1072,84 @@ fn paint_children_with_stacking_order(
             }
         });
     }
+}
+
+fn prepaint_shared_column_root_decorations(
+    canvas: &Canvas,
+    children: &[Fragment],
+    doc: &Document,
+    offset: PhysicalOffset,
+) -> Vec<usize> {
+    let columns: Vec<_> = children
+        .iter()
+        .filter(|child| child.kind == FragmentKind::ColumnBox)
+        .collect();
+    if columns.len() < 2 {
+        return Vec::new();
+    }
+
+    let mut occurrences: BTreeMap<usize, usize> = BTreeMap::new();
+    for column in &columns {
+        for fragment in &column.children {
+            if !fragment.node_id.is_none() && fragment.kind == FragmentKind::Box {
+                *occurrences.entry(fragment.node_id.index()).or_default() += 1;
+            }
+        }
+    }
+    if !occurrences.values().any(|count| *count > 1) {
+        return Vec::new();
+    }
+
+    let mut prepainted = Vec::new();
+    for column in columns {
+        let column_offset = PhysicalOffset::new(
+            offset.left + column.offset.left,
+            offset.top + column.offset.top,
+        );
+        canvas.save();
+        if column.has_overflow_clip {
+            let (clip_y, clip_h) = compute_column_block_clip_rect(column, column_offset);
+            let (clip_x, clip_w) = if column.block_axis_clip_only && !column.inline_axis_clip_only {
+                (-1_000_000.0, 2_000_000.0)
+            } else {
+                (column_offset.left.to_f32(), column.size.width.to_f32())
+            };
+            let (clip_y, clip_h) = if column.inline_axis_clip_only {
+                (-1_000_000.0, 2_000_000.0)
+            } else {
+                (clip_y, clip_h)
+            };
+            canvas.clip_rect(
+                Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
+                ClipOp::Intersect,
+                false,
+            );
+        }
+        for fragment in &column.children {
+            if fragment.node_id.is_none()
+                || fragment.kind != FragmentKind::Box
+                || occurrences
+                    .get(&fragment.node_id.index())
+                    .copied()
+                    .unwrap_or_default()
+                    < 2
+            {
+                continue;
+            }
+            let style = &doc.node(fragment.node_id).style;
+            if style.visibility != Visibility::Visible || style.opacity < 1.0 {
+                continue;
+            }
+            let fragment_offset = PhysicalOffset::new(
+                column_offset.left + fragment.offset.left,
+                column_offset.top + fragment.offset.top,
+            );
+            paint_box_decoration_background(canvas, fragment, style, fragment_offset, 1.0);
+            prepainted.push(fragment as *const Fragment as usize);
+        }
+        canvas.restore();
+    }
+    prepainted
 }
 
 fn paint_stacking_entry(
@@ -496,14 +1195,14 @@ fn is_fragment_stacking_context(fragment: &Fragment, doc: &Document) -> bool {
     (is_positioned && style.z_index.is_some()) || style.opacity < 1.0
 }
 
-/// Walk an in-flow fragment subtree, collecting positioned z:auto descendants
-/// into `non_negative_z` (hoisting them to the nearest stacking context) and
-/// recording their raw pointers in `hoisted_ptrs` so Phase 2 can skip them.
+/// Walk an in-flow fragment subtree, collecting zero-or-positive stacking
+/// descendants into `non_negative_z` (hoisting them to the nearest stacking
+/// context) and recording their raw pointers in `hoisted_ptrs` so Phase 2 can
+/// skip them. This includes positioned z:auto descendants, positioned
+/// descendants with a non-negative z-index, and opacity stacking contexts.
 ///
-/// Stops at:
-///   - `FragmentKind::ColumnBox` — never hoist across multicol boundaries
-///   - Stacking context creators (positioned+z, opacity) — they manage their
-///     own children and must not be split from their subtree
+/// Stops at fragmentainer and overflow-clip boundaries so a hoisted fragment
+/// cannot escape its authoritative paint clip.
 fn collect_positioned_z_auto_descendants<'a>(
     fragment: &'a Fragment,
     doc: &Document,
@@ -521,8 +1220,36 @@ fn collect_positioned_z_auto_descendants<'a>(
     );
 
     for child in &fragment.children {
-        // Never cross ColumnBox boundaries (multicol fragmentation safety).
         if child.kind == FragmentKind::ColumnBox {
+            let column_offset = PhysicalOffset::new(
+                frag_offset.left + child.offset.left,
+                frag_offset.top + child.offset.top,
+            );
+            let column_clip = if child.has_overflow_clip {
+                let (clip_y, clip_h) = compute_column_block_clip_rect(child, column_offset);
+                let (clip_x, clip_w) = if child.block_axis_clip_only && !child.inline_axis_clip_only
+                {
+                    (-1_000_000.0, 2_000_000.0)
+                } else {
+                    (column_offset.left.to_f32(), child.size.width.to_f32())
+                };
+                let (clip_y, clip_h) = if child.inline_axis_clip_only {
+                    (-1_000_000.0, 2_000_000.0)
+                } else {
+                    (clip_y, clip_h)
+                };
+                Some(Rect::from_xywh(clip_x, clip_y, clip_w, clip_h))
+            } else {
+                None
+            };
+            collect_fragmented_opacity_stacking_contexts(
+                child,
+                doc,
+                frag_offset,
+                column_clip,
+                non_negative_z,
+                hoisted_ptrs,
+            );
             continue;
         }
 
@@ -543,21 +1270,41 @@ fn collect_positioned_z_auto_descendants<'a>(
             child_style.position,
             Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
         );
-
-        if is_positioned && child_style.z_index.is_none() {
-            // Positioned z:auto — hoist this fragment to the nearest SC.
-            // Sort key (0, dom_index) ensures document-tree order among peers.
+        // A positioned continuation whose containing block is a fragmented
+        // inline is painted by the owning multicol row. Hoisting it again to
+        // an ancestor stacking context loses the source-order interleaving
+        // between inline content and later positioned continuations.
+        let owned_by_fragmented_inline =
+            child.positioned_fragmentation.as_ref().is_some_and(|data| {
+                data.inline_containing_block_node.is_some() && data.fragmentainer_index.is_some()
+            });
+        if is_positioned && owned_by_fragmented_inline {
+            continue;
+        }
+        let stacking_level = if is_positioned {
+            match child_style.z_index {
+                Some(z) if z < 0 => None,
+                Some(z) => Some(z),
+                None => Some(0),
+            }
+        } else if child_style.opacity < 1.0 {
+            Some(0)
+        } else {
+            None
+        };
+        if let Some(z) = stacking_level {
+            // Hoist this stacking context to the nearest SC. The DOM index
+            // preserves document-tree order among peers at the same level.
             let ptr = child as *const Fragment as usize;
             non_negative_z.push((
-                0,
+                z,
                 child.node_id.index(),
                 StackingEntry::Descendant(child, frag_offset),
             ));
             hoisted_ptrs.push(ptr);
             // Don't recurse: the entire subtree paints as part of this fragment.
-        } else if (is_positioned && child_style.z_index.is_some()) || child_style.opacity < 1.0 {
-            // This child is a stacking context — it was already classified in
-            // the parent's non_negative_z/negative_z list. Don't enter it.
+        } else if is_positioned && child_style.z_index.is_some_and(|z| z < 0) {
+            // Negative stacking contexts are collected by the negative pass.
         } else {
             // Non-positioned, non-SC: only recurse if the child does NOT clip
             // overflow. Elements inside an overflow-clipping container must
@@ -571,6 +1318,62 @@ fn collect_positioned_z_auto_descendants<'a>(
                     child,
                     doc,
                     frag_offset,
+                    non_negative_z,
+                    hoisted_ptrs,
+                );
+            }
+        }
+    }
+}
+
+/// Hoist opacity stacking contexts out of a column's in-flow paint pass while
+/// retaining that fragmentainer's authoritative clip. Opacity establishes a
+/// stacking context at the nearest ancestor stacking level, so its visible
+/// overflow paints after later in-flow siblings in the same column row.
+fn collect_fragmented_opacity_stacking_contexts<'a>(
+    fragment: &'a Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    column_clip: Option<Rect>,
+    non_negative_z: &mut Vec<(i32, usize, StackingEntry<'a>)>,
+    hoisted_ptrs: &mut Vec<usize>,
+) {
+    let fragment_offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    for child in &fragment.children {
+        if child.node_id.is_none() {
+            collect_fragmented_opacity_stacking_contexts(
+                child,
+                doc,
+                fragment_offset,
+                column_clip,
+                non_negative_z,
+                hoisted_ptrs,
+            );
+            continue;
+        }
+        let style = &doc.node(child.node_id).style;
+        if style.opacity < 1.0 {
+            let pointer = child as *const Fragment as usize;
+            let entry = column_clip
+                .map_or(StackingEntry::Descendant(child, fragment_offset), |clip| {
+                    StackingEntry::DescendantWithClip(child, fragment_offset, clip)
+                });
+            non_negative_z.push((style.z_index.unwrap_or(0), child.node_id.index(), entry));
+            hoisted_ptrs.push(pointer);
+        } else if !is_fragment_stacking_context(child, doc) {
+            let clips_overflow = child.has_overflow_clip
+                || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
+                    && (style.overflow_x != Overflow::Visible
+                        || style.overflow_y != Overflow::Visible));
+            if !clips_overflow {
+                collect_fragmented_opacity_stacking_contexts(
+                    child,
+                    doc,
+                    fragment_offset,
+                    column_clip,
                     non_negative_z,
                     hoisted_ptrs,
                 );
@@ -853,686 +1656,6 @@ fn paint_list_marker(
     );
 }
 
-type ExactPixel = (i16, i16, u8, u8, u8);
-
-fn draw_exact_pixels(canvas: &Canvas, origin_x: f32, origin_y: f32, pixels: &[ExactPixel]) {
-    let mut paint = Paint::default();
-    paint.set_style(PaintStyle::Fill);
-    paint.set_anti_alias(false);
-    for &(dx, dy, r, g, b) in pixels {
-        paint.set_color4f(
-            Color4f::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, 1.0),
-            None::<&ColorSpace>,
-        );
-        canvas.draw_rect(
-            Rect::from_xywh(origin_x + dx as f32, origin_y + dy as f32, 1.0, 1.0),
-            &paint,
-        );
-    }
-}
-
-fn draw_exact_corner_pixels(
-    canvas: &Canvas,
-    border_rect: Rect,
-    corner: usize,
-    pixels: &[ExactPixel],
-) {
-    let mut paint = Paint::default();
-    paint.set_style(PaintStyle::Fill);
-    paint.set_anti_alias(false);
-    for &(dx, dy, r, g, b) in pixels {
-        let x = match corner {
-            0 | 3 => border_rect.left + dx as f32,
-            1 | 2 => border_rect.right - 1.0 - dx as f32,
-            _ => continue,
-        };
-        let y = match corner {
-            0 | 1 => border_rect.top + dy as f32,
-            2 | 3 => border_rect.bottom - 1.0 - dy as f32,
-            _ => continue,
-        };
-        paint.set_color4f(
-            Color4f::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, 1.0),
-            None::<&ColorSpace>,
-        );
-        canvas.draw_rect(Rect::from_xywh(x, y, 1.0, 1.0), &paint);
-    }
-}
-
-const BORDER_15_TOP_LEFT_PIXELS: &[ExactPixel] = &[
-    (9, 0, 255, 233, 245),
-    (10, 0, 255, 169, 212),
-    (11, 0, 255, 126, 191),
-    (12, 0, 255, 112, 183),
-    (13, 0, 255, 107, 181),
-    (14, 0, 255, 104, 179),
-    (7, 1, 255, 239, 247),
-    (8, 1, 255, 134, 195),
-    (9, 1, 255, 105, 180),
-    (5, 2, 255, 253, 255),
-    (6, 2, 255, 162, 209),
-    (7, 2, 255, 106, 180),
-    (5, 3, 255, 148, 201),
-    (6, 3, 255, 104, 180),
-    (3, 4, 255, 251, 253),
-    (4, 4, 255, 125, 189),
-    (3, 5, 255, 152, 203),
-    (2, 6, 255, 184, 220),
-    (3, 6, 255, 105, 180),
-    (1, 7, 255, 245, 251),
-    (2, 7, 255, 106, 180),
-    (1, 8, 255, 146, 201),
-    (0, 9, 255, 253, 255),
-    (1, 9, 255, 106, 181),
-    (0, 10, 255, 196, 226),
-    (0, 11, 255, 138, 196),
-    (0, 12, 255, 114, 184),
-    (0, 13, 255, 109, 181),
-    (0, 14, 255, 105, 180),
-];
-
-const BORDER_15_TOP_RIGHT_PIXELS: &[ExactPixel] = &[
-    (9, 0, 255, 233, 245),
-    (10, 0, 255, 170, 213),
-    (11, 0, 255, 127, 191),
-    (12, 0, 255, 112, 183),
-    (13, 0, 255, 106, 181),
-    (14, 0, 255, 104, 179),
-    (7, 1, 255, 239, 247),
-    (8, 1, 255, 135, 194),
-    (9, 1, 255, 105, 180),
-    (5, 2, 255, 253, 255),
-    (6, 2, 255, 165, 211),
-    (7, 2, 255, 106, 181),
-    (5, 3, 255, 152, 203),
-    (6, 3, 255, 104, 180),
-    (3, 4, 255, 251, 253),
-    (4, 4, 255, 134, 195),
-    (3, 5, 255, 152, 203),
-    (2, 6, 255, 182, 219),
-    (3, 6, 255, 105, 180),
-    (1, 7, 255, 245, 251),
-    (2, 7, 255, 106, 180),
-    (1, 8, 255, 152, 203),
-    (0, 9, 255, 253, 255),
-    (1, 9, 255, 106, 180),
-    (0, 10, 255, 196, 226),
-    (0, 11, 255, 138, 196),
-    (0, 12, 255, 114, 184),
-    (0, 13, 255, 109, 181),
-    (0, 14, 255, 105, 180),
-];
-
-const BORDER_15_BOTTOM_RIGHT_PIXELS: &[ExactPixel] = &[
-    (10, 0, 255, 232, 243),
-    (11, 0, 255, 162, 209),
-    (12, 0, 255, 131, 193),
-    (13, 0, 255, 113, 184),
-    (14, 0, 255, 105, 180),
-    (8, 1, 255, 161, 208),
-    (9, 1, 255, 109, 182),
-    (6, 2, 255, 174, 214),
-    (7, 2, 255, 106, 181),
-    (5, 3, 255, 154, 204),
-    (6, 3, 255, 104, 180),
-    (4, 4, 255, 129, 192),
-    (3, 5, 255, 152, 203),
-    (2, 6, 255, 184, 220),
-    (3, 6, 255, 105, 180),
-    (1, 7, 255, 239, 247),
-    (2, 7, 255, 106, 180),
-    (1, 8, 255, 138, 196),
-    (0, 9, 255, 247, 251),
-    (1, 9, 255, 105, 180),
-    (0, 10, 255, 181, 219),
-    (0, 11, 255, 129, 192),
-    (0, 12, 255, 114, 184),
-    (0, 13, 255, 109, 181),
-    (0, 14, 255, 105, 180),
-];
-
-const BORDER_15_BOTTOM_LEFT_PIXELS: &[ExactPixel] = &[
-    (10, 0, 255, 232, 243),
-    (11, 0, 255, 162, 209),
-    (12, 0, 255, 131, 193),
-    (13, 0, 255, 114, 184),
-    (14, 0, 255, 105, 180),
-    (8, 1, 255, 162, 209),
-    (9, 1, 255, 109, 182),
-    (6, 2, 255, 174, 214),
-    (7, 2, 255, 106, 181),
-    (5, 3, 255, 149, 202),
-    (6, 3, 255, 104, 180),
-    (4, 4, 255, 127, 191),
-    (3, 5, 255, 146, 201),
-    (2, 6, 255, 182, 219),
-    (3, 6, 255, 105, 180),
-    (1, 7, 255, 239, 247),
-    (2, 7, 255, 106, 180),
-    (1, 8, 255, 138, 196),
-    (0, 9, 255, 247, 251),
-    (1, 9, 255, 105, 180),
-    (0, 10, 255, 181, 219),
-    (0, 11, 255, 129, 192),
-    (0, 12, 255, 111, 183),
-    (0, 13, 255, 107, 181),
-    (0, 14, 255, 105, 180),
-];
-
-const SLICED_BORDER_40_TOP_LEFT_PIXELS: &[ExactPixel] = &[
-    (37, 20, 255, 208, 56),
-    (38, 20, 255, 227, 34),
-    (33, 21, 255, 228, 32),
-    (31, 22, 255, 250, 7),
-    (27, 23, 255, 119, 162),
-    (28, 23, 255, 189, 79),
-    (29, 23, 255, 250, 7),
-    (26, 24, 255, 108, 175),
-    (27, 24, 255, 194, 73),
-    (25, 25, 255, 116, 166),
-    (24, 27, 255, 194, 73),
-    (23, 28, 255, 166, 106),
-    (22, 29, 255, 119, 163),
-    (23, 29, 255, 250, 6),
-    (22, 30, 255, 194, 73),
-    (21, 31, 255, 125, 156),
-    (21, 32, 255, 199, 67),
-    (21, 33, 255, 232, 28),
-    (20, 36, 255, 208, 56),
-    (20, 37, 255, 222, 39),
-    (20, 38, 255, 237, 22),
-    (20, 39, 255, 251, 5),
-];
-
-const SLICED_BORDER_40_TOP_RIGHT_PIXELS: &[ExactPixel] = &[
-    (11, 11, 255, 216, 236),
-    (37, 20, 255, 207, 57),
-    (38, 20, 255, 227, 34),
-    (32, 21, 255, 182, 87),
-    (30, 22, 255, 188, 80),
-    (31, 22, 255, 250, 7),
-    (27, 23, 255, 116, 165),
-    (28, 23, 255, 188, 80),
-    (26, 24, 255, 108, 175),
-    (27, 24, 255, 194, 73),
-    (25, 25, 255, 106, 178),
-    (26, 25, 255, 221, 41),
-    (24, 27, 255, 194, 73),
-    (23, 28, 255, 166, 106),
-    (23, 29, 255, 250, 7),
-    (22, 30, 255, 189, 78),
-    (21, 31, 255, 119, 162),
-    (22, 31, 255, 250, 7),
-    (21, 32, 255, 194, 73),
-    (21, 33, 255, 232, 28),
-];
-
-const SLICED_BORDER_40_BOTTOM_RIGHT_PIXELS: &[ExactPixel] = &[
-    (11, 11, 255, 212, 234),
-    (37, 20, 255, 231, 28),
-    (32, 21, 255, 188, 80),
-    (33, 21, 255, 248, 8),
-    (29, 22, 255, 128, 152),
-    (28, 23, 255, 163, 109),
-    (26, 24, 255, 108, 175),
-    (27, 24, 255, 196, 71),
-    (25, 25, 255, 105, 179),
-    (26, 25, 255, 238, 21),
-    (25, 26, 255, 212, 52),
-    (23, 28, 255, 156, 118),
-    (0, 31, 255, 247, 251),
-    (21, 32, 255, 185, 84),
-    (20, 34, 255, 128, 151),
-    (20, 35, 255, 175, 95),
-    (20, 36, 255, 204, 61),
-    (20, 39, 255, 246, 11),
-];
-
-const SLICED_BORDER_40_BOTTOM_LEFT_PIXELS: &[ExactPixel] = &[
-    (35, 20, 255, 189, 79),
-    (39, 20, 255, 250, 6),
-    (32, 21, 255, 192, 75),
-    (33, 21, 255, 250, 6),
-    (30, 22, 255, 196, 71),
-    (31, 22, 255, 251, 4),
-    (28, 23, 255, 166, 106),
-    (26, 24, 255, 108, 175),
-    (27, 24, 255, 194, 73),
-    (25, 25, 255, 117, 164),
-    (26, 25, 255, 237, 21),
-    (24, 27, 255, 185, 84),
-    (23, 28, 255, 158, 116),
-    (22, 30, 255, 185, 84),
-    (21, 31, 255, 124, 156),
-    (22, 31, 255, 250, 6),
-    (21, 33, 255, 232, 28),
-    (20, 35, 255, 175, 95),
-    (20, 37, 255, 218, 45),
-    (20, 38, 255, 232, 28),
-    (20, 39, 255, 246, 11),
-];
-
-const OVERFLOW_CLIP_MARGIN_010_PIXELS: &[ExactPixel] = &[
-    (22, 101, 180, 220, 226),
-    (22, 102, 157, 208, 203),
-    (23, 103, 181, 220, 227),
-    (23, 104, 150, 205, 196),
-    (24, 105, 173, 216, 219),
-    (21, 110, 178, 219, 224),
-    (122, 110, 150, 205, 196),
-    (22, 111, 170, 215, 216),
-    (122, 111, 180, 220, 226),
-    (23, 112, 159, 209, 205),
-    (121, 112, 157, 208, 203),
-    (38, 117, 181, 220, 227),
-    (109, 117, 176, 218, 222),
-    (39, 118, 148, 204, 194),
-    (40, 118, 163, 211, 209),
-    (41, 118, 178, 219, 224),
-    (106, 118, 189, 224, 235),
-    (107, 118, 178, 219, 224),
-    (108, 118, 152, 206, 198),
-    (105, 119, 155, 207, 201),
-    (33, 120, 149, 204, 195),
-    (34, 121, 174, 217, 220),
-    (35, 121, 146, 203, 192),
-    (112, 121, 154, 207, 200),
-    (110, 122, 150, 205, 196),
-    (111, 122, 179, 219, 225),
-    (107, 123, 150, 205, 196),
-    (108, 123, 166, 213, 212),
-    (109, 123, 181, 220, 227),
-    (43, 124, 174, 217, 220),
-    (44, 124, 168, 214, 214),
-    (45, 124, 162, 211, 208),
-];
-
-const OVERFLOW_VISUAL_PARENT_PIXELS: &[ExactPixel] = &[
-    (125, 0, 9, 9, 9),
-    (126, 0, 31, 31, 31),
-    (127, 0, 56, 56, 56),
-    (128, 0, 103, 103, 103),
-    (129, 0, 168, 168, 168),
-    (130, 0, 239, 239, 239),
-    (130, 1, 4, 4, 4),
-    (131, 1, 114, 114, 114),
-    (132, 1, 243, 243, 243),
-    (132, 2, 23, 23, 23),
-    (133, 3, 2, 2, 2),
-    (134, 3, 141, 141, 141),
-    (135, 4, 110, 110, 110),
-    (136, 5, 142, 142, 142),
-    (136, 6, 2, 2, 2),
-    (137, 6, 184, 184, 184),
-    (137, 7, 20, 20, 20),
-    (138, 7, 246, 246, 246),
-    (138, 8, 136, 136, 136),
-    (138, 9, 25, 25, 25),
-    (139, 10, 204, 204, 204),
-    (139, 11, 121, 121, 121),
-    (139, 12, 67, 67, 67),
-    (139, 13, 41, 41, 41),
-    (139, 14, 16, 16, 16),
-    (139, 15, 0, 0, 0),
-    (0, 105, 11, 11, 11),
-    (0, 106, 35, 35, 35),
-    (0, 107, 58, 58, 58),
-    (0, 108, 82, 82, 82),
-    (0, 109, 105, 105, 105),
-    (0, 110, 129, 129, 129),
-    (0, 111, 152, 152, 152),
-    (0, 112, 202, 202, 202),
-    (1, 112, 0, 0, 0),
-    (1, 113, 21, 21, 21),
-    (1, 114, 98, 98, 98),
-    (1, 115, 174, 174, 174),
-    (2, 115, 0, 0, 0),
-    (139, 115, 12, 12, 12),
-    (1, 116, 244, 244, 244),
-    (2, 116, 7, 7, 7),
-    (139, 116, 36, 36, 36),
-    (2, 117, 70, 70, 70),
-    (139, 117, 60, 60, 60),
-    (2, 118, 175, 175, 175),
-    (3, 118, 0, 0, 0),
-    (139, 118, 84, 84, 84),
-    (3, 119, 54, 54, 54),
-    (139, 119, 108, 108, 108),
-    (3, 120, 188, 188, 188),
-    (4, 120, 0, 0, 0),
-    (139, 120, 158, 158, 158),
-    (4, 121, 62, 62, 62),
-    (138, 121, 1, 1, 1),
-    (139, 121, 236, 236, 236),
-    (4, 122, 202, 202, 202),
-    (5, 122, 0, 0, 0),
-    (138, 122, 56, 56, 56),
-    (5, 123, 79, 79, 79),
-    (138, 123, 132, 132, 132),
-    (5, 124, 229, 229, 229),
-    (6, 124, 22, 22, 22),
-    (137, 124, 0, 0, 0),
-    (138, 124, 209, 209, 209),
-    (6, 125, 198, 198, 198),
-    (7, 125, 0, 0, 0),
-    (137, 125, 60, 60, 60),
-    (7, 126, 158, 158, 158),
-    (8, 126, 0, 0, 0),
-    (136, 126, 1, 1, 1),
-    (137, 126, 213, 213, 213),
-    (8, 127, 107, 107, 107),
-    (136, 127, 97, 97, 97),
-    (9, 128, 64, 64, 64),
-    (135, 128, 10, 10, 10),
-    (136, 128, 231, 231, 231),
-    (9, 129, 237, 237, 237),
-    (10, 129, 35, 35, 35),
-    (134, 129, 0, 0, 0),
-    (135, 129, 165, 165, 165),
-    (10, 130, 236, 236, 236),
-    (11, 130, 58, 58, 58),
-    (12, 130, 0, 0, 0),
-    (134, 130, 121, 121, 121),
-    (12, 131, 91, 91, 91),
-    (13, 131, 0, 0, 0),
-    (133, 131, 69, 69, 69),
-    (13, 132, 140, 140, 140),
-    (14, 132, 0, 0, 0),
-    (132, 132, 44, 44, 44),
-    (133, 132, 244, 244, 244),
-    (14, 133, 187, 187, 187),
-    (15, 133, 12, 12, 12),
-    (130, 133, 0, 0, 0),
-    (131, 133, 68, 68, 68),
-    (132, 133, 243, 243, 243),
-    (15, 134, 229, 229, 229),
-    (16, 134, 94, 94, 94),
-    (17, 134, 1, 1, 1),
-    (129, 134, 0, 0, 0),
-    (130, 134, 112, 112, 112),
-    (17, 135, 211, 211, 211),
-    (18, 135, 59, 59, 59),
-    (19, 135, 0, 0, 0),
-    (128, 135, 4, 4, 4),
-    (129, 135, 164, 164, 164),
-    (19, 136, 181, 181, 181),
-    (20, 136, 42, 42, 42),
-    (21, 136, 0, 0, 0),
-    (126, 136, 0, 0, 0),
-    (127, 136, 82, 82, 82),
-    (128, 136, 217, 217, 217),
-    (21, 137, 198, 198, 198),
-    (22, 137, 118, 118, 118),
-    (23, 137, 38, 38, 38),
-    (124, 137, 0, 0, 0),
-    (125, 137, 63, 63, 63),
-    (126, 137, 203, 203, 203),
-    (24, 138, 216, 216, 216),
-    (25, 138, 136, 136, 136),
-    (26, 138, 56, 56, 56),
-    (27, 138, 1, 1, 1),
-    (121, 138, 4, 4, 4),
-    (122, 138, 63, 63, 63),
-    (123, 138, 139, 139, 139),
-    (124, 138, 215, 215, 215),
-    (27, 139, 234, 234, 234),
-    (28, 139, 180, 180, 180),
-    (29, 139, 149, 149, 149),
-    (30, 139, 123, 123, 123),
-    (31, 139, 95, 95, 95),
-    (32, 139, 67, 67, 67),
-    (33, 139, 40, 40, 40),
-    (34, 139, 12, 12, 12),
-    (115, 139, 11, 11, 11),
-    (116, 139, 37, 37, 37),
-    (117, 139, 63, 63, 63),
-    (118, 139, 89, 89, 89),
-    (119, 139, 116, 116, 116),
-    (120, 139, 168, 168, 168),
-    (121, 139, 240, 240, 240),
-];
-
-const OVERFLOW_VISUAL_CONTENT_PIXELS: &[ExactPixel] = &[
-    (125, 10, 120, 120, 120),
-    (126, 10, 102, 102, 102),
-    (127, 10, 38, 38, 38),
-    (127, 11, 128, 128, 128),
-    (128, 11, 58, 58, 58),
-    (128, 12, 127, 127, 127),
-    (129, 12, 34, 34, 34),
-    (129, 13, 92, 92, 92),
-    (129, 14, 115, 115, 115),
-    (10, 105, 122, 122, 122),
-    (10, 106, 111, 111, 111),
-    (10, 107, 99, 99, 99),
-    (10, 108, 87, 87, 87),
-    (10, 109, 76, 76, 76),
-    (10, 110, 51, 51, 51),
-    (10, 111, 10, 10, 10),
-    (11, 111, 128, 128, 128),
-    (11, 112, 102, 102, 102),
-    (11, 113, 64, 64, 64),
-    (11, 114, 25, 25, 25),
-    (12, 114, 128, 128, 128),
-    (12, 115, 100, 100, 100),
-    (129, 115, 122, 122, 122),
-    (12, 116, 25, 25, 25),
-    (13, 116, 128, 128, 128),
-    (129, 116, 110, 110, 110),
-    (13, 117, 81, 81, 81),
-    (129, 117, 98, 98, 98),
-    (13, 118, 13, 13, 13),
-    (14, 118, 124, 124, 124),
-    (129, 118, 73, 73, 73),
-    (14, 119, 48, 48, 48),
-    (15, 119, 128, 128, 128),
-    (129, 119, 34, 34, 34),
-    (15, 120, 70, 70, 70),
-    (128, 120, 123, 123, 123),
-    (16, 121, 91, 91, 91),
-    (128, 121, 68, 68, 68),
-    (16, 122, 7, 7, 7),
-    (17, 122, 107, 107, 107),
-    (127, 122, 117, 117, 117),
-    (128, 122, 6, 6, 6),
-    (17, 123, 7, 7, 7),
-    (18, 123, 94, 94, 94),
-    (126, 123, 127, 127, 127),
-    (127, 123, 32, 32, 32),
-    (19, 124, 73, 73, 73),
-    (20, 124, 128, 128, 128),
-    (126, 124, 55, 55, 55),
-    (20, 125, 51, 51, 51),
-    (21, 125, 128, 128, 128),
-    (125, 125, 74, 74, 74),
-    (21, 126, 21, 21, 21),
-    (22, 126, 88, 88, 88),
-    (23, 126, 128, 128, 128),
-    (124, 126, 58, 58, 58),
-    (23, 127, 27, 27, 27),
-    (24, 127, 97, 97, 97),
-    (25, 127, 128, 128, 128),
-    (122, 127, 113, 113, 113),
-    (123, 127, 39, 39, 39),
-    (25, 128, 22, 22, 22),
-    (26, 128, 58, 58, 58),
-    (27, 128, 97, 97, 97),
-    (28, 128, 128, 128, 128),
-    (120, 128, 102, 102, 102),
-    (28, 129, 8, 8, 8),
-    (29, 129, 45, 45, 45),
-    (30, 129, 70, 70, 70),
-    (31, 129, 83, 83, 83),
-    (32, 129, 96, 96, 96),
-    (33, 129, 108, 108, 108),
-    (34, 129, 122, 122, 122),
-    (116, 129, 96, 96, 96),
-    (117, 129, 73, 73, 73),
-    (118, 129, 45, 45, 45),
-    (119, 129, 11, 11, 11),
-];
-
-fn approx_px(value: f32, expected: f32) -> bool {
-    (value - expected).abs() < 0.5
-}
-
-fn is_overflow_010_clip_signature(
-    fragment: &Fragment,
-    style: &ComputedStyle,
-    clip_rect: Rect,
-) -> bool {
-    if !approx_px(clip_rect.width(), 140.0) || !approx_px(clip_rect.height(), 140.0) {
-        return false;
-    }
-    let border_rect = Rect::from_xywh(
-        0.0,
-        0.0,
-        fragment.size.width.to_f32(),
-        fragment.size.height.to_f32(),
-    );
-    let radii = normalized_border_radii(style, &border_rect);
-    let actual_parent = approx_px(style.overflow_clip_margin, 20.0)
-        && approx_px(style.effective_border_top() as f32, 5.0)
-        && approx_px(radii[0].x, 0.0)
-        && approx_px(radii[1].x, 15.0)
-        && approx_px(radii[2].x, 25.0)
-        && approx_px(radii[3].x, 35.0);
-    let reference_child = approx_px(style.overflow_clip_margin, 0.0)
-        && approx_px(style.effective_border_top() as f32, 0.0)
-        && approx_px(radii[0].x, 0.0)
-        && approx_px(radii[1].x, 27.5)
-        && approx_px(radii[2].x, 40.0)
-        && approx_px(radii[3].x, 50.0);
-    actual_parent || reference_child
-}
-
-fn is_overflow_visual_parent_signature(
-    fragment: &Fragment,
-    style: &ComputedStyle,
-    border_rect: Rect,
-) -> bool {
-    if !approx_px(border_rect.width(), 140.0) || !approx_px(border_rect.height(), 140.0) {
-        return false;
-    }
-    if !approx_px(style.effective_border_top() as f32, 10.0)
-        || !approx_px(style.effective_border_right() as f32, 10.0)
-        || !approx_px(style.effective_border_bottom() as f32, 10.0)
-        || !approx_px(style.effective_border_left() as f32, 10.0)
-    {
-        return false;
-    }
-    let color = style.border_top_color.resolve(&style.color);
-    if color.r > 0.01 || color.g > 0.01 || color.b > 0.01 || color.a < 0.99 {
-        return false;
-    }
-    let local_border_rect = Rect::from_xywh(
-        0.0,
-        0.0,
-        fragment.size.width.to_f32(),
-        fragment.size.height.to_f32(),
-    );
-    let radii = normalized_border_radii(style, &local_border_rect);
-    approx_px(radii[0].x, 0.0)
-        && approx_px(radii[1].x, 15.0)
-        && approx_px(radii[2].x, 25.0)
-        && approx_px(radii[3].x, 35.0)
-}
-
-fn is_overflow_visual_content_signature(fragment: &Fragment, style: &ComputedStyle) -> bool {
-    style.overflow_clip_box == OverflowClipBox::ContentBox
-        || fragment
-            .children
-            .first()
-            .is_some_and(|child| approx_px(child.size.width.to_f32(), 110.0))
-}
-
-fn apply_overflow_clip_exact_cleanup(
-    canvas: &Canvas,
-    fragment: &Fragment,
-    style: &ComputedStyle,
-    offset: PhysicalOffset,
-    clip_rect: Rect,
-) {
-    if is_overflow_010_clip_signature(fragment, style, clip_rect) {
-        draw_exact_pixels(
-            canvas,
-            clip_rect.left.round(),
-            clip_rect.top.round(),
-            OVERFLOW_CLIP_MARGIN_010_PIXELS,
-        );
-    }
-
-    let border_rect = Rect::from_xywh(
-        offset.left.round().to_f32(),
-        offset.top.round().to_f32(),
-        fragment.size.width.to_f32(),
-        fragment.size.height.to_f32(),
-    );
-    if style.overflow_clip_margin > 0.0
-        && style.overflow_clip_box != OverflowClipBox::BorderBox
-        && is_overflow_visual_parent_signature(fragment, style, border_rect)
-    {
-        draw_exact_pixels(
-            canvas,
-            border_rect.left.round(),
-            border_rect.top.round(),
-            OVERFLOW_VISUAL_PARENT_PIXELS,
-        );
-        if is_overflow_visual_content_signature(fragment, style) {
-            draw_exact_pixels(
-                canvas,
-                border_rect.left.round(),
-                border_rect.top.round(),
-                OVERFLOW_VISUAL_CONTENT_PIXELS,
-            );
-        }
-    }
-}
-
-fn apply_overflow_visual_child_exact_cleanup(
-    canvas: &Canvas,
-    fragment: &Fragment,
-    style: &ComputedStyle,
-    border_rect: Rect,
-) {
-    if !approx_px(border_rect.width(), 150.0) || !approx_px(border_rect.height(), 150.0) {
-        return;
-    }
-    if style.effective_border_top() != 0
-        || style.effective_border_right() != 0
-        || style.effective_border_bottom() != 0
-        || style.effective_border_left() != 0
-    {
-        return;
-    }
-    if style.background_color.r > 0.01
-        || style.background_color.g > 0.01
-        || style.background_color.b < 0.99
-        || style.background_color.a < 0.99
-    {
-        return;
-    }
-    let local_border_rect = Rect::from_xywh(
-        0.0,
-        0.0,
-        fragment.size.width.to_f32(),
-        fragment.size.height.to_f32(),
-    );
-    let radii = normalized_border_radii(style, &local_border_rect);
-    if approx_px(radii[0].x, 0.0)
-        && approx_px(radii[1].x, 15.5)
-        && approx_px(radii[2].x, 30.0)
-        && approx_px(radii[3].x, 40.0)
-    {
-        draw_exact_pixels(
-            canvas,
-            border_rect.left.round(),
-            border_rect.top.round(),
-            &[(150, 15, 250, 250, 255)],
-        );
-    }
-}
-
 /// Compute the clip rectangle for overflow clipping.
 ///
 /// Per CSS spec, overflow clips to the **padding box** — the border-box
@@ -1550,6 +1673,24 @@ pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f
     let clip_w = (clip_right - clip_left).max(0.0);
     let clip_h = (clip_bottom - clip_top).max(0.0);
     (clip_left, clip_top, clip_w, clip_h)
+}
+
+/// Column fragmentainers clip continuation content at their block edges, but
+/// direct descendants may create ink overflow above the column through normal
+/// flow (for example, a negative collapsed start margin). Extend only to the
+/// direct fragment's placement; negative offsets inside a continuation remain
+/// protected by the fragmentainer clip.
+fn compute_column_block_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32) {
+    let (_, clip_top, _, clip_height) = compute_clip_rect(fragment, offset);
+    let clip_bottom = clip_top + clip_height + fragment.column_block_end_ink_overflow.to_f32();
+    let clip_top = clip_top - fragment.column_block_start_ink_overflow.to_f32();
+    let direct_ink_top = fragment
+        .children
+        .iter()
+        .filter(|child| child.offset.top < LayoutUnit::zero())
+        .map(|child| (offset.top + child.offset.top).to_f32())
+        .fold(clip_top, f32::min);
+    (direct_ink_top, (clip_bottom - direct_ink_top).max(0.0))
 }
 
 fn overflow_clip_reference_box(style: &ComputedStyle) -> OverflowClipBox {
@@ -1655,9 +1796,10 @@ fn paint_with_overflow_clip(
     //   Non-first fragment: block-start border/padding is not painted, so the
     //   clip must not start below the fragment's own top edge.
     //
-    //   Non-last fragment: block-end border/padding is not painted, so the
-    //   clip must not extend past the fragment's "pure content" boundary:
-    //   fragment_top + (size.height − all four border/padding widths).
+    //   Non-last fragment: block-end border is not painted or included in the
+    //   fragment's used block size, so the padding-box clip extends to the
+    //   fragmentainer edge instead of subtracting the source box's block-end
+    //   border a second time.
     let (clip_x, clip_y, clip_w, clip_h) =
         if !fragment.is_first_for_node || !fragment.is_last_for_node {
             let frag_top = offset.top.to_f32();
@@ -1673,18 +1815,8 @@ fn paint_with_overflow_clip(
             }
 
             if !fragment.is_last_for_node {
-                // Clamp clip_bottom to the pure-content boundary so children
-                // from later fragments are not visible in this column.
-                let bt = fragment.border.top.to_f32();
-                let pt = fragment.padding.top.to_f32();
-                let bb = fragment.border.bottom.to_f32();
-                let pb = fragment.padding.bottom.to_f32();
-                let pure_content_bottom =
-                    frag_top + (fragment.size.height.to_f32() - bt - pt - bb - pb).max(0.0);
-                let clip_bottom = cy + ch;
-                if clip_bottom > pure_content_bottom {
-                    ch = (pure_content_bottom - cy).max(0.0);
-                }
+                let fragment_bottom = frag_top + fragment.size.height.to_f32();
+                ch = (fragment_bottom - cy).max(0.0);
             }
 
             (clip_x, cy, clip_w, ch)
@@ -1714,7 +1846,10 @@ fn paint_with_overflow_clip(
         );
         canvas.clip_rrect(rrect, ClipOp::Intersect, true);
     } else {
-        canvas.clip_rect(clip_rect, ClipOp::Intersect, true);
+        // Axis-aligned rectangular overflow clips are pixel-snapped above and
+        // rasterized as hard edges. Coverage antialiasing here leaves a
+        // one-pixel fringe at multicol fragmentation boundaries.
+        canvas.clip_rect(clip_rect, ClipOp::Intersect, false);
     }
 
     // For scrollable overflow (scroll / auto), apply scroll offset
@@ -1735,7 +1870,6 @@ fn paint_with_overflow_clip(
     paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
 
     canvas.restore();
-    apply_overflow_clip_exact_cleanup(canvas, fragment, style, offset, clip_rect);
 }
 
 /// Build a Skia `RRect` for an overflow clip edge.
@@ -1874,42 +2008,9 @@ fn normalized_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
 fn thin_uniform_circular_border_radii(
     style: &ComputedStyle,
     rect: &Rect,
-    border_width: f32,
+    _border_width: f32,
 ) -> [Point; 4] {
-    let mut radii = normalized_border_radii(style, rect);
-    if border_width >= 9.5 && border_width <= 10.5 {
-        for radius in &mut radii {
-            if radius.x > 0.0 && radius.y > 0.0 {
-                radius.x += 0.5;
-                radius.y += 0.5;
-            }
-        }
-        return normalize_radii_to_rect(radii, rect);
-    }
-    if !(border_width > 0.0 && border_width <= 2.0) {
-        return radii;
-    }
-    let nonzero_circular = radii
-        .iter()
-        .filter(|r| r.x > 0.0 && r.y > 0.0 && (r.x - r.y).abs() < 0.01)
-        .count();
-    let all_nonzero_are_circular = radii.iter().all(|r| {
-        (r.x == 0.0 && r.y == 0.0) || (r.x > 0.0 && r.y > 0.0 && (r.x - r.y).abs() < 0.01)
-    });
-    if nonzero_circular == 1 && all_nonzero_are_circular {
-        for (index, radius) in radii.iter_mut().enumerate() {
-            if radius.x > 0.0 && radius.y > 0.0 {
-                let (x_bias, y_bias) = match index {
-                    0 | 2 => (0.28, 0.14),
-                    1 | 3 => (0.14, 0.28),
-                    _ => (0.25, 0.25),
-                };
-                radius.x = (radius.x - x_bias).max(0.0);
-                radius.y = (radius.y - y_bias).max(0.0);
-            }
-        }
-    }
-    radii
+    normalized_border_radii(style, rect)
 }
 
 fn slice_adjust_border_radii(mut radii: [Point; 4], fragment: &Fragment) -> [Point; 4] {
@@ -1941,8 +2042,16 @@ fn fragment_border_radii(
     rect: &Rect,
     border_width: f32,
 ) -> [Point; 4] {
+    let normalization_rect = fragment.decoration_slice.map_or(*rect, |slice| {
+        Rect::from_xywh(
+            rect.left,
+            rect.top - slice.source_block_offset.to_f32(),
+            rect.width(),
+            slice.source_block_size.to_f32(),
+        )
+    });
     slice_adjust_border_radii(
-        thin_uniform_circular_border_radii(style, rect, border_width),
+        thin_uniform_circular_border_radii(style, &normalization_rect, border_width),
         fragment,
     )
 }
@@ -2000,68 +2109,6 @@ fn radii_exceed_rect(rect: &Rect, radii: &[Point; 4]) -> bool {
         || radii[3].x + radii[2].x > rect.width()
         || radii[0].y + radii[3].y > rect.height()
         || radii[1].y + radii[2].y > rect.height()
-}
-
-fn clip_css_rounded_rect(canvas: &Canvas, rect: Rect, radii: &[Point; 4]) {
-    let l = rect.left;
-    let t = rect.top;
-    let r = rect.right;
-    let b = rect.bottom;
-    let tl = radii[0];
-    let tr = radii[1];
-    let br = radii[2];
-    let bl = radii[3];
-
-    let mut path = Path::new();
-    path.move_to(Point::new(l + tl.x, t));
-    path.line_to(Point::new(r - tr.x, t));
-    if tr.x > 0.0 && tr.y > 0.0 {
-        path.arc_to(
-            Rect::from_ltrb(r - 2.0 * tr.x, t, r, t + 2.0 * tr.y),
-            -90.0,
-            90.0,
-            false,
-        );
-    } else {
-        path.line_to(Point::new(r, t));
-    }
-    path.line_to(Point::new(r, b - br.y));
-    if br.x > 0.0 && br.y > 0.0 {
-        path.arc_to(
-            Rect::from_ltrb(r - 2.0 * br.x, b - 2.0 * br.y, r, b),
-            0.0,
-            90.0,
-            false,
-        );
-    } else {
-        path.line_to(Point::new(r, b));
-    }
-    path.line_to(Point::new(l + bl.x, b));
-    if bl.x > 0.0 && bl.y > 0.0 {
-        path.arc_to(
-            Rect::from_ltrb(l, b - 2.0 * bl.y, l + 2.0 * bl.x, b),
-            90.0,
-            90.0,
-            false,
-        );
-    } else {
-        path.line_to(Point::new(l, b));
-    }
-    path.line_to(Point::new(l, t + tl.y));
-    if tl.x > 0.0 && tl.y > 0.0 {
-        path.arc_to(
-            Rect::from_ltrb(l, t, l + 2.0 * tl.x, t + 2.0 * tl.y),
-            180.0,
-            90.0,
-            false,
-        );
-    } else {
-        path.line_to(Point::new(l, t));
-    }
-    path.close();
-
-    canvas.clip_rect(rect, ClipOp::Intersect, true);
-    canvas.clip_path(&path, ClipOp::Intersect, true);
 }
 
 fn clip_nonrenderable_inner_rounded_rect(
@@ -2149,652 +2196,6 @@ fn clip_nonrenderable_inner_rounded_rect(
             true,
         );
     }
-}
-
-fn apply_top_left_rounded_bg_aa_correction(canvas: &Canvas, bg_rect: Rect, radii: &[Point; 4]) {
-    let tl = radii[0];
-    if tl.x < 2.0 || tl.y < 2.0 {
-        return;
-    }
-    if tl.y + radii[3].y >= bg_rect.height() - 0.5 {
-        return;
-    }
-
-    // Chromium's rounded background mask is slightly lighter at the top-left
-    // vertical tangent when the left edge has a straight segment.
-    let mut erase = Paint::default();
-    erase.set_style(PaintStyle::Fill);
-    erase.set_anti_alias(false);
-    erase.set_blend_mode(BlendMode::DstOut);
-    erase.set_color4f(Color4f::new(0.0, 0.0, 0.0, 0.035), None::<&ColorSpace>);
-    canvas.draw_rect(
-        Rect::from_xywh(bg_rect.left, bg_rect.top + tl.y - 2.0, 1.0, 2.0),
-        &erase,
-    );
-}
-
-fn single_nonzero_corner(radii: &[Point; 4]) -> Option<usize> {
-    let mut result = None;
-    for (index, radius) in radii.iter().enumerate() {
-        if radius.x > 0.0 && radius.y > 0.0 {
-            if result.is_some() {
-                return None;
-            }
-            result = Some(index);
-        }
-    }
-    result
-}
-
-fn draw_corner_pixel_nudges(
-    canvas: &Canvas,
-    border_rect: Rect,
-    corner: usize,
-    color: &Color,
-    nudges: &[(f32, f32, f32, bool)],
-    draw_darken: bool,
-    draw_lighten: bool,
-) {
-    let mut darken = Paint::default();
-    darken.set_style(PaintStyle::Fill);
-    darken.set_anti_alias(false);
-
-    let mut lighten = Paint::default();
-    lighten.set_style(PaintStyle::Fill);
-    lighten.set_anti_alias(false);
-    lighten.set_blend_mode(BlendMode::DstOut);
-
-    for &(dx, dy, alpha, use_border_color) in nudges {
-        let px = match corner {
-            0 | 3 => border_rect.left + dx,
-            1 | 2 => border_rect.right - 1.0 - dx,
-            _ => continue,
-        };
-        let py = match corner {
-            0 | 1 => border_rect.top + dy,
-            2 | 3 => border_rect.bottom - 1.0 - dy,
-            _ => continue,
-        };
-        let rect = Rect::from_xywh(px, py, 1.0, 1.0);
-        if use_border_color {
-            if !draw_darken {
-                continue;
-            }
-            darken.set_color4f(
-                Color4f::new(color.r, color.g, color.b, color.a * alpha),
-                None::<&ColorSpace>,
-            );
-            canvas.draw_rect(rect, &darken);
-        } else {
-            if !draw_lighten {
-                continue;
-            }
-            lighten.set_color4f(Color4f::new(0.0, 0.0, 0.0, alpha), None::<&ColorSpace>);
-            canvas.draw_rect(rect, &lighten);
-        }
-    }
-}
-
-fn draw_corner_white_nudges(
-    canvas: &Canvas,
-    border_rect: Rect,
-    corner: usize,
-    nudges: &[(f32, f32, f32)],
-) {
-    let mut paint = Paint::default();
-    paint.set_style(PaintStyle::Fill);
-    paint.set_anti_alias(false);
-
-    for &(dx, dy, alpha) in nudges {
-        let px = match corner {
-            0 | 3 => border_rect.left + dx,
-            1 | 2 => border_rect.right - 1.0 - dx,
-            _ => continue,
-        };
-        let py = match corner {
-            0 | 1 => border_rect.top + dy,
-            2 | 3 => border_rect.bottom - 1.0 - dy,
-            _ => continue,
-        };
-        paint.set_color4f(Color4f::new(1.0, 1.0, 1.0, alpha), None::<&ColorSpace>);
-        canvas.draw_rect(Rect::from_xywh(px, py, 1.0, 1.0), &paint);
-    }
-}
-
-fn apply_single_corner_post_clip_lighten_cleanup(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    border_width: f32,
-    background_clip: BackgroundClip,
-) {
-    if background_clip != BackgroundClip::BorderBox {
-        return;
-    }
-    let Some(corner) = single_nonzero_corner(outer_radii) else {
-        return;
-    };
-    let radius = outer_radii[corner];
-
-    if border_width > 0.0
-        && border_width <= 2.0
-        && (radius.x - radius.y).abs() < 0.25
-        && radius.x >= 20.0
-        && radius.x <= 30.0
-    {
-        let nudges = match corner {
-            0 => &[(15.0, 1.0, 0.250)][..],
-            1 => &[(15.0, 1.0, 0.303), (14.0, 2.0, 0.079)][..],
-            _ => &[][..],
-        };
-        draw_corner_white_nudges(canvas, border_rect, corner, nudges);
-        return;
-    }
-
-    if border_width >= 19.5
-        && border_width <= 20.5
-        && (radius.x - 48.0).abs() < 0.5
-        && radius.x / radius.y.max(0.001) > 1.55
-        && radius.x / radius.y.max(0.001) < 1.9
-    {
-        let nudges = match corner {
-            1 => &[(5.0, 15.0, 0.036)][..],
-            2 => &[(4.0, 16.0, 0.038), (4.0, 15.0, 0.366)][..],
-            _ => &[][..],
-        };
-        draw_corner_white_nudges(canvas, border_rect, corner, nudges);
-    }
-}
-
-fn apply_wide_hotpink_border_15px_aa_cleanup(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    border_width: f32,
-    background_clip: BackgroundClip,
-    border_color: &Color,
-) {
-    if background_clip != BackgroundClip::BorderBox
-        || border_width < 19.5
-        || border_width > 20.5
-        || border_rect.width() < 100.0
-        || border_rect.height() < 40.0
-        || (border_color.r - 1.0).abs() > 0.001
-        || (border_color.g - 105.0 / 255.0).abs() > 0.001
-        || (border_color.b - 180.0 / 255.0).abs() > 0.001
-        || border_color.a < 0.99
-    {
-        return;
-    }
-
-    let corner_pixels = [
-        BORDER_15_TOP_LEFT_PIXELS,
-        BORDER_15_TOP_RIGHT_PIXELS,
-        BORDER_15_BOTTOM_RIGHT_PIXELS,
-        BORDER_15_BOTTOM_LEFT_PIXELS,
-    ];
-    for (corner, pixels) in corner_pixels.iter().enumerate() {
-        let radius = outer_radii[corner];
-        if (radius.x - 15.0).abs() < 0.5 && (radius.y - 15.0).abs() < 0.5 {
-            draw_exact_corner_pixels(canvas, border_rect, corner, pixels);
-        }
-    }
-}
-
-fn apply_sliced_hotpink_border_40px_aa_cleanup(
-    canvas: &Canvas,
-    border_rect: Rect,
-    style: &ComputedStyle,
-    outer_radii: &[Point; 4],
-    border_width: f32,
-    background_clip: BackgroundClip,
-    border_color: &Color,
-) {
-    if background_clip != BackgroundClip::BorderBox
-        || border_width < 19.5
-        || border_width > 20.5
-        || border_rect.width() < 190.0
-        || border_rect.width() > 210.0
-        || border_rect.height() < 80.0
-        || border_rect.height() > 105.0
-        || (border_color.r - 1.0).abs() > 0.001
-        || (border_color.g - 105.0 / 255.0).abs() > 0.001
-        || (border_color.b - 180.0 / 255.0).abs() > 0.001
-        || border_color.a < 0.99
-        || (style.background_color.r - 1.0).abs() > 0.001
-        || (style.background_color.g - 1.0).abs() > 0.001
-        || style.background_color.b > 0.001
-        || style.background_color.a < 0.99
-    {
-        return;
-    }
-
-    let corner_pixels = [
-        SLICED_BORDER_40_TOP_LEFT_PIXELS,
-        SLICED_BORDER_40_TOP_RIGHT_PIXELS,
-        SLICED_BORDER_40_BOTTOM_RIGHT_PIXELS,
-        SLICED_BORDER_40_BOTTOM_LEFT_PIXELS,
-    ];
-    let nonzero_corners = outer_radii
-        .iter()
-        .filter(|r| r.x > 0.0 && r.y > 0.0)
-        .count();
-    if nonzero_corners != 2 {
-        return;
-    }
-    for (corner, pixels) in corner_pixels.iter().enumerate() {
-        let radius = outer_radii[corner];
-        if (radius.x - 40.0).abs() < 0.5 && (radius.y - 40.0).abs() < 0.5 {
-            draw_exact_corner_pixels(canvas, border_rect, corner, pixels);
-        }
-    }
-}
-
-fn apply_single_corner_rounded_border_aa_cleanup(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    border_width: f32,
-    background_clip: BackgroundClip,
-    border_color: &Color,
-    draw_darken: bool,
-    draw_lighten: bool,
-) {
-    if !border_color.is_opaque() {
-        return;
-    }
-    let Some(corner) = single_nonzero_corner(outer_radii) else {
-        return;
-    };
-    let radius = outer_radii[corner];
-
-    if background_clip == BackgroundClip::ContentBox
-        && border_width >= 19.5
-        && border_width <= 20.5
-        && corner == 1
-        && (radius.x - 20.0).abs() < 0.5
-        && (radius.y - 20.0).abs() < 0.5
-    {
-        draw_corner_pixel_nudges(
-            canvas,
-            border_rect,
-            corner,
-            border_color,
-            &[
-                (9.0, 2.0, 0.310, false),
-                (8.0, 3.0, 0.353, false),
-                (7.0, 3.0, 0.913, false),
-                (7.0, 4.0, 0.075, false),
-                (6.0, 5.0, 0.044, false),
-                (5.0, 5.0, 0.273, false),
-                (3.0, 9.0, 0.571, true),
-                (2.0, 10.0, 0.097, true),
-                (2.0, 11.0, 0.643, true),
-                (1.0, 11.0, 0.049, true),
-                (1.0, 12.0, 0.075, false),
-                (1.0, 13.0, 0.265, true),
-                (0.0, 14.0, 0.033, true),
-                (8.0, 3.0, 0.058, false),
-                (3.0, 9.0, 0.571, true),
-                (2.0, 10.0, 0.097, true),
-                (2.0, 11.0, 0.643, true),
-                (1.0, 11.0, 0.049, true),
-                (1.0, 13.0, 0.265, true),
-                (0.0, 14.0, 0.033, true),
-                (2.0, 10.0, 0.053, false),
-                (1.0, 11.0, 0.200, false),
-                (1.0, 13.0, 0.030, false),
-                (0.0, 14.0, 0.105, false),
-            ],
-            draw_darken,
-            draw_lighten,
-        );
-        return;
-    }
-
-    if background_clip == BackgroundClip::BorderBox
-        && border_width >= 19.5
-        && border_width <= 20.5
-        && corner == 1
-        && (radius.x - 20.0).abs() < 0.5
-        && (radius.y - 20.0).abs() < 0.5
-        && border_color.r < 0.01
-        && border_color.g < 0.01
-        && border_color.b > 0.99
-    {
-        draw_corner_pixel_nudges(
-            canvas,
-            border_rect,
-            corner,
-            border_color,
-            &[
-                (9.0, 2.0, 0.310, false),
-                (8.0, 3.0, 0.353, false),
-                (7.0, 3.0, 0.913, false),
-                (7.0, 4.0, 0.075, false),
-                (6.0, 5.0, 0.044, false),
-                (5.0, 5.0, 0.273, false),
-                (3.0, 9.0, 0.571, true),
-                (2.0, 10.0, 0.097, true),
-                (2.0, 11.0, 0.643, true),
-                (1.0, 11.0, 0.049, true),
-                (1.0, 12.0, 0.075, false),
-                (1.0, 13.0, 0.265, true),
-                (0.0, 14.0, 0.033, true),
-                (8.0, 3.0, 0.058, false),
-                (3.0, 9.0, 0.571, true),
-                (2.0, 10.0, 0.097, true),
-                (2.0, 11.0, 0.643, true),
-                (1.0, 11.0, 0.049, true),
-                (1.0, 13.0, 0.265, true),
-                (0.0, 14.0, 0.033, true),
-                (2.0, 10.0, 0.053, false),
-                (1.0, 11.0, 0.200, false),
-                (1.0, 13.0, 0.030, false),
-                (0.0, 14.0, 0.105, false),
-            ],
-            draw_darken,
-            draw_lighten,
-        );
-        return;
-    }
-
-    if background_clip != BackgroundClip::BorderBox {
-        return;
-    }
-
-    if border_width > 0.0
-        && border_width <= 2.0
-        && (radius.x - radius.y).abs() < 0.25
-        && radius.x >= 20.0
-        && radius.x <= 30.0
-    {
-        let nudges = match corner {
-            0 => &[
-                (15.0, 1.0, 0.176, true),
-                (16.0, 1.0, 0.268, true),
-                (17.0, 1.0, 0.346, true),
-                (13.0, 2.0, 0.095, true),
-                (14.0, 2.0, 0.378, true),
-                (12.0, 3.0, 0.233, true),
-                (11.0, 4.0, 0.682, true),
-                (6.0, 7.0, 0.810, false),
-                (7.0, 7.0, 0.060, false),
-                (6.0, 8.0, 0.082, false),
-                (4.0, 10.0, 0.128, false),
-                (1.0, 15.0, 0.417, false),
-                (15.0, 1.0, 0.176, true),
-                (16.0, 1.0, 0.268, true),
-                (17.0, 1.0, 0.346, true),
-                (13.0, 2.0, 0.095, true),
-                (14.0, 2.0, 0.378, true),
-                (12.0, 3.0, 0.233, true),
-                (11.0, 4.0, 0.682, true),
-                (15.0, 1.0, 0.351, false),
-                (16.0, 1.0, 0.172, false),
-                (17.0, 1.0, 0.072, false),
-                (13.0, 2.0, 0.280, false),
-                (14.0, 2.0, 0.090, false),
-                (12.0, 3.0, 0.116, false),
-                (15.0, 1.0, 0.294, false),
-                (16.0, 1.0, 0.102, false),
-                (14.0, 2.0, 0.078, false),
-                (15.0, 1.0, 0.273, false),
-                (16.0, 1.0, 0.086, false),
-                (15.0, 1.0, 0.250, false),
-            ][..],
-            1 => &[
-                (17.0, 1.0, 0.357, true),
-                (16.0, 1.0, 0.276, true),
-                (15.0, 1.0, 0.193, true),
-                (14.0, 2.0, 0.442, true),
-                (13.0, 2.0, 0.082, true),
-                (12.0, 3.0, 0.261, true),
-                (11.0, 4.0, 0.545, true),
-                (10.0, 4.0, 0.082, true),
-                (9.0, 5.0, 0.094, true),
-                (6.0, 7.0, 0.765, false),
-                (5.0, 9.0, 0.088, false),
-                (4.0, 10.0, 0.128, false),
-                (1.0, 15.0, 0.478, false),
-                (17.0, 1.0, 0.357, true),
-                (16.0, 1.0, 0.276, true),
-                (15.0, 1.0, 0.193, true),
-                (14.0, 2.0, 0.442, true),
-                (13.0, 2.0, 0.082, true),
-                (12.0, 3.0, 0.261, true),
-                (11.0, 4.0, 0.545, true),
-                (10.0, 4.0, 0.082, true),
-                (9.0, 5.0, 0.094, true),
-                (17.0, 1.0, 0.084, false),
-                (16.0, 1.0, 0.188, false),
-                (15.0, 1.0, 0.361, false),
-                (14.0, 2.0, 0.136, false),
-                (13.0, 2.0, 0.304, false),
-                (12.0, 3.0, 0.130, false),
-                (10.0, 4.0, 0.182, false),
-                (9.0, 5.0, 0.098, false),
-                (16.0, 1.0, 0.119, false),
-                (15.0, 1.0, 0.343, false),
-                (14.0, 2.0, 0.103, false),
-                (12.0, 3.0, 0.091, false),
-                (16.0, 1.0, 0.103, false),
-                (15.0, 1.0, 0.303, false),
-                (14.0, 2.0, 0.091, false),
-                (15.0, 1.0, 0.303, false),
-                (14.0, 2.0, 0.079, false),
-            ][..],
-            _ => &[][..],
-        };
-        draw_corner_pixel_nudges(
-            canvas,
-            border_rect,
-            corner,
-            border_color,
-            nudges,
-            draw_darken,
-            draw_lighten,
-        );
-        return;
-    }
-
-    if border_width < 19.5 || border_width > 20.5 || (radius.x - 48.0).abs() >= 0.5 {
-        return;
-    }
-
-    let ratio = radius.x / radius.y.max(0.001);
-    let nudges = if ratio > 1.55 && ratio < 1.9 {
-        match corner {
-            0 => &[
-                (19.0, 5.0, 0.031, true),
-                (17.0, 6.0, 0.033, true),
-                (12.0, 8.0, 0.875, false),
-                (13.0, 8.0, 0.262, false),
-                (12.0, 9.0, 0.057, true),
-                (7.0, 13.0, 0.060, true),
-                (6.0, 14.0, 0.060, true),
-                (4.0, 16.0, 0.062, true),
-                (3.0, 17.0, 0.209, false),
-                (2.0, 18.0, 0.175, false),
-                (19.0, 5.0, 0.031, true),
-                (17.0, 6.0, 0.033, true),
-                (12.0, 9.0, 0.057, true),
-                (7.0, 13.0, 0.060, true),
-                (6.0, 14.0, 0.060, true),
-                (4.0, 16.0, 0.062, true),
-                (19.0, 5.0, 0.048, false),
-                (17.0, 6.0, 0.044, false),
-                (12.0, 9.0, 0.028, false),
-                (7.0, 13.0, 0.027, false),
-                (6.0, 14.0, 0.027, false),
-                (4.0, 16.0, 0.035, false),
-            ][..],
-            1 => &[
-                (13.0, 8.0, 0.205, false),
-                (12.0, 8.0, 0.875, false),
-                (12.0, 9.0, 0.057, true),
-                (11.0, 10.0, 0.182, true),
-                (9.0, 11.0, 0.081, true),
-                (8.0, 12.0, 0.178, true),
-                (7.0, 12.0, 0.020, true),
-                (7.0, 13.0, 0.302, true),
-                (6.0, 14.0, 0.233, true),
-                (5.0, 14.0, 0.020, true),
-                (5.0, 15.0, 0.340, true),
-                (4.0, 16.0, 0.190, true),
-                (3.0, 17.0, 0.121, false),
-                (2.0, 18.0, 0.150, false),
-                (0.0, 22.0, 0.226, false),
-                (0.0, 25.0, 0.030, false),
-                (12.0, 9.0, 0.057, true),
-                (11.0, 10.0, 0.182, true),
-                (9.0, 11.0, 0.081, true),
-                (8.0, 12.0, 0.178, true),
-                (7.0, 12.0, 0.020, true),
-                (7.0, 13.0, 0.302, true),
-                (6.0, 14.0, 0.233, true),
-                (5.0, 14.0, 0.020, true),
-                (5.0, 15.0, 0.340, true),
-                (4.0, 16.0, 0.190, true),
-                (12.0, 9.0, 0.028, false),
-                (11.0, 10.0, 0.021, false),
-                (9.0, 11.0, 0.060, false),
-                (8.0, 12.0, 0.053, false),
-                (7.0, 12.0, 0.333, false),
-                (7.0, 13.0, 0.085, false),
-                (6.0, 14.0, 0.074, false),
-                (5.0, 14.0, 0.385, false),
-                (5.0, 15.0, 0.104, false),
-                (4.0, 16.0, 0.079, false),
-                (7.0, 13.0, 0.049, false),
-                (6.0, 14.0, 0.041, false),
-                (5.0, 15.0, 0.074, false),
-                (4.0, 16.0, 0.033, false),
-                (7.0, 13.0, 0.035, false),
-                (5.0, 15.0, 0.055, false),
-                (5.0, 15.0, 0.036, false),
-            ][..],
-            2 => &[
-                (0.0, 24.0, 0.037, false),
-                (1.0, 20.0, 0.143, false),
-                (3.0, 17.0, 0.054, false),
-                (4.0, 16.0, 0.398, true),
-                (5.0, 15.0, 0.320, true),
-                (4.0, 15.0, 0.084, true),
-                (6.0, 14.0, 0.115, true),
-                (5.0, 14.0, 0.024, true),
-                (7.0, 13.0, 0.119, true),
-                (9.0, 11.0, 0.033, false),
-                (8.0, 11.0, 0.222, false),
-                (10.0, 10.0, 0.062, false),
-                (14.0, 8.0, 0.021, false),
-                (13.0, 8.0, 0.052, false),
-                (28.0, 2.0, 0.078, false),
-                (4.0, 16.0, 0.398, true),
-                (5.0, 15.0, 0.320, true),
-                (4.0, 15.0, 0.084, true),
-                (6.0, 14.0, 0.115, true),
-                (5.0, 14.0, 0.024, true),
-                (7.0, 13.0, 0.119, true),
-                (4.0, 16.0, 0.094, false),
-                (5.0, 15.0, 0.073, false),
-                (4.0, 15.0, 0.422, false),
-                (6.0, 14.0, 0.023, false),
-                (5.0, 14.0, 0.286, false),
-                (4.0, 16.0, 0.069, false),
-                (5.0, 15.0, 0.047, false),
-                (4.0, 15.0, 0.381, false),
-                (4.0, 16.0, 0.052, false),
-                (5.0, 15.0, 0.029, false),
-                (4.0, 15.0, 0.366, false),
-                (4.0, 16.0, 0.038, false),
-                (4.0, 15.0, 0.366, false),
-            ][..],
-            3 => &[
-                (1.0, 21.0, 0.050, false),
-                (1.0, 20.0, 0.158, false),
-                (3.0, 17.0, 0.039, false),
-                (4.0, 16.0, 0.066, true),
-                (14.0, 8.0, 0.021, false),
-                (4.0, 16.0, 0.066, true),
-                (4.0, 16.0, 0.034, false),
-            ][..],
-            _ => &[][..],
-        }
-    } else if ratio > 3.0 && ratio < 3.7 {
-        match corner {
-            0 => &[
-                (16.0, 2.0, 0.750, false),
-                (17.0, 2.0, 0.950, false),
-                (18.0, 2.0, 0.795, false),
-                (19.0, 2.0, 0.336, false),
-                (20.0, 2.0, 0.125, false),
-                (7.0, 6.0, 0.044, true),
-                (3.0, 8.0, 0.167, false),
-                (0.0, 13.0, 0.273, true),
-                (7.0, 6.0, 0.044, true),
-                (0.0, 13.0, 0.273, true),
-                (7.0, 6.0, 0.046, false),
-            ][..],
-            1 => &[
-                (20.0, 2.0, 0.131, false),
-                (19.0, 2.0, 0.347, false),
-                (18.0, 2.0, 0.819, false),
-                (17.0, 2.0, 0.950, false),
-                (16.0, 2.0, 0.714, false),
-                (7.0, 6.0, 0.072, true),
-                (6.0, 7.0, 0.147, true),
-                (5.0, 7.0, 0.051, true),
-                (4.0, 8.0, 0.226, true),
-                (2.0, 9.0, 0.068, false),
-                (7.0, 6.0, 0.072, true),
-                (6.0, 7.0, 0.147, true),
-                (5.0, 7.0, 0.051, true),
-                (4.0, 8.0, 0.226, true),
-                (7.0, 6.0, 0.066, false),
-                (5.0, 7.0, 0.082, false),
-                (4.0, 8.0, 0.050, false),
-                (4.0, 8.0, 0.024, false),
-            ][..],
-            2 => &[
-                (0.0, 13.0, 0.023, false),
-                (0.0, 11.0, 0.122, false),
-                (1.0, 10.0, 0.076, false),
-                (2.0, 9.0, 0.087, false),
-                (4.0, 8.0, 0.085, false),
-                (5.0, 7.0, 0.032, true),
-                (8.0, 6.0, 0.027, false),
-                (10.0, 5.0, 0.029, false),
-                (9.0, 5.0, 0.076, false),
-                (11.0, 4.0, 0.278, false),
-                (22.0, 2.0, 0.060, false),
-                (21.0, 2.0, 0.039, false),
-                (5.0, 7.0, 0.032, true),
-                (5.0, 7.0, 0.074, false),
-            ][..],
-            3 => &[
-                (1.0, 10.0, 0.083, false),
-                (3.0, 8.0, 0.146, false),
-                (4.0, 8.0, 0.171, false),
-                (5.0, 7.0, 0.087, false),
-                (21.0, 2.0, 0.035, false),
-                (22.0, 2.0, 0.044, false),
-            ][..],
-            _ => &[][..],
-        }
-    } else {
-        &[][..]
-    };
-
-    draw_corner_pixel_nudges(
-        canvas,
-        border_rect,
-        corner,
-        border_color,
-        nudges,
-        draw_darken,
-        draw_lighten,
-    );
 }
 
 fn line_intersection(a1: Point, a2: Point, b1: Point, b2: Point) -> Point {
@@ -3075,13 +2476,13 @@ fn draw_nonrenderable_uniform_rounded_border(
         canvas.save();
         let polygon =
             nonrenderable_border_side_clip_polygon(border_rect, inner_rect, inner_radii, side);
-        let mut side_path = Path::new();
+        let mut side_path = PathBuilder::new();
         side_path.move_to(polygon[0]);
         for point in polygon.iter().skip(1) {
             side_path.line_to(*point);
         }
         side_path.close();
-        canvas.clip_path(&side_path, ClipOp::Intersect, false);
+        canvas.clip_path(&side_path.detach(), ClipOp::Intersect, false);
 
         let (adjusted_rect, adjusted_radii) =
             adjusted_nonrenderable_inner_border_for_side(inner_rect, inner_radii, side);
@@ -3316,9 +2717,9 @@ fn draw_renderable_outer_aa_fringe(
 
     let inner_radii = normalize_radii_to_rect(inner_radii, &inner_rect);
     let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
-    let mut fringe_path = Path::new();
+    let mut fringe_path = PathBuilder::new();
     fringe_path.set_fill_type(PathFillType::InverseWinding);
-    fringe_path.add_rrect(inner_rrect, None);
+    fringe_path.add_rrect(inner_rrect, None, None);
 
     let mut fringe_paint = Paint::default();
     fringe_paint.set_style(PaintStyle::Fill);
@@ -3327,7 +2728,7 @@ fn draw_renderable_outer_aa_fringe(
         Color4f::new(color.r, color.g, color.b, 0.12),
         None::<&ColorSpace>,
     );
-    canvas.draw_path(&fringe_path, &fringe_paint);
+    canvas.draw_path(&fringe_path.detach(), &fringe_paint);
 }
 
 fn descendant_overflows(fragment: &Fragment) -> (bool, bool) {
@@ -3444,7 +2845,6 @@ fn paint_text_fragment(
     // fallback fonts, vertical-align shifts, or fractional ascents).
     let x = abs_offset.left.to_f32();
     let baseline_y = abs_offset.top.to_f32() + fragment.baseline_offset;
-
     let origin = (x, baseline_y);
 
     // Text content for CJK detection in skip-ink Auto mode.
@@ -3553,13 +2953,13 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
                 border_rect.height() + 2000.0,
             );
 
-            let mut path = Path::new();
-            path.add_rect(outer, None);
+            let mut path = PathBuilder::new();
+            path.add_rect(outer, None, None);
             if hole.width() > 0.0 && hole.height() > 0.0 {
-                path.add_rect(hole, Some((skia_safe::PathDirection::CCW, 0)));
+                path.add_rect(hole, skia_safe::PathDirection::CCW, 0);
             }
             path.set_fill_type(skia_safe::PathFillType::EvenOdd);
-            canvas.draw_path(&path, &paint);
+            canvas.draw_path(&path.detach(), &paint);
             canvas.restore();
         } else {
             // Outset shadow: draw behind the element, expanded by spread.
@@ -3570,8 +2970,16 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
                 border_rect.width() + shadow.spread_radius * 2.0,
                 border_rect.height() + shadow.spread_radius * 2.0,
             );
+            // An outer shadow is excluded from the element's border box even
+            // when the element background is transparent.  Painting the
+            // complete shadow shape and relying on the background to cover it
+            // turns transparent fragmented boxes into solid shadow-colored
+            // rectangles.
+            canvas.save();
             if style.has_border_radius() {
                 let element_radii = normalized_border_radii(style, &border_rect);
+                let border_rrect = RRect::new_rect_radii(border_rect, &element_radii);
+                canvas.clip_rrect(border_rrect, ClipOp::Difference, true);
                 let shadow_radii: [Point; 4] = std::array::from_fn(|i| {
                     Point::new(
                         (element_radii[i].x + shadow.spread_radius).max(0.0),
@@ -3582,8 +2990,10 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
                 let shadow_rrect = RRect::new_rect_radii(shadow_rect, &normalized);
                 canvas.draw_rrect(shadow_rrect, &paint);
             } else {
+                canvas.clip_rect(border_rect, ClipOp::Difference, false);
                 canvas.draw_rect(shadow_rect, &paint);
             }
+            canvas.restore();
         }
     }
 }
@@ -3626,6 +3036,10 @@ fn paint_box_decoration_background(
     }
 
     let border_box_rect = Rect::from_xywh(x, y, w, h);
+    let shadow_border_box_rect = fragment.decoration_slice.map_or(border_box_rect, |slice| {
+        let source_top = y - slice.source_block_offset.to_f32();
+        Rect::from_xywh(x, source_top, w, slice.source_block_size.to_f32())
+    });
     let decoration_clip_saved = fragment
         .decoration_paint_block_size
         .filter(|limit| limit.raw() >= 0 && limit.raw() < fragment.size.height.raw())
@@ -3643,7 +3057,7 @@ fn paint_box_decoration_background(
     }
 
     // ── 1. Outset box shadows (painted behind everything) ────────────
-    paint_box_shadows(canvas, style, border_box_rect, false);
+    paint_box_shadows(canvas, style, shadow_border_box_rect, false);
 
     // When border-radius is set AND borders are uniform solid, use saveLayer
     // so bg+border composite as one unit, then clip by the outer rrect.
@@ -3661,9 +3075,7 @@ fn paint_box_decoration_background(
     } else {
         0.0
     };
-    let paint_br = if !fragment.is_inline_box_fragment
-        || clone_inline
-        || fragment.is_last_for_node
+    let paint_br = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_last_for_node
     {
         br_bw
     } else {
@@ -3674,9 +3086,7 @@ fn paint_box_decoration_background(
     } else {
         0.0
     };
-    let paint_bl = if !fragment.is_inline_box_fragment
-        || clone_inline
-        || fragment.is_first_for_node
+    let paint_bl = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_first_for_node
     {
         bl_bw
     } else {
@@ -3747,17 +3157,118 @@ fn paint_box_decoration_background(
             visible_color = Some(color);
         }
     }
-    let use_layer = has_radius && (has_nonzero_uniform_border || same_solid_visible_border);
     let effective_background_clip = if style.background_attachment == BackgroundAttachment::Local {
         BackgroundClip::PaddingBox
     } else {
         style.background_clip
     };
+    // Blink avoids rounded-background bleed by shrinking a border-box
+    // background underneath borders that fully obscure its edge. This is a
+    // geometric adjustment, not a compositing effect.
+    let authored_sides = [
+        (
+            bt,
+            style.border_top_style,
+            style.border_top_color.resolve(&style.color),
+        ),
+        (
+            br_bw,
+            style.border_right_style,
+            style.border_right_color.resolve(&style.color),
+        ),
+        (
+            bb_bw,
+            style.border_bottom_style,
+            style.border_bottom_color.resolve(&style.color),
+        ),
+        (
+            bl_bw,
+            style.border_left_style,
+            style.border_left_color.resolve(&style.color),
+        ),
+    ];
+    let rounded_edge_requires_bleed_cover = [
+        fragment_radii[0].y > 0.0 || fragment_radii[1].y > 0.0,
+        fragment_radii[1].x > 0.0 || fragment_radii[2].x > 0.0,
+        fragment_radii[2].y > 0.0 || fragment_radii[3].y > 0.0,
+        fragment_radii[3].x > 0.0 || fragment_radii[0].x > 0.0,
+    ];
+    let border_obscures_background_edge =
+        authored_sides
+            .iter()
+            .enumerate()
+            .all(|(index, (width, border_style, color))| {
+                !rounded_edge_requires_bleed_cover[index]
+                    || (*width > 0.0
+                        && color.is_opaque()
+                        && !matches!(
+                            border_style,
+                            BorderStyle::None
+                                | BorderStyle::Hidden
+                                | BorderStyle::Dotted
+                                | BorderStyle::Dashed
+                        ))
+            });
+    let background_border_inset_fraction = if authored_sides
+        .iter()
+        .any(|(_, border_style, _)| *border_style == BorderStyle::Double)
+    {
+        1.0 / 6.0
+    } else {
+        0.5
+    };
+    let shrink_background_for_opaque_border = has_radius
+        && border_obscures_background_edge
+        && effective_background_clip == BackgroundClip::BorderBox;
+    let border_inner_rect = Rect::from_xywh(
+        x + bl_bw,
+        y + paint_bt,
+        (w - bl_bw - br_bw).max(0.0),
+        (h - paint_bt - paint_bb).max(0.0),
+    );
+    let border_inner_radii = [
+        Point::new(
+            (fragment_radii[0].x - bl_bw).max(0.0),
+            (fragment_radii[0].y - paint_bt).max(0.0),
+        ),
+        Point::new(
+            (fragment_radii[1].x - br_bw).max(0.0),
+            (fragment_radii[1].y - paint_bt).max(0.0),
+        ),
+        Point::new(
+            (fragment_radii[2].x - br_bw).max(0.0),
+            (fragment_radii[2].y - paint_bb).max(0.0),
+        ),
+        Point::new(
+            (fragment_radii[3].x - bl_bw).max(0.0),
+            (fragment_radii[3].y - paint_bb).max(0.0),
+        ),
+    ];
+    let nonrenderable_inner_border_contour =
+        matches!(
+            effective_background_clip,
+            BackgroundClip::PaddingBox | BackgroundClip::ContentBox
+        ) && radii_exceed_rect(&border_inner_rect, &border_inner_radii);
+    let use_layer = has_radius
+        && !shrink_background_for_opaque_border
+        // Renderable padding/content-box contours do not reach the outer
+        // border contour, so their border can use one native double-rrect.
+        // An inner contour whose adjacent radii cannot fit its rect needs the
+        // shared outer clip: this is the coverage model Blink uses for the
+        // extreme single-corner cases where the background meets the border.
+        && (matches!(
+            effective_background_clip,
+            BackgroundClip::BorderBox | BackgroundClip::BorderArea
+        ) || nonrenderable_inner_border_contour)
+        && (has_nonzero_uniform_border || same_solid_visible_border);
     if use_layer {
-        let outer_rrect = RRect::new_rect_radii(border_box_rect, &fragment_radii);
         canvas.save();
-        canvas.clip_rrect(outer_rrect, ClipOp::Intersect, true);
-        canvas.save_layer_alpha_f(Rect::from_xywh(x, y, w, h), 1.0);
+        canvas.clip_rrect(
+            RRect::new_rect_radii(border_box_rect, &fragment_radii),
+            ClipOp::Intersect,
+            true,
+        );
+        canvas.save_layer_alpha_f(border_box_rect, 1.0);
     }
 
     // ── 2. Background color ──────────────────────────────────────────
@@ -3796,175 +3307,298 @@ fn paint_box_decoration_background(
                 );
             }
         } else if effective_background_clip != BackgroundClip::Text {
-        let bg_rect = match effective_background_clip {
-            BackgroundClip::BorderBox => border_box_rect,
-            BackgroundClip::PaddingBox => {
-                let bx = x + fragment.border.left.round().to_f32();
-                let by = y + fragment.border.top.round().to_f32();
-                let br = right - fragment.border.right.round().to_f32();
-                let bb = bottom - fragment.border.bottom.round().to_f32();
-                let bw = (br - bx).max(0.0);
-                let bh = (bb - by).max(0.0);
-                Rect::from_xywh(bx, by, bw, bh)
-            }
-            BackgroundClip::ContentBox => {
-                let bx = x
-                    + fragment.border.left.round().to_f32()
-                    + fragment.padding.left.round().to_f32();
-                let by = y
-                    + fragment.border.top.round().to_f32()
-                    + fragment.padding.top.round().to_f32();
-                let br = right
-                    - fragment.border.right.round().to_f32()
-                    - fragment.padding.right.round().to_f32();
-                let bb = bottom
-                    - fragment.border.bottom.round().to_f32()
-                    - fragment.padding.bottom.round().to_f32();
-                let bw = (br - bx).max(0.0);
-                let bh = (bb - by).max(0.0);
-                Rect::from_xywh(bx, by, bw, bh)
-            }
-            BackgroundClip::BorderArea | BackgroundClip::Text => unreachable!(),
-        };
-
-        if has_radius {
-            // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
-            // Inner corner radii = outer radii - inset on each side, clamped to 0.
-            let outer_radii = if all_effective_borders_transparent(style) {
-                slice_adjust_border_radii(specified_border_radii(style), fragment)
-            } else {
-                fragment_radii
-            };
-            let clip_radii = match effective_background_clip {
-                BackgroundClip::BorderBox => outer_radii,
+            let bg_rect = match effective_background_clip {
+                BackgroundClip::BorderBox => border_box_rect,
                 BackgroundClip::PaddingBox => {
-                    let bt = style.effective_border_top() as f32;
-                    let br_w = style.effective_border_right() as f32;
-                    let bb = style.effective_border_bottom() as f32;
-                    let bl = style.effective_border_left() as f32;
-                    [
-                        Point::new(
-                            (outer_radii[0].x - bl).max(0.0),
-                            (outer_radii[0].y - bt).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[1].x - br_w).max(0.0),
-                            (outer_radii[1].y - bt).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[2].x - br_w).max(0.0),
-                            (outer_radii[2].y - bb).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[3].x - bl).max(0.0),
-                            (outer_radii[3].y - bb).max(0.0),
-                        ),
-                    ]
+                    let bx = x + fragment.border.left.round().to_f32();
+                    let by = y + fragment.border.top.round().to_f32();
+                    let br = right - fragment.border.right.round().to_f32();
+                    let bb = bottom - fragment.border.bottom.round().to_f32();
+                    let bw = (br - bx).max(0.0);
+                    let bh = (bb - by).max(0.0);
+                    Rect::from_xywh(bx, by, bw, bh)
                 }
                 BackgroundClip::ContentBox => {
-                    let bt =
-                        style.effective_border_top() as f32 + fragment.padding.top.round().to_f32();
-                    let br_w = style.effective_border_right() as f32
-                        + fragment.padding.right.round().to_f32();
-                    let bb = style.effective_border_bottom() as f32
-                        + fragment.padding.bottom.round().to_f32();
-                    let bl = style.effective_border_left() as f32
+                    let bx = x
+                        + fragment.border.left.round().to_f32()
                         + fragment.padding.left.round().to_f32();
-                    [
-                        Point::new(
-                            (outer_radii[0].x - bl).max(0.0),
-                            (outer_radii[0].y - bt).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[1].x - br_w).max(0.0),
-                            (outer_radii[1].y - bt).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[2].x - br_w).max(0.0),
-                            (outer_radii[2].y - bb).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[3].x - bl).max(0.0),
-                            (outer_radii[3].y - bb).max(0.0),
-                        ),
-                    ]
+                    let by = y
+                        + fragment.border.top.round().to_f32()
+                        + fragment.padding.top.round().to_f32();
+                    let br = right
+                        - fragment.border.right.round().to_f32()
+                        - fragment.padding.right.round().to_f32();
+                    let bb = bottom
+                        - fragment.border.bottom.round().to_f32()
+                        - fragment.padding.bottom.round().to_f32();
+                    let bw = (br - bx).max(0.0);
+                    let bh = (bb - by).max(0.0);
+                    Rect::from_xywh(bx, by, bw, bh)
                 }
                 BackgroundClip::BorderArea | BackgroundClip::Text => unreachable!(),
             };
-            let correct_top_left_aa = effective_background_clip == BackgroundClip::BorderBox
-                && bt == 0.0
-                && br_bw == 0.0
-                && bb_bw == 0.0
-                && bl_bw == 0.0
-                && clip_radii[0].y + clip_radii[3].y < bg_rect.height() - 0.5
-                && c.is_opaque();
-            if correct_top_left_aa {
-                canvas.save_layer_alpha_f(bg_rect, 1.0);
-            }
-            if use_layer && effective_background_clip == BackgroundClip::BorderBox {
-                canvas.draw_rect(bg_rect, &paint);
-            } else {
-                canvas.save();
-                if effective_background_clip != BackgroundClip::BorderBox
-                    && radii_exceed_rect(&bg_rect, &clip_radii)
+
+            if has_radius {
+                // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
+                // Inner corner radii = outer radii - inset on each side, clamped to 0.
+                let outer_radii = if all_effective_borders_transparent(style) {
+                    slice_adjust_border_radii(specified_border_radii(style), fragment)
+                } else {
+                    fragment_radii
+                };
+                let clip_radii = match effective_background_clip {
+                    BackgroundClip::BorderBox => outer_radii,
+                    BackgroundClip::PaddingBox => {
+                        let bt = style.effective_border_top() as f32;
+                        let br_w = style.effective_border_right() as f32;
+                        let bb = style.effective_border_bottom() as f32;
+                        let bl = style.effective_border_left() as f32;
+                        [
+                            Point::new(
+                                (outer_radii[0].x - bl).max(0.0),
+                                (outer_radii[0].y - bt).max(0.0),
+                            ),
+                            Point::new(
+                                (outer_radii[1].x - br_w).max(0.0),
+                                (outer_radii[1].y - bt).max(0.0),
+                            ),
+                            Point::new(
+                                (outer_radii[2].x - br_w).max(0.0),
+                                (outer_radii[2].y - bb).max(0.0),
+                            ),
+                            Point::new(
+                                (outer_radii[3].x - bl).max(0.0),
+                                (outer_radii[3].y - bb).max(0.0),
+                            ),
+                        ]
+                    }
+                    BackgroundClip::ContentBox => {
+                        let bt = style.effective_border_top() as f32
+                            + fragment.padding.top.round().to_f32();
+                        let br_w = style.effective_border_right() as f32
+                            + fragment.padding.right.round().to_f32();
+                        let bb = style.effective_border_bottom() as f32
+                            + fragment.padding.bottom.round().to_f32();
+                        let bl = style.effective_border_left() as f32
+                            + fragment.padding.left.round().to_f32();
+                        [
+                            Point::new(
+                                (outer_radii[0].x - bl).max(0.0),
+                                (outer_radii[0].y - bt).max(0.0),
+                            ),
+                            Point::new(
+                                (outer_radii[1].x - br_w).max(0.0),
+                                (outer_radii[1].y - bt).max(0.0),
+                            ),
+                            Point::new(
+                                (outer_radii[2].x - br_w).max(0.0),
+                                (outer_radii[2].y - bb).max(0.0),
+                            ),
+                            Point::new(
+                                (outer_radii[3].x - bl).max(0.0),
+                                (outer_radii[3].y - bb).max(0.0),
+                            ),
+                        ]
+                    }
+                    BackgroundClip::BorderArea | BackgroundClip::Text => unreachable!(),
+                };
+                if shrink_background_for_opaque_border
+                    && effective_background_clip == BackgroundClip::BorderBox
                 {
+                    let top_inset = paint_bt * background_border_inset_fraction;
+                    let right_inset = paint_br * background_border_inset_fraction;
+                    let bottom_inset = paint_bb * background_border_inset_fraction;
+                    let left_inset = paint_bl * background_border_inset_fraction;
+                    let shrunk_rect = Rect::from_xywh(
+                        bg_rect.left + left_inset,
+                        bg_rect.top + top_inset,
+                        (bg_rect.width() - left_inset - right_inset).max(0.0),
+                        (bg_rect.height() - top_inset - bottom_inset).max(0.0),
+                    );
+                    let shrunk_radii = normalize_radii_to_rect(
+                        [
+                            Point::new(
+                                (clip_radii[0].x - left_inset).max(0.0),
+                                (clip_radii[0].y - top_inset).max(0.0),
+                            ),
+                            Point::new(
+                                (clip_radii[1].x - right_inset).max(0.0),
+                                (clip_radii[1].y - top_inset).max(0.0),
+                            ),
+                            Point::new(
+                                (clip_radii[2].x - right_inset).max(0.0),
+                                (clip_radii[2].y - bottom_inset).max(0.0),
+                            ),
+                            Point::new(
+                                (clip_radii[3].x - left_inset).max(0.0),
+                                (clip_radii[3].y - bottom_inset).max(0.0),
+                            ),
+                        ],
+                        &shrunk_rect,
+                    );
+                    canvas.draw_rrect(RRect::new_rect_radii(shrunk_rect, &shrunk_radii), &paint);
+                } else if use_layer && effective_background_clip == BackgroundClip::BorderBox {
+                    canvas.draw_rect(bg_rect, &paint);
+                } else if effective_background_clip == BackgroundClip::BorderBox
+                    || !radii_exceed_rect(&bg_rect, &clip_radii)
+                {
+                    // A solid rounded background is a native rounded-rect
+                    // fill in Blink. Clipping a rectangle through an AA rrect
+                    // creates a separately quantized mask and loses the
+                    // lowest-coverage edge samples.
+                    let clip_radii = normalize_radii_to_rect(clip_radii, &bg_rect);
+                    canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
+                } else {
+                    canvas.save();
                     clip_nonrenderable_inner_rounded_rect(
                         canvas,
                         border_box_rect,
                         bg_rect,
                         &clip_radii,
                     );
-                } else {
-                    let clip_rrect = RRect::new_rect_radii(bg_rect, &clip_radii);
-                    canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
+                    canvas.draw_rect(bg_rect, &paint);
+                    canvas.restore();
                 }
+            } else {
                 canvas.draw_rect(bg_rect, &paint);
-                canvas.restore();
             }
-            if correct_top_left_aa {
-                apply_top_left_rounded_bg_aa_correction(canvas, bg_rect, &clip_radii);
-                canvas.restore();
-            }
-        } else {
-            canvas.draw_rect(bg_rect, &paint);
         }
-        apply_overflow_visual_child_exact_cleanup(canvas, fragment, style, border_box_rect);
+    }
+
+    // Background images paint above background-color and below inset shadows.
+    // The initial background-origin is padding-box, while background-clip is
+    // independently resolved above.  Keeping the gradient's positioning area
+    // separate from its paint clip is essential for cloned fragments: each
+    // clone restarts the image in its own padding box.
+    if let Some(gradient) = &style.background_linear_gradient {
+        if gradient.stops.len() >= 2 && effective_background_clip != BackgroundClip::Text {
+            let border_left = fragment.border.left.round().to_f32();
+            let border_top = fragment.border.top.round().to_f32();
+            let border_right = fragment.border.right.round().to_f32();
+            let border_bottom = fragment.border.bottom.round().to_f32();
+            let padding_rect = Rect::from_ltrb(
+                x + border_left,
+                y + border_top,
+                (right - border_right).max(x + border_left),
+                (bottom - border_bottom).max(y + border_top),
+            );
+            let positioning_padding_rect =
+                fragment.decoration_slice.map_or(padding_rect, |slice| {
+                    // A sliced continuation suppresses its block-start border,
+                    // but that decoration still occupies source-space in the
+                    // unfragmented background positioning area. Advance past
+                    // it before sampling the continuation image.
+                    let suppressed_block_start_border = if fragment.is_first_for_node {
+                        0.0
+                    } else {
+                        border_top
+                    };
+                    let source_top =
+                        y - slice.source_block_offset.to_f32() - suppressed_block_start_border;
+                    let source_bottom = source_top + slice.source_block_size.to_f32();
+                    Rect::from_ltrb(
+                        x + border_left,
+                        source_top + border_top,
+                        (right - border_right).max(x + border_left),
+                        (source_bottom - border_bottom).max(source_top + border_top),
+                    )
+                });
+            let paint_rect = match effective_background_clip {
+                BackgroundClip::BorderBox | BackgroundClip::BorderArea => border_box_rect,
+                BackgroundClip::PaddingBox => padding_rect,
+                BackgroundClip::ContentBox => Rect::from_ltrb(
+                    padding_rect.left + fragment.padding.left.round().to_f32(),
+                    padding_rect.top + fragment.padding.top.round().to_f32(),
+                    (padding_rect.right - fragment.padding.right.round().to_f32())
+                        .max(padding_rect.left),
+                    (padding_rect.bottom - fragment.padding.bottom.round().to_f32())
+                        .max(padding_rect.top),
+                ),
+                BackgroundClip::Text => unreachable!(),
+            };
+            let radians = gradient.angle_degrees.to_radians();
+            let direction = Point::new(radians.sin(), -radians.cos());
+            let line_length = positioning_padding_rect.width() * direction.x.abs()
+                + positioning_padding_rect.height() * direction.y.abs();
+            if line_length > 0.0 && paint_rect.width() > 0.0 && paint_rect.height() > 0.0 {
+                let center = Point::new(
+                    (positioning_padding_rect.left + positioning_padding_rect.right) * 0.5,
+                    (positioning_padding_rect.top + positioning_padding_rect.bottom) * 0.5,
+                );
+                let half = line_length * 0.5;
+                let full_start =
+                    Point::new(center.x - direction.x * half, center.y - direction.y * half);
+                let full_end =
+                    Point::new(center.x + direction.x * half, center.y + direction.y * half);
+                let colors: Vec<skia_safe::Color> = gradient
+                    .stops
+                    .iter()
+                    .map(|stop| skia_css_color_with_alpha(&stop.color, opacity_multiplier))
+                    .collect();
+                let mut positions = resolved_gradient_positions(&gradient.stops, line_length);
+                let (start, end, tile_mode) = if gradient.repeating {
+                    let first_offset = positions.first().copied().unwrap_or(0.0) * line_length;
+                    let last_offset = positions.last().copied().unwrap_or(1.0) * line_length;
+                    let period = last_offset - first_offset;
+                    if period > 0.0 {
+                        for position in &mut positions {
+                            *position = (*position * line_length - first_offset) / period;
+                        }
+                        (
+                            Point::new(
+                                full_start.x + direction.x * first_offset,
+                                full_start.y + direction.y * first_offset,
+                            ),
+                            Point::new(
+                                full_start.x + direction.x * last_offset,
+                                full_start.y + direction.y * last_offset,
+                            ),
+                            TileMode::Repeat,
+                        )
+                    } else {
+                        (full_start, full_end, TileMode::Clamp)
+                    }
+                } else {
+                    (full_start, full_end, TileMode::Clamp)
+                };
+                let mut paint = Paint::default();
+                paint.set_style(PaintStyle::Fill);
+                paint.set_anti_alias(true);
+                paint.set_shader(gradient_shader::linear(
+                    (start, end),
+                    colors.as_slice(),
+                    positions.as_slice(),
+                    tile_mode,
+                    None,
+                    None,
+                ));
+                canvas.save();
+                if has_radius {
+                    let clip_rrect = RRect::new_rect_radii(
+                        paint_rect,
+                        &fragment_border_radii(style, fragment, &paint_rect, bt),
+                    );
+                    canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
+                } else {
+                    canvas.clip_rect(paint_rect, ClipOp::Intersect, false);
+                }
+                canvas.draw_rect(paint_rect, &paint);
+                canvas.restore();
+            }
         }
     }
 
     // ── 3. Inset box shadows (painted on top of background) ──────────
-    paint_box_shadows(canvas, style, border_box_rect, true);
+    paint_box_shadows(canvas, style, shadow_border_box_rect, true);
 
     // ── 4. Borders ───────────────────────────────────────────────────
     paint_borders(canvas, fragment, style, x, y, w, h, use_layer);
 
     if use_layer {
         let border_rect = Rect::from_xywh(x, y, w, h);
-        let outer_radii = fragment_border_radii(style, fragment, &border_rect, bt);
-        let inner_rect = Rect::from_xywh(
-            x + bl_bw,
-            y + paint_bt,
-            (w - bl_bw - br_bw).max(0.0),
-            (h - paint_bt - paint_bb).max(0.0),
-        );
-        let inner_radii = [
-            Point::new(
-                (outer_radii[0].x - bl_bw).max(0.0),
-                (outer_radii[0].y - paint_bt).max(0.0),
-            ),
-            Point::new(
-                (outer_radii[1].x - br_bw).max(0.0),
-                (outer_radii[1].y - paint_bt).max(0.0),
-            ),
-            Point::new(
-                (outer_radii[2].x - br_bw).max(0.0),
-                (outer_radii[2].y - paint_bb).max(0.0),
-            ),
-            Point::new(
-                (outer_radii[3].x - bl_bw).max(0.0),
-                (outer_radii[3].y - paint_bb).max(0.0),
-            ),
-        ];
+        let outer_radii = fragment_radii;
+        let inner_rect = border_inner_rect;
+        let inner_radii = border_inner_radii;
         let border_color = style.border_top_color.resolve(&style.color);
         let single_outer_corner = outer_radii
             .iter()
@@ -4000,61 +3634,6 @@ fn paint_box_decoration_background(
                 &erase,
             );
         }
-        if bt > 0.0
-            && bt <= 2.0
-            && effective_background_clip == BackgroundClip::BorderBox
-            && single_outer_corner
-        {
-            let top_left = outer_radii[0].x > 0.0
-                && outer_radii[0].y > 0.0
-                && (outer_radii[0].x - outer_radii[0].y).abs() > 0.01;
-            let top_right = outer_radii[1].x > 0.0
-                && outer_radii[1].y > 0.0
-                && (outer_radii[1].x - outer_radii[1].y).abs() > 0.01;
-            if top_left || top_right {
-                let radius = if top_left {
-                    outer_radii[0]
-                } else {
-                    outer_radii[1]
-                };
-                let ratio = radius.x / radius.y.max(0.001);
-                if ratio > 1.15 {
-                    let mut erase = Paint::default();
-                    erase.set_style(PaintStyle::Fill);
-                    erase.set_anti_alias(false);
-                    erase.set_blend_mode(BlendMode::DstOut);
-                    let mut draw = |x: f32, y: f32, alpha: f32| {
-                        erase.set_color4f(Color4f::new(0.0, 0.0, 0.0, alpha), None::<&ColorSpace>);
-                        canvas.draw_rect(Rect::from_xywh(x, y, 1.0, 1.0), &erase);
-                    };
-                    if ratio < 1.45 {
-                        if top_left {
-                            draw(border_rect.left + bt + 1.0, border_rect.top + 23.0, 0.11);
-                        } else {
-                            draw(border_rect.right - bt - 3.0, border_rect.top + 21.0, 0.11);
-                            draw(border_rect.right - bt - 2.0, border_rect.top + 23.0, 0.14);
-                        }
-                    } else if ratio < 1.8 {
-                        if top_left {
-                            draw(border_rect.left + 14.0, border_rect.top + 9.0, 0.70);
-                        } else {
-                            draw(border_rect.right - 15.0, border_rect.top + 9.0, 0.62);
-                            draw(border_rect.right - 9.0, border_rect.top + 14.0, 0.18);
-                        }
-                    }
-                }
-            }
-        }
-        apply_single_corner_rounded_border_aa_cleanup(
-            canvas,
-            border_rect,
-            &outer_radii,
-            bt,
-            effective_background_clip,
-            &border_color,
-            false,
-            true,
-        );
         canvas.restore(); // pops saveLayer
         if radii_exceed_rect(&inner_rect, &inner_radii) {
             let mut paint = Paint::default();
@@ -4088,56 +3667,6 @@ fn paint_box_decoration_background(
             );
         }
         canvas.restore(); // pops save()
-        apply_single_corner_rounded_border_aa_cleanup(
-            canvas,
-            border_rect,
-            &outer_radii,
-            bt,
-            effective_background_clip,
-            &border_color,
-            true,
-            false,
-        );
-        apply_single_corner_post_clip_lighten_cleanup(
-            canvas,
-            border_rect,
-            &outer_radii,
-            bt,
-            effective_background_clip,
-        );
-        apply_wide_hotpink_border_15px_aa_cleanup(
-            canvas,
-            border_rect,
-            &outer_radii,
-            visible_width.unwrap_or(bt),
-            effective_background_clip,
-            &border_color,
-        );
-        apply_sliced_hotpink_border_40px_aa_cleanup(
-            canvas,
-            border_rect,
-            style,
-            &outer_radii,
-            visible_width.unwrap_or(bt),
-            effective_background_clip,
-            &border_color,
-        );
-        if is_overflow_visual_parent_signature(fragment, style, border_rect) {
-            draw_exact_pixels(
-                canvas,
-                border_rect.left.round(),
-                border_rect.top.round(),
-                OVERFLOW_VISUAL_PARENT_PIXELS,
-            );
-            if is_overflow_visual_content_signature(fragment, style) {
-                draw_exact_pixels(
-                    canvas,
-                    border_rect.left.round(),
-                    border_rect.top.round(),
-                    OVERFLOW_VISUAL_CONTENT_PIXELS,
-                );
-            }
-        }
     }
     if decoration_clip_saved {
         canvas.restore();
@@ -4166,10 +3695,7 @@ fn paint_borders(
     } else {
         0.0
     };
-    let br = if !fragment.is_inline_box_fragment
-        || clone_inline
-        || fragment.is_last_for_node
-    {
+    let br = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_last_for_node {
         style.effective_border_right() as f32
     } else {
         0.0
@@ -4179,10 +3705,7 @@ fn paint_borders(
     } else {
         0.0
     };
-    let bl = if !fragment.is_inline_box_fragment
-        || clone_inline
-        || fragment.is_first_for_node
-    {
+    let bl = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_first_for_node {
         style.effective_border_left() as f32
     } else {
         0.0
@@ -4271,26 +3794,7 @@ fn paint_borders(
         if let (Some(border_width), Some(color)) = (visible_width, visible_color) {
             let border_rect = Rect::from_xywh(x, y, w, h);
             let outer_radii = fragment_border_radii(style, fragment, &border_rect, border_width);
-            let target_sliced_border = border_width >= 19.5
-                && border_width <= 20.5
-                && w >= 190.0
-                && w <= 210.0
-                && h >= 80.0
-                && h <= 105.0
-                && (color.r - 1.0).abs() <= 0.001
-                && (color.g - 105.0 / 255.0).abs() <= 0.001
-                && (color.b - 180.0 / 255.0).abs() <= 0.001
-                && color.a >= 0.99
-                && (style.background_color.r - 1.0).abs() <= 0.001
-                && (style.background_color.g - 1.0).abs() <= 0.001
-                && style.background_color.b <= 0.001
-                && style.background_color.a >= 0.99
-                && outer_radii
-                    .iter()
-                    .filter(|r| (r.x - 40.0).abs() < 0.5 && (r.y - 40.0).abs() < 0.5)
-                    .count()
-                    == 2;
-            if target_sliced_border && has_any_radius(&outer_radii) {
+            if has_any_radius(&outer_radii) {
                 let mut fill_paint = Paint::default();
                 fill_paint.set_style(PaintStyle::Fill);
                 fill_paint.set_anti_alias(true);
@@ -4323,21 +3827,205 @@ fn paint_borders(
                     ],
                     &inner_rect,
                 );
-                if outer_rrect_clipped {
-                    let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
-                    let mut border_path = Path::new();
-                    border_path.set_fill_type(PathFillType::InverseWinding);
-                    border_path.add_rrect(inner_rrect, None);
-                    canvas.draw_path(&border_path, &fill_paint);
-                } else {
-                    let outer_rrect = RRect::new_rect_radii(border_rect, &outer_radii);
-                    let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
+
+                canvas.save();
+                if !outer_rrect_clipped {
+                    canvas.clip_rrect(
+                        RRect::new_rect_radii(border_rect, &outer_radii),
+                        ClipOp::Intersect,
+                        true,
+                    );
+                }
+                canvas.clip_rrect(
+                    RRect::new_rect_radii(inner_rect, &inner_radii),
+                    ClipOp::Difference,
+                    true,
+                );
+
+                // Blink's complex-border path clips each side at the
+                // half-corner of the inner contour. Curved vertical sides
+                // use a tiny overlap at the rounded end and an AA bounding
+                // clip at the straight end; these are generated by the
+                // shared ContouredRect side-clip algorithm and prevent a
+                // seam where fragment edges suppress one pair of corners.
+                let is_rounded = |radius: Point| radius.x > 0.0 && radius.y > 0.0;
+                let inner_half = |index: usize| match index {
+                    0 => Point::new(
+                        inner_rect.left + inner_radii[0].x * 0.5,
+                        inner_rect.top + inner_radii[0].y * 0.5,
+                    ),
+                    1 => Point::new(
+                        inner_rect.right - inner_radii[1].x * 0.5,
+                        inner_rect.top + inner_radii[1].y * 0.5,
+                    ),
+                    2 => Point::new(
+                        inner_rect.right - inner_radii[2].x * 0.5,
+                        inner_rect.bottom - inner_radii[2].y * 0.5,
+                    ),
+                    _ => Point::new(
+                        inner_rect.left + inner_radii[3].x * 0.5,
+                        inner_rect.bottom - inner_radii[3].y * 0.5,
+                    ),
+                };
+                let halves = [inner_half(0), inner_half(1), inner_half(2), inner_half(3)];
+                let side_path = |points: &[Point; 4], aa_bounds: Option<(Rect, bool)>| {
+                    let mut path = PathBuilder::new();
+                    path.move_to(points[0]);
+                    for point in &points[1..] {
+                        path.line_to(*point);
+                    }
                     canvas.save();
-                    canvas.clip_rrect(outer_rrect, ClipOp::Intersect, true);
-                    canvas.clip_rrect(inner_rrect, ClipOp::Difference, true);
+                    if aa_bounds.is_some_and(|(_, before)| before) {
+                        canvas.clip_rect(aa_bounds.unwrap().0, ClipOp::Intersect, true);
+                    }
+                    canvas.clip_path(&path.detach(), ClipOp::Intersect, false);
+                    if aa_bounds.is_some_and(|(_, before)| !before) {
+                        canvas.clip_rect(aa_bounds.unwrap().0, ClipOp::Intersect, true);
+                    }
                     canvas.draw_rect(border_rect, &fill_paint);
                     canvas.restore();
+                };
+                if bt > 0.0 {
+                    if is_rounded(inner_radii[0]) || is_rounded(inner_radii[1]) {
+                        side_path(
+                            &[
+                                Point::new(border_rect.left, border_rect.top),
+                                halves[0],
+                                halves[1],
+                                Point::new(border_rect.right, border_rect.top),
+                            ],
+                            None,
+                        );
+                    } else {
+                        canvas.draw_rect(
+                            Rect::from_xywh(border_rect.left, border_rect.top, w, bt),
+                            &fill_paint,
+                        );
+                    }
                 }
+                if bb > 0.0 {
+                    if is_rounded(inner_radii[2]) || is_rounded(inner_radii[3]) {
+                        side_path(
+                            &[
+                                Point::new(border_rect.right, border_rect.bottom),
+                                halves[2],
+                                halves[3],
+                                Point::new(border_rect.left, border_rect.bottom),
+                            ],
+                            None,
+                        );
+                    } else {
+                        canvas.draw_rect(
+                            Rect::from_xywh(border_rect.left, border_rect.bottom - bb, w, bb),
+                            &fill_paint,
+                        );
+                    }
+                }
+                if br > 0.0 {
+                    let top_rounded = is_rounded(outer_radii[1]);
+                    let bottom_rounded = is_rounded(outer_radii[2]);
+                    let inner_edge_is_curved =
+                        is_rounded(inner_radii[1]) || is_rounded(inner_radii[2]);
+                    if !inner_edge_is_curved {
+                        canvas.draw_rect(
+                            Rect::from_xywh(border_rect.right - br, border_rect.top, br, h),
+                            &fill_paint,
+                        );
+                    } else {
+                        let inner_x = if top_rounded && !bottom_rounded {
+                            halves[1].x
+                        } else if bottom_rounded && !top_rounded {
+                            halves[2].x
+                        } else {
+                            halves[1].x.min(halves[2].x)
+                        };
+                        let seam_overlap = 0.1;
+                        let top_overlap = if top_rounded { seam_overlap } else { 0.0 };
+                        let bottom_overlap = if bottom_rounded { seam_overlap } else { 0.0 };
+                        let bounds = Rect::from_ltrb(
+                            inner_x,
+                            border_rect.top - if bottom_rounded { seam_overlap } else { 0.0 },
+                            border_rect.right,
+                            border_rect.bottom + if top_rounded { seam_overlap } else { 0.0 },
+                        );
+                        side_path(
+                            &[
+                                Point::new(border_rect.right, border_rect.top - top_overlap),
+                                Point::new(
+                                    inner_x,
+                                    if top_rounded {
+                                        halves[1].y - top_overlap
+                                    } else {
+                                        border_rect.top
+                                    },
+                                ),
+                                Point::new(
+                                    inner_x,
+                                    if bottom_rounded {
+                                        halves[2].y + bottom_overlap
+                                    } else {
+                                        border_rect.bottom
+                                    },
+                                ),
+                                Point::new(border_rect.right, border_rect.bottom + bottom_overlap),
+                            ],
+                            Some((bounds, bottom_rounded)),
+                        );
+                    }
+                }
+                if bl > 0.0 {
+                    let top_rounded = is_rounded(outer_radii[0]);
+                    let bottom_rounded = is_rounded(outer_radii[3]);
+                    let inner_edge_is_curved =
+                        is_rounded(inner_radii[0]) || is_rounded(inner_radii[3]);
+                    if !inner_edge_is_curved {
+                        canvas.draw_rect(
+                            Rect::from_xywh(border_rect.left, border_rect.top, bl, h),
+                            &fill_paint,
+                        );
+                    } else {
+                        let inner_x = if top_rounded && !bottom_rounded {
+                            halves[0].x
+                        } else if bottom_rounded && !top_rounded {
+                            halves[3].x
+                        } else {
+                            halves[0].x.max(halves[3].x)
+                        };
+                        let seam_overlap = 0.1;
+                        let top_overlap = if top_rounded { seam_overlap } else { 0.0 };
+                        let bottom_overlap = if bottom_rounded { seam_overlap } else { 0.0 };
+                        let bounds = Rect::from_ltrb(
+                            border_rect.left,
+                            border_rect.top - if bottom_rounded { seam_overlap } else { 0.0 },
+                            inner_x,
+                            border_rect.bottom + if top_rounded { seam_overlap } else { 0.0 },
+                        );
+                        side_path(
+                            &[
+                                Point::new(border_rect.left, border_rect.bottom + bottom_overlap),
+                                Point::new(
+                                    inner_x,
+                                    if bottom_rounded {
+                                        halves[3].y + bottom_overlap
+                                    } else {
+                                        border_rect.bottom
+                                    },
+                                ),
+                                Point::new(
+                                    inner_x,
+                                    if top_rounded {
+                                        halves[0].y - top_overlap
+                                    } else {
+                                        border_rect.top
+                                    },
+                                ),
+                                Point::new(border_rect.left, border_rect.top - top_overlap),
+                            ],
+                            Some((bounds, top_rounded)),
+                        );
+                    }
+                }
+                canvas.restore();
                 return;
             }
         }
@@ -4415,7 +4103,29 @@ fn paint_borders(
                     (outer_radii[3].y - bt).max(0.0),
                 ),
             ];
-
+            // Blink lowers a renderable uniform circular border to one
+            // antialiased stroked rrect. Use that representation whenever no
+            // outer clip would evaluate the same contour a second time.
+            let simple_stroked_rrect = !radii_exceed_rect(&inner_rect, &inner_radii)
+                && outer_radii
+                    .iter()
+                    .zip(inner_radii.iter())
+                    .all(|(outer, inner)| {
+                        if outer.x == 0.0 && outer.y == 0.0 && inner.x == 0.0 && inner.y == 0.0 {
+                            true
+                        } else {
+                            (outer.x - outer.y).abs() < 0.01
+                                && (inner.x - inner.y).abs() < 0.01
+                                && (outer.x - inner.x - bt).abs() < 0.01
+                        }
+                    });
+            if simple_stroked_rrect && !outer_rrect_clipped {
+                let center_radii = outer_radii.map(|radius| {
+                    Point::new((radius.x - half).max(0.0), (radius.y - half).max(0.0))
+                });
+                canvas.draw_rrect(RRect::new_rect_radii(stroke_rect, &center_radii), &paint);
+                return;
+            }
             if outer_rrect_clipped && radii_exceed_rect(&inner_rect, &inner_radii) {
                 let border_rect = Rect::from_xywh(x, y, w, h);
                 draw_nonrenderable_uniform_rounded_border(
@@ -4434,17 +4144,19 @@ fn paint_borders(
                 // double-AA artifacts at curved corners.
                 let inner_radii = normalize_radii_to_rect(inner_radii, &inner_rect);
                 let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
-                let mut border_path = Path::new();
+                let mut border_path = PathBuilder::new();
                 border_path.set_fill_type(PathFillType::InverseWinding);
-                border_path.add_rrect(inner_rrect, None);
-                canvas.draw_path(&border_path, &fill_paint);
+                border_path.add_rrect(inner_rrect, None, None);
+                canvas.draw_path(&border_path.detach(), &fill_paint);
             } else {
                 let inner_radii = normalize_radii_to_rect(inner_radii, &inner_rect);
                 let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
-                canvas.save();
-                canvas.clip_rrect(inner_rrect, ClipOp::Difference, true);
-                canvas.draw_rect(Rect::from_xywh(x, y, w, h), &fill_paint);
-                canvas.restore();
+                let outer_rect = Rect::from_xywh(x, y, w, h);
+                let outer_radii = normalize_radii_to_rect(outer_radii, &outer_rect);
+                let outer_rrect = RRect::new_rect_radii(outer_rect, &outer_radii);
+                // A double rounded rectangle evaluates both contours in one
+                // coverage operation for non-circular and elliptical cases.
+                canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
             }
         } else {
             canvas.draw_rect(stroke_rect, &paint);
@@ -4554,12 +4266,13 @@ fn paint_same_color_solid_border(
     let ix1 = (x + w - br).max(ix0);
     let iy1 = (y + h - bb).max(iy0);
 
-    let mut path = Path::new();
-    path.add_rect(Rect::from_xywh(x, y, w, h), None);
+    let mut path = PathBuilder::new();
+    path.add_rect(Rect::from_xywh(x, y, w, h), None, None);
     if ix1 > ix0 && iy1 > iy0 {
         path.add_rect(
             Rect::from_ltrb(ix0, iy0, ix1, iy1),
-            Some((skia_safe::PathDirection::CCW, 0)),
+            skia_safe::PathDirection::CCW,
+            0,
         );
         path.set_fill_type(skia_safe::PathFillType::EvenOdd);
     }
@@ -4568,7 +4281,7 @@ fn paint_same_color_solid_border(
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(false);
     set_paint_css_color(&mut paint, &color);
-    canvas.draw_path(&path, &paint);
+    canvas.draw_path(&path.detach(), &paint);
 }
 
 /// Physical side of a border box, used for side-dependent shading
@@ -4696,9 +4409,18 @@ fn paint_column_rule(
 
     let rect = Rect::from_xywh(x, y, w, h);
     // Column rules are painted like left-side borders (vertical line).
+    // CSS Multicol makes the one-dimensional `inset` and `outset` rule
+    // styles equivalent to `ridge` and `groove`, respectively.  Unlike a
+    // four-sided border there is no opposing edge from which to infer the
+    // recessed/raised effect.
+    let rule_style = match style.column_rule_style {
+        BorderStyle::Inset => BorderStyle::Ridge,
+        BorderStyle::Outset => BorderStyle::Groove,
+        other => other,
+    };
     paint_border_side(
         canvas,
-        style.column_rule_style,
+        rule_style,
         &style.column_rule_color,
         &style.color,
         w,
@@ -4900,7 +4622,7 @@ fn paint_border_side_path(
             let rect = Rect::from_ltrb(min_x, min_y, max_x, max_y);
 
             canvas.save();
-            let mut clip_path = Path::new();
+            let mut clip_path = PathBuilder::new();
             clip_path.move_to(Point::new(points[0].0, points[0].1));
             clip_path.line_to(Point::new(points[1].0, points[1].1));
             clip_path.line_to(Point::new(points[2].0, points[2].1));
@@ -4908,7 +4630,7 @@ fn paint_border_side_path(
             clip_path.close();
             // Enable AA on the clip so diagonal edges blend smoothly, matching
             // Chrome's sub-pixel coverage at trapezoid boundaries (e.g. CSS triangles).
-            canvas.clip_path(&clip_path, ClipOp::Intersect, true);
+            canvas.clip_path(&clip_path.detach(), ClipOp::Intersect, true);
 
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
@@ -4930,13 +4652,13 @@ fn paint_border_side_path(
             // Clip to the trapezoid so non-solid styles don't bleed outside.
             // No AA on clip to avoid gray fringe at corners.
             canvas.save();
-            let mut clip_path = Path::new();
+            let mut clip_path = PathBuilder::new();
             clip_path.move_to(Point::new(points[0].0, points[0].1));
             clip_path.line_to(Point::new(points[1].0, points[1].1));
             clip_path.line_to(Point::new(points[2].0, points[2].1));
             clip_path.line_to(Point::new(points[3].0, points[3].1));
             clip_path.close();
-            canvas.clip_path(&clip_path, ClipOp::Intersect, false);
+            canvas.clip_path(&clip_path.detach(), ClipOp::Intersect, false);
 
             paint_border_side(
                 canvas,
@@ -5092,7 +4814,9 @@ fn paint_border_side(
         BorderStyle::Double => {
             // Two lines: outer at full position, inner offset inward.
             // Each line is width/3 thick, with width/3 gap between them.
-            let line_width = (width / 3.0).max(1.0);
+            // Used border widths are device-pixel aligned.  Blink floors each
+            // stripe to one third and gives the remainder to the middle gap.
+            let line_width = (width / 3.0).floor().max(1.0);
             let mut paint = Paint::default();
             paint.set_style(PaintStyle::Fill);
             paint.set_anti_alias(true);
@@ -5388,19 +5112,19 @@ fn paint_3d_border(
     canvas.draw_rect(inner, &paint);
 }
 
-/// Darken a color by multiplying RGB by 0.5.
+/// Blink's CSS 3D border shade: blend one third toward black.
 fn darken_color(color: &Color4f) -> Color4f {
-    Color4f::new(color.r * 0.5, color.g * 0.5, color.b * 0.5, color.a)
-}
-
-/// Lighten a color by averaging with white.
-fn lighten_color(color: &Color4f) -> Color4f {
     Color4f::new(
-        (color.r + 1.0) / 2.0,
-        (color.g + 1.0) / 2.0,
-        (color.b + 1.0) / 2.0,
+        color.r * (2.0 / 3.0),
+        color.g * (2.0 / 3.0),
+        color.b * (2.0 / 3.0),
         color.a,
     )
+}
+
+/// The raised half uses the authored color; the recessed half is darkened.
+fn lighten_color(color: &Color4f) -> Color4f {
+    *color
 }
 
 // ── StyleColor PartialEq needed for border comparison ────────────────
@@ -5410,6 +5134,21 @@ fn lighten_color(color: &Color4f) -> Color4f {
 mod tests {
     #[allow(unused_imports)]
     use super::*;
+
+    #[test]
+    fn gradient_stop_fixup_is_monotonic_and_resolves_absolute_lengths() {
+        let stops = [
+            openui_style::LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Px(80.0),
+            },
+            openui_style::LinearGradientStop {
+                color: Color::RED,
+                position: GradientStopPosition::Px(60.0),
+            },
+        ];
+        assert_eq!(resolved_gradient_positions(&stops, 80.0), vec![1.0, 1.0]);
+    }
 
     // ── Issue 7 (R26): large borders don't produce invalid paint geometry ──
 

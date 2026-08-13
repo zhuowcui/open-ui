@@ -39,6 +39,7 @@ OUTPUT_CSV = DATA_DIR / "wpt_mapping.csv"
 PORT_REPORT_DIR = DATA_DIR / "wpt_ported"
 TEXT_PORTED_JSON = PORT_REPORT_DIR / "text_ported_tests.json"
 SP14_W4_JSON = PORT_REPORT_DIR / "sp14_w4_residuals.json"
+SP13R_TARGETS_JSON = PORT_REPORT_DIR / "sp13r_multicol_targets.json"
 
 # Chromium directory → our area name
 SP12_AREAS = {
@@ -113,6 +114,16 @@ def load_text_ported_tests() -> set[str]:
         or len(data) != len(set(data))
     ):
         raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_JSON}")
+    return set(data)
+
+
+def load_sp13r_targets() -> set[str]:
+    """Load runnable multicol rows whose SP13-R ownership is retired."""
+    if not SP13R_TARGETS_JSON.exists():
+        return set()
+    data = json.loads(SP13R_TARGETS_JSON.read_text(encoding="utf-8"))
+    if data != sorted(set(data)):
+        raise ValueError(f"invalid SP13-R target manifest: {SP13R_TARGETS_JSON}")
     return set(data)
 
 
@@ -214,6 +225,7 @@ def main():
     pixel_results = load_pixel_results()
     portability_reasons = load_portability_reasons()
     text_ported_tests = load_text_ported_tests()
+    sp13r_targets = load_sp13r_targets()
     missing_text_templates = text_ported_tests - set(templates)
     if missing_text_templates:
         raise ValueError(
@@ -290,6 +302,12 @@ def main():
                         )
                     row["failure_category"] = category
                     row["dependency"] = dep
+                    if test_id in sp13r_targets:
+                        row["failure_category"] = ",".join(
+                            value
+                            for value in row["failure_category"].split(",")
+                            if value and value != "sp13_multicol"
+                        )
         else:
             row["ported"] = "no"
             html_path = CHROMIUM_WPT_BASE / test["chromium_test_path"]
@@ -308,7 +326,7 @@ def main():
     # Write CSV
     OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_CSV, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(csv_rows)
 

@@ -308,8 +308,27 @@ impl<'a> LineBreaker<'a> {
         };
 
         let remaining = line.remaining_width();
+        // Terminal collapsible whitespace is removed after line construction,
+        // so it must not force an otherwise exactly fitting final text run to
+        // the next line. Keep the full range for `strip_trailing_spaces`, but
+        // use the shaped width without its final collapsed space for the fit
+        // decision.
+        let fit_width =
+            if item.end_collapse_type == CollapseType::Collapsible && text_slice.ends_with(' ') {
+                item.shape_result.as_ref().map_or(text_width, |sr| {
+                    let char_start = self.char_map.get(text_start);
+                    let char_end = self.char_map.get(text_end);
+                    let item_char_start = self.char_map.get(item.text_range.start);
+                    LayoutUnit::from_f32(sr.width_for_range(
+                        char_start - item_char_start,
+                        char_end.saturating_sub(1) - item_char_start,
+                    ))
+                })
+            } else {
+                text_width
+            };
 
-        if text_width <= remaining || !allows_wrap {
+        if fit_width <= remaining || !allows_wrap {
             // Entire text fits (or we're in nowrap mode)
             line.items.push(InlineItemResult {
                 item_index,
@@ -349,6 +368,7 @@ impl<'a> LineBreaker<'a> {
         let mut best_break: Option<usize> = None;
         let mut best_width = LayoutUnit::zero();
         let mut best_is_hyphen = false;
+        let mut first_overflow_break: Option<(usize, LayoutUnit)> = None;
 
         // Shape the actual hyphen to get exact advance width.
         let hyphen_advance = {
@@ -366,10 +386,36 @@ impl<'a> LineBreaker<'a> {
             for &brk in &break_opps {
                 // brk is a byte offset into text_slice
                 let break_byte = text_start + brk;
-                let break_char = self.char_map.get(break_byte);
+                // A collapsible space immediately before a soft wrap is
+                // removed from the line (CSS Text 3 §4.1.3).  It therefore
+                // must not make an otherwise exact-fit break look too wide.
+                // Measuring through that space made e.g. five 20px Ahem
+                // glyphs plus a space overflow a 100px column, after which
+                // the last-resort path placed the entire text item on one
+                // unbreakable line.
+                let measured_break_byte = if matches!(
+                    style.white_space,
+                    WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+                ) {
+                    let prefix = &self.items_data.text[text_start..break_byte];
+                    let trimmed = prefix.trim_end_matches([' ', '\t']);
+                    text_start + trimmed.len()
+                } else {
+                    break_byte
+                };
+                let break_char = self.char_map.get(measured_break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
                 let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                // Keep the collapsible trailing space in the line item's
+                // stored advance. `strip_trailing_spaces` removes it after
+                // construction. Storing the already-trimmed fit width here
+                // made that pass subtract the space twice (turning `AA ` into
+                // one A for geometry even though both glyphs were painted).
+                let raw_break_char = self.char_map.get(break_byte);
+                let raw_width = LayoutUnit::from_f32(
+                    sr.width_for_range(local_start, raw_break_char - item_char_start),
+                );
                 let is_shy = brk < text_slice.len() && text_slice[brk..].starts_with('\u{00AD}');
                 // Soft-hyphen breaks insert a visible hyphen glyph — account for its width.
                 let effective_width = if is_shy {
@@ -379,9 +425,12 @@ impl<'a> LineBreaker<'a> {
                 };
                 if effective_width <= remaining {
                     best_break = Some(brk);
-                    best_width = width;
+                    best_width = raw_width;
                     best_is_hyphen = is_shy;
                 } else {
+                    if brk > 0 && !is_shy && first_overflow_break.is_none() {
+                        first_overflow_break = Some((brk, raw_width));
+                    }
                     break;
                 }
             }
@@ -433,8 +482,30 @@ impl<'a> LineBreaker<'a> {
                 }
                 OverflowWrap::Normal => {
                     if !line.has_content() {
-                        // First content on line — force it to avoid infinite loop
-                        self.force_text_on_line(item_index, text_start, text_end, text_width, line);
+                        if let Some((break_at, width)) = first_overflow_break {
+                            // An unbreakable first word may overflow the empty
+                            // line, but the rest of the text item still resumes
+                            // at its next soft opportunity. Forcing the entire
+                            // item here incorrectly suppresses all later
+                            // whitespace breaks in narrow columns.
+                            let break_byte = text_start + break_at;
+                            line.items.push(InlineItemResult {
+                                item_index,
+                                text_range: text_start..break_byte,
+                                inline_size: width,
+                                shape_result: item.shape_result.clone(),
+                                has_forced_break: false,
+                                item_type: InlineItemType::Text,
+                            });
+                            line.used_width = line.used_width + width;
+                            self.current_text_offset = break_byte;
+                        } else {
+                            // No later opportunity exists; force the whole
+                            // unbreakable item to guarantee progress.
+                            self.force_text_on_line(
+                                item_index, text_start, text_end, text_width, line,
+                            );
+                        }
                         *state = LineState::Done;
                     } else {
                         // Break before this item (it goes to next line)
@@ -1116,9 +1187,15 @@ fn strip_trailing_spaces(
                         line.hang_width = line.hang_width + space_lu;
                     } else {
                         // Normal/nowrap/pre-line: trim text_range so
-                        // decorations don't extend into stripped space.
+                        // decorations and subsequent visual-order items do
+                        // not extend into stripped space. Updating only
+                        // `used_width` leaves a stale positioning advance in
+                        // RTL after bidi reordering.
                         let new_end = line_text_start + trimmed.len();
                         line.items[target_idx].text_range = line_text_start..new_end;
+                        line.items[target_idx].inline_size = (line.items[target_idx].inline_size
+                            - space_lu)
+                            .clamp_negative_to_zero();
                     }
                 }
             } else if !at_item_end {
@@ -1151,6 +1228,9 @@ fn strip_trailing_spaces(
                             // Normal/nowrap/pre-line: trim text_range.
                             let new_end = line_text_start + trimmed.len();
                             line.items[target_idx].text_range = line_text_start..new_end;
+                            line.items[target_idx].inline_size =
+                                (line.items[target_idx].inline_size - space_lu)
+                                    .clamp_negative_to_zero();
                         }
                     }
                 }
@@ -2624,8 +2704,9 @@ mod tests {
         let text = "hello ";
         let (items, item_result, style) = make_trailing_space_test(text, 0..6, WhiteSpace::Normal);
 
+        let initial_width = item_result.inline_size;
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
-        line.used_width = item_result.inline_size;
+        line.used_width = initial_width;
         line.items.push(item_result);
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
@@ -2634,6 +2715,10 @@ mod tests {
             line.hang_width,
             LayoutUnit::zero(),
             "normal white-space: hang_width should be 0 (spaces stripped, not hung)"
+        );
+        assert!(
+            line.items[0].inline_size < initial_width,
+            "stripped spaces must not retain positioning width"
         );
     }
 
@@ -3363,5 +3448,50 @@ mod tests {
             .next_line(LayoutUnit::from_f32(500.0))
             .expect("line");
         assert_eq!(line.items[0].text_range, 1..text.len());
+    }
+
+    #[test]
+    fn oversized_first_word_resumes_at_following_whitespace_break() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let text = "oversized tail";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
+        let first_word_end = "oversized ".len();
+        let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 4));
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(shape),
+                style_index: 0,
+                end_collapse_type: CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+                intrinsic_inline_size: None,
+            }],
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, narrow);
+        let first = breaker.next_line(narrow).expect("overflowing first line");
+        let second = breaker.next_line(narrow).expect("resumed second line");
+
+        assert_eq!(
+            first.items.last().unwrap().text_range.end,
+            "oversized".len()
+        );
+        assert_eq!(
+            second.items.first().unwrap().text_range.start,
+            first_word_end
+        );
+        assert_eq!(second.items.last().unwrap().text_range.end, text.len());
     }
 }

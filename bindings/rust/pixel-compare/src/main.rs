@@ -61,14 +61,34 @@ fn main() {
                 fn dump_frag(f: &openui_layout::Fragment, depth: usize) {
                     let indent = "  ".repeat(depth);
                     println!(
-                        "{}frag: offset={:?} size={:?} kind={:?} node={:?} children={}",
+                        "{}frag: offset={:?} size={:?} kind={:?} node={:?} baseline={} clip={} block_clip={} inline_clip={} decoration={:?} slice={:?} first={} last={} children={}",
                         indent,
                         f.offset,
                         f.size,
                         f.kind,
                         f.node_id,
+                        f.baseline_offset,
+                        f.has_overflow_clip,
+                        f.block_axis_clip_only,
+                        f.inline_axis_clip_only,
+                        f.decoration_paint_block_size,
+                        f.decoration_slice,
+                        f.is_first_for_node,
+                        f.is_last_for_node,
                         f.children.len()
                     );
+                    if let Some(positioned) = &f.positioned_fragmentation {
+                        println!(
+                            "{}  positioned: static={:?} cb_offset={:?} cb_size={:?} inline_cb={:?} visual={:?} fi={:?}",
+                            indent,
+                            positioned.static_position,
+                            positioned.containing_block_offset,
+                            positioned.containing_block_size,
+                            positioned.inline_containing_block_node,
+                            positioned.visual_offset,
+                            positioned.fragmentainer_index,
+                        );
+                    }
                     for child in &f.children {
                         dump_frag(child, depth + 1);
                     }

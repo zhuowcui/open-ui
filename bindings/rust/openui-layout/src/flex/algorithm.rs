@@ -5,7 +5,7 @@
 //!
 //! Orchestrates: item collection → line breaking → flexing → alignment → positioning.
 
-use openui_dom::{Document, NodeId};
+use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::Length;
 use openui_geometry::{
     BoxStrut, LayoutUnit, LengthType, MinMaxSizes, PhysicalOffset, PhysicalRect, PhysicalSize,
@@ -656,6 +656,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 c.containing_block_size = cb_size;
                 c.containing_block_border = border.clone();
                 c.containing_block_direction = style.direction;
+                c.containing_block_node = node_id;
                 oof_candidates.push(c);
             } else {
                 bubbled_oof_candidates.push(c);
@@ -680,14 +681,18 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 &border,
                 &padding,
             );
-            let candidate = crate::out_of_flow::OutOfFlowCandidate {
+            let mut candidate = crate::out_of_flow::OutOfFlowCandidate {
                 node_id: child_id,
                 style: child_style.clone(),
                 static_position: PhysicalOffset::new(sp_x, sp_y),
+                containing_block_offset: PhysicalOffset::zero(),
+                containing_block_node: NodeId::NONE,
                 containing_block_size: cb_size,
                 containing_block_border: border.clone(),
                 containing_block_direction: style.direction,
                 static_position_direction: style.direction,
+                has_inline_containing_block: false,
+                inline_containing_block_node: None,
             };
             let captures = if child_style.position == openui_style::Position::Fixed {
                 is_root
@@ -695,6 +700,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 establishes_cb_for_abspos
             };
             if captures {
+                candidate.containing_block_node = node_id;
                 oof_candidates.push(candidate);
             } else {
                 bubbled_oof_candidates.push(candidate);
@@ -1215,6 +1221,18 @@ fn construct_flex_items(
     }
 
     items
+}
+
+/// Layout one concrete flex item. Text children generate anonymous flex-item
+/// boxes whose contents are an inline formatting context; invoking block
+/// layout directly on the Text node would otherwise measure its advance but
+/// produce an empty zero-height box with no paintable text fragment.
+fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    if doc.node(child_id).tag == ElementTag::Text {
+        crate::inline::algorithm::inline_layout_for_children(doc, child_id, &[child_id], space)
+    } else {
+        crate::block::block_layout(doc, child_id, space)
+    }
 }
 
 fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
@@ -1775,7 +1793,7 @@ fn resolve_content_based_size(
         if let Some(ref ar) = child_style.aspect_ratio {
             let ratio = ar.ratio;
             if ratio.0 > 0.0 && ratio.1 > 0.0 {
-                let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+                let child_fragment = layout_flex_item(doc, child_id, &child_space);
                 let cross_size = child_fragment.width();
                 if !cross_size.is_indefinite() && cross_size > LayoutUnit::zero() {
                     let derived_main =
@@ -1789,12 +1807,12 @@ fn resolve_content_based_size(
         // block_layout with indefinite block (auto height) computes auto height
         // from content, accounting for the actual cross-axis width constraint
         // which affects line breaking of inline children.
-        let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+        let child_fragment = layout_flex_item(doc, child_id, &child_space);
         let main_size = child_fragment.height().clamp_indefinite_to_zero();
         return (main_size - main_axis_border_padding).clamp_negative_to_zero();
     }
 
-    let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+    let child_fragment = layout_flex_item(doc, child_id, &child_space);
 
     let main_size = child_fragment.width();
 
@@ -2628,7 +2646,7 @@ fn resolve_cross_size(
             true,
         );
 
-        let child_fragment = crate::block::block_layout(doc, item.node_id, &child_space);
+        let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
         let cross_size = if is_column {
             child_fragment.width()
         } else {
@@ -2654,7 +2672,7 @@ fn resolve_cross_size(
             true,
         );
 
-        let child_fragment = crate::block::block_layout(doc, item.node_id, &child_space);
+        let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
         let cross_size = if is_column {
             child_fragment.width()
         } else {
@@ -2704,7 +2722,7 @@ fn give_items_final_position(
     is_wrap_reverse: bool,
     _is_horizontal_flow: bool,
     is_rtl: bool,
-    _main_axis_inner_size: LayoutUnit,
+    main_axis_inner_size: LayoutUnit,
     content_cross_size: LayoutUnit,
     gap_between_items: LayoutUnit,
     gap_between_lines: LayoutUnit,
@@ -2768,6 +2786,7 @@ fn give_items_final_position(
     let mut container_last_baseline: Option<LayoutUnit> = None;
 
     for line in lines.iter() {
+        let line_children_start = children.len();
         // Resolve justify-content for this line
         let effective_free = if line.main_axis_auto_margin_count > 0 {
             LayoutUnit::zero()
@@ -3108,7 +3127,7 @@ fn give_items_final_position(
                 }
             }
 
-            let child_fragment = crate::block::block_layout(doc, item.node_id, &child_space);
+            let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
 
             let item_cross_margin_box = if is_column {
                 child_fragment.width() + item.cross_axis_margin_extent()
@@ -3332,6 +3351,25 @@ fn give_items_final_position(
                 main_offset = main_offset + gap_between_items + main_align.between_space;
             }
         }
+
+        // Column-reverse lays out the reversed item sequence toward the
+        // physical block end. Keep the finished line inside that resolved
+        // main-axis extent; otherwise a zero-free-space line is displaced by
+        // one item and fragmentation observes a spurious leading gap.
+        if is_column && is_reverse && justify_content.overflow != OverflowAlignment::Safe {
+            let desired_end = content_offset_y + main_axis_inner_size;
+            let actual_end = children[line_children_start..]
+                .iter()
+                .map(|child| child.offset.top + child.size.height)
+                .max()
+                .unwrap_or(desired_end);
+            let excess = (actual_end - desired_end).clamp_negative_to_zero();
+            if excess > LayoutUnit::zero() {
+                for child in &mut children[line_children_start..] {
+                    child.offset.top = child.offset.top - excess;
+                }
+            }
+        }
     }
 
     (children, container_first_baseline, container_last_baseline)
@@ -3515,7 +3553,10 @@ mod tests {
     use super::*;
     use openui_dom::Document;
     use openui_geometry::{LayoutUnit, Length};
-    use openui_style::{Display, FlexDirection, FlexWrap, ItemAlignment, ItemPosition};
+    use openui_style::{
+        ContentPosition, Display, FlexDirection, FlexWrap, ItemAlignment, ItemPosition,
+        OverflowAlignment,
+    };
 
     fn make_flex_container(doc: &mut Document, width: i32, height: i32) -> NodeId {
         let root = doc.root();
@@ -3728,6 +3769,28 @@ mod tests {
         assert_eq!(fragment.children[1].offset.top, LayoutUnit::from_i32(50));
         // Cross axis (x): explicit width=50 doesn't stretch
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(50));
+    }
+
+    #[test]
+    fn safe_flex_start_keeps_overflowing_column_reverse_item_at_start() {
+        let mut doc = Document::new();
+        let container = make_flex_container(&mut doc, 90, 90);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.flex_direction = FlexDirection::ColumnReverse;
+            style.justify_content = ContentAlignment {
+                position: ContentPosition::FlexStart,
+                distribution: ContentDistribution::Default,
+                overflow: OverflowAlignment::Safe,
+            };
+        }
+        let child = add_flex_child(&mut doc, container, 100, 100);
+        doc.node_mut(child).style_mut().flex_shrink = 0.0;
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(90), LayoutUnit::from_i32(90));
+        let fragment = flex_layout(&doc, container, &space);
+
+        assert_eq!(fragment.children[0].offset.top, LayoutUnit::zero());
     }
 
     #[test]

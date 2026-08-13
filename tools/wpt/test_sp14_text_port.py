@@ -29,11 +29,16 @@ import generate_sp12_5_csv
 
 class TextPorterTests(unittest.TestCase):
     def setUp(self):
+        self.old_profile = port_wpt.ACTIVE_PORTER_PROFILE
         self.old_emit = port_wpt.EMIT_TEXT_NODES
         self.old_retain = port_wpt.RETAIN_TEXT
+        # SP14 tests exercise the deterministic-font generator unless a test
+        # explicitly opts into the later real-font profile.
+        port_wpt.ACTIVE_PORTER_PROFILE = port_wpt.PorterProfile.LEGACY_BOX_ONLY
         self.temp = tempfile.TemporaryDirectory()
 
     def tearDown(self):
+        port_wpt.ACTIVE_PORTER_PROFILE = self.old_profile
         port_wpt.EMIT_TEXT_NODES = self.old_emit
         port_wpt.RETAIN_TEXT = self.old_retain
         self.temp.cleanup()
@@ -78,7 +83,15 @@ class TextPorterTests(unittest.TestCase):
             + port_wpt.DETERMINISTIC_FONT_FAMILY_RUST,
             rust,
         )
-        self.assertIn("doc.node_mut(vp).style.display = Display::Block", rust)
+        self.assertNotIn("doc.node_mut(vp).style.display = Display::Block", rust)
+        self.assertIn(
+            "doc.node_mut(vp).style.list_style_type = ListStyleType::None",
+            rust,
+        )
+        self.assertIn(
+            "style.list_style_type = ListStyleType::None",
+            rust,
+        )
         self.assertIn("font_size = 20.0", rust)
         self.assertIn("color = Color::from_rgba8(255, 0, 0, 255)", rust)
         self.assertIn("white_space = WhiteSpace::PreWrap", rust)
@@ -231,6 +244,24 @@ class TextPorterTests(unittest.TestCase):
         self.assertNotIn("font_size = 32.0", legacy)
         self.assertIn("height = Length::px(64.0)", legacy)
 
+    def test_real_font_heading_ua_size_wins_over_inherited_size(self):
+        port_wpt.set_porter_profile(
+            port_wpt.PorterProfile.REAL_FONT, retain_text=True
+        )
+        parser = port_wpt.WptHtmlParser()
+        parser.feed(
+            '<body><div style="font-size:16px"><h1 style="column-span:all">'
+            'heading</h1></div></body>'
+        )
+        parser.finalize()
+
+        rust = port_wpt.generate_rust_fn(
+            "real_font_heading_ua_size", parser.root, parser.html_styles
+        )
+        h1_start = rust.index("style.column_span = ColumnSpan::All")
+        h1_prefix = rust[max(0, h1_start - 800):h1_start]
+        self.assertIn("style.font_size = 32.0", h1_prefix)
+
     def test_clearing_break_emits_semantic_zero_height_break(self):
         path = self.html(
             "<!doctype html><style>br{clear:both}</style><body>"
@@ -370,7 +401,9 @@ class SpliceTransactionTests(unittest.TestCase):
         self.assertEqual(rust.count("fn demo_added() -> Document"), 1)
         self.assertEqual(rust.count(f'"{added}"'), 1)
         self.assertNotIn("vec![\n\n", rust)
-        self.assertIn(f'        (\n            "{added}"', rust)
+        self.assertIn(
+            f'("{added}", demo_added as fn() -> Document)', rust
+        )
         for filename in ("all_wpt_templates.json", "wpt_demo_templates.json"):
             templates = json.loads((self.template_dir / filename).read_text())
             self.assertIn(added, templates)
@@ -529,10 +562,12 @@ class RunnerScopeTests(unittest.TestCase):
         self.assertEqual(w3, sorted(set(w3)))
         self.assertFalse(set(w2) & set(w3))
         sp15 = json.loads((ported_dir / "sp15_actionable_targets.json").read_text())
-        self.assertEqual(len(manifest), 496)
-        self.assertEqual(len(set(manifest) - set(w2) - set(w3)), 99)
+        sp13r = json.loads((ported_dir / "sp13r_multicol_targets.json").read_text())
+        self.assertEqual(len(manifest), 687)
+        self.assertEqual(len(set(manifest) - set(w2) - set(w3)), 290)
         self.assertTrue(set(w2) | set(w3) <= set(manifest))
         self.assertTrue(set(sp15) <= set(manifest))
+        self.assertTrue(set(sp13r) <= set(manifest))
 
     def test_ahem_fontconfig_is_only_added_for_manifest_opt_in(self):
         with tempfile.NamedTemporaryFile() as config, mock.patch.object(

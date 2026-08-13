@@ -180,6 +180,7 @@ def main() -> None:
             f,
             fieldnames=["test_id", "sp_area", "dependency", "owning_sp",
                          "mismatch_pct", "priority", "notes"],
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)

@@ -16,7 +16,7 @@
 //! are added with a horizontal padding of 1px and a vertical dilation of
 //! `min(thickness, 13px)`.
 
-use skia_safe::{Canvas, ColorSpace, Paint, PaintStyle, Path, PathEffect, Point, Rect};
+use skia_safe::{Canvas, ColorSpace, Paint, PaintStyle, PathBuilder, PathEffect, Point, Rect};
 
 use openui_style::ComputedStyle;
 use openui_style::{TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness};
@@ -641,7 +641,7 @@ fn draw_wavy_line(
         DecorationLineKind::LineThrough => y,
     };
 
-    let mut path = Path::new();
+    let mut path = PathBuilder::new();
     path.move_to(Point::new(x, wavy_y));
 
     let mut cx = x;
@@ -662,7 +662,7 @@ fn draw_wavy_line(
     let mut stroke_paint = paint.clone();
     stroke_paint.set_style(PaintStyle::Stroke);
     stroke_paint.set_stroke_width(thickness);
-    canvas.draw_path(&path, &stroke_paint);
+    canvas.draw_path(&path.detach(), &stroke_paint);
 }
 
 #[cfg(test)]

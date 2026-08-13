@@ -62,6 +62,9 @@ pub struct BlockInInlineInfo {
     pub item_index: usize,
     /// The node ID of the block-level element.
     pub node_id: NodeId,
+    /// Nearest positioned inline ancestor, when descendants of the block
+    /// bubble out-of-flow candidates through the interrupted IFC.
+    pub inline_containing_block: Option<NodeId>,
 }
 
 /// Placeholder for an out-of-flow child within inline content.
@@ -78,6 +81,9 @@ pub struct OofPlaceholder {
     /// was encountered. Items before this index precede the OOF child
     /// in document order.
     pub item_index: usize,
+    /// Nearest positioned inline ancestor, when the containing block is an
+    /// inline box rather than the surrounding block container.
+    pub inline_containing_block: Option<NodeId>,
 }
 
 impl InlineItemsData {
@@ -434,6 +440,8 @@ pub struct InlineItemsBuilder<'a> {
     last_space_collapsible: bool,
     /// OOF children encountered during inline item collection.
     oof_children: Vec<OofPlaceholder>,
+    /// Positioned inline ancestors currently open during the DOM walk.
+    positioned_inline_stack: Vec<NodeId>,
     /// Block-in-inline interruptions found during collection.
     block_in_inline: Vec<BlockInInlineInfo>,
 }
@@ -447,6 +455,7 @@ impl<'a> InlineItemsBuilder<'a> {
             styles: Vec::new(),
             last_space_collapsible: false,
             oof_children: Vec::new(),
+            positioned_inline_stack: Vec::new(),
             block_in_inline: Vec::new(),
         }
     }
@@ -521,6 +530,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 self.oof_children.push(OofPlaceholder {
                     node_id: child_id,
                     item_index: self.items.len(),
+                    inline_containing_block: self.positioned_inline_stack.last().copied(),
                 });
             }
             return;
@@ -537,7 +547,15 @@ impl<'a> InlineItemsBuilder<'a> {
                 let style = node.style.clone();
                 self.append_break(child_id, &style);
             }
-            ElementTag::Span | ElementTag::Style => {
+            ElementTag::Ruby => {
+                // A ruby container is one atomic inline object. Its base and
+                // annotation establish paired internal formatting contexts;
+                // exposing either side as ordinary inline children would put
+                // the annotation beside the base instead of over/under it.
+                let style = node.style.clone();
+                self.append_atomic_inline(child_id, &style);
+            }
+            ElementTag::Span | ElementTag::Style | ElementTag::RubyText => {
                 let display = node.style.display;
                 let style = node.style.clone();
                 if display == Display::InlineBlock
@@ -557,6 +575,7 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.block_in_inline.push(BlockInInlineInfo {
                         item_index,
                         node_id: child_id,
+                        inline_containing_block: self.positioned_inline_stack.last().copied(),
                     });
                     self.items.push(InlineItem {
                         item_type: InlineItemType::BlockInInline,
@@ -599,6 +618,7 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.block_in_inline.push(BlockInInlineInfo {
                         item_index,
                         node_id: child_id,
+                        inline_containing_block: self.positioned_inline_stack.last().copied(),
                     });
                     self.items.push(InlineItem {
                         item_type: InlineItemType::BlockInInline,
@@ -762,10 +782,17 @@ impl<'a> InlineItemsBuilder<'a> {
             bidi_level: 0,
             intrinsic_inline_size: None,
         });
+        if style.position.is_positioned() {
+            self.positioned_inline_stack.push(node_id);
+        }
     }
 
     /// Handle inline element close (`</span>`).
     fn exit_inline(&mut self, node_id: NodeId, style: &ComputedStyle) {
+        if style.position.is_positioned() {
+            let popped = self.positioned_inline_stack.pop();
+            debug_assert_eq!(popped, Some(node_id));
+        }
         let style_index = self.intern_style(style);
         let offset = self.text.len();
         self.items.push(InlineItem {
@@ -794,7 +821,9 @@ impl<'a> InlineItemsBuilder<'a> {
 
         // For flex/grid containers, use the proper intrinsic sizing algorithm
         // which handles aspect-ratio, flex-basis, definite cross sizes, etc.
-        let intrinsic = if style.display.is_flex() {
+        let intrinsic = if self.doc.node(node_id).tag == ElementTag::Ruby {
+            self.compute_ruby_intrinsic_inline_size(node_id)
+        } else if style.display.is_flex() {
             let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
             let max_w = sizes.max_content_inline_size.to_f32();
             if max_w > 0.0 {
@@ -831,6 +860,68 @@ impl<'a> InlineItemsBuilder<'a> {
         } else {
             None
         }
+    }
+
+    /// Ruby's shrink-to-fit inline size is the wider of its base sequence and
+    /// annotation sequence, rather than the sum of both sequences.
+    fn compute_ruby_intrinsic_inline_size(&self, node_id: NodeId) -> Option<f32> {
+        let mut base_width = 0.0f32;
+        let mut annotation_width = 0.0f32;
+        let mut has_content = false;
+
+        for child_id in self.doc.children(node_id) {
+            let child = self.doc.node(child_id);
+            if child.style.display == Display::None
+                || child.style.position.is_absolutely_positioned()
+                || child.style.float != Float::None
+            {
+                continue;
+            }
+
+            let (width, child_has_content) = if child.tag == ElementTag::Text {
+                let text = child.text.as_deref().unwrap_or("");
+                let processed = preprocess_text_for_shaping(text, &child.style);
+                if processed.is_empty() {
+                    (0.0, false)
+                } else {
+                    let font = Font::new(style_to_font_description(&child.style));
+                    let shaper = TextShaper::new();
+                    (
+                        shaper.shape(&processed, &font, TextDirection::Ltr).width(),
+                        true,
+                    )
+                }
+            } else {
+                let bp = child.style.effective_border_left() as f32
+                    + child.style.effective_border_right() as f32
+                    + resolve_margin_or_padding(
+                        &child.style.padding_left,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32()
+                    + resolve_margin_or_padding(
+                        &child.style.padding_right,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32();
+                if child.style.width.length_type() == openui_geometry::LengthType::Fixed {
+                    (child.style.width.value() + bp, true)
+                } else {
+                    let (descendant_width, descendant_has_content) =
+                        self.compute_intrinsic_inline_size_recursive(child_id);
+                    (descendant_width + bp, descendant_has_content || bp > 0.0)
+                }
+            };
+
+            has_content |= child_has_content;
+            if child.tag == ElementTag::RubyText {
+                annotation_width = annotation_width.max(width);
+            } else {
+                base_width += width;
+            }
+        }
+
+        has_content.then_some(base_width.max(annotation_width))
     }
 
     /// Recursive helper: returns (accumulated_width, has_content).

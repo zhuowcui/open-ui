@@ -94,6 +94,6 @@ condition, continue work or clarify the condition; do not self-certify completio
 
 ## Recommended Next Phase
 
-SP16 is closed. Continue with SP17 advanced text or the explicitly owned SP13
-multicol/fragmentation residuals, preserving the 2,804-ID frozen exact baseline and
-the zero-pixel passing threshold.
+SP13-R is closed. Continue with SP17 advanced text or one of the explicitly owned
+residual systems, preserving the 2,823-ID SP13-R frozen exact baseline, the 351-ID
+exact target ledger, and the zero-pixel passing threshold.

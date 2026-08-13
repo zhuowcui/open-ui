@@ -82,6 +82,21 @@ SP16_EXPECTED_TARGETS = 226
 SP16_EXPECTED_RESIDUALS = 550
 SP16_EXPECTED_RUNNABLE = 3566
 SP16_EXPECTED_UNPORTED = 4107
+SP13R_BASELINE_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp13r_baseline_exact.json"
+)
+SP13R_TARGETS_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp13r_multicol_targets.json"
+)
+SP13R_RESIDUALS_PATH = os.path.join(
+    DATA_DIR, "wpt_ported", "sp13r_multicol_residuals.json"
+)
+SP13R_OWNER = "sp13_multicol"
+SP13R_EXPECTED_BASELINE = 2823
+SP13R_EXPECTED_TARGETS = 351
+SP13R_EXPECTED_RESIDUALS = 1018
+SP13R_EXPECTED_MULTICOL = 1369
+SP13R_EXPECTED_EXACT = SP13R_EXPECTED_BASELINE + SP13R_EXPECTED_TARGETS
 
 issues = []
 warnings = []
@@ -492,6 +507,127 @@ def sp16_closure_errors(
     return errors
 
 
+def sp13r_multicol_closure_errors(
+    rows, summary_by_id, templates, baseline, targets, residuals
+):
+    """Validate SP13-R's immutable multicol cover and exact closed snapshot."""
+    errors = []
+    residual_ids = [
+        item.get("test_id", "") for item in residuals if isinstance(item, dict)
+    ]
+    if baseline != sorted(set(baseline)) or len(baseline) != SP13R_EXPECTED_BASELINE:
+        errors.append("SP13-R baseline is not the frozen sorted 2,823-ID set")
+    if targets != sorted(set(targets)) or len(targets) != SP13R_EXPECTED_TARGETS:
+        errors.append("SP13-R targets are not the frozen sorted 351-ID set")
+    if (
+        residual_ids != sorted(set(residual_ids))
+        or len(residuals) != SP13R_EXPECTED_RESIDUALS
+    ):
+        errors.append("SP13-R residual ledger is not the frozen sorted 1,018-ID set")
+    if set(targets) & set(residual_ids):
+        errors.append("SP13-R target and residual ledgers overlap")
+    if len(set(targets) | set(residual_ids)) != SP13R_EXPECTED_MULTICOL:
+        errors.append("SP13-R ledgers are not a complete disjoint 1,369-ID cover")
+    if set(baseline) & (set(targets) | set(residual_ids)):
+        errors.append("SP13-R baseline overlaps the multicol inventory")
+
+    mapping_by_id = {canonical_mapping_id(row): row for row in rows}
+    for test_id in baseline:
+        result = summary_by_id.get(test_id)
+        if (
+            not result
+            or result.get("status") != "pass"
+            or result.get("mismatch_pct") != 0.0
+        ):
+            errors.append(f"SP13-R baseline exact pass regressed: {test_id}")
+    for test_id in targets:
+        row = mapping_by_id.get(test_id)
+        result = summary_by_id.get(test_id)
+        if not row or row.get("ported") != "yes" or row.get("our_test_id") != test_id:
+            errors.append(f"SP13-R target is not runnable: {test_id}")
+        if test_id not in templates:
+            errors.append(f"SP13-R target lacks a template: {test_id}")
+        if (
+            not result
+            or result.get("status") != "pass"
+            or result.get("mismatch_pct") != 0.0
+        ):
+            errors.append(f"SP13-R target is not exact: {test_id}")
+
+    required = {
+        "test_id", "chromium_test_path", "rejection_reason", "owner_categories"
+    }
+    for item in residuals:
+        if not isinstance(item, dict):
+            continue
+        test_id = item.get("test_id", "")
+        owners = item.get("owner_categories", [])
+        row = mapping_by_id.get(test_id)
+        if (
+            set(item) != required
+            or not item.get("chromium_test_path")
+            or not item.get("rejection_reason")
+            or owners != sorted(set(owners))
+            or SP13R_OWNER not in owners
+            or set(owners) & {"sp12_layout_bug", "not_ported"}
+        ):
+            errors.append(f"SP13-R residual disposition is invalid: {test_id}")
+            continue
+        if not row or row.get("ported") != "no":
+            errors.append(f"SP13-R residual is not unported: {test_id}")
+            continue
+        mapped = {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }
+        if mapped != set(owners):
+            errors.append(f"SP13-R residual ownership drift: {test_id}")
+        if row.get("chromium_test_path") != item.get("chromium_test_path"):
+            errors.append(f"SP13-R residual Chromium path drift: {test_id}")
+        if row.get("notes") != f"Porter deferred: {item.get('rejection_reason', '')}":
+            errors.append(f"SP13-R residual rejection reason drift: {test_id}")
+        if test_id in templates or test_id in summary_by_id:
+            errors.append(f"SP13-R residual unexpectedly became runnable: {test_id}")
+
+    multicol_rows = []
+    stale_runnable = []
+    for row in rows:
+        categories = {
+            part.strip()
+            for part in row.get("failure_category", "").split(",")
+            if part.strip()
+        }
+        if SP13R_OWNER in categories:
+            multicol_rows.append(canonical_mapping_id(row))
+            if row.get("ported") != "no":
+                stale_runnable.append(canonical_mapping_id(row))
+    if sorted(multicol_rows) != residual_ids:
+        errors.append("SP13-R owner does not exactly identify the frozen residual ledger")
+    if stale_runnable:
+        errors.append(f"runnable row retains SP13-R ownership: {stale_runnable[0]}")
+
+    unported = sum(row.get("ported") == "no" for row in rows)
+    exact = sum(
+        item.get("status") == "pass" and item.get("mismatch_pct") == 0.0
+        for item in summary_by_id.values()
+    )
+    if len(rows) != SP14_EXPECTED_INVENTORY:
+        errors.append(f"SP13-R inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
+    if unported != SP16_EXPECTED_UNPORTED:
+        errors.append(f"SP13-R unported count {unported} != {SP16_EXPECTED_UNPORTED}")
+    if len(templates) != SP16_EXPECTED_RUNNABLE or len(summary_by_id) != SP16_EXPECTED_RUNNABLE:
+        errors.append(
+            f"SP13-R runnable count templates={len(templates)}, summary={len(summary_by_id)} "
+            f"!= {SP16_EXPECTED_RUNNABLE}"
+        )
+    if exact < SP13R_EXPECTED_EXACT:
+        errors.append(f"SP13-R exact pass count {exact} < {SP13R_EXPECTED_EXACT}")
+    if any(item.get("status") == "error" for item in summary_by_id.values()):
+        errors.append("SP13-R closed snapshot contains render/diff errors")
+    return errors
+
+
 def check_summary_integrity():
     """Check 1: Every pass has proof — result.json with status=pass, mismatch_pct=0.0, PNGs exist."""
     print("\n── Check 1: Pass claims have proof (with image verification) ──")
@@ -789,8 +925,13 @@ def check_mapping_coverage():
         SP16_RESIDUALS_PATH,
         SP16_REAL_FONT_PATH,
     )
+    sp13r_paths = (
+        SP13R_BASELINE_PATH,
+        SP13R_TARGETS_PATH,
+        SP13R_RESIDUALS_PATH,
+    )
     missing_closure_paths = [
-        path for path in closure_paths + sp15_paths + sp16_paths
+        path for path in closure_paths + sp15_paths + sp16_paths + sp13r_paths
         if not os.path.isfile(path)
     ]
     if missing_closure_paths:
@@ -825,6 +966,12 @@ def check_mapping_coverage():
             sp16_residuals = json.load(f)
         with open(SP16_REAL_FONT_PATH, encoding="utf-8") as f:
             sp16_real_font = json.load(f)
+        with open(SP13R_BASELINE_PATH, encoding="utf-8") as f:
+            sp13r_baseline = json.load(f)
+        with open(SP13R_TARGETS_PATH, encoding="utf-8") as f:
+            sp13r_targets = json.load(f)
+        with open(SP13R_RESIDUALS_PATH, encoding="utf-8") as f:
+            sp13r_residuals = json.load(f)
         sp15_residuals_by_id = {
             item.get("test_id", ""): item
             for item in sp15_residuals
@@ -897,6 +1044,24 @@ def check_mapping_coverage():
             ok(
                 f"SP16 closure: {len(sp16_baseline)} baseline exact, "
                 f"{len(sp16_targets)} actionable, {len(sp16_residuals)} residual"
+            )
+        sp13r_errors = sp13r_multicol_closure_errors(
+            rows,
+            closure_summary_by_id,
+            closure_templates,
+            sp13r_baseline,
+            sp13r_targets,
+            sp13r_residuals,
+        )
+        if sp13r_errors:
+            issue(f"SP13-R closure has {len(sp13r_errors)} invariant violations")
+            for message in sp13r_errors[:3]:
+                print(f"         {message}")
+        else:
+            ok(
+                f"SP13-R closure: {len(sp13r_baseline)} baseline exact, "
+                f"{len(sp13r_targets)} exact targets, "
+                f"{len(sp13r_residuals)} reason-owned residuals"
             )
 
     # Accounting identity: ported + not_ported = total

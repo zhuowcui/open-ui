@@ -12,6 +12,6 @@
   "mismatched_pixels": 0,
   "mismatch_pct": 0.0,
   "max_channel_diff": 4,
-  "avg_channel_diff": 0.0004,
+  "avg_channel_diff": 0.0002,
   "status": "pass"
 }

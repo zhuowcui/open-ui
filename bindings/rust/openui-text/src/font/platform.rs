@@ -20,6 +20,7 @@ pub struct FontPlatformData {
     sk_font: SkFont,
     size: f32,
     metrics: FontMetrics,
+    synthetic_bold: bool,
     /// Oblique angle in degrees for synthetic oblique synthesis.
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
@@ -40,21 +41,53 @@ impl FontPlatformData {
     /// The angle is stored and can be retrieved via `synthetic_oblique_angle()`
     /// for applying a skew transform during text painting.
     pub fn with_oblique_angle(typeface: Typeface, size: f32, oblique_angle: f32) -> Self {
+        let requested_weight = typeface.font_style().weight();
+        Self::with_synthetic_styles(typeface, size, oblique_angle, requested_weight)
+    }
+
+    /// Create platform data while retaining the requested weight so a family
+    /// without a bold face can synthesize the CSS-selected weight.
+    pub fn with_synthetic_styles(
+        typeface: Typeface,
+        size: f32,
+        oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+    ) -> Self {
+        // Font matching may return a regular face when a family has no bold
+        // member (Ahem is the canonical example). CSS font synthesis requires
+        // a synthetic bold face in that case; SkFont does not infer it from
+        // the requested FontStyle after typeface matching.
+        let synthetic_bold = requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
+            && typeface.font_style().weight() < skia_safe::font_style::Weight::SEMI_BOLD;
         let mut sk_font = SkFont::from_typeface(&typeface, size);
+        sk_font.set_embolden(synthetic_bold);
         // SP14 parity experiment: allow overriding rasterization settings via env
         // vars so we can match headless Chromium without recompiling per combo.
         // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
         // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
         let subpixel = std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
         sk_font.set_subpixel(subpixel);
-        let hinting = match std::env::var("OPENUI_HINTING").ok().as_deref() {
+        let requested_hinting = std::env::var("OPENUI_HINTING").ok();
+        let requested_edging = std::env::var("OPENUI_EDGING").ok();
+        let is_ahem = typeface.family_name().eq_ignore_ascii_case("Ahem");
+        let hinting = match requested_hinting.as_deref() {
+            // The deterministic Ahem profile keeps the square-glyph face
+            // completely unhinted. Chromium still grid-fits glyphs supplied
+            // by a fallback face (for example arrows absent from Ahem) before
+            // applying the same aliased coverage threshold. Skia's direct
+            // unhinted fallback path otherwise expands one-pixel strokes.
+            Some("none") if requested_edging.as_deref() == Some("alias") && !is_ahem => {
+                FontHinting::Slight
+            }
             Some("none") => FontHinting::None,
             Some("normal") => FontHinting::Normal,
             Some("full") => FontHinting::Full,
             _ => FontHinting::Slight,
         };
         sk_font.set_hinting(hinting);
-        match std::env::var("OPENUI_EDGING").ok().as_deref() {
+        sk_font.set_linear_metrics(subpixel);
+        sk_font.set_embedded_bitmaps(true);
+        match requested_edging.as_deref() {
             Some("alias") => {
                 sk_font.set_edging(skia_safe::font::Edging::Alias);
             }
@@ -83,6 +116,7 @@ impl FontPlatformData {
             sk_font,
             size,
             metrics,
+            synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
         }
     }
@@ -109,6 +143,12 @@ impl FontPlatformData {
     #[inline]
     pub fn metrics(&self) -> &FontMetrics {
         &self.metrics
+    }
+
+    /// Whether CSS requested a bold weight that the selected family lacked.
+    #[inline]
+    pub fn is_synthetic_bold(&self) -> bool {
+        self.synthetic_bold
     }
 
     /// The oblique angle in degrees used for synthetic oblique.

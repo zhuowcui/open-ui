@@ -106,6 +106,7 @@ SUPPORTED_PROPERTIES = {
     'overflow', 'overflow-x', 'overflow-y', 'overflow-clip-margin', 'scrollbar-color',
     # Visual
     'background', 'background-color', 'background-clip', 'color', 'opacity', 'visibility',
+    'zoom',
     # Flex
     'flex', 'flex-direction', 'flex-wrap', 'flex-flow',
     'justify-content', 'align-items', 'align-content', 'align-self',
@@ -125,6 +126,7 @@ SUPPORTED_PROPERTIES = {
     'min-inline-size', 'max-inline-size',
     # Text (basic)
     'line-height', 'vertical-align', 'text-align', 'white-space',
+    'ruby-position',
     # Aspect ratio
     'aspect-ratio',
     # Font (extract font-size)
@@ -181,8 +183,6 @@ IGNORED_PROPERTIES = {
     'print-color-adjust', 'image-rendering',
     # Scroll
     'scrollbar-gutter', 'scrollbar-width',
-    # Ruby
-    'ruby-position',
 }
 
 # CSS named colors → Rust Color constants
@@ -365,12 +365,80 @@ def parse_color(value: str) -> str | None:
     # rgba(r, g, b, a)
     m = re.match(r'^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$', value)
     if m:
-        a = round(float(m.group(4)) * 255)
-        return f'Color::from_rgba8({m.group(1)}, {m.group(2)}, {m.group(3)}, {a})'
+        alpha = min(1.0, float(m.group(4)))
+        alpha_literal = f'{alpha:.9g}'
+        if '.' not in alpha_literal:
+            alpha_literal += '.0'
+        return (
+            f'Color::from_rgba_f32({m.group(1)}.0 / 255.0, '
+            f'{m.group(2)}.0 / 255.0, {m.group(3)}.0 / 255.0, '
+            f'{alpha_literal})'
+        )
+    # CSS Color 4 whitespace syntax: rgb(R G B[ / A]). Components may be
+    # numbers or percentages, and rgba() is retained as a legacy alias.
+    m = re.match(
+        r'^rgba?\(\s*([\d.]+%?)\s+([\d.]+%?)\s+([\d.]+%?)'
+        r'(?:\s*/\s*([\d.]+%?))?\s*\)$',
+        value,
+    )
+    if m:
+        def float_literal(value: float) -> str:
+            literal = f'{value:.9g}'
+            return literal if '.' in literal else literal + '.0'
+
+        def component(token: str) -> int:
+            if token.endswith('%'):
+                return round(min(100.0, float(token[:-1])) * 255.0 / 100.0)
+            return round(min(255.0, float(token)))
+
+        def component_expr(token: str) -> str:
+            if token.endswith('%'):
+                return float_literal(min(100.0, float(token[:-1])) / 100.0)
+            return f'{float_literal(min(255.0, float(token)))} / 255.0'
+
+        def alpha_expr(token: str) -> str:
+            if token.endswith('%'):
+                return float_literal(min(100.0, float(token[:-1])) / 100.0)
+            return float_literal(min(1.0, float(token)))
+
+        r, g, b = (component(m.group(index)) for index in range(1, 4))
+        alpha_token = m.group(4)
+        components = [m.group(index) for index in range(1, 4)]
+        if alpha_token is None and all('%' not in token and '.' not in token for token in components):
+            return f'Color::from_rgba8({r}, {g}, {b}, 255)'
+        return (
+            'Color::from_rgba_f32('
+            + ', '.join(component_expr(token) for token in components)
+            + f', {alpha_expr(alpha_token) if alpha_token is not None else "1.0"})'
+        )
     return None
 
 
 _ACTIVE_FONT_RELATIVE_RESOLVER: str | None = None
+_ACTIVE_CSS_ZOOM = 1.0
+
+
+def _zoomed_px(value: float) -> float:
+    """Apply the current cumulative CSS zoom to a fixed CSS-pixel value."""
+    return round(value * _ACTIVE_CSS_ZOOM, 12)
+
+
+def _effective_css_zoom(styles: dict, parent_zoom: float = 1.0) -> float:
+    """Resolve the cumulative used zoom for a generated element subtree."""
+    value = str(styles.get('zoom', 'normal')).strip().lower()
+    local_zoom = 1.0
+    try:
+        if value.endswith('%'):
+            candidate = float(value[:-1]) / 100.0
+            if candidate > 0.0:
+                local_zoom = candidate
+        elif value not in ('', 'normal', 'reset'):
+            candidate = float(value)
+            if candidate > 0.0:
+                local_zoom = candidate
+    except ValueError:
+        pass
+    return parent_zoom * local_zoom
 
 
 def parse_length(value: str, font_size: float = 16.0) -> str | None:
@@ -387,52 +455,53 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
         return 'Length::none()'
     m = re.match(r'^(-?[\d.]+)px$', value)
     if m:
-        return f'Length::px({float(m.group(1))})'
+        return f'Length::px({_zoomed_px(float(m.group(1)))})'
     m = re.match(r'^(-?[\d.]+)%$', value)
     if m:
         return f'Length::percent({float(m.group(1))})'
     m = re.match(r'^(-?[\d.]+)(ch|ex|lh)$', value, re.IGNORECASE)
     if m and is_real_font_profile() and _ACTIVE_FONT_RELATIVE_RESOLVER:
         unit = {"ch": "Ch", "ex": "Ex", "lh": "Lh"}[m.group(2).lower()]
+        zoom = f" * {_ACTIVE_CSS_ZOOM}" if _ACTIVE_CSS_ZOOM != 1.0 else ""
         return (
             "Length::px("
             f"{_ACTIVE_FONT_RELATIVE_RESOLVER}.resolve({float(m.group(1))}, "
-            f"openui_text::FontRelativeUnit::{unit}))"
+            f"openui_text::FontRelativeUnit::{unit}){zoom})"
         )
     # em → convert to px using current font-size context
     m = re.match(r'^(-?[\d.]+)em$', value)
     if m:
-        px_val = float(m.group(1)) * font_size
+        px_val = _zoomed_px(float(m.group(1)) * font_size)
         return f'Length::px({px_val})'
     # rem → always relative to root font-size (16px)
     m = re.match(r'^(-?[\d.]+)rem$', value)
     if m:
-        px_val = float(m.group(1)) * 16.0
+        px_val = _zoomed_px(float(m.group(1)) * 16.0)
         return f'Length::px({px_val})'
     # in → inches (1in = 96px)
     m = re.match(r'^(-?[\d.]+)in$', value)
     if m:
-        px_val = float(m.group(1)) * 96.0
+        px_val = _zoomed_px(float(m.group(1)) * 96.0)
         return f'Length::px({px_val})'
     # cm → centimeters (1cm = 37.795px)
     m = re.match(r'^(-?[\d.]+)cm$', value)
     if m:
-        px_val = float(m.group(1)) * 37.7952755906
+        px_val = _zoomed_px(float(m.group(1)) * 37.7952755906)
         return f'Length::px({round(px_val, 4)})'
     # mm → millimeters (1mm = 3.7795px)
     m = re.match(r'^(-?[\d.]+)mm$', value)
     if m:
-        px_val = float(m.group(1)) * 3.77952755906
+        px_val = _zoomed_px(float(m.group(1)) * 3.77952755906)
         return f'Length::px({round(px_val, 4)})'
     # pt → points (1pt = 1.333px)
     m = re.match(r'^(-?[\d.]+)pt$', value)
     if m:
-        px_val = float(m.group(1)) * (96.0 / 72.0)
+        px_val = _zoomed_px(float(m.group(1)) * (96.0 / 72.0))
         return f'Length::px({round(px_val, 4)})'
     # pc → picas (1pc = 16px)
     m = re.match(r'^(-?[\d.]+)pc$', value)
     if m:
-        px_val = float(m.group(1)) * 16.0
+        px_val = _zoomed_px(float(m.group(1)) * 16.0)
         return f'Length::px({px_val})'
     # Keyword lengths
     if value == 'min-content':
@@ -448,11 +517,11 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
     # vw/vh — approximate as % of 800x600 viewport
     m = re.match(r'^(-?[\d.]+)vw$', value)
     if m:
-        px_val = float(m.group(1)) * 8.0  # 800px viewport
+        px_val = _zoomed_px(float(m.group(1)) * 8.0)  # 800px viewport
         return f'Length::px({px_val})'
     m = re.match(r'^(-?[\d.]+)vh$', value)
     if m:
-        px_val = float(m.group(1)) * 6.0  # 600px viewport
+        px_val = _zoomed_px(float(m.group(1)) * 6.0)  # 600px viewport
         return f'Length::px({px_val})'
     # calc() — pre-evaluate pure-px expressions
     m = re.match(r'^calc\((.+)\)$', value)
@@ -501,7 +570,7 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
     if '%' not in pure and 'vw' not in pure and 'vh' not in pure:
         try:
             result = eval(pure, {"__builtins__": {}}, {})
-            return f'Length::px({float(result):.6f})'
+            return f'Length::px({_zoomed_px(float(result)):.6f})'
         except:
             pass
 
@@ -568,10 +637,10 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
             sign = 1.0
 
     if pct_total == 0.0:
-        return f'Length::px({px_total:.6f})'
+        return f'Length::px({_zoomed_px(px_total):.6f})'
     if px_total == 0.0:
         return f'Length::percent({pct_total:.6f})'
-    return f'Length::calc_percent_px({pct_total:.6f}, {px_total:.6f})'
+    return f'Length::calc_percent_px({pct_total:.6f}, {_zoomed_px(px_total):.6f})'
 
 
 def _resolve_css_vars(value: str, custom_props: dict[str, str]) -> str:
@@ -858,8 +927,173 @@ def parse_font_shorthand(value: str) -> OrderedDict:
     return longhands
 
 
+_CSS_WIDE = {'inherit', 'initial', 'unset', 'revert', 'revert-layer'}
+_COLUMN_RULE_STYLES = {
+    'none', 'hidden', 'dotted', 'dashed', 'solid', 'double',
+    'groove', 'ridge', 'inset', 'outset',
+}
+
+
+def _nonnegative_css_length(value: str, *, strictly_positive: bool = False) -> bool:
+    """Validate the corpus-used non-negative <length-percentage> grammar."""
+    value = value.strip().lower()
+    if value in _CSS_WIDE:
+        return True
+    if value.startswith(('calc(', 'min(', 'max(', 'clamp(')):
+        # Functional values are validated by Chromium before reaching the
+        # generated snapshot.  Reject only a statically evident negative.
+        return not re.match(r'^(?:calc|min|max|clamp)\(\s*-', value)
+    match = re.fullmatch(r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))(px|em|rem|%|pt|pc|in|cm|mm|q)?', value)
+    if not match:
+        return False
+    number = float(match.group(1))
+    if match.group(2) is None and number != 0:
+        return False
+    return number > 0 if strictly_positive else number >= 0
+
+
+def _parse_columns_shorthand(value: str) -> OrderedDict | None:
+    """Return transactional longhands for a valid `columns` declaration."""
+    value = value.strip().lower()
+    if value in _CSS_WIDE:
+        computed = 'auto' if value in {'initial', 'unset', 'revert', 'revert-layer'} else value
+        return OrderedDict((('column-width', computed), ('column-count', computed)))
+
+    height = None
+    if '/' in value:
+        if value.count('/') != 1:
+            return None
+        value, height = (part.strip() for part in value.split('/', 1))
+        if not _nonnegative_css_length(height):
+            return None
+    parts = value.split()
+    if not 1 <= len(parts) <= 2:
+        return None
+    count = None
+    width = None
+    auto_count = 0
+    for part in parts:
+        if part == 'auto':
+            auto_count += 1
+        elif re.fullmatch(r'\+?\d+', part) and int(part) >= 1:
+            if count is not None:
+                return None
+            count = str(int(part))
+        elif '%' not in part and _nonnegative_css_length(part):
+            if width is not None:
+                return None
+            width = part
+        else:
+            return None
+    if count is not None and width is not None and auto_count:
+        return None
+    if auto_count > 1 or (auto_count and len(parts) == 2 and count is None and width is None):
+        return None
+    longhands = OrderedDict((('column-width', width or 'auto'), ('column-count', count or 'auto')))
+    if height is not None:
+        longhands['column-height'] = height
+    return longhands
+
+
+def _parse_column_rule_shorthand(value: str) -> OrderedDict | None:
+    """Return reset-and-set longhands for a valid `column-rule` declaration."""
+    value = value.strip().lower()
+    if value in _CSS_WIDE:
+        if value in {'initial', 'unset', 'revert', 'revert-layer'}:
+            return OrderedDict((
+                ('column-rule-width', 'medium'),
+                ('column-rule-style', 'none'),
+                ('column-rule-color', 'currentcolor'),
+            ))
+        return OrderedDict((
+            ('column-rule-width', value),
+            ('column-rule-style', value),
+            ('column-rule-color', value),
+        ))
+    width = style = color = None
+    for token in value.split():
+        if token in _COLUMN_RULE_STYLES:
+            if style is not None:
+                return None
+            style = token
+        elif parse_border_width(token) is not None:
+            if width is not None:
+                return None
+            width = token
+        elif parse_color(token) is not None or token == 'currentcolor':
+            if color is not None:
+                return None
+            color = token
+        else:
+            return None
+    if not value or (width is None and style is None and color is None):
+        return None
+    return OrderedDict((
+        ('column-rule-width', width or 'medium'),
+        ('column-rule-style', style or 'none'),
+        ('column-rule-color', color or 'currentcolor'),
+    ))
+
+
+def _valid_multicol_longhand(prop: str, value: str) -> bool:
+    value = value.strip().lower()
+    if value in _CSS_WIDE:
+        return True
+    if prop == 'column-count':
+        return value == 'auto' or bool(re.fullmatch(r'\+?\d+', value) and int(value) >= 1)
+    if prop == 'column-width':
+        # CSS Multicol defines <column-width> as a <length>, not a
+        # <length-percentage>. Invalid percentages must leave the prior
+        # cascaded value untouched.
+        return value == 'auto' or (
+            '%' not in value and _nonnegative_css_length(value)
+        )
+    if prop == 'column-height':
+        return value == 'auto' or _nonnegative_css_length(value)
+    if prop in {'column-gap', 'row-gap'}:
+        return value == 'normal' or _nonnegative_css_length(value)
+    if prop == 'column-fill':
+        return value in {'auto', 'balance', 'balance-all'}
+    if prop == 'column-span':
+        return value in {'none', 'all'}
+    if prop == 'column-wrap':
+        return value in {'auto', 'wrap', 'nowrap'}
+    if prop == 'column-rule-width':
+        return parse_border_width(value) is not None
+    if prop == 'column-rule-style':
+        return value in _COLUMN_RULE_STYLES
+    if prop == 'column-rule-color':
+        return value == 'currentcolor' or parse_color(value) is not None
+    return True
+
+
+def _valid_zoom(value: str) -> bool:
+    """Validate the corpus-used CSS zoom grammar without disturbing cascade."""
+    value = value.strip().lower()
+    if value in _CSS_WIDE | {'normal', 'reset'}:
+        return True
+    match = re.fullmatch(r'([+]?(?:\d+(?:\.\d*)?|\.\d+))(%?)', value)
+    return bool(match and float(match.group(1)) > 0.0)
+
+
+def _multicol_initial_value(prop: str) -> str:
+    return {
+        'column-count': 'auto',
+        'column-width': 'auto',
+        'column-height': 'auto',
+        'column-gap': 'normal',
+        'row-gap': 'normal',
+        'column-fill': 'balance',
+        'column-span': 'none',
+        'column-wrap': 'auto',
+        'column-rule-width': 'medium',
+        'column-rule-style': 'none',
+        'column-rule-color': 'currentcolor',
+    }[prop]
+
+
 def parse_inline_styles(style_str: str) -> dict:
-    """Parse a CSS style string into property:value dict."""
+    """Parse declarations transactionally, preserving the valid cascade."""
     result = OrderedDict()
     if not style_str:
         return result
@@ -870,7 +1104,31 @@ def parse_inline_styles(style_str: str) -> dict:
         prop, val = decl.split(':', 1)
         prop = prop.strip().lower()
         val = val.strip()
-        if prop == "font" and is_real_font_profile():
+        if prop == 'columns':
+            expanded = _parse_columns_shorthand(val)
+            if expanded is not None:
+                result.update(expanded)
+        elif prop == 'column-rule':
+            expanded = _parse_column_rule_shorthand(val)
+            if expanded is not None:
+                result.update(expanded)
+        elif prop.startswith('column-') or prop == 'row-gap':
+            # Invalid declarations do not replace an earlier valid declaration
+            # in the same block (CSS Cascade §5).
+            if _valid_multicol_longhand(prop, val):
+                result[prop] = (
+                    _multicol_initial_value(prop)
+                    if val.strip().lower() in {'initial', 'unset', 'revert', 'revert-layer'}
+                    else val
+                )
+        elif prop == 'zoom':
+            if _valid_zoom(val):
+                result[prop] = (
+                    'normal'
+                    if val.strip().lower() in {'initial', 'unset', 'revert', 'revert-layer'}
+                    else val
+                )
+        elif prop == "font" and is_real_font_profile():
             result.update(parse_font_shorthand(val))
         else:
             result[prop] = val
@@ -1197,32 +1455,36 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     remaining_tokens = tokens[:-1]
     ri = len(remaining_tokens) - 1
     # combinators[i] connects tokens[i] to tokens[i+1]
-    last_combinator = combinators[ri] if ri < len(combinators) else 'descendant'
-
-    # Handle sibling combinators at the rightmost position
-    if last_combinator in ('adjacent', 'general'):
-        if not preceding_siblings:
+    # Consume the complete rightmost sibling chain.  The previous
+    # implementation stopped after one combinator, so `A + B + C` was treated
+    # like `B + C` and lost the more-specific declaration in the cascade.
+    sibling_cursor = len(preceding_siblings or []) - 1
+    while ri >= 0:
+        combinator = combinators[ri] if ri < len(combinators) else 'descendant'
+        if combinator not in ('adjacent', 'general'):
+            break
+        if sibling_cursor < 0:
             return False
-        if last_combinator == 'adjacent':
-            # Must match the immediately preceding sibling
-            prev = preceding_siblings[-1]
-            if not _match_simple_selector(remaining_tokens[ri], prev[0], prev[1], prev[2]):
+        if combinator == 'adjacent':
+            prev = preceding_siblings[sibling_cursor]
+            if not _match_simple_selector(
+                    remaining_tokens[ri], prev[0], prev[1], prev[2]):
                 return False
+            sibling_cursor -= 1
         else:
-            # Must match any preceding sibling
-            found = False
-            for prev in preceding_siblings:
-                if _match_simple_selector(remaining_tokens[ri], prev[0], prev[1], prev[2]):
-                    found = True
+            matched_at = None
+            for index in range(sibling_cursor, -1, -1):
+                prev = preceding_siblings[index]
+                if _match_simple_selector(
+                        remaining_tokens[ri], prev[0], prev[1], prev[2]):
+                    matched_at = index
                     break
-            if not found:
+            if matched_at is None:
                 return False
+            sibling_cursor = matched_at - 1
         ri -= 1
-        if ri < 0:
-            return True
-        # Remaining tokens above the sibling combinator apply to ancestor context
-        # (e.g., "div > .a + .b" — "div > .a" is checked via ancestors of the sibling)
-        # For simplicity, fall through to ancestor matching for remaining tokens
+    if ri < 0:
+        return True
 
     if not ancestors:
         return ri < 0
@@ -1331,6 +1593,24 @@ class WptHtmlParser(HTMLParser):
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
                  'base', 'embed', 'param', 'source', 'track', 'wbr'}
 
+    # Starting one of these elements implicitly closes an open paragraph in
+    # the HTML tree builder.  Python's HTMLParser is only a tokenizer and does
+    # not perform that repair itself, so without it valid WPT markup such as
+    # ``<p>instructions<div id=test>`` incorrectly nests the entire test in
+    # the instructional paragraph that the porter later prunes.
+    P_IMPLICIT_END_TAGS = {
+        'address', 'article', 'aside', 'blockquote', 'div', 'dl', 'fieldset',
+        'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header',
+        'hgroup', 'hr', 'main', 'menu', 'nav', 'ol', 'p', 'pre', 'section',
+        'table', 'ul',
+    }
+
+    def _close_open_paragraph(self):
+        for index in range(len(self.stack) - 1, 0, -1):
+            if self.stack[index].tag == 'p':
+                del self.stack[index:]
+                return
+
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
 
@@ -1381,6 +1661,9 @@ class WptHtmlParser(HTMLParser):
         if not self.in_body:
             self.in_body = True
 
+        if tag in self.P_IMPLICIT_END_TAGS:
+            self._close_open_paragraph()
+
         styles = parse_inline_styles(attrs_dict.get('style', ''))
         # HTML's legacy ``clear=all`` spelling computes to ``clear:both``.
         # Preserve it as style so the semantic Break node participates in the
@@ -1426,8 +1709,19 @@ class WptHtmlParser(HTMLParser):
         if self.skip_depth > 0:
             self.skip_depth -= 1
             return
-        if len(self.stack) > 1:
-            self.stack.pop()
+        # HTML §13.2.6.4.7: an end tag for `p` with no paragraph in button
+        # scope first inserts an empty paragraph, then closes it.  This is
+        # observable in layout because the implied block splits the
+        # surrounding inline formatting context.
+        if tag == 'p' and not any(node.tag == 'p' for node in self.stack[1:]):
+            self.handle_starttag('p', [])
+        # Pop through the matching element.  A blind single pop corrupts the
+        # tree after an implicit paragraph close or any other recoverable HTML
+        # end-tag mismatch.
+        for index in range(len(self.stack) - 1, 0, -1):
+            if self.stack[index].tag == tag:
+                del self.stack[index:]
+                break
 
     def handle_data(self, data):
         if self.in_style:
@@ -1451,7 +1745,10 @@ class WptHtmlParser(HTMLParser):
                 node.text_content = data
                 self.stack[-1].children.append(node)
             return
-        text = data.strip()
+        # HTML's collapsible source whitespace excludes U+00A0.  Python's
+        # generic `str.strip()` includes it, which erased a layout-bearing
+        # non-breaking space in the legacy box profile.
+        text = data.strip(' \t\n\r\f')
         if text and self.in_body:
             node = DomNode('#text', {}, {})
             node.is_text = True
@@ -1528,7 +1825,10 @@ class WptHtmlParser(HTMLParser):
 
 def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
     """Parse a WPT HTML file and return the parser with DOM tree."""
-    with open(html_path, 'r', encoding='utf-8', errors='replace') as f:
+    # Decode a leading UTF-8 BOM as an encoding signature.  Leaving U+FEFF in
+    # the character stream makes HTMLParser synthesize body text before the
+    # doctype, which later creates a spurious line box in generated fixtures.
+    with open(html_path, 'r', encoding='utf-8-sig', errors='replace') as f:
         content = f.read()
 
     parser = WptHtmlParser(root_aware=root_aware)
@@ -1539,7 +1839,7 @@ def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser
     for href in parser.external_stylesheet_hrefs:
         css_path = os.path.join(parser.html_dir, href)
         if os.path.isfile(css_path):
-            with open(css_path, 'r', encoding='utf-8', errors='replace') as f:
+            with open(css_path, 'r', encoding='utf-8-sig', errors='replace') as f:
                 css_text = f.read()
             rules = parse_simple_css_rules(css_text)
             parser.external_css_rules.extend(rules)
@@ -1708,7 +2008,7 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
         'pt': 96.0 / 72.0,
         'pc': 16.0,
     }
-    return num * factors[unit]
+    return _zoomed_px(num * factors[unit])
 
 
 def _split_css_layers(value: str) -> list[str]:
@@ -1729,6 +2029,103 @@ def _split_css_layers(value: str) -> list[str]:
     if current:
         layers.append(''.join(current).strip())
     return layers
+
+
+def _linear_gradient_function(value: str) -> tuple[str, str, bool] | None:
+    """Return a linear-gradient argument list and the remaining shorthand."""
+    match = re.search(
+        r'(?P<repeating>repeating-)?linear-gradient\s*\(',
+        value,
+        re.IGNORECASE,
+    )
+    if not match:
+        return None
+    depth = 1
+    index = match.end()
+    while index < len(value) and depth:
+        if value[index] == '(':
+            depth += 1
+        elif value[index] == ')':
+            depth -= 1
+        index += 1
+    if depth:
+        return None
+    args = value[match.end():index - 1]
+    remainder = (value[:match.start()] + ' ' + value[index:]).strip()
+    return args, remainder, match.group('repeating') is not None
+
+
+def _linear_gradient_rust(value: str) -> str | None:
+    """Parse the ordinary linear-gradient subset into a computed-style value."""
+    extracted = _linear_gradient_function(value)
+    if extracted is None:
+        return None
+    args, _, repeating = extracted
+    parts = _split_css_layers(args)
+    if len(parts) < 2:
+        return None
+
+    angle = 180.0
+    direction = parts[0].strip().lower()
+    if direction.endswith('deg'):
+        try:
+            angle = float(direction[:-3]) % 360.0
+            parts = parts[1:]
+        except ValueError:
+            return None
+    elif direction.startswith('to '):
+        directions = {
+            'to top': 0.0,
+            'to right': 90.0,
+            'to bottom': 180.0,
+            'to left': 270.0,
+        }
+        if direction not in directions:
+            return None
+        angle = directions[direction]
+        parts = parts[1:]
+
+    stops = []
+    for part in parts:
+        tokens = _split_respecting_parens(part.strip())
+        if not tokens:
+            return None
+        color = parse_color(tokens[0])
+        if color is None:
+            return None
+        position = 'GradientStopPosition::Auto'
+        if len(tokens) >= 2:
+            raw_position = tokens[1].strip().lower()
+            try:
+                if raw_position.endswith('%'):
+                    position = (
+                        'GradientStopPosition::Percent('
+                        f'{float(raw_position[:-1])})'
+                    )
+                elif raw_position.endswith('px'):
+                    position = (
+                        'GradientStopPosition::Px('
+                        f'{float(raw_position[:-2])})'
+                    )
+                elif raw_position == '0':
+                    position = 'GradientStopPosition::Px(0.0)'
+                else:
+                    return None
+            except ValueError:
+                return None
+        stops.append(
+            'LinearGradientStop { '
+            f'color: {color}, position: {position} '
+            '}'
+        )
+    if len(stops) < 2:
+        return None
+    return (
+        'Some(LinearGradient { '
+        f'angle_degrees: {angle}, repeating: {str(repeating).lower()}, '
+        f'stops: vec![{", ".join(stops)}] '
+        '})'
+    )
 
 
 def _select_background_clip_layer(styles: dict, value: str) -> str:
@@ -1934,7 +2331,12 @@ def _computed_inherited_line_height(value: str, font_size: float) -> str:
     raise UnsupportedFontShorthand(f"unsupported inherited line-height: {value}")
 
 
-def generate_style_code(styles: dict, var_name: str, inherited_font_size: float = 16.0) -> list[str]:
+def generate_style_code(
+    styles: dict,
+    var_name: str,
+    inherited_font_size: float = 16.0,
+    effective_zoom: float = 1.0,
+) -> list[str]:
     """Generate Rust code lines to set style properties on a node.
     
     inherited_font_size: font-size in px inherited from parent for em resolution.
@@ -1995,36 +2397,44 @@ def generate_style_code(styles: dict, var_name: str, inherited_font_size: float 
                             elif fs_val == '0':
                                 font_size = 0.0
 
-    radius_basis = _border_radius_basis(styles, font_size)
+    global _ACTIVE_CSS_ZOOM, _ACTIVE_FONT_RELATIVE_RESOLVER
+    previous_zoom = _ACTIVE_CSS_ZOOM
+    previous_resolver = _ACTIVE_FONT_RELATIVE_RESOLVER
+    _ACTIVE_CSS_ZOOM = effective_zoom
+    try:
+        radius_basis = _border_radius_basis(styles, font_size)
 
-    font_props = {
-        'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch',
-        'font-variant-caps', 'line-height',
-    }
-    if is_real_font_profile():
-        for prop in (
+        font_props = {
             'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch',
             'font-variant-caps', 'line-height',
-        ):
-            if prop in styles:
-                code = generate_single_style(prop, styles[prop], s, font_size, radius_basis)
-                if code:
-                    lines.extend(code if isinstance(code, list) else [code])
+        }
+        if is_real_font_profile():
+            for prop in (
+                'font-family', 'font-size', 'font-weight', 'font-style', 'font-stretch',
+                'font-variant-caps', 'line-height',
+            ):
+                if prop in styles:
+                    code = generate_single_style(prop, styles[prop], s, font_size, radius_basis)
+                    if code:
+                        lines.extend(code if isinstance(code, list) else [code])
 
-    global _ACTIVE_FONT_RELATIVE_RESOLVER
-    previous_resolver = _ACTIVE_FONT_RELATIVE_RESOLVER
-    has_relative_lengths = is_real_font_profile() and any(
-        re.search(r'(?<![\w-])[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:ch|ex|lh)\b', str(value), re.I)
-        for value in styles.values()
-    )
-    if has_relative_lengths:
-        resolver = f"{var_name}_font_relative"
-        lines.append(
-            f"let {resolver} = openui_text::FontRelativeLengthResolver::from_style(&doc.node({var_name}).style);"
+        has_relative_lengths = is_real_font_profile() and any(
+            re.search(
+                r'(?<![\w-])[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:ch|ex|lh)\b',
+                str(value),
+                re.I,
+            )
+            for value in styles.values()
         )
-        _ACTIVE_FONT_RELATIVE_RESOLVER = resolver
-    try:
+        if has_relative_lengths:
+            resolver = f"{var_name}_font_relative"
+            lines.append(
+                f"let {resolver} = openui_text::FontRelativeLengthResolver::from_style(&doc.node({var_name}).style);"
+            )
+            _ACTIVE_FONT_RELATIVE_RESOLVER = resolver
         for prop, val in styles.items():
+            if prop == 'zoom':
+                continue
             if is_real_font_profile() and prop in font_props:
                 continue
             if prop == 'background-clip':
@@ -2032,8 +2442,27 @@ def generate_style_code(styles: dict, var_name: str, inherited_font_size: float 
             code = generate_single_style(prop, val, s, font_size, radius_basis)
             if code:
                 lines.extend(code if isinstance(code, list) else [code])
+
+        # CSS display blockification is part of the computed value of floated
+        # boxes. Generated builders store computed styles, so materialize it
+        # after author declarations rather than teaching layout about authored
+        # inline display values.
+        if styles.get('float', '').strip() in ('left', 'right'):
+            display = styles.get('display', 'inline').strip()
+            if display in ('', 'inline', 'inline-block'):
+                lines.append(f"{s}.display = Display::Block;")
+            elif display == 'inline-flex':
+                lines.append(f"{s}.display = Display::Flex;")
+
+        # The Rust style model intentionally has no CSS zoom field. Lower the
+        # cumulative used zoom into fixed geometry and the physical font size.
+        # Font inheritance continues to use the unzoomed computed size returned
+        # below, while every box in the zoomed subtree receives the same scale.
+        if effective_zoom != 1.0:
+            lines.append(f"{s}.font_size = {_zoomed_px(font_size)};")
     finally:
         _ACTIVE_FONT_RELATIVE_RESOLVER = previous_resolver
+        _ACTIVE_CSS_ZOOM = previous_zoom
 
     return lines, font_size
 
@@ -2149,19 +2578,21 @@ def generate_single_style(
 
     # ── border shorthand (e.g. "1px solid red") ──
     if prop == 'border':
-        return generate_border_shorthand(val, s, ['top', 'right', 'bottom', 'left'])
+        return generate_border_shorthand(
+            val, s, ['top', 'right', 'bottom', 'left'], font_size
+        )
 
     if prop in ('border-top', 'border-right', 'border-bottom', 'border-left'):
         side = prop.split('-')[1]
-        return generate_border_shorthand(val, s, [side])
+        return generate_border_shorthand(val, s, [side], font_size)
 
     # ── border-width shorthand ──
     if prop == 'border-width':
-        return generate_border_width_shorthand(val, s)
+        return generate_border_width_shorthand(val, s, font_size)
 
     # ── border-width sides ──
     if prop in ('border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'):
-        px_val = parse_border_width(val)
+        px_val = parse_border_width(val, font_size)
         if px_val is not None:
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {px_val};"
@@ -2374,18 +2805,37 @@ def generate_single_style(
         if val.strip() in mapping:
             return f"{s}.background_attachment = {mapping[val.strip()]};"
 
+    if prop == 'background-image':
+        if val.strip() == 'none':
+            return f"{s}.background_linear_gradient = None;"
+        gradient = _linear_gradient_rust(val)
+        if gradient:
+            return f"{s}.background_linear_gradient = {gradient};"
+
     # ── background shorthand — extract color component ──
     if prop == 'background':
         # background: none → treat as transparent
         if val.strip() == 'none' or val.strip() == 'none, none':
-            return f"{s}.background_color = Color::TRANSPARENT;"
+            return [
+                f"{s}.background_color = Color::TRANSPARENT;",
+                f"{s}.background_linear_gradient = None;",
+            ]
         # Try parsing entire value as color first (simplest case)
         color = parse_color(val)
         if color:
-            return f"{s}.background_color = {color};"
+            return [
+                f"{s}.background_color = {color};",
+                f"{s}.background_linear_gradient = None;",
+            ]
+        lines = []
+        gradient = _linear_gradient_rust(val)
+        gradient_function = _linear_gradient_function(val)
+        if gradient:
+            lines.append(f"{s}.background_linear_gradient = {gradient};")
         # Try extracting color from complex shorthand
         # background: <color> url(...) ... or <color> <other>
-        parts = val.split()
+        remainder = gradient_function[1] if gradient_function else val
+        parts = remainder.split()
         for part in parts:
             part = part.strip()
             if part.startswith('url(') or part.startswith('no-repeat') or part.startswith('repeat'):
@@ -2398,7 +2848,10 @@ def generate_single_style(
                 continue
             color = parse_color(part)
             if color:
-                return f"{s}.background_color = {color};"
+                lines.append(f"{s}.background_color = {color};")
+                break
+        if lines:
+            return lines
 
     # ── color ──
     if prop == 'color':
@@ -2736,7 +3189,11 @@ def generate_single_style(
             return f"{s}.column_height = Some({length});"
 
     if prop == 'column-fill':
-        mapping = {'balance': 'ColumnFill::Balance', 'auto': 'ColumnFill::Auto'}
+        mapping = {
+            'balance': 'ColumnFill::Balance',
+            'balance-all': 'ColumnFill::BalanceAll',
+            'auto': 'ColumnFill::Auto',
+        }
         if val in mapping:
             return f"{s}.column_fill = {mapping[val]};"
 
@@ -2749,6 +3206,11 @@ def generate_single_style(
         mapping = {'none': 'ColumnSpan::None', 'all': 'ColumnSpan::All'}
         if val in mapping:
             return f"{s}.column_span = {mapping[val]};"
+
+    if prop == 'ruby-position':
+        mapping = {'over': 'RubyPosition::Over', 'under': 'RubyPosition::Under'}
+        if val in mapping:
+            return f"{s}.ruby_position = {mapping[val]};"
 
     # ── line-height ──
     if prop == 'line-height':
@@ -2821,6 +3283,15 @@ def generate_single_style(
         }
         if val in mapping:
             return f"{s}.white_space = {mapping[val]};"
+
+    # ── word-break ──
+    if prop == 'word-break':
+        mapping = {
+            'normal': 'WordBreak::Normal', 'break-all': 'WordBreak::BreakAll',
+            'keep-all': 'WordBreak::KeepAll', 'break-word': 'WordBreak::BreakWord',
+        }
+        if val in mapping:
+            return f"{s}.word_break = {mapping[val]};"
 
     # ── vertical-align ──
     if prop == 'vertical-align':
@@ -2895,14 +3366,16 @@ def generate_single_style(
             bstyle = border_style_to_rust(part)
             if bstyle:
                 lines.append(f"{s}.column_rule_style = {bstyle};")
-            elif parse_border_width(part) is not None:
-                lines.append(f"{s}.column_rule_width = {parse_border_width(part)};")
+            elif parse_border_width(part, font_size) is not None:
+                lines.append(
+                    f"{s}.column_rule_width = {parse_border_width(part, font_size)};"
+                )
             elif parse_color(part):
                 lines.append(f"{s}.column_rule_color = StyleColor::Resolved({parse_color(part)});")
         return lines if lines else None
 
     if prop == 'column-rule-width':
-        px_val = parse_border_width(val)
+        px_val = parse_border_width(val, font_size)
         if px_val is not None:
             return f"{s}.column_rule_width = {px_val};"
 
@@ -3090,7 +3563,7 @@ def generate_single_style(
                  'border-block-start': ['top'], 'border-block-end': ['bottom']}[prop]
         lines = []
         for part in val.split():
-            bw = parse_border_width(part)
+            bw = parse_border_width(part, font_size)
             if bw:
                 for side in sides:
                     lines.append(f"{s}.border_{side}_width = {bw};")
@@ -3117,7 +3590,7 @@ def generate_single_style(
         'border-inline-end-width': ['border_right_width'],
     }
     if prop in _border_width_logical_map:
-        bw = parse_border_width(val.strip())
+        bw = parse_border_width(val.strip(), font_size)
         if bw:
             return [f"{s}.{p} = {bw};" for p in _border_width_logical_map[prop]]
 
@@ -3393,9 +3866,11 @@ def border_style_to_rust(val: str) -> str | None:
     return mapping.get(val.strip())
 
 
-def generate_border_shorthand(val: str, s: str, sides: list) -> list[str] | None:
+def generate_border_shorthand(
+    val: str, s: str, sides: list, font_size: float = 16.0
+) -> list[str] | None:
     """Parse 'border: 1px solid red' shorthand."""
-    parts = val.split()
+    parts = _split_respecting_parens(val)
     width = None
     style = None
     color = None
@@ -3406,8 +3881,8 @@ def generate_border_shorthand(val: str, s: str, sides: list) -> list[str] | None
             continue
         if border_style_to_rust(part):
             style = border_style_to_rust(part)
-        elif parse_border_width(part) is not None:
-            width = parse_border_width(part)
+        elif parse_border_width(part, font_size) is not None:
+            width = parse_border_width(part, font_size)
         elif parse_color(part):
             color = parse_color(part)
 
@@ -3422,16 +3897,18 @@ def generate_border_shorthand(val: str, s: str, sides: list) -> list[str] | None
     return lines if lines else None
 
 
-def generate_border_width_shorthand(val: str, s: str) -> list[str] | None:
+def generate_border_width_shorthand(
+    val: str, s: str, font_size: float = 16.0
+) -> list[str] | None:
     """Parse 'border-width: 1px 2px 3px 4px' shorthand to i32."""
     parts = val.split()
     if len(parts) == 1:
-        w = parse_border_width(parts[0])
+        w = parse_border_width(parts[0], font_size)
         if w is not None:
             return [f"{s}.border_{side}_width = {w};" for side in ['top', 'right', 'bottom', 'left']]
     elif len(parts) == 2:
-        tb = parse_border_width(parts[0])
-        lr = parse_border_width(parts[1])
+        tb = parse_border_width(parts[0], font_size)
+        lr = parse_border_width(parts[1], font_size)
         if tb is not None and lr is not None:
             return [
                 f"{s}.border_top_width = {tb};",
@@ -3440,9 +3917,9 @@ def generate_border_width_shorthand(val: str, s: str) -> list[str] | None:
                 f"{s}.border_left_width = {lr};",
             ]
     elif len(parts) == 3:
-        top = parse_border_width(parts[0])
-        lr = parse_border_width(parts[1])
-        bottom = parse_border_width(parts[2])
+        top = parse_border_width(parts[0], font_size)
+        lr = parse_border_width(parts[1], font_size)
+        bottom = parse_border_width(parts[2], font_size)
         if top is not None and lr is not None and bottom is not None:
             return [
                 f"{s}.border_top_width = {top};",
@@ -3451,7 +3928,7 @@ def generate_border_width_shorthand(val: str, s: str) -> list[str] | None:
                 f"{s}.border_left_width = {lr};",
             ]
     elif len(parts) == 4:
-        ws = [parse_border_width(p) for p in parts]
+        ws = [parse_border_width(p, font_size) for p in parts]
         if all(w is not None for w in ws):
             sides = ['top', 'right', 'bottom', 'left']
             return [f"{s}.border_{side}_width = {ws[i]};" for i, side in enumerate(sides)]
@@ -3733,6 +4210,17 @@ def _computed_border_radius(styles: dict[str, str]) -> dict[str, str] | None:
 _INLINE_LEVEL_TAGS = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small',
                       'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark',
                       'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'br'}
+_CSS_COLLAPSIBLE_WHITESPACE = ' \t\n\r\f'
+
+
+def _is_css_whitespace_only(text: str) -> bool:
+    """Whether text contains only CSS-collapsible whitespace characters.
+
+    Python's ``str.strip`` also treats U+00A0 NO-BREAK SPACE as whitespace,
+    but CSS Text does not collapse it.  Keeping that distinction here is
+    essential because a lone ``&nbsp;`` creates a real line box.
+    """
+    return all(ch in _CSS_COLLAPSIBLE_WHITESPACE for ch in text)
 
 
 def _subtree_text(node) -> str:
@@ -3747,7 +4235,8 @@ def _is_inline_level(node) -> bool:
     if node is None:
         return False
     if getattr(node, 'is_text', False):
-        return bool((getattr(node, 'text_content', '') or '').strip())
+        text = getattr(node, 'text_content', '') or ''
+        return bool(text) and not _is_css_whitespace_only(text)
     display = (node.styles or {}).get('display', '').strip()
     if display:
         return display.startswith('inline')
@@ -3767,7 +4256,10 @@ def _filter_ws_only_text_nodes(node):
     children = node.children
     parent_display = (node.styles or {}).get('display', '').strip()
     for i, c in enumerate(children):
-        if getattr(c, 'is_text', False) and not (getattr(c, 'text_content', '') or '').strip():
+        if (
+            getattr(c, 'is_text', False)
+            and _is_css_whitespace_only(getattr(c, 'text_content', '') or '')
+        ):
             # Collapsible whitespace between flex items is not wrapped in an
             # anonymous flex item and contributes no flex base size.
             if parent_display in ('flex', 'inline-flex'):
@@ -3797,9 +4289,13 @@ def generate_rust_fn(
             # context disappears. Trim only boundary text nodes; separators
             # between inline siblings remain intact.
             if root.children[0].is_text:
-                root.children[0].text_content = root.children[0].text_content.lstrip()
+                root.children[0].text_content = root.children[0].text_content.lstrip(
+                    _CSS_COLLAPSIBLE_WHITESPACE
+                )
             if root.children and root.children[-1].is_text:
-                root.children[-1].text_content = root.children[-1].text_content.rstrip()
+                root.children[-1].text_content = root.children[-1].text_content.rstrip(
+                    _CSS_COLLAPSIBLE_WHITESPACE
+                )
     lines = []
     lines.append(f"fn {fn_name}() -> Document {{")
     if root_aware:
@@ -3816,13 +4312,6 @@ def generate_rust_fn(
                 '    doc.node_mut(vp).style.font_family = '
                 f'{DETERMINISTIC_FONT_FAMILY_RUST};'
             )
-        # `base_doc` uses flow-root as a convenient isolation boundary for the
-        # legacy generated corpus. The node represents HTML's body, however,
-        # whose initial display is block. That distinction is observable when
-        # body has an auto height and floated children: their overflow must not
-        # inflate body's border box. Author `display` still overrides this in
-        # the generated body style lines below.
-        lines.append('    doc.node_mut(vp).style.display = Display::Block;')
 
     # ── Body-background propagation (CSS Backgrounds §3.11.1) ──
     # If <html> has a non-transparent background, paint it on the canvas.
@@ -3868,8 +4357,9 @@ def generate_rust_fn(
         return False
 
     # CSS inherited properties that must propagate to descendants
-    INHERITED_PROPS = {'direction', 'color', 'white-space', 'text-align',
-                       'font-size', 'line-height', 'visibility'}
+    INHERITED_PROPS = {'direction', 'color', 'white-space', 'word-break', 'text-align',
+                       'font-size', 'line-height', 'visibility',
+                       'orphans', 'widows', 'ruby-position'}
     if is_real_font_profile():
         INHERITED_PROPS |= {
             'font-family', 'font-weight', 'font-style', 'font-stretch',
@@ -3880,11 +4370,24 @@ def generate_rust_fn(
     EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {
         'background', 'background-color', 'background-clip', 'font-family',
         'list-style-position',
+        'column-count', 'column-width', 'column-height', 'column-gap',
+        'column-fill', 'column-span', 'column-wrap',
+        'column-rule-width', 'column-rule-style', 'column-rule-color',
     }
     EXPLICIT_NON_INHERITED_INITIALS = {
         'background': 'transparent',
         'background-color': 'transparent',
         'background-clip': 'border-box',
+        'column-count': 'auto',
+        'column-width': 'auto',
+        'column-height': 'auto',
+        'column-gap': 'normal',
+        'column-fill': 'balance',
+        'column-span': 'none',
+        'column-wrap': 'auto',
+        'column-rule-width': 'medium',
+        'column-rule-style': 'none',
+        'column-rule-color': 'currentcolor',
     }
     REAL_FONT_INITIALS = {
         'font-family': 'sans-serif',
@@ -3921,7 +4424,8 @@ def generate_rust_fn(
 
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
-                 custom_props: dict[str, str] | None = None):
+                 custom_props: dict[str, str] | None = None,
+                 parent_zoom: float = 1.0):
         if inherited is None:
             inherited = {}
         if custom_props is None:
@@ -3932,12 +4436,17 @@ def generate_rust_fn(
             # skip (legacy box-only behavior, default — keeps the passing corpus
             # byte-identical). `text_content` is already whitespace-stripped; our
             # inline layout performs CSS white-space processing on the content.
-            if EMIT_TEXT_NODES:
-                text = getattr(node, 'text_content', '') or ''
+            text = getattr(node, 'text_content', '') or ''
+            structural_nbsp = (
+                not EMIT_TEXT_NODES
+                and '\u00a0' in text
+                and not text.replace('\u00a0', '').strip()
+            )
+            if EMIT_TEXT_NODES or structural_nbsp:
                 # In text mode whitespace-only nodes between inline siblings are
                 # significant (word separators) — the block-context ones were
                 # already dropped by _filter_ws_only_text_nodes.
-                if text.strip() or (RETAIN_TEXT and text):
+                if text.strip() or (RETAIN_TEXT and text) or structural_nbsp:
                     counter[0] += 1
                     tvar = f"n{counter[0]}"
                     ws = "    " * indent
@@ -3947,7 +4456,10 @@ def generate_rust_fn(
                     # in the builder path), so set the effective inherited font
                     # and color explicitly on the emitted Text node.
                     ts = f"doc.node_mut({tvar}).style"
-                    lines.append(f"{ws}{ts}.font_size = {float(parent_font_size)};")
+                    lines.append(
+                        f"{ws}{ts}.font_size = "
+                        f"{round(float(parent_font_size) * parent_zoom, 12)};"
+                    )
                     if RETAIN_TEXT and not is_real_font_profile():
                         # Deterministic-font mode: every glyph renders as Ahem on
                         # both sides (TEXT_TEMPLATE_OVERRIDE forces it in Chrome).
@@ -3970,7 +4482,7 @@ def generate_rust_fn(
                         # transform / spacing from the item's own style.
                         for prop in (
                             'font-weight', 'font-style', 'font-stretch',
-                            'font-variant-caps', 'white-space', 'line-height',
+                            'font-variant-caps', 'white-space', 'word-break', 'line-height',
                             'text-transform', 'letter-spacing', 'word-spacing',
                         ):
                             if prop in inherited:
@@ -3990,6 +4502,13 @@ def generate_rust_fn(
             has_real_styles = _has_meaningful_styles(node.styles)
             skip_self = False
             skip_subtree = False
+            # The Chrome template removes instructional pass-condition
+            # paragraphs before its text-stripping pass.  Keep the generated
+            # document tree identical in every porter profile, including the
+            # box-only profiles where the paragraph itself may be styled even
+            # though none of its text is emitted.
+            if node.tag == 'p' and 'test passes' in _subtree_text(node).lower():
+                skip_subtree = True
             if RETAIN_TEXT:
                 # Text mode keeps wrapper elements (their text is content) but
                 # mirrors the Chrome template's stripping exactly:
@@ -3997,9 +4516,7 @@ def generate_rust_fn(
                 #    sides (template regex strip);
                 #  - unstyled headings carry UA font styling we don't replicate,
                 #    so both sides drop the whole subtree.
-                if node.tag == 'p' and 'test passes' in _subtree_text(node).lower():
-                    skip_subtree = True
-                elif node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6') and not has_real_styles:
+                if node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6') and not has_real_styles:
                     skip_subtree = True
             else:
                 # Skip unstyled wrapper/heading elements but still process their
@@ -4028,7 +4545,10 @@ def generate_rust_fn(
                     if prop.startswith('--'):
                         child_custom_props[prop] = val
                 for child in node.children:
-                    gen_node(child, parent_var, indent, parent_font_size, child_inherited, child_custom_props)
+                    gen_node(
+                        child, parent_var, indent, parent_font_size,
+                        child_inherited, child_custom_props, parent_zoom,
+                    )
                 return
 
         if (
@@ -4051,7 +4571,10 @@ def generate_rust_fn(
                 ws = "    " * indent
                 lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Text);")
                 bs = f"doc.node_mut({bvar}).style"
-                lines.append(f"{ws}{bs}.font_size = {float(parent_font_size)};")
+                lines.append(
+                    f"{ws}{bs}.font_size = "
+                    f"{round(float(parent_font_size) * parent_zoom, 12)};"
+                )
                 if is_real_font_profile():
                     family = _font_family_to_rust(inherited.get('font-family', 'sans-serif'))
                     lines.append(f"{ws}{bs}.font_family = {family};")
@@ -4073,6 +4596,17 @@ def generate_rust_fn(
                         for cl in (code if isinstance(code, list) else [code]):
                             lines.append(f"{ws}{cl}")
                 lines.append(f'{ws}doc.node_mut({bvar}).text = Some("\\n".to_string());')
+                lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
+            else:
+                # Box-only generation may omit glyph-bearing text, but a BR
+                # remains a forced fragmentation opportunity even when it has
+                # no painted content. Keep that structural effect in parity
+                # with the Chrome template, which has always retained BRs.
+                counter[0] += 1
+                bvar = f"n{counter[0]}"
+                ws = "    " * indent
+                lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Break);")
+                lines.append(f"{ws}doc.node_mut({bvar}).style.display = Display::Inline;")
                 lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
             return
 
@@ -4097,8 +4631,9 @@ def generate_rust_fn(
                 if isinstance(val, str) and not prop.startswith('--'):
                     effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
 
+            contents_zoom = _effective_css_zoom(effective_styles, parent_zoom)
             _ignored_lines, contents_font_size = generate_style_code(
-                effective_styles, parent_var, parent_font_size
+                effective_styles, parent_var, parent_font_size, contents_zoom
             )
             child_inherited = _computed_child_boundary(inherited)
             contents_inherit_props = EXPLICIT_INHERIT_PROPS | TEXT_EXTRA_INHERITED
@@ -4130,6 +4665,7 @@ def generate_rust_fn(
                     contents_font_size,
                     child_inherited,
                     node_custom_props,
+                    contents_zoom,
                 )
             return
 
@@ -4139,7 +4675,11 @@ def generate_rust_fn(
 
         # Map HTML tag to ElementTag
         inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp'}
-        if node.tag in inline_tags or node.tag == 'style':
+        if node.tag == 'ruby':
+            element_tag = "ElementTag::Ruby"
+        elif node.tag == 'rt':
+            element_tag = "ElementTag::RubyText"
+        elif node.tag in inline_tags or node.tag == 'style':
             element_tag = "ElementTag::Span"
         elif node.tag == 'br':
             element_tag = "ElementTag::Break"
@@ -4151,6 +4691,12 @@ def generate_rust_fn(
                 f'{ws}doc.node_mut({var}).style.font_family = '
                 f'{DETERMINISTIC_FONT_FAMILY_RUST};'
             )
+            # TEXT_TEMPLATE_OVERRIDE applies `list-style:none !important` to
+            # `body, body *`. Generated styles do not inherit implicitly, so
+            # mirror that descendant-wide override on every emitted element.
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.list_style_type = ListStyleType::None;"
+            )
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Inline;")
 
@@ -4158,7 +4704,7 @@ def generate_rust_fn(
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
                       'details', 'summary', 'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                      'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'hr', 'table'}
+                      'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr', 'table'}
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
             'contents', 'list-item', 'flex', 'inline-flex',
@@ -4210,14 +4756,17 @@ def generate_rust_fn(
         if (
             RETAIN_TEXT
             and node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
-            and 'font-size' not in effective_styles
-            and 'font' not in effective_styles
+            and 'font-size' not in node.styles
+            and 'font' not in node.styles
         ):
             # Chromium's UA sheet gives headings a relative font size. Styled
             # headings are retained in deterministic-text mode, so properties
             # such as `height: 4em` must resolve against that computed size too.
-            # Store the absolute computed value: this keeps the legacy box-only
-            # generator byte-for-byte unchanged and avoids treating the UA `em`
+            # Test the authored declarations, not `effective_styles`: the
+            # real-font profile materializes inherited font-size there before
+            # this UA cascade step.  The heading rule wins over inheritance.
+            # Store the absolute computed value to keep the legacy box-only
+            # generator byte-for-byte unchanged and avoid treating the UA `em`
             # value as author CSS during code generation.
             heading_scale = {
                 'h1': 2.0,
@@ -4228,6 +4777,16 @@ def generate_rust_fn(
                 'h6': 0.67,
             }[node.tag]
             effective_styles['font-size'] = f'{parent_font_size * heading_scale}px'
+        if (
+            RETAIN_TEXT
+            and node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
+            and 'font-weight' not in node.styles
+            and 'font' not in node.styles
+        ):
+            # The UA heading rule also contributes bold weight. Materialize it
+            # for generated documents for the same reason as the relative
+            # heading size above: builders do not run a browser UA cascade.
+            effective_styles['font-weight'] = 'bold'
         if RETAIN_TEXT and effective_styles.get('border-radius', '').strip() == 'inherit':
             # The shorthand inherits the parent's four computed longhands,
             # including initial zero values for corners the parent omitted.
@@ -4251,9 +4810,21 @@ def generate_rust_fn(
                 effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
 
         # Generate style code
-        style_lines, node_font_size = generate_style_code(effective_styles, var, parent_font_size)
+        node_zoom = _effective_css_zoom(effective_styles, parent_zoom)
+        style_lines, node_font_size = generate_style_code(
+            effective_styles, var, parent_font_size, node_zoom
+        )
         for sl in style_lines:
             lines.append(f"{ws}{sl}")
+
+        if RETAIN_TEXT and not is_real_font_profile():
+            # TEXT_TEMPLATE_OVERRIDE is author-important and therefore wins
+            # over every declaration in the source test. Materialize those
+            # computed values after authored style emission on the Rust side.
+            lines.append(
+                f'{ws}doc.node_mut({var}).style.font_family = '
+                f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+            )
 
         if node.styles.get('overflow-clip-margin') == 'inherit':
             lines.append(f"{ws}let {var}_inherited_overflow_clip_margin = doc.node({parent_var}).style.overflow_clip_margin;")
@@ -4272,6 +4843,12 @@ def generate_rust_fn(
                         inh_lines = [inh_lines]
                     for il in inh_lines:
                         lines.append(f"{ws}{il}")
+
+        if node_zoom != 1.0 and not is_real_font_profile():
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.font_size = "
+                f"{round(node_font_size * node_zoom, 12)};"
+            )
 
         lines.append(f"{ws}doc.append_child({parent_var}, {var});")
 
@@ -4302,13 +4879,81 @@ def generate_rust_fn(
             _fam = _family_from_font_shorthand(effective_styles['font'])
             if _fam:
                 child_inherited['font-family'] = _fam
+            # The shorthand resets and supplies the computed font size too.
+            # Thread the resolved absolute value rather than the authored token
+            # so descendants materialize the same used value as text nodes.
+            child_inherited['font-size'] = f'{node_font_size}px'
             child_inherited['line-height'] = _line_height_from_font_shorthand(
                 effective_styles['font']
             )
 
         # Process children (inherit font_size + CSS inherited props)
+        def emit_generated_quote(text: str) -> None:
+            """Materialize the HTML UA ``q`` generated content.
+
+            The builder path has no pseudo-element tree, so the default
+            ``q::before``/``q::after`` open-quote and close-quote content must
+            be represented by anonymous text children.  Generated content is
+            present even in the legacy box-only profile: unlike author text,
+            it is part of the element's rendered principal content.
+            """
+            counter[0] += 1
+            quote_var = f"n{counter[0]}"
+            quote_style = f"doc.node_mut({quote_var}).style"
+            lines.append(
+                f"{ws}    let {quote_var} = doc.create_node(ElementTag::Text);"
+            )
+            lines.append(
+                f"{ws}    {quote_style}.font_size = "
+                f"{round(float(node_font_size) * node_zoom, 12)};"
+            )
+            if RETAIN_TEXT and not is_real_font_profile():
+                # Generated quote text participates in the same deterministic
+                # Ahem runner override as author text. The override is added
+                # after CSS collection, so it is not present in
+                # ``child_inherited`` and must be materialized here too.
+                lines.append(
+                    f'{ws}    {quote_style}.font_family = '
+                    f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+                )
+            else:
+                family = child_inherited.get('font-family')
+                family_rust = _font_family_to_rust(family) if family else None
+                if family_rust:
+                    lines.append(f"{ws}    {quote_style}.font_family = {family_rust};")
+            color = child_inherited.get('color')
+            color_rust = parse_color(color) if color else None
+            if color_rust:
+                lines.append(f"{ws}    {quote_style}.color = {color_rust};")
+            for prop in (
+                'font-weight', 'font-style', 'font-stretch',
+                'font-variant-caps', 'white-space', 'word-break', 'line-height',
+                'text-transform', 'letter-spacing', 'word-spacing',
+            ):
+                if prop in child_inherited:
+                    code = generate_single_style(
+                        prop, child_inherited[prop], quote_style, node_font_size
+                    )
+                    if code:
+                        for generated_line in (
+                            code if isinstance(code, list) else [code]
+                        ):
+                            lines.append(f"{ws}    {generated_line}")
+            lines.append(
+                f'{ws}    {quote_style[:-6]}.text = '
+                f'Some("{_rust_escape_string(text)}".to_string());'
+            )
+            lines.append(f"{ws}    doc.append_child({var}, {quote_var});")
+
+        if node.tag == 'q':
+            emit_generated_quote('\u201c')
         for child in node.children:
-            gen_node(child, var, indent + 1, node_font_size, child_inherited, node_custom_props)
+            gen_node(
+                child, var, indent + 1, node_font_size,
+                child_inherited, node_custom_props, node_zoom,
+            )
+        if node.tag == 'q':
+            emit_generated_quote('\u201d')
 
     # Process body children
     # Apply body-level styles if any
@@ -4319,15 +4964,20 @@ def generate_rust_fn(
         if root_aware and prop in html_styles
     }
     body_custom_props = {}
+    html_zoom = 1.0
     if root_aware and html_styles:
         computed_html_styles = OrderedDict(html_styles)
         if is_real_font_profile():
             for prop, val in list(computed_html_styles.items()):
                 if val.strip() == 'inherit' and prop in REAL_FONT_INITIALS:
                     computed_html_styles[prop] = REAL_FONT_INITIALS[prop]
-        html_style_lines, _html_font_size = generate_style_code(computed_html_styles, 'html')
+        html_zoom = _effective_css_zoom(computed_html_styles)
+        html_style_lines, _html_font_size = generate_style_code(
+            computed_html_styles, 'html', 16.0, html_zoom
+        )
         for sl in html_style_lines:
             lines.append(f"    {sl}")
+    body_zoom = html_zoom
     if root.styles:
         for prop, val in root.styles.items():
             if prop.startswith('--'):
@@ -4342,9 +4992,20 @@ def generate_rust_fn(
                     computed_root_styles[prop] = body_inherited.get(
                         prop, REAL_FONT_INITIALS[prop]
                     )
-        body_styles, root_font_size = generate_style_code(computed_root_styles, 'vp')
+        body_zoom = _effective_css_zoom(computed_root_styles, html_zoom)
+        body_styles, root_font_size = generate_style_code(
+            computed_root_styles, 'vp', 16.0, body_zoom
+        )
         for sl in body_styles:
             lines.append(f"    {sl}")
+        if RETAIN_TEXT and not is_real_font_profile():
+            lines.append(
+                '    doc.node_mut(vp).style.font_family = '
+                f'{DETERMINISTIC_FONT_FAMILY_RUST};'
+            )
+            lines.append(
+                "    doc.node_mut(vp).style.list_style_type = ListStyleType::None;"
+            )
         if RETAIN_TEXT and root.styles.get('display', '').strip() == 'contents':
             # `base_doc()` models <body> as a concrete child of the viewport.
             # A display:contents body instead contributes its children directly
@@ -4404,7 +5065,10 @@ def generate_rust_fn(
         else 'vp'
     )
     for child in root.children:
-        gen_node(child, body_parent, 1, root_font_size, body_inherited, body_custom_props)
+        gen_node(
+            child, body_parent, 1, root_font_size,
+            body_inherited, body_custom_props, body_zoom,
+        )
 
     lines.append("    doc")
     lines.append("}")
@@ -4418,7 +5082,7 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     that the Rust code generator parsed and encoded into Document builder code.
     Handles external <link rel="stylesheet"> by inlining their content.
     """
-    with open(html_path, 'r', encoding='utf-8', errors='replace') as f:
+    with open(html_path, 'r', encoding='utf-8-sig', errors='replace') as f:
         content = f.read()
 
     html_dir = os.path.dirname(os.path.abspath(html_path))
@@ -4451,7 +5115,7 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
             href = href_match.group(1)
             css_path = os.path.join(html_dir, href)
             if os.path.isfile(css_path):
-                with open(css_path, 'r', encoding='utf-8', errors='replace') as f:
+                with open(css_path, 'r', encoding='utf-8-sig', errors='replace') as f:
                     css_text = f.read()
                 # Strip -webkit- prefixed duplicates to keep styles clean
                 css_text = re.sub(r'\s*-webkit-[a-z-]+:\s*[^;]+;\n?', '', css_text)
@@ -4478,8 +5142,16 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
         # Remove style blocks from body (they're already in style_prefix)
         body = re.sub(r'<style[^>]*>.*?</style>', '', body, flags=re.DOTALL | re.IGNORECASE)
 
-    # Strip instructional <p> tags (contain "Test passes if")
-    body = re.sub(r'<p[^>]*>.*?Test passes.*?</p>', '', body, flags=re.DOTALL | re.IGNORECASE)
+    # Strip instructional paragraphs before the text-preserving template pass.
+    # HTML permits their end tag to be omitted before block content, so accept
+    # either an explicit </p> or the first paragraph-closing start tag.
+    paragraph_end = '|'.join(sorted(WptHtmlParser.P_IMPLICIT_END_TAGS))
+    body = re.sub(
+        rf'<p\b[^>]*>.*?Test passes.*?(?:</p\s*>|(?=<(?:{paragraph_end})\b))',
+        '',
+        body,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
 
     # Strip ALL bare text nodes from the HTML body.  Our Rust layout engine
     # does not render text (cross-SP dependency), so leaving text in Chrome's

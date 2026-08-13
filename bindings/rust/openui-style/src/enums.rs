@@ -42,6 +42,13 @@ pub enum ListStylePosition {
     Inside,
 }
 
+/// CSS `list-style-type` values currently needed by the layout/paint pipeline.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ListStyleType {
+    None,
+    Disc,
+}
+
 impl Display {
     /// Blink's initial value: `kInline`.
     pub const INITIAL: Self = Self::Inline;

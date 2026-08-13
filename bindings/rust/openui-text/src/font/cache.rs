@@ -141,7 +141,19 @@ impl FontCache {
             description.stretch.0,
             &description.style,
         );
-        let typeface = self.font_mgr.0.match_family_style(family_name, sk_style)?;
+        let mut family = self.font_mgr.0.match_family(family_name);
+        let family_count = family.count();
+        let exact_index = (0..family_count).find(|&index| family.style(index).0 == sk_style);
+        let typeface = if let Some(index) = exact_index {
+            family.new_typeface(index)?
+        } else if family_count == 1 {
+            // A single-face family cannot supply a distinct requested style.
+            // Use the concrete face and let FontPlatformData synthesize the
+            // CSS weight/slant instead of accepting Skia's styled proxy.
+            family.new_typeface(0)?
+        } else {
+            family.match_style(sk_style)?
+        };
 
         // Extract oblique angle for synthetic oblique synthesis.
         let oblique_angle = match description.style {
@@ -149,10 +161,11 @@ impl FontCache {
             _ => 0.0,
         };
 
-        let data = Arc::new(FontPlatformData::with_oblique_angle(
+        let data = Arc::new(FontPlatformData::with_synthetic_styles(
             typeface,
             description.size,
             oblique_angle,
+            skia_safe::font_style::Weight::from(description.weight.0 as i32),
         ));
         self.cache.insert(key, Arc::clone(&data));
         Some(data)
@@ -245,10 +258,11 @@ impl FontCache {
             openui_style::FontStyleEnum::Oblique(angle) => angle,
             _ => 0.0,
         };
-        let data = Arc::new(FontPlatformData::with_oblique_angle(
+        let data = Arc::new(FontPlatformData::with_synthetic_styles(
             typeface,
             description.size,
             oblique_angle,
+            skia_safe::font_style::Weight::from(description.weight.0 as i32),
         ));
         Some(data)
     }

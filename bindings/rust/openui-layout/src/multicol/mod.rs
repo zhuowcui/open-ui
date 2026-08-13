@@ -197,7 +197,7 @@ pub struct ColumnPosition {
 /// (`available_inline_size − total_gaps`) is distributed across columns
 /// using cumulative fractions so that every sub-pixel remainder is
 /// accounted for.  Column *i* gets width
-/// `⌊remaining*(i+1)/count⌋ − ⌊remaining*i/count⌋`.
+/// `round(remaining*(i+1)/count) − round(remaining*i/count)`.
 ///
 /// When `center` is true, uniform `column_width` is used and the group
 /// is centered within the available space.
@@ -239,8 +239,14 @@ pub fn compute_column_positions(
     (0..column_count)
         .map(|i| {
             let i64_i = i as i64;
-            let left_raw = (remaining_raw * i64_i / n) as i32;
-            let right_raw = (remaining_raw * (i64_i + 1) / n) as i32;
+            // Blink's LayoutUnit distribution rounds each cumulative edge,
+            // then derives the individual widths. This keeps the group exact
+            // while placing the sub-pixel remainder on the same columns as
+            // Chromium (important for LCD glyph rasterization at a column
+            // start).
+            let rounded_edge = |numerator: i64| ((numerator + n / 2) / n) as i32;
+            let left_raw = rounded_edge(remaining_raw * i64_i);
+            let right_raw = rounded_edge(remaining_raw * (i64_i + 1));
             let w = right_raw - left_raw;
             let gap_offset = column_gap * LayoutUnit::from_i32(i as i32);
             ColumnPosition {
@@ -446,6 +452,7 @@ pub fn balance_columns(
         max_height,
         forced_break_before,
         &no_avoid,
+        false,
     )
 }
 
@@ -461,7 +468,43 @@ pub fn balance_columns_with_margins(
     max_height: LayoutUnit,
     forced_break_before: &[bool],
     avoid_break_after: &[bool],
+    collapse_empty_margin_chain: bool,
 ) -> LayoutUnit {
+    if collapse_empty_margin_chain
+        && !raw_sizes.is_empty()
+        && raw_sizes.iter().all(|size| *size == LayoutUnit::zero())
+        && !forced_break_before.iter().any(|forced| *forced)
+    {
+        // Consecutive self-collapsing empty blocks contribute one adjoining
+        // margin strut, not one margin per child. The strut is fragmentable
+        // content of the multicol formatting context and is therefore shared
+        // across the balanced columns.
+        let mut largest_positive = LayoutUnit::zero();
+        let mut smallest_negative = LayoutUnit::zero();
+        for margin in margins_top.iter().chain(margins_bottom.iter()) {
+            largest_positive = largest_positive.max_of(*margin);
+            smallest_negative = smallest_negative.min_of(*margin);
+        }
+        let collapsed = (largest_positive + smallest_negative).clamp_negative_to_zero();
+        let count = column_count.max(1) as i32;
+        let balanced = if margins_top
+            .iter()
+            .any(|margin| *margin > LayoutUnit::zero())
+        {
+            // A block-start strut belongs to the empty principal box. Keep a
+            // complete strut in its fragmentainer; only a trailing adjoining
+            // chain with no block-start contribution is itself distributed.
+            collapsed
+        } else {
+            LayoutUnit::from_raw((collapsed.raw() + count - 1) / count)
+        };
+        return if max_height.raw() > 0 && max_height.raw() < i32::MAX / 2 {
+            balanced.min_of(max_height)
+        } else {
+            balanced
+        };
+    }
+
     if column_count <= 1 || raw_sizes.is_empty() {
         // Single column: total is sum of all sizes + collapsed margins.
         let mut total: i64 = 0;
@@ -472,6 +515,9 @@ pub fn balance_columns_with_margins(
             total += (collapsed + raw_sizes[i]).raw() as i64;
             prev_mb = margins_bottom[i];
         }
+        // A multicol establishes a formatting context, so the final child's
+        // block-end margin cannot collapse through the container.
+        total += prev_mb.raw() as i64;
         return LayoutUnit::from_raw(total as i32);
     }
 
@@ -484,6 +530,9 @@ pub fn balance_columns_with_margins(
             let collapsed = if i == 0 { mt } else { prev_mb.max_of(mt) };
             eff.push(collapsed + raw_sizes[i]);
             prev_mb = margins_bottom[i];
+        }
+        if let Some(last) = eff.last_mut() {
+            *last = *last + prev_mb;
         }
         eff
     };
@@ -499,14 +548,25 @@ pub fn balance_columns_with_margins(
     } else {
         None
     };
+    let mut has_oversized_avoid = false;
     let max_unsplittable_single = raw_sizes
         .iter()
         .zip(avoid_break_inside.iter())
         .zip(margins_bottom.iter())
-        .filter(|((_, &avoid), _)| avoid)
-        .filter_map(|((s, _), mb)| {
-            let avoid_size = s.raw() as i64 + mb.raw() as i64;
+        .enumerate()
+        .filter(|(_, ((_, &avoid), _))| avoid)
+        .filter_map(|(index, ((s, _), mb))| {
+            // Only the first child's block-start margin is guaranteed to
+            // survive at a fragmentainer start. Later start margins may be
+            // truncated when their avoid unit moves to a fresh column.
+            let leading_margin = if index == 0 {
+                margins_top[index].raw() as i64
+            } else {
+                0
+            };
+            let avoid_size = leading_margin + s.raw() as i64 + mb.raw() as i64;
             if hard_max_height.is_some_and(|max_height| avoid_size > max_height) {
+                has_oversized_avoid = true;
                 None
             } else {
                 Some(avoid_size)
@@ -567,8 +627,10 @@ pub fn balance_columns_with_margins(
         .filter(|&(i, &f)| f && i > 0)
         .count() as u32;
 
-    // When there are forced breaks creating more segments than columns,
-    // excess segments are packed into the last column.
+    // Forced breaks create fragmentainers even when their segment count is
+    // greater than the authored column count. Those are overflow columns;
+    // balancing is performed across the resulting segment count rather than
+    // packing later forced segments into the last regular column.
     let min_forced_height: i64 = if forced_count > 0 {
         let mut segments: Vec<i64> = Vec::new();
         let mut cur_segment: i64 = 0;
@@ -582,21 +644,21 @@ pub fn balance_columns_with_margins(
         }
         segments.push(cur_segment);
 
-        if segments.len() as u32 <= column_count {
-            segments.iter().copied().max().unwrap_or(0)
-        } else {
-            let c = column_count as usize;
-            let last_col: i64 = segments[c - 1..].iter().sum();
-            let max_first = segments[..c - 1].iter().copied().max().unwrap_or(0);
-            max_first.max(last_col)
-        }
+        segments.iter().copied().max().unwrap_or(0)
     } else {
         0
     };
 
-    let min_raw = ((total_raw + column_count as i64 - 1) / column_count as i64)
+    let balancing_column_count = column_count.max(forced_count.saturating_add(1));
+    let oversized_avoid_floor = if has_oversized_avoid {
+        hard_max_height.unwrap_or(0)
+    } else {
+        0
+    };
+    let min_raw = ((total_raw + balancing_column_count as i64 - 1) / balancing_column_count as i64)
         .max(max_unsplittable)
-        .max(min_forced_height) as i32;
+        .max(min_forced_height)
+        .max(oversized_avoid_floor) as i32;
 
     let mut lo = min_raw;
     let mut hi = if max_height.raw() > 0 && max_height.raw() < i32::MAX / 2 {
@@ -623,10 +685,10 @@ pub fn balance_columns_with_margins(
             avoid_break_inside,
             LayoutUnit::from_raw(mid),
             forced_break_before,
-            column_count,
+            balancing_column_count,
             avoid_break_after,
         );
-        if needed <= column_count {
+        if needed <= balancing_column_count {
             hi = mid;
         } else {
             lo = mid + 1;
@@ -638,9 +700,8 @@ pub fn balance_columns_with_margins(
 
 /// Count how many columns are needed to fit all children at the given height.
 /// Children with break-inside: avoid are treated as unsplittable units.
-/// Children with forced_break_before always start a new column (except the first),
-/// but forced breaks are ignored once column_count is reached — excess content
-/// packs into the last column.
+/// Children with forced_break_before always start a new column (except the
+/// first). Forced segments beyond the authored count create overflow columns.
 fn columns_needed_for_height(
     child_block_sizes: &[LayoutUnit],
     avoid_break_inside: &[bool],
@@ -672,7 +733,7 @@ fn columns_needed_for_height_with_margins(
     avoid_break_inside: &[bool],
     height: LayoutUnit,
     forced_break_before: &[bool],
-    column_count: u32,
+    _column_count: u32,
     avoid_break_after: &[bool],
 ) -> u32 {
     if height.raw() <= 0 {
@@ -685,7 +746,7 @@ fn columns_needed_for_height_with_margins(
 
     for (i, &raw_size) in raw_sizes.iter().enumerate() {
         let has_forced = forced_break_before.get(i).copied().unwrap_or(false) && i > 0;
-        if has_forced && columns < column_count {
+        if has_forced {
             columns += 1;
             remaining = height;
             prev_mb = LayoutUnit::zero();
@@ -783,6 +844,17 @@ fn columns_needed_for_height_with_margins(
             at_column_start = false;
         }
         prev_mb = margins_bottom[i];
+    }
+
+    // The trailing margin strut is content of the multicol formatting
+    // context.  It may consume the tail of the final fragmentainer and, when
+    // balancing, continue into another column just like other block-axis
+    // space.
+    let mut trailing = prev_mb;
+    while trailing.raw() > remaining.raw() {
+        trailing = trailing - remaining;
+        columns += 1;
+        remaining = height;
     }
 
     columns
@@ -893,6 +965,23 @@ mod tests {
     }
 
     #[test]
+    fn positions_round_cumulative_fractional_edges() {
+        let positions = compute_column_positions(
+            3,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+            LayoutUnit::from_raw(10),
+            false,
+        );
+        assert_eq!(positions[0].inline_offset, LayoutUnit::from_raw(0));
+        assert_eq!(positions[0].width, LayoutUnit::from_raw(3));
+        assert_eq!(positions[1].inline_offset, LayoutUnit::from_raw(3));
+        assert_eq!(positions[1].width, LayoutUnit::from_raw(4));
+        assert_eq!(positions[2].inline_offset, LayoutUnit::from_raw(7));
+        assert_eq!(positions[2].width, LayoutUnit::from_raw(3));
+    }
+
+    #[test]
     fn resolve_zero_width_uses_minimum_fragmentainer_width() {
         let r = resolve_column_count_and_width(
             None,
@@ -952,5 +1041,41 @@ mod tests {
         // col1 = 50 + 65 (first part of 80) = 115
         // col2 = 15 (remainder of 80) + 60 + 40 = 115
         assert_eq!(h, LayoutUnit::from_i32(115));
+    }
+
+    #[test]
+    fn balance_collapses_adjoining_margins_of_empty_blocks() {
+        let zero = LayoutUnit::zero();
+        let margin = LayoutUnit::from_i32(20);
+        let h = balance_columns_with_margins(
+            &[zero; 3],
+            &[zero; 3],
+            &[margin; 3],
+            &[false; 3],
+            3,
+            LayoutUnit::from_i32(600),
+            &[false; 3],
+            &[false; 3],
+            true,
+        );
+        assert_eq!(h, LayoutUnit::from_raw((margin.raw() + 2) / 3));
+    }
+
+    #[test]
+    fn balance_keeps_empty_block_start_strut_intact() {
+        let zero = LayoutUnit::zero();
+        let margin = LayoutUnit::from_i32(20);
+        let h = balance_columns_with_margins(
+            &[zero; 2],
+            &[margin; 2],
+            &[margin; 2],
+            &[false; 2],
+            2,
+            LayoutUnit::from_i32(600),
+            &[false; 2],
+            &[false; 2],
+            true,
+        );
+        assert_eq!(h, margin);
     }
 }

@@ -37,6 +37,11 @@ pub enum ElementTag {
     Text,
     /// A semantic forced line break (`<br>`).
     Break,
+    /// An HTML ruby container. Ruby base and annotation content form one
+    /// atomic inline-level formatting object.
+    Ruby,
+    /// HTML ruby annotation content (`<rt>`).
+    RubyText,
     /// The document element (`<html>`).
     Html,
     /// The document body (`<body>`).

@@ -17,3 +17,7 @@ members = [
     "examples/dashboard",
     "pixel-compare",
 ]
+
+[patch.crates-io]
+skia-safe = { git = "https://github.com/rust-skia/rust-skia.git", rev = "c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09" }
+skia-bindings = { git = "https://github.com/rust-skia/rust-skia.git", rev = "c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09" }

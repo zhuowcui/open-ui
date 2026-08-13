@@ -21,24 +21,39 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (after SP16 closure):
+Latest authoritative accountability snapshot (after SP13-R closure):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
 | Ported/runnable WPT tests | 3566 |
 | Unported but explicitly tracked tests | 4107 |
-| Runnable passes | 2823 |
-| Runnable failures | 743 |
+| Runnable passes | 3267 |
+| Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_font_metrics` rows | 0 |
+| Runnable `sp13_multicol` rows | 0 |
+| Unported `sp13_multicol` residuals | 1018 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume, and all 2804 frozen SP16
-exact-pass IDs remain exact.
+The full `wpt/` run was executed without resume. All 2823 frozen SP13-R baseline
+IDs and all 351 runnable multicol targets remain exact.
+
+## SP13-R Closure
+
+SP13-R is complete. Its immutable ledgers contain 2823 frozen exact passes, 351
+runnable multicol targets, and 1018 reason-owned unported residuals. The target
+run finishes 351 exact, zero failed, and zero errors; no runnable mapping row
+retains `sp13_multicol`.
+
+Multicol used geometry, fragmentation, spanners and nesting, flex and positioned
+interactions, rules, and fragmented paint now consume shared resolved layout and
+continuation state. The residual ledger preserves Chromium paths, porter rejection
+reasons, and complete owner sets. Vertical and sideways writing remain deferred.
+See `docs/SP13-R-PLAN.md` for the frozen scope and evidence.
 
 ## SP16 Closure
 
@@ -81,26 +96,25 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 743 non-passing runnable tests are ported tests classified by the feature that owns the
+The 299 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
 
 | Category | Count |
 |---|---:|
-| `sp13_multicol` | 351 |
-| `sp13_fragmentation` | 213 |
-| `reference_test` | 169 |
-| `needs_inline_block` | 100 |
-| `needs_image` | 87 |
-| `needs_gradient` | 87 |
-| `needs_empty_block_margin_collapse` | 86 |
-| `needs_writing_mode` | 81 |
-| `needs_complex_border` | 77 |
-| `needs_rounded_border_paint` | 74 |
-| `needs_abspos_flex_static_position` | 50 |
-| `needs_positioned_inline_layout` | 39 |
-| `needs_body_canvas_background_extent` | 36 |
+| `reference_test` | 90 |
+| `needs_gradient` | 80 |
+| `needs_image` | 66 |
+| `needs_inline_block` | 55 |
+| `needs_complex_border` | 52 |
+| `needs_empty_block_margin_collapse` | 42 |
+| `needs_body_canvas_background_extent` | 24 |
+| `needs_generated_content` | 23 |
+| `needs_rounded_border_paint` | 22 |
+| `needs_writing_mode` | 19 |
+| `needs_box_shadow` | 18 |
+| `sp13_fragmentation` | 17 |
 
 ## Current Unported Inventory Ownership
 
@@ -128,9 +142,9 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Proceed to SP17 advanced text or resume the named SP13 multicol/fragmentation
-residuals. Preserve the exact-pixel standard, frozen SP16 baseline, and upstream-evidence
-ownership rules.
+Proceed to SP17 advanced text or one of the explicitly owned residual systems.
+Preserve the exact-pixel standard, frozen SP13-R baseline and target ledgers, and
+upstream-evidence ownership rules.
 
 ## Authoritative Commands
 

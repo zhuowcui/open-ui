@@ -6,9 +6,10 @@
 use openui_dom::Document;
 use openui_geometry::LayoutUnit;
 use openui_layout::{block_layout, ConstraintSpace};
+use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
-    surfaces, Color as SkColor, EncodedImageFormat, ImageInfo, PixelGeometry, Surface,
-    SurfaceProps, SurfacePropsFlags,
+    surfaces, Color as SkColor, EncodedImageFormat, FilterMode, ImageInfo, Paint, PictureRecorder,
+    PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps, SurfacePropsFlags,
 };
 
 use crate::painter::paint_fragment;
@@ -59,16 +60,74 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
             )
         })
         .unwrap_or(SkColor::WHITE);
-    surface.canvas().clear(canvas_color);
-
     // Layout
     let space =
         ConstraintSpace::for_root(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height));
     let fragment = block_layout(doc, doc.root(), &space);
 
-    // Paint
-    let zero_offset = openui_geometry::PhysicalOffset::zero();
-    paint_fragment(surface.canvas(), &fragment, doc, zero_offset);
+    // Chromium's software compositor rasterizes paint records into overlapping
+    // 256px tiles and composites each tile's 255px interior. Replaying the
+    // display list with the same tile origin is observable for antialiased
+    // geometry that crosses a tile boundary, so keep rasterization and final
+    // composition as separate, general stages here too.
+    let bounds = Rect::from_xywh(0.0, 0.0, width as f32, height as f32);
+    let mut recorder = PictureRecorder::new();
+    let recording_canvas = recorder.begin_recording(bounds, false);
+    recording_canvas.clear(canvas_color);
+    paint_fragment(
+        recording_canvas,
+        &fragment,
+        doc,
+        openui_geometry::PhysicalOffset::zero(),
+    );
+    let picture = recorder
+        .finish_recording_as_picture(None)
+        .ok_or_else(|| "Failed to record paint commands".to_string())?;
+
+    surface.canvas().clear(canvas_color);
+    const TILE_SIZE: i32 = 256;
+    const TILE_STEP: i32 = TILE_SIZE - 2;
+    for tile_y in (0..height).step_by(TILE_STEP as usize) {
+        for tile_x in (0..width).step_by(TILE_STEP as usize) {
+            let mut tile = create_raster_surface(TILE_SIZE, TILE_SIZE, real_font_raster)
+                .ok_or_else(|| "Failed to create raster tile".to_string())?;
+            tile.canvas().clear(canvas_color);
+            tile.canvas().translate((-tile_x as f32, -tile_y as f32));
+            tile.canvas().draw_picture(&picture, None, None);
+
+            let image = tile.image_snapshot();
+            let crop_left = if tile_x == 0 { 0 } else { 1 };
+            let crop_top = if tile_y == 0 { 0 } else { 1 };
+            let destination_x = tile_x + crop_left;
+            let destination_y = tile_y + crop_top;
+            let visible_right = (tile_x + TILE_SIZE - 1).min(width);
+            let visible_bottom = (tile_y + TILE_SIZE - 1).min(height);
+            let visible_width = visible_right - destination_x;
+            let visible_height = visible_bottom - destination_y;
+            if visible_width <= 0 || visible_height <= 0 {
+                continue;
+            }
+            let source = Rect::from_xywh(
+                crop_left as f32,
+                crop_top as f32,
+                visible_width as f32,
+                visible_height as f32,
+            );
+            let destination = Rect::from_xywh(
+                destination_x as f32,
+                destination_y as f32,
+                visible_width as f32,
+                visible_height as f32,
+            );
+            surface.canvas().draw_image_rect_with_sampling_options(
+                image,
+                Some((&source, SrcRectConstraint::Strict)),
+                destination,
+                SamplingOptions::from(FilterMode::Linear),
+                &Paint::default(),
+            );
+        }
+    }
 
     Ok(surface)
 }
@@ -78,13 +137,11 @@ fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Opt
         // Chromium's Linux Skia build pins these in //skia/BUILD.gn. Passing
         // them explicitly avoids inheriting the independently-built skia-safe
         // defaults (0.5 contrast and sRGB gamma).
-        let contrast = raster_parameter("OPENUI_TEXT_CONTRAST", 0.2);
-        let gamma = raster_parameter("OPENUI_TEXT_GAMMA", 1.2);
         let props = SurfaceProps::new_with_text_properties(
             SurfacePropsFlags::default(),
             PixelGeometry::RGBH,
-            contrast,
-            gamma,
+            0.2,
+            1.2,
         );
         surfaces::raster(
             &ImageInfo::new_n32_premul((width, height), None),
@@ -94,13 +151,6 @@ fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Opt
     } else {
         surfaces::raster_n32_premul((width, height))
     }
-}
-
-fn raster_parameter(name: &str, default: f32) -> f32 {
-    std::env::var(name)
-        .ok()
-        .and_then(|value| value.parse::<f32>().ok())
-        .unwrap_or(default)
 }
 
 #[cfg(test)]

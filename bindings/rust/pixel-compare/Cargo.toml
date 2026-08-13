@@ -15,4 +15,4 @@ openui-layout = { path = "../openui-layout" }
 openui-dom = { path = "../openui-dom" }
 openui-paint = { path = "../openui-paint" }
 openui-text = { path = "../openui-text" }
-skia-safe = "0.82"
+skia-safe = "0.94"

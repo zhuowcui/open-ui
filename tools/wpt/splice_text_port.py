@@ -20,6 +20,7 @@ import json
 import os
 import re
 import stat
+import subprocess
 import sys
 import tempfile
 from collections import defaultdict
@@ -41,6 +42,7 @@ RUST_WPT_DIR = os.path.join(
 )
 TEXT_PORTED_LIST = os.path.join(WPT_PORTED_DIR, "text_ported_tests.json")
 SP15_TARGETS_LIST = os.path.join(WPT_PORTED_DIR, "sp15_actionable_targets.json")
+SP13R_TARGETS_LIST = os.path.join(WPT_PORTED_DIR, "sp13r_multicol_targets.json")
 SP16_REAL_LIST = os.path.join(WPT_PORTED_DIR, "sp16_real_font_tests.json")
 SP14_W4_LIST = os.path.join(WPT_PORTED_DIR, "sp14_w4_residuals.json")
 REPORT_COLUMNS = ["filename", "status", "fn_name", "reason"]
@@ -133,6 +135,41 @@ def load_root_aware_ids() -> set[str]:
             and template.startswith("<!--OPENUI_ROOT_AWARE-->")
         )
     return result
+
+
+_DISTINCT_ROOT_BOX_PROPERTIES = {
+    "display", "position", "float", "clear", "overflow", "overflow-x",
+    "overflow-y", "opacity", "box-shadow", "outline", "columns",
+    "column-count", "column-width", "column-height", "column-gap",
+    "column-rule", "column-rule-width", "column-rule-style",
+    "column-rule-color", "column-fill", "column-span",
+}
+
+
+def requires_distinct_root_box(parser: port_wpt.WptHtmlParser) -> bool:
+    """Whether author CSS gives the document element observable box styling.
+
+    The compact porter normally represents ``body`` directly with ``base_doc``.
+    That is insufficient when an author selector also gives ``html`` its own
+    border, sizing, spacing, or multicol box. Detect that semantic case from
+    author rules so regeneration selects the existing root-aware document
+    model without relying on a test-ID allowlist.
+    """
+    rules = parser.external_css_rules + parser.css_rules
+    for selector, styles in rules:
+        if not port_wpt.match_selector(selector, "html", [], "", [], 1, 1, []):
+            continue
+        for prop in styles:
+            if (
+                prop in _DISTINCT_ROOT_BOX_PROPERTIES
+                or prop.startswith(("border-", "margin-", "padding-"))
+                or prop in {
+                    "width", "min-width", "max-width", "height", "min-height",
+                    "max-height", "transform", "transform-origin",
+                }
+            ):
+                return True
+    return False
 
 
 def _rust_function_span(rust_src: str, fn_name: str) -> tuple[int, int]:
@@ -244,9 +281,11 @@ def _generate_one(
 
     root_aware = test_id in load_root_aware_ids()
     if root_aware:
-        frozen_targets = set(load_ids_file(SP15_TARGETS_LIST))
+        frozen_targets = set(load_ids_file(SP15_TARGETS_LIST)) | set(
+            load_ids_file(SP13R_TARGETS_LIST)
+        )
         if test_id not in frozen_targets:
-            raise ValueError(f"{test_id}: not in the frozen SP15 root-aware allowlist")
+            raise ValueError(f"{test_id}: not in a frozen root-aware target ledger")
     retains_text = (
         True
         if profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM
@@ -254,6 +293,9 @@ def _generate_one(
     )
     port_wpt.set_porter_profile(profile, retain_text=retains_text)
     parser = port_wpt.parse_wpt_html(upstream, root_aware=root_aware)
+    if not root_aware and requires_distinct_root_box(parser):
+        root_aware = True
+        parser = port_wpt.parse_wpt_html(upstream, root_aware=True)
     portable, reason = port_wpt.analyze_portability(parser)
     if not root_aware and not portable:
         raise ValueError(f"{test_id}: not text-portable ({reason})")
@@ -300,7 +342,7 @@ def _load_json_object(path: str) -> tuple[str, dict[str, str]]:
 def _promote_report_rows(
     path: str, replacements: list[GeneratedReplacement]
 ) -> tuple[str, str]:
-    """Return the original and deterministically promoted porter report."""
+    """Return the original and deterministically synchronized porter report."""
     with open(path, newline="", encoding="utf-8") as f:
         original = f.read()
     reader = csv.DictReader(io.StringIO(original, newline=""))
@@ -319,11 +361,20 @@ def _promote_report_rows(
         row.update(status="ported", fn_name=replacement.fn_name, reason="")
         seen.add(name)
     missing = sorted(set(by_name) - seen)
-    if missing:
-        raise ValueError(f"missing porter report rows in {path}: {', '.join(missing)}")
+    for name in missing:
+        replacement = by_name[name]
+        rows.append(
+            {
+                "filename": name,
+                "status": "ported",
+                "fn_name": replacement.fn_name,
+                "reason": "",
+            }
+        )
+    rows.sort(key=lambda row: row["filename"])
 
     output = io.StringIO(newline="")
-    writer = csv.DictWriter(output, fieldnames=REPORT_COLUMNS, lineterminator="\r\n")
+    writer = csv.DictWriter(output, fieldnames=REPORT_COLUMNS, lineterminator="\n")
     writer.writeheader()
     writer.writerows(rows)
     return original, output.getvalue()
@@ -377,6 +428,11 @@ def _insert_rust_additions(
     match = matches[0]
     body = match.group(2).strip("\r\n").rstrip()
     if body:
+        # Existing generated registries are not uniformly rustfmt-expanded;
+        # a compact final tuple may omit its optional trailing comma. Make
+        # that separator explicit before appending the first new tuple.
+        if not body.endswith(","):
+            body += ","
         body += "\n"
     body += "\n".join(entries) + "\n"
     prefix = match.group(1)
@@ -389,6 +445,33 @@ def _insert_rust_additions(
         + "".join(builders)
         + new_registry
         + rust_src[match.end() :]
+    )
+
+
+def _preserve_existing_builder_profile(existing_fn: str, generated_fn: str) -> str:
+    """Retain frozen builder-level runner semantics during regeneration.
+
+    Historical retained-text builders explicitly blockified the synthetic
+    body while newer builders intentionally keep ``base_doc``'s flow-root.
+    This distinction is already part of their frozen pixel profiles, so a
+    surgical re-port preserves the explicit marker when it exists instead of
+    silently migrating the historical builder.
+    """
+    body_display = "doc.node_mut(vp).style.display = Display::Block;"
+    if body_display not in existing_fn or body_display in generated_fn:
+        return generated_fn
+    constructor = re.search(
+        r"(?m)^(\s*let \(mut doc, (?:html, )?vp\) = (?:base|root)_doc\(\);\s*)$",
+        generated_fn,
+    )
+    if constructor is None:
+        raise ValueError("generated builder has no document constructor")
+    indent = re.match(r"\s*", constructor.group(1)).group(0)
+    insertion = constructor.end()
+    return (
+        generated_fn[:insertion]
+        + f"\n{indent}{body_display}"
+        + generated_fn[insertion:]
     )
 
 
@@ -413,8 +496,13 @@ def prepare_changes(
         raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_LIST}")
     text_manifest = set(ported)
 
-    if profile is port_wpt.PorterProfile.REAL_FONT and os.path.exists(SP16_REAL_LIST):
-        allowed = set(load_ids_file(SP16_REAL_LIST))
+    real_font_ids = (
+        set(load_ids_file(SP16_REAL_LIST))
+        if os.path.exists(SP16_REAL_LIST)
+        else set()
+    )
+    if profile is port_wpt.PorterProfile.REAL_FONT:
+        allowed = real_font_ids
         outside = set(test_ids) - allowed
         if outside:
             raise ValueError(
@@ -423,7 +511,16 @@ def prepare_changes(
             )
 
     generated = [
-        _generate_one(test_id, mapping, profile, text_manifest)
+        _generate_one(
+            test_id,
+            mapping,
+            (
+                port_wpt.PorterProfile.REAL_FONT
+                if test_id in real_font_ids
+                else profile
+            ),
+            text_manifest,
+        )
         for test_id in sorted(test_ids)
     ]
     fn_names = [replacement.fn_name for replacement in generated]
@@ -483,8 +580,14 @@ def prepare_changes(
                     f"{replacement.test_id}: partial template/registry state"
                 )
             if fully_present:
+                existing_start, existing_end = _rust_function_span(
+                    original, replacement.fn_name
+                )
+                replacement_code = _preserve_existing_builder_profile(
+                    original[existing_start:existing_end], replacement.rust_code
+                )
                 updated = replace_fn(
-                    updated, replacement.fn_name, replacement.rust_code
+                    updated, replacement.fn_name, replacement_code
                 )
             else:
                 additions.append(replacement)
@@ -500,7 +603,7 @@ def prepare_changes(
                 "use crate::base_doc;", "use crate::{base_doc, root_doc};", 1
             )
         originals[rust_path] = original
-        changes[rust_path] = updated
+        changes[rust_path] = _rustfmt_source(updated, rust_path)
 
         report_path = os.path.join(WPT_PORTED_DIR, f"wpt_{module}_report.csv")
         if os.path.exists(report_path):
@@ -536,6 +639,28 @@ def _stage_text(path: str, content: str, mode: int) -> str:
         if os.path.exists(staged):
             os.unlink(staged)
         raise
+
+
+def _rustfmt_source(source: str, path: str) -> str:
+    """Format a generated Rust module before the transaction compares it.
+
+    Splicing an unformatted expression and formatting it later made a second
+    generation appear non-idempotent.  Running the workspace formatter on the
+    in-memory module keeps generation, verification, and committed artifacts
+    on the same canonical representation.
+    """
+    completed = subprocess.run(
+        ["rustfmt", "--edition", "2021"],
+        input=source,
+        text=True,
+        capture_output=True,
+        cwd=os.path.join(PROJECT_ROOT, "bindings", "rust"),
+        check=False,
+    )
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or "unknown rustfmt failure"
+        raise ValueError(f"rustfmt failed for {path}: {detail}")
+    return completed.stdout
 
 
 def commit_changes(originals: dict[str, str], changes: dict[str, str]) -> None:
@@ -589,7 +714,8 @@ def main() -> int:
                 profile = profiles[args[index]]
             except KeyError:
                 print(
-                    "ERROR: --profile must be deterministic-ahem or real-font",
+                    "ERROR: --profile must be legacy-box-only, "
+                    "deterministic-ahem, or real-font",
                     file=sys.stderr,
                 )
                 return 2

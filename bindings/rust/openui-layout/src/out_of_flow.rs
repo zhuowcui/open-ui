@@ -30,6 +30,13 @@ pub struct OutOfFlowCandidate {
     pub style: ComputedStyle,
     /// The static position — where this element would appear if `position: static`.
     pub static_position: PhysicalOffset,
+    /// Origin of the containing-block fragment that owns this candidate.
+    /// Insets resolve from this origin; static positions remain expressed in
+    /// the parent coordinate space and are translated into it below.
+    pub containing_block_offset: PhysicalOffset,
+    /// DOM node that establishes the containing block. `NodeId::NONE` means
+    /// the candidate is still bubbling toward its eventual owner.
+    pub containing_block_node: NodeId,
     /// The size of the containing block (for resolving percentages and insets).
     pub containing_block_size: PhysicalSize,
     /// The border of the containing block. Used to convert from padding-edge
@@ -46,6 +53,15 @@ pub struct OutOfFlowCandidate {
     /// static-right position when left/right/width are all auto. This field
     /// is set at candidate creation time and never overwritten during bubbling.
     pub static_position_direction: Direction,
+    /// Whether an inline positioned ancestor already supplied the candidate's
+    /// containing-block geometry. Such candidates are resolved by the block
+    /// that owns the inline formatting context without replacing that geometry.
+    pub has_inline_containing_block: bool,
+    /// The positioned inline ancestor that owns this candidate, when one
+    /// exists.  Atomic inlines can bubble an unresolved descendant before the
+    /// ancestor's first/last line-fragment geometry is known; the enclosing
+    /// inline formatting context resolves this node after all lines exist.
+    pub inline_containing_block_node: Option<NodeId>,
 }
 
 /// Layout all out-of-flow candidates and return positioned fragments.
@@ -74,13 +90,28 @@ pub fn layout_out_of_flow_children(
 fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> Fragment {
     let style = &candidate.style;
     let cb_width = candidate.containing_block_size.width;
-    let cb_height = candidate.containing_block_size.height;
+    let cb_height = if candidate.has_inline_containing_block
+        && candidate.containing_block_size.width == LayoutUnit::zero()
+        && !style.top.is_auto()
+        && !style.bottom.is_auto()
+    {
+        // A genuinely empty positioned inline has coincident inline
+        // containing-block edges in Chromium. Font metrics still give its
+        // anonymous inline fragment a line-box height, but that metric is not
+        // the block-axis inset basis for an abspos stretched between both
+        // edges.
+        LayoutUnit::zero()
+    } else {
+        candidate.containing_block_size.height
+    };
     let cb_border = &candidate.containing_block_border;
 
     // Static position is in parent border-box coordinates. Convert to
     // padding-edge coordinates for the constraint equations.
-    let static_left = candidate.static_position.left - cb_border.left;
-    let static_top = candidate.static_position.top - cb_border.top;
+    let static_left =
+        candidate.static_position.left - candidate.containing_block_offset.left - cb_border.left;
+    let static_top =
+        candidate.static_position.top - candidate.containing_block_offset.top - cb_border.top;
 
     let border = resolve_border(style);
     let padding = resolve_padding(style, cb_width);
@@ -272,7 +303,6 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 sp_direction,
             )
         };
-
     // Resolve vertical axis (CSS 2.1 §10.6.4)
     let (resolved_top, resolved_height_raw, resolved_margin_top, resolved_margin_bottom) =
         resolve_vertical(style, cb_width, cb_height, static_top, &border, &padding);
@@ -708,8 +738,22 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // padding edge. Fragment offsets are in the parent's border-box coordinates.
     // Add the containing block's border to convert from padding-edge to border-box.
     let cb_border = &candidate.containing_block_border;
-    child_fragment.offset =
-        PhysicalOffset::new(final_left + cb_border.left, final_top + cb_border.top);
+    child_fragment.offset = PhysicalOffset::new(
+        final_left + cb_border.left + candidate.containing_block_offset.left,
+        final_top + cb_border.top + candidate.containing_block_offset.top,
+    );
+    child_fragment.positioned_fragmentation = Some(crate::fragment::PositionedFragmentationData {
+        static_position: candidate.static_position,
+        containing_block_offset: candidate.containing_block_offset,
+        containing_block_node: candidate.containing_block_node,
+        containing_block_size: candidate.containing_block_size,
+        has_inline_containing_block: candidate.has_inline_containing_block,
+        inline_containing_block_node: candidate.inline_containing_block_node,
+        block_in_inline_static_advance: LayoutUnit::zero(),
+        visual_offset: PhysicalOffset::zero(),
+        fragmentainer_index: None,
+        split_containing_block_source_offset: None,
+    });
     child_fragment.border = border;
     child_fragment.padding = padding;
     child_fragment.margin = BoxStrut::new(

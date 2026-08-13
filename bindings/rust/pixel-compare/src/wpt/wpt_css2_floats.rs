@@ -265,7 +265,12 @@ fn css2_floats_float_in_nested_multicol_001() -> Document {
 // Source: float-no-content-beside-001-ref.html
 fn css2_floats_float_no_content_beside_001_ref() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -277,7 +282,12 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -289,13 +299,23 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n2).text = Some("Test passes if all three examples render the same:".to_string());
-        doc.append_child(n1, n2);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).text = Some("Test passes if all three examples render the same:".to_string());
+    doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -308,50 +328,74 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.width = Length::px(160.0);
     doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n3).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n3).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n3).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n3).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.append_child(vp, n3);
-        let n4 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
-        doc.node_mut(n4).style.margin_right = Length::px(0.0);
-        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.margin_left = Length::px(0.0);
-        doc.node_mut(n4).style.padding_top = Length::px(0.0);
-        doc.node_mut(n4).style.padding_right = Length::px(0.0);
-        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.padding_left = Length::px(0.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n4).style.float = Float::Left;
-        doc.node_mut(n4).style.width = Length::px(80.0);
-        doc.node_mut(n4).style.height = Length::px(80.0);
-        doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-        doc.append_child(n3, n4);
-        let n5 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n5).style.font_size = 16.0;
-        doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n5).style.white_space = WhiteSpace::PreLine;
-        doc.node_mut(n5).text = Some("\n".to_string());
-        doc.append_child(n3, n5);
-        let n6 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n6).style.font_size = 16.0;
-        doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n6).text = Some("Supercalifragilisticexpialidocious".to_string());
-        doc.append_child(n3, n6);
+    let n4 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.width = Length::px(80.0);
+    doc.node_mut(n4).style.height = Length::px(80.0);
+    doc.node_mut(n4).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n4).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n4).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n4).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n4).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n5).text = Some("\n".to_string());
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).text = Some("Supercalifragilisticexpialidocious".to_string());
+    doc.append_child(n3, n6);
     let n7 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.height = Length::px(16.0);
     doc.node_mut(n7).style.display = Display::Block;
@@ -367,7 +411,12 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(n7).style.clear = Clear::Both;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
@@ -380,50 +429,74 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.width = Length::px(160.0);
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n8).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n8).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n8).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n8).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.append_child(vp, n8);
-        let n9 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n9).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n9).style.margin_top = Length::px(0.0);
-        doc.node_mut(n9).style.margin_right = Length::px(0.0);
-        doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n9).style.margin_left = Length::px(0.0);
-        doc.node_mut(n9).style.padding_top = Length::px(0.0);
-        doc.node_mut(n9).style.padding_right = Length::px(0.0);
-        doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n9).style.padding_left = Length::px(0.0);
-        doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n9).style.float = Float::Left;
-        doc.node_mut(n9).style.width = Length::px(80.0);
-        doc.node_mut(n9).style.height = Length::px(80.0);
-        doc.node_mut(n9).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n9).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n9).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n9).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-        doc.append_child(n8, n9);
-        let n10 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n10).style.font_size = 16.0;
-        doc.node_mut(n10).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n10).style.white_space = WhiteSpace::PreLine;
-        doc.node_mut(n10).text = Some("\n".to_string());
-        doc.append_child(n8, n10);
-        let n11 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n11).style.font_size = 16.0;
-        doc.node_mut(n11).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n11).text = Some("Supercalifragilisticexpialidocious".to_string());
-        doc.append_child(n8, n11);
+    let n9 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.margin_top = Length::px(0.0);
+    doc.node_mut(n9).style.margin_right = Length::px(0.0);
+    doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.margin_left = Length::px(0.0);
+    doc.node_mut(n9).style.padding_top = Length::px(0.0);
+    doc.node_mut(n9).style.padding_right = Length::px(0.0);
+    doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.padding_left = Length::px(0.0);
+    doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n9).style.float = Float::Left;
+    doc.node_mut(n9).style.width = Length::px(80.0);
+    doc.node_mut(n9).style.height = Length::px(80.0);
+    doc.node_mut(n9).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n9).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n9).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n9).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n9).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n9).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n9).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n9).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n10).style.font_size = 16.0;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n10).text = Some("\n".to_string());
+    doc.append_child(n8, n10);
+    let n11 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n11).style.font_size = 16.0;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).text = Some("Supercalifragilisticexpialidocious".to_string());
+    doc.append_child(n8, n11);
     let n12 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n12).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n12).style.display = Display::Block;
     doc.node_mut(n12).style.height = Length::px(16.0);
     doc.node_mut(n12).style.display = Display::Block;
@@ -439,7 +512,12 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(n12).style.clear = Clear::Both;
     doc.append_child(vp, n12);
     let n13 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n13).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n13).style.display = Display::Block;
     doc.node_mut(n13).style.margin_top = Length::px(0.0);
     doc.node_mut(n13).style.margin_right = Length::px(0.0);
@@ -452,48 +530,67 @@ fn css2_floats_float_no_content_beside_001_ref() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.width = Length::px(160.0);
     doc.node_mut(n13).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n13).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n13).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n13).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n13).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n13).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n13).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n13).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n13).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.node_mut(n13).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n13).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
+    doc.node_mut(n13).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 255, 255, 255));
     doc.append_child(vp, n13);
-        let n14 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n14).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n14).style.margin_top = Length::px(0.0);
-        doc.node_mut(n14).style.margin_right = Length::px(0.0);
-        doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n14).style.margin_left = Length::px(0.0);
-        doc.node_mut(n14).style.padding_top = Length::px(0.0);
-        doc.node_mut(n14).style.padding_right = Length::px(0.0);
-        doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n14).style.padding_left = Length::px(0.0);
-        doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n14).style.float = Float::Left;
-        doc.node_mut(n14).style.width = Length::px(80.0);
-        doc.node_mut(n14).style.height = Length::px(80.0);
-        doc.node_mut(n14).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n14).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n14).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n14).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n14).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-        doc.append_child(n13, n14);
-        let n15 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n15).style.font_size = 16.0;
-        doc.node_mut(n15).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n15).style.white_space = WhiteSpace::PreLine;
-        doc.node_mut(n15).text = Some("\n".to_string());
-        doc.append_child(n13, n15);
-        let n16 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n16).style.font_size = 16.0;
-        doc.node_mut(n16).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n16).text = Some("Supercalifragilisticexpialidocious".to_string());
-        doc.append_child(n13, n16);
+    let n14 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.margin_top = Length::px(0.0);
+    doc.node_mut(n14).style.margin_right = Length::px(0.0);
+    doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.margin_left = Length::px(0.0);
+    doc.node_mut(n14).style.padding_top = Length::px(0.0);
+    doc.node_mut(n14).style.padding_right = Length::px(0.0);
+    doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.padding_left = Length::px(0.0);
+    doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n14).style.float = Float::Left;
+    doc.node_mut(n14).style.width = Length::px(80.0);
+    doc.node_mut(n14).style.height = Length::px(80.0);
+    doc.node_mut(n14).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n14).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n14).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.append_child(n13, n14);
+    let n15 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n15).style.font_size = 16.0;
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n15).text = Some("\n".to_string());
+    doc.append_child(n13, n15);
+    let n16 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n16).style.font_size = 16.0;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).text = Some("Supercalifragilisticexpialidocious".to_string());
+    doc.append_child(n13, n16);
     doc
 }
 
@@ -747,7 +844,9 @@ fn css2_floats_float_nowrap_1_notref() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -758,33 +857,40 @@ fn css2_floats_float_nowrap_1_notref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Right;
-        doc.node_mut(n2).style.width = Length::px(n2_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n2).style.height = Length::px(n2_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n2).style.background_color = Color::BLUE;
-        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n3).style.font_size = 16.0;
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.node_mut(n3).text = Some("\n  Some text that overflows my parent.\n".to_string());
-        doc.append_child(n1, n3);
+    let n2 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Right;
+    doc.node_mut(n2).style.width =
+        Length::px(n2_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n2).style.height =
+        Length::px(n2_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n2).style.background_color = Color::BLUE;
+    doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n3).text = Some("\n  Some text that overflows my parent.\n".to_string());
+    doc.append_child(n1, n3);
     doc
 }
 
@@ -803,7 +909,9 @@ fn css2_floats_float_nowrap_1() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -814,33 +922,42 @@ fn css2_floats_float_nowrap_1() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
-        doc.node_mut(n2).text = Some("\n  Some text that overflows my parent.\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Right;
-        doc.node_mut(n3).style.width = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.height = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.background_color = Color::BLUE;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n2).text = Some("\n  Some text that overflows my parent.\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Right;
+    doc.node_mut(n3).style.width =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.height =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.background_color = Color::BLUE;
+    doc.node_mut(n3).style.background_linear_gradient = None;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.append_child(n1, n3);
     doc
 }
 
@@ -859,7 +976,9 @@ fn css2_floats_float_nowrap_2() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -870,39 +989,48 @@ fn css2_floats_float_nowrap_2() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
-        doc.node_mut(n2).text = Some("\n  Some text that\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Right;
-        doc.node_mut(n3).style.width = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.height = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.background_color = Color::BLUE;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n4).style.font_size = 16.0;
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-        doc.node_mut(n4).text = Some("\n  overflows my parent.\n".to_string());
-        doc.append_child(n1, n4);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n2).text = Some("\n  Some text that\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Right;
+    doc.node_mut(n3).style.width =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.height =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.background_color = Color::BLUE;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n4).text = Some("\n  overflows my parent.\n".to_string());
+    doc.append_child(n1, n4);
     doc
 }
 
@@ -921,7 +1049,9 @@ fn css2_floats_float_nowrap_3_ref() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -932,54 +1062,67 @@ fn css2_floats_float_nowrap_3_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
-            let n4 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n4).style.font_size = 16.0;
-            doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n4).text = Some("\n    text that overflows my parent.\n  ".to_string());
-            doc.append_child(n3, n4);
-        let n5 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n5).style.font_size = 16.0;
-        doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n5).text = Some("\n  ".to_string());
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n6_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n6).style);
-        doc.node_mut(n6).style.margin_top = Length::px(0.0);
-        doc.node_mut(n6).style.margin_right = Length::px(0.0);
-        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.margin_left = Length::px(0.0);
-        doc.node_mut(n6).style.padding_top = Length::px(0.0);
-        doc.node_mut(n6).style.padding_right = Length::px(0.0);
-        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.padding_left = Length::px(0.0);
-        doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n6).style.float = Float::Right;
-        doc.node_mut(n6).style.width = Length::px(n6_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n6).style.height = Length::px(n6_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n6).style.background_color = Color::BLUE;
-        doc.append_child(n1, n6);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n4).text = Some("\n    text that overflows my parent.\n  ".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).text = Some("\n  ".to_string());
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n6_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n6).style);
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.float = Float::Right;
+    doc.node_mut(n6).style.width =
+        Length::px(n6_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n6).style.height =
+        Length::px(n6_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n6).style.background_color = Color::BLUE;
+    doc.append_child(n1, n6);
     doc
 }
 
@@ -998,7 +1141,9 @@ fn css2_floats_float_nowrap_3() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1009,56 +1154,69 @@ fn css2_floats_float_nowrap_3() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
-            let n4 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n4).style.font_size = 16.0;
-            doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n4).text = Some("\n    text that overflows ".to_string());
-            doc.append_child(n3, n4);
-            let n5 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
-            doc.node_mut(n5).style.margin_top = Length::px(0.0);
-            doc.node_mut(n5).style.margin_right = Length::px(0.0);
-            doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.margin_left = Length::px(0.0);
-            doc.node_mut(n5).style.padding_top = Length::px(0.0);
-            doc.node_mut(n5).style.padding_right = Length::px(0.0);
-            doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.padding_left = Length::px(0.0);
-            doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n5).style.float = Float::Right;
-            doc.node_mut(n5).style.width = Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n5).style.height = Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n5).style.background_color = Color::BLUE;
-            doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
-            doc.append_child(n3, n5);
-            let n6 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n6).style.font_size = 16.0;
-            doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n6).text = Some(" my parent.\n  ".to_string());
-            doc.append_child(n3, n6);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n4).text = Some("\n    text that overflows ".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.float = Float::Right;
+    doc.node_mut(n5).style.width =
+        Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.height =
+        Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.background_color = Color::BLUE;
+    doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n6).text = Some(" my parent.\n  ".to_string());
+    doc.append_child(n3, n6);
     doc
 }
 
@@ -1077,7 +1235,9 @@ fn css2_floats_float_nowrap_4_ref() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1088,54 +1248,67 @@ fn css2_floats_float_nowrap_4_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Right;
-        doc.node_mut(n3).style.width = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.height = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.background_color = Color::BLUE;
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n4).style.font_size = 16.0;
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n4).text = Some("\n  ".to_string());
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n5).style.margin_top = Length::px(0.0);
-        doc.node_mut(n5).style.margin_right = Length::px(0.0);
-        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.margin_left = Length::px(0.0);
-        doc.node_mut(n5).style.padding_top = Length::px(0.0);
-        doc.node_mut(n5).style.padding_right = Length::px(0.0);
-        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.padding_left = Length::px(0.0);
-        doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n5);
-            let n6 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n6).style.font_size = 16.0;
-            doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n6).text = Some("\n    text that overflows my parent.\n  ".to_string());
-            doc.append_child(n5, n6);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Right;
+    doc.node_mut(n3).style.width =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.height =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.background_color = Color::BLUE;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).text = Some("\n  ".to_string());
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n6).text = Some("\n    text that overflows my parent.\n  ".to_string());
+    doc.append_child(n5, n6);
     doc
 }
 
@@ -1154,7 +1327,9 @@ fn css2_floats_float_nowrap_4_ref2() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1165,65 +1340,82 @@ fn css2_floats_float_nowrap_4_ref2() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n3).style.font_size = 16.0;
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-        doc.node_mut(n3).text = Some("\n".to_string());
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n4).style.font_size = 16.0;
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n4).text = Some("\n  ".to_string());
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
-        doc.node_mut(n5).style.margin_top = Length::px(0.0);
-        doc.node_mut(n5).style.margin_right = Length::px(0.0);
-        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.margin_left = Length::px(0.0);
-        doc.node_mut(n5).style.padding_top = Length::px(0.0);
-        doc.node_mut(n5).style.padding_right = Length::px(0.0);
-        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.padding_left = Length::px(0.0);
-        doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n5).style.float = Float::Right;
-        doc.node_mut(n5).style.width = Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n5).style.height = Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n5).style.background_color = Color::BLUE;
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n6).style.font_size = 16.0;
-        doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n6).text = Some("\n  ".to_string());
-        doc.append_child(n1, n6);
-        let n7 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n7).style.margin_top = Length::px(0.0);
-        doc.node_mut(n7).style.margin_right = Length::px(0.0);
-        doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.margin_left = Length::px(0.0);
-        doc.node_mut(n7).style.padding_top = Length::px(0.0);
-        doc.node_mut(n7).style.padding_right = Length::px(0.0);
-        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.padding_left = Length::px(0.0);
-        doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n7);
-            let n8 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n8).style.font_size = 16.0;
-            doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n8).text = Some("\n    text that overflows my parent.\n  ".to_string());
-            doc.append_child(n7, n8);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).text = Some("\n  ".to_string());
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.float = Float::Right;
+    doc.node_mut(n5).style.width =
+        Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.height =
+        Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.background_color = Color::BLUE;
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).text = Some("\n  ".to_string());
+    doc.append_child(n1, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n7);
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 16.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n8).text = Some("\n    text that overflows my parent.\n  ".to_string());
+    doc.append_child(n7, n8);
     doc
 }
 
@@ -1242,7 +1434,9 @@ fn css2_floats_float_nowrap_4() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1253,50 +1447,61 @@ fn css2_floats_float_nowrap_4() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
-            let n4 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n4).style);
-            doc.node_mut(n4).style.margin_top = Length::px(0.0);
-            doc.node_mut(n4).style.margin_right = Length::px(0.0);
-            doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n4).style.margin_left = Length::px(0.0);
-            doc.node_mut(n4).style.padding_top = Length::px(0.0);
-            doc.node_mut(n4).style.padding_right = Length::px(0.0);
-            doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n4).style.padding_left = Length::px(0.0);
-            doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n4).style.float = Float::Right;
-            doc.node_mut(n4).style.width = Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n4).style.height = Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n4).style.background_color = Color::BLUE;
-            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-            doc.append_child(n3, n4);
-            let n5 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n5).style.font_size = 16.0;
-            doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n5).text = Some(" text that overflows my parent.\n  ".to_string());
-            doc.append_child(n3, n5);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n4).style);
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.float = Float::Right;
+    doc.node_mut(n4).style.width =
+        Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n4).style.height =
+        Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n5).text = Some(" text that overflows my parent.\n  ".to_string());
+    doc.append_child(n3, n5);
     doc
 }
 
@@ -1424,7 +1629,9 @@ fn css2_floats_float_nowrap_7() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1435,72 +1642,87 @@ fn css2_floats_float_nowrap_7() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n3).style.font_size = 16.0;
-            doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n3).text = Some("S".to_string());
-            doc.append_child(n2, n3);
-            let n4 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n4).style.display = Display::Block;
-            doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n4).style);
-            doc.node_mut(n4).style.margin_top = Length::px(0.0);
-            doc.node_mut(n4).style.margin_right = Length::px(0.0);
-            doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n4).style.margin_left = Length::px(0.0);
-            doc.node_mut(n4).style.padding_top = Length::px(0.0);
-            doc.node_mut(n4).style.padding_right = Length::px(0.0);
-            doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n4).style.padding_left = Length::px(0.0);
-            doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n4).style.width = Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n4).style.float = Float::Right;
-            doc.node_mut(n4).style.height = Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n4).style.background_color = Color::BLUE;
-            doc.append_child(n2, n4);
-            let n5 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n5).style.margin_top = Length::px(0.0);
-            doc.node_mut(n5).style.margin_right = Length::px(0.0);
-            doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.margin_left = Length::px(0.0);
-            doc.node_mut(n5).style.padding_top = Length::px(0.0);
-            doc.node_mut(n5).style.padding_right = Length::px(0.0);
-            doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.padding_left = Length::px(0.0);
-            doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
-            doc.append_child(n2, n5);
-                let n6 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n6).style.font_size = 16.0;
-                doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
-                doc.node_mut(n6).text = Some("ome".to_string());
-                doc.append_child(n5, n6);
-            let n7 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n7).style.font_size = 16.0;
-            doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n7).text = Some(" text that overflows my parent.".to_string());
-            doc.append_child(n2, n7);
+    let n2 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n3).text = Some("S".to_string());
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n4).style);
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.width =
+        Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n4).style.float = Float::Right;
+    doc.node_mut(n4).style.height =
+        Length::px(n4_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.append_child(n2, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n2, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n6).text = Some("ome".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n7).text = Some(" text that overflows my parent.".to_string());
+    doc.append_child(n2, n7);
     doc
 }
 
@@ -1519,7 +1741,9 @@ fn css2_floats_float_nowrap_8() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1530,39 +1754,48 @@ fn css2_floats_float_nowrap_8() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
-        doc.node_mut(n2).text = Some("\n  Some ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Right;
-        doc.node_mut(n3).style.width = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.height = Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n3).style.background_color = Color::BLUE;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n4).style.font_size = 16.0;
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-        doc.node_mut(n4).text = Some("\n  text that overflows my parent.\n".to_string());
-        doc.append_child(n1, n4);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n2).text = Some("\n  Some ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Right;
+    doc.node_mut(n3).style.width =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.height =
+        Length::px(n3_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.background_color = Color::BLUE;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n4).text = Some("\n  text that overflows my parent.\n".to_string());
+    doc.append_child(n1, n4);
     doc
 }
 
@@ -1581,7 +1814,9 @@ fn css2_floats_float_nowrap_9() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1592,56 +1827,69 @@ fn css2_floats_float_nowrap_9() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(10.0, openui_text::FontRelativeUnit::Ch));
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 16.0;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
-        doc.append_child(n1, n3);
-            let n4 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n4).style.font_size = 16.0;
-            doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n4).text = Some("\n    text ".to_string());
-            doc.append_child(n3, n4);
-            let n5 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
-            doc.node_mut(n5).style.margin_top = Length::px(0.0);
-            doc.node_mut(n5).style.margin_right = Length::px(0.0);
-            doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.margin_left = Length::px(0.0);
-            doc.node_mut(n5).style.padding_top = Length::px(0.0);
-            doc.node_mut(n5).style.padding_right = Length::px(0.0);
-            doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.padding_left = Length::px(0.0);
-            doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n5).style.float = Float::Right;
-            doc.node_mut(n5).style.width = Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n5).style.height = Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n5).style.background_color = Color::BLUE;
-            doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
-            doc.append_child(n3, n5);
-            let n6 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n6).style.font_size = 16.0;
-            doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
-            doc.node_mut(n6).text = Some(" that overflows my parent.\n  ".to_string());
-            doc.append_child(n3, n6);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).text = Some("\n  Some\n  ".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n4).text = Some("\n    text ".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.float = Float::Right;
+    doc.node_mut(n5).style.width =
+        Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.height =
+        Length::px(n5_font_relative.resolve(5.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.background_color = Color::BLUE;
+    doc.node_mut(n5).style.white_space = WhiteSpace::Nowrap;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).style.white_space = WhiteSpace::Nowrap;
+    doc.node_mut(n6).text = Some(" that overflows my parent.\n  ".to_string());
+    doc.append_child(n3, n6);
     doc
 }
 
@@ -1660,7 +1908,9 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -1672,338 +1922,413 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.font_size = 20.0;
-        let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.border_top_width = 1;
-        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_right_width = 1;
-        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_bottom_width = 1;
-        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_left_width = 1;
-        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.width = Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n3).style.font_size = 20.0;
-            doc.node_mut(n3).style.margin_top = Length::px(0.0);
-            doc.node_mut(n3).style.margin_right = Length::px(0.0);
-            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.margin_left = Length::px(0.0);
-            doc.node_mut(n3).style.padding_top = Length::px(0.0);
-            doc.node_mut(n3).style.padding_right = Length::px(0.0);
-            doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.padding_left = Length::px(0.0);
-            doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n3).style.border_top_width = 1;
-            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_right_width = 1;
-            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_bottom_width = 1;
-            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_left_width = 1;
-            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n4).style.font_size = 20.0;
-                doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n4).text = Some("\n      pppp\n      comprehension".to_string());
-                doc.append_child(n3, n4);
-                let n5 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n5).style.font_size = 20.0;
-                doc.node_mut(n5).style.margin_top = Length::px(0.0);
-                doc.node_mut(n5).style.margin_right = Length::px(0.0);
-                doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n5).style.margin_left = Length::px(0.0);
-                doc.node_mut(n5).style.padding_top = Length::px(0.0);
-                doc.node_mut(n5).style.padding_right = Length::px(0.0);
-                doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n5).style.padding_left = Length::px(0.0);
-                doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n3, n5);
-                    let n6 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n6).style.font_size = 20.0;
-                    doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n6).text = Some(" ppp".to_string());
-                    doc.append_child(n5, n6);
-                let n7 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n7).style.font_size = 20.0;
-                doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n7).text = Some("\n      pppp\n      ".to_string());
-                doc.append_child(n3, n7);
-                let n8 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n8).style.font_size = 20.0;
-                doc.node_mut(n8).style.margin_top = Length::px(0.0);
-                doc.node_mut(n8).style.margin_right = Length::px(0.0);
-                doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n8).style.margin_left = Length::px(0.0);
-                doc.node_mut(n8).style.padding_top = Length::px(0.0);
-                doc.node_mut(n8).style.padding_right = Length::px(0.0);
-                doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n8).style.padding_left = Length::px(0.0);
-                doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n8).style.float = Float::Right;
-                doc.node_mut(n8).style.margin_right = Length::px(-100.0);
-                doc.append_child(n3, n8);
-                    let n9 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n9).style.font_size = 20.0;
-                    doc.node_mut(n9).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n9).text = Some("float".to_string());
-                    doc.append_child(n8, n9);
-            let n10 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n10).style.display = Display::Block;
-            doc.node_mut(n10).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n10).style.font_size = 20.0;
-            doc.node_mut(n10).style.margin_top = Length::px(0.0);
-            doc.node_mut(n10).style.margin_right = Length::px(0.0);
-            doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.margin_left = Length::px(0.0);
-            doc.node_mut(n10).style.padding_top = Length::px(0.0);
-            doc.node_mut(n10).style.padding_right = Length::px(0.0);
-            doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.padding_left = Length::px(0.0);
-            doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n10).style.border_top_width = 1;
-            doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_right_width = 1;
-            doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_bottom_width = 1;
-            doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_left_width = 1;
-            doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n10);
-                let n11 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n11).style.font_size = 20.0;
-                doc.node_mut(n11).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n11).text = Some("\n      pppp\n      comprehension".to_string());
-                doc.append_child(n10, n11);
-                let n12 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n12).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n12).style.font_size = 20.0;
-                doc.node_mut(n12).style.margin_top = Length::px(0.0);
-                doc.node_mut(n12).style.margin_right = Length::px(0.0);
-                doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n12).style.margin_left = Length::px(0.0);
-                doc.node_mut(n12).style.padding_top = Length::px(0.0);
-                doc.node_mut(n12).style.padding_right = Length::px(0.0);
-                doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n12).style.padding_left = Length::px(0.0);
-                doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n10, n12);
-                    let n13 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n13).style.font_size = 20.0;
-                    doc.node_mut(n13).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n13).text = Some("[ppp".to_string());
-                    doc.append_child(n12, n13);
-                let n14 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n14).style.font_size = 20.0;
-                doc.node_mut(n14).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n14).text = Some("\n      pppp\n      ".to_string());
-                doc.append_child(n10, n14);
-                let n15 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n15).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n15).style.font_size = 20.0;
-                doc.node_mut(n15).style.margin_top = Length::px(0.0);
-                doc.node_mut(n15).style.margin_right = Length::px(0.0);
-                doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n15).style.margin_left = Length::px(0.0);
-                doc.node_mut(n15).style.padding_top = Length::px(0.0);
-                doc.node_mut(n15).style.padding_right = Length::px(0.0);
-                doc.node_mut(n15).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n15).style.padding_left = Length::px(0.0);
-                doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n15).style.float = Float::Right;
-                doc.node_mut(n15).style.margin_right = Length::px(-100.0);
-                doc.append_child(n10, n15);
-                    let n16 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n16).style.font_size = 20.0;
-                    doc.node_mut(n16).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n16).text = Some("float".to_string());
-                    doc.append_child(n15, n16);
-            let n17 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n17).style.display = Display::Block;
-            doc.node_mut(n17).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n17).style.font_size = 20.0;
-            doc.node_mut(n17).style.margin_top = Length::px(0.0);
-            doc.node_mut(n17).style.margin_right = Length::px(0.0);
-            doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n17).style.margin_left = Length::px(0.0);
-            doc.node_mut(n17).style.padding_top = Length::px(0.0);
-            doc.node_mut(n17).style.padding_right = Length::px(0.0);
-            doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n17).style.padding_left = Length::px(0.0);
-            doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n17).style.border_top_width = 1;
-            doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_right_width = 1;
-            doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_bottom_width = 1;
-            doc.node_mut(n17).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_left_width = 1;
-            doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n17);
-                let n18 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n18).style.font_size = 20.0;
-                doc.node_mut(n18).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n18).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
-                doc.append_child(n17, n18);
-                let n19 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n19).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n19).style.font_size = 20.0;
-                doc.node_mut(n19).style.margin_top = Length::px(0.0);
-                doc.node_mut(n19).style.margin_right = Length::px(0.0);
-                doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n19).style.margin_left = Length::px(0.0);
-                doc.node_mut(n19).style.padding_top = Length::px(0.0);
-                doc.node_mut(n19).style.padding_right = Length::px(0.0);
-                doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n19).style.padding_left = Length::px(0.0);
-                doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n17, n19);
-                    let n20 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n20).style.font_size = 20.0;
-                    doc.node_mut(n20).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n20).text = Some(" ppp".to_string());
-                    doc.append_child(n19, n20);
-                let n21 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n21).style.font_size = 20.0;
-                doc.node_mut(n21).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n21).text = Some("\n      pppp\n      ".to_string());
-                doc.append_child(n17, n21);
-                let n22 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n22).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n22).style.font_size = 20.0;
-                doc.node_mut(n22).style.margin_top = Length::px(0.0);
-                doc.node_mut(n22).style.margin_right = Length::px(0.0);
-                doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n22).style.margin_left = Length::px(0.0);
-                doc.node_mut(n22).style.padding_top = Length::px(0.0);
-                doc.node_mut(n22).style.padding_right = Length::px(0.0);
-                doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n22).style.padding_left = Length::px(0.0);
-                doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n22).style.float = Float::Right;
-                doc.node_mut(n22).style.margin_right = Length::px(-100.0);
-                doc.append_child(n17, n22);
-                    let n23 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n23).style.font_size = 20.0;
-                    doc.node_mut(n23).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n23).text = Some("float".to_string());
-                    doc.append_child(n22, n23);
-            let n24 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n24).style.display = Display::Block;
-            doc.node_mut(n24).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n24).style.font_size = 20.0;
-            doc.node_mut(n24).style.margin_top = Length::px(0.0);
-            doc.node_mut(n24).style.margin_right = Length::px(0.0);
-            doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n24).style.margin_left = Length::px(0.0);
-            doc.node_mut(n24).style.padding_top = Length::px(0.0);
-            doc.node_mut(n24).style.padding_right = Length::px(0.0);
-            doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n24).style.padding_left = Length::px(0.0);
-            doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n24).style.border_top_width = 1;
-            doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_right_width = 1;
-            doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_bottom_width = 1;
-            doc.node_mut(n24).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_left_width = 1;
-            doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n24);
-                let n25 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n25).style.font_size = 20.0;
-                doc.node_mut(n25).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n25).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
-                doc.append_child(n24, n25);
-                let n26 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n26).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n26).style.font_size = 20.0;
-                doc.node_mut(n26).style.margin_top = Length::px(0.0);
-                doc.node_mut(n26).style.margin_right = Length::px(0.0);
-                doc.node_mut(n26).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n26).style.margin_left = Length::px(0.0);
-                doc.node_mut(n26).style.padding_top = Length::px(0.0);
-                doc.node_mut(n26).style.padding_right = Length::px(0.0);
-                doc.node_mut(n26).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n26).style.padding_left = Length::px(0.0);
-                doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n24, n26);
-                    let n27 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n27).style.font_size = 20.0;
-                    doc.node_mut(n27).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n27).text = Some("[ppp".to_string());
-                    doc.append_child(n26, n27);
-                let n28 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n28).style.font_size = 20.0;
-                doc.node_mut(n28).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n28).text = Some("\n      pppp\n      ".to_string());
-                doc.append_child(n24, n28);
-                let n29 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n29).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n29).style.font_size = 20.0;
-                doc.node_mut(n29).style.margin_top = Length::px(0.0);
-                doc.node_mut(n29).style.margin_right = Length::px(0.0);
-                doc.node_mut(n29).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n29).style.margin_left = Length::px(0.0);
-                doc.node_mut(n29).style.padding_top = Length::px(0.0);
-                doc.node_mut(n29).style.padding_right = Length::px(0.0);
-                doc.node_mut(n29).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n29).style.padding_left = Length::px(0.0);
-                doc.node_mut(n29).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n29).style.float = Float::Right;
-                doc.node_mut(n29).style.margin_right = Length::px(-100.0);
-                doc.append_child(n24, n29);
-                    let n30 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n30).style.font_size = 20.0;
-                    doc.node_mut(n30).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n30).text = Some("float".to_string());
-                    doc.append_child(n29, n30);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.font_size = 20.0;
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.width =
+        Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.font_size = 20.0;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.border_top_width = 1;
+    doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_right_width = 1;
+    doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_bottom_width = 1;
+    doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_left_width = 1;
+    doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 20.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).text = Some("\n      pppp\n      comprehension".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).style.font_size = 20.0;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 20.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n6).text = Some(" ppp".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n7).style.font_size = 20.0;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n7).text = Some("\n      pppp\n      ".to_string());
+    doc.append_child(n3, n7);
+    let n8 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n8).style.font_size = 20.0;
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.padding_top = Length::px(0.0);
+    doc.node_mut(n8).style.padding_right = Length::px(0.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.padding_left = Length::px(0.0);
+    doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.float = Float::Right;
+    doc.node_mut(n8).style.margin_right = Length::px(-100.0);
+    doc.append_child(n3, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 20.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n9).text = Some("float".to_string());
+    doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n10).style.font_size = 20.0;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.border_top_width = 1;
+    doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_right_width = 1;
+    doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_bottom_width = 1;
+    doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_left_width = 1;
+    doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n10);
+    let n11 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n11).style.font_size = 20.0;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n11).text = Some("\n      pppp\n      comprehension".to_string());
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n12).style.font_size = 20.0;
+    doc.node_mut(n12).style.margin_top = Length::px(0.0);
+    doc.node_mut(n12).style.margin_right = Length::px(0.0);
+    doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.margin_left = Length::px(0.0);
+    doc.node_mut(n12).style.padding_top = Length::px(0.0);
+    doc.node_mut(n12).style.padding_right = Length::px(0.0);
+    doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.padding_left = Length::px(0.0);
+    doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n10, n12);
+    let n13 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n13).style.font_size = 20.0;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n13).text = Some("[ppp".to_string());
+    doc.append_child(n12, n13);
+    let n14 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n14).style.font_size = 20.0;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n14).text = Some("\n      pppp\n      ".to_string());
+    doc.append_child(n10, n14);
+    let n15 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n15).style.font_size = 20.0;
+    doc.node_mut(n15).style.margin_top = Length::px(0.0);
+    doc.node_mut(n15).style.margin_right = Length::px(0.0);
+    doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.margin_left = Length::px(0.0);
+    doc.node_mut(n15).style.padding_top = Length::px(0.0);
+    doc.node_mut(n15).style.padding_right = Length::px(0.0);
+    doc.node_mut(n15).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.padding_left = Length::px(0.0);
+    doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n15).style.float = Float::Right;
+    doc.node_mut(n15).style.margin_right = Length::px(-100.0);
+    doc.append_child(n10, n15);
+    let n16 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n16).style.font_size = 20.0;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n16).text = Some("float".to_string());
+    doc.append_child(n15, n16);
+    let n17 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n17).style.display = Display::Block;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n17).style.font_size = 20.0;
+    doc.node_mut(n17).style.margin_top = Length::px(0.0);
+    doc.node_mut(n17).style.margin_right = Length::px(0.0);
+    doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.margin_left = Length::px(0.0);
+    doc.node_mut(n17).style.padding_top = Length::px(0.0);
+    doc.node_mut(n17).style.padding_right = Length::px(0.0);
+    doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.padding_left = Length::px(0.0);
+    doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.border_top_width = 1;
+    doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_right_width = 1;
+    doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_bottom_width = 1;
+    doc.node_mut(n17).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_left_width = 1;
+    doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n17);
+    let n18 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n18).style.font_size = 20.0;
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n18).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
+    doc.append_child(n17, n18);
+    let n19 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n19).style.font_size = 20.0;
+    doc.node_mut(n19).style.margin_top = Length::px(0.0);
+    doc.node_mut(n19).style.margin_right = Length::px(0.0);
+    doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.margin_left = Length::px(0.0);
+    doc.node_mut(n19).style.padding_top = Length::px(0.0);
+    doc.node_mut(n19).style.padding_right = Length::px(0.0);
+    doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.padding_left = Length::px(0.0);
+    doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n17, n19);
+    let n20 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n20).style.font_size = 20.0;
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n20).text = Some(" ppp".to_string());
+    doc.append_child(n19, n20);
+    let n21 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n21).style.font_size = 20.0;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n21).text = Some("\n      pppp\n      ".to_string());
+    doc.append_child(n17, n21);
+    let n22 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n22).style.font_size = 20.0;
+    doc.node_mut(n22).style.margin_top = Length::px(0.0);
+    doc.node_mut(n22).style.margin_right = Length::px(0.0);
+    doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.margin_left = Length::px(0.0);
+    doc.node_mut(n22).style.padding_top = Length::px(0.0);
+    doc.node_mut(n22).style.padding_right = Length::px(0.0);
+    doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.padding_left = Length::px(0.0);
+    doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.float = Float::Right;
+    doc.node_mut(n22).style.margin_right = Length::px(-100.0);
+    doc.append_child(n17, n22);
+    let n23 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n23).style.font_size = 20.0;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n23).text = Some("float".to_string());
+    doc.append_child(n22, n23);
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style.display = Display::Block;
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n24).style.font_size = 20.0;
+    doc.node_mut(n24).style.margin_top = Length::px(0.0);
+    doc.node_mut(n24).style.margin_right = Length::px(0.0);
+    doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.margin_left = Length::px(0.0);
+    doc.node_mut(n24).style.padding_top = Length::px(0.0);
+    doc.node_mut(n24).style.padding_right = Length::px(0.0);
+    doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.padding_left = Length::px(0.0);
+    doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n24).style.border_top_width = 1;
+    doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_right_width = 1;
+    doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_bottom_width = 1;
+    doc.node_mut(n24).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_left_width = 1;
+    doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n24);
+    let n25 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n25).style.font_size = 20.0;
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n25).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n26).style.font_size = 20.0;
+    doc.node_mut(n26).style.margin_top = Length::px(0.0);
+    doc.node_mut(n26).style.margin_right = Length::px(0.0);
+    doc.node_mut(n26).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.margin_left = Length::px(0.0);
+    doc.node_mut(n26).style.padding_top = Length::px(0.0);
+    doc.node_mut(n26).style.padding_right = Length::px(0.0);
+    doc.node_mut(n26).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.padding_left = Length::px(0.0);
+    doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n24, n26);
+    let n27 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n27).style.font_size = 20.0;
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n27).text = Some("[ppp".to_string());
+    doc.append_child(n26, n27);
+    let n28 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n28).style.font_size = 20.0;
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n28).text = Some("\n      pppp\n      ".to_string());
+    doc.append_child(n24, n28);
+    let n29 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n29).style.font_size = 20.0;
+    doc.node_mut(n29).style.margin_top = Length::px(0.0);
+    doc.node_mut(n29).style.margin_right = Length::px(0.0);
+    doc.node_mut(n29).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n29).style.margin_left = Length::px(0.0);
+    doc.node_mut(n29).style.padding_top = Length::px(0.0);
+    doc.node_mut(n29).style.padding_right = Length::px(0.0);
+    doc.node_mut(n29).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n29).style.padding_left = Length::px(0.0);
+    doc.node_mut(n29).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n29).style.float = Float::Right;
+    doc.node_mut(n29).style.margin_right = Length::px(-100.0);
+    doc.append_child(n24, n29);
+    let n30 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n30).style.font_size = 20.0;
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n30).text = Some("float".to_string());
+    doc.append_child(n29, n30);
     doc
 }
 
@@ -2022,7 +2347,9 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -2034,338 +2361,413 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.font_size = 20.0;
-        let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.border_top_width = 1;
-        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_right_width = 1;
-        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_bottom_width = 1;
-        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_left_width = 1;
-        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.width = Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n3).style.font_size = 20.0;
-            doc.node_mut(n3).style.margin_top = Length::px(0.0);
-            doc.node_mut(n3).style.margin_right = Length::px(0.0);
-            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.margin_left = Length::px(0.0);
-            doc.node_mut(n3).style.padding_top = Length::px(0.0);
-            doc.node_mut(n3).style.padding_right = Length::px(0.0);
-            doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.padding_left = Length::px(0.0);
-            doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n3).style.border_top_width = 1;
-            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_right_width = 1;
-            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_bottom_width = 1;
-            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_left_width = 1;
-            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n4).style.font_size = 20.0;
-                doc.node_mut(n4).style.margin_top = Length::px(0.0);
-                doc.node_mut(n4).style.margin_right = Length::px(0.0);
-                doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n4).style.margin_left = Length::px(0.0);
-                doc.node_mut(n4).style.padding_top = Length::px(0.0);
-                doc.node_mut(n4).style.padding_right = Length::px(0.0);
-                doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n4).style.padding_left = Length::px(0.0);
-                doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n4).style.float = Float::Right;
-                doc.node_mut(n4).style.margin_right = Length::px(-100.0);
-                doc.append_child(n3, n4);
-                    let n5 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n5).style.font_size = 20.0;
-                    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n5).text = Some("float".to_string());
-                    doc.append_child(n4, n5);
-                let n6 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n6).style.font_size = 20.0;
-                doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n6).text = Some("\n      pppp\n      comprehension".to_string());
-                doc.append_child(n3, n6);
-                let n7 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n7).style.font_size = 20.0;
-                doc.node_mut(n7).style.margin_top = Length::px(0.0);
-                doc.node_mut(n7).style.margin_right = Length::px(0.0);
-                doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n7).style.margin_left = Length::px(0.0);
-                doc.node_mut(n7).style.padding_top = Length::px(0.0);
-                doc.node_mut(n7).style.padding_right = Length::px(0.0);
-                doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n7).style.padding_left = Length::px(0.0);
-                doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n3, n7);
-                    let n8 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n8).style.font_size = 20.0;
-                    doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n8).text = Some(" ppp".to_string());
-                    doc.append_child(n7, n8);
-                let n9 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n9).style.font_size = 20.0;
-                doc.node_mut(n9).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n9).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n3, n9);
-            let n10 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n10).style.display = Display::Block;
-            doc.node_mut(n10).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n10).style.font_size = 20.0;
-            doc.node_mut(n10).style.margin_top = Length::px(0.0);
-            doc.node_mut(n10).style.margin_right = Length::px(0.0);
-            doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.margin_left = Length::px(0.0);
-            doc.node_mut(n10).style.padding_top = Length::px(0.0);
-            doc.node_mut(n10).style.padding_right = Length::px(0.0);
-            doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.padding_left = Length::px(0.0);
-            doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n10).style.border_top_width = 1;
-            doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_right_width = 1;
-            doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_bottom_width = 1;
-            doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_left_width = 1;
-            doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n10);
-                let n11 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n11).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n11).style.font_size = 20.0;
-                doc.node_mut(n11).style.margin_top = Length::px(0.0);
-                doc.node_mut(n11).style.margin_right = Length::px(0.0);
-                doc.node_mut(n11).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n11).style.margin_left = Length::px(0.0);
-                doc.node_mut(n11).style.padding_top = Length::px(0.0);
-                doc.node_mut(n11).style.padding_right = Length::px(0.0);
-                doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n11).style.padding_left = Length::px(0.0);
-                doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n11).style.float = Float::Right;
-                doc.node_mut(n11).style.margin_right = Length::px(-100.0);
-                doc.append_child(n10, n11);
-                    let n12 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n12).style.font_size = 20.0;
-                    doc.node_mut(n12).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n12).text = Some("float".to_string());
-                    doc.append_child(n11, n12);
-                let n13 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n13).style.font_size = 20.0;
-                doc.node_mut(n13).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n13).text = Some("\n      pppp\n      comprehension".to_string());
-                doc.append_child(n10, n13);
-                let n14 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n14).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n14).style.font_size = 20.0;
-                doc.node_mut(n14).style.margin_top = Length::px(0.0);
-                doc.node_mut(n14).style.margin_right = Length::px(0.0);
-                doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n14).style.margin_left = Length::px(0.0);
-                doc.node_mut(n14).style.padding_top = Length::px(0.0);
-                doc.node_mut(n14).style.padding_right = Length::px(0.0);
-                doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n14).style.padding_left = Length::px(0.0);
-                doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n10, n14);
-                    let n15 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n15).style.font_size = 20.0;
-                    doc.node_mut(n15).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n15).text = Some("[ppp".to_string());
-                    doc.append_child(n14, n15);
-                let n16 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n16).style.font_size = 20.0;
-                doc.node_mut(n16).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n16).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n10, n16);
-            let n17 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n17).style.display = Display::Block;
-            doc.node_mut(n17).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n17).style.font_size = 20.0;
-            doc.node_mut(n17).style.margin_top = Length::px(0.0);
-            doc.node_mut(n17).style.margin_right = Length::px(0.0);
-            doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n17).style.margin_left = Length::px(0.0);
-            doc.node_mut(n17).style.padding_top = Length::px(0.0);
-            doc.node_mut(n17).style.padding_right = Length::px(0.0);
-            doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n17).style.padding_left = Length::px(0.0);
-            doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n17).style.border_top_width = 1;
-            doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_right_width = 1;
-            doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_bottom_width = 1;
-            doc.node_mut(n17).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_left_width = 1;
-            doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n17);
-                let n18 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n18).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n18).style.font_size = 20.0;
-                doc.node_mut(n18).style.margin_top = Length::px(0.0);
-                doc.node_mut(n18).style.margin_right = Length::px(0.0);
-                doc.node_mut(n18).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n18).style.margin_left = Length::px(0.0);
-                doc.node_mut(n18).style.padding_top = Length::px(0.0);
-                doc.node_mut(n18).style.padding_right = Length::px(0.0);
-                doc.node_mut(n18).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n18).style.padding_left = Length::px(0.0);
-                doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n18).style.float = Float::Right;
-                doc.node_mut(n18).style.margin_right = Length::px(-100.0);
-                doc.append_child(n17, n18);
-                    let n19 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n19).style.font_size = 20.0;
-                    doc.node_mut(n19).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n19).text = Some("float".to_string());
-                    doc.append_child(n18, n19);
-                let n20 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n20).style.font_size = 20.0;
-                doc.node_mut(n20).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n20).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
-                doc.append_child(n17, n20);
-                let n21 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n21).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n21).style.font_size = 20.0;
-                doc.node_mut(n21).style.margin_top = Length::px(0.0);
-                doc.node_mut(n21).style.margin_right = Length::px(0.0);
-                doc.node_mut(n21).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n21).style.margin_left = Length::px(0.0);
-                doc.node_mut(n21).style.padding_top = Length::px(0.0);
-                doc.node_mut(n21).style.padding_right = Length::px(0.0);
-                doc.node_mut(n21).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n21).style.padding_left = Length::px(0.0);
-                doc.node_mut(n21).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n17, n21);
-                    let n22 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n22).style.font_size = 20.0;
-                    doc.node_mut(n22).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n22).text = Some(" ppp".to_string());
-                    doc.append_child(n21, n22);
-                let n23 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n23).style.font_size = 20.0;
-                doc.node_mut(n23).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n23).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n17, n23);
-            let n24 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n24).style.display = Display::Block;
-            doc.node_mut(n24).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n24).style.font_size = 20.0;
-            doc.node_mut(n24).style.margin_top = Length::px(0.0);
-            doc.node_mut(n24).style.margin_right = Length::px(0.0);
-            doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n24).style.margin_left = Length::px(0.0);
-            doc.node_mut(n24).style.padding_top = Length::px(0.0);
-            doc.node_mut(n24).style.padding_right = Length::px(0.0);
-            doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n24).style.padding_left = Length::px(0.0);
-            doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n24).style.border_top_width = 1;
-            doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_right_width = 1;
-            doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_bottom_width = 1;
-            doc.node_mut(n24).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_left_width = 1;
-            doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n24);
-                let n25 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n25).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n25).style.font_size = 20.0;
-                doc.node_mut(n25).style.margin_top = Length::px(0.0);
-                doc.node_mut(n25).style.margin_right = Length::px(0.0);
-                doc.node_mut(n25).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n25).style.margin_left = Length::px(0.0);
-                doc.node_mut(n25).style.padding_top = Length::px(0.0);
-                doc.node_mut(n25).style.padding_right = Length::px(0.0);
-                doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n25).style.padding_left = Length::px(0.0);
-                doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n25).style.float = Float::Right;
-                doc.node_mut(n25).style.margin_right = Length::px(-100.0);
-                doc.append_child(n24, n25);
-                    let n26 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n26).style.font_size = 20.0;
-                    doc.node_mut(n26).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n26).text = Some("float".to_string());
-                    doc.append_child(n25, n26);
-                let n27 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n27).style.font_size = 20.0;
-                doc.node_mut(n27).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n27).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
-                doc.append_child(n24, n27);
-                let n28 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n28).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n28).style.font_size = 20.0;
-                doc.node_mut(n28).style.margin_top = Length::px(0.0);
-                doc.node_mut(n28).style.margin_right = Length::px(0.0);
-                doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n28).style.margin_left = Length::px(0.0);
-                doc.node_mut(n28).style.padding_top = Length::px(0.0);
-                doc.node_mut(n28).style.padding_right = Length::px(0.0);
-                doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n28).style.padding_left = Length::px(0.0);
-                doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n24, n28);
-                    let n29 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n29).style.font_size = 20.0;
-                    doc.node_mut(n29).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n29).text = Some("[ppp".to_string());
-                    doc.append_child(n28, n29);
-                let n30 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n30).style.font_size = 20.0;
-                doc.node_mut(n30).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n30).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n24, n30);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.font_size = 20.0;
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.width =
+        Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.font_size = 20.0;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.border_top_width = 1;
+    doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_right_width = 1;
+    doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_bottom_width = 1;
+    doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_left_width = 1;
+    doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).style.font_size = 20.0;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.float = Float::Right;
+    doc.node_mut(n4).style.margin_right = Length::px(-100.0);
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n5).style.font_size = 20.0;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).text = Some("float".to_string());
+    doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 20.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).text = Some("\n      pppp\n      comprehension".to_string());
+    doc.append_child(n3, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n7).style.font_size = 20.0;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n3, n7);
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 20.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n8).text = Some(" ppp".to_string());
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 20.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n9).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n3, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n10).style.font_size = 20.0;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.border_top_width = 1;
+    doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_right_width = 1;
+    doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_bottom_width = 1;
+    doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_left_width = 1;
+    doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n10);
+    let n11 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n11).style.font_size = 20.0;
+    doc.node_mut(n11).style.margin_top = Length::px(0.0);
+    doc.node_mut(n11).style.margin_right = Length::px(0.0);
+    doc.node_mut(n11).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n11).style.margin_left = Length::px(0.0);
+    doc.node_mut(n11).style.padding_top = Length::px(0.0);
+    doc.node_mut(n11).style.padding_right = Length::px(0.0);
+    doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n11).style.padding_left = Length::px(0.0);
+    doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n11).style.float = Float::Right;
+    doc.node_mut(n11).style.margin_right = Length::px(-100.0);
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n12).style.font_size = 20.0;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n12).text = Some("float".to_string());
+    doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n13).style.font_size = 20.0;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n13).text = Some("\n      pppp\n      comprehension".to_string());
+    doc.append_child(n10, n13);
+    let n14 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n14).style.font_size = 20.0;
+    doc.node_mut(n14).style.margin_top = Length::px(0.0);
+    doc.node_mut(n14).style.margin_right = Length::px(0.0);
+    doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.margin_left = Length::px(0.0);
+    doc.node_mut(n14).style.padding_top = Length::px(0.0);
+    doc.node_mut(n14).style.padding_right = Length::px(0.0);
+    doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.padding_left = Length::px(0.0);
+    doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n10, n14);
+    let n15 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n15).style.font_size = 20.0;
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n15).text = Some("[ppp".to_string());
+    doc.append_child(n14, n15);
+    let n16 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n16).style.font_size = 20.0;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n16).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n10, n16);
+    let n17 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n17).style.display = Display::Block;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n17).style.font_size = 20.0;
+    doc.node_mut(n17).style.margin_top = Length::px(0.0);
+    doc.node_mut(n17).style.margin_right = Length::px(0.0);
+    doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.margin_left = Length::px(0.0);
+    doc.node_mut(n17).style.padding_top = Length::px(0.0);
+    doc.node_mut(n17).style.padding_right = Length::px(0.0);
+    doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.padding_left = Length::px(0.0);
+    doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.border_top_width = 1;
+    doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_right_width = 1;
+    doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_bottom_width = 1;
+    doc.node_mut(n17).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_left_width = 1;
+    doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n17);
+    let n18 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n18).style.font_size = 20.0;
+    doc.node_mut(n18).style.margin_top = Length::px(0.0);
+    doc.node_mut(n18).style.margin_right = Length::px(0.0);
+    doc.node_mut(n18).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n18).style.margin_left = Length::px(0.0);
+    doc.node_mut(n18).style.padding_top = Length::px(0.0);
+    doc.node_mut(n18).style.padding_right = Length::px(0.0);
+    doc.node_mut(n18).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n18).style.padding_left = Length::px(0.0);
+    doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n18).style.float = Float::Right;
+    doc.node_mut(n18).style.margin_right = Length::px(-100.0);
+    doc.append_child(n17, n18);
+    let n19 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n19).style.font_size = 20.0;
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n19).text = Some("float".to_string());
+    doc.append_child(n18, n19);
+    let n20 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n20).style.font_size = 20.0;
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n20).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
+    doc.append_child(n17, n20);
+    let n21 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n21).style.font_size = 20.0;
+    doc.node_mut(n21).style.margin_top = Length::px(0.0);
+    doc.node_mut(n21).style.margin_right = Length::px(0.0);
+    doc.node_mut(n21).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n21).style.margin_left = Length::px(0.0);
+    doc.node_mut(n21).style.padding_top = Length::px(0.0);
+    doc.node_mut(n21).style.padding_right = Length::px(0.0);
+    doc.node_mut(n21).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n21).style.padding_left = Length::px(0.0);
+    doc.node_mut(n21).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n17, n21);
+    let n22 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n22).style.font_size = 20.0;
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n22).text = Some(" ppp".to_string());
+    doc.append_child(n21, n22);
+    let n23 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n23).style.font_size = 20.0;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n23).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n17, n23);
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style.display = Display::Block;
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n24).style.font_size = 20.0;
+    doc.node_mut(n24).style.margin_top = Length::px(0.0);
+    doc.node_mut(n24).style.margin_right = Length::px(0.0);
+    doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.margin_left = Length::px(0.0);
+    doc.node_mut(n24).style.padding_top = Length::px(0.0);
+    doc.node_mut(n24).style.padding_right = Length::px(0.0);
+    doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.padding_left = Length::px(0.0);
+    doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n24).style.border_top_width = 1;
+    doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_right_width = 1;
+    doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_bottom_width = 1;
+    doc.node_mut(n24).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_left_width = 1;
+    doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n24);
+    let n25 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n25).style.font_size = 20.0;
+    doc.node_mut(n25).style.margin_top = Length::px(0.0);
+    doc.node_mut(n25).style.margin_right = Length::px(0.0);
+    doc.node_mut(n25).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n25).style.margin_left = Length::px(0.0);
+    doc.node_mut(n25).style.padding_top = Length::px(0.0);
+    doc.node_mut(n25).style.padding_right = Length::px(0.0);
+    doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n25).style.padding_left = Length::px(0.0);
+    doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n25).style.float = Float::Right;
+    doc.node_mut(n25).style.margin_right = Length::px(-100.0);
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n26).style.font_size = 20.0;
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n26).text = Some("float".to_string());
+    doc.append_child(n25, n26);
+    let n27 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n27).style.font_size = 20.0;
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n27).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
+    doc.append_child(n24, n27);
+    let n28 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n28).style.font_size = 20.0;
+    doc.node_mut(n28).style.margin_top = Length::px(0.0);
+    doc.node_mut(n28).style.margin_right = Length::px(0.0);
+    doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.margin_left = Length::px(0.0);
+    doc.node_mut(n28).style.padding_top = Length::px(0.0);
+    doc.node_mut(n28).style.padding_right = Length::px(0.0);
+    doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.padding_left = Length::px(0.0);
+    doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n24, n28);
+    let n29 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n29).style.font_size = 20.0;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n29).text = Some("[ppp".to_string());
+    doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n30).style.font_size = 20.0;
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n30).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n24, n30);
     doc
 }
 
@@ -2384,7 +2786,9 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
     doc.node_mut(n1).style.font_size = 20.0;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -2396,346 +2800,421 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-        doc.node_mut(n2).style.font_size = 20.0;
-        let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.border_top_width = 1;
-        doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_right_width = 1;
-        doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_bottom_width = 1;
-        doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.border_left_width = 1;
-        doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
-        doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
-        doc.node_mut(n2).style.width = Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n3).style.font_size = 20.0;
-            doc.node_mut(n3).style.margin_top = Length::px(0.0);
-            doc.node_mut(n3).style.margin_right = Length::px(0.0);
-            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.margin_left = Length::px(0.0);
-            doc.node_mut(n3).style.padding_top = Length::px(0.0);
-            doc.node_mut(n3).style.padding_right = Length::px(0.0);
-            doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.padding_left = Length::px(0.0);
-            doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n3).style.border_top_width = 1;
-            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_right_width = 1;
-            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_bottom_width = 1;
-            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n3).style.border_left_width = 1;
-            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n4).style.font_size = 20.0;
-                doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n4).text = Some("\n      pppp\n      comprehension".to_string());
-                doc.append_child(n3, n4);
-                let n5 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n5).style.font_size = 20.0;
-                doc.node_mut(n5).style.margin_top = Length::px(0.0);
-                doc.node_mut(n5).style.margin_right = Length::px(0.0);
-                doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n5).style.margin_left = Length::px(0.0);
-                doc.node_mut(n5).style.padding_top = Length::px(0.0);
-                doc.node_mut(n5).style.padding_right = Length::px(0.0);
-                doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n5).style.padding_left = Length::px(0.0);
-                doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n3, n5);
-                    let n6 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n6).style.font_size = 20.0;
-                    doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n6).text = Some(" ppp".to_string());
-                    doc.append_child(n5, n6);
-                    let n7 = doc.create_node(ElementTag::Span);
-                    doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n7).style.font_size = 20.0;
-                    doc.node_mut(n7).style.margin_top = Length::px(0.0);
-                    doc.node_mut(n7).style.margin_right = Length::px(0.0);
-                    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-                    doc.node_mut(n7).style.margin_left = Length::px(0.0);
-                    doc.node_mut(n7).style.padding_top = Length::px(0.0);
-                    doc.node_mut(n7).style.padding_right = Length::px(0.0);
-                    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-                    doc.node_mut(n7).style.padding_left = Length::px(0.0);
-                    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-                    doc.node_mut(n7).style.float = Float::Right;
-                    doc.node_mut(n7).style.margin_right = Length::px(-100.0);
-                    doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
-                    doc.append_child(n5, n7);
-                        let n8 = doc.create_node(ElementTag::Text);
-                        doc.node_mut(n8).style.font_size = 20.0;
-                        doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                        doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
-                        doc.node_mut(n8).text = Some("float".to_string());
-                        doc.append_child(n7, n8);
-                let n9 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n9).style.font_size = 20.0;
-                doc.node_mut(n9).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n9).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n3, n9);
-            let n10 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n10).style.display = Display::Block;
-            doc.node_mut(n10).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n10).style.font_size = 20.0;
-            doc.node_mut(n10).style.margin_top = Length::px(0.0);
-            doc.node_mut(n10).style.margin_right = Length::px(0.0);
-            doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.margin_left = Length::px(0.0);
-            doc.node_mut(n10).style.padding_top = Length::px(0.0);
-            doc.node_mut(n10).style.padding_right = Length::px(0.0);
-            doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.padding_left = Length::px(0.0);
-            doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n10).style.border_top_width = 1;
-            doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_right_width = 1;
-            doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_bottom_width = 1;
-            doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n10).style.border_left_width = 1;
-            doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n10).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n10);
-                let n11 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n11).style.font_size = 20.0;
-                doc.node_mut(n11).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n11).text = Some("\n      pppp\n      comprehension".to_string());
-                doc.append_child(n10, n11);
-                let n12 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n12).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n12).style.font_size = 20.0;
-                doc.node_mut(n12).style.margin_top = Length::px(0.0);
-                doc.node_mut(n12).style.margin_right = Length::px(0.0);
-                doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n12).style.margin_left = Length::px(0.0);
-                doc.node_mut(n12).style.padding_top = Length::px(0.0);
-                doc.node_mut(n12).style.padding_right = Length::px(0.0);
-                doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n12).style.padding_left = Length::px(0.0);
-                doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n10, n12);
-                    let n13 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n13).style.font_size = 20.0;
-                    doc.node_mut(n13).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n13).text = Some("[ppp".to_string());
-                    doc.append_child(n12, n13);
-                    let n14 = doc.create_node(ElementTag::Span);
-                    doc.node_mut(n14).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n14).style.font_size = 20.0;
-                    doc.node_mut(n14).style.margin_top = Length::px(0.0);
-                    doc.node_mut(n14).style.margin_right = Length::px(0.0);
-                    doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
-                    doc.node_mut(n14).style.margin_left = Length::px(0.0);
-                    doc.node_mut(n14).style.padding_top = Length::px(0.0);
-                    doc.node_mut(n14).style.padding_right = Length::px(0.0);
-                    doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
-                    doc.node_mut(n14).style.padding_left = Length::px(0.0);
-                    doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
-                    doc.node_mut(n14).style.float = Float::Right;
-                    doc.node_mut(n14).style.margin_right = Length::px(-100.0);
-                    doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
-                    doc.append_child(n12, n14);
-                        let n15 = doc.create_node(ElementTag::Text);
-                        doc.node_mut(n15).style.font_size = 20.0;
-                        doc.node_mut(n15).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                        doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
-                        doc.node_mut(n15).text = Some("float".to_string());
-                        doc.append_child(n14, n15);
-                let n16 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n16).style.font_size = 20.0;
-                doc.node_mut(n16).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n16).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n10, n16);
-            let n17 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n17).style.display = Display::Block;
-            doc.node_mut(n17).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n17).style.font_size = 20.0;
-            doc.node_mut(n17).style.margin_top = Length::px(0.0);
-            doc.node_mut(n17).style.margin_right = Length::px(0.0);
-            doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n17).style.margin_left = Length::px(0.0);
-            doc.node_mut(n17).style.padding_top = Length::px(0.0);
-            doc.node_mut(n17).style.padding_right = Length::px(0.0);
-            doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n17).style.padding_left = Length::px(0.0);
-            doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n17).style.border_top_width = 1;
-            doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_right_width = 1;
-            doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_bottom_width = 1;
-            doc.node_mut(n17).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n17).style.border_left_width = 1;
-            doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n17).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n17);
-                let n18 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n18).style.font_size = 20.0;
-                doc.node_mut(n18).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n18).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
-                doc.append_child(n17, n18);
-                let n19 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n19).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n19).style.font_size = 20.0;
-                doc.node_mut(n19).style.margin_top = Length::px(0.0);
-                doc.node_mut(n19).style.margin_right = Length::px(0.0);
-                doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n19).style.margin_left = Length::px(0.0);
-                doc.node_mut(n19).style.padding_top = Length::px(0.0);
-                doc.node_mut(n19).style.padding_right = Length::px(0.0);
-                doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n19).style.padding_left = Length::px(0.0);
-                doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n17, n19);
-                    let n20 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n20).style.font_size = 20.0;
-                    doc.node_mut(n20).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n20).text = Some(" ppp".to_string());
-                    doc.append_child(n19, n20);
-                    let n21 = doc.create_node(ElementTag::Span);
-                    doc.node_mut(n21).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n21).style.font_size = 20.0;
-                    doc.node_mut(n21).style.margin_top = Length::px(0.0);
-                    doc.node_mut(n21).style.margin_right = Length::px(0.0);
-                    doc.node_mut(n21).style.margin_bottom = Length::px(0.0);
-                    doc.node_mut(n21).style.margin_left = Length::px(0.0);
-                    doc.node_mut(n21).style.padding_top = Length::px(0.0);
-                    doc.node_mut(n21).style.padding_right = Length::px(0.0);
-                    doc.node_mut(n21).style.padding_bottom = Length::px(0.0);
-                    doc.node_mut(n21).style.padding_left = Length::px(0.0);
-                    doc.node_mut(n21).style.box_sizing = BoxSizing::ContentBox;
-                    doc.node_mut(n21).style.float = Float::Right;
-                    doc.node_mut(n21).style.margin_right = Length::px(-100.0);
-                    doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
-                    doc.append_child(n19, n21);
-                        let n22 = doc.create_node(ElementTag::Text);
-                        doc.node_mut(n22).style.font_size = 20.0;
-                        doc.node_mut(n22).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                        doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
-                        doc.node_mut(n22).text = Some("float".to_string());
-                        doc.append_child(n21, n22);
-                let n23 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n23).style.font_size = 20.0;
-                doc.node_mut(n23).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n23).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n17, n23);
-            let n24 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n24).style.display = Display::Block;
-            doc.node_mut(n24).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-            doc.node_mut(n24).style.font_size = 20.0;
-            doc.node_mut(n24).style.margin_top = Length::px(0.0);
-            doc.node_mut(n24).style.margin_right = Length::px(0.0);
-            doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n24).style.margin_left = Length::px(0.0);
-            doc.node_mut(n24).style.padding_top = Length::px(0.0);
-            doc.node_mut(n24).style.padding_right = Length::px(0.0);
-            doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n24).style.padding_left = Length::px(0.0);
-            doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n24).style.border_top_width = 1;
-            doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_right_width = 1;
-            doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_bottom_width = 1;
-            doc.node_mut(n24).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.node_mut(n24).style.border_left_width = 1;
-            doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n24).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
-            doc.append_child(n2, n24);
-                let n25 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n25).style.font_size = 20.0;
-                doc.node_mut(n25).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n25).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
-                doc.append_child(n24, n25);
-                let n26 = doc.create_node(ElementTag::Span);
-                doc.node_mut(n26).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n26).style.font_size = 20.0;
-                doc.node_mut(n26).style.margin_top = Length::px(0.0);
-                doc.node_mut(n26).style.margin_right = Length::px(0.0);
-                doc.node_mut(n26).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n26).style.margin_left = Length::px(0.0);
-                doc.node_mut(n26).style.padding_top = Length::px(0.0);
-                doc.node_mut(n26).style.padding_right = Length::px(0.0);
-                doc.node_mut(n26).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n26).style.padding_left = Length::px(0.0);
-                doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
-                doc.append_child(n24, n26);
-                    let n27 = doc.create_node(ElementTag::Text);
-                    doc.node_mut(n27).style.font_size = 20.0;
-                    doc.node_mut(n27).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
-                    doc.node_mut(n27).text = Some("[ppp".to_string());
-                    doc.append_child(n26, n27);
-                    let n28 = doc.create_node(ElementTag::Span);
-                    doc.node_mut(n28).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                    doc.node_mut(n28).style.font_size = 20.0;
-                    doc.node_mut(n28).style.margin_top = Length::px(0.0);
-                    doc.node_mut(n28).style.margin_right = Length::px(0.0);
-                    doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
-                    doc.node_mut(n28).style.margin_left = Length::px(0.0);
-                    doc.node_mut(n28).style.padding_top = Length::px(0.0);
-                    doc.node_mut(n28).style.padding_right = Length::px(0.0);
-                    doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
-                    doc.node_mut(n28).style.padding_left = Length::px(0.0);
-                    doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
-                    doc.node_mut(n28).style.float = Float::Right;
-                    doc.node_mut(n28).style.margin_right = Length::px(-100.0);
-                    doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
-                    doc.append_child(n26, n28);
-                        let n29 = doc.create_node(ElementTag::Text);
-                        doc.node_mut(n29).style.font_size = 20.0;
-                        doc.node_mut(n29).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                        doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
-                        doc.node_mut(n29).text = Some("float".to_string());
-                        doc.append_child(n28, n29);
-                let n30 = doc.create_node(ElementTag::Text);
-                doc.node_mut(n30).style.font_size = 20.0;
-                doc.node_mut(n30).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::Monospace)] };
-                doc.node_mut(n30).text = Some("\n      pppp\n    ".to_string());
-                doc.append_child(n24, n30);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n2).style.font_size = 20.0;
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.width =
+        Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n3).style.font_size = 20.0;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.border_top_width = 1;
+    doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_right_width = 1;
+    doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_bottom_width = 1;
+    doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.border_left_width = 1;
+    doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 20.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n4).text = Some("\n      pppp\n      comprehension".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n5).style.font_size = 20.0;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 20.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n6).text = Some(" ppp".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n7).style.font_size = 20.0;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.float = Float::Right;
+    doc.node_mut(n7).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n5, n7);
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 20.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n8).text = Some("float".to_string());
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 20.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n9).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n3, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n10).style.font_size = 20.0;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.border_top_width = 1;
+    doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_right_width = 1;
+    doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_bottom_width = 1;
+    doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.border_left_width = 1;
+    doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n10);
+    let n11 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n11).style.font_size = 20.0;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n11).text = Some("\n      pppp\n      comprehension".to_string());
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n12).style.font_size = 20.0;
+    doc.node_mut(n12).style.margin_top = Length::px(0.0);
+    doc.node_mut(n12).style.margin_right = Length::px(0.0);
+    doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.margin_left = Length::px(0.0);
+    doc.node_mut(n12).style.padding_top = Length::px(0.0);
+    doc.node_mut(n12).style.padding_right = Length::px(0.0);
+    doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.padding_left = Length::px(0.0);
+    doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n10, n12);
+    let n13 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n13).style.font_size = 20.0;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n13).text = Some("[ppp".to_string());
+    doc.append_child(n12, n13);
+    let n14 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n14).style.font_size = 20.0;
+    doc.node_mut(n14).style.margin_top = Length::px(0.0);
+    doc.node_mut(n14).style.margin_right = Length::px(0.0);
+    doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.margin_left = Length::px(0.0);
+    doc.node_mut(n14).style.padding_top = Length::px(0.0);
+    doc.node_mut(n14).style.padding_right = Length::px(0.0);
+    doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.padding_left = Length::px(0.0);
+    doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n14).style.float = Float::Right;
+    doc.node_mut(n14).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n12, n14);
+    let n15 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n15).style.font_size = 20.0;
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n15).text = Some("float".to_string());
+    doc.append_child(n14, n15);
+    let n16 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n16).style.font_size = 20.0;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n16).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n10, n16);
+    let n17 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n17).style.display = Display::Block;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n17).style.font_size = 20.0;
+    doc.node_mut(n17).style.margin_top = Length::px(0.0);
+    doc.node_mut(n17).style.margin_right = Length::px(0.0);
+    doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.margin_left = Length::px(0.0);
+    doc.node_mut(n17).style.padding_top = Length::px(0.0);
+    doc.node_mut(n17).style.padding_right = Length::px(0.0);
+    doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.padding_left = Length::px(0.0);
+    doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.border_top_width = 1;
+    doc.node_mut(n17).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_right_width = 1;
+    doc.node_mut(n17).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_bottom_width = 1;
+    doc.node_mut(n17).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.border_left_width = 1;
+    doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n17).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n17);
+    let n18 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n18).style.font_size = 20.0;
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n18).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
+    doc.append_child(n17, n18);
+    let n19 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n19).style.font_size = 20.0;
+    doc.node_mut(n19).style.margin_top = Length::px(0.0);
+    doc.node_mut(n19).style.margin_right = Length::px(0.0);
+    doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.margin_left = Length::px(0.0);
+    doc.node_mut(n19).style.padding_top = Length::px(0.0);
+    doc.node_mut(n19).style.padding_right = Length::px(0.0);
+    doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.padding_left = Length::px(0.0);
+    doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n17, n19);
+    let n20 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n20).style.font_size = 20.0;
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n20).text = Some(" ppp".to_string());
+    doc.append_child(n19, n20);
+    let n21 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n21).style.font_size = 20.0;
+    doc.node_mut(n21).style.margin_top = Length::px(0.0);
+    doc.node_mut(n21).style.margin_right = Length::px(0.0);
+    doc.node_mut(n21).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n21).style.margin_left = Length::px(0.0);
+    doc.node_mut(n21).style.padding_top = Length::px(0.0);
+    doc.node_mut(n21).style.padding_right = Length::px(0.0);
+    doc.node_mut(n21).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n21).style.padding_left = Length::px(0.0);
+    doc.node_mut(n21).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n21).style.float = Float::Right;
+    doc.node_mut(n21).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n19, n21);
+    let n22 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n22).style.font_size = 20.0;
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n22).text = Some("float".to_string());
+    doc.append_child(n21, n22);
+    let n23 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n23).style.font_size = 20.0;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n23).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n17, n23);
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style.display = Display::Block;
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n24).style.font_size = 20.0;
+    doc.node_mut(n24).style.margin_top = Length::px(0.0);
+    doc.node_mut(n24).style.margin_right = Length::px(0.0);
+    doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.margin_left = Length::px(0.0);
+    doc.node_mut(n24).style.padding_top = Length::px(0.0);
+    doc.node_mut(n24).style.padding_right = Length::px(0.0);
+    doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.padding_left = Length::px(0.0);
+    doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n24).style.border_top_width = 1;
+    doc.node_mut(n24).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_right_width = 1;
+    doc.node_mut(n24).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_bottom_width = 1;
+    doc.node_mut(n24).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.border_left_width = 1;
+    doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n24).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.append_child(n2, n24);
+    let n25 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n25).style.font_size = 20.0;
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n25).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n26).style.font_size = 20.0;
+    doc.node_mut(n26).style.margin_top = Length::px(0.0);
+    doc.node_mut(n26).style.margin_right = Length::px(0.0);
+    doc.node_mut(n26).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.margin_left = Length::px(0.0);
+    doc.node_mut(n26).style.padding_top = Length::px(0.0);
+    doc.node_mut(n26).style.padding_right = Length::px(0.0);
+    doc.node_mut(n26).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.padding_left = Length::px(0.0);
+    doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n24, n26);
+    let n27 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n27).style.font_size = 20.0;
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n27).text = Some("[ppp".to_string());
+    doc.append_child(n26, n27);
+    let n28 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n28).style.font_size = 20.0;
+    doc.node_mut(n28).style.margin_top = Length::px(0.0);
+    doc.node_mut(n28).style.margin_right = Length::px(0.0);
+    doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.margin_left = Length::px(0.0);
+    doc.node_mut(n28).style.padding_top = Length::px(0.0);
+    doc.node_mut(n28).style.padding_right = Length::px(0.0);
+    doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.padding_left = Length::px(0.0);
+    doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.float = Float::Right;
+    doc.node_mut(n28).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
+    doc.append_child(n26, n28);
+    let n29 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n29).style.font_size = 20.0;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n29).text = Some("float".to_string());
+    doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n30).style.font_size = 20.0;
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(n30).text = Some("\n      pppp\n    ".to_string());
+    doc.append_child(n24, n30);
     doc
 }
 
@@ -3030,44 +3509,48 @@ fn css2_floats_floats_line_wrap_shifted_001_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n2).style.font_size = 10.0;
-        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
-        doc.node_mut(n2).text = Some("\n  1111".to_string());
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n3).style.font_size = 10.0;
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Generic(GenericFontFamily::SansSerif)] };
-        doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-        doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
-        doc.node_mut(n3).text = Some("\n".to_string());
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n4).style.font_size = 10.0;
-        doc.node_mut(n4).style.line_height = LineHeight::Number(1.0);
-        doc.node_mut(n4).text = Some("\n  2222 3333\n  ".to_string());
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n5).style.display = Display::Block;
-        doc.node_mut(n5).style.font_size = 10.0;
-        doc.node_mut(n5).style.line_height = LineHeight::Number(1.0);
-        let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
-        doc.node_mut(n5).style.margin_top = Length::px(0.0);
-        doc.node_mut(n5).style.margin_right = Length::px(0.0);
-        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.margin_left = Length::px(0.0);
-        doc.node_mut(n5).style.padding_top = Length::px(0.0);
-        doc.node_mut(n5).style.padding_right = Length::px(0.0);
-        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.padding_left = Length::px(0.0);
-        doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n5).style.width = Length::px(n5_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
-        doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 165, 0, 255);
-        doc.node_mut(n5).style.height = Length::px(10.0);
-        doc.append_child(n1, n5);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 10.0;
+    doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n2).text = Some("\n  1111".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 10.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::SansSerif)],
+    };
+    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 10.0;
+    doc.node_mut(n4).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n4).text = Some("\n  2222 3333\n  ".to_string());
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.font_size = 10.0;
+    doc.node_mut(n5).style.line_height = LineHeight::Number(1.0);
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.width =
+        Length::px(n5_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n5).style.height = Length::px(10.0);
+    doc.append_child(n1, n5);
     doc
 }
 
@@ -3097,41 +3580,43 @@ fn css2_floats_floats_line_wrap_shifted_001() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.width = Length::px(n1_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n1).style.width =
+        Length::px(n1_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.font_size = 10.0;
-        doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n3).style.display = Display::Block;
-            doc.node_mut(n3).style.font_size = 10.0;
-            doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
-            let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
-            doc.node_mut(n3).style.margin_top = Length::px(0.0);
-            doc.node_mut(n3).style.margin_right = Length::px(0.0);
-            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.margin_left = Length::px(0.0);
-            doc.node_mut(n3).style.padding_top = Length::px(0.0);
-            doc.node_mut(n3).style.padding_right = Length::px(0.0);
-            doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.padding_left = Length::px(0.0);
-            doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n3).style.width = Length::px(n3_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
-            doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
-            doc.node_mut(n3).style.float = Float::Left;
-            doc.node_mut(n3).style.height = Length::px(10.0);
-            doc.append_child(n2, n3);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_size = 10.0;
+    doc.node_mut(n2).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_size = 10.0;
+    doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.width =
+        Length::px(n3_font_relative.resolve(12.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n3).style.float = Float::Left;
+    doc.node_mut(n3).style.height = Length::px(10.0);
+    doc.append_child(n2, n3);
     doc
 }
 
@@ -3438,124 +3923,124 @@ fn css2_floats_floats_placement_003() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.position = Position::Relative;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Left;
-        doc.node_mut(n2).style.width = Length::px(20.0);
-        doc.node_mut(n2).style.height = Length::px(20.0);
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.height = Length::px(30.0);
-        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::Block;
-        doc.node_mut(n4).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
-        doc.node_mut(n4).style.margin_right = Length::px(0.0);
-        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.margin_left = Length::px(0.0);
-        doc.node_mut(n4).style.padding_top = Length::px(0.0);
-        doc.node_mut(n4).style.padding_right = Length::px(0.0);
-        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.padding_left = Length::px(0.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n4).style.float = Float::Right;
-        doc.node_mut(n4).style.width = Length::px(40.0);
-        doc.node_mut(n4).style.height = Length::px(20.0);
-        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n5).style.display = Display::Block;
-        doc.node_mut(n5).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n5).style.margin_top = Length::px(0.0);
-        doc.node_mut(n5).style.margin_right = Length::px(0.0);
-        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.margin_left = Length::px(0.0);
-        doc.node_mut(n5).style.padding_top = Length::px(0.0);
-        doc.node_mut(n5).style.padding_right = Length::px(0.0);
-        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.padding_left = Length::px(0.0);
-        doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n5).style.float = Float::Right;
-        doc.node_mut(n5).style.clear = Clear::Right;
-        doc.node_mut(n5).style.width = Length::px(50.0);
-        doc.node_mut(n5).style.height = Length::px(50.0);
-        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n6).style.display = Display::Block;
-        doc.node_mut(n6).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n6).style.margin_top = Length::px(0.0);
-        doc.node_mut(n6).style.margin_right = Length::px(0.0);
-        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.margin_left = Length::px(0.0);
-        doc.node_mut(n6).style.padding_top = Length::px(0.0);
-        doc.node_mut(n6).style.padding_right = Length::px(0.0);
-        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.padding_left = Length::px(0.0);
-        doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n6).style.float = Float::Left;
-        doc.node_mut(n6).style.width = Length::px(50.0);
-        doc.node_mut(n6).style.height = Length::px(50.0);
-        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n6);
-        let n7 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n7).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n7).style.margin_top = Length::px(0.0);
-        doc.node_mut(n7).style.margin_right = Length::px(0.0);
-        doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.margin_left = Length::px(0.0);
-        doc.node_mut(n7).style.padding_top = Length::px(0.0);
-        doc.node_mut(n7).style.padding_right = Length::px(0.0);
-        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.padding_left = Length::px(0.0);
-        doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n7).style.display = Display::InlineBlock;
-        doc.node_mut(n7).style.width = Length::px(40.0);
-        doc.node_mut(n7).style.height = Length::px(20.0);
-        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n7);
-        let n8 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n8).style.display = Display::Block;
-        doc.node_mut(n8).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n8).style.margin_top = Length::px(0.0);
-        doc.node_mut(n8).style.margin_right = Length::px(0.0);
-        doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.margin_left = Length::px(0.0);
-        doc.node_mut(n8).style.padding_top = Length::px(0.0);
-        doc.node_mut(n8).style.padding_right = Length::px(0.0);
-        doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.padding_left = Length::px(0.0);
-        doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n8).style.position = Position::Absolute;
-        doc.node_mut(n8).style.width = Length::px(20.0);
-        doc.node_mut(n8).style.height = Length::px(20.0);
-        doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n8).style.left = Length::px(40.0);
-        doc.node_mut(n8).style.top = Length::px(30.0);
-        doc.append_child(n1, n8);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.width = Length::px(20.0);
+    doc.node_mut(n2).style.height = Length::px(20.0);
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.height = Length::px(30.0);
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.float = Float::Right;
+    doc.node_mut(n4).style.width = Length::px(40.0);
+    doc.node_mut(n4).style.height = Length::px(20.0);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.float = Float::Right;
+    doc.node_mut(n5).style.clear = Clear::Right;
+    doc.node_mut(n5).style.width = Length::px(50.0);
+    doc.node_mut(n5).style.height = Length::px(50.0);
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
+    doc.node_mut(n6).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.float = Float::Left;
+    doc.node_mut(n6).style.width = Length::px(50.0);
+    doc.node_mut(n6).style.height = Length::px(50.0);
+    doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.display = Display::InlineBlock;
+    doc.node_mut(n7).style.width = Length::px(40.0);
+    doc.node_mut(n7).style.height = Length::px(20.0);
+    doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n7);
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.padding_top = Length::px(0.0);
+    doc.node_mut(n8).style.padding_right = Length::px(0.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.padding_left = Length::px(0.0);
+    doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.position = Position::Absolute;
+    doc.node_mut(n8).style.width = Length::px(20.0);
+    doc.node_mut(n8).style.height = Length::px(20.0);
+    doc.node_mut(n8).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n8).style.left = Length::px(40.0);
+    doc.node_mut(n8).style.top = Length::px(30.0);
+    doc.append_child(n1, n8);
     doc
 }
 
@@ -3808,150 +4293,150 @@ fn css2_floats_floats_placement_005() -> Document {
     doc.node_mut(n1).style.width = Length::px(150.0);
     doc.node_mut(n1).style.display = Display::FlowRoot;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Left;
-        doc.node_mut(n2).style.clear = Clear::Left;
-        doc.node_mut(n2).style.width = Length::px(50.0);
-        doc.node_mut(n2).style.height = Length::px(50.0);
-        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.height = Length::px(40.0);
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::Block;
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
-        doc.node_mut(n4).style.margin_right = Length::px(0.0);
-        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.margin_left = Length::px(0.0);
-        doc.node_mut(n4).style.padding_top = Length::px(0.0);
-        doc.node_mut(n4).style.padding_right = Length::px(0.0);
-        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.padding_left = Length::px(0.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n4).style.float = Float::Right;
-        doc.node_mut(n4).style.clear = Clear::Right;
-        doc.node_mut(n4).style.width = Length::px(50.0);
-        doc.node_mut(n4).style.height = Length::px(50.0);
-        doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n5).style.display = Display::Block;
-        doc.node_mut(n5).style.margin_top = Length::px(0.0);
-        doc.node_mut(n5).style.margin_right = Length::px(0.0);
-        doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.margin_left = Length::px(0.0);
-        doc.node_mut(n5).style.padding_top = Length::px(0.0);
-        doc.node_mut(n5).style.padding_right = Length::px(0.0);
-        doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n5).style.padding_left = Length::px(0.0);
-        doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n5).style.float = Float::Right;
-        doc.node_mut(n5).style.clear = Clear::Right;
-        doc.node_mut(n5).style.width = Length::px(50.0);
-        doc.node_mut(n5).style.height = Length::px(50.0);
-        doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n6).style.display = Display::Block;
-        doc.node_mut(n6).style.margin_top = Length::px(0.0);
-        doc.node_mut(n6).style.margin_right = Length::px(0.0);
-        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.margin_left = Length::px(0.0);
-        doc.node_mut(n6).style.padding_top = Length::px(0.0);
-        doc.node_mut(n6).style.padding_right = Length::px(0.0);
-        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.padding_left = Length::px(0.0);
-        doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n6).style.float = Float::Left;
-        doc.node_mut(n6).style.clear = Clear::Left;
-        doc.node_mut(n6).style.width = Length::px(50.0);
-        doc.node_mut(n6).style.height = Length::px(50.0);
-        doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n6);
-        let n7 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n7).style.display = Display::Block;
-        doc.node_mut(n7).style.margin_top = Length::px(0.0);
-        doc.node_mut(n7).style.margin_right = Length::px(0.0);
-        doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.margin_left = Length::px(0.0);
-        doc.node_mut(n7).style.padding_top = Length::px(0.0);
-        doc.node_mut(n7).style.padding_right = Length::px(0.0);
-        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.padding_left = Length::px(0.0);
-        doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n7).style.float = Float::Right;
-        doc.node_mut(n7).style.clear = Clear::Right;
-        doc.node_mut(n7).style.width = Length::px(50.0);
-        doc.node_mut(n7).style.height = Length::px(50.0);
-        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n7);
-        let n8 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n8).style.display = Display::Block;
-        doc.node_mut(n8).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n8).style.margin_top = Length::px(0.0);
-        doc.node_mut(n8).style.margin_right = Length::px(0.0);
-        doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.margin_left = Length::px(0.0);
-        doc.node_mut(n8).style.padding_top = Length::px(0.0);
-        doc.node_mut(n8).style.padding_right = Length::px(0.0);
-        doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.padding_left = Length::px(0.0);
-        doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n8).style.margin_top = Length::px(10.0);
-        doc.append_child(n1, n8);
-            let n9 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n9).style.line_height = LineHeight::Number(0.0);
-            doc.node_mut(n9).style.margin_top = Length::px(0.0);
-            doc.node_mut(n9).style.margin_right = Length::px(0.0);
-            doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n9).style.margin_left = Length::px(0.0);
-            doc.node_mut(n9).style.padding_top = Length::px(0.0);
-            doc.node_mut(n9).style.padding_right = Length::px(0.0);
-            doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n9).style.padding_left = Length::px(0.0);
-            doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n9).style.display = Display::InlineBlock;
-            doc.node_mut(n9).style.width = Length::px(50.0);
-            doc.node_mut(n9).style.height = Length::px(40.0);
-            doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 255, 255, 255);
-            doc.append_child(n8, n9);
-            let n10 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n10).style.line_height = LineHeight::Number(0.0);
-            doc.node_mut(n10).style.margin_top = Length::px(0.0);
-            doc.node_mut(n10).style.margin_right = Length::px(0.0);
-            doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.margin_left = Length::px(0.0);
-            doc.node_mut(n10).style.padding_top = Length::px(0.0);
-            doc.node_mut(n10).style.padding_right = Length::px(0.0);
-            doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n10).style.padding_left = Length::px(0.0);
-            doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n10).style.display = Display::InlineBlock;
-            doc.node_mut(n10).style.width = Length::px(50.0);
-            doc.node_mut(n10).style.height = Length::px(40.0);
-            doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 255, 255, 255);
-            doc.append_child(n8, n10);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.clear = Clear::Left;
+    doc.node_mut(n2).style.width = Length::px(50.0);
+    doc.node_mut(n2).style.height = Length::px(50.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.height = Length::px(40.0);
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.float = Float::Right;
+    doc.node_mut(n4).style.clear = Clear::Right;
+    doc.node_mut(n4).style.width = Length::px(50.0);
+    doc.node_mut(n4).style.height = Length::px(50.0);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.float = Float::Right;
+    doc.node_mut(n5).style.clear = Clear::Right;
+    doc.node_mut(n5).style.width = Length::px(50.0);
+    doc.node_mut(n5).style.height = Length::px(50.0);
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.display = Display::Block;
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.float = Float::Left;
+    doc.node_mut(n6).style.clear = Clear::Left;
+    doc.node_mut(n6).style.width = Length::px(50.0);
+    doc.node_mut(n6).style.height = Length::px(50.0);
+    doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.float = Float::Right;
+    doc.node_mut(n7).style.clear = Clear::Right;
+    doc.node_mut(n7).style.width = Length::px(50.0);
+    doc.node_mut(n7).style.height = Length::px(50.0);
+    doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n7);
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.padding_top = Length::px(0.0);
+    doc.node_mut(n8).style.padding_right = Length::px(0.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.padding_left = Length::px(0.0);
+    doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.margin_top = Length::px(10.0);
+    doc.append_child(n1, n8);
+    let n9 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n9).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n9).style.margin_top = Length::px(0.0);
+    doc.node_mut(n9).style.margin_right = Length::px(0.0);
+    doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.margin_left = Length::px(0.0);
+    doc.node_mut(n9).style.padding_top = Length::px(0.0);
+    doc.node_mut(n9).style.padding_right = Length::px(0.0);
+    doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.padding_left = Length::px(0.0);
+    doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n9).style.display = Display::InlineBlock;
+    doc.node_mut(n9).style.width = Length::px(50.0);
+    doc.node_mut(n9).style.height = Length::px(40.0);
+    doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+    doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n10).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::InlineBlock;
+    doc.node_mut(n10).style.width = Length::px(50.0);
+    doc.node_mut(n10).style.height = Length::px(40.0);
+    doc.node_mut(n10).style.background_color = Color::from_rgba8(0, 255, 255, 255);
+    doc.append_child(n8, n10);
     doc
 }
 
@@ -5418,7 +5903,12 @@ fn css2_floats_floats_placement_vertical_003() -> Document {
 // Source: floats-placement-vertical-004-ref.html
 fn css2_floats_floats_placement_vertical_004_ref() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -5432,7 +5922,12 @@ fn css2_floats_floats_placement_vertical_004_ref() -> Document {
     doc.node_mut(vp).style.width = Length::px(200.0);
     doc.node_mut(vp).style.font_size = 5.0;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -5451,17 +5946,32 @@ fn css2_floats_floats_placement_vertical_004_ref() -> Document {
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 5.0;
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).text = Some("\nH".to_string());
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Text);
     doc.node_mut(n3).style.font_size = 5.0;
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n3).text = Some("\n".to_string());
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
@@ -8816,7 +9326,12 @@ fn css2_floats_floats_wrap_bfc_with_margin_010() -> Document {
 // Source: floats-wrap-top-below-001l-notref.html
 fn css2_floats_floats_wrap_top_below_001l_notref() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -8838,7 +9353,12 @@ fn css2_floats_floats_wrap_top_below_001l_notref() -> Document {
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.text_align = TextAlign::Left;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -8856,7 +9376,12 @@ fn css2_floats_floats_wrap_top_below_001l_notref() -> Document {
     doc.node_mut(n1).style.text_align = TextAlign::Left;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -8874,7 +9399,12 @@ fn css2_floats_floats_wrap_top_below_001l_notref() -> Document {
     doc.node_mut(n2).style.text_align = TextAlign::Left;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -8893,11 +9423,21 @@ fn css2_floats_floats_wrap_top_below_001l_notref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -8920,7 +9460,12 @@ fn css2_floats_floats_wrap_top_below_001l_notref() -> Document {
 // Source: floats-wrap-top-below-001l-ref.html
 fn css2_floats_floats_wrap_top_below_001l_ref() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -8942,7 +9487,12 @@ fn css2_floats_floats_wrap_top_below_001l_ref() -> Document {
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.text_align = TextAlign::Left;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -8960,7 +9510,12 @@ fn css2_floats_floats_wrap_top_below_001l_ref() -> Document {
     doc.node_mut(n1).style.text_align = TextAlign::Left;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -8978,7 +9533,12 @@ fn css2_floats_floats_wrap_top_below_001l_ref() -> Document {
     doc.node_mut(n2).style.text_align = TextAlign::Left;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -8997,11 +9557,21 @@ fn css2_floats_floats_wrap_top_below_001l_ref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -9024,7 +9594,12 @@ fn css2_floats_floats_wrap_top_below_001l_ref() -> Document {
 // Source: floats-wrap-top-below-001r-notref.html
 fn css2_floats_floats_wrap_top_below_001r_notref() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -9046,7 +9621,12 @@ fn css2_floats_floats_wrap_top_below_001r_notref() -> Document {
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.text_align = TextAlign::Right;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -9064,7 +9644,12 @@ fn css2_floats_floats_wrap_top_below_001r_notref() -> Document {
     doc.node_mut(n1).style.text_align = TextAlign::Right;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -9082,7 +9667,12 @@ fn css2_floats_floats_wrap_top_below_001r_notref() -> Document {
     doc.node_mut(n2).style.text_align = TextAlign::Right;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -9101,11 +9691,21 @@ fn css2_floats_floats_wrap_top_below_001r_notref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -9128,7 +9728,12 @@ fn css2_floats_floats_wrap_top_below_001r_notref() -> Document {
 // Source: floats-wrap-top-below-001r-ref.html
 fn css2_floats_floats_wrap_top_below_001r_ref() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -9150,7 +9755,12 @@ fn css2_floats_floats_wrap_top_below_001r_ref() -> Document {
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.text_align = TextAlign::Right;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -9168,7 +9778,12 @@ fn css2_floats_floats_wrap_top_below_001r_ref() -> Document {
     doc.node_mut(n1).style.text_align = TextAlign::Right;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -9186,7 +9801,12 @@ fn css2_floats_floats_wrap_top_below_001r_ref() -> Document {
     doc.node_mut(n2).style.text_align = TextAlign::Right;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -9205,11 +9825,21 @@ fn css2_floats_floats_wrap_top_below_001r_ref() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10106,7 +10736,12 @@ fn css2_floats_floats_wrap_top_below_bfc_003r() -> Document {
 // Source: floats-wrap-top-below-inline-001l.html
 fn css2_floats_floats_wrap_top_below_inline_001l() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10128,7 +10763,12 @@ fn css2_floats_floats_wrap_top_below_inline_001l() -> Document {
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.text_align = TextAlign::Left;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10146,7 +10786,12 @@ fn css2_floats_floats_wrap_top_below_inline_001l() -> Document {
     doc.node_mut(n1).style.text_align = TextAlign::Left;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -10164,7 +10809,12 @@ fn css2_floats_floats_wrap_top_below_inline_001l() -> Document {
     doc.node_mut(n2).style.text_align = TextAlign::Left;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10183,11 +10833,21 @@ fn css2_floats_floats_wrap_top_below_inline_001l() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10210,7 +10870,12 @@ fn css2_floats_floats_wrap_top_below_inline_001l() -> Document {
 // Source: floats-wrap-top-below-inline-001r.html
 fn css2_floats_floats_wrap_top_below_inline_001r() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10232,7 +10897,12 @@ fn css2_floats_floats_wrap_top_below_inline_001r() -> Document {
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.text_align = TextAlign::Right;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10250,7 +10920,12 @@ fn css2_floats_floats_wrap_top_below_inline_001r() -> Document {
     doc.node_mut(n1).style.text_align = TextAlign::Right;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -10268,7 +10943,12 @@ fn css2_floats_floats_wrap_top_below_inline_001r() -> Document {
     doc.node_mut(n2).style.text_align = TextAlign::Right;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10287,11 +10967,21 @@ fn css2_floats_floats_wrap_top_below_inline_001r() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10314,7 +11004,12 @@ fn css2_floats_floats_wrap_top_below_inline_001r() -> Document {
 // Source: floats-wrap-top-below-inline-002l.html
 fn css2_floats_floats_wrap_top_below_inline_002l() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10335,7 +11030,12 @@ fn css2_floats_floats_wrap_top_below_inline_002l() -> Document {
     doc.node_mut(vp).style.border_left_width = 3;
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10351,7 +11051,12 @@ fn css2_floats_floats_wrap_top_below_inline_002l() -> Document {
     doc.node_mut(n1).style.height = Length::px(75.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -10367,7 +11072,12 @@ fn css2_floats_floats_wrap_top_below_inline_002l() -> Document {
     doc.node_mut(n2).style.height = Length::px(75.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10385,11 +11095,21 @@ fn css2_floats_floats_wrap_top_below_inline_002l() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10411,7 +11131,12 @@ fn css2_floats_floats_wrap_top_below_inline_002l() -> Document {
 // Source: floats-wrap-top-below-inline-002r.html
 fn css2_floats_floats_wrap_top_below_inline_002r() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10432,7 +11157,12 @@ fn css2_floats_floats_wrap_top_below_inline_002r() -> Document {
     doc.node_mut(vp).style.border_left_width = 3;
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10448,7 +11178,12 @@ fn css2_floats_floats_wrap_top_below_inline_002r() -> Document {
     doc.node_mut(n1).style.height = Length::px(75.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -10464,7 +11199,12 @@ fn css2_floats_floats_wrap_top_below_inline_002r() -> Document {
     doc.node_mut(n2).style.height = Length::px(75.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10482,11 +11222,21 @@ fn css2_floats_floats_wrap_top_below_inline_002r() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10508,7 +11258,12 @@ fn css2_floats_floats_wrap_top_below_inline_002r() -> Document {
 // Source: floats-wrap-top-below-inline-003l.html
 fn css2_floats_floats_wrap_top_below_inline_003l() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10529,7 +11284,12 @@ fn css2_floats_floats_wrap_top_below_inline_003l() -> Document {
     doc.node_mut(vp).style.border_left_width = 3;
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10545,7 +11305,12 @@ fn css2_floats_floats_wrap_top_below_inline_003l() -> Document {
     doc.node_mut(n1).style.height = Length::px(75.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -10561,7 +11326,12 @@ fn css2_floats_floats_wrap_top_below_inline_003l() -> Document {
     doc.node_mut(n2).style.height = Length::px(75.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10579,11 +11349,21 @@ fn css2_floats_floats_wrap_top_below_inline_003l() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10605,7 +11385,12 @@ fn css2_floats_floats_wrap_top_below_inline_003l() -> Document {
 // Source: floats-wrap-top-below-inline-003r.html
 fn css2_floats_floats_wrap_top_below_inline_003r() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10626,7 +11411,12 @@ fn css2_floats_floats_wrap_top_below_inline_003r() -> Document {
     doc.node_mut(vp).style.border_left_width = 3;
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10642,7 +11432,12 @@ fn css2_floats_floats_wrap_top_below_inline_003r() -> Document {
     doc.node_mut(n1).style.height = Length::px(75.0);
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -10658,7 +11453,12 @@ fn css2_floats_floats_wrap_top_below_inline_003r() -> Document {
     doc.node_mut(n2).style.height = Length::px(75.0);
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -10676,11 +11476,21 @@ fn css2_floats_floats_wrap_top_below_inline_003r() -> Document {
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 16.0;
-    doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).text = Some("\n".to_string());
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -10786,7 +11596,12 @@ fn css2_floats_floats_zero_height_wrap_001_ref() -> Document {
 // Source: floats-zero-height-wrap-001.html
 fn css2_floats_floats_zero_height_wrap_001() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10798,7 +11613,12 @@ fn css2_floats_floats_zero_height_wrap_001() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10814,112 +11634,152 @@ fn css2_floats_floats_zero_height_wrap_001() -> Document {
     doc.node_mut(n1).style.float = Float::Left;
     doc.node_mut(n1).style.font_size = 12.0;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Left;
-        doc.node_mut(n2).style.width = Length::px(10.0);
-        doc.node_mut(n2).style.height = Length::px(30.0);
-        doc.node_mut(n2).style.font_size = 12.0;
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Left;
-        doc.node_mut(n3).style.clear = Clear::Left;
-        doc.node_mut(n3).style.width = Length::px(100.0);
-        doc.node_mut(n3).style.height = Length::px(1.0);
-        doc.node_mut(n3).style.font_size = 12.0;
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
-        doc.node_mut(n4).style.margin_right = Length::px(0.0);
-        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.margin_left = Length::px(0.0);
-        doc.node_mut(n4).style.padding_top = Length::px(0.0);
-        doc.node_mut(n4).style.padding_right = Length::px(0.0);
-        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.padding_left = Length::px(0.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
-        doc.node_mut(n4).style.height = Length::px(20.0);
-        doc.node_mut(n4).style.width = Length::px(300.0);
-        doc.node_mut(n4).style.background_color = Color::BLUE;
-        doc.node_mut(n4).style.font_size = 12.0;
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n5).style.font_size = 12.0;
-        doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n5).text = Some("\n  ".to_string());
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n6).style.margin_top = Length::px(0.0);
-        doc.node_mut(n6).style.margin_right = Length::px(0.0);
-        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.margin_left = Length::px(0.0);
-        doc.node_mut(n6).style.padding_top = Length::px(0.0);
-        doc.node_mut(n6).style.padding_right = Length::px(0.0);
-        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.padding_left = Length::px(0.0);
-        doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n6).style.display = Display::InlineBlock;
-        doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
-        doc.node_mut(n6).style.height = Length::px(20.0);
-        doc.node_mut(n6).style.width = Length::px(300.0);
-        doc.node_mut(n6).style.background_color = Color::from_rgba8(128, 0, 128, 255);
-        doc.node_mut(n6).style.font_size = 12.0;
-        doc.append_child(n1, n6);
-        let n7 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n7).style.font_size = 12.0;
-        doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n7).text = Some("\n  ".to_string());
-        doc.append_child(n1, n7);
-        let n8 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n8).style.margin_top = Length::px(0.0);
-        doc.node_mut(n8).style.margin_right = Length::px(0.0);
-        doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.margin_left = Length::px(0.0);
-        doc.node_mut(n8).style.padding_top = Length::px(0.0);
-        doc.node_mut(n8).style.padding_right = Length::px(0.0);
-        doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.padding_left = Length::px(0.0);
-        doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n8).style.display = Display::InlineBlock;
-        doc.node_mut(n8).style.vertical_align = VerticalAlign::Bottom;
-        doc.node_mut(n8).style.height = Length::px(20.0);
-        doc.node_mut(n8).style.width = Length::px(300.0);
-        doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 0, 255, 255);
-        doc.node_mut(n8).style.font_size = 12.0;
-        doc.append_child(n1, n8);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.width = Length::px(10.0);
+    doc.node_mut(n2).style.height = Length::px(30.0);
+    doc.node_mut(n2).style.font_size = 12.0;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Left;
+    doc.node_mut(n3).style.clear = Clear::Left;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(1.0);
+    doc.node_mut(n3).style.font_size = 12.0;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::InlineBlock;
+    doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
+    doc.node_mut(n4).style.height = Length::px(20.0);
+    doc.node_mut(n4).style.width = Length::px(300.0);
+    doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.node_mut(n4).style.font_size = 12.0;
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n5).style.font_size = 12.0;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).text = Some("\n  ".to_string());
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.display = Display::InlineBlock;
+    doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
+    doc.node_mut(n6).style.height = Length::px(20.0);
+    doc.node_mut(n6).style.width = Length::px(300.0);
+    doc.node_mut(n6).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+    doc.node_mut(n6).style.font_size = 12.0;
+    doc.append_child(n1, n6);
+    let n7 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n7).style.font_size = 12.0;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).text = Some("\n  ".to_string());
+    doc.append_child(n1, n7);
+    let n8 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.padding_top = Length::px(0.0);
+    doc.node_mut(n8).style.padding_right = Length::px(0.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.padding_left = Length::px(0.0);
+    doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.display = Display::InlineBlock;
+    doc.node_mut(n8).style.vertical_align = VerticalAlign::Bottom;
+    doc.node_mut(n8).style.height = Length::px(20.0);
+    doc.node_mut(n8).style.width = Length::px(300.0);
+    doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n8).style.font_size = 12.0;
+    doc.append_child(n1, n8);
     doc
 }
 
 // Source: floats-zero-height-wrap-002.html
 fn css2_floats_floats_zero_height_wrap_002() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
@@ -10931,7 +11791,12 @@ fn css2_floats_floats_zero_height_wrap_002() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -10947,105 +11812,140 @@ fn css2_floats_floats_zero_height_wrap_002() -> Document {
     doc.node_mut(n1).style.float = Float::Left;
     doc.node_mut(n1).style.font_size = 12.0;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Left;
-        doc.node_mut(n2).style.width = Length::px(10.0);
-        doc.node_mut(n2).style.height = Length::px(30.0);
-        doc.node_mut(n2).style.font_size = 12.0;
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Left;
-        doc.node_mut(n3).style.clear = Clear::Left;
-        doc.node_mut(n3).style.width = Length::px(100.0);
-        doc.node_mut(n3).style.height = Length::px(0.0);
-        doc.node_mut(n3).style.font_size = 12.0;
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
-        doc.node_mut(n4).style.margin_right = Length::px(0.0);
-        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.margin_left = Length::px(0.0);
-        doc.node_mut(n4).style.padding_top = Length::px(0.0);
-        doc.node_mut(n4).style.padding_right = Length::px(0.0);
-        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.padding_left = Length::px(0.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n4).style.display = Display::InlineBlock;
-        doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
-        doc.node_mut(n4).style.height = Length::px(20.0);
-        doc.node_mut(n4).style.width = Length::px(300.0);
-        doc.node_mut(n4).style.background_color = Color::BLUE;
-        doc.node_mut(n4).style.font_size = 12.0;
-        doc.append_child(n1, n4);
-        let n5 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n5).style.font_size = 12.0;
-        doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n5).text = Some("\n  ".to_string());
-        doc.append_child(n1, n5);
-        let n6 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n6).style.margin_top = Length::px(0.0);
-        doc.node_mut(n6).style.margin_right = Length::px(0.0);
-        doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.margin_left = Length::px(0.0);
-        doc.node_mut(n6).style.padding_top = Length::px(0.0);
-        doc.node_mut(n6).style.padding_right = Length::px(0.0);
-        doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n6).style.padding_left = Length::px(0.0);
-        doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n6).style.display = Display::InlineBlock;
-        doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
-        doc.node_mut(n6).style.height = Length::px(20.0);
-        doc.node_mut(n6).style.width = Length::px(300.0);
-        doc.node_mut(n6).style.background_color = Color::from_rgba8(128, 0, 128, 255);
-        doc.node_mut(n6).style.font_size = 12.0;
-        doc.append_child(n1, n6);
-        let n7 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n7).style.font_size = 12.0;
-        doc.node_mut(n7).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n7).text = Some("\n  ".to_string());
-        doc.append_child(n1, n7);
-        let n8 = doc.create_node(ElementTag::Span);
-        doc.node_mut(n8).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n8).style.margin_top = Length::px(0.0);
-        doc.node_mut(n8).style.margin_right = Length::px(0.0);
-        doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.margin_left = Length::px(0.0);
-        doc.node_mut(n8).style.padding_top = Length::px(0.0);
-        doc.node_mut(n8).style.padding_right = Length::px(0.0);
-        doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n8).style.padding_left = Length::px(0.0);
-        doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n8).style.display = Display::InlineBlock;
-        doc.node_mut(n8).style.vertical_align = VerticalAlign::Bottom;
-        doc.node_mut(n8).style.height = Length::px(20.0);
-        doc.node_mut(n8).style.width = Length::px(300.0);
-        doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 0, 255, 255);
-        doc.node_mut(n8).style.font_size = 12.0;
-        doc.append_child(n1, n8);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.width = Length::px(10.0);
+    doc.node_mut(n2).style.height = Length::px(30.0);
+    doc.node_mut(n2).style.font_size = 12.0;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Left;
+    doc.node_mut(n3).style.clear = Clear::Left;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.height = Length::px(0.0);
+    doc.node_mut(n3).style.font_size = 12.0;
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::InlineBlock;
+    doc.node_mut(n4).style.vertical_align = VerticalAlign::Bottom;
+    doc.node_mut(n4).style.height = Length::px(20.0);
+    doc.node_mut(n4).style.width = Length::px(300.0);
+    doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.node_mut(n4).style.font_size = 12.0;
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n5).style.font_size = 12.0;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).text = Some("\n  ".to_string());
+    doc.append_child(n1, n5);
+    let n6 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.display = Display::InlineBlock;
+    doc.node_mut(n6).style.vertical_align = VerticalAlign::Bottom;
+    doc.node_mut(n6).style.height = Length::px(20.0);
+    doc.node_mut(n6).style.width = Length::px(300.0);
+    doc.node_mut(n6).style.background_color = Color::from_rgba8(128, 0, 128, 255);
+    doc.node_mut(n6).style.font_size = 12.0;
+    doc.append_child(n1, n6);
+    let n7 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n7).style.font_size = 12.0;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).text = Some("\n  ".to_string());
+    doc.append_child(n1, n7);
+    let n8 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.padding_top = Length::px(0.0);
+    doc.node_mut(n8).style.padding_right = Length::px(0.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.padding_left = Length::px(0.0);
+    doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.display = Display::InlineBlock;
+    doc.node_mut(n8).style.vertical_align = VerticalAlign::Bottom;
+    doc.node_mut(n8).style.height = Length::px(20.0);
+    doc.node_mut(n8).style.width = Length::px(300.0);
+    doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n8).style.font_size = 12.0;
+    doc.append_child(n1, n8);
     doc
 }
 
@@ -11747,106 +12647,106 @@ fn css2_floats_new_fc_relayout() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Right;
-        doc.node_mut(n2).style.width = Length::px(50.0);
-        doc.node_mut(n2).style.height = Length::px(50.0);
-        doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n3).style.display = Display::Block;
-        doc.node_mut(n3).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n3).style.margin_top = Length::px(0.0);
-        doc.node_mut(n3).style.margin_right = Length::px(0.0);
-        doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.margin_left = Length::px(0.0);
-        doc.node_mut(n3).style.padding_top = Length::px(0.0);
-        doc.node_mut(n3).style.padding_right = Length::px(0.0);
-        doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n3).style.padding_left = Length::px(0.0);
-        doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n3).style.float = Float::Right;
-        doc.node_mut(n3).style.width = Length::px(75.0);
-        doc.node_mut(n3).style.height = Length::px(50.0);
-        doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.append_child(n1, n3);
-        let n4 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n4).style.display = Display::Block;
-        doc.node_mut(n4).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n4).style.margin_top = Length::px(0.0);
-        doc.node_mut(n4).style.margin_right = Length::px(0.0);
-        doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.margin_left = Length::px(0.0);
-        doc.node_mut(n4).style.padding_top = Length::px(0.0);
-        doc.node_mut(n4).style.padding_right = Length::px(0.0);
-        doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n4).style.padding_left = Length::px(0.0);
-        doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n4).style.overflow_x = Overflow::Hidden;
-        doc.node_mut(n4).style.overflow_y = Overflow::Hidden;
-        doc.append_child(n1, n4);
-            let n5 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n5).style.line_height = LineHeight::Number(0.0);
-            doc.node_mut(n5).style.margin_top = Length::px(0.0);
-            doc.node_mut(n5).style.margin_right = Length::px(0.0);
-            doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.margin_left = Length::px(0.0);
-            doc.node_mut(n5).style.padding_top = Length::px(0.0);
-            doc.node_mut(n5).style.padding_right = Length::px(0.0);
-            doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n5).style.padding_left = Length::px(0.0);
-            doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n5).style.display = Display::InlineBlock;
-            doc.node_mut(n5).style.width = Length::px(25.0);
-            doc.node_mut(n5).style.height = Length::px(75.0);
-            doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-            doc.append_child(n4, n5);
-            let n6 = doc.create_node(ElementTag::Div);
-            doc.node_mut(n6).style.line_height = LineHeight::Number(0.0);
-            doc.node_mut(n6).style.margin_top = Length::px(0.0);
-            doc.node_mut(n6).style.margin_right = Length::px(0.0);
-            doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n6).style.margin_left = Length::px(0.0);
-            doc.node_mut(n6).style.padding_top = Length::px(0.0);
-            doc.node_mut(n6).style.padding_right = Length::px(0.0);
-            doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n6).style.padding_left = Length::px(0.0);
-            doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n6).style.display = Display::InlineBlock;
-            doc.node_mut(n6).style.width = Length::px(25.0);
-            doc.node_mut(n6).style.height = Length::px(25.0);
-            doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-            doc.append_child(n4, n6);
-        let n7 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n7).style.display = Display::Block;
-        doc.node_mut(n7).style.line_height = LineHeight::Number(0.0);
-        doc.node_mut(n7).style.margin_top = Length::px(0.0);
-        doc.node_mut(n7).style.margin_right = Length::px(0.0);
-        doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.margin_left = Length::px(0.0);
-        doc.node_mut(n7).style.padding_top = Length::px(0.0);
-        doc.node_mut(n7).style.padding_right = Length::px(0.0);
-        doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n7).style.padding_left = Length::px(0.0);
-        doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n7).style.position = Position::Relative;
-        doc.node_mut(n7).style.width = Length::px(25.0);
-        doc.node_mut(n7).style.height = Length::px(50.0);
-        doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-        doc.node_mut(n7).style.top = Length::px(-100.0);
-        doc.node_mut(n7).style.left = Length::px(25.0);
-        doc.append_child(n1, n7);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Right;
+    doc.node_mut(n2).style.width = Length::px(50.0);
+    doc.node_mut(n2).style.height = Length::px(50.0);
+    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Right;
+    doc.node_mut(n3).style.width = Length::px(75.0);
+    doc.node_mut(n3).style.height = Length::px(50.0);
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n1, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(n4).style.overflow_y = Overflow::Hidden;
+    doc.append_child(n1, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.display = Display::InlineBlock;
+    doc.node_mut(n5).style.width = Length::px(25.0);
+    doc.node_mut(n5).style.height = Length::px(75.0);
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n6).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.display = Display::InlineBlock;
+    doc.node_mut(n6).style.width = Length::px(25.0);
+    doc.node_mut(n6).style.height = Length::px(25.0);
+    doc.node_mut(n6).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.append_child(n4, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.display = Display::Block;
+    doc.node_mut(n7).style.line_height = LineHeight::Number(0.0);
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.position = Position::Relative;
+    doc.node_mut(n7).style.width = Length::px(25.0);
+    doc.node_mut(n7).style.height = Length::px(50.0);
+    doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n7).style.top = Length::px(-100.0);
+    doc.node_mut(n7).style.left = Length::px(25.0);
+    doc.append_child(n1, n7);
     doc
 }
 
@@ -12742,8 +13642,12 @@ fn css2_floats_zero_width_floats() -> Document {
 // Source: CSS2/floats/crashtests/float-rewind-parallel-flow-1-crash.html
 fn css2_floats_crashtests_float_rewind_parallel_flow_1_crash() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -12753,8 +13657,21 @@ fn css2_floats_crashtests_float_rewind_parallel_flow_1_crash() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -12766,43 +13683,72 @@ fn css2_floats_crashtests_float_rewind_parallel_flow_1_crash() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.display = Display::ListItem;
     doc.node_mut(n1).style.list_style_position = ListStylePosition::Inside;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(2);
     doc.node_mut(n1).style.column_fill = ColumnFill::Auto;
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.font_size = 1.0;
     doc.node_mut(n1).style.direction = Direction::Rtl;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.float = Float::Right;
-        doc.node_mut(n2).style.width = Length::percent(100.0);
-        doc.node_mut(n2).style.height = Length::px(150.0);
-        doc.node_mut(n2).style.direction = Direction::Rtl;
-        doc.node_mut(n2).style.font_size = 1.0;
-        doc.append_child(n1, n2);
-        let n3 = doc.create_node(ElementTag::Text);
-        doc.node_mut(n3).style.font_size = 1.0;
-        doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n3).text = Some("\n  x\n".to_string());
-        doc.append_child(n1, n3);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.float = Float::Right;
+    doc.node_mut(n2).style.width = Length::percent(100.0);
+    doc.node_mut(n2).style.height = Length::px(150.0);
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.direction = Direction::Rtl;
+    doc.node_mut(n2).style.font_size = 1.0;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n3).style.font_size = 1.0;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).text = Some("\n  x\n".to_string());
+    doc.append_child(n1, n3);
     doc
 }
 
 // Source: CSS2/floats/crashtests/float-rewind-parallel-flow-2-crash.html
 fn css2_floats_crashtests_float_rewind_parallel_flow_2_crash() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-    doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -12812,8 +13758,21 @@ fn css2_floats_crashtests_float_rewind_parallel_flow_2_crash() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -12823,80 +13782,149 @@ fn css2_floats_crashtests_float_rewind_parallel_flow_2_crash() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.height = Length::px(10.0);
+    doc.node_mut(n1).style.height = Length::px(1.0);
     doc.node_mut(n1).style.direction = Direction::Rtl;
     doc.node_mut(n1).style.column_span = ColumnSpan::All;
+    doc.node_mut(n1).style.font_size = 1.6;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.font_size = 1.6;
     doc.append_child(vp, n1);
-        let n2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(n2).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-        doc.node_mut(n2).style.display = Display::Block;
-        doc.node_mut(n2).style.margin_top = Length::px(0.0);
-        doc.node_mut(n2).style.margin_right = Length::px(0.0);
-        doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.margin_left = Length::px(0.0);
-        doc.node_mut(n2).style.padding_top = Length::px(0.0);
-        doc.node_mut(n2).style.padding_right = Length::px(0.0);
-        doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
-        doc.node_mut(n2).style.padding_left = Length::px(0.0);
-        doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-        doc.node_mut(n2).style.position = Position::Fixed;
-        doc.node_mut(n2).style.column_width = Some(Length::percent(100.0));
-        doc.node_mut(n2).style.column_span = ColumnSpan::All;
-        doc.node_mut(n2).style.column_count = Some(3);
-        doc.node_mut(n2).style.direction = Direction::Rtl;
-        doc.append_child(n1, n2);
-            let n3 = doc.create_node(ElementTag::Span);
-            doc.node_mut(n3).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-            doc.node_mut(n3).style.margin_top = Length::px(0.0);
-            doc.node_mut(n3).style.margin_right = Length::px(0.0);
-            doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.margin_left = Length::px(0.0);
-            doc.node_mut(n3).style.padding_top = Length::px(0.0);
-            doc.node_mut(n3).style.padding_right = Length::px(0.0);
-            doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
-            doc.node_mut(n3).style.padding_left = Length::px(0.0);
-            doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-            doc.node_mut(n3).style.float = Float::Right;
-            doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
-            doc.node_mut(n3).style.column_count = Some(3);
-            doc.node_mut(n3).style.column_gap = Some(Length::px(65536.0));
-            doc.node_mut(n3).style.direction = Direction::Rtl;
-            doc.append_child(n2, n3);
-                let n4 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n4).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-                doc.node_mut(n4).style.margin_top = Length::px(0.0);
-                doc.node_mut(n4).style.margin_right = Length::px(0.0);
-                doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n4).style.margin_left = Length::px(0.0);
-                doc.node_mut(n4).style.padding_top = Length::px(0.0);
-                doc.node_mut(n4).style.padding_right = Length::px(0.0);
-                doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n4).style.padding_left = Length::px(0.0);
-                doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n4).style.direction = Direction::Rtl;
-                doc.append_child(n3, n4);
-                let n5 = doc.create_node(ElementTag::Div);
-                doc.node_mut(n5).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-                doc.node_mut(n5).style.display = Display::Block;
-                doc.node_mut(n5).style.margin_top = Length::px(0.0);
-                doc.node_mut(n5).style.margin_right = Length::px(0.0);
-                doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-                doc.node_mut(n5).style.margin_left = Length::px(0.0);
-                doc.node_mut(n5).style.padding_top = Length::px(0.0);
-                doc.node_mut(n5).style.padding_right = Length::px(0.0);
-                doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-                doc.node_mut(n5).style.padding_left = Length::px(0.0);
-                doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-                doc.node_mut(n5).style.direction = Direction::Rtl;
-                doc.append_child(n3, n5);
-            let n6 = doc.create_node(ElementTag::Text);
-            doc.node_mut(n6).style.font_size = 16.0;
-            doc.node_mut(n6).style.font_family = FontFamilyList { families: vec![FontFamily::Named("Ahem".to_string()), FontFamily::Named("DejaVu Sans".to_string())] };
-            doc.node_mut(n6).text = Some("\n    -1467632561\n  ".to_string());
-            doc.append_child(n2, n6);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.position = Position::Fixed;
+    doc.node_mut(n2).style.column_span = ColumnSpan::All;
+    doc.node_mut(n2).style.column_count = Some(3);
+    doc.node_mut(n2).style.font_size = 0.16;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.direction = Direction::Rtl;
+    doc.node_mut(n2).style.font_size = 0.16;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.float = Float::Right;
+    doc.node_mut(n3).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n3).style.column_count = Some(3);
+    doc.node_mut(n3).style.column_gap = Some(Length::px(655.36));
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.font_size = 0.16;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.direction = Direction::Rtl;
+    doc.node_mut(n3).style.font_size = 0.16;
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.font_size = 0.16;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.direction = Direction::Rtl;
+    doc.node_mut(n4).style.font_size = 0.16;
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_size = 0.16;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.direction = Direction::Rtl;
+    doc.node_mut(n5).style.font_size = 0.16;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 0.16;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).text = Some("\n    -1467632561\n  ".to_string());
+    doc.append_child(n2, n6);
     doc
 }
 

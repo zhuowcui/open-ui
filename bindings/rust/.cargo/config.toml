@@ -5,3 +5,21 @@ rustflags = [
     "-C", "link-arg=--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
     "-C", "link-arg=-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
 ]
+
+[env]
+# Keep Skia and bindgen on the Chromium-pinned Linux toolchain used by the
+# pixel-test runner, including clean debug/test builds.
+CC = "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang"
+CXX = "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++"
+CLANGCC = "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang"
+CLANGCXX = "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++"
+LIBCLANG_PATH = "/home/nero/chromium/src/third_party/rust-toolchain/lib"
+BINDGEN_EXTRA_CLANG_ARGS = "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot -resource-dir=/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/lib/clang/23 -isystem /home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/include/c++/10 -isystem /home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/include/x86_64-linux-gnu/c++/10 -isystem /home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/include/c++/10/backward -isystem /home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/include/x86_64-linux-gnu -isystem /home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/include"
+SKIA_NINJA_COMMAND = "/home/nero/chromium/src/third_party/ninja/ninja"
+PKG_CONFIG_SYSROOT_DIR = "/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
+CXXFLAGS = "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
+
+# Chromium enables FreeType outline emboldening in Skia's user config. Without
+# the same define, Skia converts synthetic bold into a stroked outline, which
+# has different glyph bounds and LCD coverage despite identical fonts/runtime.
+SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'

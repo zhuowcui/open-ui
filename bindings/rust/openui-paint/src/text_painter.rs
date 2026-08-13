@@ -18,10 +18,10 @@
 //! 2. Letting Skia's `drawTextBlob` handle color/non-color dispatch
 //! 3. Not forcing monochrome rendering paths
 
-use skia_safe::{Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point};
+use skia_safe::{Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob};
 
 use openui_layout::inline::text_combine::TextCombineLayout;
-use openui_style::{Color, ComputedStyle};
+use openui_style::{Color, ComputedStyle, FontFamily};
 use openui_text::font::FontMetrics;
 use openui_text::shaping::ShapeResult;
 
@@ -52,6 +52,23 @@ pub fn paint_text(
     // Build a Skia TextBlob from the shaped glyph runs.
     // Blink: TextPainter::Paint → DrawBlob → canvas->drawTextBlob()
     if let Some(text_blob) = shape_result.to_text_blob() {
+        // Cull against the glyphs' logical ink bounds before Skia applies its
+        // LCD coverage filter.  Skia's filter taps extend one device pixel
+        // beyond those bounds; if a run begins exactly at a hard overflow
+        // clip edge, drawing it first and clipping the filtered mask can leak
+        // a colored subpixel back into the visible area.  Blink rejects the
+        // display item from its logical visual rect in this case.
+        if text_blob_is_outside_device_clip(canvas, &text_blob, origin)
+            || (style
+                .font_family
+                .families
+                .iter()
+                .any(|family| matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("ahem")))
+                && text_origin_is_past_device_clip_end(canvas, origin))
+        {
+            return;
+        }
+
         let mut paint = Paint::default();
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
@@ -66,6 +83,45 @@ pub fn paint_text(
 
         canvas.draw_text_blob(&text_blob, Point::new(origin.0, origin.1), &paint);
     }
+}
+
+/// Ahem has square glyphs with no negative inline bearing. If the run origin
+/// is on or beyond a hard overflow edge, its LCD filter fringe is not logical
+/// ink and must not leak one subpixel back into the clipped box.
+fn text_origin_is_past_device_clip_end(canvas: &Canvas, origin: (f32, f32)) -> bool {
+    let device_origin = canvas
+        .local_to_device_as_3x3()
+        .map_point(Point::new(origin.0, origin.1));
+    canvas
+        .device_clip_bounds()
+        .is_none_or(|clip| device_origin.x >= clip.right as f32)
+}
+
+/// Whether a positioned text blob has no logical ink inside the exact device
+/// clip.  `Canvas::local_clip_bounds` is deliberately outset for antialiasing,
+/// so use the non-outset device clip after mapping the blob bounds instead.
+fn text_blob_is_outside_device_clip(
+    canvas: &Canvas,
+    text_blob: &TextBlob,
+    origin: (f32, f32),
+) -> bool {
+    let local_bounds = text_blob
+        .bounds()
+        .with_offset(Point::new(origin.0, origin.1));
+    let (device_bounds, _) = canvas.local_to_device_as_3x3().map_rect(Rect::from_ltrb(
+        local_bounds.left,
+        local_bounds.top,
+        local_bounds.right,
+        local_bounds.bottom,
+    ));
+    let Some(clip) = canvas.device_clip_bounds() else {
+        return true;
+    };
+
+    // This cull is intentionally inline-axis only. Fragmentainers may allow
+    // the ink of an oversized line to cross their block edge even when the
+    // line's logical rectangle belongs to the following continuation.
+    device_bounds.right <= clip.left as f32 || device_bounds.left >= clip.right as f32
 }
 
 /// Paint text shadows behind text glyphs.

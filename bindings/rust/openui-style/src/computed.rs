@@ -39,6 +39,30 @@ pub struct BoxShadow {
     pub inset: bool,
 }
 
+/// A resolved color stop in a CSS linear gradient.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum GradientStopPosition {
+    Auto,
+    Percent(f32),
+    Px(f32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct LinearGradientStop {
+    pub color: Color,
+    pub position: GradientStopPosition,
+}
+
+/// The single linear background-image layer currently consumed by paint.
+/// Angles use CSS conventions: 0deg points up and 90deg points right.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LinearGradient {
+    pub angle_degrees: f32,
+    /// Whether this image was authored with `repeating-linear-gradient()`.
+    pub repeating: bool,
+    pub stops: Vec<LinearGradientStop>,
+}
+
 /// The complete resolved style for an element.
 ///
 /// Mirrors Blink's `ComputedStyle`. Only the properties needed for SP9
@@ -53,6 +77,9 @@ pub struct ComputedStyle {
 
     /// CSS `list-style-position`. Initial: `outside`.
     pub list_style_position: ListStylePosition,
+
+    /// CSS `list-style-type`. Initial: `disc` for the list-item subset.
+    pub list_style_type: ListStyleType,
 
     /// CSS `position`. Initial: `static`.
     pub position: Position,
@@ -198,6 +225,9 @@ pub struct ComputedStyle {
     // ── Colors ───────────────────────────────────────────────────────
     /// CSS `background-color`. Initial: `transparent`.
     pub background_color: Color,
+
+    /// First CSS linear-gradient background-image layer. Initial: `none`.
+    pub background_linear_gradient: Option<LinearGradient>,
 
     /// CSS `background-clip`. Initial: `border-box`.
     pub background_clip: BackgroundClip,
@@ -559,6 +589,7 @@ impl ComputedStyle {
         Self {
             display: Display::INITIAL, // inline
             list_style_position: ListStylePosition::Outside,
+            list_style_type: ListStyleType::Disc,
             position: Position::INITIAL, // static
             establishes_transform_containing_block: false,
             float: Float::INITIAL,         // none
@@ -624,6 +655,7 @@ impl ComputedStyle {
             border_bottom_left_radius: (0.0, 0.0),
 
             background_color: Color::TRANSPARENT,
+            background_linear_gradient: None,
             background_clip: BackgroundClip::BorderBox,
             background_attachment: BackgroundAttachment::Scroll,
             color: Color::BLACK,

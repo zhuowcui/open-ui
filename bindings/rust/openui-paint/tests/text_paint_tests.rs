@@ -6,7 +6,10 @@
 
 use std::sync::Arc;
 
-use skia_safe::{surfaces, Color as SkColor, Surface};
+use skia_safe::{
+    surfaces, ClipOp, Color as SkColor, ImageInfo, PixelGeometry, Rect, Surface, SurfaceProps,
+    SurfacePropsFlags,
+};
 
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalSize};
@@ -909,6 +912,39 @@ fn paint_text_fragment_with_offset() {
 }
 
 #[test]
+fn text_logically_outside_hard_clip_has_no_lcd_filter_leak() {
+    let sr = shape_text("H");
+    let blob = sr.to_text_blob().expect("shaped glyph blob");
+    let clip_right = 100.0;
+    let origin_x = clip_right - blob.bounds().left;
+    let props = SurfaceProps::new_with_text_properties(
+        SurfacePropsFlags::default(),
+        PixelGeometry::RGBH,
+        0.2,
+        1.2,
+    );
+    let mut surface = surfaces::raster(
+        &ImageInfo::new_n32_premul((200, 100), None),
+        None,
+        Some(&props),
+    )
+    .expect("LCD raster surface");
+    surface.canvas().clear(SkColor::WHITE);
+    surface.canvas().clip_rect(
+        Rect::from_ltrb(0.0, 0.0, clip_right, 100.0),
+        ClipOp::Intersect,
+        false,
+    );
+
+    text_painter::paint_text(surface.canvas(), &sr, (origin_x, 50.0), &default_style());
+
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "LCD filter taps must not leak from logically clipped text"
+    );
+}
+
+#[test]
 fn paint_text_fragment_with_opacity() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
         s.color = Color::BLACK;
@@ -1021,8 +1057,17 @@ fn paint_text_fragment_no_shape_result() {
         overflow_rect: None,
         has_overflow_clip: false,
         block_axis_clip_only: false,
+        inline_axis_clip_only: false,
+        column_block_start_ink_overflow: LayoutUnit::zero(),
+        column_block_end_ink_overflow: LayoutUnit::zero(),
+        fragmentation_visual_offset: PhysicalOffset::zero(),
+        positioned_fragmentation: None,
+        multicol_fragmentation: None,
         decoration_paint_block_size: None,
+        decoration_slice: None,
         paint_zero_block_outline: false,
+        is_block_end_decoration_marker: false,
+        fills_fragmentainer_block_end_decoration: false,
         oof_candidates: Vec::new(),
         end_margin_strut: openui_geometry::MarginStrut::new(),
         start_margin_strut: openui_geometry::MarginStrut::new(),
@@ -1297,8 +1342,17 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         overflow_rect: None,
         has_overflow_clip: false,
         block_axis_clip_only: false,
+        inline_axis_clip_only: false,
+        column_block_start_ink_overflow: LayoutUnit::zero(),
+        column_block_end_ink_overflow: LayoutUnit::zero(),
+        fragmentation_visual_offset: PhysicalOffset::zero(),
+        positioned_fragmentation: None,
+        multicol_fragmentation: None,
         decoration_paint_block_size: None,
+        decoration_slice: None,
         paint_zero_block_outline: false,
+        is_block_end_decoration_marker: false,
+        fills_fragmentainer_block_end_decoration: false,
         oof_candidates: Vec::new(),
         end_margin_strut: openui_geometry::MarginStrut::new(),
         start_margin_strut: openui_geometry::MarginStrut::new(),

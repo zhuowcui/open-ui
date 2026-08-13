@@ -46,14 +46,20 @@ Current verified snapshot:
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
 | Ported/runnable WPT tests | 3566 |
-| Runnable passes | 2823 |
-| Runnable failures | 743 |
+| Runnable passes | 3267 |
+| Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Unported but explicitly categorized rows | 4107 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |
 | `needs_font_metrics` rows | 0 |
+| Runnable `sp13_multicol` rows | 0 |
+| Unported `sp13_multicol` residuals | 1018 |
+
+This is the verified SP13-R snapshot: all 2823 frozen exact baseline IDs and all
+351 runnable multicol targets pass at 0.0% mismatch. The 1018 unported multicol
+rows remain reason-owned in the residual ledger.
 
 ## Data Files
 

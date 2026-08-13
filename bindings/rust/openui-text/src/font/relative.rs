@@ -56,9 +56,16 @@ pub fn used_line_height_metrics(
     line_height: &LineHeight,
     font_size: f32,
 ) -> UsedLineHeightMetrics {
-    let font_ascent = metrics.int_ascent();
-    let font_descent = metrics.int_descent();
     let line_height = used_line_height(metrics, line_height, font_size);
+    // Blink's ordinary line-height strut uses integer face metrics. For a
+    // one-device-pixel strut, retaining fractional face metrics until the
+    // final baseline snap avoids losing the entire negative half-leading to
+    // the earlier face-metric rounding step.
+    let (font_ascent, font_descent) = if line_height <= 1.0 {
+        (metrics.ascent, metrics.descent)
+    } else {
+        (metrics.int_ascent(), metrics.int_descent())
+    };
     let leading = line_height - (font_ascent + font_descent);
     let layout_grid = 1.0 / 64.0;
     let ascent_half = (leading / 2.0 / layout_grid).floor() * layout_grid;
@@ -191,5 +198,13 @@ mod tests {
         let used = used_line_height_metrics(&metrics(), &LineHeight::Length(25.0), 16.0);
         assert_eq!(used.line_height, 25.0);
         assert!((used.ascent + used.descent - 25.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn negative_half_leading_uses_fractional_face_metrics_before_snapping() {
+        let used = used_line_height_metrics(&metrics(), &LineHeight::Length(1.0), 16.0);
+        assert_eq!(used.line_height, 1.0);
+        assert!((used.ascent - 5.9875).abs() < f32::EPSILON);
+        assert!((used.ascent + used.descent - 1.0).abs() < f32::EPSILON);
     }
 }

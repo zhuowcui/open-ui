@@ -14,9 +14,11 @@
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, LengthType, MinMaxSizes};
-use openui_style::{BoxSizing, ColumnSpan, ComputedStyle};
+use openui_style::{BoxSizing, ColumnSpan, ComputedStyle, WhiteSpace, WordBreak};
+use openui_text::Font;
 
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
+use crate::inline::items_builder::{preprocess_text_for_shaping, style_to_font_description};
 use crate::length_resolver::resolve_length;
 
 /// Check if a style represents an inline-level element.
@@ -133,6 +135,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     let mut multicol_columnar_max_inline = LayoutUnit::zero();
     let mut multicol_spanner_min_inline = LayoutUnit::zero();
     let mut multicol_spanner_max_inline = LayoutUnit::zero();
+    let mut has_multicol_spanner = false;
 
     let mut ordered_children: Vec<(usize, NodeId, i32)> = doc
         .children(node_id)
@@ -157,6 +160,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 
         if multicol_algo.is_some() {
             if has_spanner_descendant_through_transparent_wrappers(doc, child_id) {
+                has_multicol_spanner = true;
                 multicol_spanner_min_inline =
                     multicol_spanner_min_inline.max_of(child_sizes.min_content_inline_size);
                 multicol_spanner_max_inline =
@@ -178,9 +182,28 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         } else if child_is_inline {
             // CSS Sizing 3 §4.1: Inline-level children share a line.
             // min-content: widest individual inline item.
-            // max-content: all inline items on one line (sum widths).
+            // max-content: inline items are summed within each explicit line;
+            // a BR commits that line and starts the next one.
             min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
-            inline_children_max_sum = inline_children_max_sum + child_sizes.max_content_inline_size;
+            let child_node = doc.node(child_id);
+            let is_preserved_newline_control = child_node.tag == ElementTag::Text
+                && matches!(
+                    child_style.white_space,
+                    WhiteSpace::Pre
+                        | WhiteSpace::PreWrap
+                        | WhiteSpace::PreLine
+                        | WhiteSpace::BreakSpaces
+                )
+                && child_node.text.as_deref().is_some_and(|text| {
+                    !text.is_empty() && text.chars().all(|ch| matches!(ch, '\n' | '\r'))
+                });
+            if child_node.tag == ElementTag::Break || is_preserved_newline_control {
+                non_float_max_inline = non_float_max_inline.max_of(inline_children_max_sum);
+                inline_children_max_sum = LayoutUnit::zero();
+            } else {
+                inline_children_max_sum =
+                    inline_children_max_sum + child_sizes.max_content_inline_size;
+            }
             // Block-size for inline children is computed via inline layout below
             // (not by summing individual contributions, which would double-count).
         } else {
@@ -245,8 +268,9 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     }
 
     if let Some(algo) = multicol_algo {
+        let column_count = algo.column_count.max(1);
         let count = if algo.column_count > 0 {
-            LayoutUnit::from_i32(algo.column_count as i32)
+            LayoutUnit::from_i32(column_count as i32)
         } else {
             LayoutUnit::from_i32(1)
         };
@@ -260,10 +284,35 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         } else {
             LayoutUnit::zero()
         };
-        let min_column_width = specified_column_width.max_of(multicol_columnar_min_inline);
+        // CSS Multicol §3: a specified column-width is the preferred
+        // fragmentainer measure and therefore the columnar contribution to
+        // the multicol min-content size. Oversized descendants may visibly
+        // overflow that fragmentainer; they do not inflate it. With
+        // column-width:auto, the columnar min-content contribution supplies
+        // the measure instead.
+        let min_column_width = if algo.column_width.is_some() {
+            specified_column_width
+        } else {
+            multicol_columnar_min_inline
+        };
         let max_column_width = specified_column_width.max_of(multicol_columnar_max_inline);
         min_inline = multicol_spanner_min_inline.max_of(min_column_width * count + gaps);
         max_inline = multicol_spanner_max_inline.max_of(max_column_width * count + gaps);
+
+        // An unconstrained balanced multicol's intrinsic block contribution is
+        // the height of one balanced column, not the unfragmented linear flow.
+        // This value is consumed by flex/grid intrinsic sizing before final
+        // multicol layout; reporting the linear height makes a multicol flex
+        // item reserve all of its pre-fragmentation content below the columns.
+        if column_count > 1 && has_multicol_columnar_content && !has_multicol_spanner {
+            let divide_ceil = |size: LayoutUnit| {
+                let raw = size.raw();
+                let count = column_count as i32;
+                LayoutUnit::from_raw((raw + count - 1) / count)
+            };
+            min_content_block = divide_ceil(min_content_block);
+            max_content_block = divide_ceil(max_content_block);
+        }
     }
 
     // Add container border + padding.
@@ -916,9 +965,8 @@ pub fn compute_intrinsic_inline_sizes(doc: &Document, node_id: NodeId) -> MinMax
 
     match tag {
         ElementTag::Text => {
-            // For text nodes, approximate word-based sizing.
             if let Some(ref text) = node.text {
-                compute_text_intrinsic_sizes(text)
+                compute_text_intrinsic_sizes(text, &node.style)
             } else {
                 MinMaxSizes::zero()
             }
@@ -1043,27 +1091,46 @@ fn compute_child_intrinsic_contribution_with_block_size(
 
 /// Compute text intrinsic sizes.
 ///
-/// min-content = widest word (based on character count × average char width).
+/// min-content = widest soft-wrap opportunity; max-content = the longest
+/// forced line. Both values use the same font resolution and shaping path as
+/// inline layout so shrink-to-fit boxes do not acquire an unrelated 8px-per-
+/// character approximation.
 /// max-content = full text width.
-///
-/// Uses `chars().count()` for correct Unicode handling (multi-byte characters).
-/// The average character width is an approximation; real text shaping is handled
-/// by the inline layout module when content is actually rendered.
-fn compute_text_intrinsic_sizes(text: &str) -> MinMaxSizes {
-    const APPROX_CHAR_WIDTH: f32 = 8.0;
-
-    if text.is_empty() {
+fn compute_text_intrinsic_sizes(text: &str, style: &ComputedStyle) -> MinMaxSizes {
+    let processed = preprocess_text_for_shaping(text, style);
+    if processed.is_empty() {
         return MinMaxSizes::zero();
     }
 
-    // Max-content: entire text on one line.
-    let max_content = LayoutUnit::from_f32(text.chars().count() as f32 * APPROX_CHAR_WIDTH);
+    let font = Font::new(style_to_font_description(style));
+    let measure = |run: &str| LayoutUnit::from_f32(font.width(run));
+    let forced_lines = processed.split('\n');
+    let max_content = forced_lines
+        .clone()
+        .map(measure)
+        .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width));
 
-    // Min-content: widest single word.
-    let min_content = text
-        .split_whitespace()
-        .map(|word| LayoutUnit::from_f32(word.chars().count() as f32 * APPROX_CHAR_WIDTH))
-        .fold(LayoutUnit::zero(), |acc, w| acc.max_of(w));
+    let permits_soft_wrap = !matches!(style.white_space, WhiteSpace::Nowrap | WhiteSpace::Pre);
+    let min_content = if permits_soft_wrap && style.word_break == WordBreak::BreakAll {
+        // `break-all` introduces a soft wrap opportunity between typographic
+        // character units. For the text handled by this engine, measuring
+        // each scalar through the same font path gives the min-content width
+        // needed by shrink-to-fit floats and inline blocks.
+        forced_lines
+            .flat_map(|line| line.chars())
+            .map(|ch| {
+                let mut encoded = [0; 4];
+                measure(ch.encode_utf8(&mut encoded))
+            })
+            .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width))
+    } else if permits_soft_wrap {
+        forced_lines
+            .flat_map(|line| line.split_whitespace())
+            .map(measure)
+            .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width))
+    } else {
+        max_content
+    };
 
     MinMaxSizes::new(min_content, max_content)
 }
@@ -1732,16 +1799,14 @@ mod tests {
 
     #[test]
     fn text_min_content_widest_word() {
-        let sizes = compute_text_intrinsic_sizes("hello world");
-        // "hello" = 5 chars, "world" = 5 chars → min = 5 * 8 = 40
-        assert_eq!(sizes.min, LayoutUnit::from_f32(40.0));
-        // "hello world" = 11 chars → max = 11 * 8 = 88
-        assert_eq!(sizes.max, LayoutUnit::from_f32(88.0));
+        let sizes = compute_text_intrinsic_sizes("hello world", &ComputedStyle::default());
+        assert!(sizes.min > LayoutUnit::zero());
+        assert!(sizes.max > sizes.min);
     }
 
     #[test]
     fn text_single_word_min_equals_max() {
-        let sizes = compute_text_intrinsic_sizes("indivisible");
+        let sizes = compute_text_intrinsic_sizes("indivisible", &ComputedStyle::default());
         // Both min and max are the full word
         assert_eq!(sizes.min, sizes.max);
     }
