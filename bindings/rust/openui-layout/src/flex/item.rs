@@ -6,7 +6,7 @@
 
 use openui_dom::NodeId;
 use openui_geometry::{BoxStrut, LayoutUnit, MinMaxSizes};
-use openui_style::ItemPosition;
+use openui_style::{ItemPosition, OverflowAlignment};
 
 /// State of a flex item during the resolve-flexible-lengths algorithm.
 /// Blink: `FlexerState` used internally in `LineFlexer`.
@@ -23,7 +23,9 @@ pub enum FlexerState {
 }
 
 impl Default for FlexerState {
-    fn default() -> Self { Self::None }
+    fn default() -> Self {
+        Self::None
+    }
 }
 
 /// Per-item data collected during `ConstructAndAppendFlexItems`.
@@ -39,7 +41,6 @@ pub struct FlexItem {
     pub item_index: usize,
 
     // ── From style ───────────────────────────────────────────────────
-
     /// Resolved flex-grow value. Default: 0.0.
     pub flex_grow: f32,
 
@@ -47,7 +48,6 @@ pub struct FlexItem {
     pub flex_shrink: f32,
 
     // ── Resolved sizes (content-box, excludes border/padding) ────────
-
     /// Flex base size minus border+padding (content-box).
     /// Blink: `base_content_size`.
     pub base_content_size: LayoutUnit,
@@ -65,7 +65,6 @@ pub struct FlexItem {
     pub main_axis_border_padding: LayoutUnit,
 
     // ── Margins ──────────────────────────────────────────────────────
-
     /// Resolved physical margins (before auto-margin resolution).
     /// Blink: `initial_margins` (PhysicalBoxStrut).
     pub margin: BoxStrut,
@@ -75,14 +74,15 @@ pub struct FlexItem {
     pub main_axis_auto_margin_count: u8,
 
     // ── Alignment ────────────────────────────────────────────────────
-
     /// Resolved alignment for this item (after auto → parent's align-items,
     /// normal → stretch, and writing-mode coercion).
     /// Blink: `alignment` field.
     pub alignment: ItemPosition,
 
-    // ── Mutable state (used during LineFlexer) ───────────────────────
+    /// Overflow alignment modifier associated with the resolved alignment.
+    pub alignment_overflow: OverflowAlignment,
 
+    // ── Mutable state (used during LineFlexer) ───────────────────────
     /// Final main-axis content size after grow/shrink.
     /// Blink: `flexed_content_size`.
     pub flexed_content_size: LayoutUnit,
@@ -96,7 +96,6 @@ pub struct FlexItem {
     pub free_space_fraction: f64,
 
     // ── Flags ────────────────────────────────────────────────────────
-
     /// True if flex-basis resolved to a content-based value.
     /// Blink: `is_used_flex_basis_indefinite`.
     pub is_used_flex_basis_indefinite: bool,
@@ -104,6 +103,10 @@ pub struct FlexItem {
     /// True if the main axis is horizontal (for axis mapping).
     /// Blink: `is_horizontal_flow`.
     pub is_horizontal_flow: bool,
+
+    /// True if `visibility: collapse`. CSS Flexbox §4.4: collapsed items
+    /// have zero main size but still contribute to the line's cross size.
+    pub is_collapsed: bool,
 }
 
 impl FlexItem {
@@ -120,9 +123,7 @@ impl FlexItem {
     /// Blink: `FlexBaseMarginBoxSize()`.
     #[inline]
     pub fn flex_base_margin_box_size(&self) -> LayoutUnit {
-        self.base_content_size
-            + self.main_axis_border_padding
-            + self.main_axis_margin_extent()
+        self.base_content_size + self.main_axis_border_padding + self.main_axis_margin_extent()
     }
 
     /// Flexed border-box size (after grow/shrink).
@@ -136,9 +137,7 @@ impl FlexItem {
     /// Blink: `FlexedMarginBoxSize()`.
     #[inline]
     pub fn flexed_margin_box_size(&self) -> LayoutUnit {
-        self.flexed_content_size
-            + self.main_axis_border_padding
-            + self.main_axis_margin_extent()
+        self.flexed_content_size + self.main_axis_border_padding + self.main_axis_margin_extent()
     }
 
     /// Sum of margins on the main axis.
@@ -180,16 +179,20 @@ mod tests {
             main_axis_min_max: MinMaxSizes::zero(),
             main_axis_border_padding: LayoutUnit::from_i32(bp),
             margin: BoxStrut::new(
-                LayoutUnit::from_i32(5), LayoutUnit::from_i32(10),
-                LayoutUnit::from_i32(5), LayoutUnit::from_i32(10),
+                LayoutUnit::from_i32(5),
+                LayoutUnit::from_i32(10),
+                LayoutUnit::from_i32(5),
+                LayoutUnit::from_i32(10),
             ),
             main_axis_auto_margin_count: 0,
             alignment: ItemPosition::Stretch,
+            alignment_overflow: OverflowAlignment::Default,
             flexed_content_size: LayoutUnit::from_i32(hyp),
             state: FlexerState::None,
             free_space_fraction: 0.0,
             is_used_flex_basis_indefinite: false,
             is_horizontal_flow: true,
+            is_collapsed: false,
         }
     }
 
@@ -200,7 +203,10 @@ mod tests {
         assert_eq!(item.main_axis_margin_extent(), LayoutUnit::from_i32(20));
         assert_eq!(item.cross_axis_margin_extent(), LayoutUnit::from_i32(10));
         // hypothetical_main_margin_box = 100 + 20 + 20 = 140
-        assert_eq!(item.hypothetical_main_axis_margin_box_size(), LayoutUnit::from_i32(140));
+        assert_eq!(
+            item.hypothetical_main_axis_margin_box_size(),
+            LayoutUnit::from_i32(140)
+        );
         // flexed_border_box = 100 + 20 = 120
         assert_eq!(item.flexed_border_box_size(), LayoutUnit::from_i32(120));
         // flexed_margin_box = 100 + 20 + 20 = 140

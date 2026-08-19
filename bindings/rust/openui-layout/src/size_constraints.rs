@@ -67,13 +67,20 @@ pub fn resolve_size_constraints(
     // box-sizing: border-box means the specified min/max include padding+border.
     // Convert to content-box space by subtracting padding+border.
     if box_sizing == BoxSizing::BorderBox {
-        min_inline = apply_box_sizing_adjustment(min_inline, BoxSizing::BorderBox, padding_border_inline);
+        min_inline =
+            apply_box_sizing_adjustment(min_inline, BoxSizing::BorderBox, padding_border_inline);
         if max_inline != LayoutUnit::max() {
-            max_inline = apply_box_sizing_adjustment(max_inline, BoxSizing::BorderBox, padding_border_inline);
+            max_inline = apply_box_sizing_adjustment(
+                max_inline,
+                BoxSizing::BorderBox,
+                padding_border_inline,
+            );
         }
-        min_block = apply_box_sizing_adjustment(min_block, BoxSizing::BorderBox, padding_border_block);
+        min_block =
+            apply_box_sizing_adjustment(min_block, BoxSizing::BorderBox, padding_border_block);
         if max_block != LayoutUnit::max() {
-            max_block = apply_box_sizing_adjustment(max_block, BoxSizing::BorderBox, padding_border_block);
+            max_block =
+                apply_box_sizing_adjustment(max_block, BoxSizing::BorderBox, padding_border_block);
         }
     }
 
@@ -176,8 +183,8 @@ pub fn resolve_inline_size(
     let raw = resolve_length(
         style_width,
         cb_inline_size,
-        available_inline_size,   // auto → fill available
-        available_inline_size,   // none → fill available (shouldn't occur for width)
+        available_inline_size, // auto → fill available
+        available_inline_size, // none → fill available (shouldn't occur for width)
     );
 
     // Convert from border-box to content-box if needed.
@@ -216,9 +223,7 @@ pub fn resolve_block_size(
                 // CSS 2.1 §10.5: percentage height with indefinite CB → auto
                 content_block_size
             } else {
-                LayoutUnit::from_f32(
-                    style_height.value() / 100.0 * cb_block_size.to_f32(),
-                )
+                LayoutUnit::from_f32(style_height.value() / 100.0 * cb_block_size.to_f32())
             }
         }
         // None / intrinsic keywords → content-based

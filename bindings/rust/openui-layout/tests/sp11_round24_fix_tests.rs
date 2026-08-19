@@ -8,9 +8,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    Display, TextAlign, TextJustify,
-};
+use openui_style::{Display, TextAlign, TextJustify};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 

@@ -5,9 +5,8 @@
 
 use openui_geometry::{LayoutUnit, Length, MinMaxSizes, INDEFINITE_SIZE};
 use openui_layout::css_sizing::{
-    SizingKeyword, apply_aspect_ratio, apply_aspect_ratio_with_auto,
-    compute_automatic_size, compute_definite_size, resolve_preferred_size,
-    resolve_sizing_keyword,
+    apply_aspect_ratio, apply_aspect_ratio_with_auto, compute_automatic_size,
+    compute_definite_size, resolve_preferred_size, resolve_sizing_keyword, SizingKeyword,
 };
 use openui_layout::ConstraintSpace;
 use openui_style::AspectRatio;
@@ -64,7 +63,10 @@ fn fit_content_clamping_below_min() {
     // fit-content(20) with min=50, max=200 → clamp up to 50
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
     let result = resolve_sizing_keyword(
-        SizingKeyword::FitContent(lu(20)), &intrinsic, lu(500), lu(0),
+        SizingKeyword::FitContent(lu(20)),
+        &intrinsic,
+        lu(500),
+        lu(0),
     );
     assert_eq!(result, lu(50));
 }
@@ -74,7 +76,10 @@ fn fit_content_clamping_above_max() {
     // fit-content(500) with min=50, max=200 → clamp down to 200
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
     let result = resolve_sizing_keyword(
-        SizingKeyword::FitContent(lu(500)), &intrinsic, lu(800), lu(0),
+        SizingKeyword::FitContent(lu(500)),
+        &intrinsic,
+        lu(800),
+        lu(0),
     );
     assert_eq!(result, lu(200));
 }
@@ -84,7 +89,10 @@ fn fit_content_clamping_between_min_and_max() {
     // fit-content(150) with min=50, max=200 → 150 (within range)
     let intrinsic = MinMaxSizes::new(lu(50), lu(200));
     let result = resolve_sizing_keyword(
-        SizingKeyword::FitContent(lu(150)), &intrinsic, lu(800), lu(0),
+        SizingKeyword::FitContent(lu(150)),
+        &intrinsic,
+        lu(800),
+        lu(0),
     );
     assert_eq!(result, lu(150));
 }
@@ -130,7 +138,10 @@ fn aspect_ratio_height_to_width() {
 
 #[test]
 fn aspect_ratio_with_auto_flag_prefers_intrinsic() {
-    let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: true };
+    let ar = AspectRatio {
+        ratio: (16.0, 9.0),
+        auto_flag: true,
+    };
     let intrinsic = Some((4.0, 3.0));
     // auto_flag + intrinsic exists → use 4:3 instead of 16:9
     let (w, h) = apply_aspect_ratio_with_auto(INDEFINITE_SIZE, lu(300), &ar, intrinsic);
@@ -231,7 +242,10 @@ fn preferred_size_with_keyword_and_min_max() {
 #[test]
 fn aspect_ratio_plus_min_width_constraint() {
     let intrinsic = MinMaxSizes::new(lu(50), lu(400));
-    let ar = AspectRatio { ratio: (2.0, 1.0), auto_flag: false };
+    let ar = AspectRatio {
+        ratio: (2.0, 1.0),
+        auto_flag: false,
+    };
     // preferred=auto, other_axis (height)=30 → width = 30 * 2/1 = 60
     // min-width=100px → clamped up to 100
     let result = resolve_preferred_size(
@@ -335,10 +349,12 @@ fn stretch_definite_in_flex_context() {
 }
 
 #[test]
-fn stretch_indefinite_without_flex() {
+fn stretch_resolves_against_available_size() {
+    // CSS Sizing L4: stretch resolves to the available size in any context
+    // (not just flex/grid) when the available size is definite.
     let space = ConstraintSpace::for_root(lu(600), lu(400));
     let result = compute_definite_size(&Length::stretch(), lu(600), &space, true);
-    assert_eq!(result, None);
+    assert_eq!(result, Some(lu(600)));
 }
 
 #[test]

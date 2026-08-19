@@ -16,7 +16,9 @@
 //! - Trailing space stripping per CSS Text §4.1.3
 
 use openui_geometry::{LayoutUnit, LengthType};
-use openui_style::{BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak};
+use openui_style::{
+    BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak,
+};
 use openui_text::hyphenation::{self, Hyphenation};
 use openui_text::{Font, TextShaper};
 use unicode_segmentation::UnicodeSegmentation;
@@ -45,6 +47,8 @@ pub struct LineBreaker<'a> {
     is_finished: bool,
     /// Text alignment from the block container.
     text_align: TextAlign,
+    /// White-space from the block container (controls wrapping for all inline content).
+    container_white_space: WhiteSpace,
     /// Containing block's content-box width for percentage resolution.
     /// Percentages on inline margin/border/padding resolve against this,
     /// not the per-line available width (CSS 2.2 §10.3.3).
@@ -64,6 +68,14 @@ enum LineState {
     Done,
 }
 
+/// Opaque rewind point for [`LineBreaker::checkpoint`]/[`LineBreaker::restore`].
+#[derive(Clone, Copy, Debug)]
+pub struct LineBreakerCheckpoint {
+    current_item: usize,
+    current_text_offset: usize,
+    is_finished: bool,
+}
+
 impl<'a> LineBreaker<'a> {
     /// Create a new line breaker for the given inline items.
     pub fn new(items_data: &'a InlineItemsData, containing_block_width: LayoutUnit) -> Self {
@@ -74,6 +86,7 @@ impl<'a> LineBreaker<'a> {
             current_text_offset: 0,
             is_finished: false,
             text_align: TextAlign::Start,
+            container_white_space: WhiteSpace::Normal,
             containing_block_width,
             hyphens: Hyphens::Manual,
             hyphenation: None,
@@ -84,6 +97,10 @@ impl<'a> LineBreaker<'a> {
     /// Set text alignment for produced lines.
     pub fn set_text_align(&mut self, align: TextAlign) {
         self.text_align = align;
+    }
+
+    pub fn set_container_white_space(&mut self, ws: WhiteSpace) {
+        self.container_white_space = ws;
     }
 
     /// Configure hyphenation from computed style properties.
@@ -102,6 +119,24 @@ impl<'a> LineBreaker<'a> {
     /// Check if all items have been consumed.
     pub fn is_finished(&self) -> bool {
         self.is_finished
+    }
+
+    /// Snapshot the breaker position so a produced line can be re-broken
+    /// (CSS 2.1 §9.5.1 line-shift below floats re-runs `next_line` at a
+    /// lower block offset with a wider available width).
+    pub fn checkpoint(&self) -> LineBreakerCheckpoint {
+        LineBreakerCheckpoint {
+            current_item: self.current_item,
+            current_text_offset: self.current_text_offset,
+            is_finished: self.is_finished,
+        }
+    }
+
+    /// Rewind to a previously captured checkpoint.
+    pub fn restore(&mut self, cp: LineBreakerCheckpoint) {
+        self.current_item = cp.current_item;
+        self.current_text_offset = cp.current_text_offset;
+        self.is_finished = cp.is_finished;
     }
 
     /// Get the next line. Returns `None` when all items are consumed.
@@ -198,7 +233,12 @@ impl<'a> LineBreaker<'a> {
         }
 
         // Strip trailing collapsible spaces from the line
-        strip_trailing_spaces(&mut line, &self.items_data.items, &self.items_data.text, &self.items_data.styles);
+        strip_trailing_spaces(
+            &mut line,
+            &self.items_data.items,
+            &self.items_data.text,
+            &self.items_data.styles,
+        );
 
         // Check if this is the last line
         line.is_last_line = self.current_item >= self.items_data.items.len();
@@ -210,22 +250,32 @@ impl<'a> LineBreaker<'a> {
     }
 
     /// Handle a text item — measure, find break opportunities, break if needed.
-    fn handle_text(
-        &mut self,
-        item_index: usize,
-        line: &mut LineInfo,
-        state: &mut LineState,
-    ) {
+    fn handle_text(&mut self, item_index: usize, line: &mut LineInfo, state: &mut LineState) {
         let item = &self.items_data.items[item_index];
         let style = &self.items_data.styles[item.style_index];
 
         // Determine the actual text range to process (may be a suffix after mid-item break)
-        let text_start = if self.current_text_offset > 0 && self.current_text_offset > item.text_range.start {
-            self.current_text_offset
-        } else {
-            item.text_range.start
-        };
+        let mut text_start =
+            if self.current_text_offset > 0 && self.current_text_offset > item.text_range.start {
+                self.current_text_offset
+            } else {
+                item.text_range.start
+            };
         let text_end = item.text_range.end;
+
+        // CSS Text §4.1.3: collapsible spaces at the start of a line are
+        // removed. This applies both to source indentation at the start of an
+        // inline formatting context and to a suffix reprocessed after wrapping.
+        if !line.has_content()
+            && matches!(
+                style.white_space,
+                WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+            )
+            && self.items_data.text[text_start..text_end].starts_with(' ')
+        {
+            text_start += 1;
+            self.current_text_offset = text_start;
+        }
 
         if text_start >= text_end {
             self.current_item += 1;
@@ -241,8 +291,9 @@ impl<'a> LineBreaker<'a> {
             return;
         }
 
-        // Check if wrapping is prevented
-        let allows_wrap = allows_line_wrap(style.white_space);
+        // Check if wrapping is prevented — both item and container must allow it
+        let allows_wrap =
+            allows_line_wrap(style.white_space) && allows_line_wrap(self.container_white_space);
 
         // Measure the text
         let text_width = if let Some(ref sr) = item.shape_result {
@@ -257,8 +308,27 @@ impl<'a> LineBreaker<'a> {
         };
 
         let remaining = line.remaining_width();
+        // Terminal collapsible whitespace is removed after line construction,
+        // so it must not force an otherwise exactly fitting final text run to
+        // the next line. Keep the full range for `strip_trailing_spaces`, but
+        // use the shaped width without its final collapsed space for the fit
+        // decision.
+        let fit_width =
+            if item.end_collapse_type == CollapseType::Collapsible && text_slice.ends_with(' ') {
+                item.shape_result.as_ref().map_or(text_width, |sr| {
+                    let char_start = self.char_map.get(text_start);
+                    let char_end = self.char_map.get(text_end);
+                    let item_char_start = self.char_map.get(item.text_range.start);
+                    LayoutUnit::from_f32(sr.width_for_range(
+                        char_start - item_char_start,
+                        char_end.saturating_sub(1) - item_char_start,
+                    ))
+                })
+            } else {
+                text_width
+            };
 
-        if text_width <= remaining || !allows_wrap {
+        if fit_width <= remaining || !allows_wrap {
             // Entire text fits (or we're in nowrap mode)
             line.items.push(InlineItemResult {
                 item_index,
@@ -275,7 +345,12 @@ impl<'a> LineBreaker<'a> {
         }
 
         // Text doesn't fit — find best break point
-        let mut break_opps = find_break_opportunities(text_slice, style.word_break, style.overflow_wrap, style.line_break);
+        let mut break_opps = find_break_opportunities(
+            text_slice,
+            style.word_break,
+            style.overflow_wrap,
+            style.line_break,
+        );
 
         // Add soft hyphen break opportunities if hyphens != none.
         // Soft hyphens (U+00AD) are valid break points in manual and auto modes.
@@ -293,6 +368,7 @@ impl<'a> LineBreaker<'a> {
         let mut best_break: Option<usize> = None;
         let mut best_width = LayoutUnit::zero();
         let mut best_is_hyphen = false;
+        let mut first_overflow_break: Option<(usize, LayoutUnit)> = None;
 
         // Shape the actual hyphen to get exact advance width.
         let hyphen_advance = {
@@ -310,19 +386,51 @@ impl<'a> LineBreaker<'a> {
             for &brk in &break_opps {
                 // brk is a byte offset into text_slice
                 let break_byte = text_start + brk;
-                let break_char = self.char_map.get(break_byte);
+                // A collapsible space immediately before a soft wrap is
+                // removed from the line (CSS Text 3 §4.1.3).  It therefore
+                // must not make an otherwise exact-fit break look too wide.
+                // Measuring through that space made e.g. five 20px Ahem
+                // glyphs plus a space overflow a 100px column, after which
+                // the last-resort path placed the entire text item on one
+                // unbreakable line.
+                let measured_break_byte = if matches!(
+                    style.white_space,
+                    WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+                ) {
+                    let prefix = &self.items_data.text[text_start..break_byte];
+                    let trimmed = prefix.trim_end_matches([' ', '\t']);
+                    text_start + trimmed.len()
+                } else {
+                    break_byte
+                };
+                let break_char = self.char_map.get(measured_break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
                 let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
-                let is_shy = brk < text_slice.len()
-                    && text_slice[brk..].starts_with('\u{00AD}');
+                // Keep the collapsible trailing space in the line item's
+                // stored advance. `strip_trailing_spaces` removes it after
+                // construction. Storing the already-trimmed fit width here
+                // made that pass subtract the space twice (turning `AA ` into
+                // one A for geometry even though both glyphs were painted).
+                let raw_break_char = self.char_map.get(break_byte);
+                let raw_width = LayoutUnit::from_f32(
+                    sr.width_for_range(local_start, raw_break_char - item_char_start),
+                );
+                let is_shy = brk < text_slice.len() && text_slice[brk..].starts_with('\u{00AD}');
                 // Soft-hyphen breaks insert a visible hyphen glyph — account for its width.
-                let effective_width = if is_shy { width + hyphen_advance } else { width };
+                let effective_width = if is_shy {
+                    width + hyphen_advance
+                } else {
+                    width
+                };
                 if effective_width <= remaining {
                     best_break = Some(brk);
-                    best_width = width;
+                    best_width = raw_width;
                     best_is_hyphen = is_shy;
                 } else {
+                    if brk > 0 && !is_shy && first_overflow_break.is_none() {
+                        first_overflow_break = Some((brk, raw_width));
+                    }
                     break;
                 }
             }
@@ -359,7 +467,8 @@ impl<'a> LineBreaker<'a> {
             *state = LineState::Done;
         } else {
             // No normal break opportunity found — try hyphenation
-            if self.try_hyphenation_break(item_index, text_start, text_end, remaining, line, state) {
+            if self.try_hyphenation_break(item_index, text_start, text_end, remaining, line, state)
+            {
                 return;
             }
 
@@ -373,8 +482,30 @@ impl<'a> LineBreaker<'a> {
                 }
                 OverflowWrap::Normal => {
                     if !line.has_content() {
-                        // First content on line — force it to avoid infinite loop
-                        self.force_text_on_line(item_index, text_start, text_end, text_width, line);
+                        if let Some((break_at, width)) = first_overflow_break {
+                            // An unbreakable first word may overflow the empty
+                            // line, but the rest of the text item still resumes
+                            // at its next soft opportunity. Forcing the entire
+                            // item here incorrectly suppresses all later
+                            // whitespace breaks in narrow columns.
+                            let break_byte = text_start + break_at;
+                            line.items.push(InlineItemResult {
+                                item_index,
+                                text_range: text_start..break_byte,
+                                inline_size: width,
+                                shape_result: item.shape_result.clone(),
+                                has_forced_break: false,
+                                item_type: InlineItemType::Text,
+                            });
+                            line.used_width = line.used_width + width;
+                            self.current_text_offset = break_byte;
+                        } else {
+                            // No later opportunity exists; force the whole
+                            // unbreakable item to guarantee progress.
+                            self.force_text_on_line(
+                                item_index, text_start, text_end, text_width, line,
+                            );
+                        }
                         *state = LineState::Done;
                     } else {
                         // Break before this item (it goes to next line)
@@ -425,9 +556,7 @@ impl<'a> LineBreaker<'a> {
         }
 
         // Find the byte offset of the word within text_slice
-        let word_byte_start = text_slice
-            .find(word)
-            .unwrap_or(0);
+        let word_byte_start = text_slice.find(word).unwrap_or(0);
 
         // Get all hyphenation points as byte offsets within the word
         let hyphen_points = hyphenation.hyphen_byte_locations(word);
@@ -448,8 +577,7 @@ impl<'a> LineBreaker<'a> {
         };
 
         if let Some(ref sr) = item.shape_result {
-            let item_char_start =
-                self.char_map.get(item.text_range.start);
+            let item_char_start = self.char_map.get(item.text_range.start);
             let char_start = self.char_map.get(text_start);
 
             for &hp in hyphen_points.iter().rev() {
@@ -460,12 +588,10 @@ impl<'a> LineBreaker<'a> {
                     continue;
                 }
 
-                let break_char =
-                    self.char_map.get(break_byte);
+                let break_char = self.char_map.get(break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
-                let width =
-                    LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
 
                 if width + hyphen_advance <= remaining {
                     line.items.push(InlineItemResult {
@@ -505,7 +631,8 @@ impl<'a> LineBreaker<'a> {
         let item = &self.items_data.items[item_index];
         let style = &self.items_data.styles[item.style_index];
         let text_slice = &self.items_data.text[text_start..text_end];
-        let wrappable = allows_line_wrap(style.white_space);
+        let wrappable =
+            allows_line_wrap(style.white_space) && allows_line_wrap(self.container_white_space);
 
         // Find the first newline
         if let Some(nl_pos) = text_slice.find('\n') {
@@ -540,24 +667,21 @@ impl<'a> LineBreaker<'a> {
                         // line via the normal loop.
                         let seg_text = &self.items_data.text[seg_start..seg_end];
                         let break_opps = find_break_opportunities(
-                            seg_text, style.word_break, style.overflow_wrap, style.line_break,
+                            seg_text,
+                            style.word_break,
+                            style.overflow_wrap,
+                            style.line_break,
                         );
 
                         let mut best_break: Option<usize> = None;
                         let mut best_width = LayoutUnit::zero();
 
                         if let Some(ref sr) = item.shape_result {
-                            let item_char_start = self.char_map.get(
-                                item.text_range.start,
-                            );
-                            let char_start = self.char_map.get(
-                                seg_start,
-                            );
+                            let item_char_start = self.char_map.get(item.text_range.start);
+                            let char_start = self.char_map.get(seg_start);
                             for &brk in &break_opps {
                                 let brk_byte = seg_start + brk;
-                                let brk_char = self.char_map.get(
-                                    brk_byte,
-                                );
+                                let brk_char = self.char_map.get(brk_byte);
                                 let local_start = char_start - item_char_start;
                                 let local_end = brk_char - item_char_start;
                                 let width = LayoutUnit::from_f32(
@@ -627,9 +751,7 @@ impl<'a> LineBreaker<'a> {
                     }
                 } else {
                     // Non-wrappable (pre): place unconditionally
-                    let pre_nl_width = self.measure_text_range(
-                        item_index, text_start, break_byte,
-                    );
+                    let pre_nl_width = self.measure_text_range(item_index, text_start, break_byte);
                     line.items.push(InlineItemResult {
                         item_index,
                         text_range: text_start..break_byte,
@@ -664,28 +786,24 @@ impl<'a> LineBreaker<'a> {
                     // Temporarily adjust text bounds and delegate.
                     let seg_text = &self.items_data.text[text_start..text_end];
                     let break_opps = find_break_opportunities(
-                        seg_text, style.word_break, style.overflow_wrap, style.line_break,
+                        seg_text,
+                        style.word_break,
+                        style.overflow_wrap,
+                        style.line_break,
                     );
                     let mut best_break: Option<usize> = None;
                     let mut best_width = LayoutUnit::zero();
 
                     if let Some(ref sr) = item.shape_result {
-                        let item_char_start = self.char_map.get(
-                            item.text_range.start,
-                        );
-                        let char_start = self.char_map.get(
-                            text_start,
-                        );
+                        let item_char_start = self.char_map.get(item.text_range.start);
+                        let char_start = self.char_map.get(text_start);
                         for &brk in &break_opps {
                             let brk_byte = text_start + brk;
-                            let brk_char = self.char_map.get(
-                                brk_byte,
-                            );
+                            let brk_char = self.char_map.get(brk_byte);
                             let local_start = char_start - item_char_start;
                             let local_end = brk_char - item_char_start;
-                            let width = LayoutUnit::from_f32(
-                                sr.width_for_range(local_start, local_end),
-                            );
+                            let width =
+                                LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
                             if width <= remaining {
                                 best_break = Some(brk);
                                 best_width = width;
@@ -796,21 +914,22 @@ impl<'a> LineBreaker<'a> {
             // grapheme boundary in the range is marked unsafe-to-break.
             if best_byte.is_none() {
                 let has_unsafe_positions =
-                    text_slice.grapheme_indices(true).skip(1).any(|(byte_offset, _)| {
-                        let break_byte = text_start + byte_offset;
-                        let break_char =
-                            self.char_map.get(break_byte);
-                        let local_break = break_char - item_char_start;
-                        !sr.safe_to_break_before(local_break)
-                    });
+                    text_slice
+                        .grapheme_indices(true)
+                        .skip(1)
+                        .any(|(byte_offset, _)| {
+                            let break_byte = text_start + byte_offset;
+                            let break_char = self.char_map.get(break_byte);
+                            let local_break = break_char - item_char_start;
+                            !sr.safe_to_break_before(local_break)
+                        });
 
                 if !has_unsafe_positions {
                     // Simple script (all positions are safe): fall back to
                     // any grapheme boundary that fits.
                     for (byte_offset, _grapheme) in text_slice.grapheme_indices(true).skip(1) {
                         let break_byte = text_start + byte_offset;
-                        let break_char =
-                            self.char_map.get(break_byte);
+                        let break_char = self.char_map.get(break_byte);
                         let local_start = char_start - item_char_start;
                         let local_end = break_char - item_char_start;
                         let width =
@@ -855,8 +974,7 @@ impl<'a> LineBreaker<'a> {
                         .skip(1)
                         .find_map(|(byte_offset, _)| {
                             let break_byte = text_start + byte_offset;
-                            let break_char =
-                                self.char_map.get(break_byte);
+                            let break_char = self.char_map.get(break_byte);
                             let local_break = break_char - item_char_start;
                             if sr.safe_to_break_before(local_break) {
                                 Some(break_byte)
@@ -907,10 +1025,21 @@ impl<'a> LineBreaker<'a> {
         // For `auto` or percentage widths without a definite containing block,
         // fall back to zero (full box layout integration is required for
         // intrinsic sizing of inline-block content).
-        let width = resolve_atomic_inline_width(style, self.containing_block_width, item.intrinsic_inline_size);
+        let width = resolve_atomic_inline_width(
+            style,
+            self.containing_block_width,
+            item.intrinsic_inline_size,
+        );
+        let margin_inline =
+            resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
+                + resolve_margin_or_padding(&style.margin_right, self.containing_block_width);
+        let margin_box_width = width + margin_inline;
         let remaining = line.remaining_width();
+        // Use the container's white-space for wrapping decisions (CSS inheritance).
+        // The container's nowrap applies to all inline content within.
+        let allows_wrap = allows_line_wrap(self.container_white_space);
 
-        if width <= remaining || !line.has_content() {
+        if margin_box_width <= remaining || !line.has_content() || !allows_wrap {
             line.items.push(InlineItemResult {
                 item_index,
                 text_range: item.text_range.clone(),
@@ -919,7 +1048,7 @@ impl<'a> LineBreaker<'a> {
                 has_forced_break: false,
                 item_type: InlineItemType::AtomicInline,
             });
-            line.used_width = line.used_width + width;
+            line.used_width = line.used_width + margin_box_width;
             self.current_item += 1;
         } else {
             *state = LineState::Done;
@@ -979,7 +1108,12 @@ impl<'a> LineBreaker<'a> {
 /// Uses the actual text on the current line (the item_result's text_range)
 /// rather than the full item's collapse metadata, so that split items are
 /// handled correctly.
-fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, styles: &[ComputedStyle]) {
+fn strip_trailing_spaces(
+    line: &mut LineInfo,
+    items: &[InlineItem],
+    text: &str,
+    styles: &[ComputedStyle],
+) {
     // Walk items from the end; skip close/open tags; find last text item index.
     let target_idx = {
         let mut idx = None;
@@ -1040,7 +1174,8 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                 let trimmed = line_text.trim_end_matches(is_hangable_space);
                 let num_trimmed_chars = line_text[trimmed.len()..].chars().count();
                 if char_count > 0 && num_trimmed_chars > 0 {
-                    let space_width = sr.width_for_range(char_count - num_trimmed_chars, char_count);
+                    let space_width =
+                        sr.width_for_range(char_count - num_trimmed_chars, char_count);
                     let space_lu = LayoutUnit::from_f32(space_width);
                     line.used_width = line.used_width - space_lu;
 
@@ -1052,9 +1187,15 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                         line.hang_width = line.hang_width + space_lu;
                     } else {
                         // Normal/nowrap/pre-line: trim text_range so
-                        // decorations don't extend into stripped space.
+                        // decorations and subsequent visual-order items do
+                        // not extend into stripped space. Updating only
+                        // `used_width` leaves a stale positioning advance in
+                        // RTL after bidi reordering.
                         let new_end = line_text_start + trimmed.len();
                         line.items[target_idx].text_range = line_text_start..new_end;
+                        line.items[target_idx].inline_size = (line.items[target_idx].inline_size
+                            - space_lu)
+                            .clamp_negative_to_zero();
                     }
                 }
             } else if !at_item_end {
@@ -1075,7 +1216,8 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                     let offset_in_item = line_text_end - item.text_range.start;
                     let local_end = item_text[..offset_in_item].chars().count();
                     if local_end >= num_trimmed_chars && local_end <= sr.num_characters {
-                        let space_width = sr.width_for_range(local_end - num_trimmed_chars, local_end);
+                        let space_width =
+                            sr.width_for_range(local_end - num_trimmed_chars, local_end);
                         let space_lu = LayoutUnit::from_f32(space_width);
                         line.used_width = line.used_width - space_lu;
 
@@ -1086,6 +1228,9 @@ fn strip_trailing_spaces(line: &mut LineInfo, items: &[InlineItem], text: &str, 
                             // Normal/nowrap/pre-line: trim text_range.
                             let new_end = line_text_start + trimmed.len();
                             line.items[target_idx].text_range = line_text_start..new_end;
+                            line.items[target_idx].inline_size =
+                                (line.items[target_idx].inline_size - space_lu)
+                                    .clamp_negative_to_zero();
                         }
                     }
                 }
@@ -1122,7 +1267,11 @@ pub fn find_break_opportunities(
 ) -> Vec<usize> {
     // line-break: anywhere overrides everything — break at every grapheme cluster.
     if line_break == LineBreak::Anywhere {
-        return text.grapheme_indices(true).map(|(i, _)| i).skip(1).collect();
+        return text
+            .grapheme_indices(true)
+            .map(|(i, _)| i)
+            .skip(1)
+            .collect();
     }
 
     let base_breaks = match word_break {
@@ -1139,7 +1288,10 @@ pub fn find_break_opportunities(
         }
         WordBreak::BreakAll => {
             // Break between grapheme clusters (not raw Unicode characters).
-            text.grapheme_indices(true).map(|(i, _)| i).skip(1).collect()
+            text.grapheme_indices(true)
+                .map(|(i, _)| i)
+                .skip(1)
+                .collect()
         }
         WordBreak::KeepAll => {
             // Start from normal UAX#14 breaks, but suppress CJK-specific
@@ -1155,12 +1307,8 @@ pub fn find_break_opportunities(
 
     // Apply line-break strictness filtering to the base break set.
     match line_break {
-        LineBreak::Strict => {
-            apply_strict_line_break(text, base_breaks)
-        }
-        LineBreak::Loose => {
-            apply_loose_line_break(text, base_breaks)
-        }
+        LineBreak::Strict => apply_strict_line_break(text, base_breaks),
+        LineBreak::Loose => apply_loose_line_break(text, base_breaks),
         // Auto and Normal use standard UAX#14 behavior unchanged.
         LineBreak::Auto | LineBreak::Normal | LineBreak::Anywhere => base_breaks,
     }
@@ -1172,7 +1320,7 @@ pub fn find_break_opportunities(
 /// coverage, including CJK ideographic break opportunities that the previous
 /// manual implementation could not detect.
 fn find_uax14_breaks(text: &str) -> Vec<usize> {
-    use unicode_linebreak::{BreakOpportunity, linebreaks};
+    use unicode_linebreak::{linebreaks, BreakOpportunity};
     let mut breaks = Vec::new();
     for (byte_offset, break_opp) in linebreaks(text) {
         match break_opp {
@@ -1187,8 +1335,8 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
     breaks
 }
 
-/// Find break opportunities only at spaces (used internally for tests).
-#[allow(dead_code)]
+/// Find break opportunities only at spaces (used by tests).
+#[cfg(test)]
 fn find_space_breaks(text: &str) -> Vec<usize> {
     let mut breaks = Vec::new();
     let chars: Vec<(usize, char)> = text.char_indices().collect();
@@ -1208,6 +1356,9 @@ fn find_space_breaks(text: &str) -> Vec<usize> {
 /// CSS Text Level 3: `word-break: keep-all` suppresses only soft wrap
 /// opportunities between CJK characters; non-CJK breaks are preserved.
 fn is_cjk_break(text: &str, byte_pos: usize) -> bool {
+    if !text.is_char_boundary(byte_pos) {
+        return false;
+    }
     let before = text[..byte_pos].chars().next_back();
     let after = text[byte_pos..].chars().next();
     match (before, after) {
@@ -1269,7 +1420,8 @@ fn is_cjk_character(ch: char) -> bool {
 ///
 /// Reference: UAX#14 §6 Tailorable Line Breaking (strict context).
 fn is_cjk_strict_no_break_before(ch: char) -> bool {
-    matches!(ch,
+    matches!(
+        ch,
         // Small hiragana (U+3041 ぁ, U+3043 ぃ, U+3045 ぅ, U+3047 ぇ, U+3049 ぉ,
         //                 U+3063 っ, U+3083 ゃ, U+3085 ゅ, U+3087 ょ, U+308E ゎ)
         'ぁ' | 'ぃ' | 'ぅ' | 'ぇ' | 'ぉ' | 'っ' | 'ゃ' | 'ゅ' | 'ょ' | 'ゎ' |
@@ -1306,7 +1458,8 @@ fn is_cjk_strict_no_break_before(ch: char) -> bool {
 ///
 /// Reference: UAX#14 §6 Tailorable Line Breaking (loose context).
 fn is_cjk_loose_break_before(ch: char) -> bool {
-    matches!(ch,
+    matches!(
+        ch,
         // U+3001 、 ideographic comma
         // U+3002 。 ideographic full stop
         // U+FF0C ， fullwidth comma
@@ -1367,7 +1520,10 @@ fn has_forced_newline(text: &str, white_space: WhiteSpace) -> bool {
 /// Check if the white-space value allows line wrapping.
 fn allows_line_wrap(white_space: WhiteSpace) -> bool {
     match white_space {
-        WhiteSpace::Normal | WhiteSpace::PreWrap | WhiteSpace::PreLine | WhiteSpace::BreakSpaces => true,
+        WhiteSpace::Normal
+        | WhiteSpace::PreWrap
+        | WhiteSpace::PreLine
+        | WhiteSpace::BreakSpaces => true,
         WhiteSpace::Nowrap | WhiteSpace::Pre => false,
     }
 }
@@ -1426,10 +1582,18 @@ fn resolve_atomic_inline_width(
             }
         }
         // Auto: use intrinsic size (shrink-to-fit), then min-width as floor, then zero.
-        // Intrinsic size is content-box, so always add border+padding.
+        // Flex intrinsic sizing already returns border-box sizes; the recursive
+        // non-flex atomic intrinsic helper returns content-box sizes.
         _ => {
             let intrinsic = intrinsic_inline_size
-                .map(|v| LayoutUnit::from_f32(v) + border_padding)
+                .map(|v| {
+                    let size = LayoutUnit::from_f32(v);
+                    if style.display.is_flex() {
+                        size
+                    } else {
+                        size + border_padding
+                    }
+                })
                 .unwrap_or(border_padding);
 
             // Apply min-width as a floor.
@@ -1485,7 +1649,11 @@ fn resolve_atomic_inline_width(
             } else {
                 max
             };
-            if base > max { max } else { base }
+            if base > max {
+                max
+            } else {
+                base
+            }
         }
         LengthType::Percent => {
             if containing_block_width > LayoutUnit::zero() {
@@ -1497,7 +1665,11 @@ fn resolve_atomic_inline_width(
                 } else {
                     max
                 };
-                if base > max { max } else { base }
+                if base > max {
+                    max
+                } else {
+                    base
+                }
             } else {
                 base
             }
@@ -1539,7 +1711,13 @@ impl ByteToCharMap {
     /// O(1) lookup.
     #[inline]
     pub fn get(&self, byte_offset: usize) -> usize {
-        self.map[byte_offset]
+        debug_assert!(
+            byte_offset < self.map.len(),
+            "ByteToCharMap::get: byte_offset {} out of bounds (len {})",
+            byte_offset,
+            self.map.len(),
+        );
+        self.map[byte_offset.min(self.map.len() - 1)]
     }
 }
 
@@ -1584,7 +1762,12 @@ mod tests {
 
     #[test]
     fn test_break_all() {
-        let breaks = find_break_opportunities("abc", WordBreak::BreakAll, OverflowWrap::Normal, LineBreak::Auto);
+        let breaks = find_break_opportunities(
+            "abc",
+            WordBreak::BreakAll,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
+        );
         assert_eq!(breaks, vec![1, 2]);
     }
 
@@ -1630,7 +1813,7 @@ mod tests {
         // When stripping trailing space at the end of an item (at_item_end case),
         // text_range should be trimmed so decorations don't extend into the space.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello ";
@@ -1679,7 +1862,7 @@ mod tests {
         // When stripping trailing space from a mid-item split (!at_item_end case),
         // text_range should also be trimmed.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello world ";
@@ -1728,7 +1911,7 @@ mod tests {
     fn strip_trailing_spaces_multi_space_at_item_end() {
         // "hello   " (3 trailing spaces) — all 3 space widths must be subtracted.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello   ";
@@ -1774,7 +1957,8 @@ mod tests {
             0..5,
             "text_range should trim all 3 trailing spaces"
         );
-        let expected_width = LayoutUnit::from_f32(initial_width) - LayoutUnit::from_f32(three_space_width);
+        let expected_width =
+            LayoutUnit::from_f32(initial_width) - LayoutUnit::from_f32(three_space_width);
         assert_eq!(
             line.used_width, expected_width,
             "used_width should subtract width of all 3 trailing spaces"
@@ -1785,7 +1969,7 @@ mod tests {
     fn strip_trailing_spaces_single_space_at_item_end() {
         // Regression: "hello " (1 trailing space) — exactly 1 space width subtracted.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello ";
@@ -1830,7 +2014,8 @@ mod tests {
             0..5,
             "text_range should trim the single trailing space"
         );
-        let expected_width = LayoutUnit::from_f32(initial_width) - LayoutUnit::from_f32(one_space_width);
+        let expected_width =
+            LayoutUnit::from_f32(initial_width) - LayoutUnit::from_f32(one_space_width);
         assert_eq!(
             line.used_width, expected_width,
             "used_width should subtract width of 1 trailing space"
@@ -1843,7 +2028,12 @@ mod tests {
     fn keep_all_allows_hyphen_breaks() {
         // word-break: keep-all should allow breaks after hyphens in Latin text.
         // Only CJK soft wrap opportunities should be suppressed.
-        let breaks = find_break_opportunities("well-known", WordBreak::KeepAll, OverflowWrap::Normal, LineBreak::Auto);
+        let breaks = find_break_opportunities(
+            "well-known",
+            WordBreak::KeepAll,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
+        );
         assert!(
             breaks.contains(&5),
             "keep-all should allow break after hyphen in Latin text, got: {:?}",
@@ -1855,8 +2045,18 @@ mod tests {
     fn keep_all_suppresses_cjk_breaks() {
         // keep-all should suppress breaks between CJK characters.
         // "漢字" = two CJK ideographs (U+6F22, U+5B57)
-        let normal_breaks = find_break_opportunities("漢字", WordBreak::Normal, OverflowWrap::Normal, LineBreak::Auto);
-        let keepall_breaks = find_break_opportunities("漢字", WordBreak::KeepAll, OverflowWrap::Normal, LineBreak::Auto);
+        let normal_breaks = find_break_opportunities(
+            "漢字",
+            WordBreak::Normal,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
+        );
+        let keepall_breaks = find_break_opportunities(
+            "漢字",
+            WordBreak::KeepAll,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
+        );
 
         // Normal should allow a break between the two CJK characters.
         // KeepAll should suppress it.
@@ -1871,7 +2071,12 @@ mod tests {
     #[test]
     fn keep_all_allows_space_breaks() {
         // keep-all should still allow breaks at spaces.
-        let breaks = find_break_opportunities("hello world", WordBreak::KeepAll, OverflowWrap::Normal, LineBreak::Auto);
+        let breaks = find_break_opportunities(
+            "hello world",
+            WordBreak::KeepAll,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
+        );
         assert!(
             breaks.contains(&6),
             "keep-all should allow break after space, got: {:?}",
@@ -1884,13 +2089,13 @@ mod tests {
         // CJK Unified Ideographs
         assert!(is_cjk_character('漢')); // U+6F22
         assert!(is_cjk_character('字')); // U+5B57
-        // Hiragana
+                                         // Hiragana
         assert!(is_cjk_character('あ')); // U+3042
-        // Katakana
+                                         // Katakana
         assert!(is_cjk_character('ア')); // U+30A2
-        // Hangul
+                                         // Hangul
         assert!(is_cjk_character('한')); // U+D55C
-        // Latin should NOT be CJK
+                                         // Latin should NOT be CJK
         assert!(!is_cjk_character('A'));
         assert!(!is_cjk_character('-'));
         assert!(!is_cjk_character(' '));
@@ -1903,7 +2108,7 @@ mod tests {
         // In pre-wrap mode, text before a newline should be wrapped at
         // soft break opportunities if it overflows the available width.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         // "hello world\nmore" — in a narrow container, "hello world" should
@@ -1929,9 +2134,11 @@ mod tests {
                 end_collapse_type: super::super::items::CollapseType::NotCollapsible,
                 is_end_collapsible_newline: false,
                 bidi_level: 0,
-            intrinsic_inline_size: None,
+                intrinsic_inline_size: None,
             }],
             styles: vec![style],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Use a very narrow width — narrower than "hello world" but
@@ -1946,9 +2153,7 @@ mod tests {
 
         // The first line should NOT contain all text up to the newline;
         // it should break at the space.
-        let line1_end = line1.items.last()
-            .map(|i| i.text_range.end)
-            .unwrap_or(0);
+        let line1_end = line1.items.last().map(|i| i.text_range.end).unwrap_or(0);
         assert!(
             line1_end < 11, // 11 = offset of '\n'
             "Pre-wrap should soft-wrap long text before the newline; line ended at byte {}, expected < 11",
@@ -1963,7 +2168,7 @@ mod tests {
         // In white-space: pre, trailing spaces in a mid-item split
         // must be preserved — stripping should be skipped entirely.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello world ";
@@ -2021,7 +2226,7 @@ mod tests {
         // In white-space: pre-wrap, trailing spaces should "hang":
         // width is subtracted (for alignment) but text_range is NOT trimmed.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello world ";
@@ -2083,7 +2288,7 @@ mod tests {
         // newline that doesn't fit should be broken at character boundaries
         // instead of being forced onto the line.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "abcdefghijklmnop\nmore";
@@ -2107,9 +2312,11 @@ mod tests {
                 end_collapse_type: super::super::items::CollapseType::NotCollapsible,
                 is_end_collapsible_newline: false,
                 bidi_level: 0,
-            intrinsic_inline_size: None,
+                intrinsic_inline_size: None,
             }],
             styles: vec![style],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Very narrow width — should only fit ~5 characters.
@@ -2121,9 +2328,7 @@ mod tests {
         assert!(line1.is_some(), "Should produce at least one line");
         let line1 = line1.unwrap();
 
-        let line1_end = line1.items.last()
-            .map(|i| i.text_range.end)
-            .unwrap_or(0);
+        let line1_end = line1.items.last().map(|i| i.text_range.end).unwrap_or(0);
 
         // With overflow-wrap: break-word, the line should break within the
         // long word, NOT force the entire word "abcdefghijklmnop" on one line.
@@ -2147,7 +2352,12 @@ mod tests {
         // BreakAll should NOT produce break opportunities inside the cluster.
         let family = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}"; // 👨‍👩‍👧
         let text = format!("a{}b", family);
-        let breaks = find_break_opportunities(&text, WordBreak::BreakAll, OverflowWrap::Normal, LineBreak::Auto);
+        let breaks = find_break_opportunities(
+            &text,
+            WordBreak::BreakAll,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
+        );
 
         // The emoji occupies multiple bytes. Break opportunities should only
         // be at grapheme boundaries: after 'a' and after the emoji, NOT inside it.
@@ -2159,11 +2369,16 @@ mod tests {
             assert!(
                 brk == a_end || brk == emoji_end,
                 "Break at byte {} is inside a grapheme cluster; expected only at {} or {}",
-                brk, a_end, emoji_end,
+                brk,
+                a_end,
+                emoji_end,
             );
         }
         // There should be at least one break (after 'a').
-        assert!(!breaks.is_empty(), "BreakAll should still produce some break opportunities");
+        assert!(
+            !breaks.is_empty(),
+            "BreakAll should still produce some break opportunities"
+        );
     }
 
     // ── SP11 Round 15 Issue 4: pre-wrap at_item_end preserves text_range ──
@@ -2174,7 +2389,7 @@ mod tests {
         // subtract width (for alignment) but NOT trim text_range
         // (spaces still render — they "hang" past the line box).
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello   ";
@@ -2219,14 +2434,18 @@ mod tests {
         assert!(
             line.used_width < original_width,
             "pre-wrap should subtract trailing space width; used_width={:?}, original={:?}",
-            line.used_width, original_width,
+            line.used_width,
+            original_width,
         );
 
         // But text_range should be PRESERVED (not trimmed) — spaces hang.
         assert_eq!(
-            line.items[0].text_range.end, text.len(),
+            line.items[0].text_range.end,
+            text.len(),
             "pre-wrap at_item_end should preserve text_range; got {}..{}, expected 0..{}",
-            line.items[0].text_range.start, line.items[0].text_range.end, text.len(),
+            line.items[0].text_range.start,
+            line.items[0].text_range.end,
+            text.len(),
         );
     }
 
@@ -2235,7 +2454,7 @@ mod tests {
         // In white-space: normal, trailing spaces at item end should
         // both subtract width AND trim text_range.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hello   ";
@@ -2297,7 +2516,7 @@ mod tests {
         // the line (overflow) rather than splitting mid-sequence, which would
         // produce incorrect glyph forms.
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "مرحبا"; // 5 Arabic chars, single joining sequence
@@ -2325,6 +2544,8 @@ mod tests {
             text: text.to_string(),
             items: vec![item],
             styles: vec![style],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Available width is very narrow — much less than the word width.
@@ -2337,10 +2558,7 @@ mod tests {
 
         // The line should contain the ENTIRE Arabic word (overflow) rather
         // than a fragment that would have invalid shaping.
-        assert!(
-            !line.items.is_empty(),
-            "line should have at least one item"
-        );
+        assert!(!line.items.is_empty(), "line should have at least one item");
         let item_result = &line.items[0];
         // The text_range should cover the entire word — since there are no
         // safe break points inside the joining sequence, the breaker must
@@ -2376,7 +2594,8 @@ mod tests {
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, None);
         assert_eq!(
-            w.to_f32(), 130.0,
+            w.to_f32(),
+            130.0,
             "content-box width:100 + border:10 + padding:20 = 130"
         );
     }
@@ -2399,7 +2618,8 @@ mod tests {
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, None);
         assert_eq!(
-            w.to_f32(), 100.0,
+            w.to_f32(),
+            100.0,
             "border-box width:100 already includes border+padding"
         );
     }
@@ -2422,7 +2642,8 @@ mod tests {
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, Some(80.0));
         assert_eq!(
-            w.to_f32(), 100.0,
+            w.to_f32(),
+            100.0,
             "auto width: intrinsic(80) + border(6) + padding(14) = 100"
         );
     }
@@ -2436,7 +2657,7 @@ mod tests {
         ws: WhiteSpace,
     ) -> (Vec<InlineItem>, InlineItemResult, ComputedStyle) {
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let shaper = TextShaper::new();
@@ -2483,14 +2704,22 @@ mod tests {
         let text = "hello ";
         let (items, item_result, style) = make_trailing_space_test(text, 0..6, WhiteSpace::Normal);
 
+        let initial_width = item_result.inline_size;
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
-        line.used_width = item_result.inline_size;
+        line.used_width = initial_width;
         line.items.push(item_result);
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "normal white-space: hang_width should be 0 (spaces stripped, not hung)");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "normal white-space: hang_width should be 0 (spaces stripped, not hung)"
+        );
+        assert!(
+            line.items[0].inline_size < initial_width,
+            "stripped spaces must not retain positioning width"
+        );
     }
 
     #[test]
@@ -2506,11 +2735,16 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert!(line.hang_width > LayoutUnit::zero(),
-            "pre-wrap: hang_width should be > 0 for trailing spaces");
+        assert!(
+            line.hang_width > LayoutUnit::zero(),
+            "pre-wrap: hang_width should be > 0 for trailing spaces"
+        );
         // hang_width + used_width should equal original total
-        assert_eq!(line.used_width + line.hang_width, initial_width,
-            "pre-wrap: used_width + hang_width should equal original width");
+        assert_eq!(
+            line.used_width + line.hang_width,
+            initial_width,
+            "pre-wrap: used_width + hang_width should equal original width"
+        );
     }
 
     #[test]
@@ -2525,17 +2759,23 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert!(line.hang_width > LayoutUnit::zero(),
-            "pre-wrap mid-item: hang_width should be > 0 for trailing spaces");
-        assert_eq!(line.items[0].text_range, 0..6,
-            "pre-wrap mid-item: text_range should NOT be trimmed");
+        assert!(
+            line.hang_width > LayoutUnit::zero(),
+            "pre-wrap mid-item: hang_width should be > 0 for trailing spaces"
+        );
+        assert_eq!(
+            line.items[0].text_range,
+            0..6,
+            "pre-wrap mid-item: text_range should NOT be trimmed"
+        );
     }
 
     #[test]
     fn hang_width_zero_for_break_spaces() {
         // break-spaces never hangs — spaces are preserved and cause breaks.
         let text = "hello ";
-        let (items, item_result, style) = make_trailing_space_test(text, 0..6, WhiteSpace::BreakSpaces);
+        let (items, item_result, style) =
+            make_trailing_space_test(text, 0..6, WhiteSpace::BreakSpaces);
         let initial_width = item_result.inline_size;
 
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
@@ -2544,10 +2784,15 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "break-spaces: hang_width should be 0 (no hanging)");
-        assert_eq!(line.used_width, initial_width,
-            "break-spaces: used_width should be unchanged");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "break-spaces: hang_width should be 0 (no hanging)"
+        );
+        assert_eq!(
+            line.used_width, initial_width,
+            "break-spaces: used_width should be unchanged"
+        );
     }
 
     #[test]
@@ -2563,10 +2808,15 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "pre: hang_width should be 0");
-        assert_eq!(line.used_width, initial_used,
-            "pre: used_width should be unchanged");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "pre: hang_width should be 0"
+        );
+        assert_eq!(
+            line.used_width, initial_used,
+            "pre: used_width should be unchanged"
+        );
     }
 
     #[test]
@@ -2581,8 +2831,11 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "nowrap: hang_width should be 0 (spaces stripped)");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "nowrap: hang_width should be 0 (spaces stripped)"
+        );
     }
 
     #[test]
@@ -2597,8 +2850,11 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "pre-line: hang_width should be 0 (spaces stripped)");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "pre-line: hang_width should be 0 (spaces stripped)"
+        );
     }
 
     #[test]
@@ -2614,10 +2870,15 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert!(line.hang_width > LayoutUnit::zero(),
-            "pre-wrap multi-space: hang_width should capture all trailing spaces");
-        assert_eq!(line.used_width + line.hang_width, initial_width,
-            "pre-wrap multi-space: used_width + hang_width == original");
+        assert!(
+            line.hang_width > LayoutUnit::zero(),
+            "pre-wrap multi-space: hang_width should capture all trailing spaces"
+        );
+        assert_eq!(
+            line.used_width + line.hang_width,
+            initial_width,
+            "pre-wrap multi-space: used_width + hang_width == original"
+        );
     }
 
     #[test]
@@ -2633,10 +2894,15 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "no trailing spaces: hang_width should be 0");
-        assert_eq!(line.used_width, initial_width,
-            "no trailing spaces: used_width unchanged");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "no trailing spaces: hang_width should be 0"
+        );
+        assert_eq!(
+            line.used_width, initial_width,
+            "no trailing spaces: used_width unchanged"
+        );
     }
 
     #[test]
@@ -2652,10 +2918,15 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, initial_width,
-            "all-spaces pre-wrap: entire width should hang");
-        assert_eq!(line.used_width, LayoutUnit::zero(),
-            "all-spaces pre-wrap: used_width should be 0");
+        assert_eq!(
+            line.hang_width, initial_width,
+            "all-spaces pre-wrap: entire width should hang"
+        );
+        assert_eq!(
+            line.used_width,
+            LayoutUnit::zero(),
+            "all-spaces pre-wrap: used_width should be 0"
+        );
     }
 
     #[test]
@@ -2671,17 +2942,23 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert!(line.hang_width > LayoutUnit::zero(),
-            "pre-wrap tab: tab character should hang");
-        assert_eq!(line.items[0].text_range, 0..3,
-            "pre-wrap tab: text_range preserved (hanging)");
+        assert!(
+            line.hang_width > LayoutUnit::zero(),
+            "pre-wrap tab: tab character should hang"
+        );
+        assert_eq!(
+            line.items[0].text_range,
+            0..3,
+            "pre-wrap tab: text_range preserved (hanging)"
+        );
     }
 
     #[test]
     fn hang_width_ideographic_space_prewrap() {
         // U+3000 IDEOGRAPHIC SPACE should be treated as a hangable space.
         let text = "hello\u{3000}";
-        let (items, item_result, style) = make_trailing_space_test(text, 0..text.len(), WhiteSpace::PreWrap);
+        let (items, item_result, style) =
+            make_trailing_space_test(text, 0..text.len(), WhiteSpace::PreWrap);
         let initial_width = item_result.inline_size;
 
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
@@ -2690,17 +2967,23 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert!(line.hang_width > LayoutUnit::zero(),
-            "pre-wrap ideographic space: U+3000 should hang");
-        assert_eq!(line.items[0].text_range.end, text.len(),
-            "pre-wrap ideographic space: text_range preserved");
+        assert!(
+            line.hang_width > LayoutUnit::zero(),
+            "pre-wrap ideographic space: U+3000 should hang"
+        );
+        assert_eq!(
+            line.items[0].text_range.end,
+            text.len(),
+            "pre-wrap ideographic space: text_range preserved"
+        );
     }
 
     #[test]
     fn hang_width_ideographic_space_normal_strips() {
         // In normal white-space, ideographic space at end is stripped (not hung).
         let text = "hello\u{3000}";
-        let (items, item_result, style) = make_trailing_space_test(text, 0..text.len(), WhiteSpace::Normal);
+        let (items, item_result, style) =
+            make_trailing_space_test(text, 0..text.len(), WhiteSpace::Normal);
 
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
         line.used_width = item_result.inline_size;
@@ -2708,18 +2991,24 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "normal ideographic space: should strip, not hang");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "normal ideographic space: should strip, not hang"
+        );
         // text_range should be trimmed to exclude the ideographic space
-        assert!(line.items[0].text_range.end < text.len(),
-            "normal ideographic space: text_range should be trimmed");
+        assert!(
+            line.items[0].text_range.end < text.len(),
+            "normal ideographic space: text_range should be trimmed"
+        );
     }
 
     #[test]
     fn hang_width_mixed_spaces_prewrap() {
         // Mix of ASCII space and ideographic space should all hang.
         let text = "hi \u{3000}";
-        let (items, item_result, style) = make_trailing_space_test(text, 0..text.len(), WhiteSpace::PreWrap);
+        let (items, item_result, style) =
+            make_trailing_space_test(text, 0..text.len(), WhiteSpace::PreWrap);
         let initial_width = item_result.inline_size;
 
         let mut line = LineInfo::new(LayoutUnit::from_f32(200.0));
@@ -2728,10 +3017,15 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &items, text, &[style]);
 
-        assert!(line.hang_width > LayoutUnit::zero(),
-            "pre-wrap mixed spaces: should hang");
-        assert_eq!(line.used_width + line.hang_width, initial_width,
-            "pre-wrap mixed: total preserved");
+        assert!(
+            line.hang_width > LayoutUnit::zero(),
+            "pre-wrap mixed spaces: should hang"
+        );
+        assert_eq!(
+            line.used_width + line.hang_width,
+            initial_width,
+            "pre-wrap mixed: total preserved"
+        );
     }
 
     #[test]
@@ -2778,23 +3072,31 @@ mod tests {
 
         strip_trailing_spaces(&mut line, &[item], "", &[ComputedStyle::default()]);
 
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "atomic inline: nothing should hang");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "atomic inline: nothing should hang"
+        );
     }
 
     #[test]
     fn line_info_hang_width_default_is_zero() {
         // Verify the default value of hang_width in a new LineInfo.
         let line = LineInfo::new(LayoutUnit::from_f32(500.0));
-        assert_eq!(line.hang_width, LayoutUnit::zero(),
-            "new LineInfo should have hang_width = 0");
+        assert_eq!(
+            line.hang_width,
+            LayoutUnit::zero(),
+            "new LineInfo should have hang_width = 0"
+        );
     }
 
     #[test]
     fn line_info_has_forced_hyphen_default_is_false() {
         let line = LineInfo::new(LayoutUnit::from_f32(500.0));
-        assert!(!line.has_forced_hyphen,
-            "new LineInfo should have has_forced_hyphen = false");
+        assert!(
+            !line.has_forced_hyphen,
+            "new LineInfo should have has_forced_hyphen = false"
+        );
     }
 
     // ── Hyphenation unit tests ──────────────────────────────────────
@@ -2804,7 +3106,10 @@ mod tests {
         // Soft hyphens are valid break opportunities — UAX#14 should detect them
         let text = "hy\u{00AD}phen";
         let breaks = find_break_opportunities(
-            text, WordBreak::Normal, OverflowWrap::Normal, LineBreak::Auto,
+            text,
+            WordBreak::Normal,
+            OverflowWrap::Normal,
+            LineBreak::Auto,
         );
         // The unicode-linebreak crate should recognize U+00AD as a break opportunity
         // If not, our line breaker adds them separately
@@ -2873,8 +3178,8 @@ mod tests {
     fn line_breaker_hyphens_none_ignores_soft_hyphens() {
         // With hyphens: none, soft hyphens should not create break opportunities
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
         use openui_style::Hyphens;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "un\u{00AD}breakable";
@@ -2899,6 +3204,8 @@ mod tests {
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
@@ -2909,15 +3216,18 @@ mod tests {
         assert!(line.is_some());
         let line = line.unwrap();
         // The text should be on a single line (wide enough container)
-        assert!(!line.has_forced_hyphen, "hyphens:none should never set forced_hyphen");
+        assert!(
+            !line.has_forced_hyphen,
+            "hyphens:none should never set forced_hyphen"
+        );
     }
 
     #[test]
     fn line_breaker_manual_mode_uses_soft_hyphens() {
         // With hyphens: manual, soft hyphens create break opportunities
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
         use openui_style::Hyphens;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         // "un<SHY>breakable" with a narrow container that forces a break
@@ -2944,6 +3254,8 @@ mod tests {
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Make container narrow enough that the full word doesn't fit,
@@ -2970,8 +3282,8 @@ mod tests {
     fn line_breaker_auto_mode_uses_patterns() {
         // With hyphens: auto, the Knuth-Liang algorithm provides break points
         use openui_dom::NodeId;
-        use openui_text::{Font, FontDescription, TextShaper, TextDirection};
         use openui_style::Hyphens;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let text = "hyphenation";
@@ -2997,6 +3309,8 @@ mod tests {
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         // Make container narrow enough to force hyphenation
@@ -3030,6 +3344,8 @@ mod tests {
             text: String::new(),
             items: vec![],
             styles: vec![],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
         };
 
         let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
@@ -3052,5 +3368,130 @@ mod tests {
         breaker.set_hyphens(Hyphens::Manual, (5, 2, 2));
         assert_eq!(breaker.hyphens, Hyphens::Manual);
         assert!(breaker.hyphenation.is_none());
+    }
+
+    #[test]
+    fn checkpoint_restore_rebreaks_the_same_text_at_a_wider_width() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let text = "alpha beta gamma";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
+        let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 6) + 1.0);
+        let wide = LayoutUnit::from_f32(shape.width + 1.0);
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(shape),
+                style_index: 0,
+                end_collapse_type: CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+                intrinsic_inline_size: None,
+            }],
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, wide);
+        let checkpoint = breaker.checkpoint();
+        let narrow_line = breaker.next_line(narrow).expect("narrow line");
+        assert!(
+            narrow_line.items.last().unwrap().text_range.end < text.len(),
+            "narrow line should consume only a prefix"
+        );
+
+        breaker.restore(checkpoint);
+        let rebroken = breaker.next_line(wide).expect("rebroken wide line");
+        assert_eq!(rebroken.items.first().unwrap().text_range.start, 0);
+        assert_eq!(rebroken.items.last().unwrap().text_range.end, text.len());
+        assert!(breaker.is_finished());
+    }
+
+    #[test]
+    fn collapsible_space_at_line_start_has_zero_advance() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let text = " hello";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(shape),
+                style_index: 0,
+                end_collapse_type: CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+                intrinsic_inline_size: None,
+            }],
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, LayoutUnit::from_f32(500.0));
+        let line = breaker
+            .next_line(LayoutUnit::from_f32(500.0))
+            .expect("line");
+        assert_eq!(line.items[0].text_range, 1..text.len());
+    }
+
+    #[test]
+    fn oversized_first_word_resumes_at_following_whitespace_break() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let text = "oversized tail";
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
+        let first_word_end = "oversized ".len();
+        let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 4));
+        let items_data = InlineItemsData {
+            text: text.to_string(),
+            items: vec![InlineItem {
+                item_type: InlineItemType::Text,
+                text_range: 0..text.len(),
+                node_id: NodeId::NONE,
+                shape_result: Some(shape),
+                style_index: 0,
+                end_collapse_type: CollapseType::NotCollapsible,
+                is_end_collapsible_newline: false,
+                bidi_level: 0,
+                intrinsic_inline_size: None,
+            }],
+            styles: vec![ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        let mut breaker = LineBreaker::new(&items_data, narrow);
+        let first = breaker.next_line(narrow).expect("overflowing first line");
+        let second = breaker.next_line(narrow).expect("resumed second line");
+
+        assert_eq!(
+            first.items.last().unwrap().text_range.end,
+            "oversized".len()
+        );
+        assert_eq!(
+            second.items.first().unwrap().text_range.start,
+            first_word_end
+        );
+        assert_eq!(second.items.last().unwrap().text_range.end, text.len());
     }
 }

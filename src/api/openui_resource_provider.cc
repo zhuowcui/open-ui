@@ -5,7 +5,6 @@
 // and direct image injection APIs.
 
 #include "openui/openui_resource_provider.h"
-#include "openui/openui_impl.h"
 
 #include <cstring>
 #include <string>
@@ -14,6 +13,7 @@
 #include "base/time/time.h"
 #include "mojo/public/cpp/system/data_pipe.h"
 #include "net/base/net_errors.h"
+#include "openui/openui_impl.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "third_party/blink/public/platform/web_url.h"
 #include "third_party/blink/public/platform/web_url_error.h"
@@ -39,8 +39,7 @@ namespace openui {
 // ResourceProviderURLLoader
 // ═══════════════════════════════════════════════════════════════════════════
 
-ResourceProviderURLLoader::ResourceProviderURLLoader(
-    ResourceProviderState* state)
+ResourceProviderURLLoader::ResourceProviderURLLoader(ResourceProviderState* state)
     : state_(state) {}
 
 ResourceProviderURLLoader::~ResourceProviderURLLoader() = default;
@@ -58,11 +57,9 @@ void ResourceProviderURLLoader::LoadSynchronously(
     int64_t& encoded_data_length,
     uint64_t& encoded_body_length,
     scoped_refptr<blink::BlobDataHandle>& downloaded_blob,
-    std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper>
-        resource_load_info_notifier_wrapper) {
+    std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper> resource_load_info_notifier_wrapper) {
   if (!state_ || !state_->callback) {
-    error = blink::WebURLError(net::ERR_FAILED,
-                               blink::WebURL(blink::KURL(request->url)));
+    error = blink::WebURLError(net::ERR_FAILED, blink::WebURL(blink::KURL(request->url)));
     return;
   }
 
@@ -71,8 +68,7 @@ void ResourceProviderURLLoader::LoadSynchronously(
 
   int found = state_->callback(url_string.c_str(), &res, state_->user_data);
   if (!found || !res.data || res.length == 0) {
-    error = blink::WebURLError(net::ERR_FILE_NOT_FOUND,
-                               blink::WebURL(blink::KURL(request->url)));
+    error = blink::WebURLError(net::ERR_FILE_NOT_FOUND, blink::WebURL(blink::KURL(request->url)));
     // Free response data if the provider set it despite returning 0.
     if (res.free_func && res.data) {
       res.free_func(res.data, res.free_user_data);
@@ -91,30 +87,26 @@ void ResourceProviderURLLoader::LoadSynchronously(
     response.SetMimeType(blink::WebString::FromUTF8(res.mime_type));
   } else {
     // Auto-detect common image formats by magic bytes.
-    response.SetMimeType(
-        blink::WebString::FromLatin1("application/octet-stream"));
+    response.SetMimeType(blink::WebString::FromLatin1("application/octet-stream"));
     if (res.length >= 8) {
       // PNG: 89 50 4E 47
-      if (res.data[0] == 0x89 && res.data[1] == 0x50 &&
-          res.data[2] == 0x4E && res.data[3] == 0x47) {
+      if (res.data[0] == 0x89 && res.data[1] == 0x50 && res.data[2] == 0x4E &&
+          res.data[3] == 0x47) {
         response.SetMimeType(blink::WebString::FromLatin1("image/png"));
       }
       // JPEG: FF D8 FF
-      else if (res.data[0] == 0xFF && res.data[1] == 0xD8 &&
-               res.data[2] == 0xFF) {
+      else if (res.data[0] == 0xFF && res.data[1] == 0xD8 && res.data[2] == 0xFF) {
         response.SetMimeType(blink::WebString::FromLatin1("image/jpeg"));
       }
       // GIF: 47 49 46 38
-      else if (res.data[0] == 0x47 && res.data[1] == 0x49 &&
-               res.data[2] == 0x46 && res.data[3] == 0x38) {
+      else if (res.data[0] == 0x47 && res.data[1] == 0x49 && res.data[2] == 0x46 &&
+               res.data[3] == 0x38) {
         response.SetMimeType(blink::WebString::FromLatin1("image/gif"));
       }
       // WebP: RIFF....WEBP
-      else if (res.data[0] == 0x52 && res.data[1] == 0x49 &&
-               res.data[2] == 0x46 && res.data[3] == 0x46 &&
-               res.length >= 12 &&
-               res.data[8] == 0x57 && res.data[9] == 0x45 &&
-               res.data[10] == 0x42 && res.data[11] == 0x50) {
+      else if (res.data[0] == 0x52 && res.data[1] == 0x49 && res.data[2] == 0x46 &&
+               res.data[3] == 0x46 && res.length >= 12 && res.data[8] == 0x57 &&
+               res.data[9] == 0x45 && res.data[10] == 0x42 && res.data[11] == 0x50) {
         response.SetMimeType(blink::WebString::FromLatin1("image/webp"));
       }
     }
@@ -122,8 +114,7 @@ void ResourceProviderURLLoader::LoadSynchronously(
 
   // Copy resource data into a SharedBuffer.
   data = blink::SharedBuffer::Create(
-      base::span<const char>(reinterpret_cast<const char*>(res.data),
-                             res.length));
+      base::span<const char>(reinterpret_cast<const char*>(res.data), res.length));
   encoded_data_length = static_cast<int64_t>(res.length);
   encoded_body_length = res.length;
 
@@ -137,8 +128,7 @@ void ResourceProviderURLLoader::LoadAsynchronously(
     std::unique_ptr<network::ResourceRequest> request,
     scoped_refptr<const blink::SecurityOrigin> top_frame_origin,
     bool no_mime_sniffing,
-    std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper>
-        resource_load_info_notifier_wrapper,
+    std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper> resource_load_info_notifier_wrapper,
     blink::CodeCacheHost* code_cache_host,
     blink::URLLoaderClient* client) {
   if (!client) {
@@ -146,13 +136,11 @@ void ResourceProviderURLLoader::LoadAsynchronously(
   }
 
   if (!state_ || !state_->callback) {
-    client->DidFail(
-        blink::WebURLError(net::ERR_FAILED,
-                           blink::WebURL(blink::KURL(request->url))),
-        base::TimeTicks::Now(),
-        /*total_encoded_data_length=*/0,
-        /*total_encoded_body_length=*/0,
-        /*total_decoded_body_length=*/0);
+    client->DidFail(blink::WebURLError(net::ERR_FAILED, blink::WebURL(blink::KURL(request->url))),
+                    base::TimeTicks::Now(),
+                    /*total_encoded_data_length=*/0,
+                    /*total_encoded_body_length=*/0,
+                    /*total_decoded_body_length=*/0);
     return;
   }
 
@@ -166,8 +154,7 @@ void ResourceProviderURLLoader::LoadAsynchronously(
       res.free_func(res.data, res.free_user_data);
     }
     client->DidFail(
-        blink::WebURLError(net::ERR_FILE_NOT_FOUND,
-                           blink::WebURL(blink::KURL(request->url))),
+        blink::WebURLError(net::ERR_FILE_NOT_FOUND, blink::WebURL(blink::KURL(request->url))),
         base::TimeTicks::Now(),
         /*total_encoded_data_length=*/0,
         /*total_encoded_body_length=*/0,
@@ -185,23 +172,19 @@ void ResourceProviderURLLoader::LoadAsynchronously(
   if (res.mime_type) {
     response.SetMimeType(blink::WebString::FromUTF8(res.mime_type));
   } else {
-    response.SetMimeType(
-        blink::WebString::FromLatin1("application/octet-stream"));
+    response.SetMimeType(blink::WebString::FromLatin1("application/octet-stream"));
     if (res.length >= 8) {
-      if (res.data[0] == 0x89 && res.data[1] == 0x50 &&
-          res.data[2] == 0x4E && res.data[3] == 0x47) {
+      if (res.data[0] == 0x89 && res.data[1] == 0x50 && res.data[2] == 0x4E &&
+          res.data[3] == 0x47) {
         response.SetMimeType(blink::WebString::FromLatin1("image/png"));
-      } else if (res.data[0] == 0xFF && res.data[1] == 0xD8 &&
-                 res.data[2] == 0xFF) {
+      } else if (res.data[0] == 0xFF && res.data[1] == 0xD8 && res.data[2] == 0xFF) {
         response.SetMimeType(blink::WebString::FromLatin1("image/jpeg"));
-      } else if (res.data[0] == 0x47 && res.data[1] == 0x49 &&
-                 res.data[2] == 0x46 && res.data[3] == 0x38) {
+      } else if (res.data[0] == 0x47 && res.data[1] == 0x49 && res.data[2] == 0x46 &&
+                 res.data[3] == 0x38) {
         response.SetMimeType(blink::WebString::FromLatin1("image/gif"));
-      } else if (res.data[0] == 0x52 && res.data[1] == 0x49 &&
-                 res.data[2] == 0x46 && res.data[3] == 0x46 &&
-                 res.length >= 12 &&
-                 res.data[8] == 0x57 && res.data[9] == 0x45 &&
-                 res.data[10] == 0x42 && res.data[11] == 0x50) {
+      } else if (res.data[0] == 0x52 && res.data[1] == 0x49 && res.data[2] == 0x46 &&
+                 res.data[3] == 0x46 && res.length >= 12 && res.data[8] == 0x57 &&
+                 res.data[9] == 0x45 && res.data[10] == 0x42 && res.data[11] == 0x50) {
         response.SetMimeType(blink::WebString::FromLatin1("image/webp"));
       }
     }
@@ -209,8 +192,7 @@ void ResourceProviderURLLoader::LoadAsynchronously(
 
   // Build the data buffer from the provider's response.
   scoped_refptr<blink::SharedBuffer> data = blink::SharedBuffer::Create(
-      base::span<const char>(reinterpret_cast<const char*>(res.data),
-                             res.length));
+      base::span<const char>(reinterpret_cast<const char*>(res.data), res.length));
   size_t data_length = res.length;
 
   // Free the provider's data now that we've copied it.
@@ -232,20 +214,18 @@ void ResourceProviderURLLoader::LoadAsynchronously(
   }
 
   // Signal completion.
-  client->DidFinishLoading(
-      base::TimeTicks::Now(),
-      /*total_encoded_data_length=*/static_cast<int64_t>(data_length),
-      /*total_encoded_body_length=*/static_cast<uint64_t>(data_length),
-      /*total_decoded_body_length=*/static_cast<int64_t>(data_length));
+  client->DidFinishLoading(base::TimeTicks::Now(),
+                           /*total_encoded_data_length=*/static_cast<int64_t>(data_length),
+                           /*total_encoded_body_length=*/static_cast<uint64_t>(data_length),
+                           /*total_decoded_body_length=*/static_cast<int64_t>(data_length));
 }
 
 void ResourceProviderURLLoader::Freeze(blink::LoaderFreezeMode mode) {
   // No-op: we don't support freezing since all data is delivered immediately.
 }
 
-void ResourceProviderURLLoader::DidChangePriority(
-    blink::WebURLRequest::Priority new_priority,
-    int intra_priority_value) {
+void ResourceProviderURLLoader::DidChangePriority(blink::WebURLRequest::Priority new_priority,
+                                                  int intra_priority_value) {
   // No-op: priority changes are irrelevant for synchronous delivery.
 }
 
@@ -258,12 +238,10 @@ ResourceProviderURLLoader::GetTaskRunnerForBodyLoader() {
 // ResourceProviderFrameClient
 // ═══════════════════════════════════════════════════════════════════════════
 
-ResourceProviderFrameClient::ResourceProviderFrameClient(
-    ResourceProviderState* state)
+ResourceProviderFrameClient::ResourceProviderFrameClient(ResourceProviderState* state)
     : state_(state) {}
 
-std::unique_ptr<blink::URLLoader>
-ResourceProviderFrameClient::CreateURLLoaderForTesting() {
+std::unique_ptr<blink::URLLoader> ResourceProviderFrameClient::CreateURLLoaderForTesting() {
   return std::make_unique<ResourceProviderURLLoader>(state_);
 }
 
@@ -273,10 +251,9 @@ ResourceProviderFrameClient::CreateURLLoaderForTesting() {
 // C API: Resource provider
 // ═══════════════════════════════════════════════════════════════════════════
 
-OuiStatus oui_document_set_resource_provider(
-    OuiDocument* doc,
-    OuiResourceProviderFunc provider,
-    void* user_data) {
+OuiStatus oui_document_set_resource_provider(OuiDocument* doc,
+                                             OuiResourceProviderFunc provider,
+                                             void* user_data) {
   if (!doc) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -296,11 +273,10 @@ OuiStatus oui_document_set_resource_provider(
   // all future URL fetches (images, CSS, etc.) are routed through the
   // user's callback.  The old page holder is replaced; any elements from
   // a prior DOM are invalidated.
-  auto* frame_client = blink::MakeGarbageCollected<
-      openui::ResourceProviderFrameClient>(&impl->resource_provider);
-  gfx::Size viewport_size = impl->page_holder
-      ? impl->page_holder->GetFrameView().GetLayoutSize()
-      : gfx::Size(800, 600);
+  auto* frame_client =
+      blink::MakeGarbageCollected<openui::ResourceProviderFrameClient>(&impl->resource_provider);
+  gfx::Size viewport_size =
+      impl->page_holder ? impl->page_holder->GetFrameView().GetLayoutSize() : gfx::Size(800, 600);
   impl->page_holder = std::make_unique<blink::DummyPageHolder>(
       viewport_size, /*chrome_client=*/nullptr, frame_client);
 
@@ -311,11 +287,10 @@ OuiStatus oui_document_set_resource_provider(
 // C API: Direct image injection
 // ═══════════════════════════════════════════════════════════════════════════
 
-OuiStatus oui_element_set_image_data(
-    OuiElement* elem,
-    const uint8_t* rgba_pixels,
-    int width,
-    int height) {
+OuiStatus oui_element_set_image_data(OuiElement* elem,
+                                     const uint8_t* rgba_pixels,
+                                     int width,
+                                     int height) {
   if (!elem || !rgba_pixels || width <= 0 || height <= 0) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -326,8 +301,7 @@ OuiStatus oui_element_set_image_data(
   }
 
   // Verify the element is an <img>.
-  auto* img_element =
-      blink::DynamicTo<blink::HTMLImageElement>(elem_impl->element.Get());
+  auto* img_element = blink::DynamicTo<blink::HTMLImageElement>(elem_impl->element.Get());
   if (!img_element) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -339,8 +313,8 @@ OuiStatus oui_element_set_image_data(
   size_t total_bytes = row_bytes * static_cast<size_t>(height);
 
   sk_sp<SkData> sk_data = SkData::MakeWithCopy(rgba_pixels, total_bytes);
-  SkImageInfo info = SkImageInfo::Make(
-      width, height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType);
+  SkImageInfo info =
+      SkImageInfo::Make(width, height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType);
 
   sk_sp<SkImage> sk_image = SkImages::RasterFromData(info, sk_data, row_bytes);
   if (!sk_image) {
@@ -366,10 +340,7 @@ OuiStatus oui_element_set_image_data(
   return OUI_OK;
 }
 
-OuiStatus oui_element_set_image_encoded(
-    OuiElement* elem,
-    const uint8_t* data,
-    size_t length) {
+OuiStatus oui_element_set_image_encoded(OuiElement* elem, const uint8_t* data, size_t length) {
   if (!elem || !data || length == 0) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -380,15 +351,13 @@ OuiStatus oui_element_set_image_encoded(
   }
 
   // Verify the element is an <img>.
-  auto* img_element =
-      blink::DynamicTo<blink::HTMLImageElement>(elem_impl->element.Get());
+  auto* img_element = blink::DynamicTo<blink::HTMLImageElement>(elem_impl->element.Get());
   if (!img_element) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
 
   // Create a BitmapImage and feed it the encoded data.
-  scoped_refptr<blink::BitmapImage> bitmap_image =
-      blink::BitmapImage::Create();
+  scoped_refptr<blink::BitmapImage> bitmap_image = blink::BitmapImage::Create();
 
   scoped_refptr<blink::SharedBuffer> buffer = blink::SharedBuffer::Create(
       base::span<const char>(reinterpret_cast<const char*>(data), length));

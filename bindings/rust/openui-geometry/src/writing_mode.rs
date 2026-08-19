@@ -6,9 +6,7 @@
 //! Source: third_party/blink/renderer/core/layout/geometry/writing_mode_converter.h
 //!         third_party/blink/renderer/platform/text/writing_direction_mode.h
 
-use crate::{
-    LogicalOffset, LogicalRect, LogicalSize, PhysicalOffset, PhysicalRect, PhysicalSize,
-};
+use crate::{LogicalOffset, LogicalRect, LogicalSize, PhysicalOffset, PhysicalRect, PhysicalSize};
 
 /// Captures the flags from `WritingMode + Direction` needed for coordinate
 /// conversion, without depending on the enum crate.
@@ -39,27 +37,47 @@ impl WritingDirectionMode {
         is_flipped_lines: bool,
         is_rtl: bool,
     ) -> Self {
-        Self { is_horizontal, is_flipped_blocks, is_flipped_lines, is_rtl }
+        Self {
+            is_horizontal,
+            is_flipped_blocks,
+            is_flipped_lines,
+            is_rtl,
+        }
     }
 
     /// Default: horizontal-tb + LTR.
     #[inline]
     pub const fn horizontal_ltr() -> Self {
-        Self { is_horizontal: true, is_flipped_blocks: false, is_flipped_lines: false, is_rtl: false }
+        Self {
+            is_horizontal: true,
+            is_flipped_blocks: false,
+            is_flipped_lines: false,
+            is_rtl: false,
+        }
     }
 
     #[inline]
-    pub const fn is_horizontal(self) -> bool { self.is_horizontal }
+    pub const fn is_horizontal(self) -> bool {
+        self.is_horizontal
+    }
     #[inline]
-    pub const fn is_flipped_blocks(self) -> bool { self.is_flipped_blocks }
+    pub const fn is_flipped_blocks(self) -> bool {
+        self.is_flipped_blocks
+    }
     #[inline]
-    pub const fn is_flipped_lines(self) -> bool { self.is_flipped_lines }
+    pub const fn is_flipped_lines(self) -> bool {
+        self.is_flipped_lines
+    }
     #[inline]
-    pub const fn is_rtl(self) -> bool { self.is_rtl }
+    pub const fn is_rtl(self) -> bool {
+        self.is_rtl
+    }
 }
 
 impl Default for WritingDirectionMode {
-    fn default() -> Self { Self::horizontal_ltr() }
+    fn default() -> Self {
+        Self::horizontal_ltr()
+    }
 }
 
 // ─── WritingModeConverter ───────────────────────────────────────────────────
@@ -276,7 +294,9 @@ mod tests {
     use super::*;
     use crate::LayoutUnit;
 
-    fn lu(px: i32) -> LayoutUnit { LayoutUnit::from_i32(px) }
+    fn lu(px: i32) -> LayoutUnit {
+        LayoutUnit::from_i32(px)
+    }
 
     // Shorthand constructors for writing direction modes.
     fn htb_ltr() -> WritingDirectionMode {
@@ -492,7 +512,11 @@ mod tests {
 
     // ── Offset round-trip tests ─────────────────────────────────────
 
-    fn assert_offset_round_trip(wm: WritingDirectionMode, outer: PhysicalSize, inner: PhysicalSize) {
+    fn assert_offset_round_trip(
+        wm: WritingDirectionMode,
+        outer: PhysicalSize,
+        inner: PhysicalSize,
+    ) {
         let conv = WritingModeConverter::new(wm, outer);
         let original = LogicalOffset::new(lu(17), lu(29));
         let physical = conv.to_physical_offset(original, inner);
@@ -502,47 +526,83 @@ mod tests {
 
     #[test]
     fn offset_round_trip_htb_ltr() {
-        assert_offset_round_trip(htb_ltr(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            htb_ltr(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_htb_rtl() {
-        assert_offset_round_trip(htb_rtl(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            htb_rtl(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_vrl_ltr() {
-        assert_offset_round_trip(vrl_ltr(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            vrl_ltr(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_vrl_rtl() {
-        assert_offset_round_trip(vrl_rtl(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            vrl_rtl(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_vlr_ltr() {
-        assert_offset_round_trip(vlr_ltr(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            vlr_ltr(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_vlr_rtl() {
-        assert_offset_round_trip(vlr_rtl(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            vlr_rtl(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_slr_ltr() {
-        assert_offset_round_trip(slr_ltr(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            slr_ltr(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_slr_rtl() {
-        assert_offset_round_trip(slr_rtl(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            slr_rtl(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     #[test]
     fn offset_round_trip_srl_ltr() {
-        assert_offset_round_trip(srl_ltr(), PhysicalSize::new(lu(800), lu(600)), PhysicalSize::new(lu(100), lu(50)));
+        assert_offset_round_trip(
+            srl_ltr(),
+            PhysicalSize::new(lu(800), lu(600)),
+            PhysicalSize::new(lu(100), lu(50)),
+        );
     }
 
     // ── Rect conversion tests ───────────────────────────────────────
@@ -656,12 +716,25 @@ mod tests {
     fn zero_size_offset_round_trip() {
         let outer = PhysicalSize::new(lu(800), lu(600));
         let inner = PhysicalSize::zero();
-        for wm in [htb_ltr(), htb_rtl(), vrl_ltr(), vrl_rtl(), vlr_ltr(), vlr_rtl(), slr_ltr(), slr_rtl()] {
+        for wm in [
+            htb_ltr(),
+            htb_rtl(),
+            vrl_ltr(),
+            vrl_rtl(),
+            vlr_ltr(),
+            vlr_rtl(),
+            slr_ltr(),
+            slr_rtl(),
+        ] {
             let conv = WritingModeConverter::new(wm, outer);
             let original = LogicalOffset::new(lu(50), lu(30));
             let physical = conv.to_physical_offset(original, inner);
             let back = conv.to_logical_offset(physical, inner);
-            assert_eq!(back, original, "zero inner size round-trip failed for {:?}", wm);
+            assert_eq!(
+                back, original,
+                "zero inner size round-trip failed for {:?}",
+                wm
+            );
         }
     }
 
@@ -669,7 +742,16 @@ mod tests {
     fn zero_offset_round_trip() {
         let outer = PhysicalSize::new(lu(800), lu(600));
         let inner = PhysicalSize::new(lu(100), lu(50));
-        for wm in [htb_ltr(), htb_rtl(), vrl_ltr(), vrl_rtl(), vlr_ltr(), vlr_rtl(), slr_ltr(), slr_rtl()] {
+        for wm in [
+            htb_ltr(),
+            htb_rtl(),
+            vrl_ltr(),
+            vrl_rtl(),
+            vlr_ltr(),
+            vlr_rtl(),
+            slr_ltr(),
+            slr_rtl(),
+        ] {
             let conv = WritingModeConverter::new(wm, outer);
             let original = LogicalOffset::zero();
             let physical = conv.to_physical_offset(original, inner);
@@ -682,13 +764,26 @@ mod tests {
     fn full_size_child_offset_round_trip() {
         // Child fills the entire container
         let outer = PhysicalSize::new(lu(800), lu(600));
-        for wm in [htb_ltr(), htb_rtl(), vrl_ltr(), vrl_rtl(), vlr_ltr(), vlr_rtl(), slr_ltr(), slr_rtl()] {
+        for wm in [
+            htb_ltr(),
+            htb_rtl(),
+            vrl_ltr(),
+            vrl_rtl(),
+            vlr_ltr(),
+            vlr_rtl(),
+            slr_ltr(),
+            slr_rtl(),
+        ] {
             let conv = WritingModeConverter::new(wm, outer);
             let inner_physical = outer;
             let original = LogicalOffset::zero();
             let physical = conv.to_physical_offset(original, inner_physical);
             let back = conv.to_logical_offset(physical, inner_physical);
-            assert_eq!(back, original, "full-size child round-trip failed for {:?}", wm);
+            assert_eq!(
+                back, original,
+                "full-size child round-trip failed for {:?}",
+                wm
+            );
         }
     }
 
@@ -701,8 +796,8 @@ mod tests {
         let inner = PhysicalSize::new(lu(100), lu(50));
         let physical = PhysicalOffset::new(lu(200), lu(30));
         let logical = conv.to_logical_offset(physical, inner);
-        assert_eq!(logical.inline_offset, lu(30));          // top
-        assert_eq!(logical.block_offset, lu(500));           // 800 - 200 - 100
+        assert_eq!(logical.inline_offset, lu(30)); // top
+        assert_eq!(logical.block_offset, lu(500)); // 800 - 200 - 100
     }
 
     #[test]
@@ -713,7 +808,7 @@ mod tests {
         let inner = PhysicalSize::new(lu(100), lu(50));
         let physical = PhysicalOffset::new(lu(200), lu(30));
         let logical = conv.to_logical_offset(physical, inner);
-        assert_eq!(logical.inline_offset, lu(30));          // top
-        assert_eq!(logical.block_offset, lu(200));           // left
+        assert_eq!(logical.inline_offset, lu(30)); // top
+        assert_eq!(logical.block_offset, lu(200)); // left
     }
 }

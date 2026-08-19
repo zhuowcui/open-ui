@@ -7,11 +7,11 @@ use std::sync::Arc;
 
 use openui_style::{
     ComputedStyle, FontFamily, FontFamilyList, FontOpticalSizing, FontSmoothing, FontStretch,
-    FontStyleEnum, FontSynthesis, FontVariantCaps, FontWeight, GenericFontFamily, TextRendering,
-    LineHeight, TextAlign, TextAlignLast, TextDecorationLine,
-    TextDecorationStyle, TextDecorationThickness, TextJustify, TextOverflow, TextTransform,
-    TextUnderlinePosition, UnicodeBidi, VerticalAlign, WordBreak, WritingMode,
-    OverflowWrap, Hyphens, TextOrientation, TabSize, StyleColor,
+    FontStyleEnum, FontSynthesis, FontVariantCaps, FontWeight, GenericFontFamily, Hyphens,
+    LineHeight, OverflowWrap, StyleColor, TabSize, TextAlign, TextAlignLast, TextDecorationLine,
+    TextDecorationStyle, TextDecorationThickness, TextJustify, TextOrientation, TextOverflow,
+    TextRendering, TextTransform, TextUnderlinePosition, UnicodeBidi, VerticalAlign, WordBreak,
+    WritingMode,
 };
 
 use openui_text::font::{Font, FontCache, FontDescription, FontFallbackList, FontMetrics};
@@ -115,10 +115,7 @@ fn font_description_default_optical_sizing() {
 
 #[test]
 fn font_description_with_family_and_size() {
-    let desc = FontDescription::with_family_and_size(
-        FontFamilyList::single("Arial"),
-        24.0,
-    );
+    let desc = FontDescription::with_family_and_size(FontFamilyList::single("Arial"), 24.0);
     assert_eq!(desc.size, 24.0);
     assert_eq!(desc.specified_size, 24.0);
     assert_eq!(desc.family.families[0], FontFamily::Named("Arial".into()));
@@ -140,13 +137,19 @@ fn font_family_list_single_named() {
 fn font_family_list_single_generic() {
     let list = FontFamilyList::generic(GenericFontFamily::Monospace);
     assert_eq!(list.len(), 1);
-    assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Monospace));
+    assert_eq!(
+        list.families[0],
+        FontFamily::Generic(GenericFontFamily::Monospace)
+    );
 }
 
 #[test]
 fn font_family_list_default_is_sans_serif() {
     let list = FontFamilyList::default();
-    assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::SansSerif));
+    assert_eq!(
+        list.families[0],
+        FontFamily::Generic(GenericFontFamily::SansSerif)
+    );
 }
 
 #[test]
@@ -266,14 +269,22 @@ fn resolve_monospace() {
 fn resolved_font_ascent_positive() {
     let font = Font::new(FontDescription::default());
     let metrics = font.font_metrics().expect("should have metrics");
-    assert!(metrics.ascent > 0.0, "ascent should be positive, got {}", metrics.ascent);
+    assert!(
+        metrics.ascent > 0.0,
+        "ascent should be positive, got {}",
+        metrics.ascent
+    );
 }
 
 #[test]
 fn resolved_font_descent_positive() {
     let font = Font::new(FontDescription::default());
     let metrics = font.font_metrics().expect("should have metrics");
-    assert!(metrics.descent > 0.0, "descent should be positive, got {}", metrics.descent);
+    assert!(
+        metrics.descent > 0.0,
+        "descent should be positive, got {}",
+        metrics.descent
+    );
 }
 
 #[test]
@@ -295,7 +306,10 @@ fn resolved_font_line_spacing_equals_sum() {
     assert!(
         (m.line_spacing - expected).abs() < 0.001,
         "line_spacing ({}) should equal ascent ({}) + descent ({}) + line_gap ({})",
-        m.line_spacing, m.ascent, m.descent, m.line_gap
+        m.line_spacing,
+        m.ascent,
+        m.descent,
+        m.line_gap
     );
 }
 
@@ -303,21 +317,33 @@ fn resolved_font_line_spacing_equals_sum() {
 fn resolved_font_x_height_positive() {
     let font = Font::new(FontDescription::default());
     let m = font.font_metrics().expect("should have metrics");
-    assert!(m.x_height > 0.0, "x_height should be positive, got {}", m.x_height);
+    assert!(
+        m.x_height > 0.0,
+        "x_height should be positive, got {}",
+        m.x_height
+    );
 }
 
 #[test]
 fn resolved_font_cap_height_positive() {
     let font = Font::new(FontDescription::default());
     let m = font.font_metrics().expect("should have metrics");
-    assert!(m.cap_height > 0.0, "cap_height should be positive, got {}", m.cap_height);
+    assert!(
+        m.cap_height > 0.0,
+        "cap_height should be positive, got {}",
+        m.cap_height
+    );
 }
 
 #[test]
 fn resolved_font_zero_width_positive() {
     let font = Font::new(FontDescription::default());
     let m = font.font_metrics().expect("should have metrics");
-    assert!(m.zero_width > 0.0, "zero_width (ch unit ref) should be positive, got {}", m.zero_width);
+    assert!(
+        m.zero_width > 0.0,
+        "zero_width (ch unit ref) should be positive, got {}",
+        m.zero_width
+    );
 }
 
 #[test]
@@ -327,7 +353,8 @@ fn resolved_font_cap_height_ge_x_height() {
     assert!(
         m.cap_height >= m.x_height,
         "cap_height ({}) should be >= x_height ({})",
-        m.cap_height, m.x_height
+        m.cap_height,
+        m.x_height
     );
 }
 
@@ -346,7 +373,11 @@ fn resolved_font_underline_thickness_positive() {
 fn resolved_font_units_per_em_positive() {
     let font = Font::new(FontDescription::default());
     let m = font.font_metrics().expect("should have metrics");
-    assert!(m.units_per_em > 0, "units_per_em should be positive, got {}", m.units_per_em);
+    assert!(
+        m.units_per_em > 0,
+        "units_per_em should be positive, got {}",
+        m.units_per_em
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -416,7 +447,10 @@ fn cache_returns_same_arc_for_same_description() {
     let font2 = Font::new(desc);
     let p1 = font1.primary_font().expect("should resolve");
     let p2 = font2.primary_font().expect("should resolve");
-    assert!(Arc::ptr_eq(p1, p2), "same description should return same Arc");
+    assert!(
+        Arc::ptr_eq(p1, p2),
+        "same description should return same Arc"
+    );
 }
 
 #[test]
@@ -427,18 +461,42 @@ fn cache_returns_different_arc_for_different_size() {
     let font2 = Font::new(desc2);
     let p1 = font1.primary_font().expect("should resolve");
     let p2 = font2.primary_font().expect("should resolve");
-    assert!(!Arc::ptr_eq(p1, p2), "different sizes should produce different entries");
+    assert!(
+        !Arc::ptr_eq(p1, p2),
+        "different sizes should produce different entries"
+    );
 }
 
 #[test]
 fn cache_generic_family_name_mapping() {
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Serif), "serif");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::SansSerif), "sans-serif");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Monospace), "monospace");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Cursive), "cursive");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::Fantasy), "fantasy");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::SystemUi), "system-ui");
-    assert_eq!(FontCache::generic_family_name(GenericFontFamily::None), "sans-serif");
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Serif),
+        "DejaVu Serif"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::SansSerif),
+        "DejaVu Sans"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Monospace),
+        "DejaVu Sans Mono"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Cursive),
+        "cursive"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::Fantasy),
+        "fantasy"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::SystemUi),
+        "DejaVu Sans"
+    );
+    assert_eq!(
+        FontCache::generic_family_name(GenericFontFamily::None),
+        "DejaVu Sans"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -469,7 +527,10 @@ fn fallback_multiple_families_first_match_wins() {
     };
     let desc = FontDescription::with_family_and_size(list, 16.0);
     let font = Font::new(desc);
-    assert!(font.fallback_count() >= 1, "should resolve at least one font");
+    assert!(
+        font.fallback_count() >= 1,
+        "should resolve at least one font"
+    );
 }
 
 #[test]
@@ -521,7 +582,8 @@ fn width_longer_string_greater() {
     assert!(
         w2 > w1,
         "'Hello World' ({}) should be wider than 'Hi' ({})",
-        w2, w1
+        w2,
+        w1
     );
 }
 
@@ -538,46 +600,70 @@ fn width_single_char() {
 
 #[test]
 fn different_sizes_different_ascent() {
-    let font12 = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 12.0));
-    let font48 = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 48.0));
+    let font12 = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        12.0,
+    ));
+    let font48 = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        48.0,
+    ));
     let m12 = font12.font_metrics().expect("metrics");
     let m48 = font48.font_metrics().expect("metrics");
     assert!(
         m48.ascent > m12.ascent,
         "48px ascent ({}) should be greater than 12px ascent ({})",
-        m48.ascent, m12.ascent
+        m48.ascent,
+        m12.ascent
     );
 }
 
 #[test]
 fn different_sizes_different_line_spacing() {
-    let font12 = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 12.0));
-    let font48 = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 48.0));
+    let font12 = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        12.0,
+    ));
+    let font48 = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        48.0,
+    ));
     let m12 = font12.font_metrics().expect("metrics");
     let m48 = font48.font_metrics().expect("metrics");
     assert!(
         m48.line_spacing > m12.line_spacing,
         "48px line_spacing ({}) should be greater than 12px line_spacing ({})",
-        m48.line_spacing, m12.line_spacing
+        m48.line_spacing,
+        m12.line_spacing
     );
 }
 
 #[test]
 fn different_sizes_different_width() {
-    let font12 = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 12.0));
-    let font48 = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 48.0));
+    let font12 = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        12.0,
+    ));
+    let font48 = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        48.0,
+    ));
     let w12 = font12.width("Hello");
     let w48 = font48.width("Hello");
     assert!(
         w48 > w12,
         "48px width ({}) should be greater than 12px width ({})",
-        w48, w12
+        w48,
+        w12
     );
 }
 
 #[test]
 fn font_size_accessor() {
-    let font = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 20.0));
+    let font = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        20.0,
+    ));
     assert_eq!(font.size(), 20.0);
 }
 
@@ -586,10 +672,7 @@ fn font_size_accessor() {
 // ═══════════════════════════════════════════════════════════════════════
 
 fn try_generic(generic: GenericFontFamily) -> bool {
-    let desc = FontDescription::with_family_and_size(
-        FontFamilyList::generic(generic),
-        16.0,
-    );
+    let desc = FontDescription::with_family_and_size(FontFamilyList::generic(generic), 16.0);
     Font::new(desc).primary_font().is_some()
 }
 
@@ -620,7 +703,10 @@ fn generic_none_resolves_to_sans_serif() {
 
 #[test]
 fn platform_data_size_matches_request() {
-    let font = Font::new(FontDescription::with_family_and_size(FontFamilyList::default(), 32.0));
+    let font = Font::new(FontDescription::with_family_and_size(
+        FontFamilyList::default(),
+        32.0,
+    ));
     let data = font.primary_font().expect("should resolve");
     assert_eq!(data.size(), 32.0);
 }
@@ -862,7 +948,8 @@ fn text_decoration_line_underline() {
 
 #[test]
 fn text_decoration_line_combined() {
-    let l = TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
+    let l =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
     assert!(l.has_underline());
     assert!(l.has_line_through());
     assert!(!l.has_overline());

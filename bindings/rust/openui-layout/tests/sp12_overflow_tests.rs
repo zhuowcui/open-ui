@@ -7,9 +7,7 @@ use std::sync::Arc;
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, Length, PhysicalOffset, PhysicalRect, PhysicalSize};
-use openui_layout::{
-    block_layout, establishes_new_fc, ConstraintSpace, Fragment, FragmentKind,
-};
+use openui_layout::{block_layout, establishes_new_fc, ConstraintSpace, Fragment, FragmentKind};
 use openui_style::*;
 
 // ── Helpers ──────────────────────────────────────────────────────────────
@@ -62,12 +60,15 @@ fn build_container_with_children(
 
 #[test]
 fn fragment_overflow_fields_initial_values() {
-    let frag = Fragment::new_box(
-        NodeId::NONE,
-        PhysicalSize::new(lu(100), lu(50)),
+    let frag = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(100), lu(50)));
+    assert!(
+        frag.overflow_rect.is_none(),
+        "overflow_rect should default to None"
     );
-    assert!(frag.overflow_rect.is_none(), "overflow_rect should default to None");
-    assert!(!frag.has_overflow_clip, "has_overflow_clip should default to false");
+    assert!(
+        !frag.has_overflow_clip,
+        "has_overflow_clip should default to false"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -76,10 +77,7 @@ fn fragment_overflow_fields_initial_values() {
 
 #[test]
 fn set_overflow_clip_toggles_flag() {
-    let mut frag = Fragment::new_box(
-        NodeId::NONE,
-        PhysicalSize::new(lu(100), lu(50)),
-    );
+    let mut frag = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(100), lu(50)));
     assert!(!frag.has_overflow_clip);
 
     frag.set_overflow_clip(true);
@@ -95,10 +93,7 @@ fn set_overflow_clip_toggles_flag() {
 
 #[test]
 fn scrollable_overflow_returns_border_box_when_no_overflow() {
-    let frag = Fragment::new_box(
-        NodeId::NONE,
-        PhysicalSize::new(lu(200), lu(100)),
-    );
+    let frag = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(200), lu(100)));
     let overflow = frag.scrollable_overflow();
     assert_eq!(overflow.x(), lu(0));
     assert_eq!(overflow.y(), lu(0));
@@ -112,10 +107,7 @@ fn scrollable_overflow_returns_border_box_when_no_overflow() {
 
 #[test]
 fn scrollable_overflow_returns_overflow_rect_when_set() {
-    let mut frag = Fragment::new_box(
-        NodeId::NONE,
-        PhysicalSize::new(lu(200), lu(100)),
-    );
+    let mut frag = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(200), lu(100)));
     let big_rect = PhysicalRect::from_xywh(lu(0), lu(0), lu(300), lu(200));
     frag.overflow_rect = Some(big_rect);
 
@@ -130,9 +122,8 @@ fn scrollable_overflow_returns_overflow_rect_when_set() {
 
 #[test]
 fn overflow_hidden_sets_clip_flag() {
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Hidden, &[50],
-    );
+    let (doc, container, _) =
+        build_container_with_children(200, Some(100), Overflow::Hidden, &[50]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -151,9 +142,8 @@ fn overflow_hidden_sets_clip_flag() {
 
 #[test]
 fn overflow_visible_no_clip_flag() {
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Visible, &[50],
-    );
+    let (doc, container, _) =
+        build_container_with_children(200, Some(100), Overflow::Visible, &[50]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -171,9 +161,8 @@ fn overflow_visible_no_clip_flag() {
 
 #[test]
 fn overflow_scroll_sets_clip_flag() {
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Scroll, &[50],
-    );
+    let (doc, container, _) =
+        build_container_with_children(200, Some(100), Overflow::Scroll, &[50]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -191,9 +180,7 @@ fn overflow_scroll_sets_clip_flag() {
 
 #[test]
 fn overflow_clip_sets_clip_flag() {
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Clip, &[50],
-    );
+    let (doc, container, _) = build_container_with_children(200, Some(100), Overflow::Clip, &[50]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -211,9 +198,7 @@ fn overflow_clip_sets_clip_flag() {
 
 #[test]
 fn overflow_auto_sets_clip_flag() {
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Auto, &[50],
-    );
+    let (doc, container, _) = build_container_with_children(200, Some(100), Overflow::Auto, &[50]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -232,9 +217,8 @@ fn overflow_auto_sets_clip_flag() {
 #[test]
 fn overflow_rect_computed_when_children_exceed_container() {
     // Container: 200×100, child: 200×200 → child overflows by 100px vertically.
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Hidden, &[200],
-    );
+    let (doc, container, _) =
+        build_container_with_children(200, Some(100), Overflow::Hidden, &[200]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -263,9 +247,7 @@ fn overflow_rect_computed_when_children_exceed_container() {
 #[test]
 fn no_overflow_rect_when_children_fit() {
     // Container: 200×auto, child: 200×50 → no overflow.
-    let (doc, container, _) = build_container_with_children(
-        200, None, Overflow::Visible, &[50],
-    );
+    let (doc, container, _) = build_container_with_children(200, None, Overflow::Visible, &[50]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 
@@ -315,7 +297,10 @@ fn nested_overflow_containers() {
     // Outer is first child of viewport
     let outer_frag = &frag.children[0];
     assert_eq!(outer_frag.node_id, outer);
-    assert!(!outer_frag.has_overflow_clip, "outer overflow:visible → no clip");
+    assert!(
+        !outer_frag.has_overflow_clip,
+        "outer overflow:visible → no clip"
+    );
 
     // Inner is first child of outer
     let inner_frag = &outer_frag.children[0];
@@ -371,7 +356,10 @@ fn overflow_with_padding_and_border() {
 
     let container_frag = &frag.children[0];
     assert_eq!(container_frag.node_id, container);
-    assert!(container_frag.has_overflow_clip, "should clip with overflow:hidden + padding/border");
+    assert!(
+        container_frag.has_overflow_clip,
+        "should clip with overflow:hidden + padding/border"
+    );
 
     // Child fits within border-box (60px child < 70px content area).
     // No overflow rect needed.
@@ -392,14 +380,20 @@ fn establishes_new_fc_overflow_hidden() {
     assert!(!establishes_new_fc(&s), "default should not establish FC");
 
     s.overflow_x = Overflow::Hidden;
-    assert!(establishes_new_fc(&s), "overflow:hidden should establish FC");
+    assert!(
+        establishes_new_fc(&s),
+        "overflow:hidden should establish FC"
+    );
 }
 
 #[test]
 fn establishes_new_fc_overflow_scroll() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Scroll;
-    assert!(establishes_new_fc(&s), "overflow:scroll should establish FC");
+    assert!(
+        establishes_new_fc(&s),
+        "overflow:scroll should establish FC"
+    );
 }
 
 #[test]
@@ -420,7 +414,10 @@ fn establishes_new_fc_float() {
 fn establishes_new_fc_absolute_position() {
     let mut s = ComputedStyle::initial();
     s.position = Position::Absolute;
-    assert!(establishes_new_fc(&s), "position:absolute should establish FC");
+    assert!(
+        establishes_new_fc(&s),
+        "position:absolute should establish FC"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -445,7 +442,11 @@ fn physical_rect_unite_empty() {
     let empty = PhysicalRect::default();
 
     assert_eq!(a.unite(&empty), a, "unite with empty should return self");
-    assert_eq!(empty.unite(&a), a, "empty united with other should return other");
+    assert_eq!(
+        empty.unite(&a),
+        a,
+        "empty united with other should return other"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -454,10 +455,7 @@ fn physical_rect_unite_empty() {
 
 #[test]
 fn border_box_rect_method() {
-    let frag = Fragment::new_box(
-        NodeId::NONE,
-        PhysicalSize::new(lu(300), lu(150)),
-    );
+    let frag = Fragment::new_box(NodeId::NONE, PhysicalSize::new(lu(300), lu(150)));
     let rect = frag.border_box_rect();
     assert_eq!(rect.x(), lu(0));
     assert_eq!(rect.y(), lu(0));
@@ -472,9 +470,8 @@ fn border_box_rect_method() {
 #[test]
 fn overflow_rect_multiple_children() {
     // Container: 200×100, two children: 200×80 each → total 160px, overflows by 60px.
-    let (doc, container, _) = build_container_with_children(
-        200, Some(100), Overflow::Hidden, &[80, 80],
-    );
+    let (doc, container, _) =
+        build_container_with_children(200, Some(100), Overflow::Hidden, &[80, 80]);
     let space = make_root_space(400, 600);
     let frag = block_layout(&doc, doc.root(), &space);
 

@@ -4,16 +4,16 @@
 //! Issue 4: 3D border styles (inset, outset, groove, ridge) have
 //! side-dependent shading: top+left vs bottom+right.
 
-use skia_safe::{surfaces, Color as SkColor, Surface};
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalSize};
 use openui_layout::Fragment;
 use openui_paint::paint_fragment;
 use openui_style::*;
+use skia_safe::{surfaces, Color as SkColor, Surface};
 
 fn make_surface(width: i32, height: i32) -> Surface {
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .expect("Failed to create Skia surface");
+    let mut surface =
+        surfaces::raster_n32_premul((width, height)).expect("Failed to create Skia surface");
     surface.canvas().clear(SkColor::WHITE);
     surface
 }
@@ -71,7 +71,12 @@ fn make_3d_bordered_box(doc: &mut Document, border_style: BorderStyle) -> Fragme
         s.border_right_width = 8;
         s.border_bottom_width = 8;
         s.border_left_width = 8;
-        let gray = Color { r: 0.6, g: 0.6, b: 0.6, a: 1.0 };
+        let gray = Color {
+            r: 0.6,
+            g: 0.6,
+            b: 0.6,
+            a: 1.0,
+        };
         s.border_top_color = StyleColor::Resolved(gray);
         s.border_right_color = StyleColor::Resolved(gray);
         s.border_bottom_color = StyleColor::Resolved(gray);

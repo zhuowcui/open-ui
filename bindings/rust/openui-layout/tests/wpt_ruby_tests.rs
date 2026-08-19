@@ -4,19 +4,15 @@
 //! Categories: ruby-position, ruby-align, column-width, overhang,
 //! writing-mode interaction, and edge cases.
 
-use openui_layout::ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
+use openui_layout::ruby::{
+    clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout,
+};
 use openui_style::{RubyAlign, RubyPosition, WritingMode};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
 /// Shorthand: compute layout with defaults for writing mode.
-fn layout(
-    base_w: f32,
-    ann_w: f32,
-    font: f32,
-    align: RubyAlign,
-    pos: RubyPosition,
-) -> RubyLayout {
+fn layout(base_w: f32, ann_w: f32, font: f32, align: RubyAlign, pos: RubyPosition) -> RubyLayout {
     compute_ruby_layout(base_w, ann_w, font, align, pos, WritingMode::HorizontalTb)
 }
 
@@ -68,7 +64,13 @@ mod ruby_position {
     /// Under block offset is exactly zero.
     #[test]
     fn under_block_offset_is_zero() {
-        let r = layout(80.0, 50.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Under);
+        let r = layout(
+            80.0,
+            50.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Under,
+        );
         assert!(
             r.annotation_block_offset.abs() < 1e-4,
             "Under offset should be 0.0, got {}",
@@ -80,7 +82,9 @@ mod ruby_position {
     #[test]
     fn over_vertical_rl() {
         let r = compute_ruby_layout(
-            60.0, 40.0, 14.0,
+            60.0,
+            40.0,
+            14.0,
             RubyAlign::Center,
             RubyPosition::Over,
             WritingMode::VerticalRl,
@@ -92,7 +96,9 @@ mod ruby_position {
     #[test]
     fn under_vertical_lr() {
         let r = compute_ruby_layout(
-            60.0, 40.0, 14.0,
+            60.0,
+            40.0,
+            14.0,
             RubyAlign::Center,
             RubyPosition::Under,
             WritingMode::VerticalLr,
@@ -123,7 +129,13 @@ mod ruby_align {
     /// SpaceAround with annotation narrower than base: annotation is centered.
     #[test]
     fn space_around_centers_narrow_annotation() {
-        let r = layout(100.0, 60.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over);
+        let r = layout(
+            100.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+        );
         // Annotation should be centered: offset = (100 - 60) / 2 = 20
         assert!((r.annotation_offset - 20.0).abs() < 1e-4);
         // Base should also be centered (but it's the wider one so offset ≈ 0)
@@ -141,7 +153,13 @@ mod ruby_align {
     /// SpaceBetween: both offsets are zero (justification happens later).
     #[test]
     fn space_between_offsets_are_zero() {
-        let r = layout(100.0, 60.0, 10.0, RubyAlign::SpaceBetween, RubyPosition::Over);
+        let r = layout(
+            100.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceBetween,
+            RubyPosition::Over,
+        );
         assert!(r.base_offset.abs() < 1e-4);
         assert!(r.annotation_offset.abs() < 1e-4);
     }
@@ -166,7 +184,13 @@ mod ruby_align {
     /// SpaceAround with wider annotation: base is centered.
     #[test]
     fn space_around_wider_annotation_centers_base() {
-        let r = layout(40.0, 100.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over);
+        let r = layout(
+            40.0,
+            100.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+        );
         assert!((r.base_offset - 30.0).abs() < 1e-4);
         assert!(r.annotation_offset.abs() < 1e-4);
     }
@@ -174,7 +198,13 @@ mod ruby_align {
     /// SpaceBetween when annotation is wider: offsets still zero.
     #[test]
     fn space_between_wider_annotation_offsets_zero() {
-        let r = layout(40.0, 100.0, 10.0, RubyAlign::SpaceBetween, RubyPosition::Over);
+        let r = layout(
+            40.0,
+            100.0,
+            10.0,
+            RubyAlign::SpaceBetween,
+            RubyPosition::Over,
+        );
         assert!(r.base_offset.abs() < 1e-4);
         assert!(r.annotation_offset.abs() < 1e-4);
     }
@@ -211,7 +241,13 @@ mod ruby_align {
     #[test]
     fn center_and_space_around_are_equivalent() {
         let c = layout(100.0, 60.0, 10.0, RubyAlign::Center, RubyPosition::Over);
-        let sa = layout(100.0, 60.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over);
+        let sa = layout(
+            100.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+        );
         assert!((c.base_offset - sa.base_offset).abs() < 1e-4);
         assert!((c.annotation_offset - sa.annotation_offset).abs() < 1e-4);
     }
@@ -257,8 +293,20 @@ mod column_width {
     fn column_width_independent_of_alignment() {
         let c = layout(100.0, 60.0, 10.0, RubyAlign::Center, RubyPosition::Over);
         let s = layout(100.0, 60.0, 10.0, RubyAlign::Start, RubyPosition::Over);
-        let sb = layout(100.0, 60.0, 10.0, RubyAlign::SpaceBetween, RubyPosition::Over);
-        let sa = layout(100.0, 60.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over);
+        let sb = layout(
+            100.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceBetween,
+            RubyPosition::Over,
+        );
+        let sa = layout(
+            100.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+        );
         assert!((c.column_width - s.column_width).abs() < 1e-4);
         assert!((c.column_width - sb.column_width).abs() < 1e-4);
         assert!((c.column_width - sa.column_width).abs() < 1e-4);
@@ -359,7 +407,9 @@ mod writing_mode_interaction {
     #[test]
     fn horizontal_tb_layout() {
         let r = compute_ruby_layout(
-            80.0, 50.0, 12.0,
+            80.0,
+            50.0,
+            12.0,
             RubyAlign::Center,
             RubyPosition::Over,
             WritingMode::HorizontalTb,
@@ -374,13 +424,17 @@ mod writing_mode_interaction {
     #[test]
     fn vertical_rl_same_column_width() {
         let h = compute_ruby_layout(
-            80.0, 50.0, 12.0,
+            80.0,
+            50.0,
+            12.0,
             RubyAlign::Center,
             RubyPosition::Over,
             WritingMode::HorizontalTb,
         );
         let v = compute_ruby_layout(
-            80.0, 50.0, 12.0,
+            80.0,
+            50.0,
+            12.0,
             RubyAlign::Center,
             RubyPosition::Over,
             WritingMode::VerticalRl,
@@ -394,7 +448,9 @@ mod writing_mode_interaction {
     #[test]
     fn vertical_lr_layout() {
         let r = compute_ruby_layout(
-            60.0, 90.0, 14.0,
+            60.0,
+            90.0,
+            14.0,
             RubyAlign::SpaceAround,
             RubyPosition::Under,
             WritingMode::VerticalLr,
@@ -407,7 +463,9 @@ mod writing_mode_interaction {
     #[test]
     fn sideways_rl_column_width() {
         let r = compute_ruby_layout(
-            70.0, 110.0, 10.0,
+            70.0,
+            110.0,
+            10.0,
             RubyAlign::Center,
             RubyPosition::Over,
             WritingMode::SidewaysRl,
@@ -419,7 +477,9 @@ mod writing_mode_interaction {
     #[test]
     fn sideways_lr_column_width() {
         let r = compute_ruby_layout(
-            110.0, 70.0, 10.0,
+            110.0,
+            70.0,
+            10.0,
             RubyAlign::Start,
             RubyPosition::Under,
             WritingMode::SidewaysLr,

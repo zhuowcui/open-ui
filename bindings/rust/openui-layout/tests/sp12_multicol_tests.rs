@@ -1,17 +1,16 @@
 //! SP12 G2 — Multi-column layout integration tests.
 //!
 //! Tests for `resolve_column_count_and_width()`, `compute_column_positions()`,
-//! `balance_columns()`, `layout_columns()`, column rule positioning, and
+//! `balance_columns(, &vec![false; .len()], `, `layout_columns()`, column rule positioning, and
 //! edge cases per CSS Multi-column Layout Module Level 1.
 
-use openui_geometry::LayoutUnit;
 use openui_dom::NodeId;
-use openui_style::ColumnFill;
+use openui_geometry::LayoutUnit;
+use openui_style::{ColumnFill, ColumnWrap};
 
 use openui_layout::multicol::{
-    ColumnLayoutAlgorithm,
-    resolve_column_count_and_width, compute_column_positions,
-    compute_column_rule_positions, balance_columns, layout_columns,
+    balance_columns, compute_column_positions, compute_column_rule_positions, layout_columns,
+    resolve_column_count_and_width, ColumnLayoutAlgorithm,
 };
 
 // ── Helper ──────────────────────────────────────────────────────────────
@@ -28,8 +27,11 @@ fn algo(count: u32, gap: i32, fill: ColumnFill) -> ColumnLayoutAlgorithm {
     ColumnLayoutAlgorithm {
         column_count: count,
         column_width: None,
+        column_height: None,
         column_gap: lu(gap),
+        row_gap: lu(0),
         column_fill: fill,
+        column_wrap: ColumnWrap::Wrap,
         column_rule: None,
     }
 }
@@ -111,7 +113,7 @@ fn gap_affects_width() {
 
 #[test]
 fn column_positions_3_columns() {
-    let positions = compute_column_positions(3, lu(200), lu(20), lu(660), false);
+    let positions = compute_column_positions(3, lu(200), lu(20), lu(640), false);
     assert_eq!(positions.len(), 3);
     assert_eq!(positions[0].inline_offset, lu(0));
     assert_eq!(positions[0].width, lu(200));
@@ -134,7 +136,13 @@ fn column_positions_with_gap() {
 #[test]
 fn balance_equal_content() {
     let children = vec![lu(100), lu(100), lu(100)];
-    let h = balance_columns(&children, 3, lu(1000));
+    let h = balance_columns(
+        &children,
+        &vec![false; children.len()],
+        3,
+        lu(1000),
+        &vec![false; children.len()],
+    );
     assert_eq!(h, lu(100));
 }
 
@@ -142,10 +150,16 @@ fn balance_equal_content() {
 
 #[test]
 fn balance_uneven_content() {
-    // Total = 230. 2 columns. Greedy: col1 = 50+80=130, col2 = 60+40=100 → 130
+    // Total = 230. 2 columns. With fragmentation-aware balance: 115.
     let children = vec![lu(50), lu(80), lu(60), lu(40)];
-    let h = balance_columns(&children, 2, lu(1000));
-    assert_eq!(h, lu(130));
+    let h = balance_columns(
+        &children,
+        &vec![false; children.len()],
+        2,
+        lu(1000),
+        &vec![false; children.len()],
+    );
+    assert_eq!(h, lu(115));
 }
 
 // ── Auto fill: columns use fragmentainer height ─────────────────────────
@@ -155,8 +169,11 @@ fn auto_fill_uses_available_height() {
     let a = ColumnLayoutAlgorithm {
         column_count: 3,
         column_width: None,
+        column_height: None,
         column_gap: lu(10),
+        row_gap: lu(0),
         column_fill: ColumnFill::Auto,
+        column_wrap: ColumnWrap::Wrap,
         column_rule: None,
     };
     let result = layout_columns(&a, node(), lu(640), lu(500), &[lu(200), lu(300), lu(150)]);
@@ -234,13 +251,19 @@ fn column_rule_positions() {
 fn balance_single_column() {
     // column_count=1: should return total height.
     let children = vec![lu(100), lu(200)];
-    let h = balance_columns(&children, 1, lu(1000));
+    let h = balance_columns(
+        &children,
+        &vec![false; children.len()],
+        1,
+        lu(1000),
+        &vec![false; children.len()],
+    );
     assert_eq!(h, lu(300));
 }
 
 #[test]
 fn balance_empty_content() {
-    let h = balance_columns(&[], 3, lu(1000));
+    let h = balance_columns(&[], &vec![false; 1], 3, lu(1000), &vec![false; 1]);
     assert_eq!(h, lu(0));
 }
 

@@ -3,8 +3,8 @@
 //! Covers Issues 1, 2, 3, 4, 6 from the review.
 
 use openui_text::font::FontMetrics;
-use openui_text::shaping::{TextDirection, TextShaper};
 use openui_text::font::{Font, FontDescription};
+use openui_text::shaping::{TextDirection, TextShaper};
 
 // ── Issue 1: RTL word-spacing applied to wrong glyphs ─────────────────────
 
@@ -233,6 +233,10 @@ fn bidi_preserves_original_text_with_u2028() {
 
     let text = "A\u{2028}B";
     let bidi = BidiParagraph::new(text, None);
-    assert_eq!(bidi.text(), text, "Original text with U+2028 should be preserved");
+    assert_eq!(
+        bidi.text(),
+        text,
+        "Original text with U+2028 should be preserved"
+    );
     assert!(bidi.text().contains('\u{2028}'));
 }

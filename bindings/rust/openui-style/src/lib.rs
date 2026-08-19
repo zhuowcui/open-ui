@@ -10,7 +10,8 @@ mod enums;
 mod font_types;
 
 pub use color::{Color, StyleColor};
-pub use computed::{ComputedStyle, AspectRatio};
+pub use computed::{
+    AspectRatio, BoxShadow, ComputedStyle, GradientStopPosition, LinearGradient, LinearGradientStop,
+};
 pub use enums::*;
 pub use font_types::*;
-

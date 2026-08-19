@@ -1,0 +1,526 @@
+[
+  {
+    "test_id": "wpt/css2_floats/hit-test-floats-001",
+    "chromium_test_path": "CSS2/floats/hit-test-floats-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/clear-br-in-size-containment-crash",
+    "chromium_test_path": "css-break/clear-br-in-size-containment-crash.html",
+    "rejection_reason": "unsupported property: contain",
+    "owner_categories": [
+      "needs_containment",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-dynamic-list-001-inline",
+    "chromium_test_path": "css-display/display-contents-dynamic-list-001-inline.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-dynamic-list-001-none",
+    "chromium_test_path": "css-display/display-contents-dynamic-list-001-none.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-content-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-content-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-002",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-003",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-004",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-005",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-005.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-006",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-006.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-007",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-007.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-008",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-008.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-002",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-003",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-004",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-002",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-003",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-004",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-002",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-003",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-004",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-005",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-005.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-006",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-006.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-007",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-007.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-008",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-008.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-002",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-001",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-002",
+    "chromium_test_path": "css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-016",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-016.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-016-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-016-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox_justifycontent-rtl-001",
+    "chromium_test_path": "css-flexbox/flexbox_justifycontent-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox_justifycontent-rtl-002",
+    "chromium_test_path": "css-flexbox/flexbox_justifycontent-rtl-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-001",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-001v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-001v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-002",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-002v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-002v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-003",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-003v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-003v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-004",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-004v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-004v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-005",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-005.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-005v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-005v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-006",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-006.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-006v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-006v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-007",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-007.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/image-as-flexitem-size-007v",
+    "chromium_test_path": "css-flexbox/image-as-flexitem-size-007v.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/text-as-flexitem-size-001",
+    "chromium_test_path": "css-flexbox/text-as-flexitem-size-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_font_metrics",
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-balance-015",
+    "chromium_test_path": "css-multicol/multicol-fill-balance-015.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-006",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-006.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  }
+]

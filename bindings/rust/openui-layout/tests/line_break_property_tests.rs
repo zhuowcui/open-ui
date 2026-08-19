@@ -6,13 +6,13 @@
 //! Each test exercises `find_break_opportunities` directly to verify break
 //! positions, or uses the full `LineBreaker` to verify end-to-end behavior.
 
-use openui_layout::inline::line_breaker::{find_break_opportunities, LineBreaker};
-use openui_layout::inline::items::{InlineItem, InlineItemType, CollapseType};
-use openui_layout::inline::items_builder::InlineItemsData;
-use openui_geometry::LayoutUnit;
-use openui_style::{ComputedStyle, LineBreak, OverflowWrap, WordBreak};
 use openui_dom::NodeId;
-use openui_text::{Font, FontDescription, TextShaper, TextDirection};
+use openui_geometry::LayoutUnit;
+use openui_layout::inline::items::{CollapseType, InlineItem, InlineItemType};
+use openui_layout::inline::items_builder::InlineItemsData;
+use openui_layout::inline::line_breaker::{find_break_opportunities, LineBreaker};
+use openui_style::{ComputedStyle, LineBreak, OverflowWrap, WordBreak};
+use openui_text::{Font, FontDescription, TextDirection, TextShaper};
 use std::sync::Arc;
 
 // ── Helper ──────────────────────────────────────────────────────────────
@@ -32,7 +32,11 @@ fn breaks_normal(text: &str, line_break: LineBreak) -> Vec<usize> {
 #[test]
 fn anywhere_breaks_between_every_latin_char() {
     let b = breaks_normal("abc", LineBreak::Anywhere);
-    assert_eq!(b, vec![1, 2], "anywhere should break between every character");
+    assert_eq!(
+        b,
+        vec![1, 2],
+        "anywhere should break between every character"
+    );
 }
 
 #[test]
@@ -41,14 +45,23 @@ fn anywhere_breaks_between_every_cjk_char() {
     let text = "世界好";
     let b = breaks_normal(text, LineBreak::Anywhere);
     // Expect breaks at byte offsets after each char (3, 6)
-    assert_eq!(b.len(), 2, "anywhere: 3 CJK chars should have 2 breaks, got {:?}", b);
+    assert_eq!(
+        b.len(),
+        2,
+        "anywhere: 3 CJK chars should have 2 breaks, got {:?}",
+        b
+    );
 }
 
 #[test]
 fn anywhere_breaks_within_latin_word() {
     // "hello" — no space; normally no breaks, but anywhere breaks everywhere
     let b = breaks_normal("hello", LineBreak::Anywhere);
-    assert_eq!(b, vec![1, 2, 3, 4], "anywhere should break within a Latin word");
+    assert_eq!(
+        b,
+        vec![1, 2, 3, 4],
+        "anywhere should break within a Latin word"
+    );
 }
 
 #[test]
@@ -57,32 +70,52 @@ fn anywhere_breaks_in_mixed_cjk_latin() {
     let text = "aあb";
     let b = breaks_normal(text, LineBreak::Anywhere);
     // 'a' = 1 byte, 'あ' = 3 bytes, 'b' = 1 byte → breaks at 1, 4
-    assert_eq!(b, vec![1, 4], "anywhere: mixed CJK+Latin should break at every grapheme");
+    assert_eq!(
+        b,
+        vec![1, 4],
+        "anywhere: mixed CJK+Latin should break at every grapheme"
+    );
 }
 
 #[test]
 fn anywhere_single_char_no_break() {
     let b = breaks_normal("x", LineBreak::Anywhere);
-    assert!(b.is_empty(), "single char should have no break opportunities");
+    assert!(
+        b.is_empty(),
+        "single char should have no break opportunities"
+    );
 }
 
 #[test]
 fn anywhere_empty_text_no_break() {
     let b = breaks_normal("", LineBreak::Anywhere);
-    assert!(b.is_empty(), "empty text should have no break opportunities");
+    assert!(
+        b.is_empty(),
+        "empty text should have no break opportunities"
+    );
 }
 
 #[test]
 fn anywhere_overrides_word_break_normal() {
     // Even with word-break: normal, line-break: anywhere should break everywhere
-    let b = find_break_opportunities("abc", WordBreak::Normal, OverflowWrap::Normal, LineBreak::Anywhere);
+    let b = find_break_opportunities(
+        "abc",
+        WordBreak::Normal,
+        OverflowWrap::Normal,
+        LineBreak::Anywhere,
+    );
     assert_eq!(b, vec![1, 2]);
 }
 
 #[test]
 fn anywhere_overrides_word_break_keep_all() {
     // line-break: anywhere should override keep-all behavior
-    let b = find_break_opportunities("漢字", WordBreak::KeepAll, OverflowWrap::Normal, LineBreak::Anywhere);
+    let b = find_break_opportunities(
+        "漢字",
+        WordBreak::KeepAll,
+        OverflowWrap::Normal,
+        LineBreak::Anywhere,
+    );
     assert!(!b.is_empty(), "anywhere should override keep-all");
 }
 
@@ -116,7 +149,8 @@ fn strict_no_break_before_small_hiragana_a() {
     assert!(
         b.len() <= normal_b.len(),
         "strict should have fewer or equal breaks compared to normal: strict={:?}, normal={:?}",
-        b, normal_b,
+        b,
+        normal_b,
     );
 }
 
@@ -217,7 +251,11 @@ fn strict_allows_normal_cjk_breaks() {
     // Between two regular CJK ideographs, strict should still allow breaks
     let text = "世界"; // Neither char is in the strict-no-break list
     let b = breaks_normal(text, LineBreak::Strict);
-    assert!(!b.is_empty(), "strict should allow breaks between regular CJK ideographs; breaks={:?}", b);
+    assert!(
+        !b.is_empty(),
+        "strict should allow breaks between regular CJK ideographs; breaks={:?}",
+        b
+    );
 }
 
 #[test]
@@ -241,7 +279,8 @@ fn strict_with_multiple_small_kana() {
         assert!(
             !b.contains(&pos),
             "strict should not break before small kana at byte {}: breaks={:?}",
-            pos, b,
+            pos,
+            b,
         );
     }
 }
@@ -326,7 +365,8 @@ fn loose_more_breaks_than_strict_for_cjk() {
     assert!(
         loose_b.len() >= strict_b.len(),
         "loose should have >= breaks compared to strict: loose={:?}, strict={:?}",
-        loose_b, strict_b,
+        loose_b,
+        strict_b,
     );
 }
 
@@ -344,7 +384,11 @@ fn normal_cjk_breaks_between_ideographs() {
 #[test]
 fn normal_latin_space_breaks() {
     let b = breaks_normal("the quick brown fox", LineBreak::Normal);
-    assert_eq!(b, vec![4, 10, 16], "normal should break at spaces in Latin text");
+    assert_eq!(
+        b,
+        vec![4, 10, 16],
+        "normal should break at spaces in Latin text"
+    );
 }
 
 #[test]
@@ -362,7 +406,10 @@ fn auto_same_as_normal_for_latin() {
     let text = "hello world test";
     let auto_b = breaks_normal(text, LineBreak::Auto);
     let normal_b = breaks_normal(text, LineBreak::Normal);
-    assert_eq!(auto_b, normal_b, "auto should behave identically to normal for Latin text");
+    assert_eq!(
+        auto_b, normal_b,
+        "auto should behave identically to normal for Latin text"
+    );
 }
 
 #[test]
@@ -370,7 +417,10 @@ fn auto_same_as_normal_for_cjk() {
     let text = "世界好人";
     let auto_b = breaks_normal(text, LineBreak::Auto);
     let normal_b = breaks_normal(text, LineBreak::Normal);
-    assert_eq!(auto_b, normal_b, "auto should behave identically to normal for CJK text");
+    assert_eq!(
+        auto_b, normal_b,
+        "auto should behave identically to normal for CJK text"
+    );
 }
 
 #[test]
@@ -378,7 +428,10 @@ fn auto_same_as_normal_for_mixed() {
     let text = "hello世界test";
     let auto_b = breaks_normal(text, LineBreak::Auto);
     let normal_b = breaks_normal(text, LineBreak::Normal);
-    assert_eq!(auto_b, normal_b, "auto should behave identically to normal for mixed text");
+    assert_eq!(
+        auto_b, normal_b,
+        "auto should behave identically to normal for mixed text"
+    );
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -391,7 +444,12 @@ fn strict_with_break_all_still_restricts() {
     // break-all adds grapheme-level breaks, but strict should still remove
     // breaks before strict-no-break characters
     let text = "カー"; // ー is strict-no-break-before
-    let b = find_break_opportunities(text, WordBreak::BreakAll, OverflowWrap::Normal, LineBreak::Strict);
+    let b = find_break_opportunities(
+        text,
+        WordBreak::BreakAll,
+        OverflowWrap::Normal,
+        LineBreak::Strict,
+    );
     let after_ka = "カ".len();
     assert!(
         !b.contains(&after_ka),
@@ -406,7 +464,12 @@ fn loose_with_keep_all_adds_loose_breaks() {
     // keep-all suppresses CJK-between-CJK breaks, but loose should still add
     // breaks before comma/period
     let text = "世、界";
-    let b = find_break_opportunities(text, WordBreak::KeepAll, OverflowWrap::Normal, LineBreak::Loose);
+    let b = find_break_opportunities(
+        text,
+        WordBreak::KeepAll,
+        OverflowWrap::Normal,
+        LineBreak::Loose,
+    );
     let comma_offset = "世".len();
     assert!(
         b.contains(&comma_offset),
@@ -418,9 +481,19 @@ fn loose_with_keep_all_adds_loose_breaks() {
 #[test]
 fn anywhere_overrides_all_word_break_modes() {
     let text = "abc";
-    for wb in [WordBreak::Normal, WordBreak::BreakAll, WordBreak::KeepAll, WordBreak::BreakWord] {
+    for wb in [
+        WordBreak::Normal,
+        WordBreak::BreakAll,
+        WordBreak::KeepAll,
+        WordBreak::BreakWord,
+    ] {
         let b = find_break_opportunities(text, wb, OverflowWrap::Normal, LineBreak::Anywhere);
-        assert_eq!(b, vec![1, 2], "anywhere should produce same breaks regardless of word-break: {:?}", wb);
+        assert_eq!(
+            b,
+            vec![1, 2],
+            "anywhere should produce same breaks regardless of word-break: {:?}",
+            wb
+        );
     }
 }
 
@@ -467,7 +540,8 @@ fn chinese_with_comma_strict_vs_loose() {
     assert!(
         loose_b.len() >= strict_b.len(),
         "loose should have >= breaks than strict for Chinese + comma: loose={:?}, strict={:?}",
-        loose_b, strict_b,
+        loose_b,
+        strict_b,
     );
 }
 
@@ -514,7 +588,12 @@ fn mixed_latin_cjk_strict_preserves_latin_breaks() {
 fn mixed_cjk_latin_anywhere_breaks_all() {
     let text = "aあb";
     let b = breaks_normal(text, LineBreak::Anywhere);
-    assert_eq!(b.len(), 2, "anywhere should break at every grapheme boundary in mixed text; breaks={:?}", b);
+    assert_eq!(
+        b.len(),
+        2,
+        "anywhere should break at every grapheme boundary in mixed text; breaks={:?}",
+        b
+    );
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -612,6 +691,8 @@ fn linebreaker_anywhere_breaks_every_char() {
             intrinsic_inline_size: None,
         }],
         styles: vec![style],
+        oof_children: Vec::new(),
+        block_in_inline: Vec::new(),
     };
 
     // Width to fit ~2 characters
@@ -658,6 +739,8 @@ fn linebreaker_strict_prevents_break_before_chouon() {
             intrinsic_inline_size: None,
         }],
         styles: vec![style],
+        oof_children: Vec::new(),
+        block_in_inline: Vec::new(),
     };
 
     // Narrow width — less than the full text but more than one character

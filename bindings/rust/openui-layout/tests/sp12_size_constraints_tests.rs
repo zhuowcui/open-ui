@@ -4,10 +4,8 @@
 
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::size_constraints::{
-    SizeConstraint, resolve_size_constraints,
-    constrain_inline_size, constrain_block_size,
-    resolve_inline_size, resolve_block_size,
-    apply_box_sizing_adjustment,
+    apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,
+    resolve_inline_size, resolve_size_constraints, SizeConstraint,
 };
 use openui_style::BoxSizing;
 
@@ -56,7 +54,7 @@ fn constrain_inline_min_greater_than_max_min_wins() {
     // set to the value of min-width." Effectively, min always wins.
     let c = SizeConstraint {
         min_inline_size: lu(400),
-        max_inline_size: lu(200),  // min > max
+        max_inline_size: lu(200), // min > max
         min_block_size: lu(0),
         max_block_size: LayoutUnit::max(),
     };
@@ -71,10 +69,10 @@ fn constrain_inline_min_greater_than_max_min_wins() {
 fn resolve_constraints_normalizes_min_gt_max() {
     // When resolve_size_constraints is used, min > max is normalized so max = min.
     let c = resolve_size_constraints(
-        &Length::px(400.0),   // min_inline = 400
-        &Length::px(200.0),   // max_inline = 200
-        &Length::auto(),      // min_block = auto → 0
-        &Length::none(),      // max_block = none → max
+        &Length::px(400.0), // min_inline = 400
+        &Length::px(200.0), // max_inline = 200
+        &Length::auto(),    // min_block = auto → 0
+        &Length::none(),    // max_block = none → max
         lu(800),
         lu(600),
         BoxSizing::ContentBox,
@@ -120,8 +118,8 @@ fn resolve_inline_auto_uses_available() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_inline_size(
         &Length::auto(),
-        lu(800),   // available
-        lu(800),   // CB
+        lu(800), // available
+        lu(800), // CB
         BoxSizing::ContentBox,
         lu(0),
         &c,
@@ -164,8 +162,8 @@ fn resolve_block_auto_uses_content() {
     let c = SizeConstraint::unconstrained();
     let result = resolve_block_size(
         &Length::auto(),
-        lu(250),   // content_block_size
-        lu(600),   // CB
+        lu(250), // content_block_size
+        lu(600), // CB
         BoxSizing::ContentBox,
         lu(0),
         &c,
@@ -193,7 +191,7 @@ fn resolve_block_percentage_definite_cb() {
     let result = resolve_block_size(
         &Length::percent(50.0),
         lu(200),
-        lu(600),   // definite CB
+        lu(600), // definite CB
         BoxSizing::ContentBox,
         lu(0),
         &c,
@@ -207,8 +205,8 @@ fn resolve_block_percentage_indefinite_cb_treated_as_auto() {
     let indef = LayoutUnit::from_raw(-64); // kIndefiniteSize
     let result = resolve_block_size(
         &Length::percent(50.0),
-        lu(200),   // content_block_size (auto fallback)
-        indef,     // indefinite CB
+        lu(200), // content_block_size (auto fallback)
+        indef,   // indefinite CB
         BoxSizing::ContentBox,
         lu(0),
         &c,
@@ -236,7 +234,7 @@ fn box_sizing_content_box_no_adjustment() {
 #[test]
 fn min_width_percentage() {
     let c = resolve_size_constraints(
-        &Length::percent(20.0),  // min_inline = 20% of 500 = 100
+        &Length::percent(20.0), // min_inline = 20% of 500 = 100
         &Length::none(),
         &Length::auto(),
         &Length::none(),
@@ -259,7 +257,7 @@ fn max_height_none_no_constraint() {
         &Length::auto(),
         &Length::none(),
         &Length::auto(),
-        &Length::none(),   // max_block = none → unconstrained
+        &Length::none(), // max_block = none → unconstrained
         lu(800),
         lu(600),
         BoxSizing::ContentBox,
@@ -352,7 +350,10 @@ fn zero_min_width() {
     );
     assert_eq!(c.min_inline_size, LayoutUnit::zero());
     // Size of 0 is valid
-    assert_eq!(constrain_inline_size(LayoutUnit::zero(), &c), LayoutUnit::zero());
+    assert_eq!(
+        constrain_inline_size(LayoutUnit::zero(), &c),
+        LayoutUnit::zero()
+    );
 }
 
 // ── border-box with constraints ─────────────────────────────────────────
@@ -369,8 +370,8 @@ fn border_box_constraints_subtract_padding_border() {
         lu(800),
         lu(600),
         BoxSizing::BorderBox,
-        lu(30),   // padding_border_inline
-        lu(20),   // padding_border_block
+        lu(30), // padding_border_inline
+        lu(20), // padding_border_block
     );
     assert_eq!(c.min_inline_size, lu(170));
     assert_eq!(c.max_inline_size, lu(470));
@@ -402,7 +403,7 @@ fn resolve_block_border_box_fixed() {
         lu(100),
         lu(600),
         BoxSizing::BorderBox,
-        lu(50),   // padding+border
+        lu(50), // padding+border
         &c,
     );
     assert_eq!(result, lu(350));
@@ -467,7 +468,7 @@ fn border_box_small_size_clamps_to_zero() {
 fn min_percentage_against_indefinite_cb_is_zero() {
     let indef = LayoutUnit::from_raw(-64);
     let c = resolve_size_constraints(
-        &Length::percent(50.0),  // min_inline: 50% of indefinite → 0
+        &Length::percent(50.0), // min_inline: 50% of indefinite → 0
         &Length::none(),
         &Length::auto(),
         &Length::none(),

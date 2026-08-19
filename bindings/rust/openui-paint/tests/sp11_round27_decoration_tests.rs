@@ -4,8 +4,8 @@
 //! UPDATED in Round 30: Blink actually always uses UnderlineThickness() for
 //! from-font, and does NOT round the result. These tests are updated accordingly.
 
-use openui_text::font::FontMetrics;
 use openui_style::TextDecorationThickness;
+use openui_text::font::FontMetrics;
 
 // We test the resolve_thickness logic indirectly through the public API.
 // The key fact (corrected in Round 30): Blink uses UnderlineThickness() for
@@ -37,7 +37,10 @@ fn from_font_underline_uses_underline_thickness() {
     // Blink: UnderlineThickness() → 1.7 (no rounding for from-font).
     let from_metric = metrics.underline_thickness;
     let expected = from_metric.max(1.0);
-    assert_eq!(expected, 1.7, "from-font should use underline_thickness without rounding");
+    assert_eq!(
+        expected, 1.7,
+        "from-font should use underline_thickness without rounding"
+    );
 }
 
 #[test]
@@ -65,10 +68,10 @@ fn from_font_fallback_when_underline_zero() {
 /// that the decoration painter is called without panics.
 #[test]
 fn paint_decorations_with_distinct_thicknesses_no_panic() {
-    use skia_safe::{surfaces, Color as SkColor};
     use openui_paint::decoration_painter::{paint_text_decorations, DecorationPhase};
     use openui_style::ComputedStyle;
     use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+    use skia_safe::{surfaces, Color as SkColor};
 
     let font = Font::new(FontDescription::default());
     let shaper = TextShaper::new();

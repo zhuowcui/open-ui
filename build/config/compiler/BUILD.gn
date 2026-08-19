@@ -7,7 +7,6 @@ config("default") {
     "-Wextra",
     "-Werror",
     "-Wno-unused-parameter",
-    "-Wno-gcc-install-dir-libstdcxx",
     "-fPIC",
   ]
 
@@ -17,9 +16,16 @@ config("default") {
     "-Wextra",
     "-Werror",
     "-Wno-unused-parameter",
-    "-Wno-gcc-install-dir-libstdcxx",
     "-fPIC",
   ]
+
+  # Chromium's hermetic Clang understands and needs this diagnostic switch;
+  # distro Clang 18 rejects it under -Werror. Keep the ABI build behavior while
+  # allowing the standalone toolchain to compile portable targets.
+  if (chromium_src != "") {
+    cflags_cc += [ "-Wno-gcc-install-dir-libstdcxx" ]
+    cflags_c += [ "-Wno-gcc-install-dir-libstdcxx" ]
+  }
 
   if (is_debug) {
     cflags_cc += [

@@ -11,9 +11,7 @@ use std::sync::Arc;
 // ── Helper ──────────────────────────────────────────────────────────────
 
 fn get_test_font_data() -> Arc<openui_text::font::FontPlatformData> {
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE
-        .lock()
-        .unwrap();
+    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
     let desc = openui_text::FontDescription::default();
     cache
         .get_font_platform_data("sans-serif", &desc)
@@ -74,11 +72,7 @@ fn make_shape_result(
 fn inter_char_justification_expands_width() {
     // 3 characters "abc" with 1:1 glyph mapping, each 10px wide.
     // 2 gaps, extra_per_gap = 5.0 → total extra = 10.0
-    let mut sr = make_shape_result(
-        vec![10.0, 10.0, 10.0],
-        vec![0, 1, 2],
-        3,
-    );
+    let mut sr = make_shape_result(vec![10.0, 10.0, 10.0], vec![0, 1, 2], 3);
     assert_eq!(sr.width, 30.0);
 
     sr.apply_inter_character_justification(5.0);
@@ -119,11 +113,7 @@ fn inter_char_justification_single_char_no_change() {
 fn inter_char_justification_updates_character_positions() {
     // 4 characters, each 10px wide, extra_per_gap = 2.0.
     // 3 gaps → total extra = 6.0
-    let mut sr = make_shape_result(
-        vec![10.0, 10.0, 10.0, 10.0],
-        vec![0, 1, 2, 3],
-        4,
-    );
+    let mut sr = make_shape_result(vec![10.0, 10.0, 10.0, 10.0], vec![0, 1, 2, 3], 4);
     sr.apply_inter_character_justification(2.0);
 
     // Check character_data x_positions after justification.
@@ -162,9 +152,7 @@ fn font_description_empty_locale_defaults_to_en() {
 fn platform_fallback_with_locale_does_not_panic() {
     // Verify that calling platform_fallback_for_character with a non-empty
     // locale doesn't panic (it used to always use "en").
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE
-        .lock()
-        .unwrap();
+    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
     let mut desc = openui_text::FontDescription::default();
     desc.locale = Some("ja".to_string());
     // This should not panic regardless of available fonts.
@@ -187,7 +175,7 @@ fn glyph_range_includes_ligature_spanning_clip_start() {
         glyphs: vec![100, 200],
         advances: vec![20.0, 10.0],
         offsets: vec![(0.0, 0.0), (0.0, 0.0)],
-        clusters: vec![0, 2],     // glyph 0 → char 0, glyph 1 → char 2
+        clusters: vec![0, 2], // glyph 0 → char 0, glyph 1 → char 2
         start_index: 0,
         num_characters: 3,
         num_glyphs: 2,
@@ -244,9 +232,21 @@ fn sub_range_preserves_ligature_glyph_at_boundary() {
         num_characters: 3,
         direction: TextDirection::Ltr,
         character_data: vec![
-            ShapeResultCharacterData { x_position: 0.0, is_cluster_base: true, safe_to_break_before: true },
-            ShapeResultCharacterData { x_position: 10.0, is_cluster_base: false, safe_to_break_before: false },
-            ShapeResultCharacterData { x_position: 20.0, is_cluster_base: true, safe_to_break_before: true },
+            ShapeResultCharacterData {
+                x_position: 0.0,
+                is_cluster_base: true,
+                safe_to_break_before: true,
+            },
+            ShapeResultCharacterData {
+                x_position: 10.0,
+                is_cluster_base: false,
+                safe_to_break_before: false,
+            },
+            ShapeResultCharacterData {
+                x_position: 20.0,
+                is_cluster_base: true,
+                safe_to_break_before: true,
+            },
         ],
     };
 
@@ -287,10 +287,26 @@ fn char_advance_from_runs_uses_cluster_geometry() {
         num_characters: 4,
         direction: TextDirection::Ltr,
         character_data: vec![
-            ShapeResultCharacterData { x_position: 0.0, is_cluster_base: true, safe_to_break_before: true },
-            ShapeResultCharacterData { x_position: 10.0, is_cluster_base: false, safe_to_break_before: false },
-            ShapeResultCharacterData { x_position: 20.0, is_cluster_base: true, safe_to_break_before: true },
-            ShapeResultCharacterData { x_position: 25.0, is_cluster_base: false, safe_to_break_before: false },
+            ShapeResultCharacterData {
+                x_position: 0.0,
+                is_cluster_base: true,
+                safe_to_break_before: true,
+            },
+            ShapeResultCharacterData {
+                x_position: 10.0,
+                is_cluster_base: false,
+                safe_to_break_before: false,
+            },
+            ShapeResultCharacterData {
+                x_position: 20.0,
+                is_cluster_base: true,
+                safe_to_break_before: true,
+            },
+            ShapeResultCharacterData {
+                x_position: 25.0,
+                is_cluster_base: false,
+                safe_to_break_before: false,
+            },
         ],
     };
 
@@ -321,7 +337,7 @@ fn char_advance_ligature_not_uniform() {
             glyphs: vec![100, 200],
             advances: vec![30.0, 10.0],
             offsets: vec![(0.0, 0.0), (0.0, 0.0)],
-            clusters: vec![0, 1],  // Each glyph covers 1 char out of 2
+            clusters: vec![0, 1], // Each glyph covers 1 char out of 2
             start_index: 0,
             num_characters: 2,
             num_glyphs: 2,
@@ -331,8 +347,16 @@ fn char_advance_ligature_not_uniform() {
         num_characters: 2,
         direction: TextDirection::Ltr,
         character_data: vec![
-            ShapeResultCharacterData { x_position: 0.0, is_cluster_base: true, safe_to_break_before: true },
-            ShapeResultCharacterData { x_position: 30.0, is_cluster_base: true, safe_to_break_before: true },
+            ShapeResultCharacterData {
+                x_position: 0.0,
+                is_cluster_base: true,
+                safe_to_break_before: true,
+            },
+            ShapeResultCharacterData {
+                x_position: 30.0,
+                is_cluster_base: true,
+                safe_to_break_before: true,
+            },
         ],
     };
 

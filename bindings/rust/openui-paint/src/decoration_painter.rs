@@ -16,7 +16,7 @@
 //! are added with a horizontal padding of 1px and a vertical dilation of
 //! `min(thickness, 13px)`.
 
-use skia_safe::{Canvas, ColorSpace, Paint, PaintStyle, Path, PathEffect, Point, Rect};
+use skia_safe::{Canvas, ColorSpace, Paint, PaintStyle, PathBuilder, PathEffect, Point, Rect};
 
 use openui_style::ComputedStyle;
 use openui_style::{TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness};
@@ -115,9 +115,18 @@ pub fn paint_text_decorations(
                 };
                 let y = baseline_y + metrics.underline_offset + css_offset;
                 draw_decoration_line_with_skip_ink(
-                    canvas, &paint, shape_result, origin, x, y, width,
-                    &style.text_decoration_style, thickness,
-                    DecorationLineKind::Underline, skip_ink, text_content,
+                    canvas,
+                    &paint,
+                    shape_result,
+                    origin,
+                    x,
+                    y,
+                    width,
+                    &style.text_decoration_style,
+                    thickness,
+                    DecorationLineKind::Underline,
+                    skip_ink,
+                    text_content,
                 );
             }
 
@@ -126,9 +135,18 @@ pub fn paint_text_decorations(
             if decoration_line.has_overline() {
                 let y = baseline_y - metrics.ascent;
                 draw_decoration_line_with_skip_ink(
-                    canvas, &paint, shape_result, origin, x, y, width,
-                    &style.text_decoration_style, thickness,
-                    DecorationLineKind::Overline, skip_ink, text_content,
+                    canvas,
+                    &paint,
+                    shape_result,
+                    origin,
+                    x,
+                    y,
+                    width,
+                    &style.text_decoration_style,
+                    thickness,
+                    DecorationLineKind::Overline,
+                    skip_ink,
+                    text_content,
                 );
             }
         }
@@ -138,7 +156,16 @@ pub fn paint_text_decorations(
             // Per CSS spec, skip-ink does NOT apply to line-through.
             if decoration_line.has_line_through() {
                 let y = baseline_y - metrics.strikeout_position;
-                draw_decoration_line(canvas, &paint, x, y, width, &style.text_decoration_style, thickness, DecorationLineKind::LineThrough);
+                draw_decoration_line(
+                    canvas,
+                    &paint,
+                    x,
+                    y,
+                    width,
+                    &style.text_decoration_style,
+                    thickness,
+                    DecorationLineKind::LineThrough,
+                );
             }
         }
     }
@@ -183,16 +210,33 @@ fn draw_decoration_line_with_skip_ink(
     text_content: Option<&str>,
 ) {
     if skip_ink == TextDecorationSkipInk::None {
-        draw_decoration_line(canvas, paint, x, y, width, decoration_style, thickness, kind);
+        draw_decoration_line(
+            canvas,
+            paint,
+            x,
+            y,
+            width,
+            decoration_style,
+            thickness,
+            kind,
+        );
         return;
     }
 
-    let intercepts = compute_skip_ink_intercepts(
-        shape_result, origin, y, thickness, skip_ink, text_content,
-    );
+    let intercepts =
+        compute_skip_ink_intercepts(shape_result, origin, y, thickness, skip_ink, text_content);
 
     if intercepts.is_empty() {
-        draw_decoration_line(canvas, paint, x, y, width, decoration_style, thickness, kind);
+        draw_decoration_line(
+            canvas,
+            paint,
+            x,
+            y,
+            width,
+            decoration_style,
+            thickness,
+            kind,
+        );
         return;
     }
 
@@ -208,7 +252,16 @@ fn draw_decoration_line_with_skip_ink(
         // Draw segment before this gap (if there's positive width).
         if current_x < gap_start {
             let seg_width = gap_start - current_x;
-            draw_decoration_line(canvas, paint, current_x, y, seg_width, decoration_style, thickness, kind);
+            draw_decoration_line(
+                canvas,
+                paint,
+                current_x,
+                y,
+                seg_width,
+                decoration_style,
+                thickness,
+                kind,
+            );
         }
 
         current_x = gap_end;
@@ -217,7 +270,16 @@ fn draw_decoration_line_with_skip_ink(
     // Draw final segment after last gap.
     if current_x < end_x {
         let seg_width = end_x - current_x;
-        draw_decoration_line(canvas, paint, current_x, y, seg_width, decoration_style, thickness, kind);
+        draw_decoration_line(
+            canvas,
+            paint,
+            current_x,
+            y,
+            seg_width,
+            decoration_style,
+            thickness,
+            kind,
+        );
     }
 }
 
@@ -399,7 +461,11 @@ pub(crate) fn is_cjk_character(ch: char) -> bool {
 ///   minimum 1px (no rounding). Falls back to auto formula when unavailable.
 /// - explicit length: `roundf()` to device pixel, minimum 1px (Blink rounds only
 ///   explicit `text-decoration-thickness` lengths).
-fn resolve_thickness(thickness: &TextDecorationThickness, metrics: &FontMetrics, font_size: f32) -> f32 {
+fn resolve_thickness(
+    thickness: &TextDecorationThickness,
+    metrics: &FontMetrics,
+    font_size: f32,
+) -> f32 {
     let t = match thickness {
         TextDecorationThickness::Auto => {
             // Blink: computed_font_size / 10.f — raw, no rounding.
@@ -475,7 +541,15 @@ fn draw_solid_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, t
 /// Blink: `TextDecorationInfo::PaintDoubleDecorationLine()`.
 /// The offset between strokes is `thickness + 1.0` (fixed 1px gap),
 /// matching Blink's `double_offset = thickness + 1.0`.
-fn draw_double_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32, kind: DecorationLineKind) {
+fn draw_double_line(
+    canvas: &Canvas,
+    paint: &Paint,
+    x: f32,
+    y: f32,
+    width: f32,
+    thickness: f32,
+    kind: DecorationLineKind,
+) {
     let double_offset = thickness + 1.0;
     let half_t = thickness / 2.0;
     let mut fill_paint = paint.clone();
@@ -548,7 +622,15 @@ fn draw_dashed_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, 
 /// Blink: `TextDecorationPainter::PaintWavyTextDecoration()` / `MakeWave`.
 /// Uses `step = thickness + 1.0` for both amplitude and half-wavelength step.
 /// The wave is offset away from text for underline/overline (by `step`).
-fn draw_wavy_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, thickness: f32, kind: DecorationLineKind) {
+fn draw_wavy_line(
+    canvas: &Canvas,
+    paint: &Paint,
+    x: f32,
+    y: f32,
+    width: f32,
+    thickness: f32,
+    kind: DecorationLineKind,
+) {
     let step = thickness + 1.0;
     let amplitude = step;
 
@@ -559,7 +641,7 @@ fn draw_wavy_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, th
         DecorationLineKind::LineThrough => y,
     };
 
-    let mut path = Path::new();
+    let mut path = PathBuilder::new();
     path.move_to(Point::new(x, wavy_y));
 
     let mut cx = x;
@@ -580,7 +662,7 @@ fn draw_wavy_line(canvas: &Canvas, paint: &Paint, x: f32, y: f32, width: f32, th
     let mut stroke_paint = paint.clone();
     stroke_paint.set_style(PaintStyle::Stroke);
     stroke_paint.set_stroke_width(thickness);
-    canvas.draw_path(&path, &stroke_paint);
+    canvas.draw_path(&path.detach(), &stroke_paint);
 }
 
 #[cfg(test)]
@@ -592,7 +674,10 @@ mod tests {
 
     #[test]
     fn auto_thickness_uses_font_size_over_10() {
-        let metrics = FontMetrics { underline_thickness: 0.8, ..FontMetrics::zero() };
+        let metrics = FontMetrics {
+            underline_thickness: 0.8,
+            ..FontMetrics::zero()
+        };
         // auto: font_size / 10.0, no rounding (matches Blink), min 1px
         let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 16.0);
         // 16.0 / 10.0 = 1.6 → max(1.0) → 1.6 (no rounding)
@@ -609,7 +694,10 @@ mod tests {
 
     #[test]
     fn from_font_uses_metric_when_positive() {
-        let metrics = FontMetrics { underline_thickness: 1.7, ..FontMetrics::zero() };
+        let metrics = FontMetrics {
+            underline_thickness: 1.7,
+            ..FontMetrics::zero()
+        };
         let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
         // 1.7 → max(1.0) → 1.7 (no rounding, matches Blink)
         assert_eq!(t, 1.7);
@@ -617,7 +705,10 @@ mod tests {
 
     #[test]
     fn from_font_falls_back_to_auto_when_zero() {
-        let metrics = FontMetrics { underline_thickness: 0.0, ..FontMetrics::zero() };
+        let metrics = FontMetrics {
+            underline_thickness: 0.0,
+            ..FontMetrics::zero()
+        };
         let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 20.0);
         // fallback: 20.0 / 10.0 = 2.0 → max(1.0) → 2.0
         assert_eq!(t, 2.0);
@@ -682,7 +773,10 @@ mod tests {
     #[test]
     fn from_font_no_rounding() {
         // from-font should not round; Blink returns raw metric value.
-        let metrics = FontMetrics { underline_thickness: 1.3, ..FontMetrics::zero() };
+        let metrics = FontMetrics {
+            underline_thickness: 1.3,
+            ..FontMetrics::zero()
+        };
         let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
         assert_eq!(t, 1.3);
     }
@@ -698,7 +792,10 @@ mod tests {
         // indirectly: at thickness=2, gap should be 1px, total offset = 3px.
         let thickness = 2.0_f32;
         let double_offset = thickness + 1.0;
-        assert_eq!(double_offset, 3.0, "double_offset should be thickness + 1.0");
+        assert_eq!(
+            double_offset, 3.0,
+            "double_offset should be thickness + 1.0"
+        );
         // The gap between the two strokes is:
         // double_offset - thickness = 1.0 (always 1px regardless of thickness)
         assert_eq!(double_offset - thickness, 1.0);
@@ -709,7 +806,11 @@ mod tests {
         for thickness in [0.5_f32, 1.0, 2.0, 3.0, 5.0, 10.0] {
             let double_offset = thickness + 1.0;
             let gap = double_offset - thickness;
-            assert_eq!(gap, 1.0, "Gap should always be 1px, got {} for thickness={}", gap, thickness);
+            assert_eq!(
+                gap, 1.0,
+                "Gap should always be 1px, got {} for thickness={}",
+                gap, thickness
+            );
         }
     }
 
@@ -734,7 +835,10 @@ mod tests {
         let thickness = 2.0_f32;
         let step = thickness + 1.0;
         let wavy_y = y + step;
-        assert!(wavy_y > y, "Underline wave should be below the decoration line");
+        assert!(
+            wavy_y > y,
+            "Underline wave should be below the decoration line"
+        );
     }
 
     #[test]
@@ -744,7 +848,10 @@ mod tests {
         let thickness = 2.0_f32;
         let step = thickness + 1.0;
         let wavy_y = y - step;
-        assert!(wavy_y < y, "Overline wave should be above the decoration line");
+        assert!(
+            wavy_y < y,
+            "Overline wave should be above the decoration line"
+        );
     }
 
     #[test]
@@ -862,7 +969,10 @@ mod tests {
         let mut style = openui_style::ComputedStyle::default();
         style.font_size = 24.0;
         let desc = crate::text_painter::style_to_font_description(&style);
-        assert_eq!(desc.size, 24.0, "Font description should preserve font size");
+        assert_eq!(
+            desc.size, 24.0,
+            "Font description should preserve font size"
+        );
         assert_eq!(desc.specified_size, 24.0);
     }
 }

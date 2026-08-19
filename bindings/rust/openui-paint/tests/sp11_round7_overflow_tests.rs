@@ -27,17 +27,14 @@ fn shape_text(text: &str) -> openui_text::ShapeResult {
 }
 
 fn make_surface(width: i32, height: i32) -> Surface {
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .expect("Failed to create Skia surface");
+    let mut surface =
+        surfaces::raster_n32_premul((width, height)).expect("Failed to create Skia surface");
     surface.canvas().clear(SkColor::WHITE);
     surface
 }
 
 /// Check if any pixels in the given rectangular region are non-white.
-fn has_non_white_pixels_in_region(
-    surface: &mut Surface,
-    x: i32, y: i32, w: i32, h: i32,
-) -> bool {
+fn has_non_white_pixels_in_region(surface: &mut Surface, x: i32, y: i32, w: i32, h: i32) -> bool {
     let image = surface.image_snapshot();
     let info = image.image_info();
     let row_bytes = info.min_row_bytes();

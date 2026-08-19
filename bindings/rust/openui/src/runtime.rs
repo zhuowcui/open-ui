@@ -98,7 +98,10 @@ impl Runtime {
                 generation: gen,
                 subscribers: Vec::new(),
             });
-            SignalId { index, generation: gen }
+            SignalId {
+                index,
+                generation: gen,
+            }
         } else {
             let index = self.signals.len() as u32;
             self.signals.push(Some(SignalSlot {
@@ -106,12 +109,18 @@ impl Runtime {
                 generation: 0,
                 subscribers: Vec::new(),
             }));
-            SignalId { index, generation: 0 }
+            SignalId {
+                index,
+                generation: 0,
+            }
         }
     }
 
     /// Track the read (if inside an effect) and clone the typed value.
-    pub(crate) fn get_signal_value_cloned<T: Clone + 'static>(&mut self, id: SignalId) -> Option<T> {
+    pub(crate) fn get_signal_value_cloned<T: Clone + 'static>(
+        &mut self,
+        id: SignalId,
+    ) -> Option<T> {
         let slot = self.signals.get(id.index as usize)?.as_ref()?;
         if slot.generation != id.generation {
             return None;
@@ -131,7 +140,12 @@ impl Runtime {
         }
 
         let slot = self.signals[id.index as usize].as_ref().unwrap();
-        Some(slot.value.downcast_ref::<T>().expect("signal type mismatch").clone())
+        Some(
+            slot.value
+                .downcast_ref::<T>()
+                .expect("signal type mismatch")
+                .clone(),
+        )
     }
 
     /// Overwrite value. Returns the list of subscriber effect ids to schedule.
@@ -190,7 +204,8 @@ impl Runtime {
     /// Dispose a scope: deactivate effects, run cleanups, recurse into children.
     pub(crate) fn dispose_scope_raw(&mut self, id: ScopeId) {
         let children: Vec<ScopeId> = self
-            .scopes.get(id.0 as usize)
+            .scopes
+            .get(id.0 as usize)
             .and_then(|s| s.as_ref())
             .map(|s| s.children.clone())
             .unwrap_or_default();
@@ -200,7 +215,8 @@ impl Runtime {
         }
 
         let effect_ids: Vec<EffectId> = self
-            .scopes.get(id.0 as usize)
+            .scopes
+            .get(id.0 as usize)
             .and_then(|s| s.as_ref())
             .map(|s| s.effects.clone())
             .unwrap_or_default();
@@ -226,7 +242,8 @@ impl Runtime {
         self.pending_effects.retain(|e| !effect_ids.contains(e));
 
         let cleanups: Vec<Box<dyn FnOnce()>> = self
-            .scopes.get_mut(id.0 as usize)
+            .scopes
+            .get_mut(id.0 as usize)
             .and_then(|s| s.as_mut())
             .map(|s| std::mem::take(&mut s.cleanups))
             .unwrap_or_default();
@@ -271,7 +288,9 @@ pub(crate) fn run_effect_standalone(id: EffectId) {
     // 1. Check active & clear old deps
     let should_run = RUNTIME.with(|rt| {
         let mut rt = rt.borrow_mut();
-        let active = rt.effects.get(id.0 as usize)
+        let active = rt
+            .effects
+            .get(id.0 as usize)
             .and_then(|s| s.as_ref())
             .map(|s| s.active)
             .unwrap_or(false);
@@ -319,7 +338,9 @@ pub(crate) fn run_effect_standalone(id: EffectId) {
 
     // SAFETY: Single-threaded (thread-local), function object lives in the
     // arena and is not freed during execution, RefCell borrow is released.
-    unsafe { (*f_ptr)(); }
+    unsafe {
+        (*f_ptr)();
+    }
 
     // 4. Restore previous effect
     RUNTIME.with(|rt| {

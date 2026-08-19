@@ -80,7 +80,10 @@ pub fn compute_text_combine(
     // Tate-chū-yoko only applies in vertical writing modes.
     // In horizontal-tb, the property has no effect.
     if writing_mode.is_horizontal()
-        || matches!(writing_mode, WritingMode::SidewaysRl | WritingMode::SidewaysLr)
+        || matches!(
+            writing_mode,
+            WritingMode::SidewaysRl | WritingMode::SidewaysLr
+        )
         || text.is_empty()
         || font_size <= 0.0
     {
@@ -131,13 +134,13 @@ pub fn compute_text_combine(
 /// vertical. In horizontal writing modes the property has no effect per
 /// CSS Writing Modes Level 4 §9.1.
 #[inline]
-pub fn is_text_combine_active(
-    text_combine: TextCombineUpright,
-    writing_mode: WritingMode,
-) -> bool {
+pub fn is_text_combine_active(text_combine: TextCombineUpright, writing_mode: WritingMode) -> bool {
     text_combine == TextCombineUpright::All
         && writing_mode.is_vertical()
-        && !matches!(writing_mode, WritingMode::SidewaysRl | WritingMode::SidewaysLr)
+        && !matches!(
+            writing_mode,
+            WritingMode::SidewaysRl | WritingMode::SidewaysLr
+        )
 }
 
 /// Compute the inline advance that a combined run contributes to the
@@ -306,22 +309,34 @@ mod tests {
 
     #[test]
     fn active_when_all_and_vertical() {
-        assert!(is_text_combine_active(TextCombineUpright::All, WritingMode::VerticalRl));
+        assert!(is_text_combine_active(
+            TextCombineUpright::All,
+            WritingMode::VerticalRl
+        ));
     }
 
     #[test]
     fn inactive_when_none() {
-        assert!(!is_text_combine_active(TextCombineUpright::None, WritingMode::VerticalRl));
+        assert!(!is_text_combine_active(
+            TextCombineUpright::None,
+            WritingMode::VerticalRl
+        ));
     }
 
     #[test]
     fn inactive_when_horizontal() {
-        assert!(!is_text_combine_active(TextCombineUpright::All, WritingMode::HorizontalTb));
+        assert!(!is_text_combine_active(
+            TextCombineUpright::All,
+            WritingMode::HorizontalTb
+        ));
     }
 
     #[test]
     fn inactive_when_none_and_horizontal() {
-        assert!(!is_text_combine_active(TextCombineUpright::None, WritingMode::HorizontalTb));
+        assert!(!is_text_combine_active(
+            TextCombineUpright::None,
+            WritingMode::HorizontalTb
+        ));
     }
 
     // ── combined_inline_advance ─────────────────────────────────────

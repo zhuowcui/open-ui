@@ -3,14 +3,13 @@
 //! Tests for min-content, max-content, shrink-to-fit, replaced elements,
 //! and block size from content.
 
-use openui_geometry::{LayoutUnit, Length};
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::Display;
+use openui_geometry::{LayoutUnit, Length};
 use openui_layout::intrinsic_sizing::{
-    IntrinsicSizes, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
-    compute_block_size_from_content, shrink_to_fit_inline_size,
-    compute_replaced_intrinsic_sizes,
+    compute_block_size_from_content, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
+    compute_replaced_intrinsic_sizes, shrink_to_fit_inline_size, IntrinsicSizes,
 };
+use openui_style::Display;
 
 fn lu(v: i32) -> LayoutUnit {
     LayoutUnit::from_i32(v)
@@ -105,11 +104,7 @@ fn min_content_single_child() {
 
 #[test]
 fn min_content_multiple_children_takes_max() {
-    let (doc, parent) = doc_with_children(&[
-        (100.0, 30.0),
-        (200.0, 40.0),
-        (150.0, 20.0),
-    ]);
+    let (doc, parent) = doc_with_children(&[(100.0, 30.0), (200.0, 40.0), (150.0, 20.0)]);
 
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     // Min-content inline = max(100, 200, 150) = 200
@@ -163,13 +158,13 @@ fn max_content_with_padding_border() {
     // Child contributes 100 inline, plus parent padding (10+10) + border (5+5) = 130
     let expected_inline = LayoutUnit::from_f32(100.0)
         + LayoutUnit::from_f32(20.0)  // padding inline
-        + LayoutUnit::from_i32(10);    // border inline
+        + LayoutUnit::from_i32(10); // border inline
     assert_eq!(sizes.max_content_inline_size, expected_inline);
 
     // Block: child 40 + parent padding (10+10) + border (5+5) = 70
     let expected_block = LayoutUnit::from_f32(40.0)
         + LayoutUnit::from_f32(20.0)  // padding block
-        + LayoutUnit::from_i32(10);    // border block
+        + LayoutUnit::from_i32(10); // border block
     assert_eq!(sizes.max_content_block_size, expected_block);
 }
 
@@ -312,8 +307,8 @@ fn auto_block_size_with_margin_collapsing() {
     // After collapse: adjacent margins 20 and 30 → collapse by min(20,30) = 20
     // Collapsed total = 130 - 20 = 110
     let child_boxes = [
-        LayoutUnit::from_f32(70.0),  // child1: 50 + 20 margin-bottom
-        LayoutUnit::from_f32(60.0),  // child2: 30 margin-top + 30
+        LayoutUnit::from_f32(70.0), // child1: 50 + 20 margin-bottom
+        LayoutUnit::from_f32(60.0), // child2: 30 margin-top + 30
     ];
     let result = compute_block_size_from_content(&doc, parent, &child_boxes);
     assert_eq!(result, lu(110));
@@ -361,21 +356,17 @@ fn inline_intrinsic_sizes_text() {
     doc.append_child(root, text_node);
 
     let sizes = compute_intrinsic_inline_sizes(&doc, text_node);
-    // min-content: widest word "hello" or "world" = 5 * 8 = 40
-    assert_eq!(sizes.min, LayoutUnit::from_f32(40.0));
-    // max-content: "hello world" = 11 * 8 = 88
-    assert_eq!(sizes.max, LayoutUnit::from_f32(88.0));
+    // Text intrinsic sizes use the same real-font measurement as inline
+    // layout: the widest word is non-zero and the unbroken line is wider.
+    assert!(sizes.min > LayoutUnit::zero());
+    assert!(sizes.max > sizes.min);
 }
 
 // ── 16. Multiple children block sizes sum in block axis ──────────────────
 
 #[test]
 fn multiple_children_block_size_sums() {
-    let (doc, parent) = doc_with_children(&[
-        (100.0, 30.0),
-        (200.0, 40.0),
-        (150.0, 20.0),
-    ]);
+    let (doc, parent) = doc_with_children(&[(100.0, 30.0), (200.0, 40.0), (150.0, 20.0)]);
 
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     // Block size = sum of children heights: 30 + 40 + 20 = 90

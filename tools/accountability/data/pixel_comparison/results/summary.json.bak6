@@ -1,0 +1,3392 @@
+{
+  "total": 676,
+  "passed": 471,
+  "failed": 205,
+  "errors": 0,
+  "near_miss_aa": 56,
+  "aa_threshold_pct": 0.5,
+  "reference_tests": 137,
+  "reference_tests_pass": 68,
+  "tests": [
+    {
+      "id": "wpt/css_backgrounds/background-334",
+      "status": "fail",
+      "mismatch_pct": 0.012527
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-350",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-fixed-inline-scrolled-ref",
+      "status": "fail",
+      "mismatch_pct": 36.815287
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-fixed",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local-hidden",
+      "status": "fail",
+      "mismatch_pct": 0.000849
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-margin-root-001-ref",
+      "status": "fail",
+      "mismatch_pct": 100.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-margin-root-002-ref",
+      "status": "fail",
+      "mismatch_pct": 100.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-010",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-color-ref",
+      "status": "fail",
+      "mismatch_pct": 0.127389
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-color-repaint-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-color",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-content-box-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-content-box-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-content-box-with-border-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.045223
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-content-box-with-border-radius-003",
+      "status": "fail",
+      "mismatch_pct": 0.01189
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-content-box",
+      "status": "fail",
+      "mismatch_pct": 0.012527
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.049682
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius-003",
+      "status": "fail",
+      "mismatch_pct": 0.017622
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-padding-box-with-border-radius",
+      "status": "fail",
+      "mismatch_pct": 0.000425
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip-root",
+      "status": "fail",
+      "mismatch_pct": 93.545648
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_padding-box",
+      "status": "fail",
+      "mismatch_pct": 0.012527
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-body-propagation-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-body-propagation-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-body-propagation-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-clip",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-color-no-body-propagation-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-gradient-interpolation-001-notref",
+      "status": "fail",
+      "mismatch_pct": 6.369427
+    },
+    {
+      "id": "wpt/css_backgrounds/background-gradient-interpolation-001",
+      "status": "fail",
+      "mismatch_pct": 6.369427
+    },
+    {
+      "id": "wpt/css_backgrounds/background-gradient-interpolation-002-notref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-gradient-interpolation-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-gradient-interpolation-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-gradient-subpixel-fills-area",
+      "status": "fail",
+      "mismatch_pct": 4.045648
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-005",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-006",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-centered-ref",
+      "status": "fail",
+      "mismatch_pct": 6.369427
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-centered-with-border-radius",
+      "status": "fail",
+      "mismatch_pct": 0.001062
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-centered",
+      "status": "fail",
+      "mismatch_pct": 6.369427
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-cover-zoomed-1",
+      "status": "fail",
+      "mismatch_pct": 10.70276
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-gradient-currentcolor-conic-repaint-ref",
+      "status": "fail",
+      "mismatch_pct": 2.093631
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-gradient-currentcolor-linear-repaint-ref",
+      "status": "fail",
+      "mismatch_pct": 2.080679
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-gradient-currentcolor-radial-repaint-ref",
+      "status": "fail",
+      "mismatch_pct": 2.122293
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-gradient-currentcolor-visited-ref",
+      "status": "fail",
+      "mismatch_pct": 2.080679
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-large-with-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-image-with-border-radius-fidelity",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-margin-root-ref",
+      "status": "fail",
+      "mismatch_pct": 100.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-margin-transformed-root-ref",
+      "status": "fail",
+      "mismatch_pct": 100.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-margin-will-change-root-ref",
+      "status": "fail",
+      "mismatch_pct": 100.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-none-none-and-color-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-none-none-and-color",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-paint-order-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position-calc-minmax-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position-negative-percentage-comparison-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position-negative-percentage-comparison",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position-subpixel-at-border.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position-three-four-values",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-002",
+      "status": "fail",
+      "mismatch_pct": 93.333333
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-1-ref",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-1a",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-1b",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-1c",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-1d",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-1e",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-2-ref",
+      "status": "fail",
+      "mismatch_pct": 0.550318
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-2",
+      "status": "fail",
+      "mismatch_pct": 0.550318
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-3-ref",
+      "status": "fail",
+      "mismatch_pct": 0.550318
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-3",
+      "status": "fail",
+      "mismatch_pct": 0.550318
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-4-ref",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-4",
+      "status": "fail",
+      "mismatch_pct": 1.100637
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-round-empty-crash",
+      "status": "fail",
+      "mismatch_pct": 0.012102
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-10-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-10",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-1a",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-1b",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-1c",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-2-ref",
+      "status": "fail",
+      "mismatch_pct": 0.21741
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-2",
+      "status": "fail",
+      "mismatch_pct": 0.21741
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+      "status": "fail",
+      "mismatch_pct": 1.304459
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-3",
+      "status": "fail",
+      "mismatch_pct": 1.304459
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-4",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-5",
+      "status": "fail",
+      "mismatch_pct": 1.956688
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+      "status": "fail",
+      "mismatch_pct": 3.913376
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-6",
+      "status": "fail",
+      "mismatch_pct": 3.913376
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+      "status": "fail",
+      "mismatch_pct": 3.913376
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-7",
+      "status": "fail",
+      "mismatch_pct": 3.913376
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-8-ref",
+      "status": "fail",
+      "mismatch_pct": 3.240764
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-8",
+      "status": "fail",
+      "mismatch_pct": 3.240764
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-9-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat-space-9",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-rounded-image-clip-001",
+      "status": "fail",
+      "mismatch_pct": 6.063907
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-010",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-013",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-014",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-015",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-016",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-017",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-018",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-019",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-020",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-021",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-022",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-023",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-024",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-025",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-026",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-027",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-028",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-029",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-030",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-031",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-034",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-041",
+      "status": "fail",
+      "mismatch_pct": 16.985138
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-042",
+      "status": "fail",
+      "mismatch_pct": 16.985138
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-043",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-044",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-contain-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-contain-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-cover-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-cover-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-cover-003-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-cover-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-one-value-1x1-image",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-percentage-root-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size-with-negative-value",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/bg-color-with-gradient",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-001",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.005732
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-004-ref",
+      "status": "fail",
+      "mismatch_pct": 0.001274
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-004",
+      "status": "fail",
+      "mismatch_pct": 0.001274
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-005-ref",
+      "status": "fail",
+      "mismatch_pct": 0.001274
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-005",
+      "status": "fail",
+      "mismatch_pct": 0.001274
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-010",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-011",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-013",
+      "status": "fail",
+      "mismatch_pct": 0.000637
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-014",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-001",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.005308
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-004-ref",
+      "status": "fail",
+      "mismatch_pct": 0.003609
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-004",
+      "status": "fail",
+      "mismatch_pct": 0.003609
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-005-ref",
+      "status": "fail",
+      "mismatch_pct": 0.002548
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-005",
+      "status": "fail",
+      "mismatch_pct": 0.002548
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-010",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-011",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-013",
+      "status": "fail",
+      "mismatch_pct": 0.000849
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-right-radius-014",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-width-medium",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-width-thick",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-bottom-width-thin",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-color_transparent",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-013",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-021",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-calc-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-calc",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-displayed-with-transparent-border-color-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-displayed-with-transparent-border-color",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-outset-003-ref",
+      "status": "fail",
+      "mismatch_pct": 17.197452
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-outset-003",
+      "status": "fail",
+      "mismatch_pct": 27.388535
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-005",
+      "status": "fail",
+      "mismatch_pct": 4.904459
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-1",
+      "status": "fail",
+      "mismatch_pct": 0.543524
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-repeat-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round-1-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round-1",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round-2-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round-2",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round-stretch-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-round",
+      "status": "fail",
+      "mismatch_pct": 0.135881
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-1-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-1",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-10-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-10",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-2-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-2",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-3-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-3",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-4-ref-1",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-4-ref-2",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-4",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-5-ref-1",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-5-ref-2",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-5",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-6-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-6",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-7-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-space-7",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-repeat-stretch-round-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-round-and-stretch",
+      "status": "fail",
+      "mismatch_pct": 0.255626
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-fill-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-fill-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-fill-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-slice-percentage",
+      "status": "fail",
+      "mismatch_pct": 0.135881
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-space-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-005",
+      "status": "fail",
+      "mismatch_pct": 0.870488
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-006",
+      "status": "fail",
+      "mismatch_pct": 0.870488
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-008-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-should-extend-to-padding-ref",
+      "status": "fail",
+      "mismatch_pct": 4.565605
+    },
+    {
+      "id": "wpt/css_backgrounds/border-image-width-should-extend-to-padding",
+      "status": "fail",
+      "mismatch_pct": 4.565605
+    },
+    {
+      "id": "wpt/css_backgrounds/border-images",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-left-width-medium",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-left-width-thick",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-left-width-thin",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-001-ref",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-001",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-002-ref",
+      "status": "fail",
+      "mismatch_pct": 3.531423
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-002",
+      "status": "fail",
+      "mismatch_pct": 3.531423
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-003-ref",
+      "status": "fail",
+      "mismatch_pct": 3.53949
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-003",
+      "status": "fail",
+      "mismatch_pct": 3.53949
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-004-ref",
+      "status": "fail",
+      "mismatch_pct": 3.515499
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-004",
+      "status": "fail",
+      "mismatch_pct": 3.515499
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-005-ref",
+      "status": "fail",
+      "mismatch_pct": 3.504246
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-005",
+      "status": "fail",
+      "mismatch_pct": 3.504246
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-006-ref",
+      "status": "fail",
+      "mismatch_pct": 3.504459
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-006",
+      "status": "fail",
+      "mismatch_pct": 3.504459
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-007-ref",
+      "status": "fail",
+      "mismatch_pct": 3.524628
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-007",
+      "status": "fail",
+      "mismatch_pct": 3.524628
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-008",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-009-ref",
+      "status": "fail",
+      "mismatch_pct": 3.509766
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-009",
+      "status": "fail",
+      "mismatch_pct": 3.718471
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-010-ref",
+      "status": "fail",
+      "mismatch_pct": 3.497028
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-010",
+      "status": "fail",
+      "mismatch_pct": 3.649469
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-011-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-012-ref",
+      "status": "fail",
+      "mismatch_pct": 0.887261
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-012",
+      "status": "fail",
+      "mismatch_pct": 0.887261
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-clipping-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-dynamic-from-no-radius-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-horizontal-value-is-zero",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-overflow-hidden",
+      "status": "fail",
+      "mismatch_pct": 0.000425
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-shorthand-002-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-radius-shorthand-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-right-width-medium",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-right-width-thick",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-right-width-thin",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-001",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.005945
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-004-ref",
+      "status": "fail",
+      "mismatch_pct": 0.002972
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-004",
+      "status": "fail",
+      "mismatch_pct": 0.002972
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-005-ref",
+      "status": "fail",
+      "mismatch_pct": 0.001699
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-005",
+      "status": "fail",
+      "mismatch_pct": 0.001699
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-010",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-011",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-012",
+      "status": "fail",
+      "mismatch_pct": 0.000212
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-013",
+      "status": "fail",
+      "mismatch_pct": 0.000212
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-left-radius-014",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-001",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-002",
+      "status": "fail",
+      "mismatch_pct": 0.00552
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-004-ref",
+      "status": "fail",
+      "mismatch_pct": 0.004034
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-004",
+      "status": "fail",
+      "mismatch_pct": 0.004034
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-005-ref",
+      "status": "fail",
+      "mismatch_pct": 0.002123
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-005",
+      "status": "fail",
+      "mismatch_pct": 0.002123
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-010",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-011",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-012",
+      "status": "fail",
+      "mismatch_pct": 0.000425
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-013",
+      "status": "fail",
+      "mismatch_pct": 0.000425
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-right-radius-014",
+      "status": "fail",
+      "mismatch_pct": 3.461571
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-width-medium",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-width-thick",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-top-width-thin",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-pixel-snapping-001-a",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-pixel-snapping-001-b",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-small-values-001-a",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-small-values-001-b",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-small-values-001-c",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-small-values-001-d",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/border-width-small-values-001-e",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-029",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-039",
+      "status": "fail",
+      "mismatch_pct": 0.779618
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-040",
+      "status": "fail",
+      "mismatch_pct": 0.733758
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-041",
+      "status": "fail",
+      "mismatch_pct": 0.779618
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-042",
+      "status": "fail",
+      "mismatch_pct": 0.856051
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-border-radius-001",
+      "status": "fail",
+      "mismatch_pct": 4.235456
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-calc-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-calc",
+      "status": "fail",
+      "mismatch_pct": 5.981316
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-currentcolor-ref",
+      "status": "fail",
+      "mismatch_pct": 9.1569
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-currentcolor",
+      "status": "fail",
+      "mismatch_pct": 24.850955
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-inset-without-border-radius",
+      "status": "fail",
+      "mismatch_pct": 6.268365
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-invalid-001",
+      "status": "fail",
+      "mismatch_pct": 7.218684
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-multiple-001",
+      "status": "fail",
+      "mismatch_pct": 5.58896
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-outset-without-border-radius-001",
+      "status": "fail",
+      "mismatch_pct": 13.970276
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-overlapping-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-overlapping-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-overlapping-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-overlapping-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-radius-000-ref",
+      "status": "fail",
+      "mismatch_pct": 5.761359
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-radius-000",
+      "status": "fail",
+      "mismatch_pct": 5.761359
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-radius-001-ref",
+      "status": "fail",
+      "mismatch_pct": 5.530361
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow-radius-001",
+      "status": "fail",
+      "mismatch_pct": 5.530361
+    },
+    {
+      "id": "wpt/css_backgrounds/child-move-reveals-parent-background-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css-border-radius-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-clip-border-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-clip-content-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-clip-padding-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-clip",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-origin-border-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-origin-content-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-origin-padding-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-size-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-size-contain",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-background-size",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-border-image-repeat-repeat",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-border-image-repeat-stretch",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-border-image-source",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/css3-box-shadow",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/fieldset-inset-shadow-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/inline-background-rtl-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/inner-border-non-renderable-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/inset-box-shadow-scroll-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/inset-box-shadow-scroll",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/inset-box-shadow-stacking-context-scroll",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/linear-gradient-calc-crash",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/linear-gradient-currentcolor-first-line-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/local-attachment-content-box-scroll-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/local-attachment-flex-column-reverse-scroll-ref",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/local-attachment-flex-row-reverse-scroll-ref",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/local-attachment-rtl-and-flex-row-reverse-scroll-ref",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/local-attachment-rtl-scroll-ref",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/subpixel-repeat-no-repeat-mix",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/hidpi_simple-bg-color",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-background-geometry-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-background-geometry",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-border-image-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-border-image",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-border-on-top-ref",
+      "status": "fail",
+      "mismatch_pct": 8.492569
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-border-on-top",
+      "status": "fail",
+      "mismatch_pct": 8.492569
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-box-decoration-break-ref",
+      "status": "fail",
+      "mismatch_pct": 0.492569
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-box-decoration-break",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-multiple-backgrounds-ref",
+      "status": "fail",
+      "mismatch_pct": 0.146285
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-multiple-backgrounds",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area-ref",
+      "status": "fail",
+      "mismatch_pct": 0.378132
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-area",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-box",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-box_with_position",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-box_with_radius",
+      "status": "fail",
+      "mismatch_pct": 10.921656
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-border-box_with_size",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-content-box",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_position",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_radius",
+      "status": "fail",
+      "mismatch_pct": 10.921656
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_size",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-padding-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_position",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+      "status": "fail",
+      "mismatch_pct": 10.921656
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_size",
+      "status": "fail",
+      "mismatch_pct": 10.254777
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-rounded-corner-ref",
+      "status": "fail",
+      "mismatch_pct": 0.003397
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-rounded-corner",
+      "status": "fail",
+      "mismatch_pct": 0.003397
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-animated-text-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-dynamic-2-ref",
+      "status": "fail",
+      "mismatch_pct": 32.271762
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-ellipsis-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-ellipsis",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-flex-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-flex",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-multi-line-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-multi-line",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-out-of-flow-child-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-text-decorations-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-text-decorations",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-text-emphasis-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-clip_clip-text-text-emphasis",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-border-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-border-box_with_position",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-border-box_with_radius",
+      "status": "fail",
+      "mismatch_pct": 0.006582
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-border-box_with_size",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-content-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-content-box_with_position",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-content-box_with_radius",
+      "status": "fail",
+      "mismatch_pct": 0.006582
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-content-box_with_size",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-padding-box",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-padding-box_with_position",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-padding-box_with_radius",
+      "status": "fail",
+      "mismatch_pct": 0.006582
+    },
+    {
+      "id": "wpt/css_backgrounds/background-origin_origin-padding-box_with_size",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-custom-property-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-custom-timing-function-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-custom-timing-function-reverse-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-element-not-visible-at-current-viewport-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-fallback-additive-keyframe-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-fragmented-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-half-opaque-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-pseudo-element-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-will-change-contents-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-with-images-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-with-mask-ref",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-animation-zero-size-element-change-to-non-zero-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_background-color-transition-currentcolor-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_invalidation_background-color-animation-with-zero-alpha-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_invalidation_background-color-transition-obscured-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/animations_invalidation_background-color-transition-with-initially-transparent-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-color-1-ref",
+      "status": "fail",
+      "mismatch_pct": 0.908705
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-color-3-ref",
+      "status": "fail",
+      "mismatch_pct": 6.726115
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-color-4-ref",
+      "status": "fail",
+      "mismatch_pct": 3.425902
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-color-6-ref",
+      "status": "fail",
+      "mismatch_pct": 2.951168
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-1-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-3-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+      "status": "fail",
+      "mismatch_pct": 2.960085
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-6-ref",
+      "status": "fail",
+      "mismatch_pct": 2.960085
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-positioning-2-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-positioning-3-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-positioning-4-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-positioning-5-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-attachment-local_attachment-scroll-positioning-1-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat_background-repeat-image-larger-than-positioning-area-crash",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-repeat_gradient-repeat-spaced-with-borders",
+      "status": "fail",
+      "mismatch_pct": 2.004459
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-contain-svg-view",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-cover-contain-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-cover-contain-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-cover-svg-view",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-cover-svg",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-near-zero-color",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-near-zero-gradient",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-near-zero-png",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_background-size-near-zero-svg",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-010",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-013",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-014",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-015",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-016",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-017",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-018",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-019",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-020",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-021",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-022",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-023",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-024",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-025",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-026",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-027",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-028",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_background-size-vector-029",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_diagonal-percentage-vector-background",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--auto-32px--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--contain--width",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-nonpercent-height--crisp",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-nonpercent-height-viewbox--crisp",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_tall--cover--width",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--12px-auto--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--auto-32px--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--contain--width",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--nonpercent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--nonpercent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--nonpercent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--nonpercent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--nonpercent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--nonpercent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--omitted-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--omitted-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--omitted-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--omitted-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--omitted-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--omitted-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--percent-width-nonpercent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--percent-width-nonpercent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--percent-width-omitted-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--percent-width-omitted-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--percent-width-percent-height-viewbox",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--percent-width-percent-height",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_wide--cover--width",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-height-ratio-5px-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-height-ratio-auto-5px",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-height-ratio-auto-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-height-ratio-contain",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-height-ratio-cover",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-ratio-no-dimensions-5px-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-ratio-no-dimensions-auto-5px",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-ratio-no-dimensions-auto-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-ratio-no-dimensions-contain",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-ratio-no-dimensions-cover",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-width-ratio-5px-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-width-ratio-auto-5px",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-width-ratio-auto-auto",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-width-ratio-contain",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-size_vector_zero-width-ratio-cover",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+      "status": "fail",
+      "mismatch_pct": 2.123142
+    },
+    {
+      "id": "wpt/css_backgrounds/background-position_subpixel-position-center.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-001-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-001",
+      "status": "fail",
+      "mismatch_pct": 6.167728
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-002-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-002",
+      "status": "fail",
+      "mismatch_pct": 6.167728
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-003-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-block-fragmentation-003",
+      "status": "fail",
+      "mismatch_pct": 8.152866
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-001-ref",
+      "status": "fail",
+      "mismatch_pct": 0.302123
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-001",
+      "status": "fail",
+      "mismatch_pct": 0.302123
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-002-ref",
+      "status": "fail",
+      "mismatch_pct": 0.302123
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-002",
+      "status": "fail",
+      "mismatch_pct": 0.302123
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003-ref",
+      "status": "fail",
+      "mismatch_pct": 0.844586
+    },
+    {
+      "id": "wpt/css_backgrounds/box-shadow_slice-inline-fragmentation-003",
+      "status": "fail",
+      "mismatch_pct": 0.844586
+    }
+  ]
+}

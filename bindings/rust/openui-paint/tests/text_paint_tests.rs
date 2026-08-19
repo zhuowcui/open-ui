@@ -6,16 +6,17 @@
 
 use std::sync::Arc;
 
-use skia_safe::{surfaces, Color as SkColor, Surface};
+use skia_safe::{
+    surfaces, ClipOp, Color as SkColor, ImageInfo, PixelGeometry, Rect, Surface, SurfaceProps,
+    SurfacePropsFlags,
+};
 
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalSize};
 use openui_layout::{Fragment, FragmentKind};
-use openui_paint::{paint_fragment, text_painter, decoration_painter};
+use openui_paint::{decoration_painter, paint_fragment, text_painter};
 use openui_style::*;
-use openui_text::{
-    Font, FontDescription, ShapeResult, TextDirection, TextShaper,
-};
+use openui_text::{Font, FontDescription, ShapeResult, TextDirection, TextShaper};
 
 // ── Test helpers ─────────────────────────────────────────────────────
 
@@ -39,8 +40,8 @@ fn shape_text_with_size(text: &str, size: f32) -> ShapeResult {
 }
 
 fn make_surface(width: i32, height: i32) -> Surface {
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .expect("Failed to create Skia surface");
+    let mut surface =
+        surfaces::raster_n32_premul((width, height)).expect("Failed to create Skia surface");
     surface.canvas().clear(SkColor::WHITE);
     surface
 }
@@ -51,7 +52,13 @@ fn has_non_white_pixels(surface: &mut Surface) -> bool {
     let info = image.image_info();
     let row_bytes = info.min_row_bytes();
     let mut pixels = vec![0u8; info.height() as usize * row_bytes];
-    image.read_pixels(&info, &mut pixels, row_bytes, (0, 0), skia_safe::image::CachingHint::Allow);
+    image.read_pixels(
+        &info,
+        &mut pixels,
+        row_bytes,
+        (0, 0),
+        skia_safe::image::CachingHint::Allow,
+    );
 
     for chunk in pixels.chunks(4) {
         // BGRA or RGBA — check if any pixel isn't white (0xFF)
@@ -77,10 +84,7 @@ fn make_text_fragment(
     let height = metrics.ascent + metrics.descent;
     let mut frag = Fragment::new_text(
         node_id,
-        PhysicalSize::new(
-            LayoutUnit::from_f32(width),
-            LayoutUnit::from_f32(height),
-        ),
+        PhysicalSize::new(LayoutUnit::from_f32(width), LayoutUnit::from_f32(height)),
         Arc::clone(shape_result),
         String::new(),
     );
@@ -89,7 +93,9 @@ fn make_text_fragment(
 }
 
 /// Create a minimal Document with one text node for testing.
-fn make_doc_with_text_style(style_fn: impl FnOnce(&mut ComputedStyle)) -> (Document, openui_dom::NodeId) {
+fn make_doc_with_text_style(
+    style_fn: impl FnOnce(&mut ComputedStyle),
+) -> (Document, openui_dom::NodeId) {
     let mut doc = Document::new();
     let vp = doc.root();
     let text_node = doc.create_node(ElementTag::Text);
@@ -112,7 +118,10 @@ fn paint_text_produces_non_white_pixels() {
     let style = default_style();
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
 
-    assert!(has_non_white_pixels(&mut surface), "Text should produce visible pixels");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Text should produce visible pixels"
+    );
 }
 
 #[test]
@@ -140,9 +149,12 @@ fn different_font_sizes_produce_different_results() {
     let sr_large = Arc::new(shape_text_with_size("Test", 48.0));
 
     // Widths should differ significantly
-    assert!(sr_large.width() > sr_small.width() * 1.5,
+    assert!(
+        sr_large.width() > sr_small.width() * 1.5,
         "Larger font should produce wider text: large={}, small={}",
-        sr_large.width(), sr_small.width());
+        sr_large.width(),
+        sr_small.width()
+    );
 }
 
 #[test]
@@ -162,8 +174,14 @@ fn text_color_is_applied() {
     text_painter::paint_text(surface_blue.canvas(), &sr, (10.0, 50.0), &style_blue);
 
     // Both should produce visible output
-    assert!(has_non_white_pixels(&mut surface_red), "Red text should be visible");
-    assert!(has_non_white_pixels(&mut surface_blue), "Blue text should be visible");
+    assert!(
+        has_non_white_pixels(&mut surface_red),
+        "Red text should be visible"
+    );
+    assert!(
+        has_non_white_pixels(&mut surface_blue),
+        "Blue text should be visible"
+    );
 }
 
 #[test]
@@ -173,7 +191,10 @@ fn transparent_text_produces_no_visible_output() {
     let mut style = default_style();
     style.color = Color::TRANSPARENT;
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(!has_non_white_pixels(&mut surface), "Transparent text should not be visible");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "Transparent text should not be visible"
+    );
 }
 
 #[test]
@@ -183,7 +204,10 @@ fn white_text_on_white_background_is_invisible() {
     let mut style = default_style();
     style.color = Color::WHITE;
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(!has_non_white_pixels(&mut surface), "White text on white should not be visible");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "White text on white should not be visible"
+    );
 }
 
 #[test]
@@ -219,27 +243,45 @@ fn paint_text_at_different_positions() {
 #[test]
 fn paint_text_shape_result_width_is_positive() {
     let sr = shape_text("Hello");
-    assert!(sr.width() > 0.0, "Shaped text should have positive width: {}", sr.width());
+    assert!(
+        sr.width() > 0.0,
+        "Shaped text should have positive width: {}",
+        sr.width()
+    );
 }
 
 #[test]
 fn shape_result_to_text_blob_succeeds() {
     let sr = shape_text("Hello");
-    assert!(sr.to_text_blob().is_some(), "to_text_blob should produce a blob");
+    assert!(
+        sr.to_text_blob().is_some(),
+        "to_text_blob should produce a blob"
+    );
 }
 
 #[test]
 fn empty_shape_result_to_text_blob_returns_none() {
     let sr = ShapeResult::empty(TextDirection::Ltr);
-    assert!(sr.to_text_blob().is_none(), "Empty shape result should not produce a blob");
+    assert!(
+        sr.to_text_blob().is_none(),
+        "Empty shape result should not produce a blob"
+    );
 }
 
 #[test]
 fn metrics_from_shape_result_returns_valid_metrics() {
     let sr = shape_text("Hello");
     let metrics = text_painter::metrics_from_shape_result(&sr);
-    assert!(metrics.ascent > 0.0, "Ascent should be positive: {}", metrics.ascent);
-    assert!(metrics.descent > 0.0, "Descent should be positive: {}", metrics.descent);
+    assert!(
+        metrics.ascent > 0.0,
+        "Ascent should be positive: {}",
+        metrics.ascent
+    );
+    assert!(
+        metrics.descent > 0.0,
+        "Descent should be positive: {}",
+        metrics.descent
+    );
 }
 
 #[test]
@@ -286,9 +328,12 @@ fn larger_font_produces_taller_metrics() {
     let sr_large = shape_text_with_size("X", 48.0);
     let m_small = text_painter::metrics_from_shape_result(&sr_small);
     let m_large = text_painter::metrics_from_shape_result(&sr_large);
-    assert!(m_large.ascent > m_small.ascent,
+    assert!(
+        m_large.ascent > m_small.ascent,
         "Larger font should have greater ascent: large={}, small={}",
-        m_large.ascent, m_small.ascent);
+        m_large.ascent,
+        m_small.ascent
+    );
 }
 
 #[test]
@@ -316,7 +361,10 @@ fn paint_text_shadow_produces_output() {
         color: Color::BLACK,
     }];
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(has_non_white_pixels(&mut surface), "Shadow should be visible");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Shadow should be visible"
+    );
 }
 
 #[test]
@@ -340,7 +388,10 @@ fn no_shadow_when_empty_shadow_list() {
     let mut surface = make_surface(200, 100);
     let style = default_style(); // empty text_shadow
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
-    assert!(!has_non_white_pixels(&mut surface), "No shadow should be drawn");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "No shadow should be drawn"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -355,11 +406,18 @@ fn underline_draws_visible_line() {
     let mut style = default_style();
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
-    assert!(has_non_white_pixels(&mut surface), "Underline should be visible");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Underline should be visible"
+    );
 }
 
 #[test]
@@ -370,11 +428,18 @@ fn overline_draws_visible_line() {
     let mut style = default_style();
     style.text_decoration_line = TextDecorationLine::OVERLINE;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
-    assert!(has_non_white_pixels(&mut surface), "Overline should be visible");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Overline should be visible"
+    );
 }
 
 #[test]
@@ -385,11 +450,18 @@ fn line_through_draws_visible_line() {
     let mut style = default_style();
     style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::AfterText,
         None,
     );
-    assert!(has_non_white_pixels(&mut surface), "Line-through should be visible");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Line-through should be visible"
+    );
 }
 
 #[test]
@@ -400,11 +472,18 @@ fn no_decoration_when_none() {
     let mut style = default_style();
     style.text_decoration_line = TextDecorationLine::NONE;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
-    assert!(!has_non_white_pixels(&mut surface), "No decoration should be drawn when NONE");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "No decoration should be drawn when NONE"
+    );
 }
 
 #[test]
@@ -417,7 +496,11 @@ fn decoration_color_matches_current_color() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_color = StyleColor::CurrentColor;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -433,7 +516,11 @@ fn decoration_color_explicit() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_color = StyleColor::Resolved(Color::BLUE);
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -449,7 +536,11 @@ fn decoration_style_solid() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_style = TextDecorationStyle::Solid;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -465,7 +556,11 @@ fn decoration_style_double() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_style = TextDecorationStyle::Double;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -481,7 +576,11 @@ fn decoration_style_dotted() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_style = TextDecorationStyle::Dotted;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -497,7 +596,11 @@ fn decoration_style_dashed() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_style = TextDecorationStyle::Dashed;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -513,7 +616,11 @@ fn decoration_style_wavy() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_style = TextDecorationStyle::Wavy;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -529,7 +636,11 @@ fn decoration_thickness_auto() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_thickness = TextDecorationThickness::Auto;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -545,7 +656,11 @@ fn decoration_thickness_from_font() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_thickness = TextDecorationThickness::FromFont;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -561,7 +676,11 @@ fn decoration_thickness_explicit_length() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_thickness = TextDecorationThickness::Length(3.0);
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -575,11 +694,14 @@ fn multiple_decorations_underline_and_line_through() {
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
     // Combine underline + line-through via bitwise OR
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.text_decoration_line =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::AfterText,
         None,
     );
@@ -598,7 +720,11 @@ fn all_three_decorations_combined() {
             | TextDecorationLine::LINE_THROUGH.0,
     );
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::AfterText,
         None,
     );
@@ -614,12 +740,18 @@ fn decoration_transparent_color_not_visible() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_color = StyleColor::Resolved(Color::TRANSPARENT);
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
-    assert!(!has_non_white_pixels(&mut surface),
-        "Transparent decoration should not be visible");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "Transparent decoration should not be visible"
+    );
 }
 
 #[test]
@@ -630,7 +762,11 @@ fn decoration_on_empty_text_does_not_crash() {
     let mut style = default_style();
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -646,7 +782,11 @@ fn decoration_wavy_overline() {
     style.text_decoration_line = TextDecorationLine::OVERLINE;
     style.text_decoration_style = TextDecorationStyle::Wavy;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 60.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 60.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -662,7 +802,11 @@ fn decoration_dashed_line_through() {
     style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
     style.text_decoration_style = TextDecorationStyle::Dashed;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::AfterText,
         None,
     );
@@ -678,7 +822,11 @@ fn decoration_dotted_overline() {
     style.text_decoration_line = TextDecorationLine::OVERLINE;
     style.text_decoration_style = TextDecorationStyle::Dotted;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 60.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 60.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -694,7 +842,11 @@ fn decoration_double_line_through() {
     style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
     style.text_decoration_style = TextDecorationStyle::Double;
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::AfterText,
         None,
     );
@@ -710,7 +862,11 @@ fn decoration_thick_underline() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
     style.text_decoration_thickness = TextDecorationThickness::Length(5.0);
     decoration_painter::paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         decoration_painter::DecorationPhase::BeforeText,
         None,
     );
@@ -733,7 +889,10 @@ fn paint_text_fragment_full_pipeline() {
 
     let mut surface = make_surface(400, 100);
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
-    assert!(has_non_white_pixels(&mut surface), "Text fragment should produce visible pixels");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Text fragment should produce visible pixels"
+    );
 }
 
 #[test]
@@ -745,14 +904,44 @@ fn paint_text_fragment_with_offset() {
     let sr = Arc::new(shape_text("Hello"));
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut frag = make_text_fragment(text_node, &sr, &metrics);
-    frag.offset = PhysicalOffset::new(
-        LayoutUnit::from_f32(50.0),
-        LayoutUnit::from_f32(20.0),
-    );
+    frag.offset = PhysicalOffset::new(LayoutUnit::from_f32(50.0), LayoutUnit::from_f32(20.0));
 
     let mut surface = make_surface(400, 100);
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
     assert!(has_non_white_pixels(&mut surface));
+}
+
+#[test]
+fn text_logically_outside_hard_clip_has_no_lcd_filter_leak() {
+    let sr = shape_text("H");
+    let blob = sr.to_text_blob().expect("shaped glyph blob");
+    let clip_right = 100.0;
+    let origin_x = clip_right - blob.bounds().left;
+    let props = SurfaceProps::new_with_text_properties(
+        SurfacePropsFlags::default(),
+        PixelGeometry::RGBH,
+        0.2,
+        1.2,
+    );
+    let mut surface = surfaces::raster(
+        &ImageInfo::new_n32_premul((200, 100), None),
+        None,
+        Some(&props),
+    )
+    .expect("LCD raster surface");
+    surface.canvas().clear(SkColor::WHITE);
+    surface.canvas().clip_rect(
+        Rect::from_ltrb(0.0, 0.0, clip_right, 100.0),
+        ClipOp::Intersect,
+        false,
+    );
+
+    text_painter::paint_text(surface.canvas(), &sr, (origin_x, 50.0), &default_style());
+
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "LCD filter taps must not leak from logically clipped text"
+    );
 }
 
 #[test]
@@ -768,7 +957,10 @@ fn paint_text_fragment_with_opacity() {
 
     let mut surface = make_surface(300, 100);
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
-    assert!(has_non_white_pixels(&mut surface), "Semi-transparent text should be visible");
+    assert!(
+        has_non_white_pixels(&mut surface),
+        "Semi-transparent text should be visible"
+    );
 }
 
 #[test]
@@ -784,8 +976,10 @@ fn paint_text_fragment_hidden_visibility() {
 
     let mut surface = make_surface(300, 100);
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
-    assert!(!has_non_white_pixels(&mut surface),
-        "Hidden text should not be visible");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "Hidden text should not be visible"
+    );
 }
 
 #[test]
@@ -862,15 +1056,37 @@ fn paint_text_fragment_no_shape_result() {
         text_combine: None,
         overflow_rect: None,
         has_overflow_clip: false,
+        block_axis_clip_only: false,
+        inline_axis_clip_only: false,
+        column_block_start_ink_overflow: LayoutUnit::zero(),
+        column_block_end_ink_overflow: LayoutUnit::zero(),
+        fragmentation_visual_offset: PhysicalOffset::zero(),
+        positioned_fragmentation: None,
+        multicol_fragmentation: None,
+        decoration_paint_block_size: None,
+        decoration_slice: None,
+        paint_zero_block_outline: false,
+        is_block_end_decoration_marker: false,
+        fills_fragmentainer_block_end_decoration: false,
         oof_candidates: Vec::new(),
         end_margin_strut: openui_geometry::MarginStrut::new(),
         start_margin_strut: openui_geometry::MarginStrut::new(),
+        first_baseline: None,
+        last_baseline: None,
+        is_first_for_node: true,
+        is_last_for_node: true,
+        is_inline_box_fragment: false,
+        break_token: None,
+        float_resolved_bfc: false,
+        float_exclusions: Vec::new(),
     };
 
     let mut surface = make_surface(200, 100);
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
-    assert!(!has_non_white_pixels(&mut surface),
-        "Text without shape_result should produce no output");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "Text without shape_result should produce no output"
+    );
 }
 
 #[test]
@@ -954,10 +1170,8 @@ fn paint_multiple_text_fragments_in_sequence() {
     let mut frag2 = make_text_fragment(t2, &sr2, &m2);
 
     // Position second fragment after first
-    frag2.offset = PhysicalOffset::new(
-        LayoutUnit::from_f32(sr1.width()),
-        LayoutUnit::from_f32(0.0),
-    );
+    frag2.offset =
+        PhysicalOffset::new(LayoutUnit::from_f32(sr1.width()), LayoutUnit::from_f32(0.0));
 
     let mut container_frag = Fragment::new_box(
         container,
@@ -967,7 +1181,12 @@ fn paint_multiple_text_fragments_in_sequence() {
     container_frag.children.push(frag2);
 
     let mut surface = make_surface(600, 100);
-    paint_fragment(surface.canvas(), &container_frag, &doc, PhysicalOffset::zero());
+    paint_fragment(
+        surface.canvas(),
+        &container_frag,
+        &doc,
+        PhysicalOffset::zero(),
+    );
     assert!(has_non_white_pixels(&mut surface));
 }
 
@@ -984,8 +1203,10 @@ fn paint_text_fragment_zero_opacity() {
 
     let mut surface = make_surface(300, 100);
     paint_fragment(surface.canvas(), &frag, &doc, PhysicalOffset::zero());
-    assert!(!has_non_white_pixels(&mut surface),
-        "Zero opacity text should not be visible");
+    assert!(
+        !has_non_white_pixels(&mut surface),
+        "Zero opacity text should not be visible"
+    );
 }
 
 #[test]
@@ -1060,7 +1281,11 @@ fn paint_text_with_all_decoration_styles_does_not_crash() {
             style.text_decoration_line = deco_line;
             style.text_decoration_style = deco_style;
             decoration_painter::paint_text_decorations(
-                surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+                surface.canvas(),
+                &sr,
+                (10.0, 50.0),
+                &style,
+                &metrics,
                 decoration_painter::DecorationPhase::AfterText,
                 None,
             );
@@ -1116,9 +1341,29 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         text_combine: None,
         overflow_rect: None,
         has_overflow_clip: false,
+        block_axis_clip_only: false,
+        inline_axis_clip_only: false,
+        column_block_start_ink_overflow: LayoutUnit::zero(),
+        column_block_end_ink_overflow: LayoutUnit::zero(),
+        fragmentation_visual_offset: PhysicalOffset::zero(),
+        positioned_fragmentation: None,
+        multicol_fragmentation: None,
+        decoration_paint_block_size: None,
+        decoration_slice: None,
+        paint_zero_block_outline: false,
+        is_block_end_decoration_marker: false,
+        fills_fragmentainer_block_end_decoration: false,
         oof_candidates: Vec::new(),
         end_margin_strut: openui_geometry::MarginStrut::new(),
         start_margin_strut: openui_geometry::MarginStrut::new(),
+        first_baseline: None,
+        last_baseline: None,
+        is_first_for_node: true,
+        is_last_for_node: true,
+        is_inline_box_fragment: false,
+        break_token: None,
+        float_resolved_bfc: false,
+        float_exclusions: Vec::new(),
     };
 
     let mut surface = make_surface(200, 100);

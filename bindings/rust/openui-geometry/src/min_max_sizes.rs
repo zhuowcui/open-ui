@@ -56,7 +56,9 @@ impl MinMaxSizes {
 }
 
 impl Default for MinMaxSizes {
-    fn default() -> Self { Self::zero() }
+    fn default() -> Self {
+        Self::zero()
+    }
 }
 
 #[cfg(test)]
@@ -66,9 +68,15 @@ mod tests {
     #[test]
     fn clamp_within_range() {
         let mm = MinMaxSizes::new(LayoutUnit::from_i32(50), LayoutUnit::from_i32(200));
-        assert_eq!(mm.clamp(LayoutUnit::from_i32(100)), LayoutUnit::from_i32(100));
+        assert_eq!(
+            mm.clamp(LayoutUnit::from_i32(100)),
+            LayoutUnit::from_i32(100)
+        );
         assert_eq!(mm.clamp(LayoutUnit::from_i32(30)), LayoutUnit::from_i32(50));
-        assert_eq!(mm.clamp(LayoutUnit::from_i32(300)), LayoutUnit::from_i32(200));
+        assert_eq!(
+            mm.clamp(LayoutUnit::from_i32(300)),
+            LayoutUnit::from_i32(200)
+        );
     }
 
     #[test]

@@ -20,7 +20,10 @@ pub struct LogicalOffset {
 impl LogicalOffset {
     #[inline]
     pub const fn new(inline_offset: LayoutUnit, block_offset: LayoutUnit) -> Self {
-        Self { inline_offset, block_offset }
+        Self {
+            inline_offset,
+            block_offset,
+        }
     }
 
     #[inline]

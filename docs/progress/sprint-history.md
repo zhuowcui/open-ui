@@ -16,9 +16,12 @@
 | SP10 | Full CSS Flexbox | 617 | — | ✅ Complete |
 | SP11 | Text & Inline Layout | 1,902 | 31 | ✅ Complete |
 | SP11.5 | Full Chromium Text Parity | 3,371 | 6 | ✅ Complete |
-| SP12 | CSS Block Layout | 7,505 | 18 | ✅ Complete |
+| SP12 | CSS Block/Layout WPT Accountability | 7,673 inventory rows | multi-wave | ✅ Complete by ownership |
+| SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
+| SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
+| SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
 
-**Total: 113 commits, 7,505 tests, 468,543 lines of Rust code**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 2,823 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 retired SP16 font-metric owner rows.**
 
 ---
 
@@ -206,60 +209,59 @@ This gives us control, portability, and eliminates the Chromium build dependency
 
 ---
 
-## SP12: CSS Block Layout (CURRENT — COMPLETE)
+## SP12: CSS Block/Layout WPT Accountability (COMPLETE BY OWNERSHIP)
 
-**Goal**: 100% Chromium block layout capabilities with pixel-perfect rendering.
+**Goal**: eliminate all current SP12-owned fixable residuals and make every remaining
+SP12-scope WPT row accountable to an explicit owner.
 
-### What we built (new Rust code):
+### Verified status
 
-| Module | LOC | Purpose |
-|--------|-----|---------|
-| `block.rs` | ~1,300 | Main block layout algorithm |
-| `margin_collapsing.rs` | ~450 | CSS 2.1 §8.3.1 margin strut logic |
-| `exclusion_space.rs` | ~500 | Float exclusion rectangle tracking |
-| `out_of_flow.rs` | ~880 | Absolute, fixed, sticky positioning |
-| `new_formatting_context.rs` | ~400 | Float avoidance for new BFC elements |
-| `intrinsic_sizing.rs` | ~580 | Min/max content size computation |
-| `float_handler.rs` | ~300 | Float positioning lifecycle |
-| `clearance.rs` | ~200 | Clear property implementation |
-| `overflow.rs` | ~400 | Overflow: visible/hidden/scroll/auto/clip |
-| `fragmentation.rs` | ~600 | Block fragmentation for multicol/print |
+| Metric | Value |
+|---|---:|
+| Chromium SP12-scope inventory rows | 7673 |
+| Ported/runnable WPT tests | 3517 |
+| Unported but explicitly tracked rows | 4156 |
+| Runnable passes | 2767 |
+| Runnable failures | 750 |
+| Runnable render/diff errors | 0 |
+| Generic `not_ported` bucket rows | 0 |
+| `sp12_layout_bug` rows | 0 |
+| `needs_text` rows | 0 |
 
-### Implementation phases:
+`tools/accountability/audit.py` passes all checks for this state.
 
-| Phase | What |
-|-------|------|
-| A | Core data structures: BFC geometry, MarginStrut, ConstraintSpace, LayoutResult |
-| B | Exclusion space + float positioning |
-| C | BFC offset resolution + full margin collapsing + new formatting context |
-| D | Relative, absolute, fixed, sticky positioning |
-| E | Intrinsic sizing + min/max constraints + CSS Sizing Level 3 |
-| F | Overflow handling + paint clipping |
-| G | Block fragmentation + multicol integration |
-| H | 2,996 WPT-style tests translated and passing |
-| I | 612 pixel comparison tests — all 100% match to Chromium |
-| J | 18 rounds of dual-model review — 102 findings, 83 real fixes, converged to 0 |
+### What changed during the SP12 accountability push
 
-### Dual-model review convergence:
+- Built and used a full WPT accountability pipeline:
+  - generated Rust WPT document builders,
+  - generated Chromium HTML templates,
+  - per-test OpenUI/Chromium/diff PNGs,
+  - full `summary.json`,
+  - full inventory `wpt_mapping.csv`,
+  - deferred dependency CSV and plan.
+- Fixed the final SP12-owned rounded background/border antialiasing residuals.
+- Fixed the final rounded overflow clip-margin residuals:
+  - `overflow-clip-margin-010` and ref,
+  - `overflow-clip-margin-visual-box-and-value-with-border-radius` and ref.
+- Tightened tracking so unported rows are no longer hidden in a generic
+  `not_ported` bucket. Every unported row now has at least one explicit dependency
+  category.
+- Tightened `audit.py` so future generic/unclassified unported rows are audit
+  failures.
 
-| Round | Findings | Real Fixes |
-|-------|----------|------------|
-| R1–R10 | 60 | 55 |
-| R11 | 9 | 4 |
-| R12 | 6 | 5 |
-| R13 | 6 | 6 |
-| R14 | 6 | 5 |
-| R15 | 7 | 4 |
-| R16 | 5 | 1 |
-| R17 | 3 | 3 |
-| **R18** | **0** | **0** ← convergence |
+### What remains outside SP12 ownership
 
-### Deferred items (architectural, require inline layout integration):
+The SP12-scope directories still contain non-passing and unported tests. They are not
+classified as SP12-owned layout bugs. Top owners include:
 
-1. Abspos inline static position
-2. Float avoidance for inline content (CSS 2.1 §9.5.1)
-3. Inline zero intrinsic block-size (CSS 2.1 §10.6.3)
-4. Root element BFC intrinsic float detection (extremely low impact)
+- SP13 fragmentation and multicol,
+- SP15 inline layout and root/body viewport propagation,
+- SP11 font metrics,
+- future JavaScript/test harness support,
+- future advanced selectors, writing modes, table/grid layout, generated content,
+  form controls, canvas/SVG, and paint-quality features.
+
+See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current counts.
 
 ---
 
@@ -267,13 +269,143 @@ This gives us control, portability, and eliminates the Chromium build dependency
 
 | Metric | Value |
 |--------|-------|
-| Total commits | 113 |
-| Total Rust LOC | 468,543 |
-| Total tests | 7,505 |
-| Test failures | 0 |
-| Pixel comparison tests | 612+ (block) + 39 pages (SP5/SP6) + 10 apps (SP8) |
+| Current SP12-scope inventory | 7,673 Chromium WPT rows |
+| Current runnable WPT tests | 3,566 |
+| Current runnable WPT passes | 3,267 |
+| Current SP12-owned layout bugs | 0 |
+| Generic unported bucket rows | 0 |
+| Pixel comparison tests | 3,566 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
 | CSS features implemented | Block, Flex, Inline, Text, Ruby |
-| Chromium version | M147 (147.0.7727.24) |
+| Chromium version | M147 (147.0.7727.50) |
+
+---
+
+## SP13 (partial) + Accountability Restore + Text Pivot
+
+### What happened
+
+- Continued SP13 fragmentation/multicol. Net layout state advanced to **2671 pass / 735
+  fail / 0 errors**, `audit.py` 7/7 (commits `b66e0df`, `4780f71`).
+  - `b66e0df`: restored a broken/stale `summary.json` left by an earlier commit (audit was
+    failing 7/7) by re-running the full WPT suite and regenerating artifacts.
+  - `4780f71`: SP13 fix — extended multicol overflow columns for abspos descendant overflow
+    (`out-of-flow-in-multicolumn-002`, `-082`), zero regressions.
+- SP13 has ~48 hard, heterogeneous fragmentation/multicol residuals remaining; documented
+  per-cluster for later resumption.
+
+### Decision: pause layout, pivot to text (SP14+)
+
+Text is the largest single unlock (`needs_text` 4045 unported + 336 runnable;
+`needs_font_metrics` 230/553). The SP11 text engine, inline layout, and glyph painter already
+exist — the gap is that the WPT porting tool emits box-only builders, so text is never
+compared against Chromium. The text track (SP14–SP18) is a porting + parity effort, starting
+with the deterministic Ahem subset.
+
+See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (first SP).
+
+### SP14 W3/W4 complete: global text accountability closed
+
+- Froze a 2,715-ID exact baseline, a 111-ID deterministic W3 ledger, and a structured
+  3,934-row W4 rejection/ownership ledger. W3 and W4 are a disjoint cover of all 4,045
+  original unported `needs_text` rows.
+- Added the 111 W3 tests transactionally across existing divergent modules: 52 exact,
+  59 functional non-text failures, and zero render/diff errors.
+- Retired the global `text_rendering`/`needs_text` category only after every W4 row had
+  merged upstream-detector and actual-rejection ownership.
+- Authoritative full state: **2,767 pass / 750 fail / 0 errors** across 3,517 runnable
+  tests; all 2,715 frozen baseline IDs remain exact; audit passes 7/7.
+- This handoff led to SP15 inline/layout and root/body propagation; the remaining text
+  roadmap continues with SP16 real-font metrics, SP17 advanced text, and SP18 generated
+  content/text effects.
+
+### SP15 complete: inline/layout and root/body ownership closed
+
+- Froze a 2,767-ID exact baseline, a 76-ID actionable ledger, and 54 structured
+  unported residual dispositions covering all 130 original SP15 owner rows.
+- Promoted all 49 deterministic root/body tests. Across all 76 actionable tests,
+  34 are exact, 42 retain precise non-SP15 functional owners, and none error.
+- Implemented real decorated-inline continuation fragments, semantic clearing breaks,
+  `display:contents` inheritance/style handling, and root/body canvas/overflow propagation.
+- Retired all five SP15 categories after proving complete coverage and preserved the
+  immutable historical SP14 W4 ledger through explicit supersession rules.
+- Authoritative full state: **2,804 pass / 762 fail / 0 errors** across 3,566 runnable
+  tests; all 2,767 frozen baseline IDs remain exact; audit passes 7/7.
+- Next: SP16 real-font metrics, or resume the explicitly owned SP13 multicol and
+  fragmentation clusters.
+
+### SP16 complete: real-font metrics and raster ownership closed
+
+- Froze a 2,804-ID exact baseline, a 226-ID actionable real-font ledger, and 550
+  structured unported residual dispositions covering all 776 original
+  `needs_font_metrics` rows.
+- Vendored deterministic DejaVu Sans, Sans Mono, and Serif faces; added shared primary
+  metrics, `ch`/`ex`/`lh`, used line height, full corpus-used font shorthand parsing,
+  and manifest-scoped Linux LCD rendering using the pinned Chromium FreeType runtime.
+- The 20 sole-owner targets finish 5 exact and 15 functionally reclassified. Across
+  all 226 actionable tests, 19 are exact, 207 retain precise non-font owners, and none
+  error.
+- Retired `needs_font_metrics` globally while preserving the immutable SP14/SP15
+  ledgers through explicit supersession rules.
+- Authoritative full state: **2,823 pass / 743 fail / 0 errors** across 3,566 runnable
+  tests; all 2,804 frozen baseline IDs remain exact; audit passes 7/7.
+- Next: SP17 advanced text, or resume the explicitly owned SP13 multicol and
+  fragmentation clusters.
+
+### SP13-R complete: runnable multicol exact closure
+
+- Froze a 2823-ID exact baseline, a 351-ID runnable multicol target ledger, and
+  1018 structured unported residual dispositions. The target and residual ledgers
+  are a disjoint cover of the original 1369 multicol-owned rows.
+- Implemented shared multicol used geometry, authoritative fragmentation and
+  continuation state, spanners and nested rows, fragmented flex and positioned
+  interactions, rule painting, and fragmented decoration/image behavior.
+- The exact-ID target run finishes 351 pass / 0 fail / 0 errors at 0.0% mismatch.
+  No runnable row retains `sp13_multicol`; every unported residual retains its
+  Chromium path, porter rejection, and complete reason-backed ownership.
+- Authoritative full state: **3267 pass / 299 fail / 0 errors** across 3566 runnable
+  tests; all 2823 baseline IDs remain exact; audit passes 7/7.
+- Vertical and sideways writing modes remain out of scope. Next: SP17 advanced
+  text or another explicitly owned residual system.
+
+### PR #1 landing gate: portable CI and SP17 handoff
+
+- Replaced the unbootstrapped shallow `depot_tools` workflow with Ubuntu 24.04
+  packages for standalone GN, Ninja, Clang, and clang-format. Native Debug and
+  Release jobs now build and execute the portable `hello_world` target instead
+  of implicitly entering the Chromium-dependent Skia POC.
+- Added hosted Rust formatting plus style/text/layout/paint tests, cached
+  source-built Skia, the 100-test Python closure/porter suite, immutable SP13-R
+  ledger verification, and repository-contained accountability verification.
+- Formatted the tracked C/C++ and GN sources once so the native format gates
+  enforce a clean baseline rather than failing on historical drift.
+- Added `docs/CI.md` with hosted-versus-pinned validation boundaries and exact
+  local equivalents.
+- Added `docs/SP17-HANDOFF.md` with a fresh-`main` branch procedure, the
+  3,267-pass guard, all 19 runnable writing-mode IDs, the full 842-row owner
+  inventory, the 337 direct porter opportunities, implementation waves,
+  architecture hotspots, and closure commands.
+- Local pre-push evidence: Rust style/text/layout/paint suites pass; all 100
+  Python tests pass; SP13-R ledgers remain 2,823/351/1,018; audit passes 7/7;
+  clang-format 18, GN formatting, workflow syntax, and `git diff --check` pass.
+- The first hosted run exposed three porter tests that had silently relied on
+  `/home/nero/chromium`. They now patch `WPT_ROOT` to two committed upstream
+  snapshots from Chromium source commit `09d377d9438dc95267369f74a073acd81bdde38f`;
+  the affected SP13-R and SP16 idempotence tests pass in isolation without a
+  sibling checkout.
+- The same run proved Ubuntu Clang 18 rejects Chromium's newer
+  `-Wno-gcc-install-dir-libstdcxx` switch under `-Werror`. The compiler config
+  now adds that switch only for `chromium_src` hermetic builds, preserving ABI
+  behavior while making the standalone native smoke target portable.
+- The clean runner also confirmed that comparison PNGs are deliberately
+  ignored workstation artifacts. Hosted CI now uses an explicit
+  `audit.py --repository-only` mode that keeps exact committed `result.json`
+  proof and checks 2–7 strict; the unflagged local 7/7 audit remains the sole
+  pixel-evidence gate and still requires both screenshots for every pass.
+- A final-head Release matrix runner then spent its entire 20-minute budget in
+  `apt-get` and was cancelled before GN ran, even though Release had compiled
+  and executed on the preceding head. The native gate now provisions once and
+  runs Debug plus Release sequentially in one job, preserving both builds while
+  removing the duplicate network failure surface.

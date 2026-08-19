@@ -5,8 +5,8 @@ use openui_layout::margin_collapsing::{
     adjoining_margin_resolve, clearance_prevents_collapsing, collapse_margins,
     establishes_new_bfc_for_collapsing, finalize_margins, float_prevents_collapsing,
     handle_margin_after_child, handle_margin_before_child, merge_struts,
-    should_margins_collapse_through, ChildMarginInfo, CollapseCheckParams,
-    MarginCollapsingState, ParentMarginInfo,
+    should_margins_collapse_through, ChildMarginInfo, CollapseCheckParams, MarginCollapsingState,
+    ParentMarginInfo,
 };
 use openui_style::{Clear, Display, Float, Overflow, Position};
 
@@ -169,8 +169,7 @@ fn parent_last_child_collapsing() {
     state.margin_strut.append_normal(lu(20)); // last child's bottom margin
 
     let parent = parent_no_separator(false, true);
-    let (resolved_bottom, propagated) =
-        finalize_margins(&mut state, &parent, lu(15), false);
+    let (resolved_bottom, propagated) = finalize_margins(&mut state, &parent, lu(15), false);
 
     // Margins collapse: nothing resolved at content edge.
     assert_eq!(resolved_bottom, lu(0));
@@ -193,8 +192,7 @@ fn parent_last_child_blocked_by_height() {
         is_last_child: true,
         block_size: Some(lu(100)),
     };
-    let (resolved_bottom, propagated) =
-        finalize_margins(&mut state, &parent, lu(15), false);
+    let (resolved_bottom, propagated) = finalize_margins(&mut state, &parent, lu(15), false);
 
     // Height separates: strut resolved at content bottom edge.
     assert_eq!(resolved_bottom, lu(20));
@@ -579,8 +577,7 @@ fn empty_block_finalize_propagates_strut() {
     state.margin_strut.append_normal(lu(10)); // top margin
 
     let parent = parent_no_separator(false, false);
-    let (resolved, propagated) =
-        finalize_margins(&mut state, &parent, lu(15), true);
+    let (resolved, propagated) = finalize_margins(&mut state, &parent, lu(15), true);
 
     // Empty block: resolved = 0, propagated has max(10, 15) = 15.
     assert_eq!(resolved, lu(0));
@@ -633,8 +630,7 @@ fn parent_last_child_blocked_by_border() {
         is_last_child: true,
         block_size: None,
     };
-    let (resolved_bottom, propagated) =
-        finalize_margins(&mut state, &parent, lu(10), false);
+    let (resolved_bottom, propagated) = finalize_margins(&mut state, &parent, lu(10), false);
 
     // Border separates.
     assert_eq!(resolved_bottom, lu(25));
@@ -654,8 +650,7 @@ fn parent_last_child_blocked_by_padding() {
         is_last_child: true,
         block_size: None,
     };
-    let (resolved_bottom, propagated) =
-        finalize_margins(&mut state, &parent, lu(10), false);
+    let (resolved_bottom, propagated) = finalize_margins(&mut state, &parent, lu(10), false);
 
     assert_eq!(resolved_bottom, lu(15));
     assert_eq!(collapse_margins(&propagated), lu(10));

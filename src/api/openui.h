@@ -204,12 +204,9 @@ OUI_EXPORT void oui_shutdown(void);
 // Document
 // ═══════════════════════════════════════════════════════════
 
-OUI_EXPORT OuiDocument* oui_document_create(int viewport_width,
-                                            int viewport_height);
+OUI_EXPORT OuiDocument* oui_document_create(int viewport_width, int viewport_height);
 OUI_EXPORT void oui_document_destroy(OuiDocument* doc);
-OUI_EXPORT void oui_document_set_viewport(OuiDocument* doc,
-                                          int width,
-                                          int height);
+OUI_EXPORT void oui_document_set_viewport(OuiDocument* doc, int width, int height);
 OUI_EXPORT OuiStatus oui_document_layout(OuiDocument* doc);
 OUI_EXPORT OuiStatus oui_document_update_all(OuiDocument* doc);
 
@@ -234,8 +231,7 @@ OUI_EXPORT OuiElement* oui_document_body(OuiDocument* doc);
 
 // Create a DOM Text node, append it to parent, and return a mutable handle.
 // The handle can be used with oui_text_node_set_data() for reactive updates.
-OUI_EXPORT OuiTextNode* oui_element_create_text_child(OuiElement* parent,
-                                                       const char* text);
+OUI_EXPORT OuiTextNode* oui_element_create_text_child(OuiElement* parent, const char* text);
 // Update the text content of a text node.
 OUI_EXPORT void oui_text_node_set_data(OuiTextNode* node, const char* data);
 // Remove from DOM and free. Safe to call on null.
@@ -261,11 +257,8 @@ OUI_EXPORT void oui_element_remove_all_child_nodes(OuiElement* elem);
 // Generic style (any CSS property/value as strings)
 // ═══════════════════════════════════════════════════════════
 
-OUI_EXPORT OuiStatus oui_element_set_style(OuiElement* e,
-                                           const char* property,
-                                           const char* value);
-OUI_EXPORT OuiStatus oui_element_remove_style(OuiElement* e,
-                                              const char* property);
+OUI_EXPORT OuiStatus oui_element_set_style(OuiElement* e, const char* property, const char* value);
+OUI_EXPORT OuiStatus oui_element_remove_style(OuiElement* e, const char* property);
 OUI_EXPORT void oui_element_clear_styles(OuiElement* e);
 
 // ═══════════════════════════════════════════════════════════
@@ -277,18 +270,14 @@ OUI_EXPORT void oui_element_clear_styles(OuiElement* e);
 // "colspan", "rowspan", "class", "id", "role", "aria-label", etc.)
 // For boolean attributes like "checked" or "disabled", pass "" as value to set,
 // or use oui_element_remove_attribute to unset.
-OUI_EXPORT OuiStatus oui_element_set_attribute(OuiElement* e,
-                                                const char* name,
-                                                const char* value);
+OUI_EXPORT OuiStatus oui_element_set_attribute(OuiElement* e, const char* name, const char* value);
 
 // Remove an HTML attribute from the element.
-OUI_EXPORT OuiStatus oui_element_remove_attribute(OuiElement* e,
-                                                   const char* name);
+OUI_EXPORT OuiStatus oui_element_remove_attribute(OuiElement* e, const char* name);
 
 // Get the value of an HTML attribute. Returns NULL if not set.
 // Caller must free the returned string with free().
-OUI_EXPORT char* oui_element_get_attribute(const OuiElement* e,
-                                            const char* name);
+OUI_EXPORT char* oui_element_get_attribute(const OuiElement* e, const char* name);
 
 // Set the "id" attribute (shorthand).
 OUI_EXPORT OuiStatus oui_element_set_id(OuiElement* e, const char* id);
@@ -334,15 +323,13 @@ OUI_EXPORT void oui_element_set_overflow(OuiElement* e, OuiOverflow overflow);
 // Typed convenience setters — flexbox
 // ═══════════════════════════════════════════════════════════
 
-OUI_EXPORT void oui_element_set_flex_direction(OuiElement* e,
-                                               OuiFlexDirection dir);
+OUI_EXPORT void oui_element_set_flex_direction(OuiElement* e, OuiFlexDirection dir);
 OUI_EXPORT void oui_element_set_flex_wrap(OuiElement* e, OuiFlexWrap wrap);
 OUI_EXPORT void oui_element_set_flex_grow(OuiElement* e, float grow);
 OUI_EXPORT void oui_element_set_flex_shrink(OuiElement* e, float shrink);
 OUI_EXPORT void oui_element_set_flex_basis(OuiElement* e, OuiLength basis);
 OUI_EXPORT void oui_element_set_align_items(OuiElement* e, OuiAlignItems align);
-OUI_EXPORT void oui_element_set_justify_content(OuiElement* e,
-                                                OuiJustifyContent jc);
+OUI_EXPORT void oui_element_set_justify_content(OuiElement* e, OuiJustifyContent jc);
 
 // ═══════════════════════════════════════════════════════════
 // Typed convenience setters — colors & visuals
@@ -385,16 +372,13 @@ OUI_EXPORT OuiRect oui_element_get_bounding_rect(const OuiElement* e);
 // ═══════════════════════════════════════════════════════════
 
 // Returns a string that must be freed by the caller with free().
-OUI_EXPORT char* oui_element_get_computed_style(const OuiElement* e,
-                                                const char* property);
+OUI_EXPORT char* oui_element_get_computed_style(const OuiElement* e, const char* property);
 
 // ═══════════════════════════════════════════════════════════
 // Hit testing
 // ═══════════════════════════════════════════════════════════
 
-OUI_EXPORT OuiElement* oui_document_hit_test(OuiDocument* doc,
-                                             float x,
-                                             float y);
+OUI_EXPORT OuiElement* oui_document_hit_test(OuiDocument* doc, float x, float y);
 
 // ═══════════════════════════════════════════════════════════
 // Scroll geometry & control (SP7)
@@ -428,21 +412,19 @@ typedef struct {
 // Render the current element tree to an RGBA bitmap.
 // Runs the full lifecycle (style → layout → paint → rasterize).
 // On success, populates |out_bitmap| with heap-allocated pixel data.
-OUI_EXPORT OuiStatus oui_document_render_to_bitmap(OuiDocument* doc,
-                                                    OuiBitmap* out_bitmap);
+OUI_EXPORT OuiStatus oui_document_render_to_bitmap(OuiDocument* doc, OuiBitmap* out_bitmap);
 
 // Free bitmap pixel data returned by oui_document_render_to_bitmap.
 OUI_EXPORT void oui_bitmap_free(OuiBitmap* bitmap);
 
 // Render the current element tree and write a PNG file to |file_path|.
-OUI_EXPORT OuiStatus oui_document_render_to_png(OuiDocument* doc,
-                                                 const char* file_path);
+OUI_EXPORT OuiStatus oui_document_render_to_png(OuiDocument* doc, const char* file_path);
 
 // Render the current element tree to a PNG in memory.
 // On success, |*out_data| is heap-allocated (free with oui_free).
 OUI_EXPORT OuiStatus oui_document_render_to_png_buffer(OuiDocument* doc,
-                                                        uint8_t** out_data,
-                                                        size_t* out_size);
+                                                       uint8_t** out_data,
+                                                       size_t* out_size);
 
 // Free memory allocated by oui_document_render_to_png_buffer.
 OUI_EXPORT void oui_free(void* ptr);
@@ -456,46 +438,39 @@ typedef void (*OuiResourceFreeFunc)(uint8_t* data, void* user_data);
 
 // Response data returned by the resource provider callback.
 typedef struct {
-  __attribute__((annotate("raw_ptr_exclusion")))
-  uint8_t* data;
+  __attribute__((annotate("raw_ptr_exclusion"))) uint8_t* data;
   size_t length;
-  __attribute__((annotate("raw_ptr_exclusion")))
-  const char* mime_type;  // NULL = auto-detect
+  __attribute__((annotate("raw_ptr_exclusion"))) const char* mime_type;  // NULL = auto-detect
   OuiResourceFreeFunc free_func;
-  __attribute__((annotate("raw_ptr_exclusion")))
-  void* free_user_data;
+  __attribute__((annotate("raw_ptr_exclusion"))) void* free_user_data;
 } OuiResourceResponse;
 
 // Resource provider callback. Return 1 if resource found, 0 if not.
-typedef int (*OuiResourceProviderFunc)(
-    const char* url,
-    OuiResourceResponse* response,
-    void* user_data);
+typedef int (*OuiResourceProviderFunc)(const char* url,
+                                       OuiResourceResponse* response,
+                                       void* user_data);
 
 // Set the resource provider for a document.  Must be called before loading
 // HTML that references external resources (images, etc.).
-OUI_EXPORT OuiStatus oui_document_set_resource_provider(
-    OuiDocument* doc,
-    OuiResourceProviderFunc provider,
-    void* user_data);
+OUI_EXPORT OuiStatus oui_document_set_resource_provider(OuiDocument* doc,
+                                                        OuiResourceProviderFunc provider,
+                                                        void* user_data);
 
 // ═══════════════════════════════════════════════════════════
 // Direct image injection (SP6)
 // ═══════════════════════════════════════════════════════════
 
 // Set raw RGBA pixel data on an <img> element.  The pixels are copied.
-OUI_EXPORT OuiStatus oui_element_set_image_data(
-    OuiElement* elem,
-    const uint8_t* rgba_pixels,
-    int width,
-    int height);
+OUI_EXPORT OuiStatus oui_element_set_image_data(OuiElement* elem,
+                                                const uint8_t* rgba_pixels,
+                                                int width,
+                                                int height);
 
 // Set encoded image data (PNG, JPEG, WebP, GIF, etc.) on an <img> element.
 // Blink's image decoder will decode internally.
-OUI_EXPORT OuiStatus oui_element_set_image_encoded(
-    OuiElement* elem,
-    const uint8_t* data,
-    size_t length);
+OUI_EXPORT OuiStatus oui_element_set_image_encoded(OuiElement* elem,
+                                                   const uint8_t* data,
+                                                   size_t length);
 
 // ═══════════════════════════════════════════════════════════
 // Frame & time management (SP7)
@@ -506,8 +481,7 @@ OUI_EXPORT OuiStatus oui_element_set_image_encoded(
 OUI_EXPORT OuiStatus oui_document_advance_time(OuiDocument* doc, double time_ms);
 
 // Advance the animation clock by a delta from the current time.
-OUI_EXPORT OuiStatus oui_document_advance_time_by(OuiDocument* doc,
-                                                    double delta_ms);
+OUI_EXPORT OuiStatus oui_document_advance_time_by(OuiDocument* doc, double delta_ms);
 
 // Get the current animation time (milliseconds from epoch).
 OUI_EXPORT double oui_document_get_time(OuiDocument* doc);
@@ -546,32 +520,29 @@ typedef enum {
 } OuiModifiers;
 
 // Dispatch a mouse event at viewport coordinates.
-OUI_EXPORT OuiStatus oui_document_dispatch_mouse_event(
-    OuiDocument* doc,
-    OuiMouseEventType type,
-    float x,
-    float y,
-    OuiMouseButton button,
-    int modifiers);
+OUI_EXPORT OuiStatus oui_document_dispatch_mouse_event(OuiDocument* doc,
+                                                       OuiMouseEventType type,
+                                                       float x,
+                                                       float y,
+                                                       OuiMouseButton button,
+                                                       int modifiers);
 
 // Dispatch a keyboard event.
 // |key_code| is a platform-independent virtual key code.
 // |key_text| is the character text for OUI_KEY_CHAR (UTF-8, NULL otherwise).
-OUI_EXPORT OuiStatus oui_document_dispatch_key_event(
-    OuiDocument* doc,
-    OuiKeyEventType type,
-    int key_code,
-    const char* key_text,
-    int modifiers);
+OUI_EXPORT OuiStatus oui_document_dispatch_key_event(OuiDocument* doc,
+                                                     OuiKeyEventType type,
+                                                     int key_code,
+                                                     const char* key_text,
+                                                     int modifiers);
 
 // Dispatch a mouse wheel event at viewport coordinates.
-OUI_EXPORT OuiStatus oui_document_dispatch_wheel_event(
-    OuiDocument* doc,
-    float x,
-    float y,
-    float delta_x,
-    float delta_y,
-    int modifiers);
+OUI_EXPORT OuiStatus oui_document_dispatch_wheel_event(OuiDocument* doc,
+                                                       float x,
+                                                       float y,
+                                                       float delta_x,
+                                                       float delta_y,
+                                                       int modifiers);
 
 // ═══════════════════════════════════════════════════════════
 // Event callbacks (SP7)
@@ -580,13 +551,13 @@ OUI_EXPORT OuiStatus oui_document_dispatch_wheel_event(
 // Event info passed to callbacks.
 typedef struct {
   __attribute__((annotate("raw_ptr_exclusion")))
-  const char* type;       // Event type name (e.g. "click")
+  const char* type;  // Event type name (e.g. "click")
   __attribute__((annotate("raw_ptr_exclusion")))
-  OuiElement* target;     // Element that received the event
-  float mouse_x;          // Mouse position (mouse events only)
+  OuiElement* target;  // Element that received the event
+  float mouse_x;       // Mouse position (mouse events only)
   float mouse_y;
-  int mouse_button;       // OuiMouseButton (mouse events only)
-  int key_code;           // Virtual key code (keyboard events only)
+  int mouse_button;  // OuiMouseButton (mouse events only)
+  int key_code;      // Virtual key code (keyboard events only)
   __attribute__((annotate("raw_ptr_exclusion")))
   const char* key_text;   // Character text (keyboard events only)
   int modifiers;          // OuiModifiers bitmask
@@ -600,15 +571,13 @@ typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
 // "mouseenter", "mouseleave", "keydown", "keyup", "input", "scroll",
 // "focus", "blur", "transitionend", "animationend", "animationstart",
 // "animationiteration".
-OUI_EXPORT OuiStatus oui_element_set_event_callback(
-    OuiElement* elem,
-    const char* event_type,
-    OuiEventCallback callback,
-    void* user_data);
+OUI_EXPORT OuiStatus oui_element_set_event_callback(OuiElement* elem,
+                                                    const char* event_type,
+                                                    OuiEventCallback callback,
+                                                    void* user_data);
 
 // Remove a previously set event callback.
-OUI_EXPORT OuiStatus oui_element_remove_event_callback(OuiElement* elem,
-                                                        const char* event_type);
+OUI_EXPORT OuiStatus oui_element_remove_event_callback(OuiElement* elem, const char* event_type);
 
 // ═══════════════════════════════════════════════════════════
 // Focus management (SP7)

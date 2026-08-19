@@ -2,59 +2,58 @@
 //!
 //! SP9: block layout. SP10: flexbox layout. SP12: full block layout + floats.
 
-mod constraint_space;
-mod fragment;
-pub(crate) mod length_resolver;
-pub mod block;
-pub mod relative;
-pub mod out_of_flow;
-pub mod flex;
-pub mod inline;
-pub mod ruby;
-pub mod exclusions;
-pub mod layout_result;
-pub mod inflow_position;
 pub mod bfc_resolution;
-pub mod new_formatting_context;
-pub mod fragmentation;
-pub mod sticky;
-pub mod multicol;
-pub mod margin_collapsing;
+pub mod block;
+mod constraint_space;
 pub mod css_sizing;
-pub mod size_constraints;
+pub mod exclusions;
+pub mod flex;
+mod fragment;
+pub mod fragmentation;
+pub mod inflow_position;
+pub mod inline;
 pub mod intrinsic_sizing;
+pub mod layout_result;
+pub(crate) mod length_resolver;
+pub mod margin_collapsing;
+pub mod multicol;
+pub mod new_formatting_context;
+pub mod out_of_flow;
+pub mod relative;
+pub mod ruby;
+pub mod size_constraints;
+pub mod sticky;
 
-pub use constraint_space::{ConstraintSpace, ConstraintSpaceBuilder};
-pub use fragment::{Fragment, FragmentKind};
-pub use length_resolver::resolve_length;
+pub use crate::inline::algorithm::inline_layout;
+pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
+pub use bfc_resolution::{BfcBlockOffsetState, PendingFloats};
 pub use block::block_layout;
 pub use block::establishes_new_fc;
-pub use relative::apply_relative_offset;
-pub use flex::flex_layout;
-pub use crate::inline::algorithm::inline_layout;
-pub use ruby::{compute_ruby_layout, max_ruby_overhang, clamp_overhang, RubyInfo, RubyLayout};
-pub use layout_result::{LayoutResult, LayoutStatus, BreakBetween, AdjoiningObjectTypes};
-pub use inflow_position::{PreviousInflowPosition, InflowChildData};
-pub use exclusions::{ExclusionSpace};
-pub use out_of_flow::{OutOfFlowCandidate, layout_out_of_flow_children};
-pub use bfc_resolution::{BfcBlockOffsetState, PendingFloats};
-pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
-pub use fragmentation::{BlockBreakToken, BreakToken, BreakAppeal, FragmentainerSpace};
-pub use sticky::{apply_sticky_offset, StickyPositionData, compute_sticky_offset};
-pub use multicol::{layout_columns, resolve_column_count_and_width};
+pub use constraint_space::{ConstraintSpace, ConstraintSpaceBuilder};
 pub use css_sizing::{
-    SizingKeyword, resolve_sizing_keyword, apply_aspect_ratio,
-    apply_aspect_ratio_with_auto, compute_definite_size,
-    compute_automatic_size, resolve_preferred_size,
+    apply_aspect_ratio, apply_aspect_ratio_with_auto, compute_automatic_size,
+    compute_definite_size, resolve_preferred_size, resolve_sizing_keyword, SizingKeyword,
 };
+pub use exclusions::ExclusionSpace;
+pub use flex::flex_layout;
+pub use fragment::{Fragment, FragmentKind};
+pub use fragmentation::{
+    BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
+};
+pub use inflow_position::{InflowChildData, PreviousInflowPosition};
 pub use intrinsic_sizing::{
-    IntrinsicSizes, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
-    compute_block_size_from_content, shrink_to_fit_inline_size,
-    compute_replaced_intrinsic_sizes,
+    compute_block_size_from_content, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
+    compute_replaced_intrinsic_sizes, shrink_to_fit_inline_size, IntrinsicSizes,
 };
+pub use layout_result::{AdjoiningObjectTypes, BreakBetween, LayoutResult, LayoutStatus};
+pub use length_resolver::resolve_length;
+pub use multicol::{layout_columns, resolve_column_count_and_width};
+pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
+pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate};
+pub use relative::apply_relative_offset;
+pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
 pub use size_constraints::{
-    SizeConstraint, resolve_size_constraints,
-    constrain_inline_size, constrain_block_size,
-    resolve_inline_size, resolve_block_size,
-    apply_box_sizing_adjustment,
+    apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,
+    resolve_inline_size, resolve_size_constraints, SizeConstraint,
 };
+pub use sticky::{apply_sticky_offset, compute_sticky_offset, StickyPositionData};

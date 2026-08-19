@@ -275,9 +275,18 @@ mod tests {
 
     #[test]
     fn bfc_rect_equality() {
-        let a = BfcRect::new(BfcOffset::new(lu(0), lu(0)), BfcOffset::new(lu(100), lu(50)));
-        let b = BfcRect::new(BfcOffset::new(lu(0), lu(0)), BfcOffset::new(lu(100), lu(50)));
-        let c = BfcRect::new(BfcOffset::new(lu(0), lu(0)), BfcOffset::new(lu(100), lu(51)));
+        let a = BfcRect::new(
+            BfcOffset::new(lu(0), lu(0)),
+            BfcOffset::new(lu(100), lu(50)),
+        );
+        let b = BfcRect::new(
+            BfcOffset::new(lu(0), lu(0)),
+            BfcOffset::new(lu(100), lu(50)),
+        );
+        let c = BfcRect::new(
+            BfcOffset::new(lu(0), lu(0)),
+            BfcOffset::new(lu(100), lu(51)),
+        );
         assert_eq!(a, b);
         assert_ne!(a, c);
     }

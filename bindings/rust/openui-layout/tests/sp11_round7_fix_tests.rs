@@ -75,7 +75,10 @@ fn narrow_box_ellipsis_still_shows_ellipsis() {
         !ellipsis_frags.is_empty(),
         "5px box should still show ellipsis fragment, got {} text fragments: {:?}",
         all_text.len(),
-        all_text.iter().map(|f| f.text_content.as_deref()).collect::<Vec<_>>()
+        all_text
+            .iter()
+            .map(|f| f.text_content.as_deref())
+            .collect::<Vec<_>>()
     );
 }
 
@@ -122,7 +125,10 @@ fn atomic_inline_valign_length_shifted_above_baseline() {
         make_atomic_inline_block(50.0, 30.0, VerticalAlign::Length(10.0));
     let frag_len = do_layout(&doc_len, block_len);
     let boxes_len = collect_box_fragments(&frag_len);
-    let len_frag: Vec<_> = boxes_len.iter().filter(|f| f.node_id == atomic_len).collect();
+    let len_frag: Vec<_> = boxes_len
+        .iter()
+        .filter(|f| f.node_id == atomic_len)
+        .collect();
     let len_texts = collect_text_fragments(&frag_len);
 
     let (doc_bl, block_bl, atomic_bl) =
@@ -163,7 +169,10 @@ fn atomic_inline_valign_percentage_shifted() {
         make_atomic_inline_block(50.0, 40.0, VerticalAlign::Percentage(50.0));
     let frag_pct = do_layout(&doc_pct, block_pct);
     let boxes_pct = collect_box_fragments(&frag_pct);
-    let pct_frag: Vec<_> = boxes_pct.iter().filter(|f| f.node_id == atomic_pct).collect();
+    let pct_frag: Vec<_> = boxes_pct
+        .iter()
+        .filter(|f| f.node_id == atomic_pct)
+        .collect();
     let pct_texts = collect_text_fragments(&frag_pct);
 
     let (doc_bl, block_bl, atomic_bl) =
@@ -242,17 +251,20 @@ fn break_spaces_preserves_trailing_spaces() {
     let text_frags2 = collect_text_fragments(&frag2);
     assert!(!text_frags.is_empty() && !text_frags2.is_empty());
 
-    let with_spaces_width: LayoutUnit = text_frags.iter()
+    let with_spaces_width: LayoutUnit = text_frags
+        .iter()
         .map(|f| f.size.width)
         .fold(LayoutUnit::zero(), |a, b| a + b);
-    let without_spaces_width: LayoutUnit = text_frags2.iter()
+    let without_spaces_width: LayoutUnit = text_frags2
+        .iter()
         .map(|f| f.size.width)
         .fold(LayoutUnit::zero(), |a, b| a + b);
 
     assert!(
         with_spaces_width > without_spaces_width,
         "break-spaces should preserve trailing spaces: with={:?}, without={:?}",
-        with_spaces_width, without_spaces_width
+        with_spaces_width,
+        without_spaces_width
     );
 }
 
@@ -279,7 +291,9 @@ fn break_spaces_wrapping_preserves_space_at_line_end() {
     let frag = inline_layout(&doc, block, &sp);
 
     // Should produce multiple line boxes (the text wraps)
-    let line_boxes: Vec<_> = frag.children.iter()
+    let line_boxes: Vec<_> = frag
+        .children
+        .iter()
         .filter(|c| c.kind == FragmentKind::Box && c.node_id.is_none())
         .collect();
 
@@ -300,7 +314,9 @@ fn break_spaces_wrapping_preserves_space_at_line_end() {
     let sp2 = ConstraintSpace::for_block_child(lu_i(25), lu_i(600), lu_i(25), lu_i(600), false);
     let frag2 = inline_layout(&doc2, block2, &sp2);
 
-    let line_boxes2: Vec<_> = frag2.children.iter()
+    let line_boxes2: Vec<_> = frag2
+        .children
+        .iter()
         .filter(|c| c.kind == FragmentKind::Box && c.node_id.is_none())
         .collect();
 
@@ -309,6 +325,7 @@ fn break_spaces_wrapping_preserves_space_at_line_end() {
     assert!(
         line_boxes.len() >= line_boxes2.len(),
         "break-spaces should produce >= lines as pre-wrap: break-spaces={}, pre-wrap={}",
-        line_boxes.len(), line_boxes2.len()
+        line_boxes.len(),
+        line_boxes2.len()
     );
 }

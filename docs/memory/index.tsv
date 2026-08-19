@@ -1,0 +1,33 @@
+# id	status	tags	title	updated	path
+0001	active	project standard	Project north star: Chromium pixel parity under strict accountability	2026-07-08	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
+0002	superseded	state accountability	Authoritative WPT state (2026-06-30): 2671 pass / 735 fail / 0 err, audit 7/7	2026-08-19	entries/0002-authoritative-wpt-state-2026-06-30-2671-pass-735.md
+0003	active	direction text sp14	Direction: layout PAUSED, pivot to text (SP14+)	2026-07-08	entries/0003-direction-layout-paused-pivot-to-text-sp14.md
+0004	active	text finding port_wpt	Text pivot is porting+parity, NOT a from-scratch engine	2026-07-08	entries/0004-text-pivot-is-porting-parity-not-a-from-scratch.md
+0005	active	sp14 text plan	SP14 goal + scope: single-line LTR Ahem text to 0.0% parity	2026-07-08	entries/0005-sp14-goal-scope-single-line-ltr-ahem-text-to-0-0.md
+0006	active	sp14 text progress next-steps	SP14 progress + next steps (glyph parity sprint)	2026-07-08	entries/0006-sp14-progress-next-steps-glyph-parity-sprint.md
+0007	active	text font gotcha sp14 reconciled	Font strategy: use DejaVu Sans fallback, do NOT install Ahem	2026-07-08	entries/0007-font-strategy-use-dejavu-sans-fallback-do-not-in.md
+0008	active	gotcha accountability pipeline	GOTCHA: filtered pixel runs OVERWRITE summary.json	2026-07-08	entries/0008-gotcha-filtered-pixel-runs-overwrite-summary-jso.md
+0009	active	commands pipeline accountability	Canonical pipeline commands (build/compare/regen/audit)	2026-07-08	entries/0009-canonical-pipeline-commands-build-compare-regen.md
+0010	active	accountability artifacts	Authoritative artifacts + failure classification	2026-07-08	entries/0010-authoritative-artifacts-failure-classification.md
+0011	active	hotspot layout sp13 block-rs	Code hotspot: block.rs multicol/flex/OOF/clone fragmentation	2026-07-08	entries/0011-code-hotspot-block-rs-multicol-flex-oof-clone-fr.md
+0012	active	hotspot text port_wpt sp14	Code hotspot: port_wpt.py text emission + generated WPT registry	2026-07-08	entries/0012-code-hotspot-port-wpt-py-text-emission-generated.md
+0013	active	sp13 residuals paused	SP13 residuals (paused): ~48 hard fragmentation/multicol tails	2026-07-08	entries/0013-sp13-residuals-paused-48-hard-fragmentation-mult.md
+0014	active	gotcha speckit process	GOTCHA: do not trust speckit.implement claims; verify manually	2026-07-08	entries/0014-gotcha-do-not-trust-speckit-implement-claims-ver.md
+0015	active	process standard	MANDATORY process: independent verifier before task_complete; no escape buckets	2026-07-08	entries/0015-mandatory-process-independent-verifier-before-ta.md
+0016	active	meta provenance recovery	Memory provenance: seeded from recovered session 4ab79aa9 'Read Repo Documentation'	2026-07-08	entries/0016-memory-provenance-seeded-from-recovered-session.md
+0017	superseded	sp14 text wip uncommitted	Uncommitted SP14 glyph-parity WIP in tree (continuation point)	2026-07-08	entries/0017-uncommitted-sp14-glyph-parity-wip-in-tree-contin.md
+0018	superseded	sp14 text font finding blocker	ROOT CAUSE: OpenUI Skia font-mgr doesn't resolve user-installed Ahem (parity blocker)	2026-07-08	entries/0018-root-cause-openui-skia-font-mgr-doesn-t-resolve.md
+0019	active	sp14 text font parity finding near_miss_aa determination	SP14 smoke at 0.04%: residual is sub-pixel AA/text-gamma, not geometry	2026-07-08	entries/0019-sp14-smoke-at-0-04-residual-is-sub-pixel-aa-text.md
+0020	active	testing accountability text guard gotcha	Testing: authoritative set is wpt/ only; legacy .text builders render blank	2026-07-08	entries/0020-testing-authoritative-set-is-wpt-only-legacy-tex.md
+0021	active	sp14 text milestone state	SP14 milestone: Ahem text pixel path proven end-to-end (0.04%)	2026-07-08	entries/0021-sp14-milestone-ahem-text-pixel-path-proven-end-t.md
+0022	active	sp14 text pilot port_wpt next-steps plan	SP14 pilot batch: plan + key porter gap (font on Text nodes)	2026-07-08	entries/0022-sp14-pilot-batch-plan-key-porter-gap-font-on-tex.md
+0023	active	sp14 text pilot port_wpt finding	Porter deep-dive: font-family IGNORED + text stripped from HTML template	2026-07-08	entries/0023-porter-deep-dive-font-family-ignored-text-stripp.md
+0024	active	gotcha port_wpt accountability pilot blocker	CRITICAL: committed wpt modules are divergent from port_wpt.py; batch regen is UNSAFE	2026-07-08	entries/0024-critical-committed-wpt-modules-are-divergent-fro.md
+0025	active	sp14 text pilot port_wpt progress	DONE: port_wpt.py Rust-side text emission (font on Text nodes) implemented + verified	2026-07-08	entries/0025-done-port-wpt-py-rust-side-text-emission-font-on.md
+0026	superseded	sp14 text strategy plan	SP14 100% strategy: 4381 needs_text = 48 sole + 288 co-blocked ported + 4045 unported	2026-08-07	entries/0026-sp14-100-strategy-4381-needs-text-48-sole-288-co.md
+0027	active	sp14 text font finding fontconfig	BREAKTHROUGH: fontconfig kills Chrome text AA -> exact 0-mismatch text passes	2026-07-14	entries/0027-breakthrough-fontconfig-kills-chrome-text-aa-exa.md
+0028	superseded	sp14 text accountability milestone handoff	SP14 W0/W1 closes 48 sole-needs_text tests with 26 exact and 22 named residuals	2026-08-07	entries/0028-sp14-w0-w1-48-sole-needs-text-closure.md
+0029	superseded	sp14 text accountability milestone handoff	SP14 W2 closes all runnable needs_text ownership	2026-08-07	entries/0029-sp14-w2-runnable-needs-text-closure.md
+0030	active	sp14 text accountability milestone handoff	SP14 W3/W4 closes the global needs_text backlog	2026-08-08	entries/0030-sp14-w3-w4-global-needs-text-closure.md
+0031	active	state accountability sp13r handoff	Authoritative post-SP13-R WPT state: 3267 pass / 299 fail / 0 errors	2026-08-19	entries/0031-authoritative-post-sp13-r-wpt-state-3267-pass-29.md
+0032	active	ci sp17 handoff next-steps	CI landing gate and SP17 from-main handoff	2026-08-19	entries/0032-ci-landing-gate-and-sp17-from-main-handoff.md

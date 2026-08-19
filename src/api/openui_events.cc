@@ -8,30 +8,28 @@
 
 #include "openui/openui.h"
 #include "openui/openui_impl.h"
-
 #include "third_party/blink/public/common/input/web_input_event.h"
 #include "third_party/blink/public/common/input/web_keyboard_event.h"
 #include "third_party/blink/public/common/input/web_mouse_event.h"
 #include "third_party/blink/public/common/input/web_mouse_wheel_event.h"
+#include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/renderer/core/dom/events/event.h"
 #include "third_party/blink/renderer/core/events/keyboard_event.h"
 #include "third_party/blink/renderer/core/events/mouse_event.h"
 #include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "third_party/blink/renderer/core/input/event_handler.h"
 #include "third_party/blink/renderer/platform/wtf/text/atomic_string.h"
-#include "third_party/blink/public/platform/web_string.h"
 
 // ═══════════════════════════════════════════════════════════════════════════
 // OuiNativeEventListener implementation
 // ═══════════════════════════════════════════════════════════════════════════
 
 OuiNativeEventListener::OuiNativeEventListener(OuiEventCallback callback,
-                                                void* user_data,
-                                                OuiElementImpl* owner)
+                                               void* user_data,
+                                               OuiElementImpl* owner)
     : callback_(callback), user_data_(user_data), owner_(owner) {}
 
-void OuiNativeEventListener::Invoke(blink::ExecutionContext*,
-                                     blink::Event* event) {
+void OuiNativeEventListener::Invoke(blink::ExecutionContext*, blink::Event* event) {
   if (!callback_ || !owner_)
     return;
 
@@ -57,15 +55,23 @@ void OuiNativeEventListener::Invoke(blink::ExecutionContext*,
 
   // Modifiers.
   if (auto* mouse = blink::DynamicTo<blink::MouseEvent>(event)) {
-    if (mouse->shiftKey()) oui_event.modifiers |= OUI_MOD_SHIFT;
-    if (mouse->ctrlKey()) oui_event.modifiers |= OUI_MOD_CTRL;
-    if (mouse->altKey()) oui_event.modifiers |= OUI_MOD_ALT;
-    if (mouse->metaKey()) oui_event.modifiers |= OUI_MOD_META;
+    if (mouse->shiftKey())
+      oui_event.modifiers |= OUI_MOD_SHIFT;
+    if (mouse->ctrlKey())
+      oui_event.modifiers |= OUI_MOD_CTRL;
+    if (mouse->altKey())
+      oui_event.modifiers |= OUI_MOD_ALT;
+    if (mouse->metaKey())
+      oui_event.modifiers |= OUI_MOD_META;
   } else if (auto* key = blink::DynamicTo<blink::KeyboardEvent>(event)) {
-    if (key->shiftKey()) oui_event.modifiers |= OUI_MOD_SHIFT;
-    if (key->ctrlKey()) oui_event.modifiers |= OUI_MOD_CTRL;
-    if (key->altKey()) oui_event.modifiers |= OUI_MOD_ALT;
-    if (key->metaKey()) oui_event.modifiers |= OUI_MOD_META;
+    if (key->shiftKey())
+      oui_event.modifiers |= OUI_MOD_SHIFT;
+    if (key->ctrlKey())
+      oui_event.modifiers |= OUI_MOD_CTRL;
+    if (key->altKey())
+      oui_event.modifiers |= OUI_MOD_ALT;
+    if (key->metaKey())
+      oui_event.modifiers |= OUI_MOD_META;
   }
 
   oui_event.default_prevented = 0;
@@ -105,12 +111,13 @@ int MapModifiers(int oui_mods) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 OuiStatus oui_document_dispatch_mouse_event(OuiDocument* doc,
-                                             OuiMouseEventType type,
-                                             float x,
-                                             float y,
-                                             OuiMouseButton button,
-                                             int modifiers) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+                                            OuiMouseEventType type,
+                                            float x,
+                                            float y,
+                                            OuiMouseButton button,
+                                            int modifiers) {
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   auto& frame = impl->page_holder->GetFrame();
   auto& handler = frame.GetEventHandler();
@@ -138,8 +145,7 @@ OuiStatus oui_document_dispatch_mouse_event(OuiDocument* doc,
 
   switch (type) {
     case OUI_MOUSE_DOWN: {
-      blink::WebMouseEvent event(
-          blink::WebInputEvent::Type::kMouseDown, web_mods, ts);
+      blink::WebMouseEvent event(blink::WebInputEvent::Type::kMouseDown, web_mods, ts);
       event.SetPositionInWidget(pos);
       event.button = web_button;
       event.click_count = 1;
@@ -147,8 +153,7 @@ OuiStatus oui_document_dispatch_mouse_event(OuiDocument* doc,
       break;
     }
     case OUI_MOUSE_UP: {
-      blink::WebMouseEvent event(
-          blink::WebInputEvent::Type::kMouseUp, web_mods, ts);
+      blink::WebMouseEvent event(blink::WebInputEvent::Type::kMouseUp, web_mods, ts);
       event.SetPositionInWidget(pos);
       event.button = web_button;
       event.click_count = 1;
@@ -156,8 +161,7 @@ OuiStatus oui_document_dispatch_mouse_event(OuiDocument* doc,
       break;
     }
     case OUI_MOUSE_MOVE: {
-      blink::WebMouseEvent event(
-          blink::WebInputEvent::Type::kMouseMove, web_mods, ts);
+      blink::WebMouseEvent event(blink::WebInputEvent::Type::kMouseMove, web_mods, ts);
       event.SetPositionInWidget(pos);
       event.button = blink::WebPointerProperties::Button::kNoButton;
       handler.HandleMouseMoveEvent(event, {}, {});
@@ -170,11 +174,12 @@ OuiStatus oui_document_dispatch_mouse_event(OuiDocument* doc,
 }
 
 OuiStatus oui_document_dispatch_key_event(OuiDocument* doc,
-                                           OuiKeyEventType type,
-                                           int key_code,
-                                           const char* key_text,
-                                           int modifiers) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+                                          OuiKeyEventType type,
+                                          int key_code,
+                                          const char* key_text,
+                                          int modifiers) {
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   auto& frame = impl->page_holder->GetFrame();
   auto& handler = frame.GetEventHandler();
@@ -184,29 +189,26 @@ OuiStatus oui_document_dispatch_key_event(OuiDocument* doc,
 
   switch (type) {
     case OUI_KEY_DOWN: {
-      blink::WebKeyboardEvent event(
-          blink::WebInputEvent::Type::kRawKeyDown, web_mods, ts);
+      blink::WebKeyboardEvent event(blink::WebInputEvent::Type::kRawKeyDown, web_mods, ts);
       event.windows_key_code = key_code;
       handler.KeyEvent(event);
       break;
     }
     case OUI_KEY_UP: {
-      blink::WebKeyboardEvent event(
-          blink::WebInputEvent::Type::kKeyUp, web_mods, ts);
+      blink::WebKeyboardEvent event(blink::WebInputEvent::Type::kKeyUp, web_mods, ts);
       event.windows_key_code = key_code;
       handler.KeyEvent(event);
       break;
     }
     case OUI_KEY_CHAR: {
-      blink::WebKeyboardEvent event(
-          blink::WebInputEvent::Type::kChar, web_mods, ts);
+      blink::WebKeyboardEvent event(blink::WebInputEvent::Type::kChar, web_mods, ts);
       event.windows_key_code = key_code;
       if (key_text && key_text[0]) {
         // Decode UTF-8 → UTF-16 for Blink's text field.
         blink::WebString ws = blink::WebString::FromUTF8(key_text);
         std::u16string u16 = ws.Utf16();
-        size_t copy_len = std::min(u16.size(),
-            static_cast<size_t>(blink::WebKeyboardEvent::kTextLengthCap - 1));
+        size_t copy_len =
+            std::min(u16.size(), static_cast<size_t>(blink::WebKeyboardEvent::kTextLengthCap - 1));
         for (size_t i = 0; i < copy_len; ++i)
           event.text[i] = u16[i];
         event.text[copy_len] = 0;
@@ -225,12 +227,13 @@ OuiStatus oui_document_dispatch_key_event(OuiDocument* doc,
 }
 
 OuiStatus oui_document_dispatch_wheel_event(OuiDocument* doc,
-                                             float x,
-                                             float y,
-                                             float delta_x,
-                                             float delta_y,
-                                             int modifiers) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+                                            float x,
+                                            float y,
+                                            float delta_x,
+                                            float delta_y,
+                                            int modifiers) {
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   auto& frame = impl->page_holder->GetFrame();
   auto& handler = frame.GetEventHandler();
@@ -238,8 +241,7 @@ OuiStatus oui_document_dispatch_wheel_event(OuiDocument* doc,
   int web_mods = MapModifiers(modifiers);
   base::TimeTicks ts = base::TimeTicks::Now();
 
-  blink::WebMouseWheelEvent event(
-      blink::WebInputEvent::Type::kMouseWheel, web_mods, ts);
+  blink::WebMouseWheelEvent event(blink::WebInputEvent::Type::kMouseWheel, web_mods, ts);
   event.SetPositionInWidget(gfx::PointF(x, y));
   event.delta_x = delta_x;
   event.delta_y = delta_y;
@@ -257,9 +259,9 @@ OuiStatus oui_document_dispatch_wheel_event(OuiDocument* doc,
 // ═══════════════════════════════════════════════════════════════════════════
 
 OuiStatus oui_element_set_event_callback(OuiElement* elem,
-                                          const char* event_type,
-                                          OuiEventCallback callback,
-                                          void* user_data) {
+                                         const char* event_type,
+                                         OuiEventCallback callback,
+                                         void* user_data) {
   if (!elem || !event_type || !callback)
     return OUI_ERROR_INVALID_ARGUMENT;
 
@@ -272,18 +274,15 @@ OuiStatus oui_element_set_event_callback(OuiElement* elem,
   // Remove existing listener for this event type if present.
   auto it = impl->callbacks.find(type);
   if (it != impl->callbacks.end()) {
-    impl->element->removeEventListener(
-        blink::AtomicString(event_type), it->second.listener.Get(), false);
+    impl->element->removeEventListener(blink::AtomicString(event_type), it->second.listener.Get(),
+                                       false);
     impl->callbacks.erase(it);
   }
 
   // Create new GC'd listener.
-  auto* listener =
-      blink::MakeGarbageCollected<OuiNativeEventListener>(
-          callback, user_data, impl);
+  auto* listener = blink::MakeGarbageCollected<OuiNativeEventListener>(callback, user_data, impl);
 
-  impl->element->addEventListener(
-      blink::AtomicString(event_type), listener);
+  impl->element->addEventListener(blink::AtomicString(event_type), listener);
 
   OuiCallbackEntry entry;
   entry.callback = reinterpret_cast<void*>(callback);
@@ -294,8 +293,7 @@ OuiStatus oui_element_set_event_callback(OuiElement* elem,
   return OUI_OK;
 }
 
-OuiStatus oui_element_remove_event_callback(OuiElement* elem,
-                                             const char* event_type) {
+OuiStatus oui_element_remove_event_callback(OuiElement* elem, const char* event_type) {
   if (!elem || !event_type)
     return OUI_ERROR_INVALID_ARGUMENT;
 
@@ -306,8 +304,8 @@ OuiStatus oui_element_remove_event_callback(OuiElement* elem,
   std::string type(event_type);
   auto it = impl->callbacks.find(type);
   if (it != impl->callbacks.end()) {
-    impl->element->removeEventListener(
-        blink::AtomicString(event_type), it->second.listener.Get(), false);
+    impl->element->removeEventListener(blink::AtomicString(event_type), it->second.listener.Get(),
+                                       false);
     impl->callbacks.erase(it);
   }
 

@@ -9,5 +9,7 @@ mod exclusion_space;
 pub mod float_utils;
 
 pub use exclusion_space::ExclusionSpace;
-pub use exclusion_space::{ExclusionType, ExclusionArea, LayoutOpportunity, ClearType};
-pub use float_utils::{UnpositionedFloat, PositionedFloat, position_float, compute_margin_box_inline_size};
+pub use exclusion_space::{ClearType, ExclusionArea, ExclusionType, LayoutOpportunity};
+pub use float_utils::{
+    compute_margin_box_inline_size, position_float, PositionedFloat, UnpositionedFloat,
+};

@@ -14,6 +14,7 @@ pub mod features;
 mod font;
 mod metrics;
 mod platform;
+mod relative;
 
 pub use cache::FontCache;
 pub use description::FontDescription;
@@ -21,3 +22,7 @@ pub use fallback::FontFallbackList;
 pub use font::Font;
 pub use metrics::FontMetrics;
 pub use platform::FontPlatformData;
+pub use relative::{
+    used_line_height, used_line_height_metrics, FontRelativeLengthResolver, FontRelativeUnit,
+    UsedLineHeightMetrics,
+};

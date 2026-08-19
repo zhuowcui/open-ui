@@ -1,0 +1,853 @@
+filename,status,fn_name,reason
+add-scroller-then-scroll-content-into-view,not_portable,,uses_javascript
+auto-scrollbar-inline-children,not_portable,,uses_javascript
+chrome-480554290-crash,not_portable,,uses_javascript
+chrome-body-overflow-propagation-crash,not_portable,,uses_javascript
+clip-001,ported,css_overflow_clip_001,
+clip-001-ref,ported,css_overflow_clip_001_ref,
+clip-002,ported,css_overflow_clip_002,
+clip-002-ref,ported,css_overflow_clip_002_ref,
+clip-003,ported,css_overflow_clip_003,
+clip-003-ref,ported,css_overflow_clip_003_ref,
+clip-004,ported,css_overflow_clip_004,
+clip-004-ref,ported,css_overflow_clip_004_ref,
+clip-005,ported,css_overflow_clip_005,
+clip-005-ref,ported,css_overflow_clip_005_ref,
+clip-006,ported,css_overflow_clip_006,
+clip-007,ported,css_overflow_clip_007,
+clip-008,ported,css_overflow_clip_008,
+clipped-scroller-add-content,not_portable,,uses_javascript
+clipped-scroller-add-content-ref,not_portable,,uses_javascript
+column-creates-computed-style,not_portable,,uses_javascript
+column-style-change-triggers-relayout,not_portable,,uses_javascript
+column-updates-computed-style,not_portable,,uses_javascript
+content-change-then-scroll-into-view,not_portable,,uses_javascript
+display-flex-svg-overflow-default,not_portable,,unsupported element: <svg>
+display-flex-svg-overflow-default-ref,ported,css_overflow_display_flex_svg_overflow_default_ref,
+document-element-overflow-hidden-scroll,not_portable,,uses_javascript
+document-element-overflow-hidden-scroll-ref,ported,css_overflow_document_element_overflow_hidden_scroll_ref,
+dynamic-visible-to-clip-001,not_portable,,uses_javascript
+ellipsis-with-image-crash,not_portable,,unsupported element: <img>
+float-with-relpos-and-transform,not_portable,,style_block_unsupported property: transform
+hit-test-border-radius-and-perspective,not_portable,,uses_javascript
+hit-test-stacking-context-parent-border-radius,not_portable,,uses_javascript
+incremental-scroll,not_portable,,uses_javascript
+incremental-scroll-002,not_portable,,uses_javascript
+incremental-scroll-002-ref,not_portable,,uses_javascript
+incremental-scroll-ref,not_portable,,uses_javascript
+inheritance,not_portable,,uses_javascript
+input-scrollable-region-001,not_portable,,unsupported element: <input>
+keyboard-scroll,not_portable,,uses_javascript
+line-clamp_block-ellipsis-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-010,not_portable,,style_block_unsupported property: grid-template-columns
+line-clamp_block-ellipsis-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-015.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-018,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-019,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-020,not_portable,,complex_css_selector: .parent::first-line
+line-clamp_block-ellipsis-021,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-022,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-023,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-024,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-025,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-026,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-027,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-028,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-029,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-030,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-031,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-032.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_block-ellipsis-repaint-001,not_portable,,uses_javascript
+line-clamp_block-ellipsis-repaint-002,not_portable,,uses_javascript
+line-clamp_block-ellipsis-repaint-003,not_portable,,uses_javascript
+line-clamp_block-ellipsis-repaint-004,not_portable,,uses_javascript
+line-clamp_continue-001,ported,css_overflow_line_clamp_continue_001,
+line-clamp_discard_discard-multicol-001,ported,css_overflow_line_clamp_discard_discard_multicol_001,
+line-clamp_discard_discard-multicol-002,ported,css_overflow_line_clamp_discard_discard_multicol_002,
+line-clamp_discard_discard-multicol-003,ported,css_overflow_line_clamp_discard_discard_multicol_003,
+line-clamp_discard_discard-multicol-004,ported,css_overflow_line_clamp_discard_discard_multicol_004,
+line-clamp_line-clamp-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-011.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-012.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-013.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-015,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-016,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_line-clamp-017,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_line-clamp-018,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_line-clamp-019,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-020,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-021,not_portable,,uses_javascript
+line-clamp_line-clamp-022.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-023.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-024.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-025.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-026,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-027,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-028,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-029,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-030,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-031,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-032,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-033,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-034,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-035.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-036,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-037,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-038,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-001-crash,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-002-crash,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-002.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-003.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-015.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-018.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-019.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-020.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-021.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-022.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-023.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-024.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-025,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-027.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-028.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-029.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-030.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-031.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-032.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-033,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-034,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-035,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-036,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-037,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-038,not_portable,,uses_javascript
+line-clamp_line-clamp-auto-039,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-040,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-041,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-042,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-043,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-044,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-045,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-046,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-047,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-auto-with-ruby-005.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-balance-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-content-height-with-dynamic-change,not_portable,,uses_javascript
+line-clamp_line-clamp-content-height-with-dynamic-change-ref,ported,css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref,
+line-clamp_line-clamp-with-abspos-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-015,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-018,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-019,not_portable,,uses_javascript
+line-clamp_line-clamp-with-abspos-020,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-021,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-022,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-abspos-023,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-001,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-002,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-003,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-004,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-005,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-006,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-007,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-010,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-011,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-012,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-013,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-014,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-015,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-016,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-fixed-pos-017,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-001.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-002.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-003.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-004.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-005.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-006.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-007.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-008,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-009.tentative,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-with-floats-010.tentative,not_portable,,uses_javascript
+line-clamp_line-clamp-with-text-overflow-string-001,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_line-clamp-with-text-overflow-string-002,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_line-clamp-with-text-overflow-string-003,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-001,not_portable,,style_block_vendor/unsupported prefix: -webkit-line-clamp
+line-clamp_webkit-line-clamp-002,not_portable,,style_block_vendor/unsupported prefix: -webkit-line-clamp
+line-clamp_webkit-line-clamp-003,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-004,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-005,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-006,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-007,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-008,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-009,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-010,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-011,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-012,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-013,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-014,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-015,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-016,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-017,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-018,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-019,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-020,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-021,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-022,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-023,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-024,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-025,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-026,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-027,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-029,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-030,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-031,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-032,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-033,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-034,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-035,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-036,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-037,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-038,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-039,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-040,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-041-crash,not_portable,,vendor/unsupported prefix: -webkit-line-clamp
+line-clamp_webkit-line-clamp-042-crash,not_portable,,vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-043,not_portable,,vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-044,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-045,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-046,not_portable,,style_block_vendor/unsupported prefix: -webkit-line-clamp
+line-clamp_webkit-line-clamp-047,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-048,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-049,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-050,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-051,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-052,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-053,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-abspos-001,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-block-in-inline-001,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-bug-1926732-crash,not_portable,,style_block_vendor/unsupported prefix: -webkit-line-clamp
+line-clamp_webkit-line-clamp-dynamic-001,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-with-line-height,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-with-max-height.tentative,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+logical-overflow-001,not_portable,,uses_javascript
+margin-block-end-scroll-area-001,ported,css_overflow_margin_block_end_scroll_area_001,
+multicol-in-orthogonal-writing-mode-crash,not_portable,,unsupported property: writing-mode
+no-scrollable-overflow-vertical-rl,not_portable,,style_block_unsupported property: writing-mode
+no-scrollable-overflow-vertical-rl-2,not_portable,,style_block_unsupported property: writing-mode
+orthogonal-flow-with-inline-end-margin,not_portable,,uses_javascript
+outline-with-opacity-crash,not_portable,,uses_javascript
+overflow-abpos-transform,not_portable,,uses_javascript
+overflow-alignment-001-ref,not_portable,,style_block_unsupported property: caption-side
+overflow-alignment-002-ref,not_portable,,style_block_unsupported property: caption-side
+overflow-alignment-block-001,not_portable,,uses_javascript
+overflow-alignment-block-002,not_portable,,uses_javascript
+overflow-alignment-flex-col-reverse-001,not_portable,,uses_javascript
+overflow-alignment-flex-col-reverse-002,not_portable,,uses_javascript
+overflow-alignment-flex-col-reverse-overflow-001,not_portable,,uses_javascript
+overflow-alignment-flex-col-reverse-overflow-002,not_portable,,uses_javascript
+overflow-alignment-flex-col-wrap-001,not_portable,,uses_javascript
+overflow-alignment-flex-col-wrap-002,not_portable,,uses_javascript
+overflow-alignment-flex-col-wrap-overflow-001,not_portable,,uses_javascript
+overflow-alignment-flex-col-wrap-overflow-002,not_portable,,uses_javascript
+overflow-alignment-flex-row-reverse-001,not_portable,,uses_javascript
+overflow-alignment-flex-row-reverse-002,not_portable,,uses_javascript
+overflow-alignment-flex-row-reverse-overflow-001,not_portable,,uses_javascript
+overflow-alignment-flex-row-reverse-overflow-002,not_portable,,uses_javascript
+overflow-alignment-flex-row-wrap-001,not_portable,,uses_javascript
+overflow-alignment-flex-row-wrap-002,not_portable,,uses_javascript
+overflow-alignment-flex-row-wrap-overflow-001,not_portable,,uses_javascript
+overflow-alignment-flex-row-wrap-overflow-002,not_portable,,uses_javascript
+overflow-alignment-grid-001,not_portable,,uses_javascript
+overflow-alignment-grid-002,not_portable,,uses_javascript
+overflow-auto-scrollbar-gutter-intrinsic-001,not_portable,,unsupported property: writing-mode
+overflow-auto-scrollbar-gutter-intrinsic-001-ref,not_portable,,unsupported property: writing-mode
+overflow-auto-scrollbar-gutter-intrinsic-002,not_portable,,unsupported property: writing-mode
+overflow-auto-scrollbar-gutter-intrinsic-002-ref,not_portable,,unsupported property: writing-mode
+overflow-auto-scrollbar-gutter-intrinsic-003,not_portable,,unsupported property: writing-mode
+overflow-auto-scrollbar-gutter-intrinsic-003-ref,not_portable,,unsupported property: writing-mode
+overflow-auto-scrolling-with-margin-and-transform,not_portable,,uses_javascript
+overflow-body-propagation-001,ported,css_overflow_overflow_body_propagation_001,
+overflow-body-propagation-002,ported,css_overflow_overflow_body_propagation_002,
+overflow-body-propagation-003,ported,css_overflow_overflow_body_propagation_003,
+overflow-body-propagation-004,ported,css_overflow_overflow_body_propagation_004,
+overflow-body-propagation-005,ported,css_overflow_overflow_body_propagation_005,
+overflow-body-propagation-006,ported,css_overflow_overflow_body_propagation_006,
+overflow-body-propagation-007,ported,css_overflow_overflow_body_propagation_007,
+overflow-body-propagation-007-ref,ported,css_overflow_overflow_body_propagation_007_ref,
+overflow-body-propagation-008,ported,css_overflow_overflow_body_propagation_008,
+overflow-body-propagation-008-ref,ported,css_overflow_overflow_body_propagation_008_ref,
+overflow-body-propagation-009,ported,css_overflow_overflow_body_propagation_009,
+overflow-body-propagation-009-ref,ported,css_overflow_overflow_body_propagation_009_ref,
+overflow-body-propagation-010,not_portable,,style_block_unsupported property: contain
+overflow-body-propagation-010-ref,ported,css_overflow_overflow_body_propagation_010_ref,
+overflow-body-propagation-011,not_portable,,style_block_unsupported property: contain
+overflow-body-propagation-011-ref,ported,css_overflow_overflow_body_propagation_011_ref,
+overflow-body-propagation-012,ported,css_overflow_overflow_body_propagation_012,
+overflow-body-propagation-012-ref,ported,css_overflow_overflow_body_propagation_012_ref,
+overflow-body-propagation-013,ported,css_overflow_overflow_body_propagation_013,
+overflow-body-propagation-014,not_portable,,uses_javascript
+overflow-body-propagation-015,not_portable,,uses_javascript
+overflow-body-propagation-016,not_portable,,uses_javascript
+overflow-canvas,not_portable,,uses_javascript
+overflow-canvas-ref,not_portable,,uses_javascript
+overflow-clip-001-crash,not_portable,,uses_javascript
+overflow-clip-002-crash,ported,css_overflow_overflow_clip_002_crash,
+overflow-clip-cant-scroll,not_portable,,uses_javascript
+overflow-clip-cant-scroll-ref,ported,css_overflow_overflow_clip_cant_scroll_ref,
+overflow-clip-content-visual-overflow,ported,css_overflow_overflow_clip_content_visual_overflow,
+overflow-clip-content-visual-overflow-ref,ported,css_overflow_overflow_clip_content_visual_overflow_ref,
+overflow-clip-hit-testing,not_portable,,uses_javascript
+overflow-clip-margin-001,ported,css_overflow_overflow_clip_margin_001,
+overflow-clip-margin-001-ref,ported,css_overflow_overflow_clip_margin_001_ref,
+overflow-clip-margin-002,ported,css_overflow_overflow_clip_margin_002,
+overflow-clip-margin-002-ref,ported,css_overflow_overflow_clip_margin_002_ref,
+overflow-clip-margin-003,ported,css_overflow_overflow_clip_margin_003,
+overflow-clip-margin-003-ref,ported,css_overflow_overflow_clip_margin_003_ref,
+overflow-clip-margin-004,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-004-ref,ported,css_overflow_overflow_clip_margin_004_ref,
+overflow-clip-margin-005,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-005-ref,ported,css_overflow_overflow_clip_margin_005_ref,
+overflow-clip-margin-006,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-006-ref,ported,css_overflow_overflow_clip_margin_006_ref,
+overflow-clip-margin-007,not_portable,,uses_javascript
+overflow-clip-margin-007-ref,not_portable,,uses_javascript
+overflow-clip-margin-008,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-008-ref,not_portable,,style_block_unsupported property: contain
+overflow-clip-margin-009,ported,css_overflow_overflow_clip_margin_009,
+overflow-clip-margin-009-ref,ported,css_overflow_overflow_clip_margin_009_ref,
+overflow-clip-margin-010,ported,css_overflow_overflow_clip_margin_010,
+overflow-clip-margin-010-ref,ported,css_overflow_overflow_clip_margin_010_ref,
+overflow-clip-margin-011,ported,css_overflow_overflow_clip_margin_011,
+overflow-clip-margin-011-ref,ported,css_overflow_overflow_clip_margin_011_ref,
+overflow-clip-margin-012,not_portable,,uses_javascript
+overflow-clip-margin-border-radius,ported,css_overflow_overflow_clip_margin_border_radius,
+overflow-clip-margin-border-radius-002,not_portable,,complex_css_selector: div::before
+overflow-clip-margin-border-radius-002-ref,ported,css_overflow_overflow_clip_margin_border_radius_002_ref,
+overflow-clip-margin-border-radius-ref,ported,css_overflow_overflow_clip_margin_border_radius_ref,
+overflow-clip-margin-hit-testing,not_portable,,uses_javascript
+overflow-clip-margin-intersection-observer,not_portable,,uses_javascript
+overflow-clip-margin-invalidation,not_portable,,uses_javascript
+overflow-clip-margin-invalidation-ref,ported,css_overflow_overflow_clip_margin_invalidation_ref,
+overflow-clip-margin-mul-column-border-box,ported,css_overflow_overflow_clip_margin_mul_column_border_box,
+overflow-clip-margin-mul-column-border-box-ref,ported,css_overflow_overflow_clip_margin_mul_column_border_box_ref,
+overflow-clip-margin-mul-column-content-box,ported,css_overflow_overflow_clip_margin_mul_column_content_box,
+overflow-clip-margin-mul-column-content-box-ref,ported,css_overflow_overflow_clip_margin_mul_column_content_box_ref,
+overflow-clip-margin-mul-column-padding-box,ported,css_overflow_overflow_clip_margin_mul_column_padding_box,
+overflow-clip-margin-mul-column-padding-box-ref,ported,css_overflow_overflow_clip_margin_mul_column_padding_box_ref,
+overflow-clip-margin-svg,not_portable,,unsupported element: <svg>
+overflow-clip-margin-svg-ref,ported,css_overflow_overflow_clip_margin_svg_ref,
+overflow-clip-margin-visual-box,ported,css_overflow_overflow_clip_margin_visual_box,
+overflow-clip-margin-visual-box-and-value,ported,css_overflow_overflow_clip_margin_visual_box_and_value,
+overflow-clip-margin-visual-box-and-value-ref,ported,css_overflow_overflow_clip_margin_visual_box_and_value_ref,
+overflow-clip-margin-visual-box-and-value-with-border-radius,ported,css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius,
+overflow-clip-margin-visual-box-and-value-with-border-radius-ref,ported,css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius_ref,
+overflow-clip-margin-visual-box-ref,ported,css_overflow_overflow_clip_margin_visual_box_ref,
+overflow-clip-rounded-table,not_portable,,style_block_unsupported property: border-collapse
+overflow-clip-rounded-table-ref,not_portable,,style_block_unsupported property: border-collapse
+overflow-clip-scroll-size,not_portable,,uses_javascript
+overflow-clip-transform-001,not_portable,,style_block_unsupported property: transform
+overflow-clip-transform-001-ref,not_portable,,style_block_unsupported property: transform
+overflow-clip-x-visible-y-svg,not_portable,,unsupported element: <svg>
+overflow-clip-x-visible-y-svg-ref,ported,css_overflow_overflow_clip_x_visible_y_svg_ref,
+overflow-clip-y-visible-x-svg,not_portable,,unsupported element: <svg>
+overflow-clip-y-visible-x-svg-ref,ported,css_overflow_overflow_clip_y_visible_x_svg_ref,
+overflow-codependent-scrollbars,not_portable,,uses_javascript
+overflow-does-not-apply-to-inline-box,ported,css_overflow_overflow_does_not_apply_to_inline_box,
+overflow-ellipsis-dynamic-001,not_portable,,uses_javascript
+overflow-empty-child-box,not_portable,,uses_javascript
+overflow-hidden-resize-with-stacking-context-child,not_portable,,uses_javascript
+overflow-img,not_portable,,unsupported element: <img>
+overflow-img-border-radius,not_portable,,unsupported element: <img>
+overflow-img-display-table,not_portable,,unsupported display: table
+overflow-img-display-table-ref,not_portable,,unsupported element: <img>
+overflow-img-object-position,not_portable,,unsupported element: <img>
+overflow-img-object-position-ref,not_portable,,unsupported element: <img>
+overflow-img-ref,not_portable,,unsupported element: <img>
+overflow-img-scroll-non-replaced,not_portable,,unsupported element: <img>
+overflow-img-scroll-non-replaced-ref,not_portable,,unsupported element: <img>
+overflow-img-scroll-replaced,not_portable,,unsupported element: <img>
+overflow-img-scroll-replaced-ref,not_portable,,unsupported element: <img>
+overflow-img-svg,not_portable,,unsupported element: <img>
+overflow-img-svg-ref,not_portable,,unsupported element: <img>
+overflow-inline-block-with-opacity,ported,css_overflow_overflow_inline_block_with_opacity,
+overflow-inline-transform-relative,not_portable,,uses_javascript
+overflow-negative-margin,ported,css_overflow_overflow_negative_margin,
+overflow-negative-margin-dynamic,not_portable,,uses_javascript
+overflow-no-frameset-propagation,ported,css_overflow_overflow_no_frameset_propagation,
+overflow-no-interpolation,not_portable,,uses_javascript
+overflow-outside-padding,not_portable,,uses_javascript
+overflow-overlay,ported,css_overflow_overflow_overlay,
+overflow-overlay-ref,ported,css_overflow_overflow_overlay_ref,
+overflow-padding,not_portable,,uses_javascript
+overflow-recalc-001,not_portable,,uses_javascript
+overflow-replaced-element-001,not_portable,,uses_javascript
+overflow-replaced-element-002,not_portable,,unsupported element: <iframe>
+overflow-replaced-element-002-ref,not_portable,,unsupported element: <iframe>
+overflow-rtl-scroll-left,not_portable,,uses_javascript
+overflow-scroll-big-border-small-content,not_portable,,uses_javascript
+overflow-scroll-big-border-small-content-ref,not_portable,,uses_javascript
+overflow-scroll-intrinsic-001,not_portable,,unsupported property: writing-mode
+overflow-scroll-intrinsic-001-ref,ported,css_overflow_overflow_scroll_intrinsic_001_ref,
+overflow-scroll-resize-visibility-hidden,ported,css_overflow_overflow_scroll_resize_visibility_hidden,
+overflow-scroll-resize-visibility-hidden-ref,not_portable,,style_block_unsupported property: filter
+overflow-shorthand-001,not_portable,,uses_javascript
+overflow-shorthand-002,not_portable,,uses_javascript
+overflow-video,not_portable,,uses_javascript
+overflow-video-ref,not_portable,,uses_javascript
+paint-containment-svg,not_portable,,style_block_unsupported property: contain
+paint-containment-svg-ref,ported,css_overflow_paint_containment_svg_ref,
+parsing_block-ellipsis-invalid,not_portable,,uses_javascript
+parsing_block-ellipsis-valid,not_portable,,uses_javascript
+parsing_continue-invalid,not_portable,,uses_javascript
+parsing_continue-valid,not_portable,,uses_javascript
+parsing_line-clamp-invalid,not_portable,,uses_javascript
+parsing_line-clamp-valid,not_portable,,uses_javascript
+parsing_max-lines-invalid,not_portable,,uses_javascript
+parsing_max-lines-valid,not_portable,,uses_javascript
+parsing_overflow-clip-margin,not_portable,,uses_javascript
+parsing_overflow-clip-margin-computed,not_portable,,uses_javascript
+parsing_overflow-computed,not_portable,,uses_javascript
+parsing_overflow-invalid,not_portable,,uses_javascript
+parsing_overflow-valid,not_portable,,uses_javascript
+parsing_scroll-buttons-invalid,not_portable,,uses_javascript
+parsing_scroll-buttons-valid,not_portable,,uses_javascript
+parsing_scroll-markers-computed,not_portable,,uses_javascript
+parsing_scroll-markers-computed.tentative,not_portable,,uses_javascript
+parsing_scroll-markers-invalid,not_portable,,uses_javascript
+parsing_scroll-markers-invalid.tentative,not_portable,,uses_javascript
+parsing_scroll-markers-valid,not_portable,,uses_javascript
+parsing_scroll-target-group-computed,not_portable,,uses_javascript
+parsing_scroll-target-group-invalid,not_portable,,uses_javascript
+parsing_scroll-target-group-valid,not_portable,,uses_javascript
+parsing_scrollbar-gutter-invalid,not_portable,,uses_javascript
+parsing_scrollbar-gutter-valid,not_portable,,uses_javascript
+parsing_text-overflow-computed,not_portable,,uses_javascript
+parsing_text-overflow-invalid,not_portable,,uses_javascript
+parsing_text-overflow-valid,not_portable,,uses_javascript
+parsing_webkit-box-computed,not_portable,,uses_javascript
+parsing_webkit-line-clamp-invalid,not_portable,,uses_javascript
+parsing_webkit-line-clamp-valid,not_portable,,uses_javascript
+resizer-no-size-change.tentative,not_portable,,uses_javascript
+resizer-transform.tentative,not_portable,,uses_javascript
+rounded-overflow-clip-visible,not_portable,,unsupported element: <svg>
+rounded-overflow-clip-visible-ref,ported,css_overflow_rounded_overflow_clip_visible_ref,
+rounded-overflow-visible-clip,not_portable,,unsupported element: <svg>
+rounded-overflow-visible-clip-ref,ported,css_overflow_rounded_overflow_visible_clip_ref,
+scroll-marker-group-hover,not_portable,,uses_javascript
+scroll-markers_chrome-421199213-crash,not_portable,,complex_css_selector: #item::scroll-marker
+scroll-markers_column-scroll-marker-001,not_portable,,complex_css_selector: #container::scroll-marker-group
+scroll-markers_column-scroll-marker-001-ref,ported,css_overflow_scroll_markers_column_scroll_marker_001_ref,
+scroll-markers_column-scroll-marker-002,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-002-ref,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-003,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-004,not_portable,,complex_css_selector: #container::scroll-marker-group
+scroll-markers_column-scroll-marker-005,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-006,not_portable,,complex_css_selector: #container::scroll-marker-group
+scroll-markers_column-scroll-marker-006-ref,not_portable,,style_block_unsupported property: content
+scroll-markers_column-scroll-marker-007,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-007-ref,not_portable,,style_block_unsupported property: content
+scroll-markers_column-scroll-marker-008,not_portable,,complex_css_selector: .scroller::scroll-marker-group
+scroll-markers_column-scroll-marker-010,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-011,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-012,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-013,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-014,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-015-crash,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-counters,not_portable,,style_block_unsupported property: counter-reset
+scroll-markers_column-scroll-marker-counters-ref,ported,css_overflow_scroll_markers_column_scroll_marker_counters_ref,
+scroll-markers_column-scroll-marker-dynamic-style-update,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-focus-001,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-focus-002,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-focus-003,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-focus-004,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-group-style-remove,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-no-content-crash,not_portable,,complex_css_selector: #container::column::scroll-marker
+scroll-markers_column-scroll-marker-reattach-target-current,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_column-scroll-marker-reattach-target-current-ref,ported,css_overflow_scroll_markers_column_scroll_marker_reattach_target_current_ref,
+scroll-markers_html-scroll-marker-target-before-after,not_portable,,uses_javascript
+scroll-markers_inline-with-scroll-marker-group-crash,not_portable,,complex_css_selector: #test::scroll-marker-group
+scroll-markers_nested-scroll-markers-under-content-visibility-auto,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_nested-scroll-markers-under-content-visibility-auto-ref,not_portable,,style_block_unsupported property: contain
+scroll-markers_resources_root-scroll-marker-activation-iframe,not_portable,,complex_css_selector: .item::scroll-marker
+scroll-markers_root-element-layout-parent-crash,not_portable,,complex_css_selector: html::scroll-marker-group
+scroll-markers_root-scroll-button,not_portable,,complex_css_selector: :root::scroll-button(block-end)
+scroll-markers_root-scroll-button-activation,not_portable,,uses_javascript
+scroll-markers_root-scroll-button-ref,not_portable,,unsupported element: <button>
+scroll-markers_root-scroll-marker,not_portable,,complex_css_selector: :root::scroll-marker-group
+scroll-markers_root-scroll-marker-activation-and-scroll-tracking,not_portable,,uses_javascript
+scroll-markers_root-scroll-marker-activation-in-iframe,not_portable,,uses_javascript
+scroll-markers_root-scroll-marker-ref,ported,css_overflow_scroll_markers_root_scroll_marker_ref,
+scroll-markers_scroll-button-activation-content-hit-test,not_portable,,uses_javascript
+scroll-markers_scroll-button-activation-without-scroller,not_portable,,uses_javascript
+scroll-markers_scroll-button-and-scroll-marker-not-in-event-path,not_portable,,uses_javascript
+scroll-markers_scroll-button-disabled-no-focus,not_portable,,uses_javascript
+scroll-markers_scroll-button-display-none,not_portable,,uses_javascript
+scroll-markers_scroll-button-disposed-event-target,not_portable,,uses_javascript
+scroll-markers_scroll-button-elementFromPoint,not_portable,,uses_javascript
+scroll-markers_scroll-button-event-target,not_portable,,uses_javascript
+scroll-markers_scroll-button-focus-active-element,not_portable,,uses_javascript
+scroll-markers_scroll-button-hover,not_portable,,uses_javascript
+scroll-markers_scroll-button-hover-remove,not_portable,,uses_javascript
+scroll-markers_scroll-button-on-object,not_portable,,complex_css_selector: #target::scroll-button(block-end)
+scroll-markers_scroll-button-on-object-ref,not_portable,,complex_css_selector: #target::scroll-button(block-end)
+scroll-markers_scroll-button-universal-before,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-001,not_portable,,complex_css_selector: div::scroll-button(block-end)
+scroll-markers_scroll-buttons-001-ref,ported,css_overflow_scroll_markers_scroll_buttons_001_ref,
+scroll-markers_scroll-buttons-002,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-003,not_portable,,complex_css_selector: div::scroll-button(block-end)
+scroll-markers_scroll-buttons-004,not_portable,,complex_css_selector: div::scroll-button(*)
+scroll-markers_scroll-buttons-activation,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-activation-with-columns,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-appearance,not_portable,,complex_css_selector: div::scroll-button(block-start)
+scroll-markers_scroll-buttons-appearance-ref,not_portable,,unsupported element: <button>
+scroll-markers_scroll-buttons-container-query-crash,not_portable,,style_block_unsupported property: container-type
+scroll-markers_scroll-buttons-disabled,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-ref,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-rtl,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-rtl-ref,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-snapping,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-snapping-ref,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-vertical-ltr,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-disabled-vertical-ltr-ref,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-dynamic-create-remove,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-enabled,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-buttons-enabled-ref,not_portable,,unsupported element: <button>
+scroll-markers_scroll-buttons-enabled-rtl,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-buttons-enabled-rtl-ref,not_portable,,unsupported element: <button>
+scroll-markers_scroll-buttons-enabled-vertical-ltr,not_portable,,style_block_unsupported property: writing-mode
+scroll-markers_scroll-buttons-enabled-vertical-ltr-ref,not_portable,,style_block_unsupported property: writing-mode
+scroll-markers_scroll-buttons-layout-parent,not_portable,,complex_css_selector: #sc::scroll-button(left)
+scroll-markers_scroll-buttons-scroll-distance,not_portable,,uses_javascript
+scroll-markers_scroll-buttons-selection,not_portable,,uses_javascript
+scroll-markers_scroll-marker-001,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-001-ref,ported,css_overflow_scroll_markers_scroll_marker_001_ref,
+scroll-markers_scroll-marker-002,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-002-ref,ported,css_overflow_scroll_markers_scroll_marker_002_ref,
+scroll-markers_scroll-marker-003,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-003-ref,ported,css_overflow_scroll_markers_scroll_marker_003_ref,
+scroll-markers_scroll-marker-004,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-004-ref,ported,css_overflow_scroll_markers_scroll_marker_004_ref,
+scroll-markers_scroll-marker-005,not_portable,,complex_css_selector: .container::scroll-marker-group
+scroll-markers_scroll-marker-006,not_portable,,complex_css_selector: .container::scroll-marker-group
+scroll-markers_scroll-marker-007,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-008,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-009,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-010,not_portable,,style_block_unsupported property: counter-reset
+scroll-markers_scroll-marker-010-ref,ported,css_overflow_scroll_markers_scroll_marker_010_ref,
+scroll-markers_scroll-marker-011,not_portable,,complex_css_selector: .scroller::scroll-marker-group
+scroll-markers_scroll-marker-011-ref,ported,css_overflow_scroll_markers_scroll_marker_011_ref,
+scroll-markers_scroll-marker-012,not_portable,,complex_css_selector: .scroller::scroll-marker-group
+scroll-markers_scroll-marker-013,not_portable,,uses_javascript
+scroll-markers_scroll-marker-014-crash,not_portable,,complex_css_selector: .carousel::scroll-marker-group
+scroll-markers_scroll-marker-15,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-crash,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-default-direction-position,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-focus-behaviour-links-mode.tentative,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-focus-behaviour-tabs-mode.tentative,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-retains-focus,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-scroll,not_portable,,uses_javascript
+scroll-markers_scroll-marker-activation-specified-direction-position,not_portable,,uses_javascript
+scroll-markers_scroll-marker-active-unreached-target,not_portable,,uses_javascript
+scroll-markers_scroll-marker-controls-scroll-tracking-001,not_portable,,uses_javascript
+scroll-markers_scroll-marker-controls-scroll-tracking-002,not_portable,,uses_javascript
+scroll-markers_scroll-marker-controls-scroll-tracking-003,not_portable,,uses_javascript
+scroll-markers_scroll-marker-counters,not_portable,,style_block_unsupported property: counter-reset
+scroll-markers_scroll-marker-counters-ref,ported,css_overflow_scroll_markers_scroll_marker_counters_ref,
+scroll-markers_scroll-marker-disposed-event-target,not_portable,,uses_javascript
+scroll-markers_scroll-marker-double-activation,not_portable,,uses_javascript
+scroll-markers_scroll-marker-dynamic,not_portable,,uses_javascript
+scroll-markers_scroll-marker-dynamic-crash,not_portable,,uses_javascript
+scroll-markers_scroll-marker-dynamic-ref,ported,css_overflow_scroll_markers_scroll_marker_dynamic_ref,
+scroll-markers_scroll-marker-elementFromPoint,not_portable,,uses_javascript
+scroll-markers_scroll-marker-event-target,not_portable,,uses_javascript
+scroll-markers_scroll-marker-focus-scroll-crash,not_portable,,uses_javascript
+scroll-markers_scroll-marker-focus-visible,not_portable,,uses_javascript
+scroll-markers_scroll-marker-focus-within,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-001,not_portable,,complex_css_selector: div::scroll-marker-group
+scroll-markers_scroll-marker-group-001-ref,ported,css_overflow_scroll_markers_scroll_marker_group_001_ref,
+scroll-markers_scroll-marker-group-002,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-003,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-005,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-005-ref,ported,css_overflow_scroll_markers_scroll_marker_group_005_ref,
+scroll-markers_scroll-marker-group-006,not_portable,,complex_css_selector: div::scroll-marker-group
+scroll-markers_scroll-marker-group-006-ref,ported,css_overflow_scroll_markers_scroll_marker_group_006_ref,
+scroll-markers_scroll-marker-group-007,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-007-ref,ported,css_overflow_scroll_markers_scroll_marker_group_007_ref,
+scroll-markers_scroll-marker-group-008,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-008-ref,ported,css_overflow_scroll_markers_scroll_marker_group_008_ref,
+scroll-markers_scroll-marker-group-009,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-009-ref,ported,css_overflow_scroll_markers_scroll_marker_group_009_ref,
+scroll-markers_scroll-marker-group-010,not_portable,,complex_css_selector: div::scroll-marker-group
+scroll-markers_scroll-marker-group-011,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-group-011-ref,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-group-012,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-013,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-group-013-ref,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-marker-group-014,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-015,not_portable,,complex_css_selector: #scroller>*::scroll-marker
+scroll-markers_scroll-marker-group-016,not_portable,,complex_css_selector: #sc::scroll-marker-group
+scroll-markers_scroll-marker-group-017,not_portable,,complex_css_selector: #sc::scroll-marker-group
+scroll-markers_scroll-marker-group-018,not_portable,,complex_css_selector: #sc::scroll-marker-group
+scroll-markers_scroll-marker-group-019,not_portable,,complex_css_selector: #sc::scroll-marker-group
+scroll-markers_scroll-marker-group-020,not_portable,,complex_css_selector: #sc::scroll-marker-group
+scroll-markers_scroll-marker-group-add-dynamic-001,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-add-dynamic-001-ref,ported,css_overflow_scroll_markers_scroll_marker_group_add_dynamic_001_ref,
+scroll-markers_scroll-marker-group-add-dynamic-002,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-add-dynamic-003,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-add-dynamic-004,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-keeps-active-in-view,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-keeps-active-in-view-ref,not_portable,,style_block_unsupported property: grid-auto-flow
+scroll-markers_scroll-marker-group-layout-parent,not_portable,,complex_css_selector: #sc::scroll-marker-group
+scroll-markers_scroll-marker-group-size-container-query,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-size-container-query-root,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-snap-aligns-to-active-ref,not_portable,,style_block_unsupported property: grid-auto-flow
+scroll-markers_scroll-marker-group-snap-aligns-to-active.tentative,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-style-and-scroll-container-query,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-style-remove,not_portable,,uses_javascript
+scroll-markers_scroll-marker-group-style-remove-ref,ported,css_overflow_scroll_markers_scroll_marker_group_style_remove_ref,
+scroll-markers_scroll-marker-hover,not_portable,,uses_javascript
+scroll-markers_scroll-marker-hover-logical,not_portable,,uses_javascript
+scroll-markers_scroll-marker-hover-remove,not_portable,,uses_javascript
+scroll-markers_scroll-marker-in-display-none-column-crash,not_portable,,uses_javascript
+scroll-markers_scroll-marker-inert-001,not_portable,,uses_javascript
+scroll-markers_scroll-marker-inert-002,not_portable,,uses_javascript
+scroll-markers_scroll-marker-multiple-activation,not_portable,,uses_javascript
+scroll-markers_scroll-marker-navigation-cycles,not_portable,,uses_javascript
+scroll-markers_scroll-marker-next-focus,not_portable,,uses_javascript
+scroll-markers_scroll-marker-scroll-container,not_portable,,uses_javascript
+scroll-markers_scroll-marker-selection-in-2d,not_portable,,style_block_unsupported property: grid-auto-flow
+scroll-markers_scroll-marker-selection-in-2d-ref,not_portable,,style_block_unsupported property: grid-auto-flow
+scroll-markers_scroll-marker-selection-in-padded-scroller,not_portable,,uses_javascript
+scroll-markers_scroll-marker-selection-picks-closest,not_portable,,uses_javascript
+scroll-markers_scroll-marker-target-before-after,not_portable,,uses_javascript
+scroll-markers_scroll-marker-with-content-visibility-hidden-ancestor-crash,not_portable,,uses_javascript
+scroll-markers_scroll-marker-with-content-visibility-hidden-crash,not_portable,,uses_javascript
+scroll-markers_scroll-markers-added-after-content-visibility-auto,not_portable,,uses_javascript
+scroll-markers_scroll-markers-added-before-content-visibility-auto,not_portable,,uses_javascript
+scroll-markers_scroll-markers-container-query-crash,not_portable,,style_block_unsupported property: container-type
+scroll-markers_scroll-markers-focus-active-element,not_portable,,uses_javascript
+scroll-markers_scroll-markers-focus-on-scrolling,not_portable,,uses_javascript
+scroll-markers_scroll-markers-inside-canvas-crash,not_portable,,complex_css_selector: #item::scroll-marker
+scroll-markers_scroll-markers-inside-select-crash,not_portable,,complex_css_selector: #scroller div::scroll-marker
+scroll-markers_scroll-markers-resize-crash,not_portable,,uses_javascript
+scroll-markers_scroll-markers-under-content-visibility-auto,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-markers-under-content-visibility-auto-ref,not_portable,,complex_css_selector: #scroller::scroll-marker-group
+scroll-markers_scroll-markers-updated-by-programmatic-scroll,not_portable,,uses_javascript
+scroll-markers_scroll-pseudo-elements-gcs-cq,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-001,not_portable,,complex_css_selector: a:target-current
+scroll-markers_scroll-target-group-001-ref,ported,css_overflow_scroll_markers_scroll_target_group_001_ref,
+scroll-markers_scroll-target-group-002,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-002-ref,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-003,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-003-ref,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-004,not_portable,,style_block_unsupported property: container
+scroll-markers_scroll-target-group-005,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-006,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-007,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-008,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-008-ref,ported,css_overflow_scroll_markers_scroll_target_group_008_ref,
+scroll-markers_scroll-target-group-009,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-009-ref,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-010,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-011,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-012,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-012-ref,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-013,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-inline-crash,ported,css_overflow_scroll_markers_scroll_target_group_inline_crash,
+scroll-markers_scroll-target-group-inline-targets,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-inline-targets-ref,not_portable,,uses_javascript
+scroll-markers_target-current-scroll-marker-update,not_portable,,uses_javascript
+scroll-markers_targeted-column-scroll-marker-selection-001,not_portable,,uses_javascript
+scroll-markers_targeted-column-scroll-marker-selection-001-ref,not_portable,,style_block_unsupported property: counter-increment
+scroll-markers_targeted-column-scroll-marker-selection-002,not_portable,,uses_javascript
+scroll-markers_targeted-column-scroll-marker-selection-002-ref,not_portable,,style_block_unsupported property: counter-increment
+scroll-markers_targeted-column-scroll-marker-selection-003,not_portable,,uses_javascript
+scroll-markers_targeted-column-scroll-marker-selection-003-ref,not_portable,,complex_css_selector: & > :nth-child(1)::scroll-marker
+scroll-markers_targeted-column-scroll-marker-selection-004,not_portable,,uses_javascript
+scroll-markers_targeted-column-scroll-marker-selection-004-ref,not_portable,,complex_css_selector: & > :nth-child(1)::scroll-marker
+scroll-markers_targeted-scroll-marker-selection-with-transition.tentative,not_portable,,uses_javascript
+scroll-markers_targeted-scroll-marker-selection.tentative,not_portable,,uses_javascript
+scroll-overflow-padding-block-001,not_portable,,uses_javascript
+scroll-with-ancestor-border-radius,not_portable,,uses_javascript
+scroll-with-border-radius,not_portable,,uses_javascript
+scrollable-overflow-empty-newline-span,not_portable,,uses_javascript
+scrollable-overflow-fixed-positioned-initial-containing-block,not_portable,,uses_javascript
+scrollable-overflow-float,not_portable,,uses_javascript
+scrollable-overflow-height-with-flex-item-margin-inline-end,not_portable,,uses_javascript
+scrollable-overflow-height-with-flex-item-margin-inline-end-rtl,not_portable,,uses_javascript
+scrollable-overflow-input-001,not_portable,,uses_javascript
+scrollable-overflow-input-001-ref,not_portable,,unsupported element: <input>
+scrollable-overflow-input-002,not_portable,,uses_javascript
+scrollable-overflow-input-002-ref,not_portable,,unsupported element: <input>
+scrollable-overflow-padding,not_portable,,uses_javascript
+scrollable-overflow-padding-inline,not_portable,,uses_javascript
+scrollable-overflow-padding-input,not_portable,,uses_javascript
+scrollable-overflow-self-collapsing,not_portable,,uses_javascript
+scrollable-overflow-textarea,not_portable,,uses_javascript
+scrollable-overflow-transform-001,not_portable,,uses_javascript
+scrollable-overflow-transform-002,not_portable,,uses_javascript
+scrollable-overflow-transform-003,not_portable,,uses_javascript
+scrollable-overflow-transform-004,not_portable,,uses_javascript
+scrollable-overflow-transform-005.tentative,not_portable,,uses_javascript
+scrollable-overflow-transform-006,not_portable,,uses_javascript
+scrollable-overflow-transform-007,not_portable,,uses_javascript
+scrollable-overflow-transform-008,not_portable,,uses_javascript
+scrollable-overflow-transform-009,not_portable,,uses_javascript
+scrollable-overflow-transform-010.tentative,not_portable,,uses_javascript
+scrollable-overflow-transform-011,not_portable,,uses_javascript
+scrollable-overflow-transform-dynamic-001,not_portable,,uses_javascript
+scrollable-overflow-transform-dynamic-002,not_portable,,uses_javascript
+scrollable-overflow-transform-dynamic-003,not_portable,,uses_javascript
+scrollable-overflow-transform-dynamic-004,not_portable,,uses_javascript
+scrollable-overflow-transform-dynamic-005,not_portable,,uses_javascript
+scrollable-overflow-transform-dynamic-006,not_portable,,uses_javascript
+scrollable-overflow-transform-unreachable-region,not_portable,,uses_javascript
+scrollable-overflow-vertical-rl-dynamic,not_portable,,uses_javascript
+scrollable-overflow-with-flex-item-margin-inline-end,not_portable,,uses_javascript
+scrollable-overflow-with-grid-item-margin-inline-end,not_portable,,uses_javascript
+scrollable-overflow-with-nested-elements-001,not_portable,,uses_javascript
+scrollable-overflow-with-nested-elements-002,not_portable,,uses_javascript
+scrollable-overflow-with-nested-elements-003,not_portable,,uses_javascript
+scrollable-overflow-with-nested-elements-004,not_portable,,uses_javascript
+scrollable-overflow-with-nested-elements-005,not_portable,,uses_javascript
+scrollable-overflow-zero-one-axis,not_portable,,uses_javascript
+scrollbar-empty-001,ported,css_overflow_scrollbar_empty_001,
+scrollbar-empty-002,not_portable,,unsupported element: <svg>
+scrollbar-gutter-001,not_portable,,uses_javascript
+scrollbar-gutter-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-002-ref,not_portable,,uses_javascript
+scrollbar-gutter-003,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-abspos-001,ported,css_overflow_scrollbar_gutter_abspos_001,
+scrollbar-gutter-abspos-001-ref,ported,css_overflow_scrollbar_gutter_abspos_001_ref,
+scrollbar-gutter-dynamic-001,not_portable,,uses_javascript
+scrollbar-gutter-dynamic-001-ref,ported,css_overflow_scrollbar_gutter_dynamic_001_ref,
+scrollbar-gutter-dynamic-002,not_portable,,uses_javascript
+scrollbar-gutter-dynamic-002-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-dynamic-003,not_portable,,uses_javascript
+scrollbar-gutter-dynamic-003-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-dynamic-004,not_portable,,uses_javascript
+scrollbar-gutter-dynamic-004-ref,ported,css_overflow_scrollbar_gutter_dynamic_004_ref,
+scrollbar-gutter-fixedpos-001,ported,css_overflow_scrollbar_gutter_fixedpos_001,
+scrollbar-gutter-fixedpos-001-ref,ported,css_overflow_scrollbar_gutter_fixedpos_001_ref,
+scrollbar-gutter-fixedpos-002,ported,css_overflow_scrollbar_gutter_fixedpos_002,
+scrollbar-gutter-fixedpos-002-ref,ported,css_overflow_scrollbar_gutter_fixedpos_002_ref,
+scrollbar-gutter-fixedpos-003,ported,css_overflow_scrollbar_gutter_fixedpos_003,
+scrollbar-gutter-fixedpos-003-ref,ported,css_overflow_scrollbar_gutter_fixedpos_003_ref,
+scrollbar-gutter-fixedpos-004,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-fixedpos-004-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-propagation-001,not_portable,,uses_javascript
+scrollbar-gutter-propagation-002,not_portable,,uses_javascript
+scrollbar-gutter-propagation-003,not_portable,,uses_javascript
+scrollbar-gutter-propagation-004,not_portable,,uses_javascript
+scrollbar-gutter-propagation-005,not_portable,,uses_javascript
+scrollbar-gutter-propagation-006,not_portable,,uses_javascript
+scrollbar-gutter-propagation-007,not_portable,,uses_javascript
+scrollbar-gutter-root,not_portable,,style_block_unsupported property: transform
+scrollbar-gutter-root-both-edges,not_portable,,style_block_unsupported property: transform
+scrollbar-gutter-root-both-edges-ref,not_portable,,uses_javascript
+scrollbar-gutter-root-ref,not_portable,,uses_javascript
+scrollbar-gutter-rtl-001,not_portable,,uses_javascript
+scrollbar-gutter-rtl-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-rtl-002-ref,not_portable,,uses_javascript
+scrollbar-gutter-scroll-into-view,not_portable,,uses_javascript
+scrollbar-gutter-scroll-into-view-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-vertical-lr-001,not_portable,,uses_javascript
+scrollbar-gutter-vertical-lr-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-vertical-lr-002-ref,not_portable,,uses_javascript
+scrollbar-gutter-vertical-rl-001,not_portable,,uses_javascript
+scrollbar-gutter-vertical-rl-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-vertical-rl-002-ref,not_portable,,uses_javascript
+scrollbar-gutter-with-background-gradient,ported,css_overflow_scrollbar_gutter_with_background_gradient,
+scrollbar-gutter-with-background-gradient-ref,ported,css_overflow_scrollbar_gutter_with_background_gradient_ref,
+scrollbar-large-scale-in-iframe,not_portable,,unsupported element: <iframe>
+scrollbar-large-scale-in-iframe-ref,ported,css_overflow_scrollbar_large_scale_in_iframe_ref,
+scrollbars-chrome-bug-001,not_portable,,uses_javascript
+scrollbars-chrome-bug-001-ref,not_portable,,style_block_unsupported property: transform
+scroller-covered-by-empty-svg,not_portable,,uses_javascript
+select-size-overflow-001,not_portable,,unsupported element: <select>
+select-size-overflow-001-ref,not_portable,,unsupported element: <select>
+shrink-to-fit-auto-overflow-relayout-crash,not_portable,,uses_javascript
+table-header-group-overflow-crash,not_portable,,unsupported display: table-header-group
+text-overflow-ellipsis-001,ported,css_overflow_text_overflow_ellipsis_001,
+text-overflow-ellipsis-002,ported,css_overflow_text_overflow_ellipsis_002,
+text-overflow-ellipsis-003,not_portable,,uses_javascript
+text-overflow-ellipsis-003-ref,ported,css_overflow_text_overflow_ellipsis_003_ref,
+text-overflow-ellipsis-editable-div-with-caret,not_portable,,uses_javascript
+text-overflow-ellipsis-editing-input,not_portable,,uses_javascript
+text-overflow-ellipsis-editing-input-ref,not_portable,,unsupported element: <input>
+text-overflow-ellipsis-rtl-001,ported,css_overflow_text_overflow_ellipsis_rtl_001,
+text-overflow-ellipsis-textarea-with-caret,not_portable,,uses_javascript
+text-overflow-ellipsis-vertical-001,not_portable,,style_block_unsupported property: writing-mode
+text-overflow-ellipsis-vertical-rtl-001,not_portable,,style_block_unsupported property: writing-mode
+text-overflow-scroll-001,not_portable,,uses_javascript
+text-overflow-scroll-rtl-001,not_portable,,uses_javascript
+text-overflow-scroll-vertical-lr-001,not_portable,,uses_javascript
+text-overflow-scroll-vertical-lr-rtl-001,not_portable,,uses_javascript
+text-overflow-scroll-vertical-rl-001,not_portable,,uses_javascript
+text-overflow-scroll-vertical-rl-rtl-001,not_portable,,uses_javascript

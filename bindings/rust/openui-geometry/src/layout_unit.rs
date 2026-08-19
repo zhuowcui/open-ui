@@ -26,34 +26,48 @@ impl LayoutUnit {
     // ── Constants ────────────────────────────────────────────────────
 
     #[inline]
-    pub const fn zero() -> Self { Self(0) }
+    pub const fn zero() -> Self {
+        Self(0)
+    }
 
     /// The smallest positive value: 1/64 pixel = 0.015625.
     #[inline]
-    pub const fn epsilon() -> Self { Self(1) }
+    pub const fn epsilon() -> Self {
+        Self(1)
+    }
 
     /// Maximum representable value (i32::MAX raw).
     #[inline]
-    pub const fn max() -> Self { Self(RAW_MAX) }
+    pub const fn max() -> Self {
+        Self(RAW_MAX)
+    }
 
     /// Minimum representable value (i32::MIN raw).
     #[inline]
-    pub const fn min() -> Self { Self(RAW_MIN) }
+    pub const fn min() -> Self {
+        Self(RAW_MIN)
+    }
 
     /// Blink's `NearlyMax()` — slightly less than max to allow rounding.
     #[inline]
-    pub const fn nearly_max() -> Self { Self(RAW_MAX - DENOMINATOR / 2) }
+    pub const fn nearly_max() -> Self {
+        Self(RAW_MAX - DENOMINATOR / 2)
+    }
 
     /// Blink's `NearlyMin()` — slightly more than min to allow rounding.
     #[inline]
-    pub const fn nearly_min() -> Self { Self(RAW_MIN + DENOMINATOR / 2) }
+    pub const fn nearly_min() -> Self {
+        Self(RAW_MIN + DENOMINATOR / 2)
+    }
 
     // ── Constructors (matching Blink exactly) ────────────────────────
 
     /// From raw internal representation.
     /// Matches Blink's `FromRawValue(Storage)`.
     #[inline]
-    pub const fn from_raw(raw: i32) -> Self { Self(raw) }
+    pub const fn from_raw(raw: i32) -> Self {
+        Self(raw)
+    }
 
     /// From raw with clamping to i32 range.
     /// Matches Blink's `FromRawValueWithClamp(T)`.
@@ -142,7 +156,9 @@ impl LayoutUnit {
 
     /// Raw internal value (in 1/64-pixel units).
     #[inline]
-    pub const fn raw(self) -> i32 { self.0 }
+    pub const fn raw(self) -> i32 {
+        self.0
+    }
 
     /// Convert to float. Matches Blink's `ToFloat()`:
     /// `static_cast<float>(value_) / kFixedPointDenominator`
@@ -225,6 +241,13 @@ impl LayoutUnit {
         self.to_i32() + ((self.fraction().0 + (DENOMINATOR / 2)) >> FRACTIONAL_BITS)
     }
 
+    /// Round to nearest pixel, returning a LayoutUnit aligned to a whole pixel.
+    /// Used for pixel-snapping positions before painting.
+    #[inline]
+    pub fn round(self) -> LayoutUnit {
+        Self::from_i32(self.round_i32())
+    }
+
     /// Fractional part only (always non-negative for positive values,
     /// sign-preserving for negative, matching C++ `%` semantics).
     /// Matches Blink's `Fraction()`:
@@ -245,24 +268,40 @@ impl LayoutUnit {
     /// Matches Blink's `ClampNegativeToZero()`.
     #[inline]
     pub fn clamp_negative_to_zero(self) -> Self {
-        if self.0 < 0 { Self(0) } else { self }
+        if self.0 < 0 {
+            Self(0)
+        } else {
+            self
+        }
     }
 
     /// Clamp indefinite (-1 pixel) to zero.
     /// Matches Blink's `ClampIndefiniteToZero()`.
     #[inline]
     pub fn clamp_indefinite_to_zero(self) -> Self {
-        if self.is_indefinite() { Self(0) } else { self }
+        if self.is_indefinite() {
+            Self(0)
+        } else {
+            self
+        }
     }
 
     #[inline]
     pub fn max_of(self, other: Self) -> Self {
-        if self.0 >= other.0 { self } else { other }
+        if self.0 >= other.0 {
+            self
+        } else {
+            other
+        }
     }
 
     #[inline]
     pub fn min_of(self, other: Self) -> Self {
-        if self.0 <= other.0 { self } else { other }
+        if self.0 <= other.0 {
+            self
+        } else {
+            other
+        }
     }
 
     /// Clamp between min and max.
@@ -283,7 +322,11 @@ impl LayoutUnit {
     /// Matches Blink's `AddEpsilon()`.
     #[inline]
     pub fn add_epsilon(self) -> Self {
-        if self.0 < RAW_MAX { Self(self.0 + 1) } else { self }
+        if self.0 < RAW_MAX {
+            Self(self.0 + 1)
+        } else {
+            self
+        }
     }
 
     /// Fused multiply-divide: `(self * m) / d` using i64 intermediate.
@@ -581,7 +624,10 @@ mod tests {
     fn indefinite_size() {
         assert_eq!(INDEFINITE_SIZE.raw(), -64);
         assert!(INDEFINITE_SIZE.is_indefinite());
-        assert_eq!(INDEFINITE_SIZE.clamp_indefinite_to_zero(), LayoutUnit::zero());
+        assert_eq!(
+            INDEFINITE_SIZE.clamp_indefinite_to_zero(),
+            LayoutUnit::zero()
+        );
     }
 
     #[test]
@@ -610,4 +656,3 @@ mod tests {
         assert_eq!(result.to_i32(), 75); // 100 * 3 / 4
     }
 }
-

@@ -1,0 +1,22 @@
+{
+  "total": 2,
+  "passed": 0,
+  "failed": 2,
+  "errors": 0,
+  "near_miss_aa": 2,
+  "aa_threshold_pct": 0.5,
+  "reference_tests": 1,
+  "reference_tests_pass": 0,
+  "tests": [
+    {
+      "id": "wpt/css_overflow/overflow-clip-margin-visual-box-and-value-with-border-radius-ref",
+      "status": "fail",
+      "mismatch_pct": 0.044161
+    },
+    {
+      "id": "wpt/css_overflow/overflow-clip-margin-visual-box-and-value-with-border-radius",
+      "status": "fail",
+      "mismatch_pct": 0.043949
+    }
+  ]
+}

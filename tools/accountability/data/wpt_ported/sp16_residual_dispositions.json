@@ -1,0 +1,5157 @@
+[
+  {
+    "test_id": "wpt/css_backgrounds/background-attachment-353",
+    "chromium_test_path": "css-backgrounds/background-attachment-353.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_image",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-attachment-fixed-block-002",
+    "chromium_test_path": "css-backgrounds/background-attachment-fixed-block-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_gradient",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-attachment-fixed-inline-002",
+    "chromium_test_path": "css-backgrounds/background-attachment-fixed-inline-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_gradient",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-attachment-local-block-002",
+    "chromium_test_path": "css-backgrounds/background-attachment-local-block-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_gradient",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-attachment-local-inline-002",
+    "chromium_test_path": "css-backgrounds/background-attachment-local-inline-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_gradient",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-clip_clip-text-dynamic-2",
+    "chromium_test_path": "css-backgrounds/background-clip/clip-text-dynamic-2.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_special_background_clip"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-clip_clip-text-out-of-flow-child",
+    "chromium_test_path": "css-backgrounds/background-clip/clip-text-out-of-flow-child.html",
+    "rejection_reason": "style_block_unsupported property: content",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_special_background_clip"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-image-007",
+    "chromium_test_path": "css-backgrounds/background-image-007.html",
+    "rejection_reason": "complex_css_selector: div::first-letter",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_image"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-image-first-letter",
+    "chromium_test_path": "css-backgrounds/background-image-first-letter.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_image",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-image-first-line",
+    "chromium_test_path": "css-backgrounds/background-image-first-line.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_image",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/border-radius-clip-001",
+    "chromium_test_path": "css-backgrounds/border-radius-clip-001.html",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_image",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/box-shadow-table-border-collapse-001",
+    "chromium_test_path": "css-backgrounds/box-shadow-table-border-collapse-001.html",
+    "rejection_reason": "style_block_unsupported property: border-collapse",
+    "owner_categories": [
+      "needs_box_shadow",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/parsing_background-image-computed.sub",
+    "chromium_test_path": "css-backgrounds/parsing/background-image-computed.sub.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_gradient",
+      "needs_image",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_height-valid",
+    "chromium_test_path": "css-box/parsing/height-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_margin-invalid",
+    "chromium_test_path": "css-box/parsing/margin-invalid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_margin-valid",
+    "chromium_test_path": "css-box/parsing/margin-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_max-height-valid",
+    "chromium_test_path": "css-box/parsing/max-height-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_max-width-valid",
+    "chromium_test_path": "css-box/parsing/max-width-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_padding-invalid",
+    "chromium_test_path": "css-box/parsing/padding-invalid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_padding-valid",
+    "chromium_test_path": "css-box/parsing/padding-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_box/parsing_width-valid",
+    "chromium_test_path": "css-box/parsing/width-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-001-wm-vlr-print",
+    "chromium_test_path": "css-break/block-001-wm-vlr-print.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_writing_mode",
+      "print_layout",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-001-wm-vlr-ref",
+    "chromium_test_path": "css-break/block-001-wm-vlr-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_writing_mode",
+      "reference_test",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-001-wm-vrl-print",
+    "chromium_test_path": "css-break/block-001-wm-vrl-print.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_writing_mode",
+      "print_layout",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-001-wm-vrl-ref",
+    "chromium_test_path": "css-break/block-001-wm-vrl-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_writing_mode",
+      "reference_test",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-002-wm-vlr-print",
+    "chromium_test_path": "css-break/block-002-wm-vlr-print.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_writing_mode",
+      "print_layout",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-002-wm-vlr-ref",
+    "chromium_test_path": "css-break/block-002-wm-vlr-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_writing_mode",
+      "reference_test",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-002-wm-vrl-print",
+    "chromium_test_path": "css-break/block-002-wm-vrl-print.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_writing_mode",
+      "print_layout",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/block-002-wm-vrl-ref",
+    "chromium_test_path": "css-break/block-002-wm-vrl-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_writing_mode",
+      "reference_test",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/break-inside-avoid-min-block-size-2",
+    "chromium_test_path": "css-break/break-inside-avoid-min-block-size-2.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_writing_mode",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/break-inside-avoid-min-block-size-2-ref",
+    "chromium_test_path": "css-break/break-inside-avoid-min-block-size-2-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_writing_mode",
+      "reference_test",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/fieldset-001",
+    "chromium_test_path": "css-break/fieldset-001.html",
+    "rejection_reason": "unsupported element: <fieldset>",
+    "owner_categories": [
+      "needs_form_controls",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/fieldset-001-ref",
+    "chromium_test_path": "css-break/fieldset-001-ref.html",
+    "rejection_reason": "unsupported element: <legend>",
+    "owner_categories": [
+      "needs_form_controls",
+      "reference_test",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/flexbox_flexbox-fragmentation-layout-001-crash",
+    "chromium_test_path": "css-break/flexbox/flexbox-fragmentation-layout-001-crash.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_javascript",
+      "non_visual_test",
+      "sp13_fragmentation"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/flexbox_multi-line-column-flex-fragmentation-009",
+    "chromium_test_path": "css-break/flexbox/multi-line-column-flex-fragmentation-009.html",
+    "rejection_reason": "unsupported property: contain",
+    "owner_categories": [
+      "needs_containment",
+      "needs_writing_mode",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/flexbox_multi-line-column-flex-fragmentation-010",
+    "chromium_test_path": "css-break/flexbox/multi-line-column-flex-fragmentation-010.html",
+    "rejection_reason": "unsupported property: contain",
+    "owner_categories": [
+      "needs_containment",
+      "needs_writing_mode",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-007",
+    "chromium_test_path": "css-break/flexbox/multi-line-row-flex-fragmentation-007.html",
+    "rejection_reason": "unsupported property: contain",
+    "owner_categories": [
+      "needs_containment",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-008",
+    "chromium_test_path": "css-break/flexbox/multi-line-row-flex-fragmentation-008.html",
+    "rejection_reason": "unsupported property: contain",
+    "owner_categories": [
+      "needs_containment",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-008",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-008.html",
+    "rejection_reason": "unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_positioned_inline_layout",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-010",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-010.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-011",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-011.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-012",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-012.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-013",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-013.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-014",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-014.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-015",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-015.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-016",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-016.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-017",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-017.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-018",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-018.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-019",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-019.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-020",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-020.html",
+    "rejection_reason": "unsupported property: grid-template-rows",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-021",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-021.html",
+    "rejection_reason": "unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-022",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-022.html",
+    "rejection_reason": "unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-023",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-023.html",
+    "rejection_reason": "unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-024",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-024.html",
+    "rejection_reason": "unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-025",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-025.html",
+    "rejection_reason": "unsupported property: grid-template-areas",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-030",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-030.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-031",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-031.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-035",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-035.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_positioned_inline_layout",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-036",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-036.html",
+    "rejection_reason": "unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_positioned_inline_layout",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-037",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-037.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_positioned_inline_layout",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-038",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-038.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_positioned_inline_layout",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-040",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-040.html",
+    "rejection_reason": "unsupported property: grid-template-areas",
+    "owner_categories": [
+      "needs_grid",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/grid_grid-item-fragmentation-041",
+    "chromium_test_path": "css-break/grid/grid-item-fragmentation-041.html",
+    "rejection_reason": "unsupported display: grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/hit-test-transformed-inline",
+    "chromium_test_path": "css-break/hit-test-transformed-inline.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_visual_effects",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/out-of-flow-in-multicolumn-067",
+    "chromium_test_path": "css-break/out-of-flow-in-multicolumn-067.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/widows-orphans-006",
+    "chromium_test_path": "css-break/widows-orphans-006.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_break/widows-orphans-007",
+    "chromium_test_path": "css-break/widows-orphans-007.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_fragmentation",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/accessibility_display-contents-role-and-label",
+    "chromium_test_path": "css-display/accessibility/display-contents-role-and-label.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_javascript",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-shadow-dom-1",
+    "chromium_test_path": "css-display/display-contents-shadow-dom-1.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-svg-elements",
+    "chromium_test_path": "css-display/display-contents-svg-elements.html",
+    "rejection_reason": "unsupported element: <svg>",
+    "owner_categories": [
+      "needs_canvas_svg"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-svg-elements-ref",
+    "chromium_test_path": "css-display/display-contents-svg-elements-ref.html",
+    "rejection_reason": "unsupported element: <svg>",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-flow-root-001-ref",
+    "chromium_test_path": "css-display/display-flow-root-001-ref.html",
+    "rejection_reason": "complex_css_selector: .clearfix:after",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-flow-root-list-item-001-ref",
+    "chromium_test_path": "css-display/display-flow-root-list-item-001-ref.html",
+    "rejection_reason": "complex_css_selector: .clearfix:after",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/empty-text-baseline-002",
+    "chromium_test_path": "css-display/empty-text-baseline-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/focus_display-contents-focus",
+    "chromium_test_path": "css-display/focus/display-contents-focus.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/align-items-baseline-column-horz",
+    "chromium_test_path": "css-flexbox/align-items-baseline-column-horz.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/align-items-baseline-column-vert",
+    "chromium_test_path": "css-flexbox/align-items-baseline-column-vert.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/align-items-baseline-row-horz",
+    "chromium_test_path": "css-flexbox/align-items-baseline-row-horz.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/align-items-baseline-row-vert",
+    "chromium_test_path": "css-flexbox/align-items-baseline-row-vert.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-005",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-005.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-006",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-006.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-007",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-007.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-fieldset-001",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-fieldset-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-fieldset-002",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-fieldset-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-fieldset-003",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-fieldset-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-flex-001",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-flex-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-flex-002",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-flex-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-flex-003",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-flex-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-flex-004",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-flex-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-grid-001",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-grid-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-grid-002",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-grid-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-grid-003",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-grid-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-001.tentative",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-line-clamp-001.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-002.tentative",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-line-clamp-002.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-line-clamp-003.tentative",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-line-clamp-003.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-multicol-001",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-multicol-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-multicol-002",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-multicol-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-multicol-003",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-multicol-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-overflow-001",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-overflow-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-overflow-002",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-overflow-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-overflow-003",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-overflow-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-table-001",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-table-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-table-002",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-table-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_table_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/alignment_flex-align-baseline-table-003",
+    "chromium_test_path": "css-flexbox/alignment/flex-align-baseline-table-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_table_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/anonymous-flex-item-restyle",
+    "chromium_test_path": "css-flexbox/anonymous-flex-item-restyle.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/baseline-synthesis-003",
+    "chromium_test_path": "css-flexbox/baseline-synthesis-003.html",
+    "rejection_reason": "unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/baseline-synthesis-004",
+    "chromium_test_path": "css-flexbox/baseline-synthesis-004.html",
+    "rejection_reason": "unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/css-flexbox-row",
+    "chromium_test_path": "css-flexbox/css-flexbox-row.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/css-flexbox-row-reverse",
+    "chromium_test_path": "css-flexbox/css-flexbox-row-reverse.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/dynamic-isize-change-001",
+    "chromium_test_path": "css-flexbox/dynamic-isize-change-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/dynamic-isize-change-004",
+    "chromium_test_path": "css-flexbox/dynamic-isize-change-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/dynamic-orthogonal-flex-item",
+    "chromium_test_path": "css-flexbox/dynamic-orthogonal-flex-item.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-basis-009",
+    "chromium_test_path": "css-flexbox/flex-basis-009.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-max-content-001",
+    "chromium_test_path": "css-flexbox/flex-container-max-content-001.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "needs_grid"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-max-content-001-ref",
+    "chromium_test_path": "css-flexbox/flex-container-max-content-001-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_grid",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-max-content-002.tentative",
+    "chromium_test_path": "css-flexbox/flex-container-max-content-002.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-min-content-001",
+    "chromium_test_path": "css-flexbox/flex-container-min-content-001.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "needs_grid"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-min-content-001-ref",
+    "chromium_test_path": "css-flexbox/flex-container-min-content-001-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_grid",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-min-content-002.tentative",
+    "chromium_test_path": "css-flexbox/flex-container-min-content-002.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-direction-column-overlap-001",
+    "chromium_test_path": "css-flexbox/flex-direction-column-overlap-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-item-compressible-001",
+    "chromium_test_path": "css-flexbox/flex-item-compressible-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-item-compressible-002",
+    "chromium_test_path": "css-flexbox/flex-item-compressible-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_form_controls",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-minimum-width-flex-items-014",
+    "chromium_test_path": "css-flexbox/flex-minimum-width-flex-items-014.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-one-sets-flex-basis-to-zero-px",
+    "chromium_test_path": "css-flexbox/flex-one-sets-flex-basis-to-zero-px.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-align-self-baseline-horiz-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <table>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_inline_block",
+      "needs_table_layout",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-006",
+    "chromium_test_path": "css-flexbox/flexbox-align-self-baseline-horiz-006.xhtml",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-006-ref",
+    "chromium_test_path": "css-flexbox/flexbox-align-self-baseline-horiz-006-ref.xhtml",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_inline_block",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008",
+    "chromium_test_path": "css-flexbox/flexbox-align-self-baseline-horiz-008.xhtml",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-align-self-baseline-horiz-008-ref",
+    "chromium_test_path": "css-flexbox/flexbox-align-self-baseline-horiz-008-ref.xhtml",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_inline_block",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-canvas-vert-001",
+    "chromium_test_path": "css-flexbox/flexbox-basic-canvas-vert-001.xhtml",
+    "rejection_reason": "unsupported element: <canvas>",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_complex_border",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-canvas-vert-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-basic-canvas-vert-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <canvas>",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_complex_border",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-canvas-vert-001v",
+    "chromium_test_path": "css-flexbox/flexbox-basic-canvas-vert-001v.xhtml",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_complex_border",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-fieldset-vert-001",
+    "chromium_test_path": "css-flexbox/flexbox-basic-fieldset-vert-001.xhtml",
+    "rejection_reason": "unsupported element: <fieldset>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_form_controls",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-fieldset-vert-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-basic-fieldset-vert-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <fieldset>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_empty_block_margin_collapse",
+      "needs_form_controls",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-iframe-vert-001",
+    "chromium_test_path": "css-flexbox/flexbox-basic-iframe-vert-001.xhtml",
+    "rejection_reason": "unsupported element: <iframe>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_generated_content",
+      "needs_image",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-iframe-vert-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-basic-iframe-vert-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <iframe>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_image",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-img-vert-001",
+    "chromium_test_path": "css-flexbox/flexbox-basic-img-vert-001.xhtml",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_generated_content",
+      "needs_image",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-img-vert-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-basic-img-vert-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_image",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-textarea-vert-001",
+    "chromium_test_path": "css-flexbox/flexbox-basic-textarea-vert-001.xhtml",
+    "rejection_reason": "unsupported element: <textarea>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_form_controls",
+      "needs_generated_content",
+      "needs_rounded_border_paint",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-textarea-vert-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-basic-textarea-vert-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <textarea>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_empty_block_margin_collapse",
+      "needs_form_controls",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-video-vert-001",
+    "chromium_test_path": "css-flexbox/flexbox-basic-video-vert-001.xhtml",
+    "rejection_reason": "unsupported element: <video>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_form_controls",
+      "needs_generated_content",
+      "needs_image",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-basic-video-vert-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-basic-video-vert-001-ref.xhtml",
+    "rejection_reason": "unsupported element: <video>",
+    "owner_categories": [
+      "needs_complex_border",
+      "needs_form_controls",
+      "needs_image",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-001-ref.html",
+    "rejection_reason": "complex_css_selector: .spacerChild::before",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-001a",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-001a.html",
+    "rejection_reason": "complex_css_selector: .spacerChild::before",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-001b",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-001b.html",
+    "rejection_reason": "complex_css_selector: .spacerChild::before",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-002-ref",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-002-ref.html",
+    "rejection_reason": "complex_css_selector: .spacerChild::before",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-002a",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-002a.html",
+    "rejection_reason": "complex_css_selector: .spacerChild::before",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-002b",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-002b.html",
+    "rejection_reason": "complex_css_selector: .spacerChild::before",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_generated_content",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-010",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-010.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-010-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-010-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-011",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-011.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-011-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-011-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-012",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-012.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-012-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-012-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-013",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-013.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-013-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-013-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-014",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-014.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-014-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-014-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-015",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-015.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-015-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-015-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-slr-row-mix.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-slr-row-mix-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-srl-row-mix.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix-ref",
+    "chromium_test_path": "css-flexbox/flexbox-writing-mode-srl-row-mix-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/hittest-anonymous-box",
+    "chromium_test_path": "css-flexbox/hittest-anonymous-box.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/hittest-before-pseudo",
+    "chromium_test_path": "css-flexbox/hittest-before-pseudo.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/intrinsic-size_row-use-cases-001",
+    "chromium_test_path": "css-flexbox/intrinsic-size/row-use-cases-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_form_controls",
+      "needs_generated_content",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/orthogonal-flex-item-crash",
+    "chromium_test_path": "css-flexbox/orthogonal-flex-item-crash.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/parsing_flex-basis-valid",
+    "chromium_test_path": "css-flexbox/parsing/flex-basis-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/percent-height-flex-items-cross-sizes-with-mutations",
+    "chromium_test_path": "css-flexbox/percent-height-flex-items-cross-sizes-with-mutations.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/svg-no-natural-size-grandchild",
+    "chromium_test_path": "css-flexbox/svg-no-natural-size-grandchild.html",
+    "rejection_reason": "unsupported element: <svg>",
+    "owner_categories": [
+      "needs_canvas_svg"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/synthesize-vrl-baseline",
+    "chromium_test_path": "css-flexbox/synthesize-vrl-baseline.html",
+    "rejection_reason": "unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/table-item-flex-percentage-min-width",
+    "chromium_test_path": "css-flexbox/table-item-flex-percentage-min-width.html",
+    "rejection_reason": "unsupported display: table",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/table-item-flex-percentage-width",
+    "chromium_test_path": "css-flexbox/table-item-flex-percentage-width.html",
+    "rejection_reason": "unsupported display: table",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/text-as-flexitem-size-001",
+    "chromium_test_path": "css-flexbox/text-as-flexitem-size-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_clearing_line_box_metrics",
+      "needs_empty_block_margin_collapse",
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/balance-grid-container",
+    "chromium_test_path": "css-multicol/balance-grid-container.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/balance-grid-container-ref",
+    "chromium_test_path": "css-multicol/balance-grid-container-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/column-fill-balance-orthog-block-001",
+    "chromium_test_path": "css-multicol/column-fill-balance-orthog-block-001.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/file-control-crash",
+    "chromium_test_path": "css-multicol/file-control-crash.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "non_visual_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/getclientrects-000",
+    "chromium_test_path": "css-multicol/getclientrects-000.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/getclientrects-001",
+    "chromium_test_path": "css-multicol/getclientrects-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-block-no-clip-001-ref",
+    "chromium_test_path": "css-multicol/multicol-block-no-clip-001-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-block-no-clip-002-ref",
+    "chromium_test_path": "css-multicol/multicol-block-no-clip-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-break-000",
+    "chromium_test_path": "css-multicol/multicol-break-000.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-break-000-ref",
+    "chromium_test_path": "css-multicol/multicol-break-000-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-break-001",
+    "chromium_test_path": "css-multicol/multicol-break-001.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-break-001-ref",
+    "chromium_test_path": "css-multicol/multicol-break-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-clip-001-ref",
+    "chromium_test_path": "css-multicol/multicol-clip-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-clip-002-ref",
+    "chromium_test_path": "css-multicol/multicol-clip-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-collapsing-001-ref",
+    "chromium_test_path": "css-multicol/multicol-collapsing-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-columns-invalid-001-ref",
+    "chromium_test_path": "css-multicol/multicol-columns-invalid-001-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-containing-001-ref",
+    "chromium_test_path": "css-multicol/multicol-containing-001-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-containing-002",
+    "chromium_test_path": "css-multicol/multicol-containing-002.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "needs_positioned_inline_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-count-002-ref",
+    "chromium_test_path": "css-multicol/multicol-count-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-count-computed-003-ref",
+    "chromium_test_path": "css-multicol/multicol-count-computed-003-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-count-computed-004-ref",
+    "chromium_test_path": "css-multicol/multicol-count-computed-004-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-000",
+    "chromium_test_path": "css-multicol/multicol-fill-000.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-000-ref",
+    "chromium_test_path": "css-multicol/multicol-fill-000-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-001",
+    "chromium_test_path": "css-multicol/multicol-fill-001.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-001-ref",
+    "chromium_test_path": "css-multicol/multicol-fill-001-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-auto-003-ref",
+    "chromium_test_path": "css-multicol/multicol-fill-auto-003-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-fill-balance-021",
+    "chromium_test_path": "css-multicol/multicol-fill-balance-021.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-gap-001-ref",
+    "chromium_test_path": "css-multicol/multicol-gap-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-gap-002-ref",
+    "chromium_test_path": "css-multicol/multicol-gap-002-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-gap-large-001-ref",
+    "chromium_test_path": "css-multicol/multicol-gap-large-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-gap-large-002-ref",
+    "chromium_test_path": "css-multicol/multicol-gap-large-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-gap-percentage-001",
+    "chromium_test_path": "css-multicol/multicol-gap-percentage-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-inherit-001-ref",
+    "chromium_test_path": "css-multicol/multicol-inherit-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-inherit-002-ref",
+    "chromium_test_path": "css-multicol/multicol-inherit-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-list-item-002",
+    "chromium_test_path": "css-multicol/multicol-list-item-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-nested-005-ref",
+    "chromium_test_path": "css-multicol/multicol-nested-005-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-nested-012",
+    "chromium_test_path": "css-multicol/multicol-nested-012.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-overflow-000",
+    "chromium_test_path": "css-multicol/multicol-overflow-000.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-overflow-000-ref",
+    "chromium_test_path": "css-multicol/multicol-overflow-000-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-rule-003-ref",
+    "chromium_test_path": "css-multicol/multicol-rule-003-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-rule-color-001-ref",
+    "chromium_test_path": "css-multicol/multicol-rule-color-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-rule-fraction-001-ref",
+    "chromium_test_path": "css-multicol/multicol-rule-fraction-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-rule-fraction-002-ref",
+    "chromium_test_path": "css-multicol/multicol-rule-fraction-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-rule-large-001-ref",
+    "chromium_test_path": "css-multicol/multicol-rule-large-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-000",
+    "chromium_test_path": "css-multicol/multicol-span-000.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-000-ref",
+    "chromium_test_path": "css-multicol/multicol-span-000-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-all-001-ref",
+    "chromium_test_path": "css-multicol/multicol-span-all-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "needs_inline_block",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-all-002-ref",
+    "chromium_test_path": "css-multicol/multicol-span-all-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "needs_inline_block",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-all-margin-001-ref",
+    "chromium_test_path": "css-multicol/multicol-span-all-margin-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-all-margin-002-ref",
+    "chromium_test_path": "css-multicol/multicol-span-all-margin-002-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-all-margin-bottom-001-ref",
+    "chromium_test_path": "css-multicol/multicol-span-all-margin-bottom-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-all-margin-nested-001-ref",
+    "chromium_test_path": "css-multicol/multicol-span-all-margin-nested-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-float-001-ref",
+    "chromium_test_path": "css-multicol/multicol-span-float-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-span-none-001-ref",
+    "chromium_test_path": "css-multicol/multicol-span-none-001-ref.xht",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-width-002-ref",
+    "chromium_test_path": "css-multicol/multicol-width-002-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-width-ch-ref",
+    "chromium_test_path": "css-multicol/multicol-width-ch-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-width-invalid-001-ref",
+    "chromium_test_path": "css-multicol/multicol-width-invalid-001-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-width-small-001-ref",
+    "chromium_test_path": "css-multicol/multicol-width-small-001-ref.xht",
+    "rejection_reason": "style_block_unsupported property: border-spacing",
+    "owner_categories": [
+      "needs_table_layout",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/offsetProps-001",
+    "chromium_test_path": "css-multicol/offsetProps-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/table_multicol-table-cell-001",
+    "chromium_test_path": "css-multicol/table/multicol-table-cell-001.xht",
+    "rejection_reason": "unsupported display: table-cell",
+    "owner_categories": [
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/table_multicol-table-cell-height-001",
+    "chromium_test_path": "css-multicol/table/multicol-table-cell-height-001.xht",
+    "rejection_reason": "unsupported display: table-cell",
+    "owner_categories": [
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/table_multicol-table-cell-height-002",
+    "chromium_test_path": "css-multicol/table/multicol-table-cell-height-002.xht",
+    "rejection_reason": "unsupported display: table-cell",
+    "owner_categories": [
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/ellipsis-with-image-crash",
+    "chromium_test_path": "css-overflow/ellipsis-with-image-crash.html",
+    "rejection_reason": "unsupported element: <img>",
+    "owner_categories": [
+      "needs_image",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/input-scrollable-region-001",
+    "chromium_test_path": "css-overflow/input-scrollable-region-001.html",
+    "rejection_reason": "unsupported element: <input>",
+    "owner_categories": [
+      "needs_form_controls"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-001",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-010",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-010.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "owner_categories": [
+      "needs_grid",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-011",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-011.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-012",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-012.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-013",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-013.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-014",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-014.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-015.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-015.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-016",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-016.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-017",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-017.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-018",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-018.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_gradient",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-019",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-019.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-020",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-020.html",
+    "rejection_reason": "complex_css_selector: .parent::first-line",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-021",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-021.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-022",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-022.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-023",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-023.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-024",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-024.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-025",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-025.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-026",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-026.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-027",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-027.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-028",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-028.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-029",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-029.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-030",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-030.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-031",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-031.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-032.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-032.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-repaint-004",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-repaint-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-002",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-002.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-003",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-003.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-004",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-004.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-005",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-005.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-006",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-006.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-007",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-007.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-008.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-009.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-010",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-010.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-011.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-011.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-012.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-012.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-013.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-013.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-014",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-014.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-015",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-015.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-016",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-016.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-017",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-017.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-018",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-018.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-019",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-019.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-020",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-020.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-021",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-021.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-022.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-022.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-023.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-023.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-024.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-024.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-025.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-025.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-026",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-026.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-029",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-029.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-030",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-030.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-031",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-031.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-033",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-033.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-034",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-034.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-035.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-035.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-036",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-036.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-037",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-037.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-038",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-038.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-002.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-002.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-003.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-003.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-004",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-004.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-005",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-005.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-006",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-006.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-007",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-007.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-008.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-009.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-010",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-010.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-011",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-011.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-012",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-012.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-013",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-013.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-014",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-014.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-015.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-015.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-016",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-016.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-017",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-017.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-018.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-018.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-019.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-019.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-020.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-020.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-021.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-021.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-022.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-022.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-023.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-023.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-024.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-024.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-025",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-025.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-027.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-027.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-028.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-028.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-029.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-029.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-030.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-030.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-031.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-031.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-032.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-032.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-033",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-033.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-034",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-034.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-035",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-035.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-036",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-036.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-037",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-037.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-038",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-038.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-041",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-041.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-042",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-042.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-with-ruby-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-002",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-with-ruby-002.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-003",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-with-ruby-003.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-004",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-with-ruby-004.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-with-ruby-005.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-with-ruby-005.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-002",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-002.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-003",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-003.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-004",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-004.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-005",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-005.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-006",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-006.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-007",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-007.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-008.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-009.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-010",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-010.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-011",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-011.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-balance-012",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-balance-012.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-002",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-002.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-003",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-003.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-004",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-004.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-005",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-005.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-006",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-006.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-007",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-007.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-008.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-009.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-010",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-010.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-011",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-011.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-012",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-012.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-013",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-013.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-014",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-014.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-015",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-015.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-016",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-016.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-017",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-017.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-018",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-018.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-019",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-019.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-020",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-020.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-021",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-021.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-022",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-022.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-023",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-023.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-001.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-002",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-002.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-003",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-003.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-004",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-004.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-005",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-005.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-006",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-006.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-007",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-007.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-008.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-009.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-010",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-010.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-011",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-011.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-012",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-012.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-013",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-013.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-014",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-014.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-015",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-015.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-016",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-016.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-017",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-017.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-001.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-001.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-002.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-002.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-003.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-003.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-004.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-004.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-005.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-005.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-006.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-006.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-007.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-007.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-008.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-009.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-009.tentative.html",
+    "rejection_reason": "style_block_unsupported property: line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-010.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-010.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-text-overflow-string-001",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-text-overflow-string-001.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-text-overflow-string-002",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-text-overflow-string-002.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-text-overflow-string-003",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-text-overflow-string-003.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-001",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-001.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-002",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-002.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-line-clamp",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-003",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-003.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-004",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-004.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-005",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-005.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-006",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-006.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-007",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-007.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-008",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-008.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-009",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-009.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-010",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-010.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-011",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-011.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-012",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-012.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-013",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-013.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-014",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-014.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-015",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-015.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-016",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-016.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-017",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-017.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-018",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-018.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-019",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-019.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-020",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-020.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-021",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-021.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-022",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-022.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-023",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-023.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-024",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-024.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-025",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-025.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-026",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-026.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-027.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-029",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-029.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-030",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-030.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-031",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-031.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-032",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-032.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-033",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-033.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-035",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-035.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-036",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-036.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-037",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-037.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-038",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-038.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-039",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-039.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-040",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-040.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-045",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-045.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-046",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-046.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-line-clamp",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-047",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-047.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-048",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-048.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-049",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-049.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-053",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-053.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-dynamic-001",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-with-line-height",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-with-line-height.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-with-max-height.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-with-max-height.tentative.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-orient",
+    "owner_categories": [
+      "needs_line_clamp"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/overflow-ellipsis-dynamic-001",
+    "chromium_test_path": "css-overflow/overflow-ellipsis-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/overflow-padding",
+    "chromium_test_path": "css-overflow/overflow-padding.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/overflow-recalc-001",
+    "chromium_test_path": "css-overflow/overflow-recalc-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-013",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-013.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-overflow-padding-block-001",
+    "chromium_test_path": "css-overflow/scroll-overflow-padding-block-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-input-001",
+    "chromium_test_path": "css-overflow/scrollable-overflow-input-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-input-001-ref",
+    "chromium_test_path": "css-overflow/scrollable-overflow-input-001-ref.html",
+    "rejection_reason": "unsupported element: <input>",
+    "owner_categories": [
+      "needs_form_controls",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-input-002",
+    "chromium_test_path": "css-overflow/scrollable-overflow-input-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-input-002-ref",
+    "chromium_test_path": "css-overflow/scrollable-overflow-input-002-ref.html",
+    "rejection_reason": "unsupported element: <input>",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-padding",
+    "chromium_test_path": "css-overflow/scrollable-overflow-padding.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-padding-inline",
+    "chromium_test_path": "css-overflow/scrollable-overflow-padding-inline.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-padding-input",
+    "chromium_test_path": "css-overflow/scrollable-overflow-padding-input.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-textarea",
+    "chromium_test_path": "css-overflow/scrollable-overflow-textarea.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollbar-gutter-dynamic-001",
+    "chromium_test_path": "css-overflow/scrollbar-gutter-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-editable-div-with-caret",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-editable-div-with-caret.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-textarea-with-caret",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-textarea-with-caret.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript",
+      "non_visual_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-vertical-001",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-vertical-001.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-vertical-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-vertical-rtl-001.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-lr-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-lr-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-lr-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-lr-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-rl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-rl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-rl-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-rl-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/crashtests_position-absolute-crash-014",
+    "chromium_test_path": "css-position/crashtests/position-absolute-crash-014.html",
+    "rejection_reason": "outside current Rust renderer support",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "needs_visual_effects",
+      "non_visual_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/fixed-z-index-blend",
+    "chromium_test_path": "css-position/fixed-z-index-blend.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vlr-ltr-ltr-in-multicol",
+    "chromium_test_path": "css-position/multicol/static-position/vlr-ltr-ltr-in-multicol.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vlr-ltr-rtl-in-multicol.tentative",
+    "chromium_test_path": "css-position/multicol/static-position/vlr-ltr-rtl-in-multicol.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vlr-rtl-ltr-in-multicol.tentative",
+    "chromium_test_path": "css-position/multicol/static-position/vlr-rtl-ltr-in-multicol.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vlr-rtl-rtl-in-multicol",
+    "chromium_test_path": "css-position/multicol/static-position/vlr-rtl-rtl-in-multicol.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vrl-ltr-ltr-in-multicol",
+    "chromium_test_path": "css-position/multicol/static-position/vrl-ltr-ltr-in-multicol.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vrl-ltr-rtl-in-multicol.tentative",
+    "chromium_test_path": "css-position/multicol/static-position/vrl-ltr-rtl-in-multicol.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vrl-rtl-ltr-in-multicol.tentative",
+    "chromium_test_path": "css-position/multicol/static-position/vrl-rtl-ltr-in-multicol.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_static-position_vrl-rtl-rtl-in-multicol",
+    "chromium_test_path": "css-position/multicol/static-position/vrl-rtl-rtl-in-multicol.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vlr-ltr-ltr-in-multicols",
+    "chromium_test_path": "css-position/multicol/vlr-ltr-ltr-in-multicols.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vlr-ltr-rtl-in-multicols.tentative",
+    "chromium_test_path": "css-position/multicol/vlr-ltr-rtl-in-multicols.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vlr-rtl-ltr-in-multicols.tentative",
+    "chromium_test_path": "css-position/multicol/vlr-rtl-ltr-in-multicols.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vlr-rtl-rtl-in-multicols",
+    "chromium_test_path": "css-position/multicol/vlr-rtl-rtl-in-multicols.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vrl-ltr-ltr-in-multicols",
+    "chromium_test_path": "css-position/multicol/vrl-ltr-ltr-in-multicols.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vrl-ltr-rtl-in-multicols.tentative",
+    "chromium_test_path": "css-position/multicol/vrl-ltr-rtl-in-multicols.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vrl-rtl-ltr-in-multicols.tentative",
+    "chromium_test_path": "css-position/multicol/vrl-rtl-ltr-in-multicols.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/multicol_vrl-rtl-rtl-in-multicols",
+    "chromium_test_path": "css-position/multicol/vrl-rtl-rtl-in-multicols.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_positioned_inline_layout",
+      "needs_writing_mode",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/parsing_bottom-valid",
+    "chromium_test_path": "css-position/parsing/bottom-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/parsing_inset-valid",
+    "chromium_test_path": "css-position/parsing/inset-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/parsing_left-valid",
+    "chromium_test_path": "css-position/parsing/left-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/parsing_right-valid",
+    "chromium_test_path": "css-position/parsing/right-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/parsing_top-valid",
+    "chromium_test_path": "css-position/parsing/top-valid.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/position-absolute-dynamic-static-position-inline",
+    "chromium_test_path": "css-position/position-absolute-dynamic-static-position-inline.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/position-relative-004",
+    "chromium_test_path": "css-position/position-relative-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/position-relative-005",
+    "chromium_test_path": "css-position/position-relative-005.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/position-relative-014",
+    "chromium_test_path": "css-position/position-relative-014.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vlr-ltr-ltr",
+    "chromium_test_path": "css-position/static-position/vlr-ltr-ltr.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vlr-ltr-rtl.tentative",
+    "chromium_test_path": "css-position/static-position/vlr-ltr-rtl.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vlr-rtl-ltr.tentative",
+    "chromium_test_path": "css-position/static-position/vlr-rtl-ltr.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vlr-rtl-rtl",
+    "chromium_test_path": "css-position/static-position/vlr-rtl-rtl.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vrl-ltr-ltr",
+    "chromium_test_path": "css-position/static-position/vrl-ltr-ltr.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vrl-ltr-rtl.tentative",
+    "chromium_test_path": "css-position/static-position/vrl-ltr-rtl.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vrl-rtl-ltr.tentative",
+    "chromium_test_path": "css-position/static-position/vrl-rtl-ltr.tentative.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/static-position_vrl-rtl-rtl",
+    "chromium_test_path": "css-position/static-position/vrl-rtl-rtl.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_positioned_inline_layout",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/sticky_position-sticky-inline",
+    "chromium_test_path": "css-position/sticky/position-sticky-inline.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_sticky"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/sticky_position-sticky-inline-ref",
+    "chromium_test_path": "css-position/sticky/position-sticky-inline-ref.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_sticky",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/sticky_position-sticky-nested-inline",
+    "chromium_test_path": "css-position/sticky/position-sticky-nested-inline.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_sticky"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/sticky_position-sticky-nested-inline-ref",
+    "chromium_test_path": "css-position/sticky/position-sticky-nested-inline-ref.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_sticky",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/sticky_position-sticky-writing-modes",
+    "chromium_test_path": "css-position/sticky/position-sticky-writing-modes.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_sticky",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/sticky_position-sticky-writing-modes-ref",
+    "chromium_test_path": "css-position/sticky/position-sticky-writing-modes-ref.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_sticky",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-042",
+    "chromium_test_path": "css-sizing/aspect-ratio/flex-aspect-ratio-042.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/canvas-intrinsic-dynamic",
+    "chromium_test_path": "css-sizing/canvas-intrinsic-dynamic.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/dynamic-change-inline-size-001",
+    "chromium_test_path": "css-sizing/dynamic-change-inline-size-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/dynamic-change-inline-size-002",
+    "chromium_test_path": "css-sizing/dynamic-change-inline-size-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/dynamic-change-inline-size-003",
+    "chromium_test_path": "css-sizing/dynamic-change-inline-size-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/intrinsic-percent-non-replaced-004-ref",
+    "chromium_test_path": "css-sizing/intrinsic-percent-non-replaced-004-ref.html",
+    "rejection_reason": "style_block_unsupported property: writing-mode",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/intrinsic-percent-replaced-dynamic-009",
+    "chromium_test_path": "css-sizing/intrinsic-percent-replaced-dynamic-009.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/keyword-sizes-for-intrinsic-contributions",
+    "chromium_test_path": "css-sizing/keyword-sizes-for-intrinsic-contributions.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/keyword-sizes-on-abspos",
+    "chromium_test_path": "css-sizing/keyword-sizes-on-abspos.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_canvas_svg",
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/keyword-sizes-on-flex-item-001",
+    "chromium_test_path": "css-sizing/keyword-sizes-on-flex-item-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/keyword-sizes-on-flex-item-002",
+    "chromium_test_path": "css-sizing/keyword-sizes-on-flex-item-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/keyword-sizes-on-floated-element",
+    "chromium_test_path": "css-sizing/keyword-sizes-on-floated-element.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/keyword-sizes-on-inline-block",
+    "chromium_test_path": "css-sizing/keyword-sizes-on-inline-block.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/max-content-input-001",
+    "chromium_test_path": "css-sizing/max-content-input-001.html",
+    "rejection_reason": "unsupported element: <input>",
+    "owner_categories": [
+      "needs_form_controls"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/max-content-input-001-ref",
+    "chromium_test_path": "css-sizing/max-content-input-001-ref.html",
+    "rejection_reason": "unsupported element: <input>",
+    "owner_categories": [
+      "needs_form_controls",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/range-percent-intrinsic-size-1",
+    "chromium_test_path": "css-sizing/range-percent-intrinsic-size-1.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-appearance",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/range-percent-intrinsic-size-1-ref",
+    "chromium_test_path": "css-sizing/range-percent-intrinsic-size-1-ref.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-appearance",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_inline_block",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/range-percent-intrinsic-size-2",
+    "chromium_test_path": "css-sizing/range-percent-intrinsic-size-2.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-appearance",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/range-percent-intrinsic-size-2-ref",
+    "chromium_test_path": "css-sizing/range-percent-intrinsic-size-2-ref.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-appearance",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_inline_block",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/range-percent-intrinsic-size-2a",
+    "chromium_test_path": "css-sizing/range-percent-intrinsic-size-2a.html",
+    "rejection_reason": "style_block_unsupported property: grid",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_body_canvas_background_extent",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/range-percent-intrinsic-size-2a-ref",
+    "chromium_test_path": "css-sizing/range-percent-intrinsic-size-2a-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_inline_block",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/stretch_block-height-002",
+    "chromium_test_path": "css-sizing/stretch/block-height-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/stretch_flex-line-001",
+    "chromium_test_path": "css-sizing/stretch/flex-line-001.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/stretch_flex-line-002",
+    "chromium_test_path": "css-sizing/stretch/flex-line-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/stretch_flex-line-003",
+    "chromium_test_path": "css-sizing/stretch/flex-line-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/stretch_flex-line-004",
+    "chromium_test_path": "css-sizing/stretch/flex-line-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_generated_content",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/svg-intrinsic-size-002",
+    "chromium_test_path": "css-sizing/svg-intrinsic-size-002.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/svg-intrinsic-size-003",
+    "chromium_test_path": "css-sizing/svg-intrinsic-size-003.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/svg-intrinsic-size-004",
+    "chromium_test_path": "css-sizing/svg-intrinsic-size-004.html",
+    "rejection_reason": "uses_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/svg-intrinsic-size-006",
+    "chromium_test_path": "css-sizing/svg-intrinsic-size-006.html",
+    "rejection_reason": "unsupported element: <svg>",
+    "owner_categories": [
+      "needs_canvas_svg"
+    ]
+  }
+]

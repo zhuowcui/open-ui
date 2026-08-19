@@ -111,7 +111,10 @@ fn collapse_whitespace_no_spaces() {
 
 #[test]
 fn collapse_spaces_preserve_newlines_basic() {
-    assert_eq!(collapse_spaces_preserve_newlines("hello\nworld"), "hello\nworld");
+    assert_eq!(
+        collapse_spaces_preserve_newlines("hello\nworld"),
+        "hello\nworld"
+    );
 }
 
 #[test]
@@ -133,10 +136,7 @@ fn collapse_spaces_preserve_newlines_space_before_newline() {
 
 #[test]
 fn collapse_spaces_preserve_newlines_multiple_newlines() {
-    assert_eq!(
-        collapse_spaces_preserve_newlines("a\n\nb"),
-        "a\n\nb"
-    );
+    assert_eq!(collapse_spaces_preserve_newlines("a\n\nb"), "a\n\nb");
 }
 
 #[test]
@@ -156,17 +156,26 @@ fn collapse_spaces_preserve_newlines_empty() {
 
 #[test]
 fn process_white_space_normal() {
-    assert_eq!(process_white_space("  hello  world  ", WhiteSpace::Normal), " hello world ");
+    assert_eq!(
+        process_white_space("  hello  world  ", WhiteSpace::Normal),
+        " hello world "
+    );
 }
 
 #[test]
 fn process_white_space_nowrap() {
-    assert_eq!(process_white_space("  hello  world  ", WhiteSpace::Nowrap), " hello world ");
+    assert_eq!(
+        process_white_space("  hello  world  ", WhiteSpace::Nowrap),
+        " hello world "
+    );
 }
 
 #[test]
 fn process_white_space_pre() {
-    assert_eq!(process_white_space("  hello  world  ", WhiteSpace::Pre), "  hello  world  ");
+    assert_eq!(
+        process_white_space("  hello  world  ", WhiteSpace::Pre),
+        "  hello  world  "
+    );
 }
 
 #[test]
@@ -301,7 +310,10 @@ fn whitespace_only_text_normal_produces_single_space() {
 fn whitespace_collapsing_in_normal_mode() {
     let (doc, block) = make_doc_with_text(&["  hello  world  "]);
     let data = InlineItemsBuilder::collect(&doc, block);
-    assert_eq!(&data.text[data.items[0].text_range.clone()], " hello world ");
+    assert_eq!(
+        &data.text[data.items[0].text_range.clone()],
+        " hello world "
+    );
 }
 
 #[test]
@@ -319,7 +331,10 @@ fn pre_preserves_all_spaces() {
     doc.append_child(block, t);
 
     let data = InlineItemsBuilder::collect(&doc, block);
-    assert_eq!(&data.text[data.items[0].text_range.clone()], "  hello  world  ");
+    assert_eq!(
+        &data.text[data.items[0].text_range.clone()],
+        "  hello  world  "
+    );
 }
 
 #[test]
@@ -387,7 +402,10 @@ fn end_collapse_type_collapsible_for_trailing_space() {
 fn end_collapse_type_not_collapsible_for_no_trailing_space() {
     let (doc, block) = make_doc_with_text(&["hello"]);
     let data = InlineItemsBuilder::collect(&doc, block);
-    assert_eq!(data.items[0].end_collapse_type, CollapseType::NotCollapsible);
+    assert_eq!(
+        data.items[0].end_collapse_type,
+        CollapseType::NotCollapsible
+    );
 }
 
 #[test]
@@ -464,7 +482,10 @@ fn shaped_text_has_nonzero_width() {
     let mut data = InlineItemsBuilder::collect(&doc, block);
     data.shape_text();
     let sr = data.items[0].shape_result.as_ref().unwrap();
-    assert!(sr.width() > 0.0, "shaped 'hello' should have positive width");
+    assert!(
+        sr.width() > 0.0,
+        "shaped 'hello' should have positive width"
+    );
 }
 
 #[test]
@@ -625,7 +646,9 @@ fn bidi_mixed_text_splits_into_runs() {
     data.apply_bidi(openui_text::TextDirection::Ltr);
 
     // Count text items — should be more than 1 due to bidi split
-    let text_items: Vec<_> = data.items.iter()
+    let text_items: Vec<_> = data
+        .items
+        .iter()
         .filter(|item| item.item_type == InlineItemType::Text)
         .collect();
     assert!(
@@ -652,7 +675,9 @@ fn bidi_split_items_have_correct_levels() {
     let mut data = InlineItemsBuilder::collect(&doc, block);
     data.apply_bidi(openui_text::TextDirection::Ltr);
 
-    let text_items: Vec<_> = data.items.iter()
+    let text_items: Vec<_> = data
+        .items
+        .iter()
         .filter(|item| item.item_type == InlineItemType::Text)
         .collect();
 
@@ -678,7 +703,9 @@ fn bidi_all_ltr_no_split() {
     let mut data = InlineItemsBuilder::collect(&doc, block);
     data.apply_bidi(openui_text::TextDirection::Ltr);
 
-    let text_items: Vec<_> = data.items.iter()
+    let text_items: Vec<_> = data
+        .items
+        .iter()
         .filter(|item| item.item_type == InlineItemType::Text)
         .collect();
     assert_eq!(text_items.len(), 1, "All-LTR text should remain one item");
@@ -706,10 +733,7 @@ fn pre_line_strips_tabs_after_newline() {
 #[test]
 fn pre_line_multiple_newlines_strip_intermediate_spaces() {
     // Each newline should strip following spaces
-    assert_eq!(
-        collapse_spaces_preserve_newlines("a\n  b\n  c"),
-        "a\nb\nc"
-    );
+    assert_eq!(collapse_spaces_preserve_newlines("a\n  b\n  c"), "a\nb\nc");
 }
 
 // ── SP11 Round 14 Issue 1: OpenTag/CloseTag bidi level ──────────────────
@@ -739,9 +763,18 @@ fn open_close_tag_bidi_level_rtl_with_span() {
     let mut data = InlineItemsBuilder::collect(&doc, block);
     data.apply_bidi(TextDirection::Rtl);
 
-    let open_tag = data.items.iter().find(|i| i.item_type == InlineItemType::OpenTag);
-    let close_tag = data.items.iter().find(|i| i.item_type == InlineItemType::CloseTag);
-    let text_item = data.items.iter().find(|i| i.item_type == InlineItemType::Text);
+    let open_tag = data
+        .items
+        .iter()
+        .find(|i| i.item_type == InlineItemType::OpenTag);
+    let close_tag = data
+        .items
+        .iter()
+        .find(|i| i.item_type == InlineItemType::CloseTag);
+    let text_item = data
+        .items
+        .iter()
+        .find(|i| i.item_type == InlineItemType::Text);
 
     assert!(open_tag.is_some(), "Should have an OpenTag item");
     assert!(close_tag.is_some(), "Should have a CloseTag item");
@@ -754,11 +787,13 @@ fn open_close_tag_bidi_level_rtl_with_span() {
         text_level,
     );
     assert_eq!(
-        open_tag.unwrap().bidi_level, text_level,
+        open_tag.unwrap().bidi_level,
+        text_level,
         "OpenTag should have the same bidi level as its content text"
     );
     assert_eq!(
-        close_tag.unwrap().bidi_level, text_level,
+        close_tag.unwrap().bidi_level,
+        text_level,
         "CloseTag should have the same bidi level as its content text"
     );
 }

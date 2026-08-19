@@ -116,12 +116,8 @@ pub fn compute_ruby_layout(
     let column_width = base_width.max(annotation_width);
 
     // Compute inline offsets based on ruby-align.
-    let (base_offset, annotation_offset) = compute_alignment_offsets(
-        base_width,
-        annotation_width,
-        column_width,
-        ruby_align,
-    );
+    let (base_offset, annotation_offset) =
+        compute_alignment_offsets(base_width, annotation_width, column_width, ruby_align);
 
     // Annotation block size ≈ annotation line height.
     let annotation_size = annotation_font_size * ANNOTATION_LINE_HEIGHT_FACTOR;
@@ -245,19 +241,40 @@ mod tests {
 
     #[test]
     fn column_width_is_max_of_base_and_annotation() {
-        let r = compute_ruby_layout(50.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 50.0);
     }
 
     #[test]
     fn column_width_annotation_wider() {
-        let r = compute_ruby_layout(30.0, 50.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            50.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 50.0);
     }
 
     #[test]
     fn column_width_equal_widths() {
-        let r = compute_ruby_layout(40.0, 40.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            40.0,
+            40.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 40.0);
     }
 
@@ -265,21 +282,42 @@ mod tests {
 
     #[test]
     fn center_short_annotation() {
-        let r = compute_ruby_layout(60.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            60.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 15.0); // (60-30)/2
     }
 
     #[test]
     fn center_wide_annotation() {
-        let r = compute_ruby_layout(30.0, 60.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            60.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 15.0); // (60-30)/2
         assert_eq!(r.annotation_offset, 0.0);
     }
 
     #[test]
     fn center_equal_widths_zero_offsets() {
-        let r = compute_ruby_layout(50.0, 50.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            50.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
@@ -288,21 +326,42 @@ mod tests {
 
     #[test]
     fn space_around_short_annotation() {
-        let r = compute_ruby_layout(60.0, 30.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            60.0,
+            30.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 15.0);
     }
 
     #[test]
     fn space_around_wide_annotation() {
-        let r = compute_ruby_layout(30.0, 60.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 15.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
 
     #[test]
     fn space_around_equal_widths() {
-        let r = compute_ruby_layout(50.0, 50.0, 10.0, RubyAlign::SpaceAround, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            50.0,
+            10.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
@@ -311,14 +370,28 @@ mod tests {
 
     #[test]
     fn space_between_offsets_are_zero() {
-        let r = compute_ruby_layout(60.0, 30.0, 10.0, RubyAlign::SpaceBetween, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            60.0,
+            30.0,
+            10.0,
+            RubyAlign::SpaceBetween,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
 
     #[test]
     fn space_between_wide_annotation() {
-        let r = compute_ruby_layout(30.0, 60.0, 10.0, RubyAlign::SpaceBetween, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            60.0,
+            10.0,
+            RubyAlign::SpaceBetween,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
@@ -327,14 +400,28 @@ mod tests {
 
     #[test]
     fn start_offsets_are_zero() {
-        let r = compute_ruby_layout(60.0, 30.0, 10.0, RubyAlign::Start, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            60.0,
+            30.0,
+            10.0,
+            RubyAlign::Start,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
 
     #[test]
     fn start_wide_annotation() {
-        let r = compute_ruby_layout(30.0, 60.0, 10.0, RubyAlign::Start, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            60.0,
+            10.0,
+            RubyAlign::Start,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
     }
@@ -343,27 +430,55 @@ mod tests {
 
     #[test]
     fn over_position_negative_block_offset() {
-        let r = compute_ruby_layout(50.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert!(r.annotation_block_offset < 0.0);
         assert_eq!(r.annotation_block_offset, -12.0); // -(10 * 1.2)
     }
 
     #[test]
     fn under_position_zero_block_offset() {
-        let r = compute_ruby_layout(50.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Under, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Under,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_block_offset, 0.0);
     }
 
     #[test]
     fn over_position_with_large_font() {
-        let r = compute_ruby_layout(50.0, 30.0, 24.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            24.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_block_offset, -(24.0 * 1.2));
         assert_eq!(r.annotation_size, 24.0 * 1.2);
     }
 
     #[test]
     fn under_position_annotation_size() {
-        let r = compute_ruby_layout(50.0, 30.0, 16.0, RubyAlign::Center, RubyPosition::Under, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            16.0,
+            RubyAlign::Center,
+            RubyPosition::Under,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_size, 16.0 * 1.2);
         assert_eq!(r.annotation_block_offset, 0.0);
     }
@@ -372,13 +487,27 @@ mod tests {
 
     #[test]
     fn annotation_size_is_font_times_line_height() {
-        let r = compute_ruby_layout(50.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_size, 12.0);
     }
 
     #[test]
     fn annotation_size_zero_font() {
-        let r = compute_ruby_layout(50.0, 30.0, 0.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            0.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_size, 0.0);
         assert_eq!(r.annotation_block_offset, 0.0); // -0.0 == 0.0
     }
@@ -469,14 +598,28 @@ mod tests {
 
     #[test]
     fn vertical_rl_produces_valid_layout() {
-        let r = compute_ruby_layout(50.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::VerticalRl);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::VerticalRl,
+        );
         assert_eq!(r.column_width, 50.0);
         assert_eq!(r.annotation_offset, 10.0);
     }
 
     #[test]
     fn vertical_lr_produces_valid_layout() {
-        let r = compute_ruby_layout(30.0, 50.0, 10.0, RubyAlign::Center, RubyPosition::Under, WritingMode::VerticalLr);
+        let r = compute_ruby_layout(
+            30.0,
+            50.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Under,
+            WritingMode::VerticalLr,
+        );
         assert_eq!(r.column_width, 50.0);
         assert_eq!(r.base_offset, 10.0);
         assert_eq!(r.annotation_block_offset, 0.0);
@@ -484,7 +627,14 @@ mod tests {
 
     #[test]
     fn sideways_rl_produces_valid_layout() {
-        let r = compute_ruby_layout(40.0, 40.0, 12.0, RubyAlign::SpaceAround, RubyPosition::Over, WritingMode::SidewaysRl);
+        let r = compute_ruby_layout(
+            40.0,
+            40.0,
+            12.0,
+            RubyAlign::SpaceAround,
+            RubyPosition::Over,
+            WritingMode::SidewaysRl,
+        );
         assert_eq!(r.column_width, 40.0);
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
@@ -492,7 +642,14 @@ mod tests {
 
     #[test]
     fn sideways_lr_produces_valid_layout() {
-        let r = compute_ruby_layout(40.0, 60.0, 8.0, RubyAlign::Start, RubyPosition::Under, WritingMode::SidewaysLr);
+        let r = compute_ruby_layout(
+            40.0,
+            60.0,
+            8.0,
+            RubyAlign::Start,
+            RubyPosition::Under,
+            WritingMode::SidewaysLr,
+        );
         assert_eq!(r.column_width, 60.0);
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
@@ -502,7 +659,14 @@ mod tests {
 
     #[test]
     fn zero_width_base() {
-        let r = compute_ruby_layout(0.0, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            0.0,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 30.0);
         assert_eq!(r.base_offset, 15.0);
         assert_eq!(r.annotation_offset, 0.0);
@@ -510,7 +674,14 @@ mod tests {
 
     #[test]
     fn zero_width_annotation() {
-        let r = compute_ruby_layout(30.0, 0.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            0.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 30.0);
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 15.0);
@@ -518,7 +689,14 @@ mod tests {
 
     #[test]
     fn both_zero_width() {
-        let r = compute_ruby_layout(0.0, 0.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            0.0,
+            0.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 0.0);
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
@@ -526,7 +704,14 @@ mod tests {
 
     #[test]
     fn negative_widths_clamped_to_zero() {
-        let r = compute_ruby_layout(-10.0, -20.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            -10.0,
+            -20.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_width, 0.0);
         assert_eq!(r.annotation_width, 0.0);
         assert_eq!(r.column_width, 0.0);
@@ -534,20 +719,41 @@ mod tests {
 
     #[test]
     fn negative_font_size_clamped() {
-        let r = compute_ruby_layout(50.0, 30.0, -5.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            50.0,
+            30.0,
+            -5.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_size, 0.0);
     }
 
     #[test]
     fn very_large_widths() {
-        let r = compute_ruby_layout(10000.0, 5000.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            10000.0,
+            5000.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 10000.0);
         assert_eq!(r.annotation_offset, 2500.0);
     }
 
     #[test]
     fn fractional_widths() {
-        let r = compute_ruby_layout(33.3, 66.7, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            33.3,
+            66.7,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 66.7);
         let expected_base_offset = (66.7 - 33.3) / 2.0;
         assert!((r.base_offset - expected_base_offset).abs() < 1e-5);
@@ -557,13 +763,27 @@ mod tests {
 
     #[test]
     fn base_width_preserved() {
-        let r = compute_ruby_layout(42.5, 30.0, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            42.5,
+            30.0,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_width, 42.5);
     }
 
     #[test]
     fn annotation_width_preserved() {
-        let r = compute_ruby_layout(30.0, 55.5, 10.0, RubyAlign::Center, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            30.0,
+            55.5,
+            10.0,
+            RubyAlign::Center,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.annotation_width, 55.5);
     }
 
@@ -611,7 +831,14 @@ mod tests {
 
     #[test]
     fn start_align_over_position() {
-        let r = compute_ruby_layout(60.0, 30.0, 10.0, RubyAlign::Start, RubyPosition::Over, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            60.0,
+            30.0,
+            10.0,
+            RubyAlign::Start,
+            RubyPosition::Over,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
         assert!(r.annotation_block_offset < 0.0);
@@ -619,7 +846,14 @@ mod tests {
 
     #[test]
     fn start_align_under_position() {
-        let r = compute_ruby_layout(60.0, 30.0, 10.0, RubyAlign::Start, RubyPosition::Under, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            60.0,
+            30.0,
+            10.0,
+            RubyAlign::Start,
+            RubyPosition::Under,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
         assert_eq!(r.annotation_block_offset, 0.0);
@@ -627,7 +861,14 @@ mod tests {
 
     #[test]
     fn space_between_under_position() {
-        let r = compute_ruby_layout(40.0, 80.0, 12.0, RubyAlign::SpaceBetween, RubyPosition::Under, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            40.0,
+            80.0,
+            12.0,
+            RubyAlign::SpaceBetween,
+            RubyPosition::Under,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 80.0);
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 0.0);
@@ -637,7 +878,14 @@ mod tests {
 
     #[test]
     fn center_under_wide_base() {
-        let r = compute_ruby_layout(100.0, 20.0, 8.0, RubyAlign::Center, RubyPosition::Under, WritingMode::HorizontalTb);
+        let r = compute_ruby_layout(
+            100.0,
+            20.0,
+            8.0,
+            RubyAlign::Center,
+            RubyPosition::Under,
+            WritingMode::HorizontalTb,
+        );
         assert_eq!(r.column_width, 100.0);
         assert_eq!(r.base_offset, 0.0);
         assert_eq!(r.annotation_offset, 40.0); // (100-20)/2

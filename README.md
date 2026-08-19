@@ -46,7 +46,16 @@ Each layer is independently usable. Use the full stack for app development, or j
 | SP6: Widget Coverage & SVG | ✅ Done | 117 elements, SVG, resource provider, 39 pixel-perfect pages |
 | SP7: Events & Animations | ✅ Done | Event system, CSS animations, hit-testing |
 | SP8: React-like Rust API | ✅ Done | `view!` macro, signals, components, 100 Rust tests, 99.1% pixel match |
-| SP9 | 📋 Planned | Platform windowing (winit/SDL2) |
+| SP9: Native Rendering Foundation | ✅ Done | Pure-Rust DOM/style/layout/paint foundation |
+| SP10: Flexbox | ✅ Done | Rust flex layout and WPT parity waves |
+| SP11: Text & Inline | ✅ Done | Text/inline work with remaining dependencies tracked |
+| SP12: Block/Layout Accountability | ✅ Done by ownership | 7,673 WPT inventory rows tracked, 3,406 runnable, 2,430 pass, 0 `sp12_layout_bug` |
+
+Current tracking docs:
+
+- [`docs/progress/current-status.md`](docs/progress/current-status.md) — latest verified WPT snapshot and next recommendation.
+- [`docs/architecture/rust-wpt-accountability.md`](docs/architecture/rust-wpt-accountability.md) — WPT comparison/tracking architecture.
+- [`docs/engineering-principles.md`](docs/engineering-principles.md) — coding philosophy and completion standards.
 
 See [`docs/plan/`](docs/plan/) for the full project roadmap.
 

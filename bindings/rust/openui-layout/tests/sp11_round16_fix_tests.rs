@@ -12,9 +12,7 @@ use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::inline::items_builder::InlineItemsBuilder;
 use openui_layout::inline::line_breaker::LineBreaker;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    Direction, Display, LineHeight, Overflow, TextOverflow, WhiteSpace,
-};
+use openui_style::{Direction, Display, LineHeight, Overflow, TextOverflow, WhiteSpace};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 
@@ -39,11 +37,14 @@ fn collect_line_boxes(fragment: &Fragment) -> Vec<&Fragment> {
 }
 
 fn collect_text_fragments(fragment: &Fragment) -> Vec<&Fragment> {
-    fragment
-        .children
-        .iter()
-        .filter(|c| c.kind == FragmentKind::Text)
-        .collect()
+    let mut result = Vec::new();
+    if fragment.kind == FragmentKind::Text {
+        result.push(fragment);
+    }
+    for child in &fragment.children {
+        result.extend(collect_text_fragments(child));
+    }
+    result
 }
 
 // ── Issue 1: Half-leading sub-pixel precision ───────────────────────────
@@ -171,7 +172,9 @@ fn open_tag_percentage_padding_uses_containing_block_not_line_available() {
 
     // Find the OpenTag item — its inline_size should include the resolved
     // padding-left. 10% of 300 = 30px.
-    let open_tag_items: Vec<_> = line.items.iter()
+    let open_tag_items: Vec<_> = line
+        .items
+        .iter()
         .filter(|i| i.item_type == openui_layout::inline::items::InlineItemType::OpenTag)
         .collect();
     assert!(!open_tag_items.is_empty(), "Should have an OpenTag item");
@@ -292,5 +295,8 @@ fn rtl_ellipsis_at_start_via_line_breaker() {
     let constraint = make_constraint_width(80);
     let frag = inline_layout(&doc, block, &constraint);
     let lines = collect_line_boxes(&frag);
-    assert!(!lines.is_empty(), "Should produce at least one line for RTL ellipsis test");
+    assert!(
+        !lines.is_empty(),
+        "Should produce at least one line for RTL ellipsis test"
+    );
 }

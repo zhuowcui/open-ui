@@ -45,7 +45,12 @@ fn make_shaped_items(
 }
 
 fn make_normal_items(texts: &[&str]) -> openui_layout::inline::items_builder::InlineItemsData {
-    make_shaped_items(texts, WhiteSpace::Normal, WordBreak::Normal, OverflowWrap::Normal)
+    make_shaped_items(
+        texts,
+        WhiteSpace::Normal,
+        WordBreak::Normal,
+        OverflowWrap::Normal,
+    )
 }
 
 fn collect_all_lines(
@@ -418,7 +423,10 @@ fn white_space_pre_wrap_breaks_at_newline_and_wraps() {
     );
     // At least one forced break from the newline
     let forced_count = lines.iter().filter(|l| l.has_forced_break).count();
-    assert!(forced_count >= 1, "pre-wrap should have forced break from \\n");
+    assert!(
+        forced_count >= 1,
+        "pre-wrap should have forced break from \\n"
+    );
 }
 
 #[test]
@@ -431,10 +439,7 @@ fn white_space_pre_line_collapses_spaces_but_breaks_at_newline() {
     );
     let lines = collect_all_lines(&data, lu(10000.0));
     // Newline produces a forced break
-    assert!(
-        lines.len() >= 2,
-        "pre-line should break at newline"
-    );
+    assert!(lines.len() >= 2, "pre-line should break at newline");
     assert!(lines[0].has_forced_break);
 }
 
@@ -674,7 +679,10 @@ fn zero_width_every_word_separate_line() {
         "Zero width should still produce at least one line"
     );
     // The first line has content even at zero width
-    assert!(lines[0].has_content(), "First line should have content at zero width");
+    assert!(
+        lines[0].has_content(),
+        "First line should have content at zero width"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════

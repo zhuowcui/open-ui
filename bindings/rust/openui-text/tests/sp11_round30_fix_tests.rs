@@ -30,7 +30,7 @@ fn r30_proportional_single_char_not_empty() {
         glyphs: vec![1, 2, 3],
         advances: vec![5.0, 5.0, 5.0],
         offsets: vec![(0.0, 0.0); 3],
-        clusters: vec![],  // empty clusters → proportional fallback
+        clusters: vec![], // empty clusters → proportional fallback
         start_index: 0,
         num_characters: 10,
         num_glyphs: 3,
@@ -41,7 +41,8 @@ fn r30_proportional_single_char_not_empty() {
     assert!(
         ge > gs,
         "Single-char range [0,1) must produce non-empty glyph range, got ({}, {})",
-        gs, ge,
+        gs,
+        ge,
     );
     assert_eq!((gs, ge), (0, 1));
 }
@@ -69,7 +70,8 @@ fn r30_proportional_middle_char_not_empty() {
     assert!(
         ge > gs,
         "Single-char range [4,5) must produce non-empty glyph range, got ({}, {})",
-        gs, ge,
+        gs,
+        ge,
     );
 }
 
@@ -114,5 +116,10 @@ fn r30_proportional_clamped_to_num_glyphs() {
     };
 
     let (_, ge) = ShapeResult::glyph_range_for_char_range(&run, 0, 3);
-    assert!(ge <= run.num_glyphs, "ge={} should be <= num_glyphs={}", ge, run.num_glyphs);
+    assert!(
+        ge <= run.num_glyphs,
+        "ge={} should be <= num_glyphs={}",
+        ge,
+        run.num_glyphs
+    );
 }

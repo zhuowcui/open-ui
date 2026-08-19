@@ -112,8 +112,8 @@ fn double_overline_second_line_is_above_first() {
     );
 
     let overline_y = (baseline_y - metrics.ascent) as i32; // 48
-    // The second double line should extend ABOVE: at y ≈ 48 - thickness - gap = 43
-    // Check that there are colored pixels above the first line position
+                                                           // The second double line should extend ABOVE: at y ≈ 48 - thickness - gap = 43
+                                                           // Check that there are colored pixels above the first line position
     let above_first_line_top = overline_y - (thickness + gap + thickness) as i32 - 1;
     assert!(
         has_colored_pixels_in_rows(&mut surface, above_first_line_top.max(0), overline_y - 1),
@@ -161,7 +161,11 @@ fn double_underline_second_line_is_below_first() {
     let second_line_region_start = underline_y + gap;
     let second_line_region_end = underline_y + gap + (thickness as i32) + 4;
     assert!(
-        has_colored_pixels_in_rows(&mut surface, second_line_region_start, second_line_region_end),
+        has_colored_pixels_in_rows(
+            &mut surface,
+            second_line_region_start,
+            second_line_region_end
+        ),
         "Double underline second line should be below the first"
     );
 }

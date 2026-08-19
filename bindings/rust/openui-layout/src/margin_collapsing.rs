@@ -290,10 +290,7 @@ pub fn handle_margin_before_child(
 /// - Appending the child's bottom margin to the current strut
 /// - Empty block collapse-through (rule 4)
 /// - Sibling margin accumulation for the next child
-pub fn handle_margin_after_child(
-    state: &mut MarginCollapsingState,
-    child: &ChildMarginInfo,
-) {
+pub fn handle_margin_after_child(state: &mut MarginCollapsingState, child: &ChildMarginInfo) {
     // Floats don't participate.
     if child.is_float {
         return;
@@ -313,9 +310,13 @@ pub fn handle_margin_after_child(
         // already been merged in its own strut. Append the child's combined
         // strut to ours (the child's own strut carries both top+bottom).
         let child_strut = &child.child_margin_strut;
-        state.margin_strut.append_normal(child_strut.positive_margin);
+        state
+            .margin_strut
+            .append_normal(child_strut.positive_margin);
         if child_strut.negative_margin.raw() < 0 {
-            state.margin_strut.append_normal(child_strut.negative_margin);
+            state
+                .margin_strut
+                .append_normal(child_strut.negative_margin);
         }
         state.previous_child_collapsed_through = true;
         return;
@@ -400,8 +401,11 @@ pub fn establishes_new_bfc_for_collapsing(
         return true;
     }
 
-    // overflow != visible on either axis establishes a new BFC.
-    if overflow_x != Overflow::Visible || overflow_y != Overflow::Visible {
+    // overflow != visible on either axis establishes a new BFC,
+    // EXCEPT overflow:clip which only clips visually without creating a BFC.
+    if (overflow_x != Overflow::Visible && overflow_x != Overflow::Clip)
+        || (overflow_y != Overflow::Visible && overflow_y != Overflow::Clip)
+    {
         return true;
     }
 

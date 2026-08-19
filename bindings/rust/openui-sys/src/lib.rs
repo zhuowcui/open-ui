@@ -65,31 +65,58 @@ pub struct OuiLength {
 
 impl OuiLength {
     pub const fn px(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_PX }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_PX,
+        }
     }
     pub const fn pct(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_PERCENT }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_PERCENT,
+        }
     }
     pub const fn em(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_EM }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_EM,
+        }
     }
     pub const fn rem(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_REM }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_REM,
+        }
     }
     pub const fn vw(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_VW }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_VW,
+        }
     }
     pub const fn vh(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_VH }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_VH,
+        }
     }
     pub const fn fr(value: f32) -> Self {
-        Self { value, unit: OuiUnit::OUI_UNIT_FR }
+        Self {
+            value,
+            unit: OuiUnit::OUI_UNIT_FR,
+        }
     }
     pub const fn auto() -> Self {
-        Self { value: 0.0, unit: OuiUnit::OUI_UNIT_AUTO }
+        Self {
+            value: 0.0,
+            unit: OuiUnit::OUI_UNIT_AUTO,
+        }
     }
     pub const fn none() -> Self {
-        Self { value: 0.0, unit: OuiUnit::OUI_UNIT_NONE }
+        Self {
+            value: 0.0,
+            unit: OuiUnit::OUI_UNIT_NONE,
+        }
     }
 }
 
@@ -268,8 +295,7 @@ pub const OUI_MOD_META: OuiModifiers = 1 << 3;
 
 // ─── Resource provider ──────────────────────────────────────
 
-pub type OuiResourceFreeFunc =
-    Option<unsafe extern "C" fn(data: *mut u8, user_data: *mut c_void)>;
+pub type OuiResourceFreeFunc = Option<unsafe extern "C" fn(data: *mut u8, user_data: *mut c_void)>;
 
 #[repr(C)]
 pub struct OuiResourceResponse {
@@ -321,24 +347,14 @@ unsafe extern "C" {
         viewport_height: c_int,
     ) -> *mut OuiDocument;
     pub unsafe fn oui_document_destroy(doc: *mut OuiDocument);
-    pub unsafe fn oui_document_set_viewport(
-        doc: *mut OuiDocument,
-        width: c_int,
-        height: c_int,
-    );
+    pub unsafe fn oui_document_set_viewport(doc: *mut OuiDocument, width: c_int, height: c_int);
     pub unsafe fn oui_document_layout(doc: *mut OuiDocument) -> OuiStatus;
     pub unsafe fn oui_document_update_all(doc: *mut OuiDocument) -> OuiStatus;
-    pub unsafe fn oui_document_load_html(
-        doc: *mut OuiDocument,
-        html: *const c_char,
-    ) -> OuiStatus;
+    pub unsafe fn oui_document_load_html(doc: *mut OuiDocument, html: *const c_char) -> OuiStatus;
 
     // ═══ Element lifecycle ════════════════════════════════════
 
-    pub unsafe fn oui_element_create(
-        doc: *mut OuiDocument,
-        tag: *const c_char,
-    ) -> *mut OuiElement;
+    pub unsafe fn oui_element_create(doc: *mut OuiDocument, tag: *const c_char) -> *mut OuiElement;
     pub unsafe fn oui_element_append_text(elem: *mut OuiElement, text: *const c_char);
     pub unsafe fn oui_element_destroy(elem: *mut OuiElement);
     pub unsafe fn oui_document_body(doc: *mut OuiDocument) -> *mut OuiElement;
@@ -354,28 +370,16 @@ unsafe extern "C" {
 
     // ═══ DOM tree manipulation ════════════════════════════════
 
-    pub unsafe fn oui_element_append_child(
-        parent: *mut OuiElement,
-        child: *mut OuiElement,
-    );
-    pub unsafe fn oui_element_remove_child(
-        parent: *mut OuiElement,
-        child: *mut OuiElement,
-    );
+    pub unsafe fn oui_element_append_child(parent: *mut OuiElement, child: *mut OuiElement);
+    pub unsafe fn oui_element_remove_child(parent: *mut OuiElement, child: *mut OuiElement);
     pub unsafe fn oui_element_insert_before(
         parent: *mut OuiElement,
         child: *mut OuiElement,
         before: *mut OuiElement,
     );
-    pub unsafe fn oui_element_first_child(
-        parent: *const OuiElement,
-    ) -> *mut OuiElement;
-    pub unsafe fn oui_element_next_sibling(
-        elem: *const OuiElement,
-    ) -> *mut OuiElement;
-    pub unsafe fn oui_element_parent(
-        elem: *const OuiElement,
-    ) -> *mut OuiElement;
+    pub unsafe fn oui_element_first_child(parent: *const OuiElement) -> *mut OuiElement;
+    pub unsafe fn oui_element_next_sibling(elem: *const OuiElement) -> *mut OuiElement;
+    pub unsafe fn oui_element_parent(elem: *const OuiElement) -> *mut OuiElement;
     pub unsafe fn oui_element_remove_all_child_nodes(elem: *mut OuiElement);
 
     // ═══ Generic style ════════════════════════════════════════
@@ -406,29 +410,17 @@ unsafe extern "C" {
         e: *const OuiElement,
         name: *const c_char,
     ) -> *mut c_char;
-    pub unsafe fn oui_element_set_id(
-        e: *mut OuiElement,
-        id: *const c_char,
-    ) -> OuiStatus;
-    pub unsafe fn oui_element_set_class(
-        e: *mut OuiElement,
-        classes: *const c_char,
-    ) -> OuiStatus;
+    pub unsafe fn oui_element_set_id(e: *mut OuiElement, id: *const c_char) -> OuiStatus;
+    pub unsafe fn oui_element_set_class(e: *mut OuiElement, classes: *const c_char) -> OuiStatus;
 
     // ═══ Layout dimensions ════════════════════════════════════
 
     pub unsafe fn oui_element_set_width(e: *mut OuiElement, len: OuiLength);
     pub unsafe fn oui_element_set_height(e: *mut OuiElement, len: OuiLength);
     pub unsafe fn oui_element_set_min_width(e: *mut OuiElement, len: OuiLength);
-    pub unsafe fn oui_element_set_min_height(
-        e: *mut OuiElement,
-        len: OuiLength,
-    );
+    pub unsafe fn oui_element_set_min_height(e: *mut OuiElement, len: OuiLength);
     pub unsafe fn oui_element_set_max_width(e: *mut OuiElement, len: OuiLength);
-    pub unsafe fn oui_element_set_max_height(
-        e: *mut OuiElement,
-        len: OuiLength,
-    );
+    pub unsafe fn oui_element_set_max_height(e: *mut OuiElement, len: OuiLength);
 
     // ═══ Box model ════════════════════════════════════════════
 
@@ -449,87 +441,39 @@ unsafe extern "C" {
 
     // ═══ Display & positioning ════════════════════════════════
 
-    pub unsafe fn oui_element_set_display(
-        e: *mut OuiElement,
-        display: OuiDisplay,
-    );
-    pub unsafe fn oui_element_set_position(
-        e: *mut OuiElement,
-        pos: OuiPosition,
-    );
-    pub unsafe fn oui_element_set_overflow(
-        e: *mut OuiElement,
-        overflow: OuiOverflow,
-    );
+    pub unsafe fn oui_element_set_display(e: *mut OuiElement, display: OuiDisplay);
+    pub unsafe fn oui_element_set_position(e: *mut OuiElement, pos: OuiPosition);
+    pub unsafe fn oui_element_set_overflow(e: *mut OuiElement, overflow: OuiOverflow);
 
     // ═══ Flexbox ══════════════════════════════════════════════
 
-    pub unsafe fn oui_element_set_flex_direction(
-        e: *mut OuiElement,
-        dir: OuiFlexDirection,
-    );
-    pub unsafe fn oui_element_set_flex_wrap(
-        e: *mut OuiElement,
-        wrap: OuiFlexWrap,
-    );
+    pub unsafe fn oui_element_set_flex_direction(e: *mut OuiElement, dir: OuiFlexDirection);
+    pub unsafe fn oui_element_set_flex_wrap(e: *mut OuiElement, wrap: OuiFlexWrap);
     pub unsafe fn oui_element_set_flex_grow(e: *mut OuiElement, grow: f32);
     pub unsafe fn oui_element_set_flex_shrink(e: *mut OuiElement, shrink: f32);
-    pub unsafe fn oui_element_set_flex_basis(
-        e: *mut OuiElement,
-        basis: OuiLength,
-    );
-    pub unsafe fn oui_element_set_align_items(
-        e: *mut OuiElement,
-        align: OuiAlignItems,
-    );
-    pub unsafe fn oui_element_set_justify_content(
-        e: *mut OuiElement,
-        jc: OuiJustifyContent,
-    );
+    pub unsafe fn oui_element_set_flex_basis(e: *mut OuiElement, basis: OuiLength);
+    pub unsafe fn oui_element_set_align_items(e: *mut OuiElement, align: OuiAlignItems);
+    pub unsafe fn oui_element_set_justify_content(e: *mut OuiElement, jc: OuiJustifyContent);
 
     // ═══ Colors & visuals ═════════════════════════════════════
 
     pub unsafe fn oui_element_set_color(e: *mut OuiElement, rgba: u32);
-    pub unsafe fn oui_element_set_background_color(
-        e: *mut OuiElement,
-        rgba: u32,
-    );
+    pub unsafe fn oui_element_set_background_color(e: *mut OuiElement, rgba: u32);
     pub unsafe fn oui_element_set_opacity(e: *mut OuiElement, opacity: f32);
     pub unsafe fn oui_element_set_z_index(e: *mut OuiElement, z: c_int);
 
     // ═══ Text content ═════════════════════════════════════════
 
-    pub unsafe fn oui_element_set_text_content(
-        e: *mut OuiElement,
-        text: *const c_char,
-    );
+    pub unsafe fn oui_element_set_text_content(e: *mut OuiElement, text: *const c_char);
 
     // ═══ Font ═════════════════════════════════════════════════
 
-    pub unsafe fn oui_element_set_font_family(
-        e: *mut OuiElement,
-        family: *const c_char,
-    );
-    pub unsafe fn oui_element_set_font_size(
-        e: *mut OuiElement,
-        size: OuiLength,
-    );
-    pub unsafe fn oui_element_set_font_weight(
-        e: *mut OuiElement,
-        weight: c_int,
-    );
-    pub unsafe fn oui_element_set_font_style(
-        e: *mut OuiElement,
-        style: OuiFontStyle,
-    );
-    pub unsafe fn oui_element_set_line_height(
-        e: *mut OuiElement,
-        lh: OuiLength,
-    );
-    pub unsafe fn oui_element_set_text_align(
-        e: *mut OuiElement,
-        align: OuiTextAlign,
-    );
+    pub unsafe fn oui_element_set_font_family(e: *mut OuiElement, family: *const c_char);
+    pub unsafe fn oui_element_set_font_size(e: *mut OuiElement, size: OuiLength);
+    pub unsafe fn oui_element_set_font_weight(e: *mut OuiElement, weight: c_int);
+    pub unsafe fn oui_element_set_font_style(e: *mut OuiElement, style: OuiFontStyle);
+    pub unsafe fn oui_element_set_line_height(e: *mut OuiElement, lh: OuiLength);
+    pub unsafe fn oui_element_set_text_align(e: *mut OuiElement, align: OuiTextAlign);
 
     // ═══ Geometry queries ═════════════════════════════════════
 
@@ -537,9 +481,7 @@ unsafe extern "C" {
     pub unsafe fn oui_element_get_offset_y(e: *const OuiElement) -> f32;
     pub unsafe fn oui_element_get_width(e: *const OuiElement) -> f32;
     pub unsafe fn oui_element_get_height(e: *const OuiElement) -> f32;
-    pub unsafe fn oui_element_get_bounding_rect(
-        e: *const OuiElement,
-    ) -> OuiRect;
+    pub unsafe fn oui_element_get_bounding_rect(e: *const OuiElement) -> OuiRect;
 
     // ═══ Computed style ═══════════════════════════════════════
 
@@ -550,11 +492,7 @@ unsafe extern "C" {
 
     // ═══ Hit testing ══════════════════════════════════════════
 
-    pub unsafe fn oui_document_hit_test(
-        doc: *mut OuiDocument,
-        x: f32,
-        y: f32,
-    ) -> *mut OuiElement;
+    pub unsafe fn oui_document_hit_test(doc: *mut OuiDocument, x: f32, y: f32) -> *mut OuiElement;
 
     // ═══ Scroll geometry & control ════════════════════════════
 
@@ -562,16 +500,8 @@ unsafe extern "C" {
     pub unsafe fn oui_element_get_scroll_height(e: *const OuiElement) -> f32;
     pub unsafe fn oui_element_get_scroll_left(e: *const OuiElement) -> f64;
     pub unsafe fn oui_element_get_scroll_top(e: *const OuiElement) -> f64;
-    pub unsafe fn oui_element_scroll_to(
-        e: *mut OuiElement,
-        x: f64,
-        y: f64,
-    ) -> OuiStatus;
-    pub unsafe fn oui_element_scroll_by(
-        e: *mut OuiElement,
-        dx: f64,
-        dy: f64,
-    ) -> OuiStatus;
+    pub unsafe fn oui_element_scroll_to(e: *mut OuiElement, x: f64, y: f64) -> OuiStatus;
+    pub unsafe fn oui_element_scroll_by(e: *mut OuiElement, dx: f64, dy: f64) -> OuiStatus;
 
     // ═══ Offscreen rendering ══════════════════════════════════
 
@@ -615,19 +545,10 @@ unsafe extern "C" {
 
     // ═══ Frame & time management ══════════════════════════════
 
-    pub unsafe fn oui_document_advance_time(
-        doc: *mut OuiDocument,
-        time_ms: f64,
-    ) -> OuiStatus;
-    pub unsafe fn oui_document_advance_time_by(
-        doc: *mut OuiDocument,
-        delta_ms: f64,
-    ) -> OuiStatus;
+    pub unsafe fn oui_document_advance_time(doc: *mut OuiDocument, time_ms: f64) -> OuiStatus;
+    pub unsafe fn oui_document_advance_time_by(doc: *mut OuiDocument, delta_ms: f64) -> OuiStatus;
     pub unsafe fn oui_document_get_time(doc: *mut OuiDocument) -> f64;
-    pub unsafe fn oui_document_begin_frame(
-        doc: *mut OuiDocument,
-        time_ms: f64,
-    ) -> OuiStatus;
+    pub unsafe fn oui_document_begin_frame(doc: *mut OuiDocument, time_ms: f64) -> OuiStatus;
 
     // ═══ Input event dispatch ═════════════════════════════════
 
@@ -672,12 +593,7 @@ unsafe extern "C" {
 
     pub unsafe fn oui_element_focus(elem: *mut OuiElement) -> OuiStatus;
     pub unsafe fn oui_element_blur(elem: *mut OuiElement) -> OuiStatus;
-    pub unsafe fn oui_document_get_focused_element(
-        doc: *mut OuiDocument,
-    ) -> *mut OuiElement;
-    pub unsafe fn oui_document_advance_focus(
-        doc: *mut OuiDocument,
-        direction: c_int,
-    ) -> OuiStatus;
+    pub unsafe fn oui_document_get_focused_element(doc: *mut OuiDocument) -> *mut OuiElement;
+    pub unsafe fn oui_document_advance_focus(doc: *mut OuiDocument, direction: c_int) -> OuiStatus;
     pub unsafe fn oui_element_has_focus(elem: *const OuiElement) -> c_int;
 }

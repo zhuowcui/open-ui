@@ -20,7 +20,8 @@ fn has_non_white_pixels(surface: &mut skia_safe::Surface) -> bool {
     let img = surface.image_snapshot();
     let pm = img.peek_pixels().unwrap();
     let data = pm.bytes().unwrap();
-    data.chunks(4).any(|px| px[0] != 255 || px[1] != 255 || px[2] != 255)
+    data.chunks(4)
+        .any(|px| px[0] != 255 || px[1] != 255 || px[2] != 255)
 }
 
 fn shape_text(text: &str) -> openui_text::ShapeResult {
@@ -42,7 +43,11 @@ fn before_text_phase_paints_underline() {
     style.text_decoration_line = TextDecorationLine::UNDERLINE;
 
     paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         DecorationPhase::BeforeText,
         None,
     );
@@ -62,7 +67,11 @@ fn after_text_phase_paints_line_through() {
     style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
 
     paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         DecorationPhase::AfterText,
         None,
     );
@@ -82,7 +91,11 @@ fn before_text_phase_does_not_paint_line_through() {
     style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
 
     paint_text_decorations(
-        surface.canvas(), &sr, (10.0, 50.0), &style, &metrics,
+        surface.canvas(),
+        &sr,
+        (10.0, 50.0),
+        &style,
+        &metrics,
         DecorationPhase::BeforeText,
         None,
     );

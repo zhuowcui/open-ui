@@ -3,16 +3,16 @@
 //! Issue 5: Non-uniform border corners use overlapping rectangles instead of trapezoids.
 //! The fix draws each border side as a 4-point polygon with diagonal corner joins.
 
-use skia_safe::{surfaces, Color as SkColor, Surface};
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalSize};
 use openui_layout::Fragment;
 use openui_paint::paint_fragment;
 use openui_style::*;
+use skia_safe::{surfaces, Color as SkColor, Surface};
 
 fn make_surface(width: i32, height: i32) -> Surface {
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .expect("Failed to create Skia surface");
+    let mut surface =
+        surfaces::raster_n32_premul((width, height)).expect("Failed to create Skia surface");
     surface.canvas().clear(SkColor::WHITE);
     surface
 }
@@ -71,10 +71,30 @@ fn make_non_uniform_border_box(doc: &mut Document) -> Fragment {
         s.border_bottom_width = 10;
         s.border_left_width = 10;
         // Red top, green right, blue bottom, yellow left
-        s.border_top_color = StyleColor::Resolved(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 });
-        s.border_right_color = StyleColor::Resolved(Color { r: 0.0, g: 1.0, b: 0.0, a: 1.0 });
-        s.border_bottom_color = StyleColor::Resolved(Color { r: 0.0, g: 0.0, b: 1.0, a: 1.0 });
-        s.border_left_color = StyleColor::Resolved(Color { r: 1.0, g: 1.0, b: 0.0, a: 1.0 });
+        s.border_top_color = StyleColor::Resolved(Color {
+            r: 1.0,
+            g: 0.0,
+            b: 0.0,
+            a: 1.0,
+        });
+        s.border_right_color = StyleColor::Resolved(Color {
+            r: 0.0,
+            g: 1.0,
+            b: 0.0,
+            a: 1.0,
+        });
+        s.border_bottom_color = StyleColor::Resolved(Color {
+            r: 0.0,
+            g: 0.0,
+            b: 1.0,
+            a: 1.0,
+        });
+        s.border_left_color = StyleColor::Resolved(Color {
+            r: 1.0,
+            g: 1.0,
+            b: 0.0,
+            a: 1.0,
+        });
         s.border_top_style = BorderStyle::Solid;
         s.border_right_style = BorderStyle::Solid;
         s.border_bottom_style = BorderStyle::Solid;
@@ -82,10 +102,10 @@ fn make_non_uniform_border_box(doc: &mut Document) -> Fragment {
     }
     doc.append_child(vp, div);
 
-    Fragment::new_box(div, PhysicalSize::new(
-        LayoutUnit::from_i32(80),
-        LayoutUnit::from_i32(80),
-    ))
+    Fragment::new_box(
+        div,
+        PhysicalSize::new(LayoutUnit::from_i32(80), LayoutUnit::from_i32(80)),
+    )
 }
 
 // ── Issue 5: Non-uniform borders use trapezoids, not overlapping rects ──

@@ -12,11 +12,11 @@
 
 // Result of comparing two bitmaps pixel-by-pixel.
 struct PixelDiffResult {
-  bool identical;               // True if all pixels match within tolerance.
-  int max_channel_diff;         // Maximum single-channel difference found.
-  double diff_percentage;       // Percentage of pixels that differ (0.0–100.0).
-  int differing_pixel_count;    // Absolute count of differing pixels.
-  int total_pixel_count;        // Total pixels compared.
+  bool identical;             // True if all pixels match within tolerance.
+  int max_channel_diff;       // Maximum single-channel difference found.
+  double diff_percentage;     // Percentage of pixels that differ (0.0–100.0).
+  int differing_pixel_count;  // Absolute count of differing pixels.
+  int total_pixel_count;      // Total pixels compared.
 };
 
 // Compare two RGBA pixel buffers of the same dimensions.

@@ -6,15 +6,16 @@
 // Run:   ./openui_render_pages <output_dir>                   — C API renders
 //        ./openui_render_pages --html <html_dir> <output_dir> — HTML renders
 
-#include "openui/openui.h"
+#include <dirent.h>
 
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <dirent.h>
 #include <string>
 #include <vector>
+
+#include "openui/openui.h"
 
 // Helper to build a file path.
 static std::string MakePath(const char* dir, const char* name) {
@@ -170,8 +171,7 @@ static void RenderGridColors(const char* output_dir) {
   oui_element_append_child(body, grid);
 
   uint32_t colors[] = {
-    0xFF0000FF, 0x00FF00FF, 0x0000FFFF,
-    0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF,
+      0xFF0000FF, 0x00FF00FF, 0x0000FFFF, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF,
   };
 
   for (int i = 0; i < 6; i++) {
@@ -281,8 +281,7 @@ static void RenderTransforms(const char* output_dir) {
   oui_element_set_width(multi, oui_px(80));
   oui_element_set_height(multi, oui_px(80));
   oui_element_set_background_color(multi, 0xe74c3cFF);
-  oui_element_set_style(multi, "transform",
-                        "rotate(30deg) scale(1.2) translateX(20px)");
+  oui_element_set_style(multi, "transform", "rotate(30deg) scale(1.2) translateX(20px)");
   oui_element_set_position(multi, OUI_POSITION_ABSOLUTE);
   oui_element_set_style(multi, "left", "400px");
   oui_element_set_style(multi, "top", "300px");
@@ -337,8 +336,7 @@ static void RenderOpacityGradients(const char* output_dir) {
   OuiElement* gradBox = oui_element_create(doc, "div");
   oui_element_set_width(gradBox, oui_px(300));
   oui_element_set_height(gradBox, oui_px(100));
-  oui_element_set_style(gradBox, "background",
-                        "linear-gradient(90deg, #ff0000, #00ff00, #0000ff)");
+  oui_element_set_style(gradBox, "background", "linear-gradient(90deg, #ff0000, #00ff00, #0000ff)");
   oui_element_set_position(gradBox, OUI_POSITION_ABSOLUTE);
   oui_element_set_style(gradBox, "left", "50px");
   oui_element_set_style(gradBox, "top", "320px");
@@ -348,9 +346,8 @@ static void RenderOpacityGradients(const char* output_dir) {
   OuiElement* radialBox = oui_element_create(doc, "div");
   oui_element_set_width(radialBox, oui_px(200));
   oui_element_set_height(radialBox, oui_px(200));
-  oui_element_set_style(
-      radialBox, "background",
-      "radial-gradient(circle, #ffff00, #ff6600, #cc0000)");
+  oui_element_set_style(radialBox, "background",
+                        "radial-gradient(circle, #ffff00, #ff6600, #cc0000)");
   oui_element_set_position(radialBox, OUI_POSITION_ABSOLUTE);
   oui_element_set_style(radialBox, "left", "400px");
   oui_element_set_style(radialBox, "top", "320px");
@@ -513,8 +510,7 @@ static void RenderOverflowClipping(const char* output_dir) {
   OuiElement* grandchild = oui_element_create(doc, "div");
   oui_element_set_width(grandchild, oui_px(300));
   oui_element_set_height(grandchild, oui_px(300));
-  oui_element_set_style(grandchild, "background",
-                        "linear-gradient(135deg, #e74c3c, #f39c12)");
+  oui_element_set_style(grandchild, "background", "linear-gradient(135deg, #e74c3c, #f39c12)");
   oui_element_set_style(grandchild, "margin-top", "-50px");
   oui_element_append_child(child, grandchild);
 
@@ -545,8 +541,7 @@ static void RenderComplexUI(const char* output_dir) {
 
   OuiElement* hdr1 = oui_element_create(doc, "div");
   oui_element_set_height(hdr1, oui_px(8));
-  oui_element_set_style(hdr1, "background",
-                        "linear-gradient(90deg, #667eea, #764ba2)");
+  oui_element_set_style(hdr1, "background", "linear-gradient(90deg, #667eea, #764ba2)");
   oui_element_append_child(card1, hdr1);
 
   OuiElement* cbody1 = oui_element_create(doc, "div");
@@ -567,10 +562,9 @@ static void RenderComplexUI(const char* output_dir) {
   oui_element_set_font_size(text1, oui_px(13));
   oui_element_set_color(text1, 0x666666FF);
   oui_element_set_style(text1, "line-height", "1.5");
-  oui_element_set_text_content(
-      text1,
-      "A complex UI component with gradients, rounded corners, shadows, "
-      "typography, and nested flexbox layout.");
+  oui_element_set_text_content(text1,
+                               "A complex UI component with gradients, rounded corners, shadows, "
+                               "typography, and nested flexbox layout.");
   oui_element_append_child(cbody1, text1);
 
   OuiElement* footer1 = oui_element_create(doc, "div");
@@ -614,8 +608,7 @@ static void RenderComplexUI(const char* output_dir) {
 
   OuiElement* hdr2 = oui_element_create(doc, "div");
   oui_element_set_height(hdr2, oui_px(8));
-  oui_element_set_style(hdr2, "background",
-                        "linear-gradient(90deg, #f093fb, #f5576c)");
+  oui_element_set_style(hdr2, "background", "linear-gradient(90deg, #f093fb, #f5576c)");
   oui_element_append_child(card2, hdr2);
 
   OuiElement* cbody2 = oui_element_create(doc, "div");
@@ -636,10 +629,9 @@ static void RenderComplexUI(const char* output_dir) {
   oui_element_set_font_size(text2, oui_px(13));
   oui_element_set_color(text2, 0x666666FF);
   oui_element_set_style(text2, "line-height", "1.5");
-  oui_element_set_text_content(
-      text2,
-      "Testing multiple CSS properties: font-weight, line-height, "
-      "border-radius, box-shadow, flex layout, and gradient backgrounds.");
+  oui_element_set_text_content(text2,
+                               "Testing multiple CSS properties: font-weight, line-height, "
+                               "border-radius, box-shadow, flex layout, and gradient backgrounds.");
   oui_element_append_child(cbody2, text2);
 
   OuiElement* footer2 = oui_element_create(doc, "div");
@@ -678,11 +670,15 @@ static void RenderComplexUI(const char* output_dir) {
   oui_element_set_width(sidebar, oui_px(180));
   oui_element_append_child(body, sidebar);
 
-  struct { const char* text; uint32_t dotColor; bool active; } navItems[] = {
-    {"Overview", 0x1e88e5FF, true},
-    {"Alerts",   0xe53935FF, false},
-    {"Reports",  0x43a047FF, false},
-    {"Settings", 0xfb8c00FF, false},
+  struct {
+    const char* text;
+    uint32_t dotColor;
+    bool active;
+  } navItems[] = {
+      {"Overview", 0x1e88e5FF, true},
+      {"Alerts", 0xe53935FF, false},
+      {"Reports", 0x43a047FF, false},
+      {"Settings", 0xfb8c00FF, false},
   };
   for (int i = 0; i < 4; i++) {
     OuiElement* navItem = oui_element_create(doc, "div");
@@ -778,15 +774,17 @@ static void RenderTypography(const char* output_dir) {
   oui_element_set_font_style(italic, OUI_FONT_STYLE_ITALIC);
   oui_element_set_color(italic, 0x888888FF);
   oui_element_set_margin(italic, oui_px(5), oui_px(20), oui_px(5), oui_px(20));
-  oui_element_set_text_content(italic,
-                               "Italic text for emphasis and style variation.");
+  oui_element_set_text_content(italic, "Italic text for emphasis and style variation.");
   oui_element_append_child(body, italic);
 
   // colored bold text
-  struct { const char* t; uint32_t c; } colored[] = {
-    {"Red bold text",   0xe74c3cFF},
-    {"Blue bold text",  0x2980b9FF},
-    {"Green bold text", 0x27ae60FF},
+  struct {
+    const char* t;
+    uint32_t c;
+  } colored[] = {
+      {"Red bold text", 0xe74c3cFF},
+      {"Blue bold text", 0x2980b9FF},
+      {"Green bold text", 0x27ae60FF},
   };
   for (int i = 0; i < 3; i++) {
     OuiElement* ct = oui_element_create(doc, "div");
@@ -847,8 +845,7 @@ static void RenderTypography(const char* output_dir) {
   oui_element_set_font_size(small, oui_px(10));
   oui_element_set_color(small, 0x999999FF);
   oui_element_set_margin(small, oui_px(5), oui_px(20), oui_px(5), oui_px(20));
-  oui_element_set_text_content(small,
-                               "Tiny 10px caption text for fine details.");
+  oui_element_set_text_content(small, "Tiny 10px caption text for fine details.");
   oui_element_append_child(body, small);
 
   std::string path = MakePath(output_dir, "typography.png");
@@ -873,10 +870,9 @@ static void RenderBordersShadows(const char* output_dir) {
   oui_element_set_background_color(inset, 0xecf0f1FF);
   oui_element_set_style(inset, "border", "3px solid #bdc3c7");
   oui_element_set_style(inset, "border-radius", "12px");
-  oui_element_set_style(
-      inset, "box-shadow",
-      "inset 4px 4px 8px rgba(0,0,0,0.2), "
-      "inset -4px -4px 8px rgba(255,255,255,0.7)");
+  oui_element_set_style(inset, "box-shadow",
+                        "inset 4px 4px 8px rgba(0,0,0,0.2), "
+                        "inset -4px -4px 8px rgba(255,255,255,0.7)");
   oui_element_append_child(body, inset);
 
   // .multi-border: different color per side
@@ -925,10 +921,9 @@ static void RenderBordersShadows(const char* output_dir) {
   OuiElement* gradBorder = oui_element_create(doc, "div");
   oui_element_set_width(gradBorder, oui_px(250));
   oui_element_set_height(gradBorder, oui_px(120));
-  oui_element_set_style(
-      gradBorder, "background",
-      "linear-gradient(white, white) padding-box, "
-      "linear-gradient(135deg, #667eea, #764ba2) border-box");
+  oui_element_set_style(gradBorder, "background",
+                        "linear-gradient(white, white) padding-box, "
+                        "linear-gradient(135deg, #667eea, #764ba2) border-box");
   oui_element_set_style(gradBorder, "border", "4px solid transparent");
   oui_element_set_style(gradBorder, "border-radius", "16px");
   oui_element_set_position(gradBorder, OUI_POSITION_ABSOLUTE);
@@ -942,11 +937,10 @@ static void RenderBordersShadows(const char* output_dir) {
   oui_element_set_height(complexShadow, oui_px(120));
   oui_element_set_background_color(complexShadow, 0xFFFFFFFF);
   oui_element_set_style(complexShadow, "border-radius", "16px");
-  oui_element_set_style(
-      complexShadow, "box-shadow",
-      "0 1px 3px rgba(0,0,0,0.12), "
-      "0 4px 6px rgba(0,0,0,0.08), "
-      "0 12px 24px rgba(0,0,0,0.06)");
+  oui_element_set_style(complexShadow, "box-shadow",
+                        "0 1px 3px rgba(0,0,0,0.12), "
+                        "0 4px 6px rgba(0,0,0,0.08), "
+                        "0 12px 24px rgba(0,0,0,0.06)");
   oui_element_set_position(complexShadow, OUI_POSITION_ABSOLUTE);
   oui_element_set_style(complexShadow, "left", "350px");
   oui_element_set_style(complexShadow, "top", "430px");
@@ -978,8 +972,7 @@ static void RenderDashboardLayout(const char* output_dir) {
   // ─── Header ───
   OuiElement* header = oui_element_create(doc, "div");
   oui_element_set_height(header, oui_px(60));
-  oui_element_set_style(header, "background",
-                        "linear-gradient(90deg, #2c3e50, #3498db)");
+  oui_element_set_style(header, "background", "linear-gradient(90deg, #2c3e50, #3498db)");
   oui_element_set_display(header, OUI_DISPLAY_FLEX);
   oui_element_set_align_items(header, OUI_ALIGN_CENTER);
   oui_element_set_padding(header, oui_px(0), oui_px(20), oui_px(0), oui_px(20));
@@ -1033,9 +1026,13 @@ static void RenderDashboardLayout(const char* output_dir) {
   oui_element_set_style(sb, "box-sizing", "border-box");
   oui_element_append_child(hgBody, sb);
 
-  struct { const char* label; const char* links[3]; int activeIdx; } sects[] = {
-    {"Main",  {"Overview", "Metrics", "Events"},  0},
-    {"Tools", {"Explorer", "Builder", "Export"}, -1},
+  struct {
+    const char* label;
+    const char* links[3];
+    int activeIdx;
+  } sects[] = {
+      {"Main", {"Overview", "Metrics", "Events"}, 0},
+      {"Tools", {"Explorer", "Builder", "Export"}, -1},
   };
   for (int s = 0; s < 2; s++) {
     OuiElement* sec = oui_element_create(doc, "div");
@@ -1090,11 +1087,15 @@ static void RenderDashboardLayout(const char* output_dir) {
   oui_element_set_style(statsRow, "box-sizing", "border-box");
   oui_element_append_child(main, statsRow);
 
-  struct { const char* val; const char* lbl; const char* fw; uint32_t fc; }
-      stats[] = {
-    {"2,847",  "Users",   "72%", 0x3498dbFF},
-    {"94.2%",  "Uptime",  "85%", 0x2ecc71FF},
-    {"$12.4k", "Revenue", "45%", 0xe67e22FF},
+  struct {
+    const char* val;
+    const char* lbl;
+    const char* fw;
+    uint32_t fc;
+  } stats[] = {
+      {"2,847", "Users", "72%", 0x3498dbFF},
+      {"94.2%", "Uptime", "85%", 0x2ecc71FF},
+      {"$12.4k", "Revenue", "45%", 0xe67e22FF},
   };
   for (int i = 0; i < 3; i++) {
     OuiElement* sc = oui_element_create(doc, "div");
@@ -1145,15 +1146,19 @@ static void RenderDashboardLayout(const char* output_dir) {
   oui_element_set_style(grid, "box-sizing", "border-box");
   oui_element_append_child(main, grid);
 
-  struct { const char* grad; const char* title; const char* desc; } cards[] = {
-    {"linear-gradient(90deg, #667eea, #764ba2)", "Project Alpha",
-     "Advanced analytics pipeline with real-time data processing."},
-    {"linear-gradient(90deg, #f093fb, #f5576c)", "Project Beta",
-     "Machine learning model deployment and monitoring system."},
-    {"linear-gradient(90deg, #4facfe, #00f2fe)", "Project Gamma",
-     "Cloud infrastructure automation and orchestration."},
-    {"linear-gradient(90deg, #f6d365, #fda085)", "Project Delta",
-     "User experience optimization through A/B testing framework."},
+  struct {
+    const char* grad;
+    const char* title;
+    const char* desc;
+  } cards[] = {
+      {"linear-gradient(90deg, #667eea, #764ba2)", "Project Alpha",
+       "Advanced analytics pipeline with real-time data processing."},
+      {"linear-gradient(90deg, #f093fb, #f5576c)", "Project Beta",
+       "Machine learning model deployment and monitoring system."},
+      {"linear-gradient(90deg, #4facfe, #00f2fe)", "Project Gamma",
+       "Cloud infrastructure automation and orchestration."},
+      {"linear-gradient(90deg, #f6d365, #fda085)", "Project Delta",
+       "User experience optimization through A/B testing framework."},
   };
   for (int i = 0; i < 4; i++) {
     OuiElement* card = oui_element_create(doc, "div");
@@ -1219,7 +1224,8 @@ static void RenderDashboardLayout(const char* output_dir) {
 // ─── HTML file rendering: loads HTML and renders through the same pipeline ──
 static bool ReadFile(const char* path, std::string* out) {
   FILE* f = fopen(path, "rb");
-  if (!f) return false;
+  if (!f)
+    return false;
   fseek(f, 0, SEEK_END);
   long sz = ftell(f);
   fseek(f, 0, SEEK_SET);
@@ -1247,9 +1253,11 @@ static void RenderHTMLFile(const char* html_path, const char* output_dir) {
   // Extract filename: "foo.html" → "foo.png"
   std::string basename(html_path);
   size_t slash = basename.rfind('/');
-  if (slash != std::string::npos) basename = basename.substr(slash + 1);
+  if (slash != std::string::npos)
+    basename = basename.substr(slash + 1);
   size_t dot = basename.rfind('.');
-  if (dot != std::string::npos) basename = basename.substr(0, dot);
+  if (dot != std::string::npos)
+    basename = basename.substr(0, dot);
   basename += ".png";
 
   std::string path = MakePath(output_dir, basename.c_str());
@@ -1276,8 +1284,7 @@ static int RenderHTMLDir(const char* html_dir, const char* output_dir) {
   closedir(dir);
   std::sort(files.begin(), files.end());
 
-  printf("Rendering %zu HTML pages from %s to %s\n",
-         files.size(), html_dir, output_dir);
+  printf("Rendering %zu HTML pages from %s to %s\n", files.size(), html_dir, output_dir);
   for (const auto& f : files) {
     std::string full = std::string(html_dir) + "/" + f;
     RenderHTMLFile(full.c_str(), output_dir);
@@ -1343,35 +1350,34 @@ int main(int argc, char** argv) {
     printf("NOTE: Pass --html-dir <path> to also render 25 SP6 test pages.\n");
   } else {
     static const char* kSP6Pages[] = {
-      "test_semantic_blocks",
-      "test_inline_text",
-      "test_headings_text",
-      "test_lists",
-      "test_tables",
-      "test_forms",
-      "test_flexbox",
-      "test_grid",
-      "test_positioning",
-      "test_box_model",
-      "test_colors_backgrounds",
-      "test_transforms_filters",
-      "test_advanced_css",
-      "test_svg_shapes",
-      "test_svg_advanced",
-      "website_blog",
-      "website_ecommerce",
-      "website_dashboard",
-      "website_landing",
-      "website_portfolio",
-      "website_news",
-      "website_docs",
-      "website_social",
-      "website_email",
-      "website_analytics",
+        "test_semantic_blocks",
+        "test_inline_text",
+        "test_headings_text",
+        "test_lists",
+        "test_tables",
+        "test_forms",
+        "test_flexbox",
+        "test_grid",
+        "test_positioning",
+        "test_box_model",
+        "test_colors_backgrounds",
+        "test_transforms_filters",
+        "test_advanced_css",
+        "test_svg_shapes",
+        "test_svg_advanced",
+        "website_blog",
+        "website_ecommerce",
+        "website_dashboard",
+        "website_landing",
+        "website_portfolio",
+        "website_news",
+        "website_docs",
+        "website_social",
+        "website_email",
+        "website_analytics",
     };
     for (const char* name : kSP6Pages) {
-      std::string html_path =
-          std::string(html_dir) + "/" + name + ".html";
+      std::string html_path = std::string(html_dir) + "/" + name + ".html";
       std::string html;
       if (!ReadFile(html_path.c_str(), &html)) {
         printf("  %s: SKIP (cannot read %s)\n", name, html_path.c_str());

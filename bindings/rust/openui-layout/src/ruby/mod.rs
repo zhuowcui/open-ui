@@ -17,6 +17,4 @@
 
 mod layout;
 
-pub use layout::{
-    compute_ruby_layout, max_ruby_overhang, clamp_overhang, RubyInfo, RubyLayout,
-};
+pub use layout::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};

@@ -10,8 +10,8 @@
 //   ./out/Release/openui_skia_poc
 //   # → writes skia_poc_output.png
 
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
 
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkColor.h"

@@ -2,25 +2,22 @@
 //!
 //! Issue 7: Non-solid border styles are now painted instead of silently skipped.
 
-use skia_safe::{surfaces, Color as SkColor, Surface};
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalSize};
 use openui_layout::Fragment;
 use openui_paint::paint_fragment;
 use openui_style::*;
+use skia_safe::{surfaces, Color as SkColor, Surface};
 
 fn make_surface(width: i32, height: i32) -> Surface {
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .expect("Failed to create Skia surface");
+    let mut surface =
+        surfaces::raster_n32_premul((width, height)).expect("Failed to create Skia surface");
     surface.canvas().clear(SkColor::WHITE);
     surface
 }
 
 /// Check if any pixels in the given rectangular region are non-white.
-fn has_non_white_pixels_in_region(
-    surface: &mut Surface,
-    x: i32, y: i32, w: i32, h: i32,
-) -> bool {
+fn has_non_white_pixels_in_region(surface: &mut Surface, x: i32, y: i32, w: i32, h: i32) -> bool {
     let image = surface.image_snapshot();
     let info = image.image_info();
     let row_bytes = info.min_row_bytes();
@@ -62,10 +59,30 @@ fn make_bordered_box(doc: &mut Document, style_fn: impl FnOnce(&mut ComputedStyl
         s.border_right_width = 4;
         s.border_bottom_width = 4;
         s.border_left_width = 4;
-        s.border_top_color = StyleColor::Resolved(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 });
-        s.border_right_color = StyleColor::Resolved(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 });
-        s.border_bottom_color = StyleColor::Resolved(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 });
-        s.border_left_color = StyleColor::Resolved(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 });
+        s.border_top_color = StyleColor::Resolved(Color {
+            r: 1.0,
+            g: 0.0,
+            b: 0.0,
+            a: 1.0,
+        });
+        s.border_right_color = StyleColor::Resolved(Color {
+            r: 1.0,
+            g: 0.0,
+            b: 0.0,
+            a: 1.0,
+        });
+        s.border_bottom_color = StyleColor::Resolved(Color {
+            r: 1.0,
+            g: 0.0,
+            b: 0.0,
+            a: 1.0,
+        });
+        s.border_left_color = StyleColor::Resolved(Color {
+            r: 1.0,
+            g: 0.0,
+            b: 0.0,
+            a: 1.0,
+        });
         style_fn(s);
     }
     doc.append_child(vp, div);

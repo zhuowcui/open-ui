@@ -26,21 +26,35 @@ impl PhysicalRect {
     }
 
     #[inline]
-    pub const fn x(&self) -> LayoutUnit { self.offset.left }
+    pub const fn x(&self) -> LayoutUnit {
+        self.offset.left
+    }
     #[inline]
-    pub const fn y(&self) -> LayoutUnit { self.offset.top }
+    pub const fn y(&self) -> LayoutUnit {
+        self.offset.top
+    }
     #[inline]
-    pub const fn width(&self) -> LayoutUnit { self.size.width }
+    pub const fn width(&self) -> LayoutUnit {
+        self.size.width
+    }
     #[inline]
-    pub const fn height(&self) -> LayoutUnit { self.size.height }
+    pub const fn height(&self) -> LayoutUnit {
+        self.size.height
+    }
 
     #[inline]
-    pub fn right(&self) -> LayoutUnit { self.offset.left + self.size.width }
+    pub fn right(&self) -> LayoutUnit {
+        self.offset.left + self.size.width
+    }
     #[inline]
-    pub fn bottom(&self) -> LayoutUnit { self.offset.top + self.size.height }
+    pub fn bottom(&self) -> LayoutUnit {
+        self.offset.top + self.size.height
+    }
 
     #[inline]
-    pub const fn is_empty(&self) -> bool { self.size.is_empty() }
+    pub const fn is_empty(&self) -> bool {
+        self.size.is_empty()
+    }
 
     /// Convert to f32 rect for Skia. Uses `to_f32()` which matches Blink's
     /// `ToFloat()` — exact conversion from fixed-point to float.
@@ -65,7 +79,13 @@ impl PhysicalRect {
     }
 
     /// Shrink this rect inward by the given strut amounts.
-    pub fn shrink(&self, top: LayoutUnit, right: LayoutUnit, bottom: LayoutUnit, left: LayoutUnit) -> Self {
+    pub fn shrink(
+        &self,
+        top: LayoutUnit,
+        right: LayoutUnit,
+        bottom: LayoutUnit,
+        left: LayoutUnit,
+    ) -> Self {
         Self {
             offset: PhysicalOffset::new(self.offset.left + left, self.offset.top + top),
             size: PhysicalSize::new(

@@ -5,9 +5,7 @@
 //! and dispatching input events.
 
 use crate::element::Element;
-use crate::events::{
-    resource_provider_trampoline, RESOURCE_PROVIDER_REGISTRY,
-};
+use crate::events::{resource_provider_trampoline, RESOURCE_PROVIDER_REGISTRY};
 use crate::style::{check_status, Bitmap, OuiError};
 use openui_sys::OuiBitmap;
 use std::ffi::{c_void, CString};
@@ -233,9 +231,7 @@ impl Document {
         {
             let mut map = RESOURCE_PROVIDER_REGISTRY.lock().unwrap();
             if let Some(old) = map.remove(&(self.raw as usize)) {
-                let _ = unsafe {
-                    Box::from_raw(old as *mut Box<dyn Fn(&str) -> Option<Vec<u8>>>)
-                };
+                let _ = unsafe { Box::from_raw(old as *mut Box<dyn Fn(&str) -> Option<Vec<u8>>>) };
             }
             map.insert(self.raw as usize, user_data as usize);
         }
@@ -266,9 +262,7 @@ impl Drop for Document {
                 .unwrap()
                 .remove(&(self.raw as usize))
             {
-                let _ = unsafe {
-                    Box::from_raw(ptr as *mut Box<dyn Fn(&str) -> Option<Vec<u8>>>)
-                };
+                let _ = unsafe { Box::from_raw(ptr as *mut Box<dyn Fn(&str) -> Option<Vec<u8>>>) };
             }
             unsafe { openui_sys::oui_document_destroy(self.raw) };
         }

@@ -13,7 +13,6 @@
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FontMetrics {
     // ── Primary vertical metrics ─────────────────────────────────────
-
     /// Distance above the baseline (POSITIVE).
     /// Skia's `ascent` is negative; we negate it.
     pub ascent: f32,
@@ -31,7 +30,6 @@ pub struct FontMetrics {
     pub line_spacing: f32,
 
     // ── Reference metrics ────────────────────────────────────────────
-
     /// Height of lowercase 'x' (CSS `ex` unit reference).
     pub x_height: f32,
 
@@ -42,7 +40,6 @@ pub struct FontMetrics {
     pub zero_width: f32,
 
     // ── Decoration metrics ───────────────────────────────────────────
-
     /// Distance below baseline for underline (POSITIVE = below baseline).
     pub underline_offset: f32,
 
@@ -60,7 +57,6 @@ pub struct FontMetrics {
     pub overline_offset: f32,
 
     // ── Font design metrics ──────────────────────────────────────────
-
     /// Units per em from the font's head table.
     pub units_per_em: u16,
 }

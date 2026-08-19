@@ -187,13 +187,12 @@ fn compute_axis_offset(
 
     // "start_stick": how much to shift so the element's start edge is at
     // `viewport_start + inset_start`.
-    let start_stick = inset_start
-        .map(|inset| (vp_start + inset) - el_in_vp);
+    let start_stick = inset_start.map(|inset| (vp_start + inset) - el_in_vp);
 
     // "end_stick": how much to shift so the element's end edge is at
     // `viewport_end - inset_end`.
-    let end_stick = inset_end
-        .map(|inset| (vp_start + vp_extent - inset) - (el_in_vp + element_extent));
+    let end_stick =
+        inset_end.map(|inset| (vp_start + vp_extent - inset) - (el_in_vp + element_extent));
 
     // CSS §3 decision table:
     let raw_offset = match (start_stick, end_stick) {
@@ -270,12 +269,20 @@ pub fn apply_sticky_offset(
 
 #[inline]
 fn min_lu(a: LayoutUnit, b: LayoutUnit) -> LayoutUnit {
-    if a <= b { a } else { b }
+    if a <= b {
+        a
+    } else {
+        b
+    }
 }
 
 #[inline]
 fn max_lu(a: LayoutUnit, b: LayoutUnit) -> LayoutUnit {
-    if a >= b { a } else { b }
+    if a >= b {
+        a
+    } else {
+        b
+    }
 }
 
 #[inline]
@@ -309,8 +316,15 @@ mod tests {
     #[test]
     fn axis_no_insets_returns_zero() {
         let off = compute_axis_offset(
-            lu(100), lu(0), lu(0), lu(600),
-            None, None, lu(50), lu(0), lu(1000),
+            lu(100),
+            lu(0),
+            lu(0),
+            lu(600),
+            None,
+            None,
+            lu(50),
+            lu(0),
+            lu(1000),
         );
         assert_eq!(off, lu(0));
     }
@@ -321,8 +335,15 @@ mod tests {
         // el_in_vp = 200 - 250 = -50.  start_stick = (0+10) - (-50) = 60.
         // max(0, 60) = 60.
         let off = compute_axis_offset(
-            lu(200), lu(250), lu(0), lu(600),
-            Some(lu(10)), None, lu(50), lu(0), lu(1000),
+            lu(200),
+            lu(250),
+            lu(0),
+            lu(600),
+            Some(lu(10)),
+            None,
+            lu(50),
+            lu(0),
+            lu(1000),
         );
         assert_eq!(off, lu(60));
     }
@@ -333,8 +354,15 @@ mod tests {
         // el_in_vp = 500. end_stick = (600-10) - (500+50) = 40.
         // min(0, 40) = 0  → no sticking needed (already inside viewport).
         let off = compute_axis_offset(
-            lu(500), lu(0), lu(0), lu(600),
-            None, Some(lu(10)), lu(50), lu(0), lu(1000),
+            lu(500),
+            lu(0),
+            lu(0),
+            lu(600),
+            None,
+            Some(lu(10)),
+            lu(50),
+            lu(0),
+            lu(1000),
         );
         assert_eq!(off, lu(0));
     }
@@ -345,8 +373,15 @@ mod tests {
         // max_positive = (950 - 50) - 900 = 0.
         // Any positive offset should be clamped to 0.
         let off = compute_axis_offset(
-            lu(900), lu(950), lu(0), lu(600),
-            Some(lu(0)), None, lu(50), lu(0), lu(950),
+            lu(900),
+            lu(950),
+            lu(0),
+            lu(600),
+            Some(lu(0)),
+            None,
+            lu(50),
+            lu(0),
+            lu(950),
         );
         assert_eq!(off, lu(0));
     }

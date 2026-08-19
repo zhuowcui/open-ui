@@ -109,10 +109,7 @@ fn parse_element(input: ParseStream) -> syn::Result<ViewNode> {
     // Tag name (use parse_any to support keywords like `type` used as custom tags)
     let tag: Ident = input.call(Ident::parse_any)?;
     let tag_str = tag.to_string();
-    let is_component = tag_str
-        .chars()
-        .next()
-        .map_or(false, |c| c.is_uppercase());
+    let is_component = tag_str.chars().next().map_or(false, |c| c.is_uppercase());
 
     // Attributes
     let mut attrs = Vec::new();
@@ -469,7 +466,11 @@ fn gen_attr_stmt(attr: &Attr) -> TokenStream {
                 __el.set_attribute(#name, #value).expect("set attribute");
             }
         }
-        Attr::Event { name, handler, span } => {
+        Attr::Event {
+            name,
+            handler,
+            span,
+        } => {
             quote_spanned! {*span=>
                 __el.on(#name, #handler).expect("set event handler");
             }
@@ -649,7 +650,10 @@ mod tests {
         assert_eq!(body.nodes.len(), 1);
         match &body.nodes[0] {
             ViewNode::Element {
-                tag, children, is_component, ..
+                tag,
+                children,
+                is_component,
+                ..
             } => {
                 assert_eq!(tag.to_string(), "br");
                 assert!(children.is_empty());
@@ -723,9 +727,7 @@ mod tests {
         match &body.nodes[0] {
             ViewNode::Element { attrs, .. } => {
                 assert_eq!(attrs.len(), 1);
-                assert!(
-                    matches!(&attrs[0], Attr::StyleStatic { prop, .. } if prop == "width")
-                );
+                assert!(matches!(&attrs[0], Attr::StyleStatic { prop, .. } if prop == "width"));
             }
             _ => panic!("expected Element"),
         }
@@ -737,9 +739,7 @@ mod tests {
         match &body.nodes[0] {
             ViewNode::Element { attrs, .. } => {
                 assert_eq!(attrs.len(), 1);
-                assert!(
-                    matches!(&attrs[0], Attr::StyleDynamic { prop, .. } if prop == "opacity")
-                );
+                assert!(matches!(&attrs[0], Attr::StyleDynamic { prop, .. } if prop == "opacity"));
             }
             _ => panic!("expected Element"),
         }
@@ -751,9 +751,7 @@ mod tests {
         match &body.nodes[0] {
             ViewNode::Element { attrs, .. } => {
                 assert_eq!(attrs.len(), 1);
-                assert!(
-                    matches!(&attrs[0], Attr::Static { name, .. } if name == "data-id")
-                );
+                assert!(matches!(&attrs[0], Attr::Static { name, .. } if name == "data-id"));
             }
             _ => panic!("expected Element"),
         }
@@ -765,12 +763,10 @@ mod tests {
         match &body.nodes[0] {
             ViewNode::Element { attrs, .. } => {
                 assert_eq!(attrs.len(), 1);
-                assert!(
-                    matches!(
-                        &attrs[0],
-                        Attr::StyleStatic { prop, .. } if prop == "background-color"
-                    )
-                );
+                assert!(matches!(
+                    &attrs[0],
+                    Attr::StyleStatic { prop, .. } if prop == "background-color"
+                ));
             }
             _ => panic!("expected Element"),
         }
@@ -877,9 +873,7 @@ mod tests {
                 assert!(matches!(&attrs[0], Attr::Event { name, .. } if name == "click"));
                 assert!(matches!(&attrs[1], Attr::Static { name, .. } if name == "class"));
                 assert!(matches!(&attrs[2], Attr::Bool { name, .. } if name == "disabled"));
-                assert!(
-                    matches!(&attrs[3], Attr::StyleStatic { prop, .. } if prop == "color")
-                );
+                assert!(matches!(&attrs[3], Attr::StyleStatic { prop, .. } if prop == "color"));
             }
             _ => panic!("expected Element"),
         }
@@ -939,7 +933,11 @@ mod tests {
         let body = parse_ok(quote! { <div /> });
         let output = generate(&body);
         let output_str = output.to_string();
-        assert!(output_str.contains("create"), "expected 'create' in: {}", output_str);
+        assert!(
+            output_str.contains("create"),
+            "expected 'create' in: {}",
+            output_str
+        );
         assert!(output_str.contains("\"div\""));
     }
 
@@ -958,8 +956,11 @@ mod tests {
         let body = parse_ok(quote! { <button on:click=|_| {} /> });
         let output = generate(&body);
         let output_str = output.to_string();
-        assert!(output_str.contains(". on (") || output_str.contains(".on("),
-            "expected '.on(' in: {}", output_str);
+        assert!(
+            output_str.contains(". on (") || output_str.contains(".on("),
+            "expected '.on(' in: {}",
+            output_str
+        );
         assert!(output_str.contains("\"click\""));
     }
 
@@ -985,12 +986,21 @@ mod tests {
         let body = parse_ok(quote! { <p>{val}</p> });
         let output = generate(&body);
         let output_str = output.to_string();
-        assert!(output_str.contains("create_text_child"),
-            "expected 'create_text_child' in: {}", output_str);
-        assert!(output_str.contains("set_data"),
-            "expected 'set_data' (not set_text) in: {}", output_str);
-        assert!(!output_str.contains("create(__doc, \"span\")"),
-            "must not create a <span> wrapper for dynamic text: {}", output_str);
+        assert!(
+            output_str.contains("create_text_child"),
+            "expected 'create_text_child' in: {}",
+            output_str
+        );
+        assert!(
+            output_str.contains("set_data"),
+            "expected 'set_data' (not set_text) in: {}",
+            output_str
+        );
+        assert!(
+            !output_str.contains("create(__doc, \"span\")"),
+            "must not create a <span> wrapper for dynamic text: {}",
+            output_str
+        );
     }
 
     #[test]
@@ -998,10 +1008,16 @@ mod tests {
         let body = parse_ok(quote! { {val} });
         let output = generate(&body);
         let output_str = output.to_string();
-        assert!(output_str.contains("MountFn"),
-            "expected 'MountFn' in standalone dynamic: {}", output_str);
-        assert!(output_str.contains("create_text_child"),
-            "expected 'create_text_child' in: {}", output_str);
+        assert!(
+            output_str.contains("MountFn"),
+            "expected 'MountFn' in standalone dynamic: {}",
+            output_str
+        );
+        assert!(
+            output_str.contains("create_text_child"),
+            "expected 'create_text_child' in: {}",
+            output_str
+        );
     }
 
     #[test]

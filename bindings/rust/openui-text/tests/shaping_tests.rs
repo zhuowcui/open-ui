@@ -5,9 +5,7 @@
 
 use openui_style::{FontFamily, FontFamilyList};
 use openui_text::font::{Font, FontDescription};
-use openui_text::shaping::{
-    RunSegmenter, ShapeResult, TextDirection, TextShaper,
-};
+use openui_text::shaping::{RunSegmenter, ShapeResult, TextDirection, TextShaper};
 
 // ═══════════════════════════════════════════════════════════════════════
 // Helpers
@@ -49,7 +47,11 @@ fn shape_text_with_font(text: &str, font: &Font) -> ShapeResult {
 fn shape_hello_produces_5_glyphs() {
     let result = shape_text("Hello");
     assert_eq!(result.num_characters, 5);
-    assert!(result.num_glyphs() >= 5, "Expected at least 5 glyphs, got {}", result.num_glyphs());
+    assert!(
+        result.num_glyphs() >= 5,
+        "Expected at least 5 glyphs, got {}",
+        result.num_glyphs()
+    );
 }
 
 #[test]
@@ -79,14 +81,21 @@ fn shape_single_character() {
     let result = shape_text("A");
     assert_eq!(result.num_characters, 1);
     assert!(result.num_glyphs() >= 1);
-    assert!(result.width() > 0.0, "Single char should have non-zero width");
+    assert!(
+        result.width() > 0.0,
+        "Single char should have non-zero width"
+    );
 }
 
 #[test]
 fn shape_space_has_nonzero_width() {
     let result = shape_text(" ");
     assert_eq!(result.num_characters, 1);
-    assert!(result.width() > 0.0, "Space should have non-zero width: {}", result.width());
+    assert!(
+        result.width() > 0.0,
+        "Space should have non-zero width: {}",
+        result.width()
+    );
 }
 
 #[test]
@@ -127,7 +136,10 @@ fn shape_mixed_content() {
 #[test]
 fn shape_has_at_least_one_run() {
     let result = shape_text("Hello");
-    assert!(!result.runs.is_empty(), "Non-empty text should have at least one run");
+    assert!(
+        !result.runs.is_empty(),
+        "Non-empty text should have at least one run"
+    );
 }
 
 #[test]
@@ -174,7 +186,8 @@ fn glyph_advances_positive_for_visible() {
             assert!(
                 advance > 0.0,
                 "Advance for glyph {} should be positive, got {}",
-                i, advance
+                i,
+                advance
             );
         }
     }
@@ -260,7 +273,11 @@ fn different_characters_different_widths() {
 fn very_large_font_size() {
     let font = make_font(100.0);
     let result = shape_text_with_font("A", &font);
-    assert!(result.width() > 30.0, "100px 'A' should be wide: {}", result.width());
+    assert!(
+        result.width() > 30.0,
+        "100px 'A' should be wide: {}",
+        result.width()
+    );
 }
 
 #[test]
@@ -268,14 +285,22 @@ fn very_small_font_size() {
     let font = make_font(4.0);
     let result = shape_text_with_font("A", &font);
     assert!(result.width() > 0.0, "4px 'A' should still have width");
-    assert!(result.width() < 10.0, "4px 'A' should be narrow: {}", result.width());
+    assert!(
+        result.width() < 10.0,
+        "4px 'A' should be narrow: {}",
+        result.width()
+    );
 }
 
 #[test]
 fn width_always_nonnegative() {
     for text in &["", "a", "Hello", "   ", "!"] {
         let result = shape_text(text);
-        assert!(result.width() >= 0.0, "Width for {:?} should be non-negative", text);
+        assert!(
+            result.width() >= 0.0,
+            "Width for {:?} should be non-negative",
+            text
+        );
     }
 }
 
@@ -302,7 +327,8 @@ fn offsets_typically_zero_for_latin() {
             assert!(
                 ox.abs() < 1.0 && oy.abs() < 1.0,
                 "Latin offsets should be near zero: ({}, {})",
-                ox, oy
+                ox,
+                oy
             );
         }
     }
@@ -474,7 +500,12 @@ fn x_position_for_offset_at_end() {
     let result = shape_text("Hello");
     let x = result.x_position_for_offset(5);
     let diff = (x - result.width()).abs();
-    assert!(diff < 0.1, "x at end ({}) should equal width ({})", x, result.width());
+    assert!(
+        diff < 0.1,
+        "x at end ({}) should equal width ({})",
+        x,
+        result.width()
+    );
 }
 
 #[test]
@@ -486,7 +517,10 @@ fn offset_for_x_position_at_zero() {
 #[test]
 fn offset_for_x_position_at_width() {
     let result = shape_text("Hello");
-    assert_eq!(result.offset_for_x_position(result.width()), result.num_characters);
+    assert_eq!(
+        result.offset_for_x_position(result.width()),
+        result.num_characters
+    );
 }
 
 #[test]
@@ -515,7 +549,9 @@ fn roundtrip_offset_to_x_to_offset() {
         assert!(
             diff <= 1,
             "Round-trip for offset {}: x={}, recovered={}",
-            offset, x, recovered
+            offset,
+            x,
+            recovered
         );
     }
 }
@@ -632,7 +668,10 @@ fn sub_range_out_of_bounds_clamped() {
     let result = shape_text("Hello");
     let sub = result.sub_range(0, 100);
     let diff = (sub.width() - result.width()).abs();
-    assert!(diff < 0.1, "Out-of-bounds sub_range should clamp to full result");
+    assert!(
+        diff < 0.1,
+        "Out-of-bounds sub_range should clamp to full result"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -657,7 +696,10 @@ fn text_blob_bounds_reasonable() {
     let blob = result.to_text_blob().unwrap();
     let bounds = blob.bounds();
     assert!(bounds.width() > 0.0, "TextBlob should have positive width");
-    assert!(bounds.height() > 0.0, "TextBlob should have positive height");
+    assert!(
+        bounds.height() > 0.0,
+        "TextBlob should have positive height"
+    );
 }
 
 #[test]
@@ -688,7 +730,12 @@ fn segment_pure_latin_one_segment() {
 fn segment_latin_with_numbers_merged() {
     let segments = RunSegmenter::segment("Hello 123 World");
     // Numbers are Common script, should merge with Latin.
-    assert_eq!(segments.len(), 1, "Latin+numbers should merge: {:?}", segments);
+    assert_eq!(
+        segments.len(),
+        1,
+        "Latin+numbers should merge: {:?}",
+        segments
+    );
 }
 
 #[test]
@@ -867,7 +914,11 @@ fn zero_spacing_no_change() {
     let r2 = shaper.shape("Hello", &font_default, TextDirection::Ltr);
 
     let diff = (r1.width() - r2.width()).abs();
-    assert!(diff < 0.1, "Zero spacing should not change width: diff={}", diff);
+    assert!(
+        diff < 0.1,
+        "Zero spacing should not change width: diff={}",
+        diff
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -956,15 +1007,24 @@ fn safe_break_at_start() {
 fn safe_break_after_space() {
     let result = shape_text("hello world");
     // Position after space should be safe to break
-    assert!(result.safe_to_break_before(6), "Position after space should be safe to break");
+    assert!(
+        result.safe_to_break_before(6),
+        "Position after space should be safe to break"
+    );
 }
 
 #[test]
 fn safe_break_at_whitespace() {
     let result = shape_text("a b c");
     // Spaces themselves and positions after them should be safe
-    assert!(result.safe_to_break_before(1), "Space position should be safe");
-    assert!(result.safe_to_break_before(2), "Position after space should be safe");
+    assert!(
+        result.safe_to_break_before(1),
+        "Space position should be safe"
+    );
+    assert!(
+        result.safe_to_break_before(2),
+        "Position after space should be safe"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════

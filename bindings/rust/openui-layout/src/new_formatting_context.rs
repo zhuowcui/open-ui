@@ -16,12 +16,12 @@
 
 use std::sync::Arc;
 
-use openui_geometry::{BfcOffset, LayoutUnit, MarginStrut, PhysicalSize};
 use openui_dom::NodeId;
+use openui_geometry::{BfcOffset, LayoutUnit, MarginStrut, PhysicalSize};
 use openui_style::ComputedStyle;
 
 use crate::constraint_space::{ConstraintSpace, ConstraintSpaceBuilder};
-use crate::exclusions::{ExclusionSpace, ClearType};
+use crate::exclusions::{ClearType, ExclusionSpace};
 use crate::fragment::Fragment;
 use crate::layout_result::LayoutResult;
 use crate::length_resolver::resolve_margin_or_padding;
@@ -123,7 +123,11 @@ pub fn adjust_for_float_avoidance(
         element_inline_size,
     );
 
-    (result.inline_offset, result.available_inline_size, result.block_offset)
+    (
+        result.inline_offset,
+        result.available_inline_size,
+        result.block_offset,
+    )
 }
 
 // ── 3. New formatting context layout ─────────────────────────────────────
@@ -175,9 +179,7 @@ pub struct NewFcLayoutResult {
 /// Note: This does NOT call block_layout — it prepares all the inputs that the
 /// caller (block.rs or future integration) will pass to block_layout. This keeps
 /// the module standalone per task requirements.
-pub fn layout_new_formatting_context(
-    input: &NewFcLayoutInput,
-) -> NewFcLayoutResult {
+pub fn layout_new_formatting_context(input: &NewFcLayoutInput) -> NewFcLayoutResult {
     let style = input.style;
     let container_inline = input.container_inline_size;
 
@@ -219,13 +221,27 @@ pub fn layout_new_formatting_context(
                 );
                 let pushed = result.block_offset > content_bfc_offset.block_offset;
                 let avail = result.available_inline_size - margin_left - margin_right;
-                let avail = if avail < LayoutUnit::zero() { LayoutUnit::zero() } else { avail };
+                let avail = if avail < LayoutUnit::zero() {
+                    LayoutUnit::zero()
+                } else {
+                    avail
+                };
                 // Auto width shrinks to fit the available space.
-                (result.inline_offset, avail, result.block_offset, pushed, avail)
+                (
+                    result.inline_offset,
+                    avail,
+                    result.block_offset,
+                    pushed,
+                    avail,
+                )
             } else {
                 // Explicit width: resolve size, then find position.
                 let size = resolve_element_inline_size(
-                    style, container_inline, margin_left, margin_right, border_padding,
+                    style,
+                    container_inline,
+                    margin_left,
+                    margin_right,
+                    border_padding,
                 );
                 let result = compute_float_avoidance_offset(
                     excl_space,
@@ -235,16 +251,40 @@ pub fn layout_new_formatting_context(
                 );
                 let pushed = result.block_offset > content_bfc_offset.block_offset;
                 let avail = result.available_inline_size - margin_left - margin_right;
-                let avail = if avail < LayoutUnit::zero() { LayoutUnit::zero() } else { avail };
-                (result.inline_offset, avail, result.block_offset, pushed, size)
+                let avail = if avail < LayoutUnit::zero() {
+                    LayoutUnit::zero()
+                } else {
+                    avail
+                };
+                (
+                    result.inline_offset,
+                    avail,
+                    result.block_offset,
+                    pushed,
+                    size,
+                )
             }
         } else {
             let avail = container_inline - margin_left - margin_right;
-            let avail = if avail < LayoutUnit::zero() { LayoutUnit::zero() } else { avail };
+            let avail = if avail < LayoutUnit::zero() {
+                LayoutUnit::zero()
+            } else {
+                avail
+            };
             let size = resolve_element_inline_size(
-                style, container_inline, margin_left, margin_right, border_padding,
+                style,
+                container_inline,
+                margin_left,
+                margin_right,
+                border_padding,
             );
-            (content_bfc_offset.line_offset, avail, content_bfc_offset.block_offset, false, size)
+            (
+                content_bfc_offset.line_offset,
+                avail,
+                content_bfc_offset.block_offset,
+                false,
+                size,
+            )
         };
 
     // Step 4: Build ConstraintSpace for the child with a fresh ExclusionSpace.
@@ -300,10 +340,7 @@ pub fn build_new_fc_constraint_space(
 ) -> ConstraintSpace {
     ConstraintSpaceBuilder::from_parent(parent_space)
         .set_available_size(available_inline_size, available_block_size)
-        .set_percentage_resolution_size(
-            percentage_inline_size,
-            available_block_size,
-        )
+        .set_percentage_resolution_size(percentage_inline_size, available_block_size)
         .set_is_new_formatting_context(true)
         .set_exclusion_space(None)
         .set_floats_bfc_block_offset(None)
@@ -347,7 +384,11 @@ fn resolve_element_inline_size(
 ) -> LayoutUnit {
     let auto_size = {
         let s = container_inline_size - margin_left - margin_right;
-        if s < LayoutUnit::zero() { LayoutUnit::zero() } else { s }
+        if s < LayoutUnit::zero() {
+            LayoutUnit::zero()
+        } else {
+            s
+        }
     };
     let resolved = crate::length_resolver::resolve_length(
         &style.width,
@@ -361,10 +402,18 @@ fn resolve_element_inline_size(
     match style.box_sizing {
         BoxSizing::ContentBox => {
             let total = resolved + border_padding;
-            if total < LayoutUnit::zero() { LayoutUnit::zero() } else { total }
+            if total < LayoutUnit::zero() {
+                LayoutUnit::zero()
+            } else {
+                total
+            }
         }
         BoxSizing::BorderBox => {
-            if resolved < LayoutUnit::zero() { LayoutUnit::zero() } else { resolved }
+            if resolved < LayoutUnit::zero() {
+                LayoutUnit::zero()
+            } else {
+                resolved
+            }
         }
     }
 }
@@ -372,7 +421,7 @@ fn resolve_element_inline_size(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use openui_style::{Display, Position, Float, Overflow};
+    use openui_style::{Display, Float, Overflow, Position};
 
     fn lu(v: i32) -> LayoutUnit {
         LayoutUnit::from_i32(v)

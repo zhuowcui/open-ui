@@ -13,8 +13,8 @@ use openui_layout::margin_collapsing::{
     adjoining_margin_resolve, clearance_prevents_collapsing, collapse_margins,
     establishes_new_bfc_for_collapsing, finalize_margins, float_prevents_collapsing,
     handle_margin_after_child, handle_margin_before_child, merge_struts,
-    should_margins_collapse_through, ChildMarginInfo, CollapseCheckParams,
-    MarginCollapsingState, ParentMarginInfo,
+    should_margins_collapse_through, ChildMarginInfo, CollapseCheckParams, MarginCollapsingState,
+    ParentMarginInfo,
 };
 use openui_style::{Clear, Display, Float, Overflow, Position};
 use sp12_wpt_helpers::*;
@@ -295,11 +295,7 @@ fn sibling_integration_three_blocks_collapsing() {
     // B-C gap=max(5,15)=15. C at y=40+20+15=75.
     let mut builder = BlockTestBuilder::new(400, 600);
     builder.add_child().height(20.0).margin(0, 0, 10, 0).done();
-    builder
-        .add_child()
-        .height(20.0)
-        .margin(20, 0, 5, 0)
-        .done();
+    builder.add_child().height(20.0).margin(20, 0, 5, 0).done();
     builder.add_child().height(20.0).margin(15, 0, 0, 0).done();
     let result = builder.build();
 
@@ -324,16 +320,8 @@ fn sibling_integration_zero_and_positive() {
 fn sibling_integration_large_margin() {
     // A(h=10,mb=200) B(h=10,mt=100) → gap=200
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(10.0)
-        .margin(0, 0, 200, 0)
-        .done();
-    builder
-        .add_child()
-        .height(10.0)
-        .margin(100, 0, 0, 0)
-        .done();
+    builder.add_child().height(10.0).margin(0, 0, 200, 0).done();
+    builder.add_child().height(10.0).margin(100, 0, 0, 0).done();
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
@@ -616,11 +604,7 @@ fn parent_child_integration_top_collapse() {
     // Parent has no border/padding. First child mt=30, h=50.
     // Margin collapses with parent: child at y=0 (margin propagates out).
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(30, 0, 0, 0)
-        .done();
+    builder.add_child().height(50.0).margin(30, 0, 0, 0).done();
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
@@ -631,11 +615,7 @@ fn parent_child_integration_border_prevents_collapse() {
     // Container with border-top:1 prevents first-child collapse.
     // Child mt=30 doesn't collapse with container.
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(30, 0, 0, 0)
-        .done();
+    builder.add_child().height(50.0).margin(30, 0, 0, 0).done();
     let result = builder
         .with_container_style(|s| {
             s.border_top_width = 1;
@@ -650,11 +630,7 @@ fn parent_child_integration_border_prevents_collapse() {
 #[test]
 fn parent_child_integration_padding_prevents_collapse() {
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(30, 0, 0, 0)
-        .done();
+    builder.add_child().height(50.0).margin(30, 0, 0, 0).done();
     let result = builder
         .with_container_style(|s| {
             s.padding_top = openui_geometry::Length::px(5.0);
@@ -672,11 +648,7 @@ fn parent_child_both_margins_collapse() {
     // Container position reflects its own margin (10) since the viewport
     // resolves the container's BFC offset before child margin propagation.
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(20, 0, 0, 0)
-        .done();
+    builder.add_child().height(50.0).margin(20, 0, 0, 0).done();
     let result = builder
         .with_container_style(|s| {
             s.margin_top = openui_geometry::Length::px(10.0);
@@ -943,7 +915,11 @@ fn empty_block_integration_between_content() {
     // B at y = 30 + 15 = 45.
     let mut builder = BlockTestBuilder::new(400, 600);
     builder.add_child().height(30.0).margin(0, 0, 10, 0).done();
-    builder.add_child().margin(5, 0, 5, 0).done(); // empty: no height
+    builder
+        .add_child()
+        .margin(5, 0, 5, 0)
+        .overflow(Overflow::Visible)
+        .done(); // empty: self-collapsing
     builder.add_child().height(30.0).margin(15, 0, 0, 0).done();
     let result = builder.build();
 
@@ -1093,16 +1069,8 @@ fn negative_integration_overlap() {
     // A(h=50,mb=-20) B(h=50,mt=10) → gap = -20 + 10 = -10
     // A at y=0. B at y = 50 + (-10) = 40 (overlap by 10px).
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(0, 0, -20, 0)
-        .done();
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(10, 0, 0, 0)
-        .done();
+    builder.add_child().height(50.0).margin(0, 0, -20, 0).done();
+    builder.add_child().height(50.0).margin(10, 0, 0, 0).done();
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
@@ -1113,16 +1081,8 @@ fn negative_integration_overlap() {
 fn negative_integration_siblings() {
     // A(h=30,mb=20) B(h=30,mt=-10) → gap = max(20,0)+min(0,-10) = 20+(-10) = 10
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(30.0)
-        .margin(0, 0, 20, 0)
-        .done();
-    builder
-        .add_child()
-        .height(30.0)
-        .margin(-10, 0, 0, 0)
-        .done();
+    builder.add_child().height(30.0).margin(0, 0, 20, 0).done();
+    builder.add_child().height(30.0).margin(-10, 0, 0, 0).done();
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
@@ -1358,11 +1318,7 @@ fn overflow_hidden_integration_prevents_sibling_collapse() {
     // sibling margins still collapse per CSS 2.1 §8.3.1.
     // Gap = max(20,10) = 20. Child 1 at y = 30 + 20 = 50.
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(30.0)
-        .margin(0, 0, 20, 0)
-        .done();
+    builder.add_child().height(30.0).margin(0, 0, 20, 0).done();
     builder
         .add_child()
         .height(30.0)
@@ -1530,17 +1486,13 @@ fn complex_integration_mixed_children() {
     // A's mt=10 collapses with container → A at y=0.
     // C at y = 40 + 20 = 60.
     let mut builder = BlockTestBuilder::new(400, 600);
+    builder.add_child().height(40.0).margin(10, 0, 20, 0).done();
     builder
         .add_child()
-        .height(40.0)
-        .margin(10, 0, 20, 0)
-        .done();
-    builder.add_child().margin(5, 0, 5, 0).done(); // empty
-    builder
-        .add_child()
-        .height(40.0)
-        .margin(15, 0, 0, 0)
-        .done();
+        .margin(5, 0, 5, 0)
+        .overflow(Overflow::Visible)
+        .done(); // empty, self-collapsing
+    builder.add_child().height(40.0).margin(15, 0, 0, 0).done();
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);
@@ -1600,31 +1552,11 @@ fn state_new_resolved_defaults() {
 fn complex_five_siblings_alternating_margins() {
     // 5 siblings with alternating large/small margins.
     let mut builder = BlockTestBuilder::new(400, 800);
-    builder
-        .add_child()
-        .height(20.0)
-        .margin(0, 0, 50, 0)
-        .done();
-    builder
-        .add_child()
-        .height(20.0)
-        .margin(10, 0, 30, 0)
-        .done();
-    builder
-        .add_child()
-        .height(20.0)
-        .margin(5, 0, 40, 0)
-        .done();
-    builder
-        .add_child()
-        .height(20.0)
-        .margin(15, 0, 25, 0)
-        .done();
-    builder
-        .add_child()
-        .height(20.0)
-        .margin(35, 0, 0, 0)
-        .done();
+    builder.add_child().height(20.0).margin(0, 0, 50, 0).done();
+    builder.add_child().height(20.0).margin(10, 0, 30, 0).done();
+    builder.add_child().height(20.0).margin(5, 0, 40, 0).done();
+    builder.add_child().height(20.0).margin(15, 0, 25, 0).done();
+    builder.add_child().height(20.0).margin(35, 0, 0, 0).done();
     let result = builder.build();
 
     // A at y=0.
@@ -1644,16 +1576,8 @@ fn complex_negative_sibling_overlap_integration() {
     // A(h=50, mb=-30) B(h=50, mt=-10)
     // pos_max=0, neg_min=min(-30,-10)=-30. Gap = -30. B at 50 + (-30) = 20.
     let mut builder = BlockTestBuilder::new(400, 600);
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(0, 0, -30, 0)
-        .done();
-    builder
-        .add_child()
-        .height(50.0)
-        .margin(-10, 0, 0, 0)
-        .done();
+    builder.add_child().height(50.0).margin(0, 0, -30, 0).done();
+    builder.add_child().height(50.0).margin(-10, 0, 0, 0).done();
     let result = builder.build();
 
     result.assert_child_position(0, 0, 0);

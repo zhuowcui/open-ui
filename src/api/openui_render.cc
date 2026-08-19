@@ -47,8 +47,7 @@ bool OpenUIRasterize(OuiDocumentImpl* doc_impl, SkBitmap* out_bitmap) {
   }
 
   // Allocate the bitmap: kN32_SkColorType is BGRA on little-endian.
-  SkImageInfo info =
-      SkImageInfo::MakeN32Premul(width, height);
+  SkImageInfo info = SkImageInfo::MakeN32Premul(width, height);
   if (!out_bitmap->tryAllocPixels(info)) {
     return false;
   }
@@ -123,7 +122,7 @@ bool OpenUIEncodePNG(const SkBitmap& bitmap, std::vector<uint8_t>* out_data) {
   }
 
   auto result = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap,
-                                                    /*discard_transparency=*/false);
+                                                  /*discard_transparency=*/false);
   if (!result.has_value()) {
     return false;
   }

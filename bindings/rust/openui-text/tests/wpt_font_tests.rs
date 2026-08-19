@@ -7,15 +7,15 @@
 //! and text shaping.
 
 use openui_style::{
-    ComputedStyle, FontFamily, FontFamilyList, FontOpticalSizing, FontSmoothing, FontStretch,
-    FontStyleEnum, FontSynthesis, FontVariantCaps, FontWeight, GenericFontFamily, TextRendering,
-    FontVariantLigatures, FontVariantNumeric, FontVariantEastAsian, FontVariantPosition,
-    FontVariantAlternates, LigatureState, NumericFigure, NumericSpacing, NumericFraction,
-    EastAsianForm, EastAsianWidth, FontFeature, FontVariation, FontPalette,
+    ComputedStyle, EastAsianForm, EastAsianWidth, FontFamily, FontFamilyList, FontFeature,
+    FontOpticalSizing, FontPalette, FontSmoothing, FontStretch, FontStyleEnum, FontSynthesis,
+    FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantLigatures,
+    FontVariantNumeric, FontVariantPosition, FontVariation, FontWeight, GenericFontFamily,
+    LigatureState, NumericFigure, NumericFraction, NumericSpacing, TextRendering,
 };
-use openui_text::font::{Font, FontCache, FontDescription, FontFallbackList, FontMetrics};
-use openui_text::{TextShaper, TextDirection, ShapeResult};
 use openui_text::font::features::collect_font_features;
+use openui_text::font::{Font, FontCache, FontDescription, FontFallbackList, FontMetrics};
+use openui_text::{ShapeResult, TextDirection, TextShaper};
 
 // ═══════════════════════════════════════════════════════════════════════
 // Helpers
@@ -96,73 +96,109 @@ mod font_family {
     #[test]
     fn family_list_generic_serif() {
         let list = FontFamilyList::generic(GenericFontFamily::Serif);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Serif));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::Serif)
+        );
     }
 
     #[test]
     fn family_list_generic_monospace() {
         let list = FontFamilyList::generic(GenericFontFamily::Monospace);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Monospace));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::Monospace)
+        );
     }
 
     #[test]
     fn family_list_generic_cursive() {
         let list = FontFamilyList::generic(GenericFontFamily::Cursive);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Cursive));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::Cursive)
+        );
     }
 
     #[test]
     fn family_list_generic_fantasy() {
         let list = FontFamilyList::generic(GenericFontFamily::Fantasy);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Fantasy));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::Fantasy)
+        );
     }
 
     #[test]
     fn family_list_generic_system_ui() {
         let list = FontFamilyList::generic(GenericFontFamily::SystemUi);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::SystemUi));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::SystemUi)
+        );
     }
 
     #[test]
     fn family_list_generic_math() {
         let list = FontFamilyList::generic(GenericFontFamily::Math);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Math));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::Math)
+        );
     }
 
     #[test]
     fn family_list_generic_emoji() {
         let list = FontFamilyList::generic(GenericFontFamily::Emoji);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::Emoji));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::Emoji)
+        );
     }
 
     #[test]
     fn family_list_generic_fangsong() {
         let list = FontFamilyList::generic(GenericFontFamily::FangSong);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::FangSong));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::FangSong)
+        );
     }
 
     #[test]
     fn family_list_generic_ui_serif() {
         let list = FontFamilyList::generic(GenericFontFamily::UiSerif);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::UiSerif));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::UiSerif)
+        );
     }
 
     #[test]
     fn family_list_generic_ui_sans_serif() {
         let list = FontFamilyList::generic(GenericFontFamily::UiSansSerif);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::UiSansSerif));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::UiSansSerif)
+        );
     }
 
     #[test]
     fn family_list_generic_ui_monospace() {
         let list = FontFamilyList::generic(GenericFontFamily::UiMonospace);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::UiMonospace));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::UiMonospace)
+        );
     }
 
     #[test]
     fn family_list_generic_ui_rounded() {
         let list = FontFamilyList::generic(GenericFontFamily::UiRounded);
-        assert_eq!(list.families[0], FontFamily::Generic(GenericFontFamily::UiRounded));
+        assert_eq!(
+            list.families[0],
+            FontFamily::Generic(GenericFontFamily::UiRounded)
+        );
     }
 
     #[test]
@@ -285,7 +321,10 @@ mod font_weight {
         let w_normal = normal.width("Hello World");
         let w_bold = bold.width("Hello World");
         // Bold glyphs are typically wider; at minimum both should be positive
-        assert!(w_normal > 0.0, "Normal weight text should have positive width");
+        assert!(
+            w_normal > 0.0,
+            "Normal weight text should have positive width"
+        );
         assert!(w_bold > 0.0, "Bold weight text should have positive width");
         assert!(w_bold > w_normal, "bold text should be wider than normal");
     }
@@ -473,10 +512,7 @@ mod font_size {
 
     #[test]
     fn with_family_and_size_sets_both() {
-        let desc = FontDescription::with_family_and_size(
-            FontFamilyList::default_list(),
-            24.0,
-        );
+        let desc = FontDescription::with_family_and_size(FontFamilyList::default_list(), 24.0);
         assert_eq!(desc.size, 24.0);
         assert_eq!(desc.specified_size, 24.0);
     }
@@ -649,27 +685,45 @@ mod font_variant_caps {
     #[test]
     fn small_caps_emits_smcp_feature() {
         let f = features_for(|d| d.variant_caps = FontVariantCaps::SmallCaps);
-        assert!(has_feature(&f, b"smcp", 1), "SmallCaps should emit 'smcp'=1");
+        assert!(
+            has_feature(&f, b"smcp", 1),
+            "SmallCaps should emit 'smcp'=1"
+        );
     }
 
     #[test]
     fn all_small_caps_emits_smcp_and_c2sc() {
         let f = features_for(|d| d.variant_caps = FontVariantCaps::AllSmallCaps);
-        assert!(has_feature(&f, b"smcp", 1), "AllSmallCaps should emit 'smcp'=1");
-        assert!(has_feature(&f, b"c2sc", 1), "AllSmallCaps should emit 'c2sc'=1");
+        assert!(
+            has_feature(&f, b"smcp", 1),
+            "AllSmallCaps should emit 'smcp'=1"
+        );
+        assert!(
+            has_feature(&f, b"c2sc", 1),
+            "AllSmallCaps should emit 'c2sc'=1"
+        );
     }
 
     #[test]
     fn petite_caps_emits_pcap() {
         let f = features_for(|d| d.variant_caps = FontVariantCaps::PetiteCaps);
-        assert!(has_feature(&f, b"pcap", 1), "PetiteCaps should emit 'pcap'=1");
+        assert!(
+            has_feature(&f, b"pcap", 1),
+            "PetiteCaps should emit 'pcap'=1"
+        );
     }
 
     #[test]
     fn all_petite_caps_emits_pcap_and_c2pc() {
         let f = features_for(|d| d.variant_caps = FontVariantCaps::AllPetiteCaps);
-        assert!(has_feature(&f, b"pcap", 1), "AllPetiteCaps should emit 'pcap'=1");
-        assert!(has_feature(&f, b"c2pc", 1), "AllPetiteCaps should emit 'c2pc'=1");
+        assert!(
+            has_feature(&f, b"pcap", 1),
+            "AllPetiteCaps should emit 'pcap'=1"
+        );
+        assert!(
+            has_feature(&f, b"c2pc", 1),
+            "AllPetiteCaps should emit 'c2pc'=1"
+        );
     }
 
     #[test]
@@ -681,7 +735,10 @@ mod font_variant_caps {
     #[test]
     fn titling_caps_emits_titl() {
         let f = features_for(|d| d.variant_caps = FontVariantCaps::TitlingCaps);
-        assert!(has_feature(&f, b"titl", 1), "TitlingCaps should emit 'titl'=1");
+        assert!(
+            has_feature(&f, b"titl", 1),
+            "TitlingCaps should emit 'titl'=1"
+        );
     }
 }
 
@@ -950,9 +1007,18 @@ mod font_feature_settings {
     #[test]
     fn multiple_custom_features() {
         let f = features_for(|d| {
-            d.feature_settings.push(FontFeature { tag: *b"liga", value: 1 });
-            d.feature_settings.push(FontFeature { tag: *b"kern", value: 1 });
-            d.feature_settings.push(FontFeature { tag: *b"smcp", value: 1 });
+            d.feature_settings.push(FontFeature {
+                tag: *b"liga",
+                value: 1,
+            });
+            d.feature_settings.push(FontFeature {
+                tag: *b"kern",
+                value: 1,
+            });
+            d.feature_settings.push(FontFeature {
+                tag: *b"smcp",
+                value: 1,
+            });
         });
         assert!(has_feature(&f, b"liga", 1));
         assert!(has_feature(&f, b"kern", 1));
@@ -1009,16 +1075,28 @@ mod font_variation_settings {
     #[test]
     fn multiple_variations() {
         let mut desc = FontDescription::new();
-        desc.variation_settings.push(FontVariation { tag: *b"wght", value: 450.0 });
-        desc.variation_settings.push(FontVariation { tag: *b"wdth", value: 80.0 });
-        desc.variation_settings.push(FontVariation { tag: *b"opsz", value: 12.0 });
+        desc.variation_settings.push(FontVariation {
+            tag: *b"wght",
+            value: 450.0,
+        });
+        desc.variation_settings.push(FontVariation {
+            tag: *b"wdth",
+            value: 80.0,
+        });
+        desc.variation_settings.push(FontVariation {
+            tag: *b"opsz",
+            value: 12.0,
+        });
         assert_eq!(desc.variation_settings.len(), 3);
     }
 
     #[test]
     fn variation_font_resolves() {
         let mut desc = FontDescription::new();
-        desc.variation_settings.push(FontVariation { tag: *b"wght", value: 600.0 });
+        desc.variation_settings.push(FontVariation {
+            tag: *b"wght",
+            value: 600.0,
+        });
         let font = Font::new(desc);
         assert!(font.primary_font().is_some());
     }
@@ -1113,21 +1191,33 @@ mod font_metrics_validation {
     fn ascent_is_positive() {
         let font = make_font(16.0);
         let m = font.font_metrics().unwrap();
-        assert!(m.ascent > 0.0, "Ascent should be positive, got {}", m.ascent);
+        assert!(
+            m.ascent > 0.0,
+            "Ascent should be positive, got {}",
+            m.ascent
+        );
     }
 
     #[test]
     fn descent_is_positive() {
         let font = make_font(16.0);
         let m = font.font_metrics().unwrap();
-        assert!(m.descent > 0.0, "Descent should be positive, got {}", m.descent);
+        assert!(
+            m.descent > 0.0,
+            "Descent should be positive, got {}",
+            m.descent
+        );
     }
 
     #[test]
     fn line_gap_non_negative() {
         let font = make_font(16.0);
         let m = font.font_metrics().unwrap();
-        assert!(m.line_gap >= 0.0, "Line gap should be non-negative, got {}", m.line_gap);
+        assert!(
+            m.line_gap >= 0.0,
+            "Line gap should be non-negative, got {}",
+            m.line_gap
+        );
     }
 
     #[test]
@@ -1150,7 +1240,11 @@ mod font_metrics_validation {
     fn x_height_positive() {
         let font = make_font(16.0);
         let m = font.font_metrics().unwrap();
-        assert!(m.x_height > 0.0, "x_height should be positive, got {}", m.x_height);
+        assert!(
+            m.x_height > 0.0,
+            "x_height should be positive, got {}",
+            m.x_height
+        );
     }
 
     #[test]
@@ -1169,7 +1263,11 @@ mod font_metrics_validation {
     fn units_per_em_nonzero() {
         let font = make_font(16.0);
         let m = font.font_metrics().unwrap();
-        assert!(m.units_per_em > 0, "units_per_em should be > 0, got {}", m.units_per_em);
+        assert!(
+            m.units_per_em > 0,
+            "units_per_em should be > 0, got {}",
+            m.units_per_em
+        );
     }
 
     #[test]
@@ -1226,7 +1324,11 @@ mod font_measurement {
     fn non_empty_text_has_positive_width() {
         let font = make_font(16.0);
         let w = font.width("Hello");
-        assert!(w > 0.0, "Non-empty text should have positive width, got {}", w);
+        assert!(
+            w > 0.0,
+            "Non-empty text should have positive width, got {}",
+            w
+        );
     }
 
     #[test]
@@ -1269,7 +1371,12 @@ mod font_measurement {
         let big = make_font(36.0);
         let ws = small.width("Test");
         let wb = big.width("Test");
-        assert!(wb > ws, "Bigger font width ({}) > smaller font width ({})", wb, ws);
+        assert!(
+            wb > ws,
+            "Bigger font width ({}) > smaller font width ({})",
+            wb,
+            ws
+        );
     }
 
     #[test]
@@ -1344,7 +1451,10 @@ mod text_shaping {
     fn shape_result_has_positive_width() {
         let font = make_font(16.0);
         let result = shape("Hello", &font, TextDirection::Ltr);
-        assert!(result.width() > 0.0, "Shaped text should have positive width");
+        assert!(
+            result.width() > 0.0,
+            "Shaped text should have positive width"
+        );
     }
 
     #[test]
@@ -1375,7 +1485,10 @@ mod text_shaping {
     fn shape_result_has_runs() {
         let font = make_font(16.0);
         let result = shape("Hello", &font, TextDirection::Ltr);
-        assert!(!result.runs.is_empty(), "Shaped text should have at least one run");
+        assert!(
+            !result.runs.is_empty(),
+            "Shaped text should have at least one run"
+        );
     }
 
     #[test]
@@ -1555,8 +1668,14 @@ mod font_smoothing_and_rendering {
     #[test]
     fn text_rendering_variants() {
         assert_ne!(TextRendering::Auto, TextRendering::OptimizeSpeed);
-        assert_ne!(TextRendering::OptimizeSpeed, TextRendering::OptimizeLegibility);
-        assert_ne!(TextRendering::OptimizeLegibility, TextRendering::GeometricPrecision);
+        assert_ne!(
+            TextRendering::OptimizeSpeed,
+            TextRendering::OptimizeLegibility
+        );
+        assert_ne!(
+            TextRendering::OptimizeLegibility,
+            TextRendering::GeometricPrecision
+        );
     }
 }
 

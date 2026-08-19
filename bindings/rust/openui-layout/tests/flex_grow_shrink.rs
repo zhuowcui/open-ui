@@ -40,10 +40,8 @@ fn add_child(doc: &mut Document, parent: NodeId, width: i32, height: i32) -> Nod
 }
 
 fn layout(doc: &Document, container: NodeId, width: i32, height: i32) -> Fragment {
-    let space = ConstraintSpace::for_root(
-        LayoutUnit::from_i32(width),
-        LayoutUnit::from_i32(height),
-    );
+    let space =
+        ConstraintSpace::for_root(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height));
     flex_layout(doc, container, &space)
 }
 
@@ -558,15 +556,39 @@ fn grow_five_items_varied() {
     }
 
     let frag = layout(&doc, c, 500, 100);
-    let total: LayoutUnit = frag.children.iter().map(|c| c.width()).fold(lu(0), |a, b| a + b);
+    let total: LayoutUnit = frag
+        .children
+        .iter()
+        .map(|c| c.width())
+        .fold(lu(0), |a, b| a + b);
     assert_eq!(total, lu(500));
     // Verify approximate proportions.
     let w: Vec<i32> = frag.children.iter().map(|c| c.width().to_i32()).collect();
-    assert!(w[0] >= 49 && w[0] <= 51, "item0: expected ~50, got {}", w[0]);
-    assert!(w[1] >= 99 && w[1] <= 101, "item1: expected ~100, got {}", w[1]);
-    assert!(w[2] >= 149 && w[2] <= 151, "item2: expected ~150, got {}", w[2]);
-    assert!(w[3] >= 99 && w[3] <= 101, "item3: expected ~100, got {}", w[3]);
-    assert!(w[4] >= 99 && w[4] <= 101, "item4: expected ~100, got {}", w[4]);
+    assert!(
+        w[0] >= 49 && w[0] <= 51,
+        "item0: expected ~50, got {}",
+        w[0]
+    );
+    assert!(
+        w[1] >= 99 && w[1] <= 101,
+        "item1: expected ~100, got {}",
+        w[1]
+    );
+    assert!(
+        w[2] >= 149 && w[2] <= 151,
+        "item2: expected ~150, got {}",
+        w[2]
+    );
+    assert!(
+        w[3] >= 99 && w[3] <= 101,
+        "item3: expected ~100, got {}",
+        w[3]
+    );
+    assert!(
+        w[4] >= 99 && w[4] <= 101,
+        "item4: expected ~100, got {}",
+        w[4]
+    );
 }
 
 // ═════════════════════════════════════════════════════════════════════════════

@@ -53,7 +53,7 @@ pub fn apply_relative_offset(
 /// **Inline axis (left/right):**
 /// - LTR: if `left` is not `auto`, use it; else negate `right`. Both specified → `right` ignored.
 /// - RTL: if `right` is not `auto`, negate it; else use `left`. Both specified → `left` ignored.
-fn compute_relative_offset(
+pub(crate) fn compute_relative_offset(
     style: &ComputedStyle,
     containing_block_inline_size: LayoutUnit,
     containing_block_block_size: LayoutUnit,
@@ -129,8 +129,12 @@ mod tests {
         s
     }
 
-    fn cb_inline() -> LayoutUnit { LayoutUnit::from_i32(800) }
-    fn cb_block() -> LayoutUnit { LayoutUnit::from_i32(600) }
+    fn cb_inline() -> LayoutUnit {
+        LayoutUnit::from_i32(800)
+    }
+    fn cb_block() -> LayoutUnit {
+        LayoutUnit::from_i32(600)
+    }
 
     // ── Test 1: top only ─────────────────────────────────────────────
 
@@ -138,7 +142,10 @@ mod tests {
     fn top_only() {
         let mut frag = make_fragment(10, 20);
         let style = make_relative_style(
-            Length::px(30.0), Length::auto(), Length::auto(), Length::auto(),
+            Length::px(30.0),
+            Length::auto(),
+            Length::auto(),
+            Length::auto(),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         assert_eq!(frag.offset.top.to_i32(), 50); // 20 + 30
@@ -151,7 +158,10 @@ mod tests {
     fn left_only() {
         let mut frag = make_fragment(10, 20);
         let style = make_relative_style(
-            Length::auto(), Length::auto(), Length::auto(), Length::px(15.0),
+            Length::auto(),
+            Length::auto(),
+            Length::auto(),
+            Length::px(15.0),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         assert_eq!(frag.offset.left.to_i32(), 25); // 10 + 15
@@ -164,7 +174,10 @@ mod tests {
     fn bottom_only() {
         let mut frag = make_fragment(10, 100);
         let style = make_relative_style(
-            Length::auto(), Length::auto(), Length::px(40.0), Length::auto(),
+            Length::auto(),
+            Length::auto(),
+            Length::px(40.0),
+            Length::auto(),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         assert_eq!(frag.offset.top.to_i32(), 60); // 100 - 40
@@ -177,7 +190,10 @@ mod tests {
     fn right_only() {
         let mut frag = make_fragment(50, 20);
         let style = make_relative_style(
-            Length::auto(), Length::px(25.0), Length::auto(), Length::auto(),
+            Length::auto(),
+            Length::px(25.0),
+            Length::auto(),
+            Length::auto(),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         assert_eq!(frag.offset.left.to_i32(), 25); // 50 - 25
@@ -190,7 +206,10 @@ mod tests {
     fn top_and_left() {
         let mut frag = make_fragment(0, 0);
         let style = make_relative_style(
-            Length::px(10.0), Length::auto(), Length::auto(), Length::px(20.0),
+            Length::px(10.0),
+            Length::auto(),
+            Length::auto(),
+            Length::px(20.0),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         assert_eq!(frag.offset.top.to_i32(), 10);
@@ -203,7 +222,10 @@ mod tests {
     fn top_and_bottom_ignores_bottom() {
         let mut frag = make_fragment(0, 0);
         let style = make_relative_style(
-            Length::px(10.0), Length::auto(), Length::px(999.0), Length::auto(),
+            Length::px(10.0),
+            Length::auto(),
+            Length::px(999.0),
+            Length::auto(),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         // top wins — bottom is ignored per CSS 2.1 §9.4.3
@@ -216,7 +238,10 @@ mod tests {
     fn left_and_right_ltr_ignores_right() {
         let mut frag = make_fragment(0, 0);
         let mut style = make_relative_style(
-            Length::auto(), Length::px(999.0), Length::auto(), Length::px(5.0),
+            Length::auto(),
+            Length::px(999.0),
+            Length::auto(),
+            Length::px(5.0),
         );
         style.direction = Direction::Ltr;
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
@@ -230,7 +255,10 @@ mod tests {
     fn left_and_right_rtl_ignores_left() {
         let mut frag = make_fragment(100, 0);
         let mut style = make_relative_style(
-            Length::auto(), Length::px(30.0), Length::auto(), Length::px(999.0),
+            Length::auto(),
+            Length::px(30.0),
+            Length::auto(),
+            Length::px(999.0),
         );
         style.direction = Direction::Rtl;
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
@@ -244,10 +272,10 @@ mod tests {
     fn percentage_offsets() {
         let mut frag = make_fragment(0, 0);
         let style = make_relative_style(
-            Length::percent(10.0),  // 10% of 600 = 60
+            Length::percent(10.0), // 10% of 600 = 60
             Length::auto(),
             Length::auto(),
-            Length::percent(25.0),  // 25% of 800 = 200
+            Length::percent(25.0), // 25% of 800 = 200
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         assert_eq!(frag.offset.top.to_i32(), 60);
@@ -260,7 +288,10 @@ mod tests {
     fn relative_no_offsets() {
         let mut frag = make_fragment(42, 77);
         let style = make_relative_style(
-            Length::auto(), Length::auto(), Length::auto(), Length::auto(),
+            Length::auto(),
+            Length::auto(),
+            Length::auto(),
+            Length::auto(),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         // All offsets are auto → no movement
@@ -289,11 +320,14 @@ mod tests {
     fn negative_offsets() {
         let mut frag = make_fragment(50, 100);
         let style = make_relative_style(
-            Length::px(-20.0), Length::auto(), Length::auto(), Length::px(-10.0),
+            Length::px(-20.0),
+            Length::auto(),
+            Length::auto(),
+            Length::px(-10.0),
         );
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
-        assert_eq!(frag.offset.top.to_i32(), 80);   // 100 + (-20)
-        assert_eq!(frag.offset.left.to_i32(), 40);  // 50 + (-10)
+        assert_eq!(frag.offset.top.to_i32(), 80); // 100 + (-20)
+        assert_eq!(frag.offset.left.to_i32(), 40); // 50 + (-10)
     }
 
     // ── Test 13: nested relative positioning ─────────────────────────
@@ -305,7 +339,10 @@ mod tests {
         // Simulate parent: normal flow at (0,0), relative offset top:10 left:20
         let mut parent = make_fragment(0, 0);
         let parent_style = make_relative_style(
-            Length::px(10.0), Length::auto(), Length::auto(), Length::px(20.0),
+            Length::px(10.0),
+            Length::auto(),
+            Length::auto(),
+            Length::px(20.0),
         );
         apply_relative_offset(&mut parent, &parent_style, cb_inline(), cb_block());
         assert_eq!(parent.offset.top.to_i32(), 10);
@@ -314,12 +351,15 @@ mod tests {
         // Child inside parent: normal flow at (5,30) within parent, relative top:3 left:7
         let mut child = make_fragment(5, 30);
         let child_style = make_relative_style(
-            Length::px(3.0), Length::auto(), Length::auto(), Length::px(7.0),
+            Length::px(3.0),
+            Length::auto(),
+            Length::auto(),
+            Length::px(7.0),
         );
         apply_relative_offset(&mut child, &child_style, cb_inline(), cb_block());
         // Child's offset is relative to parent's content box.
         // The relative offset stacks independently.
-        assert_eq!(child.offset.top.to_i32(), 33);   // 30 + 3
-        assert_eq!(child.offset.left.to_i32(), 12);  // 5 + 7
+        assert_eq!(child.offset.top.to_i32(), 33); // 30 + 3
+        assert_eq!(child.offset.left.to_i32(), 12); // 5 + 7
     }
 }

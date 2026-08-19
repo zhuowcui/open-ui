@@ -16,7 +16,9 @@ use openui_style::*;
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
-fn lu(px: i32) -> LayoutUnit { LayoutUnit::from_i32(px) }
+fn lu(px: i32) -> LayoutUnit {
+    LayoutUnit::from_i32(px)
+}
 
 fn make_space(w: i32, h: i32) -> ConstraintSpace {
     ConstraintSpace::for_root(lu(w), lu(h))
@@ -24,14 +26,19 @@ fn make_space(w: i32, h: i32) -> ConstraintSpace {
 
 /// Build a document with a container (optional height) and N children.
 fn build_doc(
-    cw: i32, ch: Option<i32>, overflow: Overflow, child_heights: &[i32],
+    cw: i32,
+    ch: Option<i32>,
+    overflow: Overflow,
+    child_heights: &[i32],
 ) -> (Document, NodeId, Vec<NodeId>) {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
     doc.node_mut(c).style.display = Display::Block;
     doc.node_mut(c).style.width = Length::px(cw as f32);
-    if let Some(h) = ch { doc.node_mut(c).style.height = Length::px(h as f32); }
+    if let Some(h) = ch {
+        doc.node_mut(c).style.height = Length::px(h as f32);
+    }
     doc.node_mut(c).style.overflow_x = overflow;
     doc.node_mut(c).style.overflow_y = overflow;
     doc.append_child(vp, c);
@@ -53,7 +60,9 @@ fn layout(doc: &Document) -> Fragment {
 }
 
 /// Container fragment (first child of viewport).
-fn container(frag: &Fragment) -> &Fragment { &frag.children[0] }
+fn container(frag: &Fragment) -> &Fragment {
+    &frag.children[0]
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // Section 1: overflow: visible
@@ -144,7 +153,12 @@ fn visible_single_large_child() {
 
 #[test]
 fn visible_many_small_children() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Visible, &[20, 20, 20, 20, 20, 20, 20, 20, 20, 20]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Visible,
+        &[20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+    );
     let f = layout(&doc);
     let c = container(&f);
     let ov = c.scrollable_overflow();
@@ -671,10 +685,14 @@ fn hidden_nested_containers() {
 fn hidden_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
         .padding(10, 10, 10, 10)
-        .add_child().width(180.0).height(50.0).done()
+        .add_child()
+        .width(180.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     let c = r.child(0);
@@ -686,10 +704,14 @@ fn hidden_with_padding() {
 fn hidden_with_border() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
         .border(5, 5, 5, 5)
-        .add_child().width(190.0).height(50.0).done()
+        .add_child()
+        .width(190.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
@@ -1655,7 +1677,12 @@ fn scroll_multi_child_5() {
 
 #[test]
 fn scroll_multi_child_6() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[42, 42, 42, 42, 42, 42, 42]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[42, 42, 42, 42, 42, 42, 42],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1664,7 +1691,12 @@ fn scroll_multi_child_6() {
 
 #[test]
 fn scroll_multi_child_7() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[44, 44, 44, 44, 44, 44, 44, 44]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[44, 44, 44, 44, 44, 44, 44, 44],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1673,7 +1705,12 @@ fn scroll_multi_child_7() {
 
 #[test]
 fn scroll_multi_child_8() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[46, 46, 46, 46, 46, 46, 46, 46, 46]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[46, 46, 46, 46, 46, 46, 46, 46, 46],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1682,7 +1719,12 @@ fn scroll_multi_child_8() {
 
 #[test]
 fn scroll_multi_child_9() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[48, 48, 48, 48, 48, 48, 48, 48, 48, 48]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[48, 48, 48, 48, 48, 48, 48, 48, 48, 48],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1691,7 +1733,12 @@ fn scroll_multi_child_9() {
 
 #[test]
 fn scroll_multi_child_10() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1700,7 +1747,12 @@ fn scroll_multi_child_10() {
 
 #[test]
 fn scroll_multi_child_11() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1709,7 +1761,12 @@ fn scroll_multi_child_11() {
 
 #[test]
 fn scroll_multi_child_12() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1718,7 +1775,12 @@ fn scroll_multi_child_12() {
 
 #[test]
 fn scroll_multi_child_13() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -1727,7 +1789,12 @@ fn scroll_multi_child_13() {
 
 #[test]
 fn scroll_multi_child_14() {
-    let (doc, _, _) = build_doc(200, Some(100), Overflow::Scroll, &[58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58]);
+    let (doc, _, _) = build_doc(
+        200,
+        Some(100),
+        Overflow::Scroll,
+        &[58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58],
+    );
     let f = layout(&doc);
     let c = container(&f);
     assert!(c.has_overflow_clip);
@@ -3437,11 +3504,12 @@ fn bfc_overflow_scroll_creates_new_fc() {
 }
 
 #[test]
-fn bfc_overflow_clip_creates_new_fc() {
+fn bfc_overflow_clip_does_not_create_fc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
 }
 
 #[test]
@@ -3472,10 +3540,11 @@ fn bfc_overflow_x_scroll_creates_fc() {
 }
 
 #[test]
-fn bfc_overflow_x_clip_creates_fc() {
+fn bfc_overflow_x_clip_does_not_create_fc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
 }
 
 #[test]
@@ -3500,17 +3569,27 @@ fn bfc_overflow_y_scroll_creates_fc() {
 }
 
 #[test]
-fn bfc_overflow_y_clip_creates_fc() {
+fn bfc_overflow_y_clip_does_not_create_fc() {
+    // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_hidden_no_margin_collapse_through() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).margin(20, 0, 20, 0).done();
-    b.add_child().width(200.0).height(50.0).overflow_hidden().margin(30, 0, 30, 0).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(20, 0, 20, 0)
+        .done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow_hidden()
+        .margin(30, 0, 30, 0)
+        .done();
     let r = b.build();
     let c0 = r.child(0);
     let c1 = r.child(1);
@@ -3520,8 +3599,17 @@ fn bfc_overflow_hidden_no_margin_collapse_through() {
 #[test]
 fn bfc_overflow_scroll_no_margin_collapse_through() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).margin(0, 0, 20, 0).done();
-    b.add_child().width(200.0).height(50.0).overflow(Overflow::Scroll).margin(30, 0, 0, 0).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(0, 0, 20, 0)
+        .done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow(Overflow::Scroll)
+        .margin(30, 0, 0, 0)
+        .done();
     let r = b.build();
     let c0 = r.child(0);
     let c1 = r.child(1);
@@ -3532,8 +3620,17 @@ fn bfc_overflow_scroll_no_margin_collapse_through() {
 #[test]
 fn bfc_overflow_auto_no_margin_collapse_through() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).margin(0, 0, 20, 0).done();
-    b.add_child().width(200.0).height(50.0).overflow(Overflow::Auto).margin(30, 0, 0, 0).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .margin(0, 0, 20, 0)
+        .done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow(Overflow::Auto)
+        .margin(30, 0, 0, 0)
+        .done();
     let r = b.build();
     let c0 = r.child(0);
     let c1 = r.child(1);
@@ -3545,7 +3642,11 @@ fn bfc_overflow_auto_no_margin_collapse_through() {
 fn bfc_overflow_hidden_avoids_float() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(100.0).height(100.0).float_left().done();
-    b.add_child().width(200.0).height(50.0).overflow_hidden().done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow_hidden()
+        .done();
     let r = b.build();
     let fl = r.child(0);
     let bfc = r.child(1);
@@ -3559,7 +3660,11 @@ fn bfc_overflow_hidden_avoids_float() {
 fn bfc_overflow_auto_avoids_float() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(100.0).height(100.0).float_left().done();
-    b.add_child().width(200.0).height(50.0).overflow(Overflow::Auto).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow(Overflow::Auto)
+        .done();
     let r = b.build();
     let fl = r.child(0);
     let bfc = r.child(1);
@@ -3573,7 +3678,11 @@ fn bfc_overflow_auto_avoids_float() {
 fn bfc_overflow_scroll_avoids_float() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child().width(100.0).height(100.0).float_left().done();
-    b.add_child().width(200.0).height(50.0).overflow(Overflow::Scroll).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow(Overflow::Scroll)
+        .done();
     let r = b.build();
     let fl = r.child(0);
     let bfc = r.child(1);
@@ -3586,49 +3695,64 @@ fn bfc_overflow_scroll_avoids_float() {
 #[test]
 fn bfc_combined_float_left_hidden() {
     let mut s = ComputedStyle::initial();
-    s.float = Float::Left; s.overflow_x = Overflow::Hidden; s.overflow_y = Overflow::Hidden;
+    s.float = Float::Left;
+    s.overflow_x = Overflow::Hidden;
+    s.overflow_y = Overflow::Hidden;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_float_right_auto() {
     let mut s = ComputedStyle::initial();
-    s.float = Float::Right; s.overflow_x = Overflow::Auto; s.overflow_y = Overflow::Auto;
+    s.float = Float::Right;
+    s.overflow_x = Overflow::Auto;
+    s.overflow_y = Overflow::Auto;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_abs_pos_hidden() {
     let mut s = ComputedStyle::initial();
-    s.position = Position::Absolute; s.overflow_x = Overflow::Hidden; s.overflow_y = Overflow::Hidden;
+    s.position = Position::Absolute;
+    s.overflow_x = Overflow::Hidden;
+    s.overflow_y = Overflow::Hidden;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_fixed_pos_scroll() {
     let mut s = ComputedStyle::initial();
-    s.position = Position::Fixed; s.overflow_x = Overflow::Scroll; s.overflow_y = Overflow::Scroll;
+    s.position = Position::Fixed;
+    s.overflow_x = Overflow::Scroll;
+    s.overflow_y = Overflow::Scroll;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_inline_block_hidden() {
     let mut s = ComputedStyle::initial();
-    s.display = Display::InlineBlock; s.overflow_x = Overflow::Hidden; s.overflow_y = Overflow::Hidden;
+    s.display = Display::InlineBlock;
+    s.overflow_x = Overflow::Hidden;
+    s.overflow_y = Overflow::Hidden;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_flow_root_auto() {
     let mut s = ComputedStyle::initial();
-    s.display = Display::FlowRoot; s.overflow_x = Overflow::Auto; s.overflow_y = Overflow::Auto;
+    s.display = Display::FlowRoot;
+    s.overflow_x = Overflow::Auto;
+    s.overflow_y = Overflow::Auto;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_flex_clip() {
     let mut s = ComputedStyle::initial();
-    s.display = Display::Flex; s.overflow_x = Overflow::Clip; s.overflow_y = Overflow::Clip;
+    // Flex display creates a new FC regardless of overflow
+    s.display = Display::Flex;
+    s.overflow_x = Overflow::Clip;
+    s.overflow_y = Overflow::Clip;
     assert!(establishes_new_fc(&s));
 }
 
@@ -3655,7 +3779,7 @@ fn bfc_parametric_3() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3691,7 +3815,7 @@ fn bfc_parametric_7() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3727,7 +3851,7 @@ fn bfc_parametric_11() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3763,7 +3887,7 @@ fn bfc_parametric_15() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3799,7 +3923,7 @@ fn bfc_parametric_19() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3835,7 +3959,7 @@ fn bfc_parametric_23() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3871,7 +3995,7 @@ fn bfc_parametric_27() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3907,7 +4031,7 @@ fn bfc_parametric_31() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3943,7 +4067,7 @@ fn bfc_parametric_35() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -3979,7 +4103,7 @@ fn bfc_parametric_39() {
     let mut s = ComputedStyle::initial();
     s.overflow_x = Overflow::Clip;
     s.overflow_y = Overflow::Clip;
-    assert!(establishes_new_fc(&s));
+    assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
 
@@ -5762,10 +5886,14 @@ fn edge_overflow_shorthand_mixed() {
 fn edge_overflow_with_padding_all_sides() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
         .padding(10, 10, 10, 10)
-        .add_child().width(180.0).height(50.0).done()
+        .add_child()
+        .width(180.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
@@ -5775,10 +5903,14 @@ fn edge_overflow_with_padding_all_sides() {
 fn edge_overflow_with_border_all_sides() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
         .border(5, 5, 5, 5)
-        .add_child().width(190.0).height(50.0).done()
+        .add_child()
+        .width(190.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
@@ -5788,11 +5920,15 @@ fn edge_overflow_with_border_all_sides() {
 fn edge_overflow_with_padding_and_border() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
         .padding(10, 10, 10, 10)
         .border(5, 5, 5, 5)
-        .add_child().width(170.0).height(40.0).done()
+        .add_child()
+        .width(170.0)
+        .height(40.0)
+        .done()
         .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
@@ -5862,11 +5998,15 @@ fn edge_padding_box_size() {
 fn edge_overflow_hidden_border_box() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
         .box_sizing_border_box()
         .padding(10, 10, 10, 10)
-        .add_child().width(180.0).height(50.0).done()
+        .add_child()
+        .width(180.0)
+        .height(50.0)
+        .done()
         .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
@@ -6279,42 +6419,52 @@ fn edge_parametric_40() {
 #[test]
 fn additional_overflow_x_hidden_y_visible() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden; s.overflow_y = Overflow::Visible;
+    s.overflow_x = Overflow::Hidden;
+    s.overflow_y = Overflow::Visible;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn additional_overflow_x_visible_y_hidden() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Visible; s.overflow_y = Overflow::Hidden;
+    s.overflow_x = Overflow::Visible;
+    s.overflow_y = Overflow::Hidden;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn additional_overflow_x_scroll_y_auto() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll; s.overflow_y = Overflow::Auto;
-    assert!(establishes_new_fc(&s)); assert!(s.overflow_x.is_scrollable()); assert!(s.overflow_y.is_scrollable());
+    s.overflow_x = Overflow::Scroll;
+    s.overflow_y = Overflow::Auto;
+    assert!(establishes_new_fc(&s));
+    assert!(s.overflow_x.is_scrollable());
+    assert!(s.overflow_y.is_scrollable());
 }
 
 #[test]
 fn additional_overflow_x_clip_y_hidden() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip; s.overflow_y = Overflow::Hidden;
-    assert!(establishes_new_fc(&s)); assert!(s.overflow_x.is_clipping()); assert!(s.overflow_y.is_clipping());
+    s.overflow_x = Overflow::Clip;
+    s.overflow_y = Overflow::Hidden;
+    assert!(establishes_new_fc(&s));
+    assert!(s.overflow_x.is_clipping());
+    assert!(s.overflow_y.is_clipping());
 }
 
 #[test]
 fn additional_overflow_x_auto_y_clip() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto; s.overflow_y = Overflow::Clip;
+    s.overflow_x = Overflow::Auto;
+    s.overflow_y = Overflow::Clip;
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn additional_overflow_x_scroll_y_hidden() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll; s.overflow_y = Overflow::Hidden;
+    s.overflow_x = Overflow::Scroll;
+    s.overflow_y = Overflow::Hidden;
     assert!(establishes_new_fc(&s));
 }
 
@@ -6361,7 +6511,11 @@ fn additional_overflow_clip_not_scrollable() {
 #[test]
 fn additional_builder_overflow_hidden_child() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(300.0).height(200.0).overflow_hidden().done();
+    b.add_child()
+        .width(300.0)
+        .height(200.0)
+        .overflow_hidden()
+        .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
     r.assert_child_size(0, 300, 200);
@@ -6370,7 +6524,11 @@ fn additional_builder_overflow_hidden_child() {
 #[test]
 fn additional_builder_overflow_scroll_size() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(300.0).overflow(Overflow::Scroll).done();
+    b.add_child()
+        .width(400.0)
+        .height(300.0)
+        .overflow(Overflow::Scroll)
+        .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
     r.assert_child_size(0, 400, 300);
@@ -6379,7 +6537,11 @@ fn additional_builder_overflow_scroll_size() {
 #[test]
 fn additional_builder_overflow_auto_size() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(400.0).height(300.0).overflow(Overflow::Auto).done();
+    b.add_child()
+        .width(400.0)
+        .height(300.0)
+        .overflow(Overflow::Auto)
+        .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
 }
@@ -6388,8 +6550,14 @@ fn additional_builder_overflow_auto_size() {
 fn additional_nested_visible_hidden() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
-        .add_child().width(200.0).height(80.0).overflow_hidden().done()
+        .width(200.0)
+        .height(100.0)
+        .overflow(Overflow::Visible)
+        .add_child()
+        .width(200.0)
+        .height(80.0)
+        .overflow_hidden()
+        .done()
         .done();
     let r = b.build();
     let outer = r.child(0);
@@ -6401,9 +6569,13 @@ fn additional_nested_visible_hidden() {
 fn additional_nested_hidden_visible() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
-        .width(200.0).height(100.0)
+        .width(200.0)
+        .height(100.0)
         .overflow_hidden()
-        .add_child().width(200.0).height(80.0).done()
+        .add_child()
+        .width(200.0)
+        .height(80.0)
+        .done()
         .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
@@ -6412,9 +6584,21 @@ fn additional_nested_hidden_visible() {
 #[test]
 fn additional_three_overflow_types_in_sequence() {
     let mut b = BlockTestBuilder::new(800, 600);
-    b.add_child().width(200.0).height(50.0).overflow_hidden().done();
-    b.add_child().width(200.0).height(50.0).overflow(Overflow::Scroll).done();
-    b.add_child().width(200.0).height(50.0).overflow(Overflow::Auto).done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow_hidden()
+        .done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow(Overflow::Scroll)
+        .done();
+    b.add_child()
+        .width(200.0)
+        .height(50.0)
+        .overflow(Overflow::Auto)
+        .done();
     let r = b.build();
     assert!(r.child(0).has_overflow_clip);
     assert!(r.child(1).has_overflow_clip);
@@ -6441,14 +6625,19 @@ fn additional_overflow_auto_height_no_explicit_height() {
 
 #[test]
 fn additional_all_overflow_clipping_check() {
-    for ov in [Overflow::Hidden, Overflow::Scroll, Overflow::Auto, Overflow::Clip] {
+    for ov in [
+        Overflow::Hidden,
+        Overflow::Scroll,
+        Overflow::Auto,
+        Overflow::Clip,
+    ] {
         assert!(ov.is_clipping(), "{:?} should be clipping", ov);
     }
 }
 
 #[test]
 fn additional_physical_rect_from_xywh_various() {
-    for (x, y, w, h) in [(0,0,100,50), (10,20,30,40), (0,0,1,1)] {
+    for (x, y, w, h) in [(0, 0, 100, 50), (10, 20, 30, 40), (0, 0, 1, 1)] {
         let r = PhysicalRect::from_xywh(lu(x), lu(y), lu(w), lu(h));
         assert_eq!(r.x(), lu(x));
         assert_eq!(r.y(), lu(y));

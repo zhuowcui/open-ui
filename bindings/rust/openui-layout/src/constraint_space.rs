@@ -22,7 +22,6 @@ use crate::exclusions::ExclusionSpace;
 #[derive(Debug, Clone)]
 pub struct ConstraintSpace {
     // ── Available space ──────────────────────────────────────────────
-
     /// Available inline size (width in horizontal-tb).
     pub available_inline_size: LayoutUnit,
 
@@ -31,7 +30,6 @@ pub struct ConstraintSpace {
     pub available_block_size: LayoutUnit,
 
     // ── Percentage resolution ────────────────────────────────────────
-
     /// The size to use for resolving percentage widths.
     pub percentage_resolution_inline_size: LayoutUnit,
 
@@ -39,7 +37,6 @@ pub struct ConstraintSpace {
     pub percentage_resolution_block_size: LayoutUnit,
 
     // ── BFC state (SP12) ─────────────────────────────────────────────
-
     /// The offset of this element within its block formatting context.
     /// `None` if the BFC offset is not yet known (pending resolution).
     pub bfc_offset: BfcOffset,
@@ -53,14 +50,12 @@ pub struct ConstraintSpace {
     pub exclusion_space: Option<Arc<ExclusionSpace>>,
 
     // ── Formatting context flags ─────────────────────────────────────
-
     /// True if this element establishes a new BFC. Elements with overflow
     /// != visible, floats, absolutely positioned elements, inline-blocks,
     /// flex/grid containers, etc. all establish new BFCs.
     pub is_new_formatting_context: bool,
 
     // ── Flex-specific fields (SP10) ──────────────────────────────────
-
     /// True when the inline size is externally determined (e.g., row flex main axis).
     pub is_fixed_inline_size: bool,
 
@@ -77,7 +72,6 @@ pub struct ConstraintSpace {
     pub is_initial_block_size_indefinite: bool,
 
     // ── Fragmentation fields (SP12) ──────────────────────────────────
-
     /// Block size of the current fragmentainer (column, page). Zero means
     /// no fragmentation context.
     pub fragmentainer_block_size: LayoutUnit,
@@ -89,7 +83,6 @@ pub struct ConstraintSpace {
     pub is_resuming: bool,
 
     // ── Baseline request (SP12) ──────────────────────────────────────
-
     /// Whether the parent needs a first baseline from this child.
     pub needs_first_baseline: bool,
 
@@ -220,11 +213,7 @@ impl ConstraintSpaceBuilder {
         Self { space }
     }
 
-    pub fn set_available_size(
-        mut self,
-        inline_size: LayoutUnit,
-        block_size: LayoutUnit,
-    ) -> Self {
+    pub fn set_available_size(mut self, inline_size: LayoutUnit, block_size: LayoutUnit) -> Self {
         self.space.available_inline_size = inline_size;
         self.space.available_block_size = block_size;
         self

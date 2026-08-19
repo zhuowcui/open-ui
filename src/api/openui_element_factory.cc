@@ -6,6 +6,7 @@
 #include "openui/openui_element_factory.h"
 
 #include <string.h>
+
 #include <string_view>
 
 #include "base/compiler_specific.h"
@@ -127,112 +128,85 @@ blink::Element* Create(blink::Document& doc) {
 // ---------------------------------------------------------------------------
 
 blink::Element* CreateAbbr(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kAbbrTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kAbbrTag, doc);
 }
 blink::Element* CreateAddress(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kAddressTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kAddressTag, doc);
 }
 blink::Element* CreateArticle(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kArticleTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kArticleTag, doc);
 }
 blink::Element* CreateAside(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kAsideTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kAsideTag, doc);
 }
 blink::Element* CreateB(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kBTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kBTag, doc);
 }
 blink::Element* CreateCode(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kCodeTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kCodeTag, doc);
 }
 blink::Element* CreateDd(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kDdTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kDdTag, doc);
 }
 blink::Element* CreateDt(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kDtTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kDtTag, doc);
 }
 blink::Element* CreateEm(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kEmTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kEmTag, doc);
 }
 blink::Element* CreateFigcaption(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kFigcaptionTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kFigcaptionTag, doc);
 }
 blink::Element* CreateFigure(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kFigureTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kFigureTag, doc);
 }
 blink::Element* CreateFooter(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kFooterTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kFooterTag, doc);
 }
 blink::Element* CreateHeader(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kHeaderTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kHeaderTag, doc);
 }
 blink::Element* CreateI(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kITag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kITag, doc);
 }
 blink::Element* CreateKbd(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kKbdTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kKbdTag, doc);
 }
 blink::Element* CreateMain(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kMainTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kMainTag, doc);
 }
 blink::Element* CreateMark(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kMarkTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kMarkTag, doc);
 }
 blink::Element* CreateNav(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kNavTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kNavTag, doc);
 }
 blink::Element* CreateS(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kSTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kSTag, doc);
 }
 blink::Element* CreateSamp(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kSampTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kSampTag, doc);
 }
 blink::Element* CreateSection(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kSectionTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kSectionTag, doc);
 }
 blink::Element* CreateSmall(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kSmallTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kSmallTag, doc);
 }
 blink::Element* CreateStrong(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kStrongTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kStrongTag, doc);
 }
 blink::Element* CreateSub(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kSubTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kSubTag, doc);
 }
 blink::Element* CreateSup(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kSupTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kSupTag, doc);
 }
 blink::Element* CreateU(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kUTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kUTag, doc);
 }
 blink::Element* CreateVar(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLElement>(
-      blink::html_names::kVarTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLElement>(blink::html_names::kVarTag, doc);
 }
 
 // ---------------------------------------------------------------------------
@@ -240,28 +214,22 @@ blink::Element* CreateVar(blink::Document& doc) {
 // ---------------------------------------------------------------------------
 
 blink::Element* CreateH1(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(
-      blink::html_names::kH1Tag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(blink::html_names::kH1Tag, doc);
 }
 blink::Element* CreateH2(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(
-      blink::html_names::kH2Tag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(blink::html_names::kH2Tag, doc);
 }
 blink::Element* CreateH3(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(
-      blink::html_names::kH3Tag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(blink::html_names::kH3Tag, doc);
 }
 blink::Element* CreateH4(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(
-      blink::html_names::kH4Tag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(blink::html_names::kH4Tag, doc);
 }
 blink::Element* CreateH5(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(
-      blink::html_names::kH5Tag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(blink::html_names::kH5Tag, doc);
 }
 blink::Element* CreateH6(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(
-      blink::html_names::kH6Tag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLHeadingElement>(blink::html_names::kH6Tag, doc);
 }
 
 // ---------------------------------------------------------------------------
@@ -269,32 +237,29 @@ blink::Element* CreateH6(blink::Document& doc) {
 // ---------------------------------------------------------------------------
 
 blink::Element* CreateThead(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableSectionElement>(
-      blink::html_names::kTheadTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableSectionElement>(blink::html_names::kTheadTag,
+                                                                     doc);
 }
 blink::Element* CreateTbody(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableSectionElement>(
-      blink::html_names::kTbodyTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableSectionElement>(blink::html_names::kTbodyTag,
+                                                                     doc);
 }
 blink::Element* CreateTfoot(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableSectionElement>(
-      blink::html_names::kTfootTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableSectionElement>(blink::html_names::kTfootTag,
+                                                                     doc);
 }
 blink::Element* CreateTd(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableCellElement>(
-      blink::html_names::kTdTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableCellElement>(blink::html_names::kTdTag, doc);
 }
 blink::Element* CreateTh(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableCellElement>(
-      blink::html_names::kThTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableCellElement>(blink::html_names::kThTag, doc);
 }
 blink::Element* CreateCol(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableColElement>(
-      blink::html_names::kColTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableColElement>(blink::html_names::kColTag, doc);
 }
 blink::Element* CreateColgroup(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLTableColElement>(
-      blink::html_names::kColgroupTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLTableColElement>(blink::html_names::kColgroupTag,
+                                                                 doc);
 }
 
 // ---------------------------------------------------------------------------
@@ -302,16 +267,14 @@ blink::Element* CreateColgroup(blink::Document& doc) {
 // ---------------------------------------------------------------------------
 
 blink::Element* CreateBlockquote(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLQuoteElement>(
-      blink::html_names::kBlockquoteTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLQuoteElement>(blink::html_names::kBlockquoteTag,
+                                                              doc);
 }
 blink::Element* CreateQ(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLQuoteElement>(
-      blink::html_names::kQTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLQuoteElement>(blink::html_names::kQTag, doc);
 }
 blink::Element* CreatePre(blink::Document& doc) {
-  return blink::MakeGarbageCollected<blink::HTMLPreElement>(
-      blink::html_names::kPreTag, doc);
+  return blink::MakeGarbageCollected<blink::HTMLPreElement>(blink::html_names::kPreTag, doc);
 }
 
 // ---------------------------------------------------------------------------

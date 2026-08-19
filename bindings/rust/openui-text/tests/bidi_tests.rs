@@ -45,7 +45,11 @@ fn bidi_pure_ltr_run_boundaries() {
 fn bidi_pure_rtl_hebrew_levels_one() {
     let bidi = BidiParagraph::new("שלום עולם", None);
     for level in bidi.levels() {
-        assert_eq!(level.number(), 1, "All levels should be 1 for pure RTL Hebrew");
+        assert_eq!(
+            level.number(),
+            1,
+            "All levels should be 1 for pure RTL Hebrew"
+        );
     }
 }
 
@@ -80,7 +84,11 @@ fn bidi_mixed_ltr_rtl_multiple_runs() {
     let bidi = BidiParagraph::new("Hello שלום world", None);
     let runs = bidi.runs();
     // Should have at least 2 runs (LTR and RTL parts)
-    assert!(runs.len() >= 2, "Mixed text should produce multiple runs, got {}", runs.len());
+    assert!(
+        runs.len() >= 2,
+        "Mixed text should produce multiple runs, got {}",
+        runs.len()
+    );
 }
 
 #[test]
@@ -127,7 +135,12 @@ fn bidi_numbers_in_rtl_remain_ltr() {
     assert!(number_run.is_some(), "Should find a run containing numbers");
     let nr = number_run.unwrap();
     // Even level means LTR display order for the numbers
-    assert_eq!(nr.level % 2, 0, "Numbers should have even level (LTR direction), got level {}", nr.level);
+    assert_eq!(
+        nr.level % 2,
+        0,
+        "Numbers should have even level (LTR direction), got level {}",
+        nr.level
+    );
 }
 
 #[test]

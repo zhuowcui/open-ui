@@ -33,7 +33,16 @@ pub fn resolve_length(
         }
         LengthType::Auto => auto_value,
         LengthType::None => none_value,
-        // Intrinsic sizes and calc() will be implemented in later SPs.
+        LengthType::Calculated => {
+            // calc(<percent>% ± <px>px): resolve percent then add offset.
+            if containing_block_size.is_indefinite() {
+                auto_value
+            } else {
+                let pct_part = length.value() / 100.0 * containing_block_size.to_f32();
+                LayoutUnit::from_f32(pct_part + length.calc_offset())
+            }
+        }
+        // Intrinsic sizes resolved elsewhere.
         _ => auto_value,
     }
 }
@@ -56,6 +65,14 @@ pub fn resolve_margin_or_padding(
         // Auto margins are resolved later during layout (centering, etc.)
         // For now return 0 — the block layout algorithm handles auto margins.
         LengthType::Auto => LayoutUnit::zero(),
+        LengthType::Calculated => {
+            if containing_inline_size.is_indefinite() {
+                LayoutUnit::zero()
+            } else {
+                let pct_part = length.value() / 100.0 * containing_inline_size.to_f32();
+                LayoutUnit::from_f32(pct_part + length.calc_offset())
+            }
+        }
         _ => LayoutUnit::zero(),
     }
 }
@@ -67,28 +84,48 @@ mod tests {
     #[test]
     fn resolve_fixed() {
         let l = Length::px(100.0);
-        let result = resolve_length(&l, LayoutUnit::from_i32(500), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(500),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 100);
     }
 
     #[test]
     fn resolve_percent() {
         let l = Length::percent(50.0);
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 200);
     }
 
     #[test]
     fn resolve_auto() {
         let l = Length::auto();
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::from_i32(999), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::from_i32(999),
+            LayoutUnit::max(),
+        );
         assert_eq!(result.to_i32(), 999);
     }
 
     #[test]
     fn resolve_none() {
         let l = Length::none();
-        let result = resolve_length(&l, LayoutUnit::from_i32(400), LayoutUnit::zero(), LayoutUnit::max());
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
         assert_eq!(result, LayoutUnit::max());
     }
 
@@ -98,6 +135,40 @@ mod tests {
         let indef = LayoutUnit::from_raw(-64); // kIndefiniteSize
         let result = resolve_length(&l, indef, LayoutUnit::from_i32(42), LayoutUnit::max());
         // Percentage against indefinite → auto value
+        assert_eq!(result.to_i32(), 42);
+    }
+
+    #[test]
+    fn resolve_calc_percent_px() {
+        // calc(50% - 10px) against 400px → 200 - 10 = 190
+        let l = Length::calc_percent_px(50.0, -10.0);
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(400),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
+        assert_eq!(result.to_i32(), 190);
+    }
+
+    #[test]
+    fn resolve_calc_percent_px_positive_offset() {
+        // calc(25% + 20px) against 200px → 50 + 20 = 70
+        let l = Length::calc_percent_px(25.0, 20.0);
+        let result = resolve_length(
+            &l,
+            LayoutUnit::from_i32(200),
+            LayoutUnit::zero(),
+            LayoutUnit::max(),
+        );
+        assert_eq!(result.to_i32(), 70);
+    }
+
+    #[test]
+    fn resolve_calc_against_indefinite() {
+        let l = Length::calc_percent_px(50.0, -10.0);
+        let indef = LayoutUnit::from_raw(-64);
+        let result = resolve_length(&l, indef, LayoutUnit::from_i32(42), LayoutUnit::max());
         assert_eq!(result.to_i32(), 42);
     }
 }

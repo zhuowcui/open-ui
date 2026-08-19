@@ -26,19 +26,20 @@ pub use bidi::{BidiParagraph, BidiRun};
 pub use char_orientation::is_upright_in_mixed_vertical;
 pub use emoji::{
     contains_emoji, is_emoji, is_emoji_modifier, is_emoji_presentation_selector,
-    is_regional_indicator, is_tag_character, is_text_presentation_selector,
-    is_zero_width_joiner,
+    is_regional_indicator, is_tag_character, is_text_presentation_selector, is_zero_width_joiner,
 };
 pub use emphasis::{
-    ResolvedEmphasisMark, default_mark_for_writing_mode, default_position_for_writing_mode,
-    resolve_emphasis_mark, should_draw_emphasis_mark,
+    default_mark_for_writing_mode, default_position_for_writing_mode, resolve_emphasis_mark,
+    should_draw_emphasis_mark, ResolvedEmphasisMark,
 };
 pub use transform::apply_text_transform;
 
-pub use font::{
-    Font, FontCache, FontDescription, FontFallbackList, FontMetrics, FontPlatformData,
-};
 pub use font::features::collect_font_features;
+pub use font::{
+    used_line_height, used_line_height_metrics, Font, FontCache, FontDescription, FontFallbackList,
+    FontMetrics, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,
+    UsedLineHeightMetrics,
+};
 
 pub use shaping::{
     RunSegment, RunSegmenter, ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection,
@@ -46,6 +47,6 @@ pub use shaping::{
 };
 
 pub use hyphenation::{
-    Hyphenation, SOFT_HYPHEN, find_soft_hyphens, is_soft_hyphen, last_soft_hyphen_before,
-    strip_soft_hyphens,
+    find_soft_hyphens, is_soft_hyphen, last_soft_hyphen_before, strip_soft_hyphens, Hyphenation,
+    SOFT_HYPHEN,
 };

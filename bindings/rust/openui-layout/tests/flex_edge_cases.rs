@@ -2,14 +2,12 @@
 //! Covers min/max constraints, border/padding, nested flex, block_layout
 //! dispatch, empty/single items, percentages, and real-world scenarios.
 
-use openui_layout::{flex_layout, block_layout, ConstraintSpace, Fragment};
-use openui_dom::{Document, NodeId, ElementTag};
+use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length};
+use openui_layout::{block_layout, flex_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    Display, FlexDirection, FlexWrap,
-    ContentAlignment, ContentDistribution, ContentPosition,
-    ItemAlignment, ItemPosition,
-    BorderStyle,
+    BorderStyle, ContentAlignment, ContentDistribution, ContentPosition, Display, FlexDirection,
+    FlexWrap, ItemAlignment, ItemPosition,
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -58,7 +56,9 @@ fn lay_block(doc: &Document, container: NodeId, w: i32, h: i32) -> Fragment {
     block_layout(doc, container, &space)
 }
 
-fn lu(v: i32) -> LayoutUnit { LayoutUnit::from_i32(v) }
+fn lu(v: i32) -> LayoutUnit {
+    LayoutUnit::from_i32(v)
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // CATEGORY 1: min-width / max-width constraints (15 tests)
@@ -769,7 +769,8 @@ fn c3_05_nested_different_justify() {
     // Outer justify:center, inner justify:flex-end
     let mut doc = Document::new();
     let outer = make_flex(&mut doc, 400, 200);
-    doc.node_mut(outer).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
+    doc.node_mut(outer).style_mut().justify_content =
+        ContentAlignment::new(ContentPosition::Center);
     let inner = doc.create_node(ElementTag::Div);
     {
         let s = doc.node_mut(inner).style_mut();
@@ -868,7 +869,10 @@ fn c3_08_inner_wrap_inside_outer() {
     let inner_frag = &frag.children[0];
     assert_eq!(inner_frag.children.len(), 3);
     // First two side by side
-    assert_eq!(inner_frag.children[0].offset.top, inner_frag.children[1].offset.top);
+    assert_eq!(
+        inner_frag.children[0].offset.top,
+        inner_frag.children[1].offset.top
+    );
     // Third wraps to next line
     assert!(inner_frag.children[2].offset.top > inner_frag.children[0].offset.top);
 }
@@ -977,10 +981,22 @@ fn c4_03_block_flex_matches_flex_layout() {
     assert_eq!(frag_block.height(), frag_flex.height());
     assert_eq!(frag_block.children.len(), frag_flex.children.len());
     for i in 0..frag_block.children.len() {
-        assert_eq!(frag_block.children[i].width(), frag_flex.children[i].width());
-        assert_eq!(frag_block.children[i].height(), frag_flex.children[i].height());
-        assert_eq!(frag_block.children[i].offset.left, frag_flex.children[i].offset.left);
-        assert_eq!(frag_block.children[i].offset.top, frag_flex.children[i].offset.top);
+        assert_eq!(
+            frag_block.children[i].width(),
+            frag_flex.children[i].width()
+        );
+        assert_eq!(
+            frag_block.children[i].height(),
+            frag_flex.children[i].height()
+        );
+        assert_eq!(
+            frag_block.children[i].offset.left,
+            frag_flex.children[i].offset.left
+        );
+        assert_eq!(
+            frag_block.children[i].offset.top,
+            frag_flex.children[i].offset.top
+        );
     }
 }
 
@@ -1382,11 +1398,11 @@ fn c7_02_card_layout() {
     let _footer = add_child(&mut doc, card, 300, 40);
 
     let frag = lay(&doc, card, 300, 400);
-    assert_eq!(frag.children[0].offset.top, lu(0));     // header at top
+    assert_eq!(frag.children[0].offset.top, lu(0)); // header at top
     assert_eq!(frag.children[0].height(), lu(60));
-    assert_eq!(frag.children[1].offset.top, lu(60));     // body
-    assert_eq!(frag.children[1].height(), lu(300));       // 400-60-40
-    assert_eq!(frag.children[2].offset.top, lu(360));    // footer
+    assert_eq!(frag.children[1].offset.top, lu(60)); // body
+    assert_eq!(frag.children[1].height(), lu(300)); // 400-60-40
+    assert_eq!(frag.children[2].offset.top, lu(360)); // footer
     assert_eq!(frag.children[2].height(), lu(40));
 }
 
@@ -1460,7 +1476,7 @@ fn c7_05_holy_grail_layout() {
     // Body
     assert_eq!(frag.children[1].offset.top, lu(60));
     assert_eq!(frag.children[1].height(), lu(500)); // 600-60-40
-    // Footer
+                                                    // Footer
     assert_eq!(frag.children[2].offset.top, lu(560));
     // Body children
     let body_frag = &frag.children[1];
@@ -1584,8 +1600,8 @@ fn c7_11_footer_at_bottom() {
     let _footer = add_child(&mut doc, page, 400, 50);
 
     let frag = lay(&doc, page, 400, 600);
-    assert_eq!(frag.children[0].height(), lu(550));    // 600 - 50
-    assert_eq!(frag.children[1].offset.top, lu(550));  // footer at bottom
+    assert_eq!(frag.children[0].height(), lu(550)); // 600 - 50
+    assert_eq!(frag.children[1].offset.top, lu(550)); // footer at bottom
 }
 
 #[test]
@@ -1615,7 +1631,7 @@ fn c7_13_breadcrumbs_with_gap() {
 
     let frag = lay(&doc, bc, 600, 40);
     assert_eq!(frag.children[0].offset.left, lu(0));
-    assert_eq!(frag.children[1].offset.left, lu(68));  // 60 + 8
+    assert_eq!(frag.children[1].offset.left, lu(68)); // 60 + 8
     assert_eq!(frag.children[2].offset.left, lu(156)); // 68 + 80 + 8
 }
 

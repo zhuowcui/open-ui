@@ -17,7 +17,10 @@ pub struct LogicalSize {
 impl LogicalSize {
     #[inline]
     pub const fn new(inline_size: LayoutUnit, block_size: LayoutUnit) -> Self {
-        Self { inline_size, block_size }
+        Self {
+            inline_size,
+            block_size,
+        }
     }
 
     #[inline]

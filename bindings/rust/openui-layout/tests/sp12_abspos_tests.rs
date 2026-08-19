@@ -6,7 +6,7 @@
 use openui_dom::{Document, ElementTag};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::{block_layout, ConstraintSpace};
-use openui_style::{Display, Direction, Position, BorderStyle};
+use openui_style::{BorderStyle, Direction, Display, Position};
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -290,10 +290,10 @@ fn abs_percentage_values() {
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::percent(10.0);     // 10% of 800 = 80
-    doc.node_mut(abs).style.left = Length::percent(5.0);     // 5% of 1000 = 50
-    doc.node_mut(abs).style.width = Length::percent(50.0);   // 50% of 1000 = 500
-    doc.node_mut(abs).style.height = Length::percent(25.0);  // 25% of 800 = 200
+    doc.node_mut(abs).style.top = Length::percent(10.0); // 10% of 800 = 80
+    doc.node_mut(abs).style.left = Length::percent(5.0); // 5% of 1000 = 50
+    doc.node_mut(abs).style.width = Length::percent(50.0); // 50% of 1000 = 500
+    doc.node_mut(abs).style.height = Length::percent(25.0); // 25% of 800 = 200
 
     let space = root_space(1000, 800);
     let fragment = block_layout(&doc, vp, &space);

@@ -16,7 +16,7 @@ use skia_safe::Surface;
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::Length;
-use openui_paint::{render_to_surface, render_to_png};
+use openui_paint::{render_to_png, render_to_surface};
 use openui_style::*;
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -34,7 +34,9 @@ struct PixelDiff {
 
 impl PixelDiff {
     fn mismatch_percentage(&self) -> f64 {
-        if self.total_pixels == 0 { return 0.0; }
+        if self.total_pixels == 0 {
+            return 0.0;
+        }
         (self.mismatched_pixels as f64 / self.total_pixels as f64) * 100.0
     }
 }
@@ -47,17 +49,16 @@ fn surface_to_rgba(surface: &mut Surface) -> (u32, u32, Vec<u8>) {
     let row_bytes = (w * 4) as usize;
     let mut pixels = vec![0u8; (h as usize) * row_bytes];
     image.read_pixels(
-        &info, &mut pixels, row_bytes, (0, 0),
+        &info,
+        &mut pixels,
+        row_bytes,
+        (0, 0),
         skia_safe::image::CachingHint::Allow,
     );
     (w, h, pixels)
 }
 
-fn pixel_diff(
-    a: &(u32, u32, Vec<u8>),
-    b: &(u32, u32, Vec<u8>),
-    tolerance: u8,
-) -> PixelDiff {
+fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
     if a.0 != b.0 || a.1 != b.1 {
         return PixelDiff {
             total_pixels: (a.0 as usize) * (a.1 as usize),
@@ -75,18 +76,28 @@ fn pixel_diff(
         let mut pixel_mismatch = false;
         for i in 0..4 {
             let d = (pa[i] as i16 - pb[i] as i16).unsigned_abs() as u8;
-            if d > max_diff { max_diff = d; }
+            if d > max_diff {
+                max_diff = d;
+            }
             sum_diff += d as u64;
-            if d > tolerance { pixel_mismatch = true; }
+            if d > tolerance {
+                pixel_mismatch = true;
+            }
         }
-        if pixel_mismatch { mismatched += 1; }
+        if pixel_mismatch {
+            mismatched += 1;
+        }
     }
     let channels = total_pixels * 4;
     PixelDiff {
         total_pixels,
         mismatched_pixels: mismatched,
         max_channel_diff: max_diff,
-        avg_channel_diff: if channels > 0 { sum_diff as f64 / channels as f64 } else { 0.0 },
+        avg_channel_diff: if channels > 0 {
+            sum_diff as f64 / channels as f64
+        } else {
+            0.0
+        },
         size_mismatch: false,
     }
 }
@@ -114,14 +125,25 @@ fn get_pixel(surface: &mut Surface, x: i32, y: i32) -> (u8, u8, u8, u8) {
     let mut pixels = vec![0u8; row_bytes];
     // Request RGBA8888 explicitly — N32 is BGRA on little-endian platforms
     let single_row_info = skia_safe::ImageInfo::new(
-        (info.width(), 1), skia_safe::ColorType::RGBA8888, info.alpha_type(), None,
+        (info.width(), 1),
+        skia_safe::ColorType::RGBA8888,
+        info.alpha_type(),
+        None,
     );
     image.read_pixels(
-        &single_row_info, &mut pixels, row_bytes, (0, y),
+        &single_row_info,
+        &mut pixels,
+        row_bytes,
+        (0, y),
         skia_safe::image::CachingHint::Allow,
     );
     let idx = (x as usize) * 4;
-    (pixels[idx], pixels[idx + 1], pixels[idx + 2], pixels[idx + 3])
+    (
+        pixels[idx],
+        pixels[idx + 1],
+        pixels[idx + 2],
+        pixels[idx + 3],
+    )
 }
 
 fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, u8), msg: &str) {
@@ -132,7 +154,18 @@ fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, 
     assert!(
         dr <= 2 && dg <= 2 && db <= 2,
         "{}: pixel ({},{}) = ({},{},{}) expected ~({},{},{}), diff=({},{},{})",
-        msg, x, y, r, g, b, expected.0, expected.1, expected.2, dr, dg, db,
+        msg,
+        x,
+        y,
+        r,
+        g,
+        b,
+        expected.0,
+        expected.1,
+        expected.2,
+        dr,
+        dg,
+        db,
     );
 }
 
@@ -182,7 +215,8 @@ fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
 fn add_float_box(
     doc: &mut Document,
     parent: NodeId,
-    w: f32, h: f32,
+    w: f32,
+    h: f32,
     float_dir: Float,
     color: Color,
 ) -> NodeId {
@@ -196,14 +230,12 @@ fn add_float_box(
     div
 }
 
-fn add_colored_block(
-    doc: &mut Document,
-    parent: NodeId,
-    w: f32, h: f32,
-    color: Color,
-) -> NodeId {
+fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
     doc.node_mut(div).style.display = Display::Block;
+    // BFC root so it avoids floats (CSS 2.1 §9.5).
+    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
+    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
     if w > 0.0 {
         doc.node_mut(div).style.width = Length::px(w);
     }
@@ -355,7 +387,13 @@ fn float_left_white_above() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD - 5, WHITE, "white above viewport padding");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD - 5,
+        WHITE,
+        "white above viewport padding",
+    );
 }
 
 #[test]
@@ -371,7 +409,14 @@ fn float_left_100x50_area() {
 fn float_left_custom_color() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, color_from_rgb(255, 255, 0));
+    add_float_box(
+        &mut doc,
+        vp,
+        100.0,
+        100.0,
+        Float::Left,
+        color_from_rgb(255, 255, 0),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 50, YELLOW, "yellow float center");
 }
@@ -433,7 +478,13 @@ fn float_right_basic_position() {
     // Right float: x = PAD + CONTENT_W - 100 = 20 + 660 = 680
     let right_x = PAD + CONTENT_W - 100;
     assert_pixel_color(&mut s, right_x + 5, PAD + 5, RED, "right float interior");
-    assert_pixel_color(&mut s, right_x + 95, PAD + 50, RED, "right float right side");
+    assert_pixel_color(
+        &mut s,
+        right_x + 95,
+        PAD + 50,
+        RED,
+        "right float right side",
+    );
 }
 
 #[test]
@@ -443,7 +494,13 @@ fn float_right_white_to_left() {
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::RED);
     let mut s = render(&doc);
     let right_x = PAD + CONTENT_W - 100;
-    assert_pixel_color(&mut s, right_x - 10, PAD + 50, WHITE, "white left of right float");
+    assert_pixel_color(
+        &mut s,
+        right_x - 10,
+        PAD + 50,
+        WHITE,
+        "white left of right float",
+    );
 }
 
 #[test]
@@ -453,7 +510,13 @@ fn float_right_white_below() {
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::RED);
     let mut s = render(&doc);
     let right_x = PAD + CONTENT_W - 100;
-    assert_pixel_color(&mut s, right_x + 50, PAD + 110, WHITE, "white below right float");
+    assert_pixel_color(
+        &mut s,
+        right_x + 50,
+        PAD + 110,
+        WHITE,
+        "white below right float",
+    );
 }
 
 #[test]
@@ -544,10 +607,29 @@ fn float_right_precise_bottom() {
 fn float_right_full_width() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_float_box(&mut doc, vp, CONTENT_W as f32, 50.0, Float::Right, Color::RED);
+    add_float_box(
+        &mut doc,
+        vp,
+        CONTENT_W as f32,
+        50.0,
+        Float::Right,
+        Color::RED,
+    );
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 5, PAD + 25, RED, "full width right float left");
-    assert_pixel_color(&mut s, PAD + CONTENT_W - 5, PAD + 25, RED, "full width right float right");
+    assert_pixel_color(
+        &mut s,
+        PAD + 5,
+        PAD + 25,
+        RED,
+        "full width right float left",
+    );
+    assert_pixel_color(
+        &mut s,
+        PAD + CONTENT_W - 5,
+        PAD + 25,
+        RED,
+        "full width right float right",
+    );
 }
 
 #[test]
@@ -564,7 +646,14 @@ fn float_right_150x150_center() {
 fn float_right_custom_color() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, color_from_rgb(0, 255, 255));
+    add_float_box(
+        &mut doc,
+        vp,
+        100.0,
+        100.0,
+        Float::Right,
+        color_from_rgb(0, 255, 255),
+    );
     let mut s = render(&doc);
     let rx = PAD + CONTENT_W - 100;
     assert_pixel_color(&mut s, rx + 50, PAD + 50, CYAN, "cyan right float");
@@ -619,7 +708,13 @@ fn float_right_adjacent_to_padding() {
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::RED);
     let mut s = render(&doc);
     let right_pad = PAD + CONTENT_W;
-    assert_pixel_color(&mut s, right_pad - 1, PAD + 50, RED, "just inside right edge");
+    assert_pixel_color(
+        &mut s,
+        right_pad - 1,
+        PAD + 50,
+        RED,
+        "just inside right edge",
+    );
     assert_pixel_color(&mut s, right_pad + 1, PAD + 50, WHITE, "right padding area");
 }
 
@@ -677,7 +772,13 @@ fn two_left_floats_white_after_both() {
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::BLUE);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 210, PAD + 50, WHITE, "white after both floats");
+    assert_pixel_color(
+        &mut s,
+        PAD + 210,
+        PAD + 50,
+        WHITE,
+        "white after both floats",
+    );
 }
 
 #[test]
@@ -749,7 +850,13 @@ fn two_left_different_heights() {
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::BLUE);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 100, RED, "red is taller");
-    assert_pixel_color(&mut s, PAD + 150, PAD + 100, WHITE, "blue shorter, white below");
+    assert_pixel_color(
+        &mut s,
+        PAD + 150,
+        PAD + 100,
+        WHITE,
+        "blue shorter, white below",
+    );
 }
 
 #[test]
@@ -811,7 +918,14 @@ fn four_left_floats_row() {
     add_float_box(&mut doc, vp, 100.0, 40.0, Float::Left, Color::RED);
     add_float_box(&mut doc, vp, 100.0, 40.0, Float::Left, Color::GREEN);
     add_float_box(&mut doc, vp, 100.0, 40.0, Float::Left, Color::BLUE);
-    add_float_box(&mut doc, vp, 100.0, 40.0, Float::Left, color_from_rgb(255, 255, 0));
+    add_float_box(
+        &mut doc,
+        vp,
+        100.0,
+        40.0,
+        Float::Left,
+        color_from_rgb(255, 255, 0),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 20, RED, "first");
     assert_pixel_color(&mut s, PAD + 150, PAD + 20, GREEN, "second");
@@ -903,7 +1017,13 @@ fn float_wrap_right_drops_below() {
     add_float_box(&mut doc, c, 200.0, 50.0, Float::Right, Color::BLUE);
     let mut s = render(&doc);
     let rx1 = PAD + 100; // 300 - 200 = 100
-    assert_pixel_color(&mut s, rx1 + PAD - PAD + 100 + PAD, PAD + 25, RED, "first right float");
+    assert_pixel_color(
+        &mut s,
+        rx1 + PAD - PAD + 100 + PAD,
+        PAD + 25,
+        RED,
+        "first right float",
+    );
 }
 
 #[test]
@@ -925,7 +1045,14 @@ fn float_wrap_four_in_two_rows() {
     add_float_box(&mut doc, c, 100.0, 40.0, Float::Left, Color::RED);
     add_float_box(&mut doc, c, 100.0, 40.0, Float::Left, Color::BLUE);
     add_float_box(&mut doc, c, 100.0, 40.0, Float::Left, Color::GREEN);
-    add_float_box(&mut doc, c, 100.0, 40.0, Float::Left, color_from_rgb(255, 255, 0));
+    add_float_box(
+        &mut doc,
+        c,
+        100.0,
+        40.0,
+        Float::Left,
+        color_from_rgb(255, 255, 0),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 20, RED, "row1 left");
     assert_pixel_color(&mut s, PAD + 150, PAD + 20, BLUE, "row1 right");
@@ -967,7 +1094,13 @@ fn float_wrap_single_oversized() {
     let c = setup_container(&mut doc, 100.0);
     add_float_box(&mut doc, c, 200.0, 50.0, Float::Left, Color::RED);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD + 25, RED, "oversized float still at left");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 25,
+        RED,
+        "oversized float still at left",
+    );
 }
 
 #[test]
@@ -1106,7 +1239,13 @@ fn clear_left_moves_below_left_float() {
     doc.node_mut(clr).style.clear = Clear::Left;
     let mut s = render(&doc);
     // Cleared block below float at y >= PAD+100
-    assert_pixel_color(&mut s, PAD + 50, PAD + 110, BLUE, "cleared block below float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 110,
+        BLUE,
+        "cleared block below float",
+    );
 }
 
 #[test]
@@ -1118,7 +1257,13 @@ fn clear_left_not_beside_float() {
     doc.node_mut(clr).style.clear = Clear::Left;
     let mut s = render(&doc);
     // At float level, only red
-    assert_pixel_color(&mut s, PAD + 50, PAD + 50, RED, "float area is red not blue");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 50,
+        RED,
+        "float area is red not blue",
+    );
 }
 
 #[test]
@@ -1129,7 +1274,13 @@ fn clear_right_moves_below_right_float() {
     let clr = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
     doc.node_mut(clr).style.clear = Clear::Right;
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD + 110, BLUE, "cleared below right float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 110,
+        BLUE,
+        "cleared below right float",
+    );
 }
 
 #[test]
@@ -1155,7 +1306,13 @@ fn clear_both_full_width() {
     let mut s = render(&doc);
     // Cleared block gets full width
     assert_pixel_color(&mut s, PAD + 5, PAD + 90, BLUE, "cleared block left edge");
-    assert_pixel_color(&mut s, PAD + CONTENT_W - 5, PAD + 90, BLUE, "cleared block right edge");
+    assert_pixel_color(
+        &mut s,
+        PAD + CONTENT_W - 5,
+        PAD + 90,
+        BLUE,
+        "cleared block right edge",
+    );
 }
 
 #[test]
@@ -1167,7 +1324,13 @@ fn clear_left_no_left_float_no_effect() {
     doc.node_mut(blk).style.clear = Clear::Left;
     let mut s = render(&doc);
     // No left float to clear, block beside right float at top
-    assert_pixel_color(&mut s, PAD + 50, PAD + 25, BLUE, "no left float, block at top");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 25,
+        BLUE,
+        "no left float, block at top",
+    );
 }
 
 #[test]
@@ -1179,7 +1342,13 @@ fn clear_right_no_right_float_no_effect() {
     doc.node_mut(blk).style.clear = Clear::Right;
     let mut s = render(&doc);
     // No right float to clear, block flows beside left float
-    assert_pixel_color(&mut s, PAD + 150, PAD + 25, BLUE, "no right float, block beside left");
+    assert_pixel_color(
+        &mut s,
+        PAD + 150,
+        PAD + 25,
+        BLUE,
+        "no right float, block beside left",
+    );
 }
 
 #[test]
@@ -1264,7 +1433,13 @@ fn clear_both_asymmetric_floats() {
     doc.node_mut(clr).style.clear = Clear::Both;
     let mut s = render(&doc);
     // Must be below the taller (right) float
-    assert_pixel_color(&mut s, PAD + 50, PAD + 160, BLUE, "below taller right float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 160,
+        BLUE,
+        "below taller right float",
+    );
 }
 
 #[test]
@@ -1354,8 +1529,20 @@ fn content_wrap_multiple_blocks_beside_float() {
     add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
     add_colored_block(&mut doc, vp, 0.0, 50.0, Color::GREEN);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 250, PAD + 25, BLUE, "first block beside float");
-    assert_pixel_color(&mut s, PAD + 250, PAD + 75, GREEN, "second block beside float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 250,
+        PAD + 25,
+        BLUE,
+        "first block beside float",
+    );
+    assert_pixel_color(
+        &mut s,
+        PAD + 250,
+        PAD + 75,
+        GREEN,
+        "second block beside float",
+    );
 }
 
 #[test]
@@ -1366,8 +1553,20 @@ fn content_wrap_block_reduced_width() {
     add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // Blue block should start at x=PAD+200 and end before right padding
-    assert_pixel_color(&mut s, PAD + 200, PAD + 25, BLUE, "block starts at float edge");
-    assert_pixel_color(&mut s, PAD + CONTENT_W - 5, PAD + 25, BLUE, "block extends to right");
+    assert_pixel_color(
+        &mut s,
+        PAD + 200,
+        PAD + 25,
+        BLUE,
+        "block starts at float edge",
+    );
+    assert_pixel_color(
+        &mut s,
+        PAD + CONTENT_W - 5,
+        PAD + 25,
+        BLUE,
+        "block extends to right",
+    );
 }
 
 #[test]
@@ -1416,7 +1615,13 @@ fn content_wrap_block_before_float_unaffected() {
     let mut s = render(&doc);
     // Block before float at top, full width
     assert_pixel_color(&mut s, PAD + 5, PAD + 20, BLUE, "block before float left");
-    assert_pixel_color(&mut s, PAD + CONTENT_W - 5, PAD + 20, BLUE, "block before float right");
+    assert_pixel_color(
+        &mut s,
+        PAD + CONTENT_W - 5,
+        PAD + 20,
+        BLUE,
+        "block before float right",
+    );
 }
 
 #[test]
@@ -1460,7 +1665,13 @@ fn content_wrap_block_with_fixed_width_beside_float() {
     add_colored_block(&mut doc, vp, 300.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // Fixed width block beside float
-    assert_pixel_color(&mut s, PAD + 250, PAD + 25, BLUE, "fixed width block beside float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 250,
+        PAD + 25,
+        BLUE,
+        "fixed width block beside float",
+    );
 }
 
 #[test]
@@ -1486,7 +1697,13 @@ fn content_wrap_block_narrow_between_floats() {
     // Remaining space: 760 - 300 - 300 = 160
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 350, PAD + 25, BLUE, "narrow block between floats");
+    assert_pixel_color(
+        &mut s,
+        PAD + 350,
+        PAD + 25,
+        BLUE,
+        "narrow block between floats",
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -1526,7 +1743,13 @@ fn bfc_overflow_hidden_beside_right_float() {
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Right, Color::RED);
     add_bfc_block(&mut doc, vp, 300.0, 80.0, Color::BLUE);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD + 40, BLUE, "BFC block beside right float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 40,
+        BLUE,
+        "BFC block beside right float",
+    );
 }
 
 #[test]
@@ -1600,7 +1823,13 @@ fn bfc_overflow_auto_beside_float() {
     doc.node_mut(auto_block).style.overflow_y = Overflow::Auto;
     doc.append_child(vp, auto_block);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 250, PAD + 40, BLUE, "overflow:auto BFC beside float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 250,
+        PAD + 40,
+        BLUE,
+        "overflow:auto BFC beside float",
+    );
 }
 
 #[test]
@@ -1617,7 +1846,13 @@ fn bfc_scroll_beside_float() {
     doc.node_mut(scroll_block).style.overflow_y = Overflow::Scroll;
     doc.append_child(vp, scroll_block);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 250, PAD + 40, BLUE, "overflow:scroll BFC beside float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 250,
+        PAD + 40,
+        BLUE,
+        "overflow:scroll BFC beside float",
+    );
 }
 
 #[test]
@@ -1627,7 +1862,13 @@ fn bfc_small_beside_large_float() {
     add_float_box(&mut doc, vp, 400.0, 100.0, Float::Left, Color::RED);
     add_bfc_block(&mut doc, vp, 200.0, 60.0, Color::BLUE);
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 500, PAD + 30, BLUE, "small BFC beside large float");
+    assert_pixel_color(
+        &mut s,
+        PAD + 500,
+        PAD + 30,
+        BLUE,
+        "small BFC beside large float",
+    );
 }
 
 #[test]
@@ -1649,7 +1890,13 @@ fn bfc_overflow_hidden_with_float_and_clear() {
     let bfc = add_bfc_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
     doc.node_mut(bfc).style.clear = Clear::Both;
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 50, PAD + 90, BLUE, "BFC cleared with overflow:hidden");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 90,
+        BLUE,
+        "BFC cleared with overflow:hidden",
+    );
 }
 
 #[test]
@@ -1686,7 +1933,8 @@ fn bfc_float_inside_overflow_hidden() {
 fn add_float_container(
     doc: &mut Document,
     parent: NodeId,
-    w: f32, h: f32,
+    w: f32,
+    h: f32,
     float_dir: Float,
     color: Color,
 ) -> NodeId {
@@ -1738,7 +1986,13 @@ fn nested_float_with_sibling() {
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Left, Color::GREEN);
     let mut s = render(&doc);
     // Green float beside outer (at x=PAD+300)
-    assert_pixel_color(&mut s, PAD + 400, PAD + 50, GREEN, "sibling float beside outer");
+    assert_pixel_color(
+        &mut s,
+        PAD + 400,
+        PAD + 50,
+        GREEN,
+        "sibling float beside outer",
+    );
 }
 
 #[test]
@@ -1756,7 +2010,14 @@ fn nested_deeply_nested_float() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let l1 = add_float_container(&mut doc, vp, 400.0, 300.0, Float::Left, Color::BLUE);
-    let l2 = add_float_container(&mut doc, l1, 300.0, 200.0, Float::Left, color_from_rgb(0, 255, 255));
+    let l2 = add_float_container(
+        &mut doc,
+        l1,
+        300.0,
+        200.0,
+        Float::Left,
+        color_from_rgb(0, 255, 255),
+    );
     add_float_box(&mut doc, l2, 100.0, 80.0, Float::Left, Color::RED);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 40, RED, "deeply nested float");
@@ -1769,10 +2030,29 @@ fn nested_two_floated_containers_side_by_side() {
     let c1 = add_float_container(&mut doc, vp, 200.0, 150.0, Float::Left, Color::RED);
     let c2 = add_float_container(&mut doc, vp, 200.0, 150.0, Float::Left, Color::BLUE);
     add_float_box(&mut doc, c1, 80.0, 60.0, Float::Left, Color::GREEN);
-    add_float_box(&mut doc, c2, 80.0, 60.0, Float::Left, color_from_rgb(255, 255, 0));
+    add_float_box(
+        &mut doc,
+        c2,
+        80.0,
+        60.0,
+        Float::Left,
+        color_from_rgb(255, 255, 0),
+    );
     let mut s = render(&doc);
-    assert_pixel_color(&mut s, PAD + 40, PAD + 30, GREEN, "inner in first container");
-    assert_pixel_color(&mut s, PAD + 240, PAD + 30, YELLOW, "inner in second container");
+    assert_pixel_color(
+        &mut s,
+        PAD + 40,
+        PAD + 30,
+        GREEN,
+        "inner in first container",
+    );
+    assert_pixel_color(
+        &mut s,
+        PAD + 240,
+        PAD + 30,
+        YELLOW,
+        "inner in second container",
+    );
 }
 
 #[test]
@@ -1783,7 +2063,13 @@ fn nested_right_float_container_with_inner_left() {
     add_float_box(&mut doc, outer, 100.0, 80.0, Float::Left, Color::RED);
     let mut s = render(&doc);
     let outer_x = PAD + CONTENT_W - 300;
-    assert_pixel_color(&mut s, outer_x + 50, PAD + 40, RED, "inner left in right container");
+    assert_pixel_color(
+        &mut s,
+        outer_x + 50,
+        PAD + 40,
+        RED,
+        "inner left in right container",
+    );
 }
 
 #[test]
@@ -1860,7 +2146,13 @@ fn float_margin_right_on_right_float() {
     let mut s = render(&doc);
     // Right float pushed left by margin-right
     let rx = PAD + CONTENT_W - 100 - 30;
-    assert_pixel_color(&mut s, rx + 50, PAD + 50, RED, "right float with margin-right");
+    assert_pixel_color(
+        &mut s,
+        rx + 50,
+        PAD + 50,
+        RED,
+        "right float with margin-right",
+    );
 }
 
 #[test]
@@ -1899,7 +2191,13 @@ fn float_margin_bottom_affects_clear() {
     doc.node_mut(clr).style.clear = Clear::Left;
     let mut s = render(&doc);
     // Clear moves below float + margin-bottom = 80+20=100
-    assert_pixel_color(&mut s, PAD + 50, PAD + 110, BLUE, "cleared below float+margin");
+    assert_pixel_color(
+        &mut s,
+        PAD + 50,
+        PAD + 110,
+        BLUE,
+        "cleared below float+margin",
+    );
 }
 
 #[test]
@@ -1960,7 +2258,13 @@ fn float_left_padding_on_container() {
     add_float_box(&mut doc, c, 100.0, 80.0, Float::Left, Color::RED);
     let mut s = render(&doc);
     // Float inside container respects padding
-    assert_pixel_color(&mut s, PAD + 35, PAD + 20, RED, "float inside padded container");
+    assert_pixel_color(
+        &mut s,
+        PAD + 35,
+        PAD + 20,
+        RED,
+        "float inside padded container",
+    );
 }
 
 #[test]
@@ -1978,7 +2282,13 @@ fn float_right_padding_on_container() {
     let mut s = render(&doc);
     // Container content-box is 400, float at right edge of content
     let rx = PAD + 300; // 400 content - 100 float = 300
-    assert_pixel_color(&mut s, rx + 50, PAD + 40, RED, "right float in padded container");
+    assert_pixel_color(
+        &mut s,
+        rx + 50,
+        PAD + 40,
+        RED,
+        "right float in padded container",
+    );
 }
 
 #[test]
@@ -2007,7 +2317,13 @@ fn float_right_then_clear_right_then_float_right() {
     let rx = PAD + CONTENT_W - 100;
     assert_pixel_color(&mut s, rx + 50, PAD + 25, RED, "first right float");
     assert_pixel_color(&mut s, PAD + 50, PAD + 60, GREEN, "cleared block");
-    assert_pixel_color(&mut s, rx + 50, PAD + 95, BLUE, "second right float after clear");
+    assert_pixel_color(
+        &mut s,
+        rx + 50,
+        PAD + 95,
+        BLUE,
+        "second right float after clear",
+    );
 }
 
 #[test]
@@ -2083,45 +2399,64 @@ fn float_left_with_padding_content() {
 fn all_float_scenarios_produce_output() {
     // Smoke test: build several scenarios and verify they all produce visible pixels
     let scenarios: Vec<(&str, Box<dyn Fn() -> Document>)> = vec![
-        ("left_float", Box::new(|| {
-            let mut doc = Document::new();
-            let vp = setup_viewport(&mut doc);
-            add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-            doc
-        })),
-        ("right_float", Box::new(|| {
-            let mut doc = Document::new();
-            let vp = setup_viewport(&mut doc);
-            add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::BLUE);
-            doc
-        })),
-        ("two_left", Box::new(|| {
-            let mut doc = Document::new();
-            let vp = setup_viewport(&mut doc);
-            add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-            add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::BLUE);
-            doc
-        })),
-        ("left_right", Box::new(|| {
-            let mut doc = Document::new();
-            let vp = setup_viewport(&mut doc);
-            add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-            add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::BLUE);
-            doc
-        })),
-        ("clear_both", Box::new(|| {
-            let mut doc = Document::new();
-            let vp = setup_viewport(&mut doc);
-            add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
-            let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-            doc.node_mut(clr).style.clear = Clear::Both;
-            doc
-        })),
+        (
+            "left_float",
+            Box::new(|| {
+                let mut doc = Document::new();
+                let vp = setup_viewport(&mut doc);
+                add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
+                doc
+            }),
+        ),
+        (
+            "right_float",
+            Box::new(|| {
+                let mut doc = Document::new();
+                let vp = setup_viewport(&mut doc);
+                add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::BLUE);
+                doc
+            }),
+        ),
+        (
+            "two_left",
+            Box::new(|| {
+                let mut doc = Document::new();
+                let vp = setup_viewport(&mut doc);
+                add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
+                add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::BLUE);
+                doc
+            }),
+        ),
+        (
+            "left_right",
+            Box::new(|| {
+                let mut doc = Document::new();
+                let vp = setup_viewport(&mut doc);
+                add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
+                add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::BLUE);
+                doc
+            }),
+        ),
+        (
+            "clear_both",
+            Box::new(|| {
+                let mut doc = Document::new();
+                let vp = setup_viewport(&mut doc);
+                add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
+                let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
+                doc.node_mut(clr).style.clear = Clear::Both;
+                doc
+            }),
+        ),
     ];
 
     for (name, builder) in scenarios {
         let doc = builder();
         let mut surface = render(&doc);
-        assert!(has_visible_content(&mut surface), "{} should produce visible pixels", name);
+        assert!(
+            has_visible_content(&mut surface),
+            "{} should produce visible pixels",
+            name
+        );
     }
 }

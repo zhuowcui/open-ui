@@ -65,7 +65,12 @@ fn get_pixel(surface: &mut Surface, x: i32, y: i32) -> (u8, u8, u8, u8) {
         skia_safe::image::CachingHint::Allow,
     );
     let idx = (x as usize) * 4;
-    (pixels[idx], pixels[idx + 1], pixels[idx + 2], pixels[idx + 3])
+    (
+        pixels[idx],
+        pixels[idx + 1],
+        pixels[idx + 2],
+        pixels[idx + 3],
+    )
 }
 
 fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, u8), msg: &str) {
@@ -76,7 +81,18 @@ fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, 
     assert!(
         dr <= TOLERANCE as u16 && dg <= TOLERANCE as u16 && db <= TOLERANCE as u16,
         "{}: pixel ({},{}) = ({},{},{}) expected ~({},{},{}), diff=({},{},{})",
-        msg, x, y, r, g, b, expected.0, expected.1, expected.2, dr, dg, db
+        msg,
+        x,
+        y,
+        r,
+        g,
+        b,
+        expected.0,
+        expected.1,
+        expected.2,
+        dr,
+        dg,
+        db
     );
 }
 
@@ -271,10 +287,22 @@ fn flow_no_gap_between() {
 fn flow_ten_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let colors = [Color::RED, Color::BLUE, Color::GREEN, Color::RED, Color::BLUE,
-                  Color::GREEN, Color::RED, Color::BLUE, Color::GREEN, Color::RED];
+    let colors = [
+        Color::RED,
+        Color::BLUE,
+        Color::GREEN,
+        Color::RED,
+        Color::BLUE,
+        Color::GREEN,
+        Color::RED,
+        Color::BLUE,
+        Color::GREEN,
+        Color::RED,
+    ];
     let expected = [RED, BLUE, GREEN, RED, BLUE, GREEN, RED, BLUE, GREEN, RED];
-    for &c in &colors { add_colored_block(&mut doc, vp, 80.0, 10.0, c); }
+    for &c in &colors {
+        add_colored_block(&mut doc, vp, 80.0, 10.0, c);
+    }
     let mut s = render(&doc);
     for i in 0..10 {
         let cy = VP + i as i32 * 10 + 5;
@@ -386,9 +414,17 @@ fn flow_third_block_y() {
 fn flow_five_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let colors = [Color::RED, Color::BLUE, Color::GREEN, Color::RED, Color::BLUE];
+    let colors = [
+        Color::RED,
+        Color::BLUE,
+        Color::GREEN,
+        Color::RED,
+        Color::BLUE,
+    ];
     let expected = [RED, BLUE, GREEN, RED, BLUE];
-    for &c in &colors { add_colored_block(&mut doc, vp, 100.0, 50.0, c); }
+    for &c in &colors {
+        add_colored_block(&mut doc, vp, 100.0, 50.0, c);
+    }
     let mut s = render(&doc);
     for i in 0..5 {
         let cy = VP + i as i32 * 50 + 25;
@@ -426,7 +462,13 @@ fn flow_four_colors() {
     add_colored_block(&mut doc, vp, 120.0, 30.0, Color::RED);
     add_colored_block(&mut doc, vp, 120.0, 30.0, Color::GREEN);
     add_colored_block(&mut doc, vp, 120.0, 30.0, Color::BLUE);
-    add_colored_block(&mut doc, vp, 120.0, 30.0, Color::from_rgba8(255, 255, 0, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        120.0,
+        30.0,
+        Color::from_rgba8(255, 255, 0, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 80, 35, RED, "block 0");
     assert_pixel_color(&mut s, 80, 65, GREEN, "block 1");
@@ -790,7 +832,9 @@ fn border_all_1px_black() {
             d.node_mut(id).style.border_left_width = 1;
             d.node_mut(id).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         },
-    ] { setter(&mut doc, div); }
+    ] {
+        setter(&mut doc, div);
+    }
     let mut s = render(&doc);
     // total box: 102x52, borders at edges
     assert_pixel_color(&mut s, 70, 20, BLACK, "top border");
@@ -972,7 +1016,8 @@ fn border_different_colors() {
     doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::GREEN);
     doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.node_mut(div).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 60, 22, RED, "top red");
     // bottom border: y = 20 + 5(top) + 60(content) = 85..89
@@ -1015,7 +1060,13 @@ fn border_shifts_content_down() {
 fn border_1px_all_sides() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let div = add_colored_block(&mut doc, vp, 60.0, 30.0, Color::from_rgba8(192, 192, 192, 255));
+    let div = add_colored_block(
+        &mut doc,
+        vp,
+        60.0,
+        30.0,
+        Color::from_rgba8(192, 192, 192, 255),
+    );
     let c = Color::BLACK;
     doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_width = 1;
@@ -1067,7 +1118,13 @@ fn border_affects_stacking() {
 fn border_with_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::from_rgba8(192, 192, 192, 255));
+    let div = add_colored_block(
+        &mut doc,
+        vp,
+        80.0,
+        40.0,
+        Color::from_rgba8(192, 192, 192, 255),
+    );
     doc.node_mut(div).style.padding_top = Length::px(10.0);
     doc.node_mut(div).style.padding_left = Length::px(10.0);
     doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
@@ -1163,7 +1220,13 @@ fn border_nested_with_border() {
 fn border_3px_all_red() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(128, 128, 128, 255));
+    let div = add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(128, 128, 128, 255),
+    );
     let c = Color::RED;
     doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_width = 3;
@@ -1935,9 +1998,21 @@ fn collapse_zero_margin_render() {
 fn collapse_different_colors() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let d1 = add_colored_block(&mut doc, vp, 150.0, 60.0, Color::from_rgba8(255, 165, 0, 255));
+    let d1 = add_colored_block(
+        &mut doc,
+        vp,
+        150.0,
+        60.0,
+        Color::from_rgba8(255, 165, 0, 255),
+    );
     doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
-    let d2 = add_colored_block(&mut doc, vp, 150.0, 60.0, Color::from_rgba8(0, 255, 255, 255));
+    let d2 = add_colored_block(
+        &mut doc,
+        vp,
+        150.0,
+        60.0,
+        Color::from_rgba8(0, 255, 255, 255),
+    );
     doc.node_mut(d2).style.margin_top = Length::px(20.0);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 95, 50, ORANGE, "orange block");
@@ -2071,7 +2146,12 @@ fn collapse_all_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     for i in 0..4 {
-        let c = [Color::RED, Color::GREEN, Color::BLUE, Color::from_rgba8(255, 255, 0, 255)][i];
+        let c = [
+            Color::RED,
+            Color::GREEN,
+            Color::BLUE,
+            Color::from_rgba8(255, 255, 0, 255),
+        ][i];
         let d = add_colored_block(&mut doc, vp, 100.0, 40.0, c);
         doc.node_mut(d).style.margin_top = Length::px(10.0);
         doc.node_mut(d).style.margin_bottom = Length::px(10.0);
@@ -2129,7 +2209,12 @@ fn collapse_blocks_not_empty() {
 fn collapse_stacked_four() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let colors = [Color::RED, Color::GREEN, Color::BLUE, Color::from_rgba8(255, 165, 0, 255)];
+    let colors = [
+        Color::RED,
+        Color::GREEN,
+        Color::BLUE,
+        Color::from_rgba8(255, 165, 0, 255),
+    ];
     let expected = [RED, GREEN, BLUE, ORANGE];
     for &c in &colors {
         let d = add_colored_block(&mut doc, vp, 80.0, 40.0, c);
@@ -2199,7 +2284,13 @@ fn bg_black_block() {
 fn bg_custom_gray() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 120.0, 60.0, Color::from_rgba8(128, 128, 128, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        120.0,
+        60.0,
+        Color::from_rgba8(128, 128, 128, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 80, 50, GRAY, "solid gray bg");
 }
@@ -2307,7 +2398,13 @@ fn bg_three_stacked() {
 fn bg_dark_gray() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(64, 64, 64, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(64, 64, 64, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, (64, 64, 64), "dark gray");
 }
@@ -2316,7 +2413,13 @@ fn bg_dark_gray() {
 fn bg_light_gray() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(192, 192, 192, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(192, 192, 192, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, SILVER, "light gray");
 }
@@ -2325,7 +2428,13 @@ fn bg_light_gray() {
 fn bg_yellow() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(255, 255, 0, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(255, 255, 0, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, YELLOW, "yellow");
 }
@@ -2334,7 +2443,13 @@ fn bg_yellow() {
 fn bg_cyan() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(0, 255, 255, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(0, 255, 255, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, CYAN, "cyan");
 }
@@ -2343,7 +2458,13 @@ fn bg_cyan() {
 fn bg_magenta() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(255, 0, 255, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(255, 0, 255, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, MAGENTA, "magenta");
 }
@@ -2379,7 +2500,13 @@ fn bg_viewport_white() {
 fn bg_center_color() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 300.0, 200.0, Color::from_rgba8(255, 165, 0, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        300.0,
+        200.0,
+        Color::from_rgba8(255, 165, 0, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 170, 120, ORANGE, "orange center");
 }
@@ -2403,8 +2530,20 @@ fn bg_multiple_colors() {
     add_colored_block(&mut doc, vp, 100.0, 25.0, Color::RED);
     add_colored_block(&mut doc, vp, 100.0, 25.0, Color::GREEN);
     add_colored_block(&mut doc, vp, 100.0, 25.0, Color::BLUE);
-    add_colored_block(&mut doc, vp, 100.0, 25.0, Color::from_rgba8(255, 255, 0, 255));
-    add_colored_block(&mut doc, vp, 100.0, 25.0, Color::from_rgba8(0, 255, 255, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        25.0,
+        Color::from_rgba8(255, 255, 0, 255),
+    );
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        25.0,
+        Color::from_rgba8(0, 255, 255, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 32, RED, "1st");
     assert_pixel_color(&mut s, 70, 57, GREEN, "2nd");
@@ -2417,7 +2556,13 @@ fn bg_multiple_colors() {
 fn bg_orange() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(255, 165, 0, 255));
+    add_colored_block(
+        &mut doc,
+        vp,
+        100.0,
+        50.0,
+        Color::from_rgba8(255, 165, 0, 255),
+    );
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, ORANGE, "orange bg");
 }
@@ -2586,7 +2731,13 @@ fn combo_nested_centered() {
 fn combo_border_and_bg() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let div = add_colored_block(&mut doc, vp, 150.0, 80.0, Color::from_rgba8(0, 255, 255, 255));
+    let div = add_colored_block(
+        &mut doc,
+        vp,
+        150.0,
+        80.0,
+        Color::from_rgba8(0, 255, 255, 255),
+    );
     let bc = Color::from_rgba8(128, 0, 0, 255);
     doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_width = 4;
@@ -2666,7 +2817,13 @@ fn combo_all_properties() {
 fn combo_wide_block_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let div = add_colored_block(&mut doc, vp, 600.0, 60.0, Color::from_rgba8(192, 192, 192, 255));
+    let div = add_colored_block(
+        &mut doc,
+        vp,
+        600.0,
+        60.0,
+        Color::from_rgba8(192, 192, 192, 255),
+    );
     doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(div).style.border_top_width = 3;
     doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -2808,7 +2965,13 @@ fn combo_content_box_explicit() {
 fn combo_multi_child() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let parent = add_colored_block(&mut doc, vp, 400.0, 300.0, Color::from_rgba8(192, 192, 192, 255));
+    let parent = add_colored_block(
+        &mut doc,
+        vp,
+        400.0,
+        300.0,
+        Color::from_rgba8(192, 192, 192, 255),
+    );
     doc.node_mut(parent).style.padding_top = Length::px(10.0);
     doc.node_mut(parent).style.padding_left = Length::px(10.0);
     add_colored_block(&mut doc, parent, 200.0, 50.0, Color::RED);
@@ -2836,7 +2999,13 @@ fn combo_deep_nesting() {
     let l3 = add_colored_block(&mut doc, l2, 150.0, 100.0, Color::BLUE);
     doc.node_mut(l3).style.padding_top = Length::px(10.0);
     doc.node_mut(l3).style.padding_left = Length::px(10.0);
-    let l4 = add_colored_block(&mut doc, l3, 60.0, 40.0, Color::from_rgba8(255, 255, 0, 255));
+    let l4 = add_colored_block(
+        &mut doc,
+        l3,
+        60.0,
+        40.0,
+        Color::from_rgba8(255, 255, 0, 255),
+    );
     let mut s = render(&doc);
     // l4 at x=20+10+10+10+10=60, y=60
     assert_pixel_color(&mut s, 90, 80, YELLOW, "deepest level");
@@ -2920,7 +3089,13 @@ fn combo_three_level_nesting_borders() {
 fn combo_everything() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
-    let div = add_colored_block(&mut doc, vp, 160.0, 80.0, Color::from_rgba8(0, 255, 255, 255));
+    let div = add_colored_block(
+        &mut doc,
+        vp,
+        160.0,
+        80.0,
+        Color::from_rgba8(0, 255, 255, 255),
+    );
     doc.node_mut(div).style.margin_top = Length::px(20.0);
     doc.node_mut(div).style.margin_left = Length::auto();
     doc.node_mut(div).style.margin_right = Length::auto();
@@ -2947,7 +3122,6 @@ fn combo_everything() {
     // content center at approx x=400, y=40+3+10+40=93
     assert_pixel_color(&mut s, 400, 93, CYAN, "everything combined center");
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════
 // ── Additional tests ────────────────────────────────────────────────
@@ -3045,4 +3219,3 @@ fn padding_nested_double() {
     // innermost at (70, 70), center (90, 80) → BLUE
     assert_pixel_color(&mut s, 90, 80, BLUE, "innermost");
 }
-

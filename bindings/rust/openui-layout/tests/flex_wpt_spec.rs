@@ -470,7 +470,7 @@ fn spec_9_3_multi_line_two_lines() {
     let f = lay(&doc, c, 200, 200);
 
     // Line 1: [120]. Line 2: [100, 80].
-    assert_eq!(f.children[0].offset.top, px(0));  // line 1
+    assert_eq!(f.children[0].offset.top, px(0)); // line 1
     assert_eq!(f.children[1].offset.top, px(30)); // line 2
     assert_eq!(f.children[2].offset.top, px(30)); // line 2
     assert_eq!(f.children[1].offset.left, px(0));
@@ -857,8 +857,7 @@ fn spec_9_5_justify_space_evenly() {
         s.display = Display::Flex;
         s.width = Length::px(300.0);
         s.height = Length::px(100.0);
-        s.justify_content =
-            ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+        s.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
     }
     doc.append_child(doc.root(), c);
     add_child(&mut doc, c, 60, 50);
@@ -1212,7 +1211,7 @@ fn spec_9_4_align_self_override() {
 
     let f = lay(&doc, c, 300, 100);
 
-    assert_eq!(f.children[0].offset.top, px(0));  // flex-start
+    assert_eq!(f.children[0].offset.top, px(0)); // flex-start
     assert_eq!(f.children[1].offset.top, px(60)); // flex-end
 }
 
@@ -1452,8 +1451,7 @@ fn spec_9_6_align_content_space_between() {
         s.width = Length::px(300.0);
         s.height = Length::px(200.0);
         s.flex_wrap = FlexWrap::Wrap;
-        s.align_content =
-            ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
     }
     doc.append_child(doc.root(), c);
     for _ in 0..4 {
@@ -1480,8 +1478,7 @@ fn spec_9_6_align_content_space_around() {
         s.width = Length::px(300.0);
         s.height = Length::px(200.0);
         s.flex_wrap = FlexWrap::Wrap;
-        s.align_content =
-            ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
     }
     doc.append_child(doc.root(), c);
     for _ in 0..4 {
@@ -1508,8 +1505,7 @@ fn spec_9_6_align_content_space_evenly() {
         s.width = Length::px(300.0);
         s.height = Length::px(200.0);
         s.flex_wrap = FlexWrap::Wrap;
-        s.align_content =
-            ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
     }
     doc.append_child(doc.root(), c);
     for _ in 0..4 {
@@ -1536,8 +1532,7 @@ fn spec_9_6_align_content_stretch() {
         s.width = Length::px(300.0);
         s.height = Length::px(200.0);
         s.flex_wrap = FlexWrap::Wrap;
-        s.align_content =
-            ContentAlignment::with_distribution(ContentDistribution::Stretch);
+        s.align_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
     }
     doc.append_child(doc.root(), c);
     for _ in 0..4 {

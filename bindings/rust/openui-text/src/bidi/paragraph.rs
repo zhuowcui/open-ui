@@ -106,8 +106,7 @@ impl BidiParagraph {
         }
 
         let mut runs = Vec::new();
-        let char_byte_offsets: Vec<usize> =
-            self.text.char_indices().map(|(i, _)| i).collect();
+        let char_byte_offsets: Vec<usize> = self.text.char_indices().map(|(i, _)| i).collect();
 
         if char_byte_offsets.is_empty() {
             return Vec::new();
@@ -216,12 +215,7 @@ fn reorder_visual(runs: &mut Vec<BidiRun>) {
         return; // All LTR, no reordering needed
     }
 
-    let min_odd_level = match runs
-        .iter()
-        .map(|r| r.level)
-        .filter(|l| l % 2 == 1)
-        .min()
-    {
+    let min_odd_level = match runs.iter().map(|r| r.level).filter(|l| l % 2 == 1).min() {
         Some(v) => v,
         None => return, // No odd levels → no reordering needed
     };
@@ -297,9 +291,12 @@ mod tests {
 
     #[test]
     fn reorder_visual_pure_ltr() {
-        let mut runs = vec![
-            BidiRun { start: 0, end: 5, level: 0, direction: TextDirection::Ltr },
-        ];
+        let mut runs = vec![BidiRun {
+            start: 0,
+            end: 5,
+            level: 0,
+            direction: TextDirection::Ltr,
+        }];
         reorder_visual(&mut runs);
         assert_eq!(runs.len(), 1);
         assert_eq!(runs[0].start, 0);
@@ -307,9 +304,12 @@ mod tests {
 
     #[test]
     fn reorder_visual_single_rtl() {
-        let mut runs = vec![
-            BidiRun { start: 0, end: 5, level: 1, direction: TextDirection::Rtl },
-        ];
+        let mut runs = vec![BidiRun {
+            start: 0,
+            end: 5,
+            level: 1,
+            direction: TextDirection::Rtl,
+        }];
         reorder_visual(&mut runs);
         assert_eq!(runs.len(), 1);
     }
@@ -317,9 +317,24 @@ mod tests {
     #[test]
     fn reorder_visual_mixed() {
         let mut runs = vec![
-            BidiRun { start: 0, end: 6, level: 0, direction: TextDirection::Ltr },
-            BidiRun { start: 6, end: 10, level: 1, direction: TextDirection::Rtl },
-            BidiRun { start: 10, end: 16, level: 0, direction: TextDirection::Ltr },
+            BidiRun {
+                start: 0,
+                end: 6,
+                level: 0,
+                direction: TextDirection::Ltr,
+            },
+            BidiRun {
+                start: 6,
+                end: 10,
+                level: 1,
+                direction: TextDirection::Rtl,
+            },
+            BidiRun {
+                start: 10,
+                end: 16,
+                level: 0,
+                direction: TextDirection::Ltr,
+            },
         ];
         reorder_visual(&mut runs);
         assert_eq!(runs[0].start, 0);
@@ -343,7 +358,10 @@ mod tests {
         // Byte offset 1 is inside the first 2-byte Hebrew character.
         let level = bidi.level_at_byte(1);
         // Should return the level for the first char (RTL = 1).
-        assert_eq!(level, 1, "Mid-char offset should resolve to first char's level");
+        assert_eq!(
+            level, 1,
+            "Mid-char offset should resolve to first char's level"
+        );
     }
 
     #[test]
@@ -352,9 +370,17 @@ mod tests {
         let text = "AB שלום";
         let bidi = BidiParagraph::new(text, None);
         // Byte offset 0 is 'A' (LTR).
-        assert_eq!(bidi.level_at_byte(0), 0, "LTR char at offset 0 should have level 0");
+        assert_eq!(
+            bidi.level_at_byte(0),
+            0,
+            "LTR char at offset 0 should have level 0"
+        );
         // Byte offset 3 is the start of the Hebrew text (after "AB ").
-        assert_eq!(bidi.level_at_byte(3), 1, "RTL char at offset 3 should have level 1");
+        assert_eq!(
+            bidi.level_at_byte(3),
+            1,
+            "RTL char at offset 3 should have level 1"
+        );
     }
 
     #[test]
@@ -366,7 +392,11 @@ mod tests {
 
         // Levels should cover the entire text (all characters).
         let char_count = text.chars().count();
-        assert_eq!(bidi.levels().len(), char_count, "levels must span entire text");
+        assert_eq!(
+            bidi.levels().len(),
+            char_count,
+            "levels must span entire text"
+        );
 
         // Arabic chars after newline must be RTL (level >= 1, odd).
         // 'H' is char 0 (LTR), '\n' is char 5, Arabic starts at char 6.

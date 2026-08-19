@@ -41,13 +41,21 @@ impl SizingKeyword {
     ///
     /// Returns `None` if the length is a concrete value (fixed, percent) rather
     /// than a sizing keyword.
+    ///
+    /// For `fit-content(X)` functional notation, only the px component is used
+    /// directly. Callers needing percentage resolution should use
+    /// `resolve_size_value` instead.
     pub fn from_length(length: &Length) -> Option<Self> {
         match length.length_type() {
             LengthType::Auto => Some(SizingKeyword::Auto),
             LengthType::MinContent => Some(SizingKeyword::MinContent),
             LengthType::MaxContent => Some(SizingKeyword::MaxContent),
             LengthType::FitContent => {
-                Some(SizingKeyword::FitContent(LayoutUnit::from_f32(length.value())))
+                // Use calc_offset (px part) for the limit; value holds the
+                // percent part which requires a containing-block to resolve.
+                Some(SizingKeyword::FitContent(LayoutUnit::from_f32(
+                    length.calc_offset(),
+                )))
             }
             LengthType::Stretch => Some(SizingKeyword::Stretch),
             _ => None,
@@ -199,9 +207,7 @@ pub fn compute_definite_size(
     is_inline_axis: bool,
 ) -> Option<LayoutUnit> {
     match length.length_type() {
-        LengthType::Fixed => {
-            Some(LayoutUnit::from_f32(length.value()))
-        }
+        LengthType::Fixed => Some(LayoutUnit::from_f32(length.value())),
         LengthType::Percent => {
             if containing_block_size.is_indefinite() {
                 None
@@ -212,21 +218,19 @@ pub fn compute_definite_size(
             }
         }
         LengthType::Stretch => {
-            // Stretch is definite inside flex/grid when the container stretches.
-            let is_stretching = if is_inline_axis {
-                space.stretch_inline_size
+            // CSS Sizing L4: `stretch` fills the available space.
+            // In flex/grid, it stretches when the container tells it to.
+            // In normal flow, it resolves against the containing block
+            // when the available size is definite.
+            let avail = if is_inline_axis {
+                space.available_inline_size
             } else {
-                space.stretch_block_size
+                space.available_block_size
             };
-            if is_stretching {
-                let avail = if is_inline_axis {
-                    space.available_inline_size
-                } else {
-                    space.available_block_size
-                };
-                if avail.is_indefinite() { None } else { Some(avail) }
-            } else {
+            if avail.is_indefinite() {
                 None
+            } else {
+                Some(avail)
             }
         }
         LengthType::Auto => {
@@ -243,7 +247,11 @@ pub fn compute_definite_size(
                 } else {
                     space.available_block_size
                 };
-                if avail.is_indefinite() { None } else { Some(avail) }
+                if avail.is_indefinite() {
+                    None
+                } else {
+                    Some(avail)
+                }
             } else {
                 None
             }
@@ -384,12 +392,23 @@ fn resolve_size_value(
         LengthType::MinContent => intrinsic.min,
         LengthType::MaxContent => intrinsic.max,
         LengthType::FitContent => {
-            let limit = LayoutUnit::from_f32(length.value());
+            // Bare `fit-content` keyword → fit-content(stretch):
+            //   limit = available_size - margins
+            // `fit-content(X)` functional notation → resolve X as length-percentage:
+            //   value = percent part, calc_offset = px part (same encoding as Calculated)
+            let limit = if length.value() == 0.0 && length.calc_offset() == 0.0 {
+                (available_size - margins).clamp_negative_to_zero()
+            } else if !containing_block_size.is_indefinite() {
+                LayoutUnit::from_f32(
+                    length.value() / 100.0 * containing_block_size.to_f32() + length.calc_offset(),
+                )
+            } else {
+                LayoutUnit::from_f32(length.calc_offset())
+            };
+            // fit-content(X) = min(max-content, max(min-content, X))
             limit.clamp(intrinsic.min, intrinsic.max)
         }
-        LengthType::Stretch => {
-            (available_size - margins).clamp_negative_to_zero()
-        }
+        LengthType::Stretch => (available_size - margins).clamp_negative_to_zero(),
         LengthType::Auto | LengthType::None => INDEFINITE_SIZE,
         _ => INDEFINITE_SIZE,
     }
@@ -414,6 +433,18 @@ fn resolve_min_value(
         }
         LengthType::MinContent => intrinsic.min,
         LengthType::MaxContent => intrinsic.max,
+        LengthType::FitContent => {
+            // fit-content for min-size: use max-content as upper bound
+            intrinsic.max
+        }
+        LengthType::Stretch => {
+            // min-height: stretch → available size (clamped to 0)
+            if containing_block_size.is_indefinite() {
+                LayoutUnit::zero()
+            } else {
+                containing_block_size.clamp_negative_to_zero()
+            }
+        }
         // auto / none → 0 (default automatic minimum)
         _ => LayoutUnit::zero(),
     }
@@ -436,6 +467,18 @@ fn resolve_max_value(
         }
         LengthType::MinContent => intrinsic.min,
         LengthType::MaxContent => intrinsic.max,
+        LengthType::FitContent => {
+            // fit-content for max-size: use max-content as upper bound
+            intrinsic.max
+        }
+        LengthType::Stretch => {
+            // max-height: stretch → available size
+            if containing_block_size.is_indefinite() {
+                LayoutUnit::max()
+            } else {
+                containing_block_size.clamp_negative_to_zero()
+            }
+        }
         // none → unconstrained
         LengthType::None => LayoutUnit::max(),
         _ => LayoutUnit::max(),
@@ -452,7 +495,10 @@ mod tests {
 
     #[test]
     fn sizing_keyword_from_length_auto() {
-        assert_eq!(SizingKeyword::from_length(&Length::auto()), Some(SizingKeyword::Auto));
+        assert_eq!(
+            SizingKeyword::from_length(&Length::auto()),
+            Some(SizingKeyword::Auto)
+        );
     }
 
     #[test]
@@ -462,17 +508,26 @@ mod tests {
 
     #[test]
     fn sizing_keyword_from_length_min_content() {
-        assert_eq!(SizingKeyword::from_length(&Length::min_content()), Some(SizingKeyword::MinContent));
+        assert_eq!(
+            SizingKeyword::from_length(&Length::min_content()),
+            Some(SizingKeyword::MinContent)
+        );
     }
 
     #[test]
     fn sizing_keyword_from_length_max_content() {
-        assert_eq!(SizingKeyword::from_length(&Length::max_content()), Some(SizingKeyword::MaxContent));
+        assert_eq!(
+            SizingKeyword::from_length(&Length::max_content()),
+            Some(SizingKeyword::MaxContent)
+        );
     }
 
     #[test]
     fn sizing_keyword_from_length_stretch() {
-        assert_eq!(SizingKeyword::from_length(&Length::stretch()), Some(SizingKeyword::Stretch));
+        assert_eq!(
+            SizingKeyword::from_length(&Length::stretch()),
+            Some(SizingKeyword::Stretch)
+        );
     }
 
     #[test]
@@ -575,12 +630,13 @@ mod tests {
 
     #[test]
     fn aspect_ratio_with_auto_flag_uses_intrinsic() {
-        let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: true };
+        let ar = AspectRatio {
+            ratio: (16.0, 9.0),
+            auto_flag: true,
+        };
         let intrinsic_ratio = Some((4.0, 3.0));
         // auto_flag is true and intrinsic ratio exists → use intrinsic (4:3)
-        let (w, h) = apply_aspect_ratio_with_auto(
-            INDEFINITE_SIZE, lu(120), &ar, intrinsic_ratio,
-        );
+        let (w, h) = apply_aspect_ratio_with_auto(INDEFINITE_SIZE, lu(120), &ar, intrinsic_ratio);
         // width = 120 * 4/3 = 160
         assert_eq!(w, lu(160));
         assert_eq!(h, lu(120));
@@ -588,11 +644,12 @@ mod tests {
 
     #[test]
     fn aspect_ratio_with_auto_flag_no_intrinsic_falls_back() {
-        let ar = AspectRatio { ratio: (16.0, 9.0), auto_flag: true };
+        let ar = AspectRatio {
+            ratio: (16.0, 9.0),
+            auto_flag: true,
+        };
         // No intrinsic ratio → use specified (16:9)
-        let (w, h) = apply_aspect_ratio_with_auto(
-            INDEFINITE_SIZE, lu(90), &ar, None,
-        );
+        let (w, h) = apply_aspect_ratio_with_auto(INDEFINITE_SIZE, lu(90), &ar, None);
         // width = 90 * 16/9 = 160
         assert_eq!(w, lu(160));
         assert_eq!(h, lu(90));

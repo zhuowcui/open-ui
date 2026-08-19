@@ -7,9 +7,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::LayoutUnit;
 use openui_layout::inline::algorithm::inline_layout;
 use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
-use openui_style::{
-    Display, LineHeight, VerticalAlign,
-};
+use openui_style::{Display, LineHeight, VerticalAlign};
 
 // ── Helpers ─────────────────────────────────────────────────────────────
 

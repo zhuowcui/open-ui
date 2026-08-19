@@ -11,7 +11,9 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_style::{ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace};
+use openui_style::{
+    ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace,
+};
 use openui_text::{
     apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
 };
@@ -29,6 +31,59 @@ pub struct InlineItemsData {
     pub items: Vec<InlineItem>,
     /// Styles referenced by items (index into this vec).
     pub styles: Vec<ComputedStyle>,
+    /// Out-of-flow children encountered during inline item collection.
+    /// Each entry records the node ID and the inline item index where
+    /// the OOF child appeared (for static position computation).
+    ///
+    /// CSS 2.1 §10.3.7: The static position of an absolutely-positioned
+    /// element within inline content is where it would have been placed
+    /// in normal flow. We record the position during collection and
+    /// resolve it after line layout.
+    pub oof_children: Vec<OofPlaceholder>,
+    /// Block-level elements found inside inline content (block-in-inline).
+    ///
+    /// CSS 2.2 §9.2.1.1: When a block-level element appears inside inline
+    /// content, the inline formatting context must be split into anonymous
+    /// block boxes around the block element. Each entry records the item
+    /// index where the interruption occurs and the block element's node ID.
+    pub block_in_inline: Vec<BlockInInlineInfo>,
+}
+
+/// Information about a block-level element found inside inline content.
+///
+/// CSS 2.2 §9.2.1.1: A block-level box inside an inline formatting context
+/// causes the inline content to be split into anonymous block boxes.
+///
+/// Blink: Handled by `InlineLayoutAlgorithm` detecting `BlockInInline` items
+/// and creating continuation fragments.
+#[derive(Clone, Debug)]
+pub struct BlockInInlineInfo {
+    /// Index into InlineItemsData::items where the block element appears.
+    pub item_index: usize,
+    /// The node ID of the block-level element.
+    pub node_id: NodeId,
+    /// Nearest positioned inline ancestor, when descendants of the block
+    /// bubble out-of-flow candidates through the interrupted IFC.
+    pub inline_containing_block: Option<NodeId>,
+}
+
+/// Placeholder for an out-of-flow child within inline content.
+///
+/// Records the node ID and the inline item index at which the OOF
+/// child was encountered. During line layout, this index is used to
+/// determine which line the element would have appeared on, giving
+/// the static block position.
+#[derive(Clone, Debug)]
+pub struct OofPlaceholder {
+    /// The node ID of the out-of-flow element.
+    pub node_id: NodeId,
+    /// The index into InlineItemsData::items at the time the OOF child
+    /// was encountered. Items before this index precede the OOF child
+    /// in document order.
+    pub item_index: usize,
+    /// Nearest positioned inline ancestor, when the containing block is an
+    /// inline box rather than the surrounding block container.
+    pub inline_containing_block: Option<NodeId>,
 }
 
 impl InlineItemsData {
@@ -81,7 +136,8 @@ impl InlineItemsData {
         let mut bidi_text = String::with_capacity(self.text.len() + self.items.len() * 2);
         // Maps each byte in bidi_text back to the corresponding byte in self.text.
         // Control characters map to the tag item's text_range position.
-        let mut bidi_to_orig: Vec<usize> = Vec::with_capacity(self.text.len() + self.items.len() * 2);
+        let mut bidi_to_orig: Vec<usize> =
+            Vec::with_capacity(self.text.len() + self.items.len() * 2);
 
         for item in &self.items {
             match item.item_type {
@@ -166,7 +222,11 @@ impl InlineItemsData {
         // first subsequent Text/AtomicInline; CloseTag inherits the level of
         // the last preceding Text/AtomicInline. This ensures tag items don't
         // break contiguous bidi runs during UAX#9 L2 reordering.
-        let base_level = if base_direction == TextDirection::Rtl { 1 } else { 0 };
+        let base_level = if base_direction == TextDirection::Rtl {
+            1
+        } else {
+            0
+        };
         for i in 0..self.items.len() {
             match self.items[i].item_type {
                 InlineItemType::OpenTag => {
@@ -364,31 +424,7 @@ fn derive_runs_from_levels(text: &str, levels: &[u8]) -> Vec<OrigBidiRun> {
 
 /// Convert a `ComputedStyle` to a `FontDescription` for text shaping.
 pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
-    FontDescription {
-        family: style.font_family.clone(),
-        size: style.font_size,
-        specified_size: style.font_size,
-        weight: style.font_weight,
-        stretch: style.font_stretch,
-        style: style.font_style,
-        variant_caps: style.font_variant_caps,
-        variant_ligatures: style.font_variant_ligatures,
-        variant_numeric: style.font_variant_numeric,
-        variant_east_asian: style.font_variant_east_asian,
-        variant_position: style.font_variant_position,
-        variant_alternates: style.font_variant_alternates,
-        letter_spacing: style.letter_spacing,
-        word_spacing: style.word_spacing,
-        locale: style.locale.clone(),
-        font_smoothing: style.font_smoothing,
-        text_rendering: style.text_rendering,
-        feature_settings: style.font_feature_settings.clone(),
-        variation_settings: style.font_variation_settings.clone(),
-        font_synthesis_weight: style.font_synthesis_weight,
-        font_synthesis_style: style.font_synthesis_style,
-        font_optical_sizing: style.font_optical_sizing,
-        orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
-    }
+    FontDescription::from_computed_style(style)
 }
 
 /// Builder that walks the DOM and collects inline items.
@@ -402,6 +438,12 @@ pub struct InlineItemsBuilder<'a> {
     /// `pre` or `pre-wrap` should not cause collapsing of the next node's
     /// leading space.
     last_space_collapsible: bool,
+    /// OOF children encountered during inline item collection.
+    oof_children: Vec<OofPlaceholder>,
+    /// Positioned inline ancestors currently open during the DOM walk.
+    positioned_inline_stack: Vec<NodeId>,
+    /// Block-in-inline interruptions found during collection.
+    block_in_inline: Vec<BlockInInlineInfo>,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
@@ -412,6 +454,9 @@ impl<'a> InlineItemsBuilder<'a> {
             items: Vec::new(),
             styles: Vec::new(),
             last_space_collapsible: false,
+            oof_children: Vec::new(),
+            positioned_inline_stack: Vec::new(),
+            block_in_inline: Vec::new(),
         }
     }
 
@@ -426,6 +471,8 @@ impl<'a> InlineItemsBuilder<'a> {
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
+            oof_children: builder.oof_children,
+            block_in_inline: builder.block_in_inline,
         }
     }
 
@@ -446,6 +493,8 @@ impl<'a> InlineItemsBuilder<'a> {
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
+            oof_children: builder.oof_children,
+            block_in_inline: builder.block_in_inline,
         }
     }
 
@@ -473,9 +522,17 @@ impl<'a> InlineItemsBuilder<'a> {
         if node.style.display == Display::None {
             return;
         }
-        // Out-of-flow children (absolute, fixed, floated) don't participate
-        // in inline layout.
+        // Out-of-flow children (absolute, fixed) record their position for
+        // static position computation but don't participate in inline layout.
+        // Floated children are handled separately by the block layout caller.
         if node.style.is_out_of_flow() {
+            if node.style.position.is_absolutely_positioned() {
+                self.oof_children.push(OofPlaceholder {
+                    node_id: child_id,
+                    item_index: self.items.len(),
+                    inline_containing_block: self.positioned_inline_stack.last().copied(),
+                });
+            }
             return;
         }
 
@@ -486,7 +543,19 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.append_text(child_id, text, &style);
                 }
             }
-            ElementTag::Span => {
+            ElementTag::Break => {
+                let style = node.style.clone();
+                self.append_break(child_id, &style);
+            }
+            ElementTag::Ruby => {
+                // A ruby container is one atomic inline object. Its base and
+                // annotation establish paired internal formatting contexts;
+                // exposing either side as ordinary inline children would put
+                // the annotation beside the base instead of over/under it.
+                let style = node.style.clone();
+                self.append_atomic_inline(child_id, &style);
+            }
+            ElementTag::Span | ElementTag::Style | ElementTag::RubyText => {
                 let display = node.style.display;
                 let style = node.style.clone();
                 if display == Display::InlineBlock
@@ -494,13 +563,38 @@ impl<'a> InlineItemsBuilder<'a> {
                     || display == Display::InlineGrid
                 {
                     self.append_atomic_inline(child_id, &style);
+                } else if display == Display::Block
+                    || display == Display::Flex
+                    || display == Display::Grid
+                    || display == Display::FlowRoot
+                    || display == Display::Table
+                {
+                    // Block-level span inside inline content (block-in-inline).
+                    let style_index = self.intern_style(&style);
+                    let item_index = self.items.len();
+                    self.block_in_inline.push(BlockInInlineInfo {
+                        item_index,
+                        node_id: child_id,
+                        inline_containing_block: self.positioned_inline_stack.last().copied(),
+                    });
+                    self.items.push(InlineItem {
+                        item_type: InlineItemType::BlockInInline,
+                        text_range: 0..0,
+                        node_id: child_id,
+                        shape_result: None,
+                        style_index,
+                        end_collapse_type: CollapseType::NotCollapsible,
+                        is_end_collapsible_newline: false,
+                        bidi_level: 0,
+                        intrinsic_inline_size: None,
+                    });
                 } else {
                     self.enter_inline(child_id, &style);
                     self.collect_children(child_id);
                     self.exit_inline(child_id, &style);
                 }
             }
-            ElementTag::Div => {
+            ElementTag::Div | ElementTag::Html | ElementTag::Body => {
                 let display = node.style.display;
                 if display == Display::Inline {
                     // display:inline on a div creates a normal inline box, not atomic.
@@ -514,6 +608,29 @@ impl<'a> InlineItemsBuilder<'a> {
                 {
                     let style = node.style.clone();
                     self.append_atomic_inline(child_id, &style);
+                } else {
+                    // Block-level element inside inline content (CSS 2.2 §9.2.1.1).
+                    // Record a BlockInInline item so the layout algorithm can split
+                    // the inline formatting context around this block.
+                    let style = node.style.clone();
+                    let style_index = self.intern_style(&style);
+                    let item_index = self.items.len();
+                    self.block_in_inline.push(BlockInInlineInfo {
+                        item_index,
+                        node_id: child_id,
+                        inline_containing_block: self.positioned_inline_stack.last().copied(),
+                    });
+                    self.items.push(InlineItem {
+                        item_type: InlineItemType::BlockInInline,
+                        text_range: 0..0,
+                        node_id: child_id,
+                        shape_result: None,
+                        style_index,
+                        end_collapse_type: CollapseType::NotCollapsible,
+                        is_end_collapsible_newline: false,
+                        bidi_level: 0,
+                        intrinsic_inline_size: None,
+                    });
                 }
             }
             ElementTag::Viewport => {
@@ -641,7 +758,11 @@ impl<'a> InlineItemsBuilder<'a> {
             style_index,
             end_collapse_type: end_collapse,
             is_end_collapsible_newline: is_newline,
-            bidi_level: if style.direction == Direction::Rtl { 1 } else { 0 },
+            bidi_level: if style.direction == Direction::Rtl {
+                1
+            } else {
+                0
+            },
             intrinsic_inline_size: None,
         });
     }
@@ -661,10 +782,17 @@ impl<'a> InlineItemsBuilder<'a> {
             bidi_level: 0,
             intrinsic_inline_size: None,
         });
+        if style.position.is_positioned() {
+            self.positioned_inline_stack.push(node_id);
+        }
     }
 
     /// Handle inline element close (`</span>`).
     fn exit_inline(&mut self, node_id: NodeId, style: &ComputedStyle) {
+        if style.position.is_positioned() {
+            let popped = self.positioned_inline_stack.pop();
+            debug_assert_eq!(popped, Some(node_id));
+        }
         let style_index = self.intern_style(style);
         let offset = self.text.len();
         self.items.push(InlineItem {
@@ -691,8 +819,21 @@ impl<'a> InlineItemsBuilder<'a> {
         self.text.push('\u{FFFC}');
         let end = self.text.len();
 
-        // Compute intrinsic inline size by examining children.
-        let intrinsic = self.compute_intrinsic_inline_size(node_id);
+        // For flex/grid containers, use the proper intrinsic sizing algorithm
+        // which handles aspect-ratio, flex-basis, definite cross sizes, etc.
+        let intrinsic = if self.doc.node(node_id).tag == ElementTag::Ruby {
+            self.compute_ruby_intrinsic_inline_size(node_id)
+        } else if style.display.is_flex() {
+            let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
+            let max_w = sizes.max_content_inline_size.to_f32();
+            if max_w > 0.0 {
+                Some(max_w)
+            } else {
+                self.compute_intrinsic_inline_size(node_id)
+            }
+        } else {
+            self.compute_intrinsic_inline_size(node_id)
+        };
 
         self.items.push(InlineItem {
             item_type: InlineItemType::AtomicInline,
@@ -714,7 +855,73 @@ impl<'a> InlineItemsBuilder<'a> {
     /// Inline children sum widths; block children take the max (they stack vertically).
     fn compute_intrinsic_inline_size(&self, node_id: NodeId) -> Option<f32> {
         let (width, has_content) = self.compute_intrinsic_inline_size_recursive(node_id);
-        if has_content { Some(width) } else { None }
+        if has_content {
+            Some(width)
+        } else {
+            None
+        }
+    }
+
+    /// Ruby's shrink-to-fit inline size is the wider of its base sequence and
+    /// annotation sequence, rather than the sum of both sequences.
+    fn compute_ruby_intrinsic_inline_size(&self, node_id: NodeId) -> Option<f32> {
+        let mut base_width = 0.0f32;
+        let mut annotation_width = 0.0f32;
+        let mut has_content = false;
+
+        for child_id in self.doc.children(node_id) {
+            let child = self.doc.node(child_id);
+            if child.style.display == Display::None
+                || child.style.position.is_absolutely_positioned()
+                || child.style.float != Float::None
+            {
+                continue;
+            }
+
+            let (width, child_has_content) = if child.tag == ElementTag::Text {
+                let text = child.text.as_deref().unwrap_or("");
+                let processed = preprocess_text_for_shaping(text, &child.style);
+                if processed.is_empty() {
+                    (0.0, false)
+                } else {
+                    let font = Font::new(style_to_font_description(&child.style));
+                    let shaper = TextShaper::new();
+                    (
+                        shaper.shape(&processed, &font, TextDirection::Ltr).width(),
+                        true,
+                    )
+                }
+            } else {
+                let bp = child.style.effective_border_left() as f32
+                    + child.style.effective_border_right() as f32
+                    + resolve_margin_or_padding(
+                        &child.style.padding_left,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32()
+                    + resolve_margin_or_padding(
+                        &child.style.padding_right,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32();
+                if child.style.width.length_type() == openui_geometry::LengthType::Fixed {
+                    (child.style.width.value() + bp, true)
+                } else {
+                    let (descendant_width, descendant_has_content) =
+                        self.compute_intrinsic_inline_size_recursive(child_id);
+                    (descendant_width + bp, descendant_has_content || bp > 0.0)
+                }
+            };
+
+            has_content |= child_has_content;
+            if child.tag == ElementTag::RubyText {
+                annotation_width = annotation_width.max(width);
+            } else {
+                base_width += width;
+            }
+        }
+
+        has_content.then_some(base_width.max(annotation_width))
     }
 
     /// Recursive helper: returns (accumulated_width, has_content).
@@ -827,9 +1034,7 @@ impl<'a> InlineItemsBuilder<'a> {
                         max_width = max_width.max(child_total);
                     } else {
                         // Inline-level children flow horizontally → sum widths.
-                        if child_style.width.length_type()
-                            == openui_geometry::LengthType::Fixed
-                        {
+                        if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
                             has_content = true;
                             current_inline_row += child_style.width.value() + child_bp;
                         } else {
@@ -839,7 +1044,11 @@ impl<'a> InlineItemsBuilder<'a> {
                                 has_content = true;
                             }
                             // Always add border+padding; add child_width only if child has content.
-                            let contrib = if child_has_content { child_width + child_bp } else { child_bp };
+                            let contrib = if child_has_content {
+                                child_width + child_bp
+                            } else {
+                                child_bp
+                            };
                             current_inline_row += contrib;
                         }
                     }
@@ -878,7 +1087,10 @@ impl<'a> InlineItemsBuilder<'a> {
 /// Process text according to the CSS `white-space` property.
 /// Returns true if the white-space mode collapses adjacent spaces.
 fn is_collapsible_ws_mode(ws: WhiteSpace) -> bool {
-    matches!(ws, WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine)
+    matches!(
+        ws,
+        WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+    )
 }
 
 /// Apply the same text preprocessing as real inline layout:
@@ -939,22 +1151,27 @@ pub fn process_white_space(text: &str, white_space: WhiteSpace) -> String {
 /// Tab stops are computed from a running advance width. For non-tab characters,
 /// the `char_width` callback returns the actual shaped advance (or falls back
 /// to `space_advance`), so that proportional fonts produce correct tab stops.
-pub fn expand_tabs<F>(
-    text: &str,
-    tab_size: &TabSize,
-    space_advance: f32,
-    char_width: F,
-) -> String
+pub fn expand_tabs<F>(text: &str, tab_size: &TabSize, space_advance: f32, char_width: F) -> String
 where
     F: Fn(char) -> f32,
 {
     if !text.contains('\t') {
         return text.to_string();
     }
-    let space_adv = if space_advance > 0.0 { space_advance } else { 1.0 };
+    let space_adv = if space_advance > 0.0 {
+        space_advance
+    } else {
+        1.0
+    };
     let tab_interval = match *tab_size {
         TabSize::Spaces(n) => (n.max(1) as f32) * space_adv,
-        TabSize::Length(len) => if len > 0.0 { len } else { 8.0 * space_adv },
+        TabSize::Length(len) => {
+            if len > 0.0 {
+                len
+            } else {
+                8.0 * space_adv
+            }
+        }
     };
     let mut result = String::with_capacity(text.len());
     let mut current_advance = 0.0f32;
@@ -1127,11 +1344,11 @@ mod tests {
         let mut data = InlineItemsBuilder::collect(&doc, container);
         data.apply_bidi(TextDirection::Rtl);
 
-        let atomic = data.items.iter().find(|i| i.item_type == InlineItemType::AtomicInline);
-        assert!(
-            atomic.is_some(),
-            "Should have an AtomicInline item"
-        );
+        let atomic = data
+            .items
+            .iter()
+            .find(|i| i.item_type == InlineItemType::AtomicInline);
+        assert!(atomic.is_some(), "Should have an AtomicInline item");
         let atomic = atomic.unwrap();
         assert!(
             atomic.bidi_level % 2 == 1,
@@ -1173,11 +1390,11 @@ mod tests {
         // The text inside the embed+RTL span should have a non-zero bidi level,
         // indicating the embedding was applied. Exact level depends on UAX#9
         // resolution but should be > 0.
-        let text_item = data.items.iter().find(|i| i.item_type == InlineItemType::Text);
-        assert!(
-            text_item.is_some(),
-            "Should have a Text item"
-        );
+        let text_item = data
+            .items
+            .iter()
+            .find(|i| i.item_type == InlineItemType::Text);
+        assert!(text_item.is_some(), "Should have a Text item");
         let text_item = text_item.unwrap();
         assert!(
             text_item.bidi_level > 0,
@@ -1237,14 +1454,26 @@ mod tests {
     fn unicode_bidi_isolate_override_injects_correct_chars() {
         // IsolateOverride + LTR should inject LRI + LRO on open, PDF + PDI on close.
         let open = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Ltr);
-        assert_eq!(open, vec!['\u{2066}', '\u{202D}'], "LTR isolate-override: LRI + LRO");
+        assert_eq!(
+            open,
+            vec!['\u{2066}', '\u{202D}'],
+            "LTR isolate-override: LRI + LRO"
+        );
 
         let close = bidi_close_chars(UnicodeBidi::IsolateOverride);
-        assert_eq!(close, vec!['\u{202C}', '\u{2069}'], "isolate-override close: PDF + PDI");
+        assert_eq!(
+            close,
+            vec!['\u{202C}', '\u{2069}'],
+            "isolate-override close: PDF + PDI"
+        );
 
         // IsolateOverride + RTL should inject RLI + RLO on open.
         let open_rtl = bidi_open_chars(UnicodeBidi::IsolateOverride, Direction::Rtl);
-        assert_eq!(open_rtl, vec!['\u{2067}', '\u{202E}'], "RTL isolate-override: RLI + RLO");
+        assert_eq!(
+            open_rtl,
+            vec!['\u{2067}', '\u{202E}'],
+            "RTL isolate-override: RLI + RLO"
+        );
     }
 
     // ── Issue 4 (R26): intrinsic sizing skips out-of-flow & display:none ──
@@ -1268,7 +1497,8 @@ mod tests {
         doc.append_child(container, hidden);
 
         let hidden_text = doc.create_node(ElementTag::Text);
-        doc.node_mut(hidden_text).text = Some("This is hidden and very long text that should not count".to_string());
+        doc.node_mut(hidden_text).text =
+            Some("This is hidden and very long text that should not count".to_string());
         doc.append_child(hidden, hidden_text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1418,7 +1648,8 @@ mod tests {
         assert!(
             size_upper.unwrap_or(0.0) >= size_normal.unwrap_or(0.0),
             "uppercase text should be at least as wide: upper={:?}, normal={:?}",
-            size_upper, size_normal,
+            size_upper,
+            size_normal,
         );
     }
 

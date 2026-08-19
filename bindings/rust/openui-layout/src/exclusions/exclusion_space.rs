@@ -208,6 +208,238 @@ impl ExclusionSpace {
         }
     }
 
+    /// Find a layout opportunity where a BFC of the given block size fits
+    /// without overlapping any float margin boxes across its full height.
+    ///
+    /// Unlike `find_layout_opportunity` which only checks one shelf level,
+    /// this verifies that sufficient inline space exists at every shelf
+    /// within the BFC's block extent.
+    pub fn find_opportunity_for_bfc(
+        &self,
+        offset: &BfcOffset,
+        available_inline_size: LayoutUnit,
+        min_inline_size: LayoutUnit,
+        bfc_block_size: LayoutUnit,
+    ) -> LayoutOpportunity {
+        let mut block_offset = offset.block_offset;
+
+        // Collect all distinct block offsets where shelves change
+        let mut shelf_edges: Vec<LayoutUnit> = Vec::new();
+        shelf_edges.push(block_offset);
+
+        for f in &self.left_floats {
+            let start = f.rect.block_start_offset();
+            let end = f.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+        for f in &self.right_floats {
+            let start = f.rect.block_start_offset();
+            let end = f.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+
+        shelf_edges.sort_unstable();
+        shelf_edges.dedup();
+
+        // At each candidate shelf, check if the BFC fits for its full height.
+        'outer: for idx in 0..shelf_edges.len() {
+            let shelf_start = shelf_edges[idx];
+            if shelf_start < block_offset {
+                continue;
+            }
+
+            let (left_edge, right_edge) =
+                self.compute_edges_at(shelf_start, offset.line_offset, available_inline_size);
+            let inline_space = right_edge - left_edge;
+
+            if inline_space < min_inline_size {
+                block_offset = shelf_start;
+                continue;
+            }
+
+            // Verify this opportunity holds for the full BFC block extent.
+            // Check every shelf edge within [shelf_start, shelf_start + bfc_block_size).
+            let bfc_block_end = shelf_start + bfc_block_size;
+            let mut narrowest_left = left_edge;
+            let mut narrowest_right = right_edge;
+
+            for &inner_shelf in &shelf_edges[(idx + 1)..] {
+                if inner_shelf >= bfc_block_end {
+                    break;
+                }
+                let (l, r) =
+                    self.compute_edges_at(inner_shelf, offset.line_offset, available_inline_size);
+                if l > narrowest_left {
+                    narrowest_left = l;
+                }
+                if r < narrowest_right {
+                    narrowest_right = r;
+                }
+            }
+
+            let narrowest = narrowest_right - narrowest_left;
+            if narrowest < min_inline_size {
+                // BFC doesn't fit for its full height here; try next shelf.
+                block_offset = shelf_start;
+                continue 'outer;
+            }
+
+            let block_end = self.next_float_start_after(shelf_start);
+            return LayoutOpportunity {
+                rect: BfcRect::new(
+                    BfcOffset::new(narrowest_left, shelf_start),
+                    BfcOffset::new(narrowest_right, block_end),
+                ),
+            };
+        }
+
+        // No floats obstruct — full width available below all floats
+        let max_clear = if self.left_clear_offset > self.right_clear_offset {
+            self.left_clear_offset
+        } else {
+            self.right_clear_offset
+        };
+        let start_block = if max_clear > block_offset {
+            max_clear
+        } else {
+            block_offset
+        };
+
+        LayoutOpportunity {
+            rect: BfcRect::new(
+                BfcOffset::new(offset.line_offset, start_block),
+                BfcOffset::new(
+                    offset.line_offset + available_inline_size,
+                    LayoutUnit::max(),
+                ),
+            ),
+        }
+    }
+
+    /// Find a layout opportunity for a BFC whose block size depends on the
+    /// candidate inline size (for example, auto block-size from aspect-ratio).
+    pub fn find_opportunity_for_auto_sized_bfc<F>(
+        &self,
+        offset: &BfcOffset,
+        available_inline_size: LayoutUnit,
+        min_inline_size: LayoutUnit,
+        block_size_for_inline: F,
+    ) -> LayoutOpportunity
+    where
+        F: Fn(LayoutUnit) -> LayoutUnit,
+    {
+        let mut block_offset = offset.block_offset;
+
+        let mut shelf_edges: Vec<LayoutUnit> = Vec::new();
+        shelf_edges.push(block_offset);
+
+        for f in &self.left_floats {
+            let start = f.rect.block_start_offset();
+            let end = f.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+        for f in &self.right_floats {
+            let start = f.rect.block_start_offset();
+            let end = f.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+
+        shelf_edges.sort_unstable();
+        shelf_edges.dedup();
+
+        'outer: for idx in 0..shelf_edges.len() {
+            let shelf_start = shelf_edges[idx];
+            if shelf_start < block_offset {
+                continue;
+            }
+
+            let (left_edge, right_edge) =
+                self.compute_edges_at(shelf_start, offset.line_offset, available_inline_size);
+            let inline_space = right_edge - left_edge;
+
+            if inline_space < min_inline_size {
+                block_offset = shelf_start;
+                continue;
+            }
+
+            let bfc_block_end = shelf_start + block_size_for_inline(inline_space);
+            let mut narrowest_left = left_edge;
+            let mut narrowest_right = right_edge;
+
+            for &inner_shelf in &shelf_edges[(idx + 1)..] {
+                if inner_shelf >= bfc_block_end {
+                    break;
+                }
+                let (l, r) =
+                    self.compute_edges_at(inner_shelf, offset.line_offset, available_inline_size);
+                if l > narrowest_left {
+                    narrowest_left = l;
+                }
+                if r < narrowest_right {
+                    narrowest_right = r;
+                }
+            }
+
+            let narrowest = narrowest_right - narrowest_left;
+            if narrowest < min_inline_size
+                || narrowest_left > left_edge
+                || narrowest_right < right_edge
+            {
+                block_offset = shelf_start;
+                continue 'outer;
+            }
+
+            let block_end = self.next_float_start_after(shelf_start);
+            return LayoutOpportunity {
+                rect: BfcRect::new(
+                    BfcOffset::new(left_edge, shelf_start),
+                    BfcOffset::new(right_edge, block_end),
+                ),
+            };
+        }
+
+        let max_clear = if self.left_clear_offset > self.right_clear_offset {
+            self.left_clear_offset
+        } else {
+            self.right_clear_offset
+        };
+        let start_block = if max_clear > block_offset {
+            max_clear
+        } else {
+            block_offset
+        };
+
+        LayoutOpportunity {
+            rect: BfcRect::new(
+                BfcOffset::new(offset.line_offset, start_block),
+                BfcOffset::new(
+                    offset.line_offset + available_inline_size,
+                    LayoutUnit::max(),
+                ),
+            ),
+        }
+    }
+
     /// Compute the clearance offset for the given clear type.
     ///
     /// Returns the block offset below which no floats of the specified type exist.
@@ -236,6 +468,25 @@ impl ExclusionSpace {
     #[inline]
     pub fn num_exclusions(&self) -> usize {
         self.left_floats.len() + self.right_floats.len()
+    }
+
+    /// Return all float exclusions (left and right) for propagation through
+    /// non-BFC ancestors. Used to implement CSS 2.1 §9.5: floats participate
+    /// in the nearest BFC's exclusion space, even when nested inside non-BFC
+    /// wrapper blocks.
+    pub fn all_exclusions(&self) -> Vec<ExclusionArea> {
+        let mut result = Vec::with_capacity(self.left_floats.len() + self.right_floats.len());
+        result.extend_from_slice(&self.left_floats);
+        result.extend_from_slice(&self.right_floats);
+        result
+    }
+
+    /// Whether `rect` has positive-area overlap with any float exclusion.
+    pub fn overlaps_float(&self, rect: &BfcRect) -> bool {
+        self.left_floats
+            .iter()
+            .chain(self.right_floats.iter())
+            .any(|float| rects_overlap_with_area(rect, &float.rect))
     }
 
     // ── Internal helpers ─────────────────────────────────────────────
@@ -305,6 +556,15 @@ impl ExclusionSpace {
     }
 }
 
+fn rects_overlap_with_area(a: &BfcRect, b: &BfcRect) -> bool {
+    let line_start = a.line_start_offset().max_of(b.line_start_offset());
+    let line_end = a.line_end_offset().min_of(b.line_end_offset());
+    let block_start = a.block_start_offset().max_of(b.block_start_offset());
+    let block_end = a.block_end_offset().min_of(b.block_end_offset());
+
+    line_end > line_start && block_end > block_start
+}
+
 impl Default for ExclusionSpace {
     fn default() -> Self {
         Self::new()
@@ -349,11 +609,7 @@ mod tests {
     #[test]
     fn empty_space_full_opportunity() {
         let space = ExclusionSpace::new();
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(0)),
-            lu(800),
-            lu(100),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(0)), lu(800), lu(100));
         assert_eq!(opp.rect.line_start_offset(), lu(0));
         assert_eq!(opp.rect.line_end_offset(), lu(800));
         assert_eq!(opp.rect.block_start_offset(), lu(0));
@@ -365,11 +621,7 @@ mod tests {
         // Left float: 0-200px wide, 0-100px tall
         space.add(make_float(ExclusionType::Left, 0, 0, 200, 100));
 
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(0)),
-            lu(800),
-            lu(100),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(0)), lu(800), lu(100));
         // Content starts at line_offset 200 (after the float)
         assert_eq!(opp.rect.line_start_offset(), lu(200));
         assert_eq!(opp.rect.line_end_offset(), lu(800));
@@ -381,11 +633,7 @@ mod tests {
         // Right float: 600-800px wide, 0-100px tall
         space.add(make_float(ExclusionType::Right, 600, 0, 800, 100));
 
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(0)),
-            lu(800),
-            lu(100),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(0)), lu(800), lu(100));
         assert_eq!(opp.rect.line_start_offset(), lu(0));
         assert_eq!(opp.rect.line_end_offset(), lu(600));
     }
@@ -396,11 +644,7 @@ mod tests {
         space.add(make_float(ExclusionType::Left, 0, 0, 200, 100));
         space.add(make_float(ExclusionType::Right, 600, 0, 800, 100));
 
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(0)),
-            lu(800),
-            lu(100),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(0)), lu(800), lu(100));
         assert_eq!(opp.rect.line_start_offset(), lu(200));
         assert_eq!(opp.rect.line_end_offset(), lu(600));
     }
@@ -412,11 +656,7 @@ mod tests {
         space.add(make_float(ExclusionType::Left, 0, 0, 700, 100));
 
         // Need 200px but only 100px available (800 - 700)
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(0)),
-            lu(800),
-            lu(200),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(0)), lu(800), lu(200));
         // Should drop below the float
         assert!(opp.rect.block_start_offset() >= lu(100));
         assert_eq!(opp.inline_size(), lu(800));
@@ -455,11 +695,7 @@ mod tests {
         space.add(make_float(ExclusionType::Left, 0, 0, 200, 50));
 
         // At block_offset 50, float has expired
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(50)),
-            lu(800),
-            lu(100),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(50)), lu(800), lu(100));
         assert_eq!(opp.rect.line_start_offset(), lu(0));
         assert_eq!(opp.rect.line_end_offset(), lu(800));
     }
@@ -471,11 +707,7 @@ mod tests {
         space.add(make_float(ExclusionType::Left, 0, 50, 300, 150));
 
         // At offset 50, both floats active — wider one wins (300px)
-        let opp = space.find_layout_opportunity(
-            &BfcOffset::new(lu(0), lu(50)),
-            lu(800),
-            lu(100),
-        );
+        let opp = space.find_layout_opportunity(&BfcOffset::new(lu(0), lu(50)), lu(800), lu(100));
         assert_eq!(opp.rect.line_start_offset(), lu(300));
     }
 }

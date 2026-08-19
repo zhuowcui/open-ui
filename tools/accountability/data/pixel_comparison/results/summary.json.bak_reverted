@@ -1,0 +1,17 @@
+{
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "errors": 0,
+  "near_miss_aa": 0,
+  "aa_threshold_pct": 0.5,
+  "reference_tests": 0,
+  "reference_tests_pass": 0,
+  "tests": [
+    {
+      "id": "wpt/css_backgrounds/border-bottom-left-radius-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    }
+  ]
+}

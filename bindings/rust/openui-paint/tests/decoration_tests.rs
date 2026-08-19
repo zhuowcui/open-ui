@@ -525,9 +525,8 @@ fn underline_and_line_through_simultaneously() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.text_decoration_line =
+        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,

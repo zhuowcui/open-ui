@@ -26,13 +26,8 @@ fn space(width: i32, height: i32) -> ConstraintSpace {
 
 fn layout_text(texts: &[&str], width: i32) -> Fragment {
     let (doc, block) = make_text_block(texts, width);
-    let sp = ConstraintSpace::for_block_child(
-        lu_i(width),
-        lu_i(600),
-        lu_i(width),
-        lu_i(600),
-        false,
-    );
+    let sp =
+        ConstraintSpace::for_block_child(lu_i(width), lu_i(600), lu_i(width), lu_i(600), false);
     inline_layout(&doc, block, &sp)
 }
 
@@ -167,7 +162,10 @@ fn edge_100_words_many_lines() {
     let long_text = "word ".repeat(100);
     let frag = layout_text(&[&long_text], 200);
     let lines = count_line_boxes(&frag);
-    assert!(lines >= 2, "100 words at 200px should wrap to multiple lines, got {lines}");
+    assert!(
+        lines >= 2,
+        "100 words at 200px should wrap to multiple lines, got {lines}"
+    );
     assert!(
         frag.size.height > LayoutUnit::zero(),
         "100-word paragraph should have positive height"
@@ -193,7 +191,10 @@ fn edge_single_very_long_word() {
     let long_word = "a".repeat(500);
     let frag = layout_text(&[&long_word], 200);
     let lines = count_line_boxes(&frag);
-    assert!(lines >= 1, "Very long word should produce at least 1 line box");
+    assert!(
+        lines >= 1,
+        "Very long word should produce at least 1 line box"
+    );
     assert!(
         frag.size.height > LayoutUnit::zero(),
         "Very long word should have positive height"
@@ -208,7 +209,10 @@ fn edge_single_very_long_word() {
 fn edge_single_char_produces_text_fragment() {
     let frag = layout_text(&["A"], 800);
     let text_count = count_text_fragments(&frag);
-    assert_eq!(text_count, 1, "Single char 'A' should produce exactly 1 text fragment");
+    assert_eq!(
+        text_count, 1,
+        "Single char 'A' should produce exactly 1 text fragment"
+    );
 }
 
 #[test]
@@ -231,7 +235,10 @@ fn edge_unicode_single_char_produces_layout() {
         "Unicode CJK character should produce layout with positive height"
     );
     let text_count = count_text_fragments(&frag);
-    assert!(text_count >= 1, "Unicode char should produce at least 1 text fragment");
+    assert!(
+        text_count >= 1,
+        "Unicode char should produce at least 1 text fragment"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -271,7 +278,10 @@ fn edge_layout_at_width_zero_no_crash() {
     let frag = layout_text(&["Hello world"], 0);
     // Produces at least one line box — text must go somewhere.
     let lines = count_line_boxes(&frag);
-    assert!(lines >= 1, "Zero-width layout should still produce line boxes");
+    assert!(
+        lines >= 1,
+        "Zero-width layout should still produce line boxes"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -444,7 +454,10 @@ fn edge_rtl_text_align_start_offsets_right() {
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
     let frag = inline_layout(&doc, block, &sp);
     let texts = collect_text_fragments(&frag);
-    assert!(!texts.is_empty(), "RTL layout should produce text fragments");
+    assert!(
+        !texts.is_empty(),
+        "RTL layout should produce text fragments"
+    );
     // In RTL with text-align: start, short text should be offset to the right.
     assert!(
         texts[0].offset.left > LayoutUnit::zero(),

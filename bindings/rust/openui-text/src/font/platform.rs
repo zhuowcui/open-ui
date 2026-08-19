@@ -20,6 +20,7 @@ pub struct FontPlatformData {
     sk_font: SkFont,
     size: f32,
     metrics: FontMetrics,
+    synthetic_bold: bool,
     /// Oblique angle in degrees for synthetic oblique synthesis.
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
@@ -40,9 +41,67 @@ impl FontPlatformData {
     /// The angle is stored and can be retrieved via `synthetic_oblique_angle()`
     /// for applying a skew transform during text painting.
     pub fn with_oblique_angle(typeface: Typeface, size: f32, oblique_angle: f32) -> Self {
+        let requested_weight = typeface.font_style().weight();
+        Self::with_synthetic_styles(typeface, size, oblique_angle, requested_weight)
+    }
+
+    /// Create platform data while retaining the requested weight so a family
+    /// without a bold face can synthesize the CSS-selected weight.
+    pub fn with_synthetic_styles(
+        typeface: Typeface,
+        size: f32,
+        oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+    ) -> Self {
+        // Font matching may return a regular face when a family has no bold
+        // member (Ahem is the canonical example). CSS font synthesis requires
+        // a synthetic bold face in that case; SkFont does not infer it from
+        // the requested FontStyle after typeface matching.
+        let synthetic_bold = requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
+            && typeface.font_style().weight() < skia_safe::font_style::Weight::SEMI_BOLD;
         let mut sk_font = SkFont::from_typeface(&typeface, size);
-        sk_font.set_subpixel(true);
-        sk_font.set_hinting(FontHinting::Slight);
+        sk_font.set_embolden(synthetic_bold);
+        // SP14 parity experiment: allow overriding rasterization settings via env
+        // vars so we can match headless Chromium without recompiling per combo.
+        // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
+        // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
+        let subpixel = std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
+        sk_font.set_subpixel(subpixel);
+        let requested_hinting = std::env::var("OPENUI_HINTING").ok();
+        let requested_edging = std::env::var("OPENUI_EDGING").ok();
+        let is_ahem = typeface.family_name().eq_ignore_ascii_case("Ahem");
+        let hinting = match requested_hinting.as_deref() {
+            // The deterministic Ahem profile keeps the square-glyph face
+            // completely unhinted. Chromium still grid-fits glyphs supplied
+            // by a fallback face (for example arrows absent from Ahem) before
+            // applying the same aliased coverage threshold. Skia's direct
+            // unhinted fallback path otherwise expands one-pixel strokes.
+            Some("none") if requested_edging.as_deref() == Some("alias") && !is_ahem => {
+                FontHinting::Slight
+            }
+            Some("none") => FontHinting::None,
+            Some("normal") => FontHinting::Normal,
+            Some("full") => FontHinting::Full,
+            _ => FontHinting::Slight,
+        };
+        sk_font.set_hinting(hinting);
+        sk_font.set_linear_metrics(subpixel);
+        sk_font.set_embedded_bitmaps(true);
+        match requested_edging.as_deref() {
+            Some("alias") => {
+                sk_font.set_edging(skia_safe::font::Edging::Alias);
+            }
+            Some("subpixel") => {
+                sk_font.set_edging(skia_safe::font::Edging::SubpixelAntiAlias);
+            }
+            Some("aa") => {
+                sk_font.set_edging(skia_safe::font::Edging::AntiAlias);
+            }
+            _ => {}
+        }
+        if std::env::var("OPENUI_AUTOHINT").ok().as_deref() == Some("1") {
+            sk_font.set_force_auto_hinting(true);
+        }
 
         // Apply synthetic oblique via skew if angle is non-zero.
         if oblique_angle != 0.0 {
@@ -57,6 +116,7 @@ impl FontPlatformData {
             sk_font,
             size,
             metrics,
+            synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
         }
     }
@@ -85,6 +145,12 @@ impl FontPlatformData {
         &self.metrics
     }
 
+    /// Whether CSS requested a bold weight that the selected family lacked.
+    #[inline]
+    pub fn is_synthetic_bold(&self) -> bool {
+        self.synthetic_bold
+    }
+
     /// The oblique angle in degrees used for synthetic oblique.
     /// Returns 0.0 for normal and italic styles.
     #[inline]
@@ -98,11 +164,7 @@ impl FontPlatformData {
     /// - Skia's ascent is NEGATIVE (distance above baseline as negative Y).
     ///   We store it as POSITIVE.
     /// - underline/strikeout values use Optional accessors in skia-safe.
-    fn convert_metrics(
-        sk: &SkFontMetrics,
-        typeface: &Typeface,
-        sk_font: &SkFont,
-    ) -> FontMetrics {
+    fn convert_metrics(sk: &SkFontMetrics, typeface: &Typeface, sk_font: &SkFont) -> FontMetrics {
         let ascent = -sk.ascent; // Make positive
         let descent = sk.descent; // Already positive in Skia
         let line_gap = sk.leading;
@@ -114,10 +176,7 @@ impl FontPlatformData {
         };
 
         // Units per em from the font's head table
-        let units_per_em = typeface
-            .units_per_em()
-            .map(|u| u as u16)
-            .unwrap_or(1000);
+        let units_per_em = typeface.units_per_em().map(|u| u as u16).unwrap_or(1000);
 
         FontMetrics {
             ascent,
@@ -160,15 +219,15 @@ impl FontPlatformData {
     /// Mapping based on CSS Fonts spec § 3.3.
     fn stretch_to_sk_width(stretch: f32) -> i32 {
         match stretch.round() as i32 {
-            ..=62 => 1,      // UltraCondensed (50%)
-            63..=74 => 2,    // ExtraCondensed (62.5%)
-            75..=86 => 3,    // Condensed (75%)
-            87..=93 => 4,    // SemiCondensed (87.5%)
-            94..=106 => 5,   // Normal (100%)
-            107..=118 => 6,  // SemiExpanded (112.5%)
-            119..=137 => 7,  // Expanded (125%)
-            138..=174 => 8,  // ExtraExpanded (150%)
-            _ => 9,          // UltraExpanded (200%)
+            ..=62 => 1,     // UltraCondensed (50%)
+            63..=74 => 2,   // ExtraCondensed (62.5%)
+            75..=86 => 3,   // Condensed (75%)
+            87..=93 => 4,   // SemiCondensed (87.5%)
+            94..=106 => 5,  // Normal (100%)
+            107..=118 => 6, // SemiExpanded (112.5%)
+            119..=137 => 7, // Expanded (125%)
+            138..=174 => 8, // ExtraExpanded (150%)
+            _ => 9,         // UltraExpanded (200%)
         }
     }
 }
@@ -199,15 +258,15 @@ mod tests {
 
     #[test]
     fn stretch_keyword_values_map_correctly() {
-        assert_eq!(FontPlatformData::stretch_to_sk_width(50.0), 1);   // UltraCondensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(62.5), 2);   // ExtraCondensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(75.0), 3);   // Condensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4);   // SemiCondensed
-        assert_eq!(FontPlatformData::stretch_to_sk_width(100.0), 5);  // Normal
-        assert_eq!(FontPlatformData::stretch_to_sk_width(112.5), 6);  // SemiExpanded
-        assert_eq!(FontPlatformData::stretch_to_sk_width(125.0), 7);  // Expanded
-        assert_eq!(FontPlatformData::stretch_to_sk_width(150.0), 8);  // ExtraExpanded
-        assert_eq!(FontPlatformData::stretch_to_sk_width(200.0), 9);  // UltraExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(50.0), 1); // UltraCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(62.5), 2); // ExtraCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(75.0), 3); // Condensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(87.5), 4); // SemiCondensed
+        assert_eq!(FontPlatformData::stretch_to_sk_width(100.0), 5); // Normal
+        assert_eq!(FontPlatformData::stretch_to_sk_width(112.5), 6); // SemiExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(125.0), 7); // Expanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(150.0), 8); // ExtraExpanded
+        assert_eq!(FontPlatformData::stretch_to_sk_width(200.0), 9); // UltraExpanded
     }
 
     #[test]

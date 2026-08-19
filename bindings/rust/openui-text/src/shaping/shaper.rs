@@ -12,8 +12,8 @@ use skia_safe::{
 };
 use unicode_script::{Script, UnicodeScript};
 
-use crate::font::{Font, FontPlatformData};
 use crate::font::features::{collect_font_features, to_skia_features};
+use crate::font::{Font, FontPlatformData};
 
 use super::shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
 
@@ -137,8 +137,7 @@ impl ShapeCollector {
                     collected.positions[i + 1].x - collected.positions[i].x
                 } else {
                     // Last glyph: use the run's total advance minus position.
-                    collected.advance.x - collected.positions[i].x
-                        + collected.positions[0].x
+                    collected.advance.x - collected.positions[i].x + collected.positions[0].x
                 };
                 run_advances.push(advance);
 
@@ -334,7 +333,11 @@ impl ShapeCollector {
     ///   NOT safe because reshaping would change glyph forms (joining,
     ///   reordering, contextual substitutions). Only word/space boundaries
     ///   are considered safe.
-    fn compute_safe_breaks(runs: &[CollectedRun], chars: &[char], byte_to_char: &[usize]) -> Vec<bool> {
+    fn compute_safe_breaks(
+        runs: &[CollectedRun],
+        chars: &[char],
+        byte_to_char: &[usize],
+    ) -> Vec<bool> {
         let mut safe = vec![false; chars.len()];
         if safe.is_empty() {
             return safe;
@@ -477,15 +480,13 @@ impl TextShaper {
                 .shape(text, sk_font, left_to_right, f32::INFINITY, &mut collector);
         } else {
             // Feature-aware path: set up run iterators for the full API.
-            let mut font_iter =
-                shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
+            let mut font_iter = shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
             let bidi_level = if left_to_right { 0 } else { 1 };
             #[allow(deprecated)]
             let mut bidi_iter =
                 shaper::Shaper::new_trivial_bidi_run_iterator(bidi_level, text.len());
             #[allow(deprecated)]
-            let mut script_iter =
-                shaper::Shaper::new_trivial_script_run_iterator(0, text.len());
+            let mut script_iter = shaper::Shaper::new_trivial_script_run_iterator(0, text.len());
             let mut lang_iter =
                 shaper::Shaper::new_trivial_language_run_iterator("und", text.len());
 
@@ -593,10 +594,7 @@ impl TextShaper {
         // For each missing segment, try fallback fonts (skip index 0 = primary).
         for (seg_char_start, seg_char_end) in &merged {
             // Extract the substring for this segment.
-            let byte_start: usize = chars[..*seg_char_start]
-                .iter()
-                .map(|c| c.len_utf8())
-                .sum();
+            let byte_start: usize = chars[..*seg_char_start].iter().map(|c| c.len_utf8()).sum();
             let byte_end: usize = byte_start
                 + chars[*seg_char_start..*seg_char_end]
                     .iter()
@@ -633,8 +631,7 @@ impl TextShaper {
                 let fb_data_clone = Arc::clone(fb_data);
                 let segment_text_owned = segment_text.to_string();
                 let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    let mut fb_collector =
-                        ShapeCollector::new(fb_data_clone, direction);
+                    let mut fb_collector = ShapeCollector::new(fb_data_clone, direction);
                     self.shaper.shape(
                         &segment_text_owned,
                         fb_sk_font,
@@ -707,7 +704,8 @@ impl TextShaper {
                                             (0..r.num_glyphs)
                                                 .find(|&gi| r.clusters[gi] == local)
                                                 .map(|gi| r.glyphs[gi])
-                                                .unwrap_or(0) == 0
+                                                .unwrap_or(0)
+                                                == 0
                                         } else {
                                             r.glyphs.get(local).copied() == Some(0)
                                         }
@@ -759,8 +757,7 @@ impl TextShaper {
                     let fb_data_clone = Arc::clone(&fb_data);
                     let segment_text_owned = segment_text.to_string();
                     let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                        let mut fb_collector =
-                            ShapeCollector::new(fb_data_clone, direction);
+                        let mut fb_collector = ShapeCollector::new(fb_data_clone, direction);
                         self.shaper.shape(
                             &segment_text_owned,
                             fb_sk_font,
@@ -928,9 +925,17 @@ impl TextShaper {
                     let glyph_is_notdef = if r.num_glyphs == r.num_characters {
                         if !r.clusters.is_empty() {
                             (0..r.num_glyphs)
-                                .find(|&gi| Self::char_in_cluster_span(&r.clusters, gi, r.num_characters, local))
+                                .find(|&gi| {
+                                    Self::char_in_cluster_span(
+                                        &r.clusters,
+                                        gi,
+                                        r.num_characters,
+                                        local,
+                                    )
+                                })
                                 .map(|gi| r.glyphs[gi])
-                                .unwrap_or(0) == 0
+                                .unwrap_or(0)
+                                == 0
                         } else {
                             r.glyphs.get(local).copied() == Some(0)
                         }
@@ -963,7 +968,14 @@ impl TextShaper {
                 let glyph_ok = if r.num_glyphs == r.num_characters {
                     if !r.clusters.is_empty() {
                         (0..r.num_glyphs)
-                            .find(|&gi| Self::char_in_cluster_span(&r.clusters, gi, r.num_characters, ci_local))
+                            .find(|&gi| {
+                                Self::char_in_cluster_span(
+                                    &r.clusters,
+                                    gi,
+                                    r.num_characters,
+                                    ci_local,
+                                )
+                            })
                             .map(|gi| r.glyphs[gi] != 0)
                             .unwrap_or(false)
                     } else {
@@ -994,7 +1006,8 @@ impl TextShaper {
                 let sub_start = seg_char_start + start;
                 let sub_end = seg_char_start + i;
                 // Build a sub-result from the fallback covering [sub_start..sub_end].
-                let sub_fb = Self::extract_sub_result(fb_result, seg_char_start, sub_start, sub_end);
+                let sub_fb =
+                    Self::extract_sub_result(fb_result, seg_char_start, sub_start, sub_end);
                 Self::splice_fallback_runs(
                     result,
                     sub_start,
@@ -1012,7 +1025,12 @@ impl TextShaper {
     /// A glyph at cluster `c` covers characters [c, next_distinct_cluster),
     /// where next_distinct_cluster is the smallest value > c in the cluster
     /// array, or `num_characters` if none exists.
-    fn char_in_cluster_span(clusters: &[usize], gi: usize, num_characters: usize, local: usize) -> bool {
+    fn char_in_cluster_span(
+        clusters: &[usize],
+        gi: usize,
+        num_characters: usize,
+        local: usize,
+    ) -> bool {
         let base = clusters[gi];
         if local < base {
             return false;
@@ -1152,9 +1170,7 @@ impl TextShaper {
                     for i in 1..run.clusters.len() {
                         if run.clusters[i] != run.clusters[i - 1] {
                             let char_idx = run.start_index + run.clusters[i];
-                            if char_idx < num_characters
-                                && !is_complex_script(chars[char_idx])
-                            {
+                            if char_idx < num_characters && !is_complex_script(chars[char_idx]) {
                                 safe_to_break[char_idx] = true;
                             }
                         }
@@ -1322,10 +1338,8 @@ impl TextShaper {
                             .collect();
                         glyph_by_cluster.sort_by_key(|(c, _)| *c);
 
-                        let mut unique_clusters: Vec<usize> = glyph_by_cluster
-                            .iter()
-                            .map(|(c, _)| *c)
-                            .collect();
+                        let mut unique_clusters: Vec<usize> =
+                            glyph_by_cluster.iter().map(|(c, _)| *c).collect();
                         unique_clusters.dedup();
 
                         for (uc_idx, &uc) in unique_clusters.iter().enumerate() {
@@ -1529,7 +1543,10 @@ mod tests {
         let chars: Vec<char> = text.chars().collect();
 
         // Find the space character index.
-        let space_idx = chars.iter().position(|&c| c == ' ').expect("should have space");
+        let space_idx = chars
+            .iter()
+            .position(|&c| c == ' ')
+            .expect("should have space");
         assert!(
             result.character_data[space_idx].safe_to_break_before,
             "Space should be safe_to_break_before"
@@ -1672,7 +1689,8 @@ mod tests {
         let font_data = {
             let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
             let desc = FontDescription::default();
-            cache.get_font_platform_data("sans-serif", &desc)
+            cache
+                .get_font_platform_data("sans-serif", &desc)
                 .unwrap_or_else(|| cache.get_font_platform_data("serif", &desc).unwrap())
         };
         let runs = vec![ShapeResultRun {
@@ -1706,7 +1724,8 @@ mod tests {
         let font_data = {
             let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
             let desc = FontDescription::default();
-            cache.get_font_platform_data("sans-serif", &desc)
+            cache
+                .get_font_platform_data("sans-serif", &desc)
                 .unwrap_or_else(|| cache.get_font_platform_data("serif", &desc).unwrap())
         };
         let runs = vec![ShapeResultRun {
@@ -1745,7 +1764,8 @@ mod tests {
         let font_data = {
             let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
             let desc = FontDescription::default();
-            cache.get_font_platform_data("sans-serif", &desc)
+            cache
+                .get_font_platform_data("sans-serif", &desc)
                 .unwrap_or_else(|| cache.get_font_platform_data("serif", &desc).unwrap())
         };
         let runs = vec![ShapeResultRun {

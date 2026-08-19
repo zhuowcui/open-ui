@@ -7,7 +7,7 @@ description = "Font resolution, metrics, and text shaping — extracted from Bli
 [dependencies]
 openui-style = { path = "../openui-style" }
 openui-geometry = { path = "../openui-geometry" }
-skia-safe = { version = "0.82", features = ["textlayout"] }
+skia-safe = { version = "0.94", features = ["textlayout"] }
 unicode-script = "0.5"
 unicode-bidi = "0.3"
 unicode-segmentation = "1.10"
