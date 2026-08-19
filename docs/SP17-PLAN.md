@@ -2,14 +2,14 @@
 
 ## Status
 
-SP17 is in kickoff/planning on `agent/sp17-advanced-text`, branched from
-`main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19.
-No production or generated WPT code has changed yet.
+SP17 W0A is complete on `agent/sp17-advanced-text`, branched from `main` commit
+`2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19. No production or
+generated WPT builder code has changed yet.
 
-The committed starting evidence passes the full local 7/7 audit, including PNG
-proof. A new no-resume WPT run from this branch is still required before the
-SP17 ledgers are frozen; the existing committed summary is evidence of the
-landed state, not a substitute for that run.
+The branch has reproduced the complete suite without resume, frozen the kickoff
+ledgers and 19-ID pixel evidence, restored the authoritative full summary, and
+passed the full local 7/7 audit including PNG proof. W0B transactional CSS and
+porter probing is the next implementation boundary.
 
 | Starting metric | Value |
 |---|---:|
@@ -46,18 +46,23 @@ pool: 62 are `css_flexbox`, 28 are `css_sizing`, and all stop directly on
 `writing-mode` (67 style-block, 23 inline). They are the first functional
 implementation cohort after the parser and ledgers are trustworthy.
 
-Freeze four sorted immutable artifacts after the new no-resume baseline run
-and transactional probe:
+W0A freezes four sorted immutable kickoff artifacts:
 
 1. `sp17_baseline_exact.json`: every exact starting ID, expected 3,267;
 2. `sp17_writing_mode_inventory.json`: all original 842 rows and their kickoff
    state, Chromium path, first rejection, and complete owner set;
-3. `sp17_actionable_targets.json`: the 19 starting runnable IDs plus every
-   original inventory row that becomes runnable through transactional probing;
-4. `sp17_residual_dispositions.json`: every still-unported original row with
-   Chromium path, actual first rejection, and complete non-SP17 owners.
+3. `sp17_initial_runnable_targets.json`: the sorted 19-ID kickoff manifest; and
+4. `sp17_initial_runnable_results.json`: the exact per-pixel outcome and pinned
+   runner provenance from its no-resume focused run.
 
-The actionable and residual IDs must be disjoint and cover exactly the frozen
+W0B will add `sp17_actionable_targets.json` and
+`sp17_residual_dispositions.json` after transactional probing. The actionable
+ledger will contain the 19 starting runnable IDs plus every original inventory
+row made runnable by that probe; the residual ledger will preserve every still-
+unported row's Chromium path, actual first rejection, and complete non-SP17
+owners.
+
+The future actionable and residual IDs must be disjoint and cover exactly the frozen
 842-row inventory. Actionable does not mean guaranteed exact: after SP17
 behavior is corrected, a runnable row may remain a functional failure only if
 its remaining pixels have specific, detector-backed non-SP17 owners.
@@ -101,6 +106,8 @@ The production gaps determine the implementation order:
 ## Execution plan
 
 ### W0A — Reproduce and freeze the starting evidence
+
+Completed on 2026-08-19; see the progress log and immutable artifacts below.
 
 1. Build `pixel-compare` in release mode in the pinned environment.
 2. Run the complete `wpt/` suite without resume, then run the unflagged 7/7
@@ -256,3 +263,34 @@ render/diff error.
 - Next command sequence: release-build `pixel-compare`, run the complete WPT
   suite without resume, audit it, capture the 19-ID initial evidence, then
   implement the SP17 ledger generator/tests before changing porter or layout.
+
+### 2026-08-19 — W0A evidence frozen
+
+- Built release `pixel-compare` successfully, then ran all 3,566 WPTs without
+  resume in the pinned Chromium 147 / 800x600 environment. The result exactly
+  reproduced 3,267 passes, 299 functional failures, and zero errors.
+- Ran the unflagged audit after the full suite and again after focused evidence
+  capture/restoration. Both runs passed 7/7 and verified PNG proof for all 3,267
+  exact IDs. The restored full `summary.json` SHA-256 is
+  `67d50eb1ee54fcf7121df5c1f186d2468a24b2f0310303606e0a689e4d2581a4`.
+- Ran the sorted 19-ID initial manifest without resume: 0 pass, 19 functional
+  failures, zero errors. Every mismatch reproduced the full-run value, from the
+  16-pixel `flex-basis-011-ref` result through the 15,000-pixel flex-wrap cases.
+- Added `generate_sp17_closure.py` with generate, check, and focused-capture
+  modes. It freezes 3,267 baseline IDs, all 842 original owner rows, the 19-ID
+  manifest, and structured per-pixel evidence. It also pins every historical
+  SP13-R/SP14/SP15/SP16 ledger by SHA-256 and rejects inventory/count drift.
+- Added six focused tests for ledger shape and disjointness, the 19/823 and
+  337/3 partitions, exact initial pixel evidence, byte-idempotent generation,
+  and historical-ledger compatibility. Hosted accountability CI now runs the
+  tests and the SP17 generator check.
+- Frozen artifact SHA-256 values:
+  - baseline: `59a514d3b76b83ecc44efd43dda5a16ec2a0203803849407f3dce035d9e9fc20`;
+  - inventory: `b72a0b0b4e74f4c1cb912ab65642dd6f5bef76a570f0a9b219f68729de6d10ad`;
+  - initial targets: `f82d99182bf276ddd524b2894e2de6b21e8f1f5bf7d8f3bd984c8ef0e2c040c4`;
+  - initial results: `1fcc02a0e742df04cec80e06750f74e6859ef11552d5488300c590095432d00d`.
+- W0B starts in `tools/wpt/port_wpt.py`: add transactional parsing and cascade
+  tests before changing rejection policy, then probe exactly the frozen 340
+  direct-property rows into temporary output. Do not alter committed builders,
+  mapping ownership, or the detector until the probe produces a reviewed
+  disjoint actionable/residual disposition.

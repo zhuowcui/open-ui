@@ -21,7 +21,7 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (after SP13-R closure):
+Latest authoritative accountability snapshot (reproduced at SP17 W0A):
 
 | Metric | Value |
 |---|---:|
@@ -39,8 +39,23 @@ Latest authoritative accountability snapshot (after SP13-R closure):
 | Unported `sp13_multicol` residuals | 1018 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume. All 2823 frozen SP13-R baseline
+The full `wpt/` run was executed without resume on 2026-08-19. All 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets remain exact.
+
+## SP17 W0A Kickoff Evidence
+
+SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
+exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
+kickoff IDs, and their exact per-pixel results. The inventory remains 19
+runnable plus 823 unported; 337 rows stop directly on `writing-mode`, three on
+`unicode-bidi`, and 483 first stop elsewhere. Historical SP13-R through SP16
+ledgers are byte-pinned and unchanged.
+
+The 19-ID no-resume run produced 19 expected functional failures and zero
+errors. The authoritative 3,566-ID full summary was restored afterward and the
+unflagged audit passes 7/7. No production layout, paint, porter, generated WPT,
+mapping, or detector behavior changed in W0A. See `docs/SP17-PLAN.md` and the
+four `tools/accountability/data/wpt_ported/sp17_*` kickoff artifacts.
 
 ## SP13-R Closure
 
@@ -142,12 +157,12 @@ Top unported categories:
 
 ## Recommended Next Work
 
-After PR #1 is green and merged, start SP17 advanced text from fresh `main`.
-The handoff freezes the expected 3,267-pass starting state, enumerates all 19
-runnable writing-mode rows, and accounts for the 823 unported writing-mode rows,
-including the 337 that currently stop directly on porter writing-mode rejection.
-Follow `docs/SP17-HANDOFF.md` and preserve the exact-pixel standard, frozen
-SP13-R baseline and target ledgers, and upstream-evidence ownership rules.
+Continue SP17 with W0B transactional CSS and porter probing. Add focused parser,
+cascade, inheritance, logical/physical conflict, and idempotence tests before
+changing rejection policy. Then probe the frozen 337 direct `writing-mode` and
+three direct `unicode-bidi` rows into temporary output and freeze the reviewed
+actionable/residual partition. Do not batch-regenerate builders or retire the
+detector during the probe. Follow `docs/SP17-PLAN.md` for the exact boundary.
 
 Hosted pre-merge checks and the separate pinned Chromium parity gate are
 documented in `docs/CI.md`.
@@ -173,6 +188,7 @@ Regenerate tracking:
 ```bash
 python3 tools/accountability/generate_wpt_mapping.py
 python3 tools/accountability/generate_sp12_5_csv.py
+python3 tools/wpt/generate_sp17_closure.py --check
 ```
 
 Audit:

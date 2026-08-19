@@ -13,7 +13,7 @@ repository permissions.
 |---|---|
 | `native-build (Debug + Release)` | Install native tools once, then generate, build, and run `hello_world` in both configurations. |
 | `rust-parity` | Check Rust formatting and run the style, text, layout, and paint test suites. |
-| `python-accountability` | Run the SP13-R through SP16 closure/porter tests, verify the immutable SP13-R ledgers, and validate committed exact-result metadata plus accountability checks 2–7. |
+| `python-accountability` | Run the SP13-R through SP17 W0A closure/porter tests, verify the immutable SP13-R and SP17 kickoff ledgers, and validate committed exact-result metadata plus accountability checks 2–7. |
 | `clang-format` | Require every tracked C/C++ source under `src/`, `include/`, and `examples/` to match clang-format 18. |
 | `gn-format` | Require every tracked `.gn` and `.gni` file to pass `gn format --dry-run`. |
 
@@ -76,8 +76,10 @@ python3 -m unittest \
   tools.wpt.test_sp13r_multicol_closure \
   tools.wpt.test_sp14_text_port \
   tools.wpt.test_sp15_closure \
-  tools.wpt.test_sp16_closure
+  tools.wpt.test_sp16_closure \
+  tools.wpt.test_sp17_closure
 python3 tools/wpt/generate_sp13r_multicol_closure.py --check
+python3 tools/wpt/generate_sp17_closure.py --check
 python3 tools/accountability/audit.py
 ```
 

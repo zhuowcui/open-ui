@@ -20,8 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
+| SP17 | Advanced Text + Writing Modes | 842 owner rows | W0A | 🟡 Active; kickoff evidence frozen |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 2,823 runnable passes, 0 errors, 0 `sp12_layout_bug` rows, and 0 retired SP16 font-metric owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 3,267 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, and 842 frozen SP17 writing-mode owner rows.**
 
 ---
 
@@ -409,3 +410,23 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   and executed on the preceding head. The native gate now provisions once and
   runs Debug plus Release sequentially in one job, preserving both builds while
   removing the duplicate network failure surface.
+
+### SP17 W0A: writing-mode kickoff evidence frozen
+
+- Started `agent/sp17-advanced-text` from landed `main` commit `2c1fe78c` and
+  committed the execution plan before changing implementation code.
+- Release-built `pixel-compare`, ran the complete 3,566-ID WPT suite without
+  resume, and reproduced **3,267 pass / 299 fail / 0 errors** exactly. The
+  unflagged local audit passes all 7 checks with PNG verification.
+- Froze the complete 3,267-ID exact baseline and the original 842-row
+  `needs_writing_mode` inventory: 19 runnable, 823 unported, 337 direct
+  `writing-mode` rejections, three direct `unicode-bidi` rejections, and 483
+  rows first blocked elsewhere.
+- Ran the exact 19-ID kickoff manifest without resume and retained structured
+  evidence for all 19 functional failures and zero errors; restored the full
+  summary before re-running audit.
+- Added generation/check/capture tooling, six focused tests, SHA-256 guards for
+  every historical SP13-R through SP16 ledger, and hosted CI coverage.
+- Next: W0B transactional SP17 CSS handling and a temporary 340-row porter
+  probe. No production behavior, committed WPT builder, mapping owner, or
+  detector changed in W0A.
