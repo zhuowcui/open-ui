@@ -395,3 +395,7 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   snapshots from Chromium source commit `09d377d9438dc95267369f74a073acd81bdde38f`;
   the affected SP13-R and SP16 idempotence tests pass in isolation without a
   sibling checkout.
+- The same run proved Ubuntu Clang 18 rejects Chromium's newer
+  `-Wno-gcc-install-dir-libstdcxx` switch under `-Werror`. The compiler config
+  now adds that switch only for `chromium_src` hermetic builds, preserving ABI
+  behavior while making the standalone native smoke target portable.

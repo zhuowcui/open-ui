@@ -23,6 +23,11 @@ Do not replace it with a shallow `depot_tools` clone: the wrapper requires a
 bootstrapped Chromium checkout and was the cause of the original build and GN
 format failures.
 
+The standalone compiler configuration deliberately omits Chromium's
+`-Wno-gcc-install-dir-libstdcxx` diagnostic switch. That switch is added only
+when `chromium_src` selects the hermetic Chromium toolchain; Ubuntu Clang 18
+rejects it under `-Werror`.
+
 The Rust job overrides the machine-specific paths in
 `bindings/rust/.cargo/config.toml` with the hosted compiler and builds Skia from
 source. Its cache is keyed by the Rust toolchain and Cargo manifests. The
