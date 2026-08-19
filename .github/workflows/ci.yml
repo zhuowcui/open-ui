@@ -15,17 +15,9 @@ concurrency:
 
 jobs:
   native-build:
-    name: native-build (${{ matrix.name }})
+    name: native-build (Debug + Release)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: Debug
-            is_debug: true
-          - name: Release
-            is_debug: false
     steps:
       - uses: actions/checkout@v6
 
@@ -35,14 +27,21 @@ jobs:
           sudo apt-get install --yes --no-install-recommends \
             clang generate-ninja lld ninja-build
 
-      - name: Generate build
-        run: gn gen "out/${{ matrix.name }}" --args='is_debug=${{ matrix.is_debug }}'
+      - name: Generate Debug build
+        run: gn gen out/Debug --args='is_debug=true'
 
-      - name: Build portable smoke target
-        run: ninja -C "out/${{ matrix.name }}" hello_world
+      - name: Build and run Debug smoke target
+        run: |
+          ninja -C out/Debug hello_world
+          out/Debug/hello_world
 
-      - name: Run portable smoke target
-        run: "out/${{ matrix.name }}/hello_world"
+      - name: Generate Release build
+        run: gn gen out/Release --args='is_debug=false'
+
+      - name: Build and run Release smoke target
+        run: |
+          ninja -C out/Release hello_world
+          out/Release/hello_world
 
   rust-parity:
     name: rust-parity

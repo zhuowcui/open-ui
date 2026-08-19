@@ -11,8 +11,7 @@ repository permissions.
 
 | Check | Contract |
 |---|---|
-| `native-build (Debug)` | Generate the portable GN graph, build `hello_world`, and run it. |
-| `native-build (Release)` | Repeat the portable native smoke test with release flags. |
+| `native-build (Debug + Release)` | Install native tools once, then generate, build, and run `hello_world` in both configurations. |
 | `rust-parity` | Check Rust formatting and run the style, text, layout, and paint test suites. |
 | `python-accountability` | Run the SP13-R through SP16 closure/porter tests, verify the immutable SP13-R ledgers, and validate committed exact-result metadata plus accountability checks 2–7. |
 | `clang-format` | Require every tracked C/C++ source under `src/`, `include/`, and `examples/` to match clang-format 18. |
@@ -21,7 +20,8 @@ repository permissions.
 The native smoke workflow installs Ubuntu's `generate-ninja` package directly.
 Do not replace it with a shallow `depot_tools` clone: the wrapper requires a
 bootstrapped Chromium checkout and was the cause of the original build and GN
-format failures.
+format failures. Debug and Release deliberately share one job so a pull request
+does not provision the same apt packages twice.
 
 The standalone compiler configuration deliberately omits Chromium's
 `-Wno-gcc-install-dir-libstdcxx` diagnostic switch. That switch is added only

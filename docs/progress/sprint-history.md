@@ -404,3 +404,8 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   `audit.py --repository-only` mode that keeps exact committed `result.json`
   proof and checks 2–7 strict; the unflagged local 7/7 audit remains the sole
   pixel-evidence gate and still requires both screenshots for every pass.
+- A final-head Release matrix runner then spent its entire 20-minute budget in
+  `apt-get` and was cancelled before GN ran, even though Release had compiled
+  and executed on the preceding head. The native gate now provisions once and
+  runs Debug plus Release sequentially in one job, preserving both builds while
+  removing the duplicate network failure surface.
