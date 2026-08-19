@@ -28,6 +28,12 @@ The Rust job overrides the machine-specific paths in
 source. Its cache is keyed by the Rust toolchain and Cargo manifests. The
 checked-in Cargo config remains the source of the pinned local raster policy.
 
+Porter idempotence tests use the two immutable upstream snapshots under
+`tools/wpt/fixtures/upstream/`. Never make a unit test implicitly read
+`~/chromium`: that can pass on the parity workstation while failing on every
+clean runner. Add only the minimal source fixture needed to reproduce a
+committed builder and record its Chromium revision in the fixture README.
+
 ## Local equivalents
 
 Native smoke build, using any current standalone `gn`, `ninja`, and Clang:

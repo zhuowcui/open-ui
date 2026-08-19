@@ -11,12 +11,14 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 ACCOUNTABILITY = ROOT / "tools" / "accountability"
 PORTED = ACCOUNTABILITY / "data" / "wpt_ported"
+UPSTREAM_FIXTURES = HERE / "fixtures" / "upstream"
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ACCOUNTABILITY))
 
@@ -444,6 +446,15 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
 
 
 class GenerationAndRunnerTests(unittest.TestCase):
+    def setUp(self):
+        self.upstream_patch = mock.patch.object(
+            splice_text_port, "WPT_ROOT", str(UPSTREAM_FIXTURES)
+        )
+        self.upstream_patch.start()
+
+    def tearDown(self):
+        self.upstream_patch.stop()
+
     def test_author_root_box_styling_selects_root_aware_generation(self):
         parser = port_wpt.WptHtmlParser()
         parser.feed("<style>*{max-height:10vh;border-top-style:dotted;columns:1 0px}</style><div></div>")

@@ -390,3 +390,8 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Local pre-push evidence: Rust style/text/layout/paint suites pass; all 99
   Python tests pass; SP13-R ledgers remain 2,823/351/1,018; audit passes 7/7;
   clang-format 18, GN formatting, workflow syntax, and `git diff --check` pass.
+- The first hosted run exposed three porter tests that had silently relied on
+  `/home/nero/chromium`. They now patch `WPT_ROOT` to two committed upstream
+  snapshots from Chromium source commit `09d377d9438dc95267369f74a073acd81bdde38f`;
+  the affected SP13-R and SP16 idempotence tests pass in isolation without a
+  sibling checkout.

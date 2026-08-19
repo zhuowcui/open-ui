@@ -10,11 +10,13 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 ACCOUNTABILITY = ROOT / "tools" / "accountability"
+UPSTREAM_FIXTURES = HERE / "fixtures" / "upstream"
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ACCOUNTABILITY))
 
@@ -59,8 +61,13 @@ class RealFontPorterTests(unittest.TestCase):
         self.old_profile = port_wpt.ACTIVE_PORTER_PROFILE
         self.old_emit = port_wpt.EMIT_TEXT_NODES
         self.old_retain = port_wpt.RETAIN_TEXT
+        self.upstream_patch = mock.patch.object(
+            splice_text_port, "WPT_ROOT", str(UPSTREAM_FIXTURES)
+        )
+        self.upstream_patch.start()
 
     def tearDown(self):
+        self.upstream_patch.stop()
         port_wpt.ACTIVE_PORTER_PROFILE = self.old_profile
         port_wpt.EMIT_TEXT_NODES = self.old_emit
         port_wpt.RETAIN_TEXT = self.old_retain
